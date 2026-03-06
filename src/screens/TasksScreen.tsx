@@ -36,6 +36,7 @@ export function TasksScreen() {
   const [schedule, setSchedule] = useState<Weekday[]>(everyDay)
   const [planType, setPlanType] = useState<PlanType>('recurring')
   const [plannedDate, setPlannedDate] = useState(selectedDate >= today ? selectedDate : today)
+  const [reminderTime, setReminderTime] = useState('')
 
   useEffect(() => {
     if (planType !== 'one-time') {
@@ -73,6 +74,7 @@ export function TasksScreen() {
       weight,
       schedule: planType === 'one-time' ? [] : schedule,
       plannedDate: planType === 'one-time' ? plannedDate : undefined,
+      reminderTime: reminderTime || undefined,
     })
 
     setName('')
@@ -81,6 +83,7 @@ export function TasksScreen() {
     setSchedule(everyDay)
     setPlanType('recurring')
     setPlannedDate(selectedDate >= today ? selectedDate : today)
+    setReminderTime('')
   }
 
   return (
@@ -128,6 +131,19 @@ export function TasksScreen() {
               max={5}
               value={weight}
               onChange={(event) => setWeight(Number(event.target.value) || 1)}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-xs text-slate-200/80" htmlFor="taskReminderTime">
+              Reminder time (optional)
+            </label>
+            <input
+              id="taskReminderTime"
+              className="glass-input"
+              type="time"
+              value={reminderTime}
+              onChange={(event) => setReminderTime(event.target.value)}
             />
           </div>
 
@@ -190,6 +206,7 @@ export function TasksScreen() {
                 ) : (
                   <p className="text-xs text-slate-300/70">Recurring</p>
                 )}
+                {task.reminderTime && <p className="text-xs text-cyan-200/80">Reminder: {task.reminderTime}</p>}
               </div>
 
               <button

@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
 @import 'tailwindcss';
 @import './styles/glass.css';
 
 :root {
-  font-family: 'Inter', 'SF Pro Text', 'Segoe UI', sans-serif;
+  font-family: 'Outfit', 'Segoe UI', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -12,15 +13,28 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: radial-gradient(circle at 15% 0%, #1e293b 0%, #020617 55%), radial-gradient(circle at 80% 120%, #1d4ed833 0%, transparent 50%), #020617;
+  background:
+    radial-gradient(circle at 8% -10%, #0ea5e9 0%, transparent 36%),
+    radial-gradient(circle at 84% 12%, #14b8a622 0%, transparent 44%),
+    linear-gradient(170deg, #020617 0%, #071b2a 52%, #020617 100%);
   color: #f8fafc;
 }
 
 body.light {
-  background: radial-gradient(circle at 15% 0%, #f8fafc 0%, #dbeafe 55%), radial-gradient(circle at 80% 120%, #93c5fd55 0%, transparent 52%), #e2e8f0;
+  background:
+    radial-gradient(circle at 10% 0%, #e0f2fe 0%, transparent 40%),
+    radial-gradient(circle at 82% 22%, #99f6e455 0%, transparent 48%),
+    linear-gradient(170deg, #f8fafc 0%, #dbeafe 58%, #ecfeff 100%);
   color: #0f172a;
 }
 
 #root {
   min-height: 100dvh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  letter-spacing: 0.01em;
 }

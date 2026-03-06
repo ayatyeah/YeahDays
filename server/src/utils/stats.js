@@ -44,6 +44,11 @@ export function calculateAccountStats(tasks, records) {
   const dates = Object.keys(records).sort()
   let trackedDays = 0
   let completedDays = 0
+  const lifeStatus = {
+    red: 0,
+    yellow: 0,
+    green: 0,
+  }
 
   for (const date of dates) {
     const dayTasks = getTasksForDate(tasks, date)
@@ -51,6 +56,14 @@ export function calculateAccountStats(tasks, records) {
     const day = getDayPercentage(dayTasks, completedIds)
     if (day.total > 0) {
       trackedDays += 1
+      if (day.percentage >= 100) {
+        lifeStatus.green += 1
+      } else if (day.percentage >= 50) {
+        lifeStatus.yellow += 1
+      } else {
+        lifeStatus.red += 1
+      }
+
       if (day.percentage === 100) {
         completedDays += 1
       }
@@ -102,5 +115,6 @@ export function calculateAccountStats(tasks, records) {
     completionRate,
     bestStreak,
     currentStreak,
+    lifeStatus,
   }
 }

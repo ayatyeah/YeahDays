@@ -9,7 +9,7 @@ import {
   saveCloudData,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
-import type { AccountStats, DailyRecord, PersistedAppState, UserTask, Weekday } from '../types'
+import type { AccountStats, DailyRecord, PersistedAppState, UserTask } from '../types'
 
 interface AppState extends PersistedAppState {
   selectedDate: string
@@ -17,41 +17,27 @@ interface AppState extends PersistedAppState {
   authLoading: boolean
   syncError: string | null
   accountStats: AccountStats | null
+  notificationsEnabled: boolean
   hydrate: () => Promise<void>
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   register: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
   logout: () => void
   syncNow: () => Promise<void>
+  refreshFromCloud: () => Promise<void>
   toggleTaskForDate: (date: string, taskId: string) => void
   setCompletedTasksForDate: (date: string, completedTaskIds: string[]) => void
   addTask: (task: Omit<UserTask, 'id'>) => void
   updateTask: (task: UserTask) => void
   deleteTask: (taskId: string) => void
   setTheme: (theme: 'light' | 'dark') => void
+  setNotificationsEnabled: (enabled: boolean) => void
   setSelectedDate: (date: string) => void
   resetAll: () => void
   exportData: () => PersistedAppState
   importData: (payload: string) => { success: boolean; error?: string }
 }
 
-const defaultSchedule: Weekday[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
-
-const defaultTasks: UserTask[] = [
-  {
-    id: crypto.randomUUID(),
-    name: 'Plan the day',
-    weight: 1,
-    icon: '📝',
-    schedule: defaultSchedule,
-  },
-  {
-    id: crypto.randomUUID(),
-    name: 'Focus session',
-    weight: 2,
-    icon: '🎯',
-    schedule: ['mon', 'tue', 'wed', 'thu', 'fri'],
-  },
-]
+const defaultTasks: UserTask[] = []
 
 function getInitialTheme(): 'light' | 'dark' {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
@@ -66,6 +52,7 @@ function pickPersistedState(state: AppState): PersistedAppState {
     tasks: state.tasks,
     records: state.records,
     theme: state.theme,
+    notificationsEnabled: state.notificationsEnabled,
     authToken: state.authToken,
     userEmail: state.userEmail,
     lastLocalChangeAt: state.lastLocalChangeAt,
@@ -94,7 +81,7 @@ export const useAppStore = create<AppState>((set, get) => {
     }
   }
 
-  const syncFromCloud = async (token: string) => {
+  const syncFromCloud = async (token: string, uploadIfCloudEmpty: boolean) => {
     const [me, cloud] = await Promise.all([getMe(token), getCloudData(token)])
     const state = get()
 
@@ -105,7 +92,7 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // Never overwrite non-empty cloud data on login from another device.
     // This avoids losing tasks created elsewhere due to local stale snapshots.
-    if (localHasContent && !cloudHasContent) {
+    if (uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
       const saveResult = await saveCloudData(token, pickPersistedState(state))
       set({
         userEmail: me.user.email,
@@ -134,6 +121,7 @@ export const useAppStore = create<AppState>((set, get) => {
     tasks: defaultTasks,
     records: {},
     theme: getInitialTheme(),
+    notificationsEnabled: false,
     authToken: null,
     userEmail: null,
     lastLocalChangeAt: 0,
@@ -154,6 +142,7 @@ export const useAppStore = create<AppState>((set, get) => {
           hydrated: true,
           authToken: persisted.authToken ?? null,
           userEmail: persisted.userEmail ?? null,
+          notificationsEnabled: persisted.notificationsEnabled ?? false,
           lastLocalChangeAt:
             persisted.lastLocalChangeAt ??
             (hasContent(persisted.tasks, persisted.records) ? Date.now() : 0),
@@ -164,9 +153,16 @@ export const useAppStore = create<AppState>((set, get) => {
 
         if (persisted.authToken) {
           try {
-            await syncFromCloud(persisted.authToken)
+            await syncFromCloud(persisted.authToken, true)
           } catch {
-            set({ authToken: null, userEmail: null, accountStats: null, cloudUpdatedAt: null })
+            set({
+              authToken: null,
+              userEmail: null,
+              accountStats: null,
+              cloudUpdatedAt: null,
+              tasks: [],
+              records: {},
+            })
             persist()
           }
         }
@@ -182,7 +178,7 @@ export const useAppStore = create<AppState>((set, get) => {
       try {
         const response = await registerAccount(email, password)
         set({ authToken: response.token, userEmail: response.user.email })
-        await syncFromCloud(response.token)
+        await syncFromCloud(response.token, true)
         set({ authLoading: false })
         persist()
         return { success: true }
@@ -198,7 +194,7 @@ export const useAppStore = create<AppState>((set, get) => {
       try {
         const response = await loginAccount(email, password)
         set({ authToken: response.token, userEmail: response.user.email })
-        await syncFromCloud(response.token)
+        await syncFromCloud(response.token, true)
         set({ authLoading: false })
         persist()
         return { success: true }
@@ -210,7 +206,16 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     logout: () => {
-      set({ authToken: null, userEmail: null, accountStats: null, syncError: null, cloudUpdatedAt: null })
+      set({
+        authToken: null,
+        userEmail: null,
+        accountStats: null,
+        syncError: null,
+        cloudUpdatedAt: null,
+        tasks: [],
+        records: {},
+        selectedDate: toISODate(new Date()),
+      })
       persist()
     },
 
@@ -220,6 +225,19 @@ export const useAppStore = create<AppState>((set, get) => {
         return
       }
       await saveCloud()
+    },
+
+    refreshFromCloud: async () => {
+      const state = get()
+      if (!state.authToken) {
+        return
+      }
+
+      try {
+        await syncFromCloud(state.authToken, false)
+      } catch (error) {
+        set({ syncError: error instanceof Error ? error.message : 'Cloud refresh failed' })
+      }
     },
 
     toggleTaskForDate: (date, taskId) => {
@@ -314,6 +332,11 @@ export const useAppStore = create<AppState>((set, get) => {
       set({ theme, lastLocalChangeAt: Date.now() })
       persist()
       void saveCloud()
+    },
+
+    setNotificationsEnabled: (enabled) => {
+      set({ notificationsEnabled: enabled })
+      persist()
     },
 
     setSelectedDate: (date) => {

@@ -15,6 +15,10 @@ const taskSchema = new mongoose.Schema(
       type: String,
       match: /^\d{4}-\d{2}-\d{2}$/,
     },
+    reminderTime: {
+      type: String,
+      match: /^\d{2}:\d{2}$/,
+    },
   },
   { _id: false },
 )

@@ -1,5 +1,5 @@
 import { getWeekday } from './dateUtils'
-import type { UserTask } from '../types'
+import type { LifeStatusCounts, UserTask } from '../types'
 
 export type DayColor = 'gray' | 'red' | 'yellow' | 'green'
 
@@ -62,4 +62,30 @@ export function getScoreSummary(tasks: UserTask[], completedTaskIds: string[]) {
     color,
     hexColor: dayColorHex[color],
   }
+}
+
+export function getLifeStatusCounts(tasks: UserTask[], records: Record<string, { completedTaskIds: string[] }>): LifeStatusCounts {
+  const counts: LifeStatusCounts = {
+    red: 0,
+    yellow: 0,
+    green: 0,
+  }
+
+  for (const [date, record] of Object.entries(records)) {
+    const dayTasks = getScheduledTasksForDate(tasks, date)
+    const score = getScoreSummary(dayTasks, record?.completedTaskIds ?? [])
+    if (score.totalScore === 0) {
+      continue
+    }
+
+    if (score.percentage >= 100) {
+      counts.green += 1
+    } else if (score.percentage >= 50) {
+      counts.yellow += 1
+    } else {
+      counts.red += 1
+    }
+  }
+
+  return counts
 }

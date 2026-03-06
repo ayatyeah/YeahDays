@@ -1,25 +1,34 @@
 import { useEffect, useMemo, useState } from 'react'
+import { AuthScreen } from './screens/AuthScreen'
 import { LiquidBackground } from './components/LiquidBackground'
+import { useTaskReminders } from './hooks/useTaskReminders'
 import { getScheduledTasksForDate, getScoreSummary } from './utils/scoreUtils'
 import { CalendarScreen } from './screens/CalendarScreen'
+import { GameScreen } from './screens/GameScreen'
+import { PlannerScreen } from './screens/PlannerScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { TasksScreen } from './screens/TasksScreen'
 import { TodayScreen } from './screens/TodayScreen'
 import { toISODate } from './utils/dateUtils'
 import { useAppStore } from './store/useAppStore'
 
-type Tab = 'today' | 'calendar' | 'tasks' | 'settings'
+type Tab = 'today' | 'calendar' | 'planner' | 'tasks' | 'game' | 'settings'
 
 const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: 'today', label: 'Today', icon: '☀️' },
   { id: 'calendar', label: 'Calendar', icon: '🗓️' },
+  { id: 'planner', label: 'Planner', icon: '🧭' },
   { id: 'tasks', label: 'Tasks', icon: '✅' },
+  { id: 'game', label: 'Game', icon: '🎮' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ]
 
+const CLOUD_REFRESH_MS = 25000
+
 function App() {
   const [activeTab, setActiveTab] = useState<Tab>('today')
-  const { tasks, records, theme, hydrated, hydrate } = useAppStore()
+  const { tasks, records, theme, hydrated, hydrate, userEmail, authToken, refreshFromCloud } = useAppStore()
+  const reminders = useTaskReminders()
 
   useEffect(() => {
     void hydrate()
@@ -33,6 +42,30 @@ function App() {
     root.classList.toggle('dark', theme === 'dark')
     root.style.colorScheme = theme
   }, [theme])
+
+  useEffect(() => {
+    if (!authToken) {
+      return
+    }
+
+    void refreshFromCloud()
+    const intervalId = window.setInterval(() => {
+      void refreshFromCloud()
+    }, CLOUD_REFRESH_MS)
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        void refreshFromCloud()
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      window.clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [authToken, refreshFromCloud])
 
   const todayStats = useMemo(() => {
     const today = toISODate(new Date())
@@ -49,24 +82,37 @@ function App() {
     )
   }
 
+  if (!userEmail) {
+    return (
+      <main className="app-shell relative mx-auto min-h-dvh max-w-[390px] overflow-hidden px-4 py-4 text-slate-100 dark:text-slate-100">
+        <LiquidBackground percentage={36} hexColor="#38bdf8" />
+        <section className="relative z-10">
+          <AuthScreen />
+        </section>
+      </main>
+    )
+  }
+
   return (
     <main className="app-shell relative mx-auto min-h-dvh max-w-[390px] overflow-hidden px-4 pb-22 pt-4 text-slate-100 dark:text-slate-100">
       <LiquidBackground percentage={todayStats.percentage} hexColor={todayStats.hexColor} />
       <section className="relative z-10 flex min-h-[calc(100dvh-6rem)] flex-col gap-4">
         {activeTab === 'today' && <TodayScreen />}
-        {activeTab === 'calendar' && <CalendarScreen />}
+        {activeTab === 'calendar' && <CalendarScreen onOpenPlanner={() => setActiveTab('planner')} />}
+        {activeTab === 'planner' && <PlannerScreen />}
         {activeTab === 'tasks' && <TasksScreen />}
-        {activeTab === 'settings' && <SettingsScreen />}
+        {activeTab === 'game' && <GameScreen />}
+        {activeTab === 'settings' && <SettingsScreen reminders={reminders} />}
       </section>
 
-      <nav className="glass-nav fixed inset-x-0 bottom-3 z-20 mx-auto flex w-[calc(100%-1.5rem)] max-w-[370px] items-center justify-between px-2 py-2">
+      <nav className="glass-nav fixed inset-x-0 bottom-3 z-20 mx-auto flex w-[calc(100%-1.5rem)] max-w-[370px] items-center justify-between gap-1 px-1 py-1">
         {tabs.map((tab) => {
           const active = activeTab === tab.id
           return (
             <button
               key={tab.id}
               type="button"
-              className={`glass-tab flex min-w-16 flex-1 flex-col items-center justify-center px-2 text-[11px] font-medium ${active ? 'active' : ''}`}
+              className={`glass-tab flex min-w-12 flex-1 flex-col items-center justify-center px-1 text-[10px] font-medium ${active ? 'active' : ''}`}
               onClick={() => setActiveTab(tab.id)}
             >
               <span aria-hidden>{tab.icon}</span>

@@ -7,6 +7,15 @@ export interface UserTask {
   icon?: string
   schedule: Weekday[]
   plannedDate?: string
+  reminderTime?: string
+}
+
+export type DayLifeStatus = 'red' | 'yellow' | 'green'
+
+export interface LifeStatusCounts {
+  red: number
+  yellow: number
+  green: number
 }
 
 export interface DailyRecord {
@@ -18,6 +27,7 @@ export interface PersistedAppState {
   tasks: UserTask[]
   records: Record<string, DailyRecord>
   theme: 'light' | 'dark'
+  notificationsEnabled?: boolean
   authToken?: string | null
   userEmail?: string | null
   lastLocalChangeAt?: number
@@ -30,5 +40,6 @@ export interface AccountStats {
   completionRate: number
   bestStreak: number
   currentStreak: number
+  lifeStatus: LifeStatusCounts
 }
 

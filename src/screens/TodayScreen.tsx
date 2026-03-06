@@ -9,7 +9,7 @@ import { getQuoteOfTheDay, getSevenDayInsights } from '../utils/productivityUtil
 import { getScheduledTasksForDate, getScoreSummary } from '../utils/scoreUtils'
 
 export function TodayScreen() {
-  const { tasks, records, toggleTaskForDate, setCompletedTasksForDate } = useAppStore()
+  const { tasks, records, toggleTaskForDate, setCompletedTasksForDate, accountStats } = useAppStore()
 
   const todayDate = toISODate(new Date())
   const todayTasks = getScheduledTasksForDate(tasks, todayDate)
@@ -118,6 +118,28 @@ export function TodayScreen() {
               }}
             />
           ))}
+        </div>
+      </GlassCard>
+
+      <GlassCard className="space-y-3 px-4 py-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-100">Life status</h3>
+          <span className="text-[11px] text-slate-300/80">tracked days: {accountStats?.trackedDays ?? 0}</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="surface-panel py-2">
+            <p className="text-[11px] text-red-200/90">Red</p>
+            <p className="text-sm font-semibold">{accountStats?.lifeStatus.red ?? 0}</p>
+          </div>
+          <div className="surface-panel py-2">
+            <p className="text-[11px] text-amber-200/90">Yellow</p>
+            <p className="text-sm font-semibold">{accountStats?.lifeStatus.yellow ?? 0}</p>
+          </div>
+          <div className="surface-panel py-2">
+            <p className="text-[11px] text-emerald-200/90">Green</p>
+            <p className="text-sm font-semibold">{accountStats?.lifeStatus.green ?? 0}</p>
+          </div>
         </div>
       </GlassCard>
 

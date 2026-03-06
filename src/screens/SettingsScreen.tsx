@@ -4,26 +4,31 @@ import { GlassCard } from '../components/GlassCard'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { useAppStore } from '../store/useAppStore'
 
-export function SettingsScreen() {
+interface SettingsScreenProps {
+  reminders: {
+    supported: boolean
+    permission: NotificationPermission
+    requestPermission: () => Promise<boolean>
+  }
+}
+
+export function SettingsScreen({ reminders }: SettingsScreenProps) {
   const {
     theme,
     setTheme,
     exportData,
     importData,
     resetAll,
-    login,
-    register,
     logout,
     syncNow,
     userEmail,
-    authLoading,
     syncError,
     accountStats,
+    notificationsEnabled,
+    setNotificationsEnabled,
   } = useAppStore()
   const { installAvailable, install } = useInstallPrompt()
   const [message, setMessage] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
 
   const download = () => {
     const payload = JSON.stringify(exportData(), null, 2)
@@ -60,82 +65,58 @@ export function SettingsScreen() {
     setMessage('All data reset')
   }
 
-  const handleAuth = async (mode: 'login' | 'register') => {
-    if (!email || !password) {
-      setMessage('Enter email and password')
-      return
-    }
-
-    const result =
-      mode === 'login' ? await login(email.trim(), password.trim()) : await register(email.trim(), password.trim())
-
-    setMessage(result.success ? `${mode === 'login' ? 'Logged in' : 'Account created'}` : result.error ?? 'Auth failed')
-    if (result.success) {
-      setPassword('')
-    }
-  }
-
   return (
     <GlassCard className="space-y-4 px-4 py-4">
       <h2 className="text-lg font-semibold">Settings</h2>
 
-      {!userEmail ? (
-        <div className="surface-panel space-y-2 p-3">
-          <p className="text-sm font-semibold">Account</p>
-          <input
-            className="glass-input"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-          <input
-            className="glass-input"
-            type="password"
-            placeholder="Password (min 6)"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <div className="flex gap-2">
-            <button
-              type="button"
-              className="glass-button glass-button-secondary"
-              disabled={authLoading}
-              onClick={() => void handleAuth('login')}
-            >
-              Login
-            </button>
-            <button
-              type="button"
-              className="glass-button"
-              disabled={authLoading}
-              onClick={() => void handleAuth('register')}
-            >
-              Register
-            </button>
+      <div className="surface-panel space-y-2 p-3">
+        <p className="text-sm font-semibold">Signed in as {userEmail}</p>
+        {accountStats && (
+          <div className="grid grid-cols-2 gap-2 text-xs text-slate-200/90">
+            <p>Tracked days: {accountStats.trackedDays}</p>
+            <p>100% days: {accountStats.completedDays}</p>
+            <p>Completion: {accountStats.completionRate}%</p>
+            <p>Streak: {accountStats.currentStreak}</p>
+            <p>Red days: {accountStats.lifeStatus.red}</p>
+            <p>Yellow days: {accountStats.lifeStatus.yellow}</p>
+            <p>Green days: {accountStats.lifeStatus.green}</p>
           </div>
+        )}
+        <div className="flex gap-2">
+          <button type="button" className="glass-button glass-button-secondary" onClick={() => void syncNow()}>
+            Sync now
+          </button>
+          <button type="button" className="glass-button glass-button-ghost" onClick={logout}>
+            Logout
+          </button>
         </div>
-      ) : (
-        <div className="surface-panel space-y-2 p-3">
-          <p className="text-sm font-semibold">Signed in as {userEmail}</p>
-          {accountStats && (
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-200/90">
-              <p>Tracked days: {accountStats.trackedDays}</p>
-              <p>100% days: {accountStats.completedDays}</p>
-              <p>Completion: {accountStats.completionRate}%</p>
-              <p>Streak: {accountStats.currentStreak}</p>
-            </div>
-          )}
-          <div className="flex gap-2">
-            <button type="button" className="glass-button glass-button-secondary" onClick={() => void syncNow()}>
-              Sync now
-            </button>
-            <button type="button" className="glass-button glass-button-ghost" onClick={logout}>
-              Logout
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
+
+      <div className="surface-panel space-y-2 p-3">
+        <p className="text-sm font-semibold">Task reminders</p>
+        <p className="text-xs text-slate-200/85">Notification permission: {reminders.permission}</p>
+        {!reminders.supported && <p className="text-xs text-red-200">This browser does not support notifications.</p>}
+        {reminders.supported && reminders.permission !== 'granted' && (
+          <button
+            type="button"
+            className="glass-button glass-button-secondary"
+            onClick={async () => {
+              const granted = await reminders.requestPermission()
+              setMessage(granted ? 'Notifications enabled' : 'Permission not granted')
+            }}
+          >
+            Enable browser notifications
+          </button>
+        )}
+
+        <button
+          type="button"
+          className={`glass-button ${notificationsEnabled ? '' : 'glass-button-secondary'}`}
+          onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+        >
+          {notificationsEnabled ? 'Reminders: ON' : 'Reminders: OFF'}
+        </button>
+      </div>
 
       <button
         type="button"

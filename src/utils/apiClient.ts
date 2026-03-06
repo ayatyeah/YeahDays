@@ -2,10 +2,6 @@ import type { AccountStats, PersistedAppState } from '../types'
 
 const API_BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')).trim()
 
-function isAbsoluteUrl(value: string) {
-  return /^https?:\/\//i.test(value)
-}
-
 function buildApiUrl(path: string) {
   const base = API_BASE.replace(/\/$/, '')
 
@@ -26,16 +22,9 @@ function buildApiCandidates(path: string) {
   candidates.add(primary)
   candidates.add(path)
 
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname
-    if (host.endsWith('.ondigitalocean.app') && !isAbsoluteUrl(API_BASE)) {
-      const apiHost = `api-${host}`
-      candidates.add(`https://${apiHost}${path}`)
-
-      if (path.startsWith('/api/')) {
-        candidates.add(`https://${apiHost}${path.slice(4)}`)
-      }
-    }
+  if (path.startsWith('/api/')) {
+    // Some deployments expose backend routes without the /api prefix.
+    candidates.add(path.slice(4))
   }
 
   return Array.from(candidates)
@@ -71,7 +60,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         ...init,
       })
     } catch {
-      lastError = 'API unavailable. Start backend on http://localhost:4000'
+      lastError = import.meta.env.DEV
+        ? 'API unavailable. Start backend on http://localhost:4000'
+        : 'API unavailable. Check backend deployment/routes.'
       continue
     }
 

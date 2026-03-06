@@ -2,6 +2,20 @@ import type { AccountStats, PersistedAppState } from '../types'
 
 const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')
 
+function buildApiUrl(path: string) {
+  const base = API_BASE.replace(/\/$/, '')
+
+  if (!base) {
+    return path
+  }
+
+  if (base.endsWith('/api') && path.startsWith('/api/')) {
+    return `${base}${path.slice(4)}`
+  }
+
+  return `${base}${path}`
+}
+
 interface AuthResponse {
   token: string
   user: {
@@ -20,7 +34,7 @@ interface CloudDataResponse {
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response
   try {
-    response = await fetch(`${API_BASE}${path}`, {
+    response = await fetch(buildApiUrl(path), {
       headers: {
         'Content-Type': 'application/json',
         ...(init?.headers || {}),

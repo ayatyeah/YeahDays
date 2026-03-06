@@ -1,0 +1,21 @@
+<svg width="220" height="54" viewBox="0 0 220 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="yd-bg" x1="4" y1="4" x2="50" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7DD3FC"/>
+      <stop offset="0.5" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="yd-text" x1="66" y1="10" x2="210" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#CBD5E1"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="46" height="46" rx="15" fill="url(#yd-bg)"/>
+  <path d="M15 33.5L22.5 25.8L28 31L39 19" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="38.5" cy="19.5" r="3.2" fill="#FFFFFF"/>
+  <path d="M66 17.6H74.2L81.4 28.4L88.6 17.6H96.8L85.3 34.2V44H77.5V34.2L66 17.6Z" fill="url(#yd-text)"/>
+  <path d="M102.1 44V17.6H112.8C121.7 17.6 127.6 22.8 127.6 30.8C127.6 38.8 121.7 44 112.8 44H102.1ZM109.8 37.7H112.4C116.9 37.7 119.7 35.2 119.7 30.8C119.7 26.4 116.9 23.9 112.4 23.9H109.8V37.7Z" fill="url(#yd-text)"/>
+  <path d="M144.3 44.6C136.1 44.6 130.2 39.1 130.2 30.8C130.2 22.5 136.1 17 144.3 17C152.5 17 158.4 22.5 158.4 30.8C158.4 39.1 152.5 44.6 144.3 44.6ZM144.3 37.8C148 37.8 150.6 35 150.6 30.8C150.6 26.6 148 23.8 144.3 23.8C140.6 23.8 138.1 26.6 138.1 30.8C138.1 35 140.6 37.8 144.3 37.8Z" fill="url(#yd-text)"/>
+  <path d="M172.7 44.6C167.1 44.6 162.5 42.7 159.7 39.6L163.9 34.6C166 36.6 169.3 38 172.7 38C175.5 38 176.8 37.1 176.8 35.7C176.8 34.2 175.2 33.6 172 32.8L169.1 32.1C164.1 30.9 160.4 28.1 160.4 23.3C160.4 17.8 165.4 17 171.2 17C176 17 180.1 18.4 182.8 20.8L178.9 26C176.8 24.4 174.2 23.6 171.3 23.6C169.1 23.6 168 24.3 168 25.5C168 26.9 169.5 27.4 172.8 28.2L175.7 28.9C181.4 30.3 184.5 33.2 184.5 38C184.5 43.8 179.8 44.6 172.7 44.6Z" fill="url(#yd-text)"/>
+  <path d="M186.3 17.6H194.5L201.7 28.4L208.9 17.6H217.1L205.6 34.2V44H197.8V34.2L186.3 17.6Z" fill="url(#yd-text)"/>
+</svg>

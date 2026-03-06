@@ -1,0 +1,363 @@
+import { create } from 'zustand'
+import { toISODate } from '../utils/dateUtils'
+import {
+  getCloudData,
+  getMe,
+  loginAccount,
+  registerAccount,
+  resetCloudData,
+  saveCloudData,
+} from '../utils/apiClient'
+import { loadPersistedState, savePersistedState } from '../utils/persistence'
+import type { AccountStats, DailyRecord, PersistedAppState, UserTask, Weekday } from '../types'
+
+interface AppState extends PersistedAppState {
+  selectedDate: string
+  hydrated: boolean
+  authLoading: boolean
+  syncError: string | null
+  accountStats: AccountStats | null
+  hydrate: () => Promise<void>
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  register: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  logout: () => void
+  syncNow: () => Promise<void>
+  toggleTaskForDate: (date: string, taskId: string) => void
+  setCompletedTasksForDate: (date: string, completedTaskIds: string[]) => void
+  addTask: (task: Omit<UserTask, 'id'>) => void
+  updateTask: (task: UserTask) => void
+  deleteTask: (taskId: string) => void
+  setTheme: (theme: 'light' | 'dark') => void
+  setSelectedDate: (date: string) => void
+  resetAll: () => void
+  exportData: () => PersistedAppState
+  importData: (payload: string) => { success: boolean; error?: string }
+}
+
+const defaultSchedule: Weekday[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+
+const defaultTasks: UserTask[] = [
+  {
+    id: crypto.randomUUID(),
+    name: 'Plan the day',
+    weight: 1,
+    icon: '📝',
+    schedule: defaultSchedule,
+  },
+  {
+    id: crypto.randomUUID(),
+    name: 'Focus session',
+    weight: 2,
+    icon: '🎯',
+    schedule: ['mon', 'tue', 'wed', 'thu', 'fri'],
+  },
+]
+
+function getInitialTheme(): 'light' | 'dark' {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+function hasContent(tasks: UserTask[], records: Record<string, DailyRecord>) {
+  return tasks.length > 0 || Object.keys(records).length > 0
+}
+
+function pickPersistedState(state: AppState): PersistedAppState {
+  return {
+    tasks: state.tasks,
+    records: state.records,
+    theme: state.theme,
+    authToken: state.authToken,
+    userEmail: state.userEmail,
+    lastLocalChangeAt: state.lastLocalChangeAt,
+    cloudUpdatedAt: state.cloudUpdatedAt,
+  }
+}
+
+export const useAppStore = create<AppState>((set, get) => {
+  const persist = () => {
+    const state = get()
+    void savePersistedState(pickPersistedState(state))
+  }
+
+  const saveCloud = async () => {
+    const state = get()
+    if (!state.authToken) {
+      return
+    }
+
+    try {
+      const result = await saveCloudData(state.authToken, pickPersistedState(state))
+      set({ syncError: null, accountStats: result.stats, cloudUpdatedAt: result.updatedAt })
+      persist()
+    } catch (error) {
+      set({ syncError: error instanceof Error ? error.message : 'Cloud sync failed' })
+    }
+  }
+
+  const syncFromCloud = async (token: string) => {
+    const [me, cloud] = await Promise.all([getMe(token), getCloudData(token)])
+    const state = get()
+
+    const localHasContent = hasContent(state.tasks, state.records)
+    const cloudHasContent = hasContent(cloud.tasks, cloud.records)
+    const localChangedAt = state.lastLocalChangeAt ?? 0
+    const cloudChangedAt = cloud.updatedAt ? Date.parse(cloud.updatedAt) : 0
+
+    if (localHasContent && (!cloudHasContent || localChangedAt > cloudChangedAt)) {
+      const saveResult = await saveCloudData(token, pickPersistedState(state))
+      set({
+        userEmail: me.user.email,
+        accountStats: saveResult.stats,
+        cloudUpdatedAt: saveResult.updatedAt,
+        syncError: null,
+      })
+      persist()
+      return
+    }
+
+    set({
+      userEmail: me.user.email,
+      tasks: cloud.tasks,
+      records: cloud.records,
+      theme: cloud.theme,
+      accountStats: cloud.stats,
+      cloudUpdatedAt: cloud.updatedAt,
+      lastLocalChangeAt: Math.max(localChangedAt, cloudChangedAt),
+      syncError: null,
+    })
+    persist()
+  }
+
+  return {
+    tasks: defaultTasks,
+    records: {},
+    theme: getInitialTheme(),
+    authToken: null,
+    userEmail: null,
+    lastLocalChangeAt: 0,
+    cloudUpdatedAt: null,
+    selectedDate: toISODate(new Date()),
+    hydrated: false,
+    authLoading: false,
+    syncError: null,
+    accountStats: null,
+
+    hydrate: async () => {
+      const persisted = await loadPersistedState()
+      if (persisted) {
+        const nextState: Partial<AppState> = {
+          tasks: persisted.tasks,
+          records: persisted.records,
+          theme: persisted.theme,
+          hydrated: true,
+          authToken: persisted.authToken ?? null,
+          userEmail: persisted.userEmail ?? null,
+          lastLocalChangeAt:
+            persisted.lastLocalChangeAt ??
+            (hasContent(persisted.tasks, persisted.records) ? Date.now() : 0),
+          cloudUpdatedAt: persisted.cloudUpdatedAt ?? null,
+        }
+
+        set(nextState)
+
+        if (persisted.authToken) {
+          try {
+            await syncFromCloud(persisted.authToken)
+          } catch {
+            set({ authToken: null, userEmail: null, accountStats: null, cloudUpdatedAt: null })
+            persist()
+          }
+        }
+        return
+      }
+
+      set({ hydrated: true })
+      persist()
+    },
+
+    register: async (email, password) => {
+      set({ authLoading: true, syncError: null })
+      try {
+        const response = await registerAccount(email, password)
+        set({ authToken: response.token, userEmail: response.user.email })
+        await syncFromCloud(response.token)
+        set({ authLoading: false })
+        persist()
+        return { success: true }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Registration failed'
+        set({ authLoading: false, syncError: message })
+        return { success: false, error: message }
+      }
+    },
+
+    login: async (email, password) => {
+      set({ authLoading: true, syncError: null })
+      try {
+        const response = await loginAccount(email, password)
+        set({ authToken: response.token, userEmail: response.user.email })
+        await syncFromCloud(response.token)
+        set({ authLoading: false })
+        persist()
+        return { success: true }
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Login failed'
+        set({ authLoading: false, syncError: message })
+        return { success: false, error: message }
+      }
+    },
+
+    logout: () => {
+      set({ authToken: null, userEmail: null, accountStats: null, syncError: null, cloudUpdatedAt: null })
+      persist()
+    },
+
+    syncNow: async () => {
+      const state = get()
+      if (!state.authToken) {
+        return
+      }
+      await saveCloud()
+    },
+
+    toggleTaskForDate: (date, taskId) => {
+      set((state) => {
+        const currentRecord: DailyRecord = state.records[date] ?? {
+          date,
+          completedTaskIds: [],
+        }
+
+        const hasTask = currentRecord.completedTaskIds.includes(taskId)
+        const completedTaskIds = hasTask
+          ? currentRecord.completedTaskIds.filter((id) => id !== taskId)
+          : [...currentRecord.completedTaskIds, taskId]
+
+        return {
+          records: {
+            ...state.records,
+            [date]: {
+              date,
+              completedTaskIds,
+            },
+          },
+          lastLocalChangeAt: Date.now(),
+        }
+      })
+      persist()
+      void saveCloud()
+    },
+
+    setCompletedTasksForDate: (date, completedTaskIds) => {
+      set((state) => ({
+        records: {
+          ...state.records,
+          [date]: {
+            date,
+            completedTaskIds,
+          },
+        },
+        lastLocalChangeAt: Date.now(),
+      }))
+      persist()
+      void saveCloud()
+    },
+
+    addTask: (task) => {
+      set((state) => ({
+        tasks: [
+          ...state.tasks,
+          {
+            ...task,
+            id: crypto.randomUUID(),
+          },
+        ],
+        lastLocalChangeAt: Date.now(),
+      }))
+      persist()
+      void saveCloud()
+    },
+
+    updateTask: (task) => {
+      set((state) => ({
+        tasks: state.tasks.map((currentTask) => (currentTask.id === task.id ? task : currentTask)),
+        lastLocalChangeAt: Date.now(),
+      }))
+      persist()
+      void saveCloud()
+    },
+
+    deleteTask: (taskId) => {
+      set((state) => {
+        const records = Object.fromEntries(
+          Object.entries(state.records).map(([date, record]) => [
+            date,
+            {
+              ...record,
+              completedTaskIds: record.completedTaskIds.filter((id) => id !== taskId),
+            },
+          ]),
+        )
+
+        return {
+          tasks: state.tasks.filter((task) => task.id !== taskId),
+          records,
+          lastLocalChangeAt: Date.now(),
+        }
+      })
+      persist()
+      void saveCloud()
+    },
+
+    setTheme: (theme) => {
+      set({ theme, lastLocalChangeAt: Date.now() })
+      persist()
+      void saveCloud()
+    },
+
+    setSelectedDate: (date) => {
+      set({ selectedDate: date })
+    },
+
+    resetAll: () => {
+      set({
+        tasks: [],
+        records: {},
+        selectedDate: toISODate(new Date()),
+        accountStats: null,
+        lastLocalChangeAt: Date.now(),
+      })
+      persist()
+      const token = get().authToken
+      if (token) {
+        void resetCloudData(token)
+      }
+    },
+
+    exportData: () => {
+      return pickPersistedState(get())
+    },
+
+    importData: (payload) => {
+      try {
+        const parsed = JSON.parse(payload) as Partial<PersistedAppState>
+
+        if (!Array.isArray(parsed.tasks) || typeof parsed.records !== 'object') {
+          return { success: false, error: 'Invalid JSON format' }
+        }
+
+        set({
+          tasks: parsed.tasks,
+          records: (parsed.records as Record<string, DailyRecord>) ?? {},
+          theme: parsed.theme === 'light' ? 'light' : 'dark',
+          lastLocalChangeAt: Date.now(),
+        })
+        persist()
+        void saveCloud()
+
+        return { success: true }
+      } catch {
+        return { success: false, error: 'Unable to parse file' }
+      }
+    },
+  }
+})

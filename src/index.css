@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+@import './styles/glass.css';
+
+:root {
+  font-family: 'Inter', 'SF Pro Text', 'Segoe UI', sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: radial-gradient(circle at 15% 0%, #1e293b 0%, #020617 55%), radial-gradient(circle at 80% 120%, #1d4ed833 0%, transparent 50%), #020617;
+  color: #f8fafc;
+}
+
+body.light {
+  background: radial-gradient(circle at 15% 0%, #f8fafc 0%, #dbeafe 55%), radial-gradient(circle at 80% 120%, #93c5fd55 0%, transparent 52%), #e2e8f0;
+  color: #0f172a;
+}
+
+#root {
+  min-height: 100dvh;
+}

@@ -55,6 +55,12 @@ interface CloudDataResponse {
   updatedAt: string | null
 }
 
+export interface LeaderboardEntry {
+  rank: number
+  userEmail: string
+  highScore: number
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const candidates = buildApiCandidates(path)
   let lastError = 'Request failed'
@@ -148,6 +154,21 @@ export async function saveCloudData(token: string, payload: PersistedAppState) {
 export async function resetCloudData(token: string) {
   return request<{ ok: true }>('/api/data/reset', {
     method: 'POST',
+    headers: authHeaders(token),
+  })
+}
+
+export async function submitGameScore(token: string, score: number) {
+  return request<{ ok: true; score: number; highScore: number; improved: boolean }>('/api/game/score', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ score }),
+  })
+}
+
+export async function getLeaderboard(token: string) {
+  return request<{ leaderboard: LeaderboardEntry[] }>('/api/game/leaderboard', {
+    method: 'GET',
     headers: authHeaders(token),
   })
 }

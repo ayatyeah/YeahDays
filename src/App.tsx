@@ -5,19 +5,17 @@ import { useTaskReminders } from './hooks/useTaskReminders'
 import { getScheduledTasksForDate, getScoreSummary } from './utils/scoreUtils'
 import { CalendarScreen } from './screens/CalendarScreen'
 import { GameScreen } from './screens/GameScreen'
-import { PlannerScreen } from './screens/PlannerScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { TasksScreen } from './screens/TasksScreen'
 import { TodayScreen } from './screens/TodayScreen'
 import { toISODate } from './utils/dateUtils'
 import { useAppStore } from './store/useAppStore'
 
-type Tab = 'today' | 'calendar' | 'planner' | 'tasks' | 'game' | 'settings'
+type Tab = 'today' | 'calendar' | 'tasks' | 'game' | 'settings'
 
 const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: 'today', label: 'Today', icon: '☀️' },
   { id: 'calendar', label: 'Calendar', icon: '🗓️' },
-  { id: 'planner', label: 'Planner', icon: '🧭' },
   { id: 'tasks', label: 'Tasks', icon: '✅' },
   { id: 'game', label: 'Game', icon: '🎮' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
@@ -98,8 +96,7 @@ function App() {
       <LiquidBackground percentage={todayStats.percentage} hexColor={todayStats.hexColor} />
       <section className="relative z-10 flex min-h-[calc(100dvh-6rem)] flex-col gap-4">
         {activeTab === 'today' && <TodayScreen />}
-        {activeTab === 'calendar' && <CalendarScreen onOpenPlanner={() => setActiveTab('planner')} />}
-        {activeTab === 'planner' && <PlannerScreen />}
+        {activeTab === 'calendar' && <CalendarScreen onOpenTasks={() => setActiveTab('tasks')} />}
         {activeTab === 'tasks' && <TasksScreen />}
         {activeTab === 'game' && <GameScreen />}
         {activeTab === 'settings' && <SettingsScreen reminders={reminders} />}

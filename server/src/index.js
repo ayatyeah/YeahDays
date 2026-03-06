@@ -114,6 +114,15 @@ function signToken(userId) {
   })
 }
 
+function clampScore(value) {
+  const raw = Number(value)
+  if (!Number.isFinite(raw) || raw < 0) {
+    return 0
+  }
+
+  return Math.floor(raw)
+}
+
 async function getOrCreateData(userId) {
   const existing = await UserData.findOne({ userId })
   if (existing) {
@@ -125,6 +134,7 @@ async function getOrCreateData(userId) {
     tasks: [],
     records: {},
     theme: 'dark',
+    gameHighScore: 0,
   })
 }
 
@@ -214,6 +224,7 @@ const getDataHandler = async (req, res) => {
     tasks: data.tasks,
     records: data.records || {},
     theme: data.theme,
+    gameHighScore: data.gameHighScore || 0,
     stats,
     updatedAt: data.updatedAt ? data.updatedAt.toISOString() : null,
   })
@@ -257,6 +268,50 @@ const resetDataHandler = async (req, res) => {
 
 app.post('/api/data/reset', requireDbReady, authRequired, resetDataHandler)
 app.post('/data/reset', requireDbReady, authRequired, resetDataHandler)
+
+const submitGameScoreHandler = async (req, res) => {
+  const submittedScore = clampScore(req.body?.score)
+  const data = await getOrCreateData(req.auth.userId)
+  const previousBest = data.gameHighScore || 0
+  const gameHighScore = Math.max(previousBest, submittedScore)
+
+  if (gameHighScore !== previousBest) {
+    data.gameHighScore = gameHighScore
+    await data.save()
+  }
+
+  return res.json({
+    ok: true,
+    score: submittedScore,
+    highScore: gameHighScore,
+    improved: gameHighScore > previousBest,
+  })
+}
+
+app.post('/api/game/score', requireDbReady, authRequired, submitGameScoreHandler)
+app.post('/game/score', requireDbReady, authRequired, submitGameScoreHandler)
+
+const leaderboardHandler = async (_req, res) => {
+  const top = await UserData.find({ gameHighScore: { $gt: 0 } })
+    .sort({ gameHighScore: -1, updatedAt: 1 })
+    .limit(20)
+    .lean()
+
+  const userIds = top.map((entry) => String(entry.userId))
+  const users = await User.find({ _id: { $in: userIds } }).lean()
+  const emailById = new Map(users.map((item) => [String(item._id), item.email]))
+
+  const leaderboard = top.map((entry, index) => ({
+    rank: index + 1,
+    userEmail: emailById.get(String(entry.userId)) || 'unknown@user',
+    highScore: entry.gameHighScore || 0,
+  }))
+
+  return res.json({ leaderboard })
+}
+
+app.get('/api/game/leaderboard', requireDbReady, authRequired, leaderboardHandler)
+app.get('/game/leaderboard', requireDbReady, authRequired, leaderboardHandler)
 
 app.use((error, _req, res, _next) => {
   console.error(error)

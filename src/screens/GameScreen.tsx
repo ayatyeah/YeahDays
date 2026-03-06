@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { GlassCard } from '../components/GlassCard'
+import { useAppStore } from '../store/useAppStore'
+import { getLeaderboard, submitGameScore } from '../utils/apiClient'
+import type { LeaderboardEntry } from '../utils/apiClient'
 
 const GAME_LENGTH_MS = 30000
 
@@ -11,11 +14,15 @@ function randomPosition() {
 }
 
 export function GameScreen() {
+  const { authToken, userEmail } = useAppStore()
   const [running, setRunning] = useState(false)
   const [score, setScore] = useState(0)
   const [combo, setCombo] = useState(0)
   const [position, setPosition] = useState(randomPosition())
   const [leftMs, setLeftMs] = useState(GAME_LENGTH_MS)
+  const [highScore, setHighScore] = useState(0)
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false)
 
   useEffect(() => {
     if (!running) {
@@ -35,6 +42,44 @@ export function GameScreen() {
 
     return () => window.clearInterval(timerId)
   }, [running])
+
+  useEffect(() => {
+    if (!authToken) {
+      return
+    }
+
+    const loadLeaderboard = async () => {
+      setLeaderboardLoading(true)
+      try {
+        const result = await getLeaderboard(authToken)
+        setLeaderboard(result.leaderboard)
+
+        const selfEntry = result.leaderboard.find((entry) => entry.userEmail === userEmail)
+        if (selfEntry) {
+          setHighScore(selfEntry.highScore)
+        }
+      } finally {
+        setLeaderboardLoading(false)
+      }
+    }
+
+    void loadLeaderboard()
+  }, [authToken, userEmail])
+
+  useEffect(() => {
+    if (running || !authToken || score <= 0) {
+      return
+    }
+
+    const sendScore = async () => {
+      const result = await submitGameScore(authToken, score)
+      setHighScore(result.highScore)
+      const board = await getLeaderboard(authToken)
+      setLeaderboard(board.leaderboard)
+    }
+
+    void sendScore()
+  }, [running, score, authToken])
 
   const leftSec = Math.ceil(leftMs / 1000)
 
@@ -93,6 +138,11 @@ export function GameScreen() {
           </div>
         </div>
 
+        <div className="surface-panel flex items-center justify-between px-3 py-2 text-xs">
+          <p className="text-slate-300/80">Your best score</p>
+          <p className="text-sm font-semibold">{highScore}</p>
+        </div>
+
         <button type="button" className="glass-button" onClick={start}>
           {running ? 'Restart round' : 'Start game'}
         </button>
@@ -116,6 +166,26 @@ export function GameScreen() {
           <div className="relative z-10 flex h-full items-center justify-center">
             <p className="text-sm text-slate-100/85">Press start to launch your round.</p>
           </div>
+        )}
+      </GlassCard>
+
+      <GlassCard className="space-y-3 px-4 py-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-semibold">Leaderboard</h3>
+          {leaderboardLoading && <span className="text-xs text-slate-300/80">Loading...</span>}
+        </div>
+
+        {leaderboard.length === 0 ? (
+          <p className="text-sm text-slate-200/80">No scores yet. Start the first round.</p>
+        ) : (
+          leaderboard.map((entry) => (
+            <div key={`${entry.rank}-${entry.userEmail}`} className="surface-panel flex items-center justify-between px-3 py-2">
+              <p className="text-sm">
+                #{entry.rank} {entry.userEmail}
+              </p>
+              <p className="text-sm font-semibold">{entry.highScore}</p>
+            </div>
+          ))
         )}
       </GlassCard>
     </>

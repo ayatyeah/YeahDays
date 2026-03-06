@@ -6,10 +6,10 @@ import { getFullDisplayDate, getMonthTitle, shiftMonth } from '../utils/dateUtil
 import { getScheduledTasksForDate, getScoreSummary } from '../utils/scoreUtils'
 
 interface CalendarScreenProps {
-  onOpenPlanner: () => void
+  onOpenTasks: () => void
 }
 
-export function CalendarScreen({ onOpenPlanner }: CalendarScreenProps) {
+export function CalendarScreen({ onOpenTasks }: CalendarScreenProps) {
   const { tasks, records, selectedDate, setSelectedDate } = useAppStore()
   const [monthDate, setMonthDate] = useState(new Date())
 
@@ -71,7 +71,7 @@ export function CalendarScreen({ onOpenPlanner }: CalendarScreenProps) {
           {selectedInfo.completedScore}/{selectedInfo.totalScore} score from{' '}
           {selectedInfo.dayTasks.length} tasks
         </p>
-        <button type="button" className="glass-button !min-h-10 text-xs" onClick={onOpenPlanner}>
+        <button type="button" className="glass-button !min-h-10 text-xs" onClick={onOpenTasks}>
           Plan this day
         </button>
       </GlassCard>

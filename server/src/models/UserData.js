@@ -45,6 +45,11 @@ const userDataSchema = new mongoose.Schema(
       enum: ['light', 'dark'],
       default: 'dark',
     },
+    gameHighScore: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   { timestamps: true },
 )

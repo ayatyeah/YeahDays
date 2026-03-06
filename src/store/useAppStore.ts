@@ -90,9 +90,27 @@ export const useAppStore = create<AppState>((set, get) => {
     const localChangedAt = state.lastLocalChangeAt ?? 0
     const cloudChangedAt = cloud.updatedAt ? Date.parse(cloud.updatedAt) : 0
 
-    // Never overwrite non-empty cloud data on login from another device.
-    // This avoids losing tasks created elsewhere due to local stale snapshots.
+    // Upload local snapshot for first login if cloud is empty.
     if (uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
+      const saveResult = await saveCloudData(token, pickPersistedState(state))
+      set({
+        userEmail: me.user.email,
+        accountStats: saveResult.stats,
+        cloudUpdatedAt: saveResult.updatedAt,
+        syncError: null,
+      })
+      persist()
+      return
+    }
+
+    // During background refresh, never wipe non-empty local data with empty cloud payload.
+    if (!uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
+      set({ userEmail: me.user.email, syncError: null })
+      return
+    }
+
+    // If local state is newer than cloud, push local version instead of replacing it.
+    if (!uploadIfCloudEmpty && localHasContent && cloudHasContent && localChangedAt > cloudChangedAt) {
       const saveResult = await saveCloudData(token, pickPersistedState(state))
       set({
         userEmail: me.user.email,

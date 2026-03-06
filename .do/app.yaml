@@ -1,19 +1,6 @@
 name: yeahdays
 region: fra
 services:
-  - name: web
-    github:
-      repo: ayatyeah/YeahDays
-      branch: master
-      deploy_on_push: true
-    source_dir: /
-    dockerfile_path: /Dockerfile
-    http_port: 80
-    instance_count: 1
-    instance_size_slug: apps-s-1vcpu-0.5gb
-    routes:
-      - path: /
-
   - name: api
     github:
       repo: ayatyeah/YeahDays
@@ -26,6 +13,10 @@ services:
     instance_size_slug: apps-s-1vcpu-0.5gb
     routes:
       - path: /api
+        preserve_path_prefix: true
+      - path: /auth
+        preserve_path_prefix: true
+      - path: /data
         preserve_path_prefix: true
     envs:
       - key: NODE_ENV
@@ -45,3 +36,16 @@ services:
       - key: CLIENT_ORIGIN
         scope: RUN_AND_BUILD_TIME
         value: https://yeahdays-qk3jx.ondigitalocean.app
+
+  - name: web
+    github:
+      repo: ayatyeah/YeahDays
+      branch: master
+      deploy_on_push: true
+    source_dir: /
+    dockerfile_path: /Dockerfile
+    http_port: 80
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    routes:
+      - path: /

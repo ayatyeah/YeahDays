@@ -16,6 +16,26 @@ function buildApiUrl(path: string) {
   return `${base}${path}`
 }
 
+function buildApiCandidates(path: string) {
+  const candidates = new Set<string>()
+  const primary = buildApiUrl(path)
+  candidates.add(primary)
+
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname
+    if (host.endsWith('.ondigitalocean.app')) {
+      const apiHost = `api-${host}`
+      candidates.add(`https://${apiHost}${path}`)
+
+      if (path.startsWith('/api/')) {
+        candidates.add(`https://${apiHost}${path.slice(4)}`)
+      }
+    }
+  }
+
+  return Array.from(candidates)
+}
+
 interface AuthResponse {
   token: string
   user: {
@@ -32,25 +52,39 @@ interface CloudDataResponse {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  let response: Response
-  try {
-    response = await fetch(buildApiUrl(path), {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(init?.headers || {}),
-      },
-      ...init,
-    })
-  } catch {
-    throw new Error('API unavailable. Start backend on http://localhost:4000')
-  }
+  const candidates = buildApiCandidates(path)
+  let lastError = 'Request failed'
 
-  if (!response.ok) {
+  for (const url of candidates) {
+    let response: Response
+    try {
+      response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(init?.headers || {}),
+        },
+        ...init,
+      })
+    } catch {
+      lastError = 'API unavailable. Start backend on http://localhost:4000'
+      continue
+    }
+
+    if (response.ok) {
+      return (await response.json()) as T
+    }
+
     const body = (await response.json().catch(() => ({}))) as { error?: string }
-    throw new Error(body.error || 'Request failed')
+    lastError = body.error || `Request failed (${response.status})`
+
+    if (response.status === 404 || response.status === 405) {
+      continue
+    }
+
+    throw new Error(lastError)
   }
 
-  return (await response.json()) as T
+  throw new Error(lastError)
 }
 
 function authHeaders(token: string) {

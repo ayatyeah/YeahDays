@@ -1,6 +1,10 @@
 import type { AccountStats, PersistedAppState } from '../types'
 
-const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')
+const API_BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')).trim()
+
+function isAbsoluteUrl(value: string) {
+  return /^https?:\/\//i.test(value)
+}
 
 function buildApiUrl(path: string) {
   const base = API_BASE.replace(/\/$/, '')
@@ -20,10 +24,11 @@ function buildApiCandidates(path: string) {
   const candidates = new Set<string>()
   const primary = buildApiUrl(path)
   candidates.add(primary)
+  candidates.add(path)
 
   if (typeof window !== 'undefined') {
     const host = window.location.hostname
-    if (host.endsWith('.ondigitalocean.app')) {
+    if (host.endsWith('.ondigitalocean.app') && !isAbsoluteUrl(API_BASE)) {
       const apiHost = `api-${host}`
       candidates.add(`https://${apiHost}${path}`)
 
@@ -71,13 +76,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
 
     if (response.ok) {
-      return (await response.json()) as T
+      try {
+        return (await response.json()) as T
+      } catch {
+        lastError = `Invalid API response from ${url}`
+        continue
+      }
     }
 
     const body = (await response.json().catch(() => ({}))) as { error?: string }
     lastError = body.error || `Request failed (${response.status})`
 
-    if (response.status === 404 || response.status === 405) {
+    if (response.status === 404 || response.status === 405 || response.status === 502 || response.status === 503) {
       continue
     }
 

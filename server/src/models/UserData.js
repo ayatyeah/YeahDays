@@ -11,6 +11,10 @@ const taskSchema = new mongoose.Schema(
       enum: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
       default: ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'],
     },
+    plannedDate: {
+      type: String,
+      match: /^\d{4}-\d{2}-\d{2}$/,
+    },
   },
   { _id: false },
 )

@@ -6,6 +6,7 @@ export interface UserTask {
   weight: number
   icon?: string
   schedule: Weekday[]
+  plannedDate?: string
 }
 
 export interface DailyRecord {

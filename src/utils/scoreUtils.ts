@@ -12,7 +12,13 @@ export const dayColorHex: Record<DayColor, string> = {
 
 export function getScheduledTasksForDate(tasks: UserTask[], isoDate: string): UserTask[] {
   const weekday = getWeekday(isoDate)
-  return tasks.filter((task) => task.schedule.includes(weekday))
+  return tasks.filter((task) => {
+    if (task.plannedDate) {
+      return task.plannedDate === isoDate
+    }
+
+    return Array.isArray(task.schedule) && task.schedule.includes(weekday)
+  })
 }
 
 export function calculateProgress(tasks: UserTask[], completedTaskIds: string[]) {

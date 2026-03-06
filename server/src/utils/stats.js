@@ -11,7 +11,13 @@ function getWeekday(dateStr) {
 
 function getTasksForDate(tasks, dateStr) {
   const weekday = getWeekday(dateStr)
-  return tasks.filter((task) => task.schedule.includes(weekday))
+  return tasks.filter((task) => {
+    if (task.plannedDate) {
+      return task.plannedDate === dateStr
+    }
+
+    return Array.isArray(task.schedule) && task.schedule.includes(weekday)
+  })
 }
 
 function getDayPercentage(tasks, completedTaskIds) {

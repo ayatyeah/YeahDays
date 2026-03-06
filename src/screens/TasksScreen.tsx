@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import { GlassCard } from '../components/GlassCard'
 import { useAppStore } from '../store/useAppStore'
 import type { Weekday } from '../types'
+import { toISODate } from '../utils/dateUtils'
 
 const weekdays: { key: Weekday; label: string }[] = [
   { key: 'mon', label: 'M' },
@@ -15,15 +16,44 @@ const weekdays: { key: Weekday; label: string }[] = [
 ]
 
 const everyDay: Weekday[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+type PlanType = 'recurring' | 'one-time'
+
+function formatTaskDate(isoDate: string) {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(year, month - 1, day))
+}
 
 export function TasksScreen() {
-  const { tasks, addTask, deleteTask } = useAppStore()
+  const { tasks, addTask, deleteTask, selectedDate } = useAppStore()
+  const today = toISODate(new Date())
   const [name, setName] = useState('')
   const [icon, setIcon] = useState('')
   const [weight, setWeight] = useState(1)
   const [schedule, setSchedule] = useState<Weekday[]>(everyDay)
+  const [planType, setPlanType] = useState<PlanType>('recurring')
+  const [plannedDate, setPlannedDate] = useState(selectedDate >= today ? selectedDate : today)
 
-  const canSubmit = useMemo(() => name.trim().length > 0 && schedule.length > 0, [name, schedule])
+  useEffect(() => {
+    if (planType !== 'one-time') {
+      return
+    }
+
+    if (selectedDate >= today) {
+      setPlannedDate(selectedDate)
+    }
+  }, [planType, selectedDate, today])
+
+  const canSubmit = useMemo(() => {
+    if (name.trim().length === 0) {
+      return false
+    }
+
+    return planType === 'one-time' ? plannedDate.length > 0 : schedule.length > 0
+  }, [name, planType, plannedDate, schedule])
 
   const toggleWeekday = (weekday: Weekday) => {
     setSchedule((current) =>
@@ -41,13 +71,16 @@ export function TasksScreen() {
       name: name.trim(),
       icon: icon.trim() || undefined,
       weight,
-      schedule,
+      schedule: planType === 'one-time' ? [] : schedule,
+      plannedDate: planType === 'one-time' ? plannedDate : undefined,
     })
 
     setName('')
     setIcon('')
     setWeight(1)
     setSchedule(everyDay)
+    setPlanType('recurring')
+    setPlannedDate(selectedDate >= today ? selectedDate : today)
   }
 
   return (
@@ -56,6 +89,23 @@ export function TasksScreen() {
         <h2 className="text-lg font-semibold">Add task</h2>
 
         <form className="space-y-3" onSubmit={submit}>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              className={`glass-button !min-h-10 text-xs ${planType === 'recurring' ? '' : 'glass-button-secondary'}`}
+              onClick={() => setPlanType('recurring')}
+            >
+              Recurring
+            </button>
+            <button
+              type="button"
+              className={`glass-button !min-h-10 text-xs ${planType === 'one-time' ? '' : 'glass-button-secondary'}`}
+              onClick={() => setPlanType('one-time')}
+            >
+              One-time
+            </button>
+          </div>
+
           <input
             className="glass-input"
             placeholder="Task name"
@@ -81,21 +131,37 @@ export function TasksScreen() {
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {weekdays.map((day) => {
-              const active = schedule.includes(day.key)
-              return (
-                <button
-                  key={day.key}
-                  type="button"
-                  className={`weekday-pill h-9 w-9 text-xs font-semibold ${active ? 'active' : ''}`}
-                  onClick={() => toggleWeekday(day.key)}
-                >
-                  {day.label}
-                </button>
-              )
-            })}
-          </div>
+          {planType === 'one-time' ? (
+            <div className="space-y-2">
+              <label className="text-xs text-slate-200/80" htmlFor="plannedDate">
+                Plan for date
+              </label>
+              <input
+                id="plannedDate"
+                className="glass-input"
+                type="date"
+                min={today}
+                value={plannedDate}
+                onChange={(event) => setPlannedDate(event.target.value)}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {weekdays.map((day) => {
+                const active = schedule.includes(day.key)
+                return (
+                  <button
+                    key={day.key}
+                    type="button"
+                    className={`weekday-pill h-9 w-9 text-xs font-semibold ${active ? 'active' : ''}`}
+                    onClick={() => toggleWeekday(day.key)}
+                  >
+                    {day.label}
+                  </button>
+                )
+              })}
+            </div>
+          )}
 
           <button type="submit" className="glass-button" disabled={!canSubmit}>
             Add task
@@ -119,6 +185,11 @@ export function TasksScreen() {
                   {task.name}
                 </p>
                 <p className="text-xs text-slate-200/75">Weight: {task.weight}</p>
+                {task.plannedDate ? (
+                  <p className="text-xs text-emerald-200/85">Planned: {formatTaskDate(task.plannedDate)}</p>
+                ) : (
+                  <p className="text-xs text-slate-300/70">Recurring</p>
+                )}
               </div>
 
               <button

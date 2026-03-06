@@ -83,7 +83,7 @@ app.get('/api/health', (_req, res) => {
   res.json({ ok: true, dbReady })
 })
 
-app.post('/api/auth/register', requireDbReady, async (req, res) => {
+const registerHandler = async (req, res) => {
   const { email, password } = req.body ?? {}
 
   if (!email || !password || password.length < 6) {
@@ -104,9 +104,12 @@ app.post('/api/auth/register', requireDbReady, async (req, res) => {
     token: signToken(String(user._id)),
     user: { email: user.email },
   })
-})
+}
 
-app.post('/api/auth/login', requireDbReady, async (req, res) => {
+app.post('/api/auth/register', requireDbReady, registerHandler)
+app.post('/auth/register', requireDbReady, registerHandler)
+
+const loginHandler = async (req, res) => {
   const { email, password } = req.body ?? {}
   const normalizedEmail = String(email || '').trim().toLowerCase()
 
@@ -124,9 +127,12 @@ app.post('/api/auth/login', requireDbReady, async (req, res) => {
     token: signToken(String(user._id)),
     user: { email: user.email },
   })
-})
+}
 
-app.get('/api/auth/me', requireDbReady, authRequired, async (req, res) => {
+app.post('/api/auth/login', requireDbReady, loginHandler)
+app.post('/auth/login', requireDbReady, loginHandler)
+
+const meHandler = async (req, res) => {
   const user = await User.findById(req.auth.userId)
   if (!user) {
     return res.status(404).json({ error: 'User not found' })
@@ -139,9 +145,12 @@ app.get('/api/auth/me', requireDbReady, authRequired, async (req, res) => {
     user: { email: user.email },
     stats,
   })
-})
+}
 
-app.get('/api/data', requireDbReady, authRequired, async (req, res) => {
+app.get('/api/auth/me', requireDbReady, authRequired, meHandler)
+app.get('/auth/me', requireDbReady, authRequired, meHandler)
+
+const getDataHandler = async (req, res) => {
   const data = await getOrCreateData(req.auth.userId)
   const stats = calculateAccountStats(data.tasks, data.records || {})
 
@@ -152,9 +161,12 @@ app.get('/api/data', requireDbReady, authRequired, async (req, res) => {
     stats,
     updatedAt: data.updatedAt ? data.updatedAt.toISOString() : null,
   })
-})
+}
 
-app.put('/api/data', requireDbReady, authRequired, async (req, res) => {
+app.get('/api/data', requireDbReady, authRequired, getDataHandler)
+app.get('/data', requireDbReady, authRequired, getDataHandler)
+
+const putDataHandler = async (req, res) => {
   const payload = req.body ?? {}
   const tasks = Array.isArray(payload.tasks) ? payload.tasks : []
   const records = typeof payload.records === 'object' && payload.records ? payload.records : {}
@@ -172,9 +184,12 @@ app.put('/api/data', requireDbReady, authRequired, async (req, res) => {
     stats,
     updatedAt: updated.updatedAt ? updated.updatedAt.toISOString() : null,
   })
-})
+}
 
-app.post('/api/data/reset', requireDbReady, authRequired, async (req, res) => {
+app.put('/api/data', requireDbReady, authRequired, putDataHandler)
+app.put('/data', requireDbReady, authRequired, putDataHandler)
+
+const resetDataHandler = async (req, res) => {
   await UserData.findOneAndUpdate(
     { userId: req.auth.userId },
     { tasks: [], records: {} },
@@ -182,7 +197,10 @@ app.post('/api/data/reset', requireDbReady, authRequired, async (req, res) => {
   )
 
   return res.json({ ok: true })
-})
+}
+
+app.post('/api/data/reset', requireDbReady, authRequired, resetDataHandler)
+app.post('/data/reset', requireDbReady, authRequired, resetDataHandler)
 
 app.use((error, _req, res, _next) => {
   console.error(error)

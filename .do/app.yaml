@@ -26,6 +26,7 @@ services:
     instance_size_slug: apps-s-1vcpu-0.5gb
     routes:
       - path: /api
+        preserve_path_prefix: true
     envs:
       - key: NODE_ENV
         scope: RUN_AND_BUILD_TIME
@@ -33,11 +34,14 @@ services:
       - key: PORT
         scope: RUN_AND_BUILD_TIME
         value: "4000"
-      - key: "mongodb+srv://yeah:yeah123@cluster0.kgzd93e.mongodb.net/?appName=Cluster0"
+      - key: MONGODB_URI
         scope: RUN_AND_BUILD_TIME
-        value: mongodb+srv://CHANGE_ME
+        value: CHANGE_ME_MONGODB_URI
         type: SECRET
-      - key: 9f3b0f5d4f6e43f8a5b1c9d2e7a8b4f1c6d3e9a2b7f4c8d1
+      - key: JWT_SECRET
         scope: RUN_AND_BUILD_TIME
-        value: CHANGE_ME_LONG_RANDOM_SECRET
+        value: CHANGE_ME_JWT_SECRET
         type: SECRET
+      - key: CLIENT_ORIGIN
+        scope: RUN_AND_BUILD_TIME
+        value: https://yeahdays-qk3jx.ondigitalocean.app

@@ -39,6 +39,26 @@ function summarizeDbError(error) {
   return 'Mongo connection failed: check API runtime logs for details.'
 }
 
+function parseMongoUriInfo(uri) {
+  if (!uri || typeof uri !== 'string') {
+    return { configured: false, scheme: null, host: null }
+  }
+
+  const trimmed = uri.trim().replace(/^"|"$/g, '')
+  const schemeMatch = trimmed.match(/^(mongodb(?:\+srv)?):\/\//i)
+  const scheme = schemeMatch ? schemeMatch[1].toLowerCase() : null
+
+  const withoutScheme = schemeMatch ? trimmed.slice(schemeMatch[0].length) : trimmed
+  const afterCreds = withoutScheme.includes('@') ? withoutScheme.split('@')[1] : withoutScheme
+  const host = afterCreds.split('/')[0]?.split('?')[0] || null
+
+  return {
+    configured: true,
+    scheme,
+    host,
+  }
+}
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -109,10 +129,13 @@ async function getOrCreateData(userId) {
 }
 
 app.get('/api/health', (_req, res) => {
+  const uriInfo = parseMongoUriInfo(process.env.MONGODB_URI)
+
   res.json({
     ok: true,
     dbReady,
     dbError: dbReady ? null : dbErrorHint,
+    mongoUri: uriInfo,
   })
 })
 

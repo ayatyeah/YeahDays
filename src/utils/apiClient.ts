@@ -2,6 +2,10 @@ import type { AccountStats, PersistedAppState } from '../types'
 
 const API_BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')).trim()
 
+function isAbsoluteUrl(value: string) {
+  return /^https?:\/\//i.test(value)
+}
+
 function buildApiUrl(path: string) {
   const base = API_BASE.replace(/\/$/, '')
 
@@ -20,6 +24,12 @@ function buildApiCandidates(path: string) {
   const candidates = new Set<string>()
   const primary = buildApiUrl(path)
   candidates.add(primary)
+
+  // When an explicit API host is configured, do not fallback to same-origin paths.
+  if (isAbsoluteUrl(API_BASE)) {
+    return Array.from(candidates)
+  }
+
   candidates.add(path)
 
   if (path.startsWith('/api/')) {

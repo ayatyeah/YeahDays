@@ -11,6 +11,33 @@ import { calculateAccountStats } from './utils/stats.js'
 
 const app = express()
 let dbReady = false
+let dbErrorHint = null
+
+function summarizeDbError(error) {
+  const message = String(error?.message || '').toLowerCase()
+
+  if (message.includes('authentication failed') || message.includes('bad auth')) {
+    return 'Mongo auth failed: check MONGODB_URI username/password and Database Access user.'
+  }
+
+  if (message.includes('querysrv') || message.includes('getaddrinfo') || message.includes('enotfound')) {
+    return 'Mongo DNS lookup failed: verify Atlas hostname in MONGODB_URI.'
+  }
+
+  if (message.includes('timed out') || message.includes('timeout')) {
+    return 'Mongo network timeout: check Atlas Network Access IP allowlist.'
+  }
+
+  if (message.includes('ssl') || message.includes('tls')) {
+    return 'Mongo TLS/SSL error: verify Atlas URI options and certificate requirements.'
+  }
+
+  if (message.includes('uri') || message.includes('connection string')) {
+    return 'Mongo URI format error: verify full mongodb+srv URI including database name.'
+  }
+
+  return 'Mongo connection failed: check API runtime logs for details.'
+}
 
 app.use(
   cors({
@@ -80,7 +107,11 @@ async function getOrCreateData(userId) {
 }
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, dbReady })
+  res.json({
+    ok: true,
+    dbReady,
+    dbError: dbReady ? null : dbErrorHint,
+  })
 })
 
 const registerHandler = async (req, res) => {
@@ -215,15 +246,18 @@ app.listen(port, () => {
 
 mongoose.connection.on('connected', () => {
   dbReady = true
+  dbErrorHint = null
   console.log('MongoDB connected')
 })
 
 mongoose.connection.on('disconnected', () => {
   dbReady = false
+  dbErrorHint = 'Mongo disconnected: check Atlas availability and network allowlist.'
   console.error('MongoDB disconnected')
 })
 
 mongoose.connect(process.env.MONGODB_URI).catch((error) => {
   dbReady = false
+  dbErrorHint = summarizeDbError(error)
   console.error('MongoDB connection failed:', error.message)
 })

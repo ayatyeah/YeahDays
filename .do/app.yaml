@@ -37,7 +37,7 @@ services:
         scope: RUN_AND_BUILD_TIME
         value: mongodb+srv://CHANGE_ME
         type: SECRET
-      - key: JWT_SECRET
+      - key: 9f3b0f5d4f6e43f8a5b1c9d2e7a8b4f1c6d3e9a2b7f4c8d1
         scope: RUN_AND_BUILD_TIME
         value: CHANGE_ME_LONG_RANDOM_SECRET
         type: SECRET

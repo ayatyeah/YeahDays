@@ -1,0 +1,43 @@
+name: yeahdays
+region: fra
+services:
+  - name: web
+    github:
+      repo: ayatyeah/YeahDays
+      branch: master
+      deploy_on_push: true
+    source_dir: /
+    dockerfile_path: /Dockerfile
+    http_port: 80
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    routes:
+      - path: /
+
+  - name: api
+    github:
+      repo: ayatyeah/YeahDays
+      branch: master
+      deploy_on_push: true
+    source_dir: /server
+    dockerfile_path: /server/Dockerfile
+    http_port: 4000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    routes:
+      - path: /api
+    envs:
+      - key: NODE_ENV
+        scope: RUN_AND_BUILD_TIME
+        value: production
+      - key: PORT
+        scope: RUN_AND_BUILD_TIME
+        value: "4000"
+      - key: "mongodb+srv://yeah:yeah123@cluster0.kgzd93e.mongodb.net/?appName=Cluster0"
+        scope: RUN_AND_BUILD_TIME
+        value: mongodb+srv://CHANGE_ME
+        type: SECRET
+      - key: JWT_SECRET
+        scope: RUN_AND_BUILD_TIME
+        value: CHANGE_ME_LONG_RANDOM_SECRET
+        type: SECRET

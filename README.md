@@ -139,3 +139,19 @@ docker compose logs -f
 - Never commit `server/.env`.
 - Rotate MongoDB password/JWT if previously exposed.
 - Restrict MongoDB Atlas network access to required IP ranges.
+
+## One-click DigitalOcean App Platform
+
+Use ready app spec: [.do/app.yaml](.do/app.yaml)
+
+1. In DigitalOcean: **Apps → Create App → App Spec**
+2. Paste content from `.do/app.yaml` (or upload file)
+3. Replace secret values:
+	- `MONGODB_URI`
+	- `JWT_SECRET`
+4. Click **Create Resources**
+
+This creates two services automatically:
+
+- `web` (frontend, route `/`)
+- `api` (backend, route `/api`)

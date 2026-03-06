@@ -27,7 +27,16 @@ app.use(
       const isLanDevOrigin =
         typeof origin === 'string' && /^https?:\/\/192\.168\.\d+\.\d+(:\d+)?$/i.test(origin)
 
-      if (!origin || configured.includes(origin) || isLocalhostDevOrigin || isLanDevOrigin) {
+      const isDigitalOceanAppOrigin =
+        typeof origin === 'string' && /^https?:\/\/[a-z0-9-]+\.ondigitalocean\.app$/i.test(origin)
+
+      if (
+        !origin ||
+        configured.includes(origin) ||
+        isLocalhostDevOrigin ||
+        isLanDevOrigin ||
+        isDigitalOceanAppOrigin
+      ) {
         callback(null, true)
         return
       }

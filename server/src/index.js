@@ -77,8 +77,10 @@ app.use(express.json({ limit: '1mb' }))
 
 function requireDbReady(_req, res, next) {
   if (!dbReady) {
-    return res.status(503).json({
+    return res.status(500).json({
       error: 'Database unavailable. Check MONGODB_URI/network and restart API.',
+      code: 'DB_NOT_READY',
+      details: dbErrorHint,
     })
   }
 

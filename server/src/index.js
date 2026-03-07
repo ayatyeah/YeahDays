@@ -211,6 +211,7 @@ async function getOrCreateData(userId) {
     records: {},
     theme: 'dark',
     gameHighScore: 0,
+    lastClientChangeAt: 0,
   })
 }
 
@@ -313,13 +314,36 @@ app.get('/data', requireDbReady, authRequired, getDataHandler)
 
 const putDataHandler = async (req, res) => {
   const payload = req.body ?? {}
-  const tasks = await replaceTasksForUser(req.auth.userId, payload.tasks)
+  const syncTasks = payload.syncTasks === true
+  const clientLastChangeAt = Number(payload.clientLastChangeAt)
+  const safeClientChangeAt = Number.isFinite(clientLastChangeAt) && clientLastChangeAt > 0 ? clientLastChangeAt : Date.now()
+
+  const currentData = await getOrCreateData(req.auth.userId)
+  const serverLastChangeAt = Number(currentData.lastClientChangeAt || 0)
+  if (safeClientChangeAt < serverLastChangeAt) {
+    const tasks = await getTasksForUser(req.auth.userId, currentData.tasks)
+    const stats = calculateAccountStats(tasks, currentData.records || {})
+    return res.json({
+      ok: true,
+      staleIgnored: true,
+      stats,
+      updatedAt: currentData.updatedAt ? currentData.updatedAt.toISOString() : null,
+    })
+  }
+
+  const tasks = syncTasks
+    ? await replaceTasksForUser(req.auth.userId, payload.tasks)
+    : await getTasksForUser(req.auth.userId, currentData.tasks)
   const records = typeof payload.records === 'object' && payload.records ? payload.records : {}
   const theme = payload.theme === 'light' ? 'light' : 'dark'
 
   const updated = await UserData.findOneAndUpdate(
     { userId: req.auth.userId },
-    { records, theme },
+    {
+      records,
+      theme,
+      lastClientChangeAt: Math.max(serverLastChangeAt, safeClientChangeAt),
+    },
     { new: true, upsert: true, setDefaultsOnInsert: true },
   )
 

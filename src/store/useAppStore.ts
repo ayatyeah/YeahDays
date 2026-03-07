@@ -7,7 +7,7 @@ import {
   loginAccount,
   registerAccount,
   resetCloudData,
-  saveCloudData,
+  saveCloudDataWithMode,
   upsertTaskCloud,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
@@ -69,8 +69,8 @@ export const useAppStore = create<AppState>((set, get) => {
     void savePersistedState(pickPersistedState(state))
   }
 
-  const pushLocalToCloud = async (token: string, state: AppState) => {
-    const result = await saveCloudData(token, pickPersistedState(state))
+  const pushLocalToCloud = async (token: string, state: AppState, syncTasks: boolean) => {
+    const result = await saveCloudDataWithMode(token, pickPersistedState(state), syncTasks)
     set({
       syncError: null,
       accountStats: result.stats,
@@ -87,7 +87,7 @@ export const useAppStore = create<AppState>((set, get) => {
     }
 
     try {
-      await pushLocalToCloud(state.authToken, state)
+      await pushLocalToCloud(state.authToken, state, state.cloudSyncPending)
     } catch (error) {
       set({
         syncError: error instanceof Error ? error.message : 'Cloud sync failed',
@@ -107,27 +107,27 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // Upload local snapshot for first login if cloud is empty.
     if (uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      await pushLocalToCloud(token, state)
+      await pushLocalToCloud(token, state, true)
       set({ userEmail: me.user.email })
       return
     }
 
     if (!uploadIfCloudEmpty && state.cloudSyncPending && localHasContent) {
-      await pushLocalToCloud(token, state)
+      await pushLocalToCloud(token, state, true)
       set({ userEmail: me.user.email })
       return
     }
 
     // During background refresh, never wipe non-empty local data with empty cloud payload.
     if (!uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      await pushLocalToCloud(token, state)
+      await pushLocalToCloud(token, state, true)
       set({ userEmail: me.user.email })
       return
     }
 
     // If local state is newer than cloud, push local version instead of replacing it.
     if (!uploadIfCloudEmpty && localHasContent && cloudHasContent && localChangedAt > cloudChangedAt) {
-      await pushLocalToCloud(token, state)
+      await pushLocalToCloud(token, state, true)
       set({ userEmail: me.user.email })
       return
     }

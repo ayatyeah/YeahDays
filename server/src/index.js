@@ -126,7 +126,8 @@ function clampScore(value) {
   return Math.floor(raw)
 }
 
-function sanitizeTask(rawTask) {
+function sanitizeTask(rawTask, options = {}) {
+  const strictName = options.strictName === true
   const task = rawTask && typeof rawTask === 'object' ? rawTask : {}
   const plannedDate =
     typeof task.plannedDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(task.plannedDate)
@@ -139,10 +140,15 @@ function sanitizeTask(rawTask) {
   const schedule = Array.isArray(task.schedule)
     ? task.schedule.filter((item) => typeof item === 'string' && validWeekdays.has(item))
     : []
+  const normalizedName = typeof task.name === 'string' ? task.name.trim() : ''
+
+  if (strictName && normalizedName.length === 0) {
+    return null
+  }
 
   return {
     id: typeof task.id === 'string' && task.id.trim() ? task.id.trim() : randomUUID(),
-    name: typeof task.name === 'string' && task.name.trim() ? task.name.trim() : 'Untitled task',
+    name: normalizedName || 'Untitled task',
     weight: Math.min(5, Math.max(1, Number(task.weight) || 1)),
     icon: typeof task.icon === 'string' && task.icon.trim() ? task.icon.trim().slice(0, 2) : undefined,
     schedule: plannedDate ? [] : schedule,
@@ -164,7 +170,11 @@ function toTaskPayload(taskDoc) {
 }
 
 async function replaceTasksForUser(userId, taskList) {
-  const normalized = Array.isArray(taskList) ? taskList.map(sanitizeTask) : []
+  const normalized = Array.isArray(taskList)
+    ? taskList
+        .map((task) => sanitizeTask(task, { strictName: true }))
+        .filter((task) => task !== null)
+    : []
   await Task.deleteMany({ userId })
   if (normalized.length === 0) {
     return []
@@ -361,7 +371,10 @@ app.post('/api/data', requireDbReady, authRequired, putDataHandler)
 app.post('/data', requireDbReady, authRequired, putDataHandler)
 
 const upsertTaskHandler = async (req, res) => {
-  const sanitizedTask = sanitizeTask(req.body?.task)
+  const sanitizedTask = sanitizeTask(req.body?.task, { strictName: true })
+  if (!sanitizedTask) {
+    return res.status(400).json({ error: 'Task name is required' })
+  }
 
   await Task.findOneAndUpdate(
     { userId: req.auth.userId, id: sanitizedTask.id },

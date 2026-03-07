@@ -10,6 +10,7 @@ import {
   resetCloudData,
   saveCloudData,
   upsertTaskCloud,
+  upsertRecordCloud,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
 import type { AccountStats, DailyRecord, PersistedAppState, UserTask } from '../types'
@@ -340,6 +341,7 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     toggleTaskForDate: (date, taskId) => {
+      let nextCompletedTaskIds: string[] = []
       set((state) => {
         const currentRecord: DailyRecord = state.records[date] ?? {
           date,
@@ -350,6 +352,7 @@ export const useAppStore = create<AppState>((set, get) => {
         const completedTaskIds = hasTask
           ? currentRecord.completedTaskIds.filter((id) => id !== taskId)
           : [...currentRecord.completedTaskIds, taskId]
+        nextCompletedTaskIds = completedTaskIds
 
         return {
           records: {
@@ -364,22 +367,67 @@ export const useAppStore = create<AppState>((set, get) => {
         }
       })
       persist()
+      const token = get().authToken
+      if (token) {
+        void upsertRecordCloud(token, {
+          date,
+          completedTaskIds: nextCompletedTaskIds,
+          clientLastChangeAt: get().lastLocalChangeAt,
+        })
+          .then((result) => {
+            set({
+              accountStats: result.stats,
+              cloudUpdatedAt: result.updatedAt,
+              syncError: null,
+              cloudSyncPending: false,
+            })
+            persist()
+          })
+          .catch(() => {
+            void saveCloud()
+          })
+        return
+      }
+
       void saveCloud()
     },
 
     setCompletedTasksForDate: (date, completedTaskIds) => {
+      const normalized = Array.from(new Set(completedTaskIds))
       set((state) => ({
         records: {
           ...state.records,
           [date]: {
             date,
-            completedTaskIds,
+            completedTaskIds: normalized,
           },
         },
         lastLocalChangeAt: Date.now(),
         cloudSyncPending: true,
       }))
       persist()
+      const token = get().authToken
+      if (token) {
+        void upsertRecordCloud(token, {
+          date,
+          completedTaskIds: normalized,
+          clientLastChangeAt: get().lastLocalChangeAt,
+        })
+          .then((result) => {
+            set({
+              accountStats: result.stats,
+              cloudUpdatedAt: result.updatedAt,
+              syncError: null,
+              cloudSyncPending: false,
+            })
+            persist()
+          })
+          .catch(() => {
+            void saveCloud()
+          })
+        return
+      }
+
       void saveCloud()
     },
 

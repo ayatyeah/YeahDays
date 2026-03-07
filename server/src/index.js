@@ -232,6 +232,25 @@ function pruneRecordTaskRefs(records, validTaskIds) {
   )
 }
 
+function isIsoDate(value) {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
+}
+
+function normalizeCompletedTaskIds(value) {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  const unique = new Set()
+  for (const item of value) {
+    if (typeof item === 'string' && item.trim()) {
+      unique.add(item.trim())
+    }
+  }
+
+  return Array.from(unique)
+}
+
 async function getTasksForUser(userId, legacyTasks = []) {
   let tasks = await Task.find({ userId }).sort({ createdAt: 1 }).lean()
 
@@ -452,6 +471,43 @@ const replaceTasksHandler = async (req, res) => {
 
 app.post('/api/tasks/replace', requireDbReady, authRequired, replaceTasksHandler)
 app.post('/tasks/replace', requireDbReady, authRequired, replaceTasksHandler)
+
+const upsertRecordHandler = async (req, res) => {
+  const date = String(req.body?.date || '').trim()
+  if (!isIsoDate(date)) {
+    return res.status(400).json({ error: 'Valid date (YYYY-MM-DD) is required' })
+  }
+
+  const incomingIds = normalizeCompletedTaskIds(req.body?.completedTaskIds)
+  const tasks = await getTasksForUser(req.auth.userId)
+  const validTaskIds = new Set(tasks.map((task) => task.id))
+  const completedTaskIds = incomingIds.filter((id) => validTaskIds.has(id))
+  const submittedChangeAt = Number(req.body?.clientLastChangeAt)
+  const safeClientChangeAt =
+    Number.isFinite(submittedChangeAt) && submittedChangeAt > 0 ? submittedChangeAt : Date.now()
+
+  const data = await getOrCreateData(req.auth.userId)
+  const records = typeof data.records === 'object' && data.records ? { ...data.records } : {}
+  records[date] = {
+    date,
+    completedTaskIds,
+  }
+
+  const updatedData = await UserData.findOneAndUpdate(
+    { userId: req.auth.userId },
+    {
+      records,
+      lastClientChangeAt: Math.max(Number(data.lastClientChangeAt || 0), safeClientChangeAt),
+    },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
+  const stats = calculateAccountStats(tasks, updatedData.records || {})
+
+  return res.json({ ok: true, date, completedTaskIds, stats, updatedAt: updatedData.updatedAt?.toISOString() || null })
+}
+
+app.post('/api/records/upsert', requireDbReady, authRequired, upsertRecordHandler)
+app.post('/records/upsert', requireDbReady, authRequired, upsertRecordHandler)
 
 const deleteTaskHandler = async (req, res) => {
   const taskId = String(req.params.taskId || '').trim()

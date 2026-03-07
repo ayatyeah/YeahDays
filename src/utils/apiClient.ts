@@ -210,3 +210,17 @@ export async function deleteTaskCloud(token: string, taskId: string) {
     headers: authHeaders(token),
   })
 }
+
+export async function upsertRecordCloud(
+  token: string,
+  payload: { date: string; completedTaskIds: string[]; clientLastChangeAt?: number },
+) {
+  return request<{ ok: true; date: string; completedTaskIds: string[]; stats: AccountStats; updatedAt: string | null }>(
+    '/api/records/upsert',
+    {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    },
+  )
+}

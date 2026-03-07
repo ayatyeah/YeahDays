@@ -1,15 +1,13 @@
 import { create } from 'zustand'
 import { toISODate } from '../utils/dateUtils'
 import {
-  deleteTaskCloud,
   getCloudData,
   getMe,
   loginAccount,
   replaceTasksCloud,
   registerAccount,
   resetCloudData,
-  saveCloudData,
-  upsertTaskCloud,
+  setThemeCloud,
   upsertRecordCloud,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
@@ -68,7 +66,6 @@ function pickPersistedState(state: AppState): PersistedAppState {
 export const useAppStore = create<AppState>((set, get) => {
   let syncInFlight = false
   let syncQueued = false
-  let taskFlushRequested = false
 
   const persist = () => {
     const state = get()
@@ -82,14 +79,34 @@ export const useAppStore = create<AppState>((set, get) => {
   }
 
   const pushLocalToCloud = async (token: string, state: AppState) => {
-    const sentLastChangeAt = state.lastLocalChangeAt ?? 0
-    const result = await saveCloudData(token, pickPersistedState(state))
+    const safeChangeAt = state.lastLocalChangeAt ?? Date.now()
+
+    await flushAllTasksToCloud(token, state.tasks)
+
+    const recordEntries = Object.entries(state.records || {})
+    for (const [date, record] of recordEntries) {
+      await upsertRecordCloud(token, {
+        date,
+        completedTaskIds: Array.isArray(record?.completedTaskIds) ? record.completedTaskIds : [],
+        clientLastChangeAt: safeChangeAt,
+      })
+    }
+
+    await setThemeCloud(token, {
+      theme: state.theme,
+      clientLastChangeAt: safeChangeAt,
+    })
+
+    const fresh = await getCloudData(token)
     set((current) => ({
+      tasks: fresh.tasks,
+      records: fresh.records,
+      theme: fresh.theme,
+      accountStats: fresh.stats,
+      cloudUpdatedAt: fresh.updatedAt,
       syncError: null,
-      accountStats: result.stats,
-      cloudUpdatedAt: result.updatedAt,
-      // Keep pending=true when new local changes were made while this request was in-flight.
-      cloudSyncPending: (current.lastLocalChangeAt ?? 0) > sentLastChangeAt,
+      cloudSyncPending: (current.lastLocalChangeAt ?? 0) > safeChangeAt,
+      lastLocalChangeAt: Math.max(current.lastLocalChangeAt ?? 0, safeChangeAt),
     }))
     persist()
   }
@@ -116,22 +133,11 @@ export const useAppStore = create<AppState>((set, get) => {
           break
         }
 
-        if (current.cloudSyncPending && taskFlushRequested) {
-          const tasksOk = await flushAllTasksToCloud(current.authToken, current.tasks)
-          if (!tasksOk) {
-            throw new Error('Task sync failed')
-          }
-
-          taskFlushRequested = false
-        }
-
-        // Always send the freshest snapshot after task flush to avoid stale record/theme writes.
-        const freshest = get()
-        if (!freshest.authToken) {
+        if (!current.cloudSyncPending) {
           break
         }
 
-        await pushLocalToCloud(freshest.authToken, freshest)
+        await pushLocalToCloud(current.authToken, current)
 
         if (!syncQueued) {
           break
@@ -324,6 +330,9 @@ export const useAppStore = create<AppState>((set, get) => {
       if (!state.authToken) {
         return
       }
+
+      set({ cloudSyncPending: true, lastLocalChangeAt: Date.now() })
+      persist()
       await saveCloud()
     },
 
@@ -341,7 +350,6 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     toggleTaskForDate: (date, taskId) => {
-      let nextCompletedTaskIds: string[] = []
       set((state) => {
         const currentRecord: DailyRecord = state.records[date] ?? {
           date,
@@ -352,7 +360,6 @@ export const useAppStore = create<AppState>((set, get) => {
         const completedTaskIds = hasTask
           ? currentRecord.completedTaskIds.filter((id) => id !== taskId)
           : [...currentRecord.completedTaskIds, taskId]
-        nextCompletedTaskIds = completedTaskIds
 
         return {
           records: {
@@ -367,28 +374,6 @@ export const useAppStore = create<AppState>((set, get) => {
         }
       })
       persist()
-      const token = get().authToken
-      if (token) {
-        void upsertRecordCloud(token, {
-          date,
-          completedTaskIds: nextCompletedTaskIds,
-          clientLastChangeAt: get().lastLocalChangeAt,
-        })
-          .then((result) => {
-            set({
-              accountStats: result.stats,
-              cloudUpdatedAt: result.updatedAt,
-              syncError: null,
-              cloudSyncPending: false,
-            })
-            persist()
-          })
-          .catch(() => {
-            void saveCloud()
-          })
-        return
-      }
-
       void saveCloud()
     },
 
@@ -406,28 +391,6 @@ export const useAppStore = create<AppState>((set, get) => {
         cloudSyncPending: true,
       }))
       persist()
-      const token = get().authToken
-      if (token) {
-        void upsertRecordCloud(token, {
-          date,
-          completedTaskIds: normalized,
-          clientLastChangeAt: get().lastLocalChangeAt,
-        })
-          .then((result) => {
-            set({
-              accountStats: result.stats,
-              cloudUpdatedAt: result.updatedAt,
-              syncError: null,
-              cloudSyncPending: false,
-            })
-            persist()
-          })
-          .catch(() => {
-            void saveCloud()
-          })
-        return
-      }
-
       void saveCloud()
     },
 
@@ -437,8 +400,6 @@ export const useAppStore = create<AppState>((set, get) => {
         id: crypto.randomUUID(),
       }
 
-      taskFlushRequested = true
-
       set((state) => ({
         tasks: [...state.tasks, newTask],
         lastLocalChangeAt: Date.now(),
@@ -446,26 +407,10 @@ export const useAppStore = create<AppState>((set, get) => {
       }))
       persist()
 
-      const token = get().authToken
-      if (token) {
-        void upsertTaskCloud(token, newTask)
-          .then((result) => {
-            set({ accountStats: result.stats, syncError: null })
-            persist()
-            void saveCloud()
-          })
-          .catch(() => {
-            void saveCloud()
-          })
-        return
-      }
-
       void saveCloud()
     },
 
     updateTask: (task) => {
-      taskFlushRequested = true
-
       set((state) => ({
         tasks: state.tasks.map((currentTask) => (currentTask.id === task.id ? task : currentTask)),
         lastLocalChangeAt: Date.now(),
@@ -473,26 +418,10 @@ export const useAppStore = create<AppState>((set, get) => {
       }))
       persist()
 
-      const token = get().authToken
-      if (token) {
-        void upsertTaskCloud(token, task)
-          .then((result) => {
-            set({ accountStats: result.stats, syncError: null })
-            persist()
-            void saveCloud()
-          })
-          .catch(() => {
-            void saveCloud()
-          })
-        return
-      }
-
       void saveCloud()
     },
 
     deleteTask: (taskId) => {
-      taskFlushRequested = true
-
       set((state) => {
         const records = Object.fromEntries(
           Object.entries(state.records).map(([date, record]) => [
@@ -513,20 +442,6 @@ export const useAppStore = create<AppState>((set, get) => {
       })
       persist()
 
-      const token = get().authToken
-      if (token) {
-        void deleteTaskCloud(token, taskId)
-          .then((result) => {
-            set({ accountStats: result.stats, syncError: null })
-            persist()
-            void saveCloud()
-          })
-          .catch(() => {
-            void saveCloud()
-          })
-        return
-      }
-
       void saveCloud()
     },
 
@@ -546,8 +461,6 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     resetAll: () => {
-      taskFlushRequested = true
-
       set({
         tasks: [],
         records: {},
@@ -574,8 +487,6 @@ export const useAppStore = create<AppState>((set, get) => {
         if (!Array.isArray(parsed.tasks) || typeof parsed.records !== 'object') {
           return { success: false, error: 'Invalid JSON format' }
         }
-
-        taskFlushRequested = true
 
         set({
           tasks: parsed.tasks,

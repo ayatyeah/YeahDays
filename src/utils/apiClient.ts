@@ -283,3 +283,38 @@ export async function upsertRecordCloud(
     }
   }
 }
+
+export async function setThemeCloud(
+  token: string,
+  payload: { theme: 'light' | 'dark'; clientLastChangeAt?: number },
+) {
+  try {
+    return await request<{ ok: true; theme: 'light' | 'dark'; stats: AccountStats; updatedAt: string | null }>(
+      '/api/theme',
+      {
+        method: 'POST',
+        headers: authHeaders(token),
+        body: JSON.stringify(payload),
+      },
+    )
+  } catch {
+    const cloud = await getCloudData(token)
+    const saved = await saveCloudData(token, {
+      tasks: cloud.tasks,
+      records: cloud.records,
+      theme: payload.theme,
+      lastLocalChangeAt: payload.clientLastChangeAt ?? Date.now(),
+      authToken: null,
+      userEmail: null,
+      cloudUpdatedAt: cloud.updatedAt,
+      notificationsEnabled: false,
+    })
+
+    return {
+      ok: true,
+      theme: payload.theme,
+      stats: saved.stats,
+      updatedAt: saved.updatedAt,
+    }
+  }
+}

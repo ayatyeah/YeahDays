@@ -10,6 +10,7 @@ interface DbCheckResult {
   cloudTaskCount: number
   missingInCloud: string[]
   extraInCloud: string[]
+  autoRepaired: boolean
   ok: boolean
 }
 
@@ -62,12 +63,36 @@ export function LabScreen() {
     setDbCheckError(null)
 
     try {
-      const cloud = await getCloudData(authToken)
+      const initialCloud = await getCloudData(authToken)
       const localIds = new Set(tasks.map((task) => task.id))
-      const cloudIds = new Set(cloud.tasks.map((task) => task.id))
+      let cloud = initialCloud
+      let cloudIds = new Set(cloud.tasks.map((task) => task.id))
+      let missingInCloud = [...localIds].filter((id) => !cloudIds.has(id))
+      let extraInCloud = [...cloudIds].filter((id) => !localIds.has(id))
+      let autoRepaired = false
 
-      const missingInCloud = [...localIds].filter((id) => !cloudIds.has(id))
-      const extraInCloud = [...cloudIds].filter((id) => !localIds.has(id))
+      if (missingInCloud.length > 0) {
+        await replaceTasksCloud(authToken, tasks)
+
+        const recordEntries = Object.values(records || {})
+        for (const record of recordEntries) {
+          if (!record?.date) {
+            continue
+          }
+
+          await upsertRecordCloud(authToken, {
+            date: record.date,
+            completedTaskIds: Array.isArray(record.completedTaskIds) ? record.completedTaskIds : [],
+            clientLastChangeAt: Date.now(),
+          })
+        }
+
+        cloud = await getCloudData(authToken)
+        cloudIds = new Set(cloud.tasks.map((task) => task.id))
+        missingInCloud = [...localIds].filter((id) => !cloudIds.has(id))
+        extraInCloud = [...cloudIds].filter((id) => !localIds.has(id))
+        autoRepaired = true
+      }
 
       setDbCheckResult({
         checkedAt: new Date().toISOString(),
@@ -75,6 +100,7 @@ export function LabScreen() {
         cloudTaskCount: cloud.tasks.length,
         missingInCloud,
         extraInCloud,
+        autoRepaired,
         ok: missingInCloud.length === 0,
       })
     } catch (error) {
@@ -181,7 +207,10 @@ export function LabScreen() {
         )}
 
         {dbCheckResult && (
-          <p className="text-[11px] text-slate-300/80">Last check: {new Date(dbCheckResult.checkedAt).toLocaleString()}</p>
+          <p className="text-[11px] text-slate-300/80">
+            Last check: {new Date(dbCheckResult.checkedAt).toLocaleString()}
+            {dbCheckResult.autoRepaired ? ' (auto-repair tried)' : ''}
+          </p>
         )}
       </GlassCard>
 

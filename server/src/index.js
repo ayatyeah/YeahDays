@@ -509,6 +509,30 @@ const upsertRecordHandler = async (req, res) => {
 app.post('/api/records/upsert', requireDbReady, authRequired, upsertRecordHandler)
 app.post('/records/upsert', requireDbReady, authRequired, upsertRecordHandler)
 
+const setThemeHandler = async (req, res) => {
+  const theme = req.body?.theme === 'light' ? 'light' : 'dark'
+  const submittedChangeAt = Number(req.body?.clientLastChangeAt)
+  const safeClientChangeAt =
+    Number.isFinite(submittedChangeAt) && submittedChangeAt > 0 ? submittedChangeAt : Date.now()
+
+  const data = await getOrCreateData(req.auth.userId)
+  const tasks = await getTasksForUser(req.auth.userId)
+  const updatedData = await UserData.findOneAndUpdate(
+    { userId: req.auth.userId },
+    {
+      theme,
+      lastClientChangeAt: Math.max(Number(data.lastClientChangeAt || 0), safeClientChangeAt),
+    },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
+  const stats = calculateAccountStats(tasks, updatedData.records || {})
+
+  return res.json({ ok: true, theme, stats, updatedAt: updatedData.updatedAt?.toISOString() || null })
+}
+
+app.post('/api/theme', requireDbReady, authRequired, setThemeHandler)
+app.post('/theme', requireDbReady, authRequired, setThemeHandler)
+
 const deleteTaskHandler = async (req, res) => {
   const taskId = String(req.params.taskId || '').trim()
   if (!taskId) {

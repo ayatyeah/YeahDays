@@ -2,7 +2,27 @@
 @import './styles/glass.css';
 
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --apple-bg-ink: #061127;
+  --apple-bg-deep: #0a1631;
+  --apple-bg-mid: #1a305e;
+  --apple-bg-soft: #d9e6ff;
+  --apple-accent: #0a84ff;
+  --apple-accent-strong: #0066cc;
+  --apple-text: #f5f8ff;
+  --apple-text-muted: rgba(232, 239, 255, 0.78);
+  --apple-light-bg: #f4f7fb;
+  --apple-light-bg-soft: #eaf0fb;
+  --apple-light-text: #0f172a;
+  --apple-light-muted: rgba(30, 41, 59, 0.72);
+  font-family:
+    'SF Pro Text',
+    'SF Pro Display',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -12,30 +32,83 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: linear-gradient(180deg, #0f172a 0%, #111827 48%, #0b1220 100%);
-  color: #f8fafc;
+  color: var(--apple-text);
+  background:
+    radial-gradient(1200px 720px at 12% -12%, rgba(140, 178, 255, 0.38) 0%, transparent 46%),
+    radial-gradient(920px 560px at 90% 8%, rgba(66, 110, 226, 0.32) 0%, transparent 44%),
+    linear-gradient(180deg, var(--apple-bg-mid) 0%, var(--apple-bg-deep) 42%, var(--apple-bg-ink) 100%);
+  background-attachment: fixed;
 }
 
 body.light {
-  background: linear-gradient(180deg, #f6f7fb 0%, #eef2f7 100%);
-  color: #0f172a;
+  color: var(--apple-light-text);
+  background:
+    radial-gradient(980px 600px at 10% -10%, rgba(130, 166, 255, 0.2) 0%, transparent 46%),
+    radial-gradient(860px 500px at 88% 4%, rgba(173, 205, 255, 0.28) 0%, transparent 44%),
+    linear-gradient(180deg, var(--apple-light-bg) 0%, var(--apple-light-bg-soft) 100%);
+  background-attachment: fixed;
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  filter: blur(48px);
+}
+
+body::before {
+  width: 360px;
+  height: 360px;
+  left: -96px;
+  top: -96px;
+  background: radial-gradient(circle, rgba(175, 208, 255, 0.45) 0%, rgba(175, 208, 255, 0) 66%);
+}
+
+body::after {
+  width: 400px;
+  height: 400px;
+  right: -100px;
+  bottom: -120px;
+  background: radial-gradient(circle, rgba(77, 150, 255, 0.28) 0%, rgba(77, 150, 255, 0) 70%);
 }
 
 #root {
   min-height: 100dvh;
+  position: relative;
 }
 
 h1,
 h2,
 h3 {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  letter-spacing: -0.01em;
+  font-family:
+    'SF Pro Display',
+    'SF Pro Text',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
+  letter-spacing: -0.018em;
 }
 
-/* Improve readability in light mode for existing utility classes. */
 body.light [class*='text-slate-1'],
 body.light [class*='text-slate-2'],
 body.light [class*='text-slate-3'],
 body.light [class*='text-white'] {
-  color: #111827 !important;
+  color: var(--apple-light-text) !important;
+}
+
+@media (min-width: 768px) {
+  body::before {
+    width: 520px;
+    height: 520px;
+  }
+
+  body::after {
+    width: 560px;
+    height: 560px;
+  }
 }

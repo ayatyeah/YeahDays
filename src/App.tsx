@@ -82,7 +82,7 @@ function App() {
 
   if (!userEmail) {
     return (
-      <main className="app-shell relative mx-auto min-h-dvh max-w-[390px] overflow-hidden px-4 py-4 text-slate-100 dark:text-slate-100">
+      <main className="app-shell relative mx-auto min-h-dvh max-w-[430px] overflow-hidden px-4 py-5 text-slate-100 dark:text-slate-100 md:my-4 md:min-h-[calc(100dvh-2rem)] md:rounded-[34px]">
         <LiquidBackground percentage={36} hexColor="#38bdf8" />
         <section className="relative z-10">
           <AuthScreen />
@@ -92,7 +92,7 @@ function App() {
   }
 
   return (
-    <main className="app-shell relative mx-auto min-h-dvh max-w-[390px] overflow-hidden px-4 pb-22 pt-4 text-slate-100 dark:text-slate-100">
+    <main className="app-shell relative mx-auto min-h-dvh max-w-[430px] overflow-hidden px-4 pb-24 pt-5 text-slate-100 dark:text-slate-100 md:my-4 md:min-h-[calc(100dvh-2rem)] md:rounded-[34px]">
       <LiquidBackground percentage={todayStats.percentage} hexColor={todayStats.hexColor} />
       <section className="relative z-10 flex min-h-[calc(100dvh-6rem)] flex-col gap-4">
         {activeTab === 'today' && <TodayScreen />}
@@ -102,7 +102,7 @@ function App() {
         {activeTab === 'settings' && <SettingsScreen reminders={reminders} />}
       </section>
 
-      <nav className="glass-nav fixed inset-x-0 bottom-3 z-20 mx-auto flex w-[calc(100%-1.5rem)] max-w-[370px] items-center justify-between gap-1 px-1 py-1">
+      <nav className="glass-nav fixed inset-x-0 bottom-3 z-20 mx-auto flex w-[calc(100%-1.5rem)] max-w-[400px] items-center justify-between gap-1.5 px-1.5 py-1.5 md:bottom-6">
         {tabs.map((tab) => {
           const active = activeTab === tab.id
           return (

@@ -139,16 +139,26 @@ export async function getCloudData(token: string) {
 }
 
 export async function saveCloudData(token: string, payload: PersistedAppState) {
-  return request<{ ok: true; stats: AccountStats; updatedAt: string | null }>('/api/data', {
-    method: 'PUT',
-    headers: authHeaders(token),
-    body: JSON.stringify({
-      tasks: payload.tasks,
-      records: payload.records,
-      theme: payload.theme,
-      clientLastChangeAt: payload.lastLocalChangeAt ?? Date.now(),
-    }),
+  const body = JSON.stringify({
+    tasks: payload.tasks,
+    records: payload.records,
+    theme: payload.theme,
+    clientLastChangeAt: payload.lastLocalChangeAt ?? Date.now(),
   })
+
+  try {
+    return await request<{ ok: true; stats: AccountStats; updatedAt: string | null }>('/api/data', {
+      method: 'PUT',
+      headers: authHeaders(token),
+      body,
+    })
+  } catch {
+    return request<{ ok: true; stats: AccountStats; updatedAt: string | null }>('/api/data', {
+      method: 'POST',
+      headers: authHeaders(token),
+      body,
+    })
+  }
 }
 
 export async function resetCloudData(token: string) {

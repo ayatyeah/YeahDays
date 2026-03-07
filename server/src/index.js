@@ -255,6 +255,8 @@ const putDataHandler = async (req, res) => {
 
 app.put('/api/data', requireDbReady, authRequired, putDataHandler)
 app.put('/data', requireDbReady, authRequired, putDataHandler)
+app.post('/api/data', requireDbReady, authRequired, putDataHandler)
+app.post('/data', requireDbReady, authRequired, putDataHandler)
 
 const resetDataHandler = async (req, res) => {
   await UserData.findOneAndUpdate(

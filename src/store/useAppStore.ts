@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 import { toISODate } from '../utils/dateUtils'
 import {
+  deleteTaskCloud,
   getCloudData,
   getMe,
   loginAccount,
   registerAccount,
   resetCloudData,
   saveCloudData,
+  upsertTaskCloud,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
 import type { AccountStats, DailyRecord, PersistedAppState, UserTask } from '../types'
@@ -316,18 +318,31 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     addTask: (task) => {
+      const newTask: UserTask = {
+        ...task,
+        id: crypto.randomUUID(),
+      }
+
       set((state) => ({
-        tasks: [
-          ...state.tasks,
-          {
-            ...task,
-            id: crypto.randomUUID(),
-          },
-        ],
+        tasks: [...state.tasks, newTask],
         lastLocalChangeAt: Date.now(),
         cloudSyncPending: true,
       }))
       persist()
+
+      const token = get().authToken
+      if (token) {
+        void upsertTaskCloud(token, newTask)
+          .then((result) => {
+            set({ accountStats: result.stats, syncError: null, cloudSyncPending: false })
+            persist()
+          })
+          .catch(() => {
+            void saveCloud()
+          })
+        return
+      }
+
       void saveCloud()
     },
 
@@ -338,6 +353,20 @@ export const useAppStore = create<AppState>((set, get) => {
         cloudSyncPending: true,
       }))
       persist()
+
+      const token = get().authToken
+      if (token) {
+        void upsertTaskCloud(token, task)
+          .then((result) => {
+            set({ accountStats: result.stats, syncError: null, cloudSyncPending: false })
+            persist()
+          })
+          .catch(() => {
+            void saveCloud()
+          })
+        return
+      }
+
       void saveCloud()
     },
 
@@ -361,6 +390,20 @@ export const useAppStore = create<AppState>((set, get) => {
         }
       })
       persist()
+
+      const token = get().authToken
+      if (token) {
+        void deleteTaskCloud(token, taskId)
+          .then((result) => {
+            set({ accountStats: result.stats, syncError: null, cloudSyncPending: false })
+            persist()
+          })
+          .catch(() => {
+            void saveCloud()
+          })
+        return
+      }
+
       void saveCloud()
     },
 

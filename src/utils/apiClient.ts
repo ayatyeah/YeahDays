@@ -1,4 +1,5 @@
 import type { AccountStats, PersistedAppState } from '../types'
+import type { UserTask } from '../types'
 
 const API_BASE = (import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:4000' : '')).trim()
 
@@ -179,6 +180,21 @@ export async function submitGameScore(token: string, score: number) {
 export async function getLeaderboard(token: string) {
   return request<{ leaderboard: LeaderboardEntry[] }>('/api/game/leaderboard', {
     method: 'GET',
+    headers: authHeaders(token),
+  })
+}
+
+export async function upsertTaskCloud(token: string, task: UserTask) {
+  return request<{ ok: true; task: UserTask; stats: AccountStats }>('/api/tasks/upsert', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ task }),
+  })
+}
+
+export async function deleteTaskCloud(token: string, taskId: string) {
+  return request<{ ok: true; stats: AccountStats }>(`/api/tasks/${encodeURIComponent(taskId)}`, {
+    method: 'DELETE',
     headers: authHeaders(token),
   })
 }

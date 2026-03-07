@@ -336,6 +336,59 @@ app.put('/data', requireDbReady, authRequired, putDataHandler)
 app.post('/api/data', requireDbReady, authRequired, putDataHandler)
 app.post('/data', requireDbReady, authRequired, putDataHandler)
 
+const upsertTaskHandler = async (req, res) => {
+  const sanitizedTask = sanitizeTask(req.body?.task)
+
+  await Task.findOneAndUpdate(
+    { userId: req.auth.userId, id: sanitizedTask.id },
+    { userId: req.auth.userId, ...sanitizedTask },
+    { upsert: true, new: true, setDefaultsOnInsert: true },
+  )
+
+  const data = await getOrCreateData(req.auth.userId)
+  const tasks = await getTasksForUser(req.auth.userId)
+  const stats = calculateAccountStats(tasks, data.records || {})
+
+  return res.json({ ok: true, task: sanitizedTask, stats })
+}
+
+app.post('/api/tasks/upsert', requireDbReady, authRequired, upsertTaskHandler)
+app.post('/tasks/upsert', requireDbReady, authRequired, upsertTaskHandler)
+
+const deleteTaskHandler = async (req, res) => {
+  const taskId = String(req.params.taskId || '').trim()
+  if (!taskId) {
+    return res.status(400).json({ error: 'taskId is required' })
+  }
+
+  await Task.deleteOne({ userId: req.auth.userId, id: taskId })
+  const data = await getOrCreateData(req.auth.userId)
+  const tasks = await getTasksForUser(req.auth.userId)
+  const records = Object.fromEntries(
+    Object.entries(data.records || {}).map(([date, record]) => [
+      date,
+      {
+        ...(record || {}),
+        completedTaskIds: Array.isArray(record?.completedTaskIds)
+          ? record.completedTaskIds.filter((id) => id !== taskId)
+          : [],
+      },
+    ]),
+  )
+
+  const updatedData = await UserData.findOneAndUpdate(
+    { userId: req.auth.userId },
+    { records },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
+
+  const stats = calculateAccountStats(tasks, updatedData.records || {})
+  return res.json({ ok: true, stats })
+}
+
+app.delete('/api/tasks/:taskId', requireDbReady, authRequired, deleteTaskHandler)
+app.delete('/tasks/:taskId', requireDbReady, authRequired, deleteTaskHandler)
+
 const resetDataHandler = async (req, res) => {
   await Promise.all([
     UserData.findOneAndUpdate(

@@ -6,19 +6,21 @@ import { useTaskReminders } from './hooks/useTaskReminders'
 import { getScheduledTasksForDate, getScoreSummary } from './utils/scoreUtils'
 import { CalendarScreen } from './screens/CalendarScreen'
 import { GameScreen } from './screens/GameScreen'
+import { LabScreen } from './screens/LabScreen'
 import { SettingsScreen } from './screens/SettingsScreen'
 import { TasksScreen } from './screens/TasksScreen'
 import { TodayScreen } from './screens/TodayScreen'
 import { toISODate } from './utils/dateUtils'
 import { useAppStore } from './store/useAppStore'
 
-type Tab = 'today' | 'calendar' | 'tasks' | 'game' | 'settings'
+type Tab = 'today' | 'calendar' | 'tasks' | 'game' | 'lab' | 'settings'
 
 const tabs: { id: Tab; label: string; icon: string }[] = [
   { id: 'today', label: 'Today', icon: '☀️' },
   { id: 'calendar', label: 'Calendar', icon: '🗓️' },
   { id: 'tasks', label: 'Tasks', icon: '✅' },
   { id: 'game', label: 'Game', icon: '🎮' },
+  { id: 'lab', label: 'Lab', icon: '🧪' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ]
 
@@ -101,6 +103,7 @@ function App() {
         {activeTab === 'calendar' && <CalendarScreen onOpenTasks={() => setActiveTab('tasks')} />}
         {activeTab === 'tasks' && <TasksScreen />}
         {activeTab === 'game' && <GameScreen />}
+        {activeTab === 'lab' && <LabScreen />}
         {activeTab === 'settings' && <SettingsScreen reminders={reminders} />}
       </section>
 

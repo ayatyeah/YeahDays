@@ -5,6 +5,7 @@ import {
   getCloudData,
   getMe,
   loginAccount,
+  replaceTasksCloud,
   registerAccount,
   resetCloudData,
   saveCloudData,
@@ -70,8 +71,9 @@ export const useAppStore = create<AppState>((set, get) => {
   }
 
   const flushAllTasksToCloud = async (token: string, tasks: UserTask[]) => {
-    const results = await Promise.allSettled(tasks.map((task) => upsertTaskCloud(token, task)))
-    return results.every((item) => item.status === 'fulfilled')
+    const result = await replaceTasksCloud(token, tasks)
+    set({ accountStats: result.stats, syncError: null })
+    return true
   }
 
   const pushLocalToCloud = async (token: string, state: AppState) => {

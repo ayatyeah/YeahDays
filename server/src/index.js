@@ -126,6 +126,27 @@ function clampScore(value) {
   return Math.floor(raw)
 }
 
+function looksCorruptedTaskName(value) {
+  if (typeof value !== 'string') {
+    return true
+  }
+
+  // U+FFFD appears when decoding/encoding already failed before reaching the API.
+  if (value.includes('\uFFFD')) {
+    return true
+  }
+
+  // Guard against lossy names like "????????? 9990" from broken terminal/codepage input.
+  if (/\?{3,}/.test(value)) {
+    const meaningful = value.replace(/[?\d\s\-_,.!:;()\[\]{}]+/g, '')
+    if (meaningful.length === 0) {
+      return true
+    }
+  }
+
+  return false
+}
+
 function sanitizeTask(rawTask, options = {}) {
   const strictName = options.strictName === true
   const task = rawTask && typeof rawTask === 'object' ? rawTask : {}
@@ -142,7 +163,7 @@ function sanitizeTask(rawTask, options = {}) {
     : []
   const normalizedName = typeof task.name === 'string' ? task.name.trim() : ''
 
-  if (strictName && normalizedName.length === 0) {
+  if (strictName && (normalizedName.length === 0 || looksCorruptedTaskName(normalizedName))) {
     return null
   }
 
@@ -188,6 +209,27 @@ async function replaceTasksForUser(userId, taskList) {
   )
 
   return normalized
+}
+
+function pruneRecordTaskRefs(records, validTaskIds) {
+  const allowedIds = new Set(validTaskIds)
+  const source = records && typeof records === 'object' ? records : {}
+
+  return Object.fromEntries(
+    Object.entries(source).map(([date, record]) => {
+      const completedTaskIds = Array.isArray(record?.completedTaskIds)
+        ? record.completedTaskIds.filter((id) => allowedIds.has(id))
+        : []
+
+      return [
+        date,
+        {
+          ...(record || {}),
+          completedTaskIds,
+        },
+      ]
+    }),
+  )
 }
 
 async function getTasksForUser(userId, legacyTasks = []) {
@@ -372,7 +414,7 @@ app.post('/data', requireDbReady, authRequired, putDataHandler)
 const upsertTaskHandler = async (req, res) => {
   const sanitizedTask = sanitizeTask(req.body?.task, { strictName: true })
   if (!sanitizedTask) {
-    return res.status(400).json({ error: 'Task name is required' })
+    return res.status(400).json({ error: 'Task name is invalid or corrupted. Use UTF-8 text and retry.' })
   }
 
   await Task.findOneAndUpdate(
@@ -390,6 +432,26 @@ const upsertTaskHandler = async (req, res) => {
 
 app.post('/api/tasks/upsert', requireDbReady, authRequired, upsertTaskHandler)
 app.post('/tasks/upsert', requireDbReady, authRequired, upsertTaskHandler)
+
+const replaceTasksHandler = async (req, res) => {
+  const incomingTasks = Array.isArray(req.body?.tasks) ? req.body.tasks : []
+  const normalizedTasks = await replaceTasksForUser(req.auth.userId, incomingTasks)
+  const validTaskIds = normalizedTasks.map((task) => task.id)
+
+  const data = await getOrCreateData(req.auth.userId)
+  const records = pruneRecordTaskRefs(data.records || {}, validTaskIds)
+  const updatedData = await UserData.findOneAndUpdate(
+    { userId: req.auth.userId },
+    { records },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
+  const stats = calculateAccountStats(normalizedTasks, updatedData.records || {})
+
+  return res.json({ ok: true, tasks: normalizedTasks, stats })
+}
+
+app.post('/api/tasks/replace', requireDbReady, authRequired, replaceTasksHandler)
+app.post('/tasks/replace', requireDbReady, authRequired, replaceTasksHandler)
 
 const deleteTaskHandler = async (req, res) => {
   const taskId = String(req.params.taskId || '').trim()

@@ -196,6 +196,14 @@ export async function upsertTaskCloud(token: string, task: UserTask) {
   })
 }
 
+export async function replaceTasksCloud(token: string, tasks: UserTask[]) {
+  return request<{ ok: true; tasks: UserTask[]; stats: AccountStats }>('/api/tasks/replace', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({ tasks }),
+  })
+}
+
 export async function deleteTaskCloud(token: string, taskId: string) {
   return request<{ ok: true; stats: AccountStats }>(`/api/tasks/${encodeURIComponent(taskId)}`, {
     method: 'DELETE',

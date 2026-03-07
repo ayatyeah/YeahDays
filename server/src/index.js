@@ -4,7 +4,9 @@ import cors from 'cors'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
+import { randomUUID } from 'node:crypto'
 import { authRequired } from './middleware/auth.js'
+import { Task } from './TASKS/Task.js'
 import { User } from './models/User.js'
 import { UserData } from './models/UserData.js'
 import { calculateAccountStats } from './utils/stats.js'
@@ -12,6 +14,7 @@ import { calculateAccountStats } from './utils/stats.js'
 const app = express()
 let dbReady = false
 let dbErrorHint = null
+const validWeekdays = new Set(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'])
 
 function summarizeDbError(error) {
   const message = String(error?.message || '').toLowerCase()
@@ -123,6 +126,79 @@ function clampScore(value) {
   return Math.floor(raw)
 }
 
+function sanitizeTask(rawTask) {
+  const task = rawTask && typeof rawTask === 'object' ? rawTask : {}
+  const plannedDate =
+    typeof task.plannedDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(task.plannedDate)
+      ? task.plannedDate
+      : undefined
+  const reminderTime =
+    typeof task.reminderTime === 'string' && /^\d{2}:\d{2}$/.test(task.reminderTime)
+      ? task.reminderTime
+      : undefined
+  const schedule = Array.isArray(task.schedule)
+    ? task.schedule.filter((item) => typeof item === 'string' && validWeekdays.has(item))
+    : []
+
+  return {
+    id: typeof task.id === 'string' && task.id.trim() ? task.id.trim() : randomUUID(),
+    name: typeof task.name === 'string' && task.name.trim() ? task.name.trim() : 'Untitled task',
+    weight: Math.min(5, Math.max(1, Number(task.weight) || 1)),
+    icon: typeof task.icon === 'string' && task.icon.trim() ? task.icon.trim().slice(0, 2) : undefined,
+    schedule: plannedDate ? [] : schedule,
+    plannedDate,
+    reminderTime,
+  }
+}
+
+function toTaskPayload(taskDoc) {
+  return {
+    id: taskDoc.id,
+    name: taskDoc.name,
+    weight: taskDoc.weight,
+    icon: taskDoc.icon,
+    schedule: Array.isArray(taskDoc.schedule) ? taskDoc.schedule : [],
+    plannedDate: taskDoc.plannedDate,
+    reminderTime: taskDoc.reminderTime,
+  }
+}
+
+async function replaceTasksForUser(userId, taskList) {
+  const normalized = Array.isArray(taskList) ? taskList.map(sanitizeTask) : []
+  await Task.deleteMany({ userId })
+  if (normalized.length === 0) {
+    return []
+  }
+
+  await Task.insertMany(
+    normalized.map((task) => ({
+      userId,
+      ...task,
+    })),
+  )
+
+  return normalized
+}
+
+async function getTasksForUser(userId, legacyTasks = []) {
+  let tasks = await Task.find({ userId }).sort({ createdAt: 1 }).lean()
+
+  if (tasks.length === 0 && Array.isArray(legacyTasks) && legacyTasks.length > 0) {
+    await Task.insertMany(
+      legacyTasks.map((task) => ({
+        userId,
+        ...sanitizeTask(task),
+      })),
+    )
+
+    // Clean legacy embedded tasks after one-time migration.
+    await UserData.findOneAndUpdate({ userId }, { tasks: [] })
+    tasks = await Task.find({ userId }).sort({ createdAt: 1 }).lean()
+  }
+
+  return tasks.map(toTaskPayload)
+}
+
 async function getOrCreateData(userId) {
   const existing = await UserData.findOne({ userId })
   if (existing) {
@@ -205,7 +281,8 @@ const meHandler = async (req, res) => {
   }
 
   const data = await getOrCreateData(user._id)
-  const stats = calculateAccountStats(data.tasks, data.records || {})
+  const tasks = await getTasksForUser(user._id, data.tasks)
+  const stats = calculateAccountStats(tasks, data.records || {})
 
   return res.json({
     user: { email: user.email },
@@ -218,10 +295,11 @@ app.get('/auth/me', requireDbReady, authRequired, meHandler)
 
 const getDataHandler = async (req, res) => {
   const data = await getOrCreateData(req.auth.userId)
-  const stats = calculateAccountStats(data.tasks, data.records || {})
+  const tasks = await getTasksForUser(req.auth.userId, data.tasks)
+  const stats = calculateAccountStats(tasks, data.records || {})
 
   return res.json({
-    tasks: data.tasks,
+    tasks,
     records: data.records || {},
     theme: data.theme,
     gameHighScore: data.gameHighScore || 0,
@@ -235,17 +313,17 @@ app.get('/data', requireDbReady, authRequired, getDataHandler)
 
 const putDataHandler = async (req, res) => {
   const payload = req.body ?? {}
-  const tasks = Array.isArray(payload.tasks) ? payload.tasks : []
+  const tasks = await replaceTasksForUser(req.auth.userId, payload.tasks)
   const records = typeof payload.records === 'object' && payload.records ? payload.records : {}
   const theme = payload.theme === 'light' ? 'light' : 'dark'
 
   const updated = await UserData.findOneAndUpdate(
     { userId: req.auth.userId },
-    { tasks, records, theme },
+    { records, theme },
     { new: true, upsert: true, setDefaultsOnInsert: true },
   )
 
-  const stats = calculateAccountStats(updated.tasks, updated.records || {})
+  const stats = calculateAccountStats(tasks, updated.records || {})
   return res.json({
     ok: true,
     stats,
@@ -259,11 +337,14 @@ app.post('/api/data', requireDbReady, authRequired, putDataHandler)
 app.post('/data', requireDbReady, authRequired, putDataHandler)
 
 const resetDataHandler = async (req, res) => {
-  await UserData.findOneAndUpdate(
-    { userId: req.auth.userId },
-    { tasks: [], records: {} },
-    { new: true, upsert: true, setDefaultsOnInsert: true },
-  )
+  await Promise.all([
+    UserData.findOneAndUpdate(
+      { userId: req.auth.userId },
+      { tasks: [], records: {} },
+      { new: true, upsert: true, setDefaultsOnInsert: true },
+    ),
+    Task.deleteMany({ userId: req.auth.userId }),
+  ])
 
   return res.json({ ok: true })
 }

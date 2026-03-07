@@ -67,6 +67,7 @@ function pickPersistedState(state: AppState): PersistedAppState {
 export const useAppStore = create<AppState>((set, get) => {
   let syncInFlight = false
   let syncQueued = false
+  let taskFlushRequested = false
 
   const persist = () => {
     const state = get()
@@ -114,11 +115,13 @@ export const useAppStore = create<AppState>((set, get) => {
           break
         }
 
-        if (current.cloudSyncPending) {
+        if (current.cloudSyncPending && taskFlushRequested) {
           const tasksOk = await flushAllTasksToCloud(current.authToken, current.tasks)
           if (!tasksOk) {
             throw new Error('Task sync failed')
           }
+
+          taskFlushRequested = false
         }
 
         // Always send the freshest snapshot after task flush to avoid stale record/theme writes.
@@ -386,6 +389,8 @@ export const useAppStore = create<AppState>((set, get) => {
         id: crypto.randomUUID(),
       }
 
+      taskFlushRequested = true
+
       set((state) => ({
         tasks: [...state.tasks, newTask],
         lastLocalChangeAt: Date.now(),
@@ -411,6 +416,8 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     updateTask: (task) => {
+      taskFlushRequested = true
+
       set((state) => ({
         tasks: state.tasks.map((currentTask) => (currentTask.id === task.id ? task : currentTask)),
         lastLocalChangeAt: Date.now(),
@@ -436,6 +443,8 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     deleteTask: (taskId) => {
+      taskFlushRequested = true
+
       set((state) => {
         const records = Object.fromEntries(
           Object.entries(state.records).map(([date, record]) => [
@@ -489,6 +498,8 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     resetAll: () => {
+      taskFlushRequested = true
+
       set({
         tasks: [],
         records: {},
@@ -515,6 +526,8 @@ export const useAppStore = create<AppState>((set, get) => {
         if (!Array.isArray(parsed.tasks) || typeof parsed.records !== 'object') {
           return { success: false, error: 'Invalid JSON format' }
         }
+
+        taskFlushRequested = true
 
         set({
           tasks: parsed.tasks,

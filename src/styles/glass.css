@@ -391,7 +391,9 @@ body.light {
 }
 
 .iphone-nav {
-  bottom: calc(1.45rem + env(safe-area-inset-bottom, 0px));
+  bottom: calc(2.2rem + env(safe-area-inset-bottom, 0px));
+  border-color: rgba(216, 234, 255, 0.34);
+  box-shadow: 0 24px 44px rgba(2, 10, 27, 0.56), inset 0 1px 0 rgba(255, 255, 255, 0.42);
 }
 
 .cloud-pulse {
@@ -521,6 +523,6 @@ body.light {
 
 @media (max-width: 420px) {
   .iphone-nav {
-    bottom: calc(1.3rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(1.95rem + env(safe-area-inset-bottom, 0px));
   }
 }

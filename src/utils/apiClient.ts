@@ -197,11 +197,36 @@ export async function upsertTaskCloud(token: string, task: UserTask) {
 }
 
 export async function replaceTasksCloud(token: string, tasks: UserTask[]) {
-  return request<{ ok: true; tasks: UserTask[]; stats: AccountStats }>('/api/tasks/replace', {
-    method: 'POST',
-    headers: authHeaders(token),
-    body: JSON.stringify({ tasks }),
-  })
+  try {
+    return await request<{ ok: true; tasks: UserTask[]; stats: AccountStats }>('/api/tasks/replace', {
+      method: 'POST',
+      headers: authHeaders(token),
+      body: JSON.stringify({ tasks }),
+    })
+  } catch {
+    // Compatibility fallback for older API versions without /api/tasks/replace.
+    const cloud = await getCloudData(token)
+    const localById = new Map(tasks.map((task) => [task.id, task]))
+    let latestStats = cloud.stats
+
+    for (const task of tasks) {
+      const upserted = await upsertTaskCloud(token, task)
+      latestStats = upserted.stats
+    }
+
+    for (const cloudTask of cloud.tasks) {
+      if (!localById.has(cloudTask.id)) {
+        const removed = await deleteTaskCloud(token, cloudTask.id)
+        latestStats = removed.stats
+      }
+    }
+
+    return {
+      ok: true,
+      tasks,
+      stats: latestStats,
+    }
+  }
 }
 
 export async function deleteTaskCloud(token: string, taskId: string) {
@@ -215,12 +240,46 @@ export async function upsertRecordCloud(
   token: string,
   payload: { date: string; completedTaskIds: string[]; clientLastChangeAt?: number },
 ) {
-  return request<{ ok: true; date: string; completedTaskIds: string[]; stats: AccountStats; updatedAt: string | null }>(
-    '/api/records/upsert',
-    {
+  try {
+    return await request<{
+      ok: true
+      date: string
+      completedTaskIds: string[]
+      stats: AccountStats
+      updatedAt: string | null
+    }>('/api/records/upsert', {
       method: 'POST',
       headers: authHeaders(token),
       body: JSON.stringify(payload),
-    },
-  )
+    })
+  } catch {
+    // Compatibility fallback for older API versions without /api/records/upsert.
+    const cloud = await getCloudData(token)
+    const mergedRecords = {
+      ...(cloud.records || {}),
+      [payload.date]: {
+        date: payload.date,
+        completedTaskIds: Array.from(new Set(payload.completedTaskIds || [])),
+      },
+    }
+
+    const saved = await saveCloudData(token, {
+      tasks: cloud.tasks,
+      records: mergedRecords,
+      theme: cloud.theme,
+      lastLocalChangeAt: payload.clientLastChangeAt ?? Date.now(),
+      authToken: null,
+      userEmail: null,
+      cloudUpdatedAt: cloud.updatedAt,
+      notificationsEnabled: false,
+    })
+
+    return {
+      ok: true,
+      date: payload.date,
+      completedTaskIds: mergedRecords[payload.date].completedTaskIds,
+      stats: saved.stats,
+      updatedAt: saved.updatedAt,
+    }
+  }
 }

@@ -41,8 +41,9 @@ function pickBoosters(seedText: string) {
 }
 
 export function LabScreen() {
-  const { authToken, tasks } = useAppStore()
+  const { authToken, tasks, syncNow, refreshFromCloud } = useAppStore()
   const [dbCheckLoading, setDbCheckLoading] = useState(false)
+  const [repairLoading, setRepairLoading] = useState(false)
   const [dbCheckError, setDbCheckError] = useState<string | null>(null)
   const [dbCheckResult, setDbCheckResult] = useState<DbCheckResult | null>(null)
   const [mood, setMood] = useState('locked in')
@@ -83,6 +84,26 @@ export function LabScreen() {
     }
   }
 
+  const runAutoRepair = async () => {
+    if (!authToken) {
+      setDbCheckError('Login required for auto-repair')
+      return
+    }
+
+    setRepairLoading(true)
+    setDbCheckError(null)
+
+    try {
+      await syncNow()
+      await refreshFromCloud()
+      await runDbCheck()
+    } catch (error) {
+      setDbCheckError(error instanceof Error ? error.message : 'Auto-repair failed')
+    } finally {
+      setRepairLoading(false)
+    }
+  }
+
   return (
     <>
       <GlassCard className="space-y-3 px-4 py-4">
@@ -110,6 +131,14 @@ export function LabScreen() {
             {dbCheckLoading ? 'Checking...' : 'Check DB now'}
           </button>
         </div>
+
+        <button
+          type="button"
+          className="glass-button glass-button-secondary"
+          onClick={() => void runAutoRepair()}
+        >
+          {repairLoading ? 'Repairing cloud...' : 'Auto-Repair Cloud Mismatch'}
+        </button>
 
         {dbCheckError && <p className="text-xs text-rose-200">{dbCheckError}</p>}
 

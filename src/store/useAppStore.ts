@@ -7,7 +7,7 @@ import {
   loginAccount,
   registerAccount,
   resetCloudData,
-  saveCloudDataWithMode,
+  saveCloudData,
   upsertTaskCloud,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
@@ -69,8 +69,13 @@ export const useAppStore = create<AppState>((set, get) => {
     void savePersistedState(pickPersistedState(state))
   }
 
-  const pushLocalToCloud = async (token: string, state: AppState, syncTasks: boolean) => {
-    const result = await saveCloudDataWithMode(token, pickPersistedState(state), syncTasks)
+  const flushAllTasksToCloud = async (token: string, tasks: UserTask[]) => {
+    const results = await Promise.allSettled(tasks.map((task) => upsertTaskCloud(token, task)))
+    return results.every((item) => item.status === 'fulfilled')
+  }
+
+  const pushLocalToCloud = async (token: string, state: AppState) => {
+    const result = await saveCloudData(token, pickPersistedState(state))
     set({
       syncError: null,
       accountStats: result.stats,
@@ -87,7 +92,14 @@ export const useAppStore = create<AppState>((set, get) => {
     }
 
     try {
-      await pushLocalToCloud(state.authToken, state, state.cloudSyncPending)
+      if (state.cloudSyncPending) {
+        const tasksOk = await flushAllTasksToCloud(state.authToken, state.tasks)
+        if (!tasksOk) {
+          throw new Error('Task sync failed')
+        }
+      }
+
+      await pushLocalToCloud(state.authToken, state)
     } catch (error) {
       set({
         syncError: error instanceof Error ? error.message : 'Cloud sync failed',
@@ -107,27 +119,43 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // Upload local snapshot for first login if cloud is empty.
     if (uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      await pushLocalToCloud(token, state, true)
+      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
+      if (!tasksOk) {
+        throw new Error('Task sync failed')
+      }
+      await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
     }
 
     if (!uploadIfCloudEmpty && state.cloudSyncPending && localHasContent) {
-      await pushLocalToCloud(token, state, true)
+      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
+      if (!tasksOk) {
+        throw new Error('Task sync failed')
+      }
+      await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
     }
 
     // During background refresh, never wipe non-empty local data with empty cloud payload.
     if (!uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      await pushLocalToCloud(token, state, true)
+      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
+      if (!tasksOk) {
+        throw new Error('Task sync failed')
+      }
+      await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
     }
 
     // If local state is newer than cloud, push local version instead of replacing it.
     if (!uploadIfCloudEmpty && localHasContent && cloudHasContent && localChangedAt > cloudChangedAt) {
-      await pushLocalToCloud(token, state, true)
+      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
+      if (!tasksOk) {
+        throw new Error('Task sync failed')
+      }
+      await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
     }

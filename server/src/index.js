@@ -325,7 +325,6 @@ app.get('/data', requireDbReady, authRequired, getDataHandler)
 
 const putDataHandler = async (req, res) => {
   const payload = req.body ?? {}
-  const syncTasks = payload.syncTasks === true
   const clientLastChangeAt = Number(payload.clientLastChangeAt)
   const safeClientChangeAt = Number.isFinite(clientLastChangeAt) && clientLastChangeAt > 0 ? clientLastChangeAt : Date.now()
 
@@ -342,9 +341,8 @@ const putDataHandler = async (req, res) => {
     })
   }
 
-  const tasks = syncTasks
-    ? await replaceTasksForUser(req.auth.userId, payload.tasks)
-    : await getTasksForUser(req.auth.userId, currentData.tasks)
+  // Tasks are managed only by dedicated /api/tasks routes to avoid accidental wipes by stale snapshots.
+  const tasks = await getTasksForUser(req.auth.userId, currentData.tasks)
   const records = typeof payload.records === 'object' && payload.records ? payload.records : {}
   const theme = payload.theme === 'light' ? 'light' : 'dark'
 

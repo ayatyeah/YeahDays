@@ -144,15 +144,8 @@ export async function getCloudData(token: string) {
 }
 
 export async function saveCloudData(token: string, payload: PersistedAppState) {
-  return saveCloudDataWithMode(token, payload, false)
-}
-
-export async function saveCloudDataWithMode(token: string, payload: PersistedAppState, syncTasks: boolean) {
   const body = JSON.stringify({
-    // Always send tasks for backward compatibility with older API deployments.
-    // New backend honors syncTasks flag, old backend still expects full tasks snapshot.
     tasks: payload.tasks,
-    syncTasks,
     records: payload.records,
     theme: payload.theme,
     clientLastChangeAt: payload.lastLocalChangeAt ?? Date.now(),

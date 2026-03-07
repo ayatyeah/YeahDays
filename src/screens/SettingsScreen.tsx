@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { GlassCard } from '../components/GlassCard'
 import { useInstallPrompt } from '../hooks/useInstallPrompt'
 import { useAppStore } from '../store/useAppStore'
+import { getConfiguredApiBase } from '../utils/apiClient'
 
 interface SettingsScreenProps {
   reminders: {
@@ -26,6 +27,8 @@ export function SettingsScreen({ reminders }: SettingsScreenProps) {
     accountStats,
     notificationsEnabled,
     setNotificationsEnabled,
+    cloudSyncPending,
+    cloudUpdatedAt,
   } = useAppStore()
   const { installAvailable, install } = useInstallPrompt()
   const [message, setMessage] = useState('')
@@ -116,6 +119,13 @@ export function SettingsScreen({ reminders }: SettingsScreenProps) {
         >
           {notificationsEnabled ? 'Reminders: ON' : 'Reminders: OFF'}
         </button>
+      </div>
+
+      <div className="surface-panel space-y-1 p-3 text-xs">
+        <p className="text-sm font-semibold">Sync debug</p>
+        <p>API: {getConfiguredApiBase()}</p>
+        <p>Cloud pending: {cloudSyncPending ? 'yes' : 'no'}</p>
+        <p>Cloud updated: {cloudUpdatedAt || 'none'}</p>
       </div>
 
       <button

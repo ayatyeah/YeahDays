@@ -232,6 +232,7 @@ app.get('/api/health', (_req, res) => {
     ok: true,
     dbReady,
     dbError: dbReady ? null : dbErrorHint,
+    dbName: mongoose.connection?.name || null,
     mongoUri: uriInfo,
   })
 })

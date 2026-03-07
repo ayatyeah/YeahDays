@@ -145,7 +145,9 @@ export async function saveCloudData(token: string, payload: PersistedAppState) {
 
 export async function saveCloudDataWithMode(token: string, payload: PersistedAppState, syncTasks: boolean) {
   const body = JSON.stringify({
-    tasks: syncTasks ? payload.tasks : undefined,
+    // Always send tasks for backward compatibility with older API deployments.
+    // New backend honors syncTasks flag, old backend still expects full tasks snapshot.
+    tasks: payload.tasks,
     syncTasks,
     records: payload.records,
     theme: payload.theme,

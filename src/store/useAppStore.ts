@@ -16,6 +16,7 @@ interface AppState extends PersistedAppState {
   hydrated: boolean
   authLoading: boolean
   syncError: string | null
+  cloudSyncPending: boolean
   accountStats: AccountStats | null
   notificationsEnabled: boolean
   hydrate: () => Promise<void>
@@ -66,6 +67,17 @@ export const useAppStore = create<AppState>((set, get) => {
     void savePersistedState(pickPersistedState(state))
   }
 
+  const pushLocalToCloud = async (token: string, state: AppState) => {
+    const result = await saveCloudData(token, pickPersistedState(state))
+    set({
+      syncError: null,
+      accountStats: result.stats,
+      cloudUpdatedAt: result.updatedAt,
+      cloudSyncPending: false,
+    })
+    persist()
+  }
+
   const saveCloud = async () => {
     const state = get()
     if (!state.authToken) {
@@ -73,11 +85,12 @@ export const useAppStore = create<AppState>((set, get) => {
     }
 
     try {
-      const result = await saveCloudData(state.authToken, pickPersistedState(state))
-      set({ syncError: null, accountStats: result.stats, cloudUpdatedAt: result.updatedAt })
-      persist()
+      await pushLocalToCloud(state.authToken, state)
     } catch (error) {
-      set({ syncError: error instanceof Error ? error.message : 'Cloud sync failed' })
+      set({
+        syncError: error instanceof Error ? error.message : 'Cloud sync failed',
+        cloudSyncPending: true,
+      })
     }
   }
 
@@ -92,33 +105,28 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // Upload local snapshot for first login if cloud is empty.
     if (uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      const saveResult = await saveCloudData(token, pickPersistedState(state))
-      set({
-        userEmail: me.user.email,
-        accountStats: saveResult.stats,
-        cloudUpdatedAt: saveResult.updatedAt,
-        syncError: null,
-      })
-      persist()
+      await pushLocalToCloud(token, state)
+      set({ userEmail: me.user.email })
+      return
+    }
+
+    if (!uploadIfCloudEmpty && state.cloudSyncPending && localHasContent) {
+      await pushLocalToCloud(token, state)
+      set({ userEmail: me.user.email })
       return
     }
 
     // During background refresh, never wipe non-empty local data with empty cloud payload.
     if (!uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      set({ userEmail: me.user.email, syncError: null })
+      await pushLocalToCloud(token, state)
+      set({ userEmail: me.user.email })
       return
     }
 
     // If local state is newer than cloud, push local version instead of replacing it.
     if (!uploadIfCloudEmpty && localHasContent && cloudHasContent && localChangedAt > cloudChangedAt) {
-      const saveResult = await saveCloudData(token, pickPersistedState(state))
-      set({
-        userEmail: me.user.email,
-        accountStats: saveResult.stats,
-        cloudUpdatedAt: saveResult.updatedAt,
-        syncError: null,
-      })
-      persist()
+      await pushLocalToCloud(token, state)
+      set({ userEmail: me.user.email })
       return
     }
 
@@ -131,6 +139,7 @@ export const useAppStore = create<AppState>((set, get) => {
       cloudUpdatedAt: cloud.updatedAt,
       lastLocalChangeAt: Math.max(localChangedAt, cloudChangedAt),
       syncError: null,
+      cloudSyncPending: false,
     })
     persist()
   }
@@ -148,6 +157,7 @@ export const useAppStore = create<AppState>((set, get) => {
     hydrated: false,
     authLoading: false,
     syncError: null,
+    cloudSyncPending: false,
     accountStats: null,
 
     hydrate: async () => {
@@ -165,6 +175,7 @@ export const useAppStore = create<AppState>((set, get) => {
             persisted.lastLocalChangeAt ??
             (hasContent(persisted.tasks, persisted.records) ? Date.now() : 0),
           cloudUpdatedAt: persisted.cloudUpdatedAt ?? null,
+          cloudSyncPending: false,
         }
 
         set(nextState)
@@ -180,6 +191,7 @@ export const useAppStore = create<AppState>((set, get) => {
               cloudUpdatedAt: null,
               tasks: [],
               records: {},
+              cloudSyncPending: false,
             })
             persist()
           }
@@ -233,6 +245,7 @@ export const useAppStore = create<AppState>((set, get) => {
         tasks: [],
         records: {},
         selectedDate: toISODate(new Date()),
+        cloudSyncPending: false,
       })
       persist()
     },
@@ -279,6 +292,7 @@ export const useAppStore = create<AppState>((set, get) => {
             },
           },
           lastLocalChangeAt: Date.now(),
+          cloudSyncPending: true,
         }
       })
       persist()
@@ -295,6 +309,7 @@ export const useAppStore = create<AppState>((set, get) => {
           },
         },
         lastLocalChangeAt: Date.now(),
+        cloudSyncPending: true,
       }))
       persist()
       void saveCloud()
@@ -310,6 +325,7 @@ export const useAppStore = create<AppState>((set, get) => {
           },
         ],
         lastLocalChangeAt: Date.now(),
+        cloudSyncPending: true,
       }))
       persist()
       void saveCloud()
@@ -319,6 +335,7 @@ export const useAppStore = create<AppState>((set, get) => {
       set((state) => ({
         tasks: state.tasks.map((currentTask) => (currentTask.id === task.id ? task : currentTask)),
         lastLocalChangeAt: Date.now(),
+        cloudSyncPending: true,
       }))
       persist()
       void saveCloud()
@@ -340,6 +357,7 @@ export const useAppStore = create<AppState>((set, get) => {
           tasks: state.tasks.filter((task) => task.id !== taskId),
           records,
           lastLocalChangeAt: Date.now(),
+          cloudSyncPending: true,
         }
       })
       persist()
@@ -347,7 +365,7 @@ export const useAppStore = create<AppState>((set, get) => {
     },
 
     setTheme: (theme) => {
-      set({ theme, lastLocalChangeAt: Date.now() })
+      set({ theme, lastLocalChangeAt: Date.now(), cloudSyncPending: true })
       persist()
       void saveCloud()
     },
@@ -368,6 +386,7 @@ export const useAppStore = create<AppState>((set, get) => {
         selectedDate: toISODate(new Date()),
         accountStats: null,
         lastLocalChangeAt: Date.now(),
+        cloudSyncPending: true,
       })
       persist()
       const token = get().authToken
@@ -393,6 +412,7 @@ export const useAppStore = create<AppState>((set, get) => {
           records: (parsed.records as Record<string, DailyRecord>) ?? {},
           theme: parsed.theme === 'light' ? 'light' : 'dark',
           lastLocalChangeAt: Date.now(),
+          cloudSyncPending: true,
         })
         persist()
         void saveCloud()

@@ -65,6 +65,9 @@ function pickPersistedState(state: AppState): PersistedAppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => {
+  let syncInFlight = false
+  let syncQueued = false
+
   const persist = () => {
     const state = get()
     void savePersistedState(pickPersistedState(state))
@@ -77,13 +80,15 @@ export const useAppStore = create<AppState>((set, get) => {
   }
 
   const pushLocalToCloud = async (token: string, state: AppState) => {
+    const sentLastChangeAt = state.lastLocalChangeAt ?? 0
     const result = await saveCloudData(token, pickPersistedState(state))
-    set({
+    set((current) => ({
       syncError: null,
       accountStats: result.stats,
       cloudUpdatedAt: result.updatedAt,
-      cloudSyncPending: false,
-    })
+      // Keep pending=true when new local changes were made while this request was in-flight.
+      cloudSyncPending: (current.lastLocalChangeAt ?? 0) > sentLastChangeAt,
+    }))
     persist()
   }
 
@@ -93,20 +98,48 @@ export const useAppStore = create<AppState>((set, get) => {
       return
     }
 
+    if (syncInFlight) {
+      syncQueued = true
+      return
+    }
+
+    syncInFlight = true
+
     try {
-      if (state.cloudSyncPending) {
-        const tasksOk = await flushAllTasksToCloud(state.authToken, state.tasks)
-        if (!tasksOk) {
-          throw new Error('Task sync failed')
+      // Run until no queued local changes remain.
+      while (true) {
+        syncQueued = false
+        const current = get()
+        if (!current.authToken) {
+          break
+        }
+
+        if (current.cloudSyncPending) {
+          const tasksOk = await flushAllTasksToCloud(current.authToken, current.tasks)
+          if (!tasksOk) {
+            throw new Error('Task sync failed')
+          }
+        }
+
+        // Always send the freshest snapshot after task flush to avoid stale record/theme writes.
+        const freshest = get()
+        if (!freshest.authToken) {
+          break
+        }
+
+        await pushLocalToCloud(freshest.authToken, freshest)
+
+        if (!syncQueued) {
+          break
         }
       }
-
-      await pushLocalToCloud(state.authToken, state)
     } catch (error) {
       set({
         syncError: error instanceof Error ? error.message : 'Cloud sync failed',
         cloudSyncPending: true,
       })
+    } finally {
+      syncInFlight = false
     }
   }
 
@@ -364,8 +397,9 @@ export const useAppStore = create<AppState>((set, get) => {
       if (token) {
         void upsertTaskCloud(token, newTask)
           .then((result) => {
-            set({ accountStats: result.stats, syncError: null, cloudSyncPending: false })
+            set({ accountStats: result.stats, syncError: null })
             persist()
+            void saveCloud()
           })
           .catch(() => {
             void saveCloud()
@@ -388,8 +422,9 @@ export const useAppStore = create<AppState>((set, get) => {
       if (token) {
         void upsertTaskCloud(token, task)
           .then((result) => {
-            set({ accountStats: result.stats, syncError: null, cloudSyncPending: false })
+            set({ accountStats: result.stats, syncError: null })
             persist()
+            void saveCloud()
           })
           .catch(() => {
             void saveCloud()
@@ -425,8 +460,9 @@ export const useAppStore = create<AppState>((set, get) => {
       if (token) {
         void deleteTaskCloud(token, taskId)
           .then((result) => {
-            set({ accountStats: result.stats, syncError: null, cloudSyncPending: false })
+            set({ accountStats: result.stats, syncError: null })
             persist()
+            void saveCloud()
           })
           .catch(() => {
             void saveCloud()

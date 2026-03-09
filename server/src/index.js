@@ -191,11 +191,16 @@ function toTaskPayload(taskDoc) {
 }
 
 async function replaceTasksForUser(userId, taskList) {
-  const normalized = Array.isArray(taskList)
+  const normalizedRaw = Array.isArray(taskList)
     ? taskList
         .map((task) => sanitizeTask(task, { strictName: true }))
         .filter((task) => task !== null)
     : []
+
+  // Keep one task per id to avoid unique index collisions on bulk replace.
+  const byId = new Map(normalizedRaw.map((task) => [task.id, task]))
+  const normalized = Array.from(byId.values())
+
   await Task.deleteMany({ userId })
   if (normalized.length === 0) {
     return []
@@ -249,6 +254,42 @@ function normalizeCompletedTaskIds(value) {
   }
 
   return Array.from(unique)
+}
+
+function normalizeRecords(records, validTaskIds) {
+  const source = records && typeof records === 'object' ? records : {}
+  const validTaskIdSet = new Set(validTaskIds)
+  const normalized = {}
+
+  for (const [date, record] of Object.entries(source)) {
+    if (!isIsoDate(date)) {
+      continue
+    }
+
+    const completedTaskIds = normalizeCompletedTaskIds(record?.completedTaskIds).filter((id) =>
+      validTaskIdSet.has(id),
+    )
+
+    normalized[date] = {
+      date,
+      completedTaskIds,
+    }
+  }
+
+  return normalized
+}
+
+function toCloudResponse({ tasks, data, stats, staleIgnored = false }) {
+  return {
+    ok: true,
+    staleIgnored,
+    tasks,
+    records: data.records || {},
+    theme: data.theme,
+    gameHighScore: data.gameHighScore || 0,
+    stats,
+    updatedAt: data.updatedAt ? data.updatedAt.toISOString() : null,
+  }
 }
 
 async function getTasksForUser(userId, legacyTasks = []) {
@@ -436,17 +477,44 @@ const upsertTaskHandler = async (req, res) => {
     return res.status(400).json({ error: 'Task name is invalid or corrupted. Use UTF-8 text and retry.' })
   }
 
+  const submittedChangeAt = Number(req.body?.clientLastChangeAt)
+  const safeClientChangeAt =
+    Number.isFinite(submittedChangeAt) && submittedChangeAt > 0 ? submittedChangeAt : Date.now()
+  const data = await getOrCreateData(req.auth.userId)
+  const serverLastChangeAt = Number(data.lastClientChangeAt || 0)
+
+  if (safeClientChangeAt < serverLastChangeAt) {
+    const tasks = await getTasksForUser(req.auth.userId, data.tasks)
+    const stats = calculateAccountStats(tasks, data.records || {})
+    return res.json({
+      ok: true,
+      staleIgnored: true,
+      tasks,
+      stats,
+      updatedAt: data.updatedAt ? data.updatedAt.toISOString() : null,
+    })
+  }
+
   await Task.findOneAndUpdate(
     { userId: req.auth.userId, id: sanitizedTask.id },
     { userId: req.auth.userId, ...sanitizedTask },
     { upsert: true, new: true, setDefaultsOnInsert: true },
   )
 
-  const data = await getOrCreateData(req.auth.userId)
+  const updatedData = await UserData.findOneAndUpdate(
+    { userId: req.auth.userId },
+    { lastClientChangeAt: Math.max(serverLastChangeAt, safeClientChangeAt) },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
   const tasks = await getTasksForUser(req.auth.userId)
-  const stats = calculateAccountStats(tasks, data.records || {})
+  const stats = calculateAccountStats(tasks, updatedData.records || {})
 
-  return res.json({ ok: true, task: sanitizedTask, stats })
+  return res.json({
+    ok: true,
+    task: sanitizedTask,
+    stats,
+    updatedAt: updatedData.updatedAt ? updatedData.updatedAt.toISOString() : null,
+  })
 }
 
 app.post('/api/tasks/upsert', requireDbReady, authRequired, upsertTaskHandler)
@@ -454,14 +522,33 @@ app.post('/tasks/upsert', requireDbReady, authRequired, upsertTaskHandler)
 
 const replaceTasksHandler = async (req, res) => {
   const incomingTasks = Array.isArray(req.body?.tasks) ? req.body.tasks : []
+  const submittedChangeAt = Number(req.body?.clientLastChangeAt)
+  const safeClientChangeAt =
+    Number.isFinite(submittedChangeAt) && submittedChangeAt > 0 ? submittedChangeAt : Date.now()
+  const data = await getOrCreateData(req.auth.userId)
+  const serverLastChangeAt = Number(data.lastClientChangeAt || 0)
+
+  if (safeClientChangeAt < serverLastChangeAt) {
+    const tasks = await getTasksForUser(req.auth.userId, data.tasks)
+    const stats = calculateAccountStats(tasks, data.records || {})
+    return res.json({
+      ok: true,
+      staleIgnored: true,
+      tasks,
+      stats,
+      updatedAt: data.updatedAt ? data.updatedAt.toISOString() : null,
+    })
+  }
+
   const normalizedTasks = await replaceTasksForUser(req.auth.userId, incomingTasks)
   const validTaskIds = normalizedTasks.map((task) => task.id)
-
-  const data = await getOrCreateData(req.auth.userId)
   const records = pruneRecordTaskRefs(data.records || {}, validTaskIds)
   const updatedData = await UserData.findOneAndUpdate(
     { userId: req.auth.userId },
-    { records },
+    {
+      records,
+      lastClientChangeAt: Math.max(serverLastChangeAt, safeClientChangeAt),
+    },
     { new: true, upsert: true, setDefaultsOnInsert: true },
   )
   const stats = calculateAccountStats(normalizedTasks, updatedData.records || {})
@@ -539,8 +626,25 @@ const deleteTaskHandler = async (req, res) => {
     return res.status(400).json({ error: 'taskId is required' })
   }
 
-  await Task.deleteOne({ userId: req.auth.userId, id: taskId })
   const data = await getOrCreateData(req.auth.userId)
+  const submittedChangeAt = Number(req.body?.clientLastChangeAt)
+  const safeClientChangeAt =
+    Number.isFinite(submittedChangeAt) && submittedChangeAt > 0 ? submittedChangeAt : Date.now()
+  const serverLastChangeAt = Number(data.lastClientChangeAt || 0)
+
+  if (safeClientChangeAt < serverLastChangeAt) {
+    const tasks = await getTasksForUser(req.auth.userId, data.tasks)
+    const stats = calculateAccountStats(tasks, data.records || {})
+    return res.json({
+      ok: true,
+      staleIgnored: true,
+      tasks,
+      stats,
+      updatedAt: data.updatedAt ? data.updatedAt.toISOString() : null,
+    })
+  }
+
+  await Task.deleteOne({ userId: req.auth.userId, id: taskId })
   const tasks = await getTasksForUser(req.auth.userId)
   const records = Object.fromEntries(
     Object.entries(data.records || {}).map(([date, record]) => [
@@ -556,7 +660,10 @@ const deleteTaskHandler = async (req, res) => {
 
   const updatedData = await UserData.findOneAndUpdate(
     { userId: req.auth.userId },
-    { records },
+    {
+      records,
+      lastClientChangeAt: Math.max(serverLastChangeAt, safeClientChangeAt),
+    },
     { new: true, upsert: true, setDefaultsOnInsert: true },
   )
 
@@ -566,6 +673,45 @@ const deleteTaskHandler = async (req, res) => {
 
 app.delete('/api/tasks/:taskId', requireDbReady, authRequired, deleteTaskHandler)
 app.delete('/tasks/:taskId', requireDbReady, authRequired, deleteTaskHandler)
+
+const syncSnapshotHandler = async (req, res) => {
+  const payload = req.body ?? {}
+  const submittedChangeAt = Number(payload.clientLastChangeAt)
+  const safeClientChangeAt =
+    Number.isFinite(submittedChangeAt) && submittedChangeAt > 0 ? submittedChangeAt : Date.now()
+
+  const data = await getOrCreateData(req.auth.userId)
+  const serverLastChangeAt = Number(data.lastClientChangeAt || 0)
+
+  if (safeClientChangeAt < serverLastChangeAt) {
+    const tasks = await getTasksForUser(req.auth.userId, data.tasks)
+    const stats = calculateAccountStats(tasks, data.records || {})
+    return res.json(toCloudResponse({ tasks, data, stats, staleIgnored: true }))
+  }
+
+  const incomingTasks = Array.isArray(payload.tasks) ? payload.tasks : []
+  const normalizedTasks = await replaceTasksForUser(req.auth.userId, incomingTasks)
+  const validTaskIds = normalizedTasks.map((task) => task.id)
+  const normalizedRecords = normalizeRecords(payload.records, validTaskIds)
+  const theme = payload.theme === 'light' ? 'light' : 'dark'
+
+  const updatedData = await UserData.findOneAndUpdate(
+    { userId: req.auth.userId },
+    {
+      records: normalizedRecords,
+      theme,
+      lastClientChangeAt: Math.max(serverLastChangeAt, safeClientChangeAt),
+      tasks: [],
+    },
+    { new: true, upsert: true, setDefaultsOnInsert: true },
+  )
+
+  const stats = calculateAccountStats(normalizedTasks, updatedData.records || {})
+  return res.json(toCloudResponse({ tasks: normalizedTasks, data: updatedData, stats }))
+}
+
+app.post('/api/sync', requireDbReady, authRequired, syncSnapshotHandler)
+app.post('/sync', requireDbReady, authRequired, syncSnapshotHandler)
 
 const resetDataHandler = async (req, res) => {
   await Promise.all([

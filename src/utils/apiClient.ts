@@ -60,6 +60,12 @@ interface CloudDataResponse {
   updatedAt: string | null
 }
 
+interface SyncSnapshotResponse extends CloudDataResponse {
+  ok: true
+  staleIgnored?: boolean
+  gameHighScore?: number
+}
+
 export interface LeaderboardEntry {
   rank: number
   userEmail: string
@@ -166,6 +172,19 @@ export async function saveCloudData(token: string, payload: PersistedAppState) {
   }
 }
 
+export async function syncCloudSnapshot(token: string, payload: PersistedAppState) {
+  return request<SyncSnapshotResponse>('/api/sync', {
+    method: 'POST',
+    headers: authHeaders(token),
+    body: JSON.stringify({
+      tasks: payload.tasks,
+      records: payload.records,
+      theme: payload.theme,
+      clientLastChangeAt: payload.lastLocalChangeAt ?? Date.now(),
+    }),
+  })
+}
+
 export async function resetCloudData(token: string) {
   return request<{ ok: true }>('/api/data/reset', {
     method: 'POST',
@@ -188,21 +207,30 @@ export async function getLeaderboard(token: string) {
   })
 }
 
-export async function upsertTaskCloud(token: string, task: UserTask) {
-  return request<{ ok: true; task: UserTask; stats: AccountStats }>('/api/tasks/upsert', {
+export async function upsertTaskCloud(token: string, task: UserTask, clientLastChangeAt?: number) {
+  return request<{ ok: true; task: UserTask; stats: AccountStats; updatedAt?: string | null }>('/api/tasks/upsert', {
     method: 'POST',
     headers: authHeaders(token),
-    body: JSON.stringify({ task }),
+    body: JSON.stringify({
+      task,
+      clientLastChangeAt: clientLastChangeAt ?? Date.now(),
+    }),
   })
 }
 
-export async function replaceTasksCloud(token: string, tasks: UserTask[]) {
+export async function replaceTasksCloud(token: string, tasks: UserTask[], clientLastChangeAt?: number) {
   try {
-    return await request<{ ok: true; tasks: UserTask[]; stats: AccountStats }>('/api/tasks/replace', {
+    return await request<{ ok: true; tasks: UserTask[]; stats: AccountStats; updatedAt?: string | null }>(
+      '/api/tasks/replace',
+      {
       method: 'POST',
       headers: authHeaders(token),
-      body: JSON.stringify({ tasks }),
-    })
+      body: JSON.stringify({
+        tasks,
+        clientLastChangeAt: clientLastChangeAt ?? Date.now(),
+      }),
+      },
+    )
   } catch {
     // Compatibility fallback for older API versions without /api/tasks/replace.
     const cloud = await getCloudData(token)

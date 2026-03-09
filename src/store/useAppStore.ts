@@ -4,11 +4,9 @@ import {
   getCloudData,
   getMe,
   loginAccount,
-  replaceTasksCloud,
   registerAccount,
   resetCloudData,
-  setThemeCloud,
-  upsertRecordCloud,
+  syncCloudSnapshot,
 } from '../utils/apiClient'
 import { loadPersistedState, savePersistedState } from '../utils/persistence'
 import type { AccountStats, DailyRecord, PersistedAppState, UserTask } from '../types'
@@ -72,32 +70,19 @@ export const useAppStore = create<AppState>((set, get) => {
     void savePersistedState(pickPersistedState(state))
   }
 
-  const flushAllTasksToCloud = async (token: string, tasks: UserTask[]) => {
-    const result = await replaceTasksCloud(token, tasks)
-    set({ accountStats: result.stats, syncError: null })
-    return true
-  }
-
   const pushLocalToCloud = async (token: string, state: AppState) => {
     const safeChangeAt = state.lastLocalChangeAt ?? Date.now()
-
-    await flushAllTasksToCloud(token, state.tasks)
-
-    const recordEntries = Object.entries(state.records || {})
-    for (const [date, record] of recordEntries) {
-      await upsertRecordCloud(token, {
-        date,
-        completedTaskIds: Array.isArray(record?.completedTaskIds) ? record.completedTaskIds : [],
-        clientLastChangeAt: safeChangeAt,
-      })
-    }
-
-    await setThemeCloud(token, {
+    const fresh = await syncCloudSnapshot(token, {
+      tasks: state.tasks,
+      records: state.records,
       theme: state.theme,
-      clientLastChangeAt: safeChangeAt,
+      notificationsEnabled: state.notificationsEnabled,
+      authToken: null,
+      userEmail: null,
+      cloudUpdatedAt: state.cloudUpdatedAt,
+      lastLocalChangeAt: safeChangeAt,
     })
 
-    const fresh = await getCloudData(token)
     set((current) => ({
       tasks: fresh.tasks,
       records: fresh.records,
@@ -164,20 +149,12 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // Upload local snapshot for first login if cloud is empty.
     if (uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
-      if (!tasksOk) {
-        throw new Error('Task sync failed')
-      }
       await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
     }
 
     if (!uploadIfCloudEmpty && state.cloudSyncPending && localHasContent) {
-      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
-      if (!tasksOk) {
-        throw new Error('Task sync failed')
-      }
       await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
@@ -185,10 +162,6 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // During background refresh, never wipe non-empty local data with empty cloud payload.
     if (!uploadIfCloudEmpty && localHasContent && !cloudHasContent) {
-      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
-      if (!tasksOk) {
-        throw new Error('Task sync failed')
-      }
       await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return
@@ -196,10 +169,6 @@ export const useAppStore = create<AppState>((set, get) => {
 
     // If local state is newer than cloud, push local version instead of replacing it.
     if (!uploadIfCloudEmpty && localHasContent && cloudHasContent && localChangedAt > cloudChangedAt) {
-      const tasksOk = await flushAllTasksToCloud(token, state.tasks)
-      if (!tasksOk) {
-        throw new Error('Task sync failed')
-      }
       await pushLocalToCloud(token, state)
       set({ userEmail: me.user.email })
       return

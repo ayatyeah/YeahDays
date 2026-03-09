@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { GlassCard } from '../components/GlassCard'
 import ogBudaSecret from '../assets/og-buda-secret.svg'
 import { useAppStore } from '../store/useAppStore'
-import { getCloudData, replaceTasksCloud, upsertRecordCloud } from '../utils/apiClient'
+import { getCloudData, syncCloudSnapshot } from '../utils/apiClient'
 
 interface DbCheckResult {
   checkedAt: string
@@ -42,7 +42,7 @@ function pickBoosters(seedText: string) {
 }
 
 export function LabScreen() {
-  const { authToken, tasks, records, refreshFromCloud } = useAppStore()
+  const { authToken, tasks, records, theme, refreshFromCloud } = useAppStore()
   const [dbCheckLoading, setDbCheckLoading] = useState(false)
   const [repairLoading, setRepairLoading] = useState(false)
   const [dbCheckError, setDbCheckError] = useState<string | null>(null)
@@ -72,20 +72,16 @@ export function LabScreen() {
       let autoRepaired = false
 
       if (missingInCloud.length > 0) {
-        await replaceTasksCloud(authToken, tasks)
-
-        const recordEntries = Object.values(records || {})
-        for (const record of recordEntries) {
-          if (!record?.date) {
-            continue
-          }
-
-          await upsertRecordCloud(authToken, {
-            date: record.date,
-            completedTaskIds: Array.isArray(record.completedTaskIds) ? record.completedTaskIds : [],
-            clientLastChangeAt: Date.now(),
-          })
-        }
+        await syncCloudSnapshot(authToken, {
+          tasks,
+          records,
+          theme,
+          lastLocalChangeAt: Date.now(),
+          authToken: null,
+          userEmail: null,
+          cloudUpdatedAt: null,
+          notificationsEnabled: false,
+        })
 
         cloud = await getCloudData(authToken)
         cloudIds = new Set(cloud.tasks.map((task) => task.id))
@@ -121,20 +117,16 @@ export function LabScreen() {
 
     try {
       // Force local state as source of truth for recovery when checker reports mismatch.
-      await replaceTasksCloud(authToken, tasks)
-
-      const recordEntries = Object.values(records || {})
-      for (const record of recordEntries) {
-        if (!record?.date) {
-          continue
-        }
-
-        await upsertRecordCloud(authToken, {
-          date: record.date,
-          completedTaskIds: Array.isArray(record.completedTaskIds) ? record.completedTaskIds : [],
-          clientLastChangeAt: Date.now(),
-        })
-      }
+      await syncCloudSnapshot(authToken, {
+        tasks,
+        records,
+        theme,
+        lastLocalChangeAt: Date.now(),
+        authToken: null,
+        userEmail: null,
+        cloudUpdatedAt: null,
+        notificationsEnabled: false,
+      })
 
       await refreshFromCloud()
       await runDbCheck()

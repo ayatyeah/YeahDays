@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
-import Human from "@/components/Human";
+import Buddy from "@/components/Buddy";
 import XpBar from "@/components/XpBar";
 import TaskItem from "@/components/TaskItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
@@ -11,8 +11,10 @@ import {
   useUserStore,
   useHydrated,
   selectTotalXp,
+  selectStats,
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
+import { CATEGORY_LIST } from "@/lib/categories";
 import {
   getLevelProgress,
   tierForLevel,
@@ -22,22 +24,21 @@ import {
 
 export default function HomePage() {
   const tasks = useUserStore((s) => s.tasks);
+  const name = useUserStore((s) => s.name);
   const hydrated = useHydrated();
   const seenLevel = useUserStore((s) => s.seenLevel);
   const markSeenLevel = useUserStore((s) => s.markSeenLevel);
   const openCreate = useUiStore((s) => s.openCreate);
 
   const totalXp = useMemo(() => selectTotalXp(tasks), [tasks]);
+  const stats = useMemo(() => selectStats(tasks), [tasks]);
   const progress = useMemo(() => getLevelProgress(totalXp), [totalXp]);
   const level = progress.level;
   const upcoming = nextMilestone(level);
   const tierLabel =
     TIER_MILESTONES.find((m) => m.tier === tierForLevel(level))?.label ?? "";
 
-  const active = useMemo(
-    () => tasks.filter((t) => !t.completed),
-    [tasks],
-  );
+  const active = useMemo(() => tasks.filter((t) => !t.completed), [tasks]);
   const doneCount = tasks.length - active.length;
 
   const [overlay, setOverlay] = useState<{
@@ -46,10 +47,6 @@ export default function HomePage() {
     milestoneLabel: string | null;
   }>({ open: false, level: 1, milestoneLabel: null });
 
-  // детекция повышения уровня.
-  // markSeenLevel вызываем НЕ здесь, а при закрытии оверлея — иначе
-  // «выброшенный» первый проход эффектов в StrictMode (dev) пометил бы
-  // уровень увиденным и съел бы празднование до реального показа.
   useEffect(() => {
     if (!hydrated) return;
     if (level > seenLevel) {
@@ -69,26 +66,34 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Шапка: уровень + XP */}
-      <header className="mb-2">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-[var(--color-muted)]">
-              Уровень
-            </p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-4xl font-bold leading-none tabular-nums">
-                {level}
+      {/* Приветствие */}
+      <p className="mb-3 text-sm text-[var(--color-fg-dim)]">
+        Привет,{" "}
+        <span className="font-semibold text-[var(--color-fg)]">
+          {hydrated ? name : "…"}
+        </span>{" "}
+        👋
+      </p>
+
+      {/* Статус-бар: уровень + XP */}
+      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 p-3.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-lg font-bold tabular-nums">
+              {level}
+            </div>
+            <div className="leading-tight">
+              <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                Уровень
               </p>
-              <span className="rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-0.5 text-[10px] font-medium text-[var(--color-fg-dim)]">
-                {tierLabel}
-              </span>
+              <p className="text-sm font-semibold">{tierLabel}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-[var(--color-muted)]">Всего опыта</p>
-            <p className="text-lg font-semibold tabular-nums text-[var(--color-xp)]">
-              {totalXp} XP
+          <div className="text-right leading-tight">
+            <p className="text-[11px] text-[var(--color-muted)]">Опыт</p>
+            <p className="text-base font-bold tabular-nums text-[var(--color-xp)]">
+              {totalXp}
+              <span className="ml-0.5 text-[11px] font-medium">XP</span>
             </p>
           </div>
         </div>
@@ -99,22 +104,39 @@ export default function HomePage() {
               {progress.currentInLevel} / {progress.neededForNext} до ур.{" "}
               {level + 1}
             </span>
-            {upcoming && (
-              <span>
-                «{upcoming.label}» — ур. {upcoming.level}
-              </span>
-            )}
+            {upcoming && <span>«{upcoming.label}» — ур. {upcoming.level}</span>}
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Персонаж */}
-      <section className="relative flex flex-1 items-center justify-center py-2">
-        <Human level={level} size={260} />
+      <section className="relative flex flex-1 items-center justify-center py-4">
+        <Buddy level={level} size={320} />
       </section>
 
+      {/* Характеристики */}
+      <div className="grid grid-cols-3 gap-2">
+        {CATEGORY_LIST.map((c) => (
+          <div
+            key={c.key}
+            className="flex flex-col items-center gap-0.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 py-2"
+          >
+            <span className="text-base leading-none">{c.emoji}</span>
+            <span
+              className="text-sm font-bold tabular-nums"
+              style={{ color: c.color }}
+            >
+              {stats[c.key]}
+            </span>
+            <span className="text-[10px] text-[var(--color-muted)]">
+              {c.label}
+            </span>
+          </div>
+        ))}
+      </div>
+
       {/* Задачи */}
-      <section>
+      <section className="mt-4">
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-[var(--color-fg-dim)]">
             Активные задачи
@@ -127,22 +149,17 @@ export default function HomePage() {
         </div>
 
         {active.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-8 text-center">
+          <button
+            onClick={() => openCreate()}
+            className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-6 text-center transition hover:border-[var(--color-fg-dim)] hover:bg-[var(--color-surface)]/50"
+          >
             <p className="text-sm text-[var(--color-fg-dim)]">
-              Пока пусто. Создай первую задачу —
+              Пусто. Нажми, чтобы создать первую задачу —
               <br />и персонаж начнёт расти.
             </p>
-            <Button
-              variant="primary"
-              size="sm"
-              className="mt-4"
-              onClick={() => openCreate()}
-            >
-              + Задача
-            </Button>
-          </div>
+          </button>
         ) : (
-          <div className="flex max-h-[34vh] flex-col gap-2 overflow-y-auto pb-1">
+          <div className="flex max-h-[32vh] flex-col gap-2 overflow-y-auto pb-1">
             <AnimatePresence initial={false}>
               {active.map((t) => (
                 <TaskItem key={t.id} task={t} />

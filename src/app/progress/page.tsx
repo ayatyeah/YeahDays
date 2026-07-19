@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import Human from "@/components/Human";
+import Buddy from "@/components/Buddy";
+import PageHeader from "@/components/PageHeader";
 import XpBar from "@/components/XpBar";
 import {
   useUserStore,
@@ -36,12 +37,12 @@ export default function ProgressPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="mb-4 text-xl font-bold">Прогресс</h1>
+      <PageHeader title="Прогресс" />
 
       {/* мини-превью персонажа + уровень */}
       <div className="mb-5 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <div className="shrink-0">
-          <Human level={level} size={92} />
+        <div className="flex shrink-0 justify-center" style={{ width: 92 }}>
+          <Buddy level={level} size={96} />
         </div>
         <div className="flex-1">
           <p className="text-xs uppercase tracking-widest text-[var(--color-muted)]">

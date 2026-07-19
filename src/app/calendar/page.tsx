@@ -67,16 +67,26 @@ export default function CalendarPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-bold">
+      <header className="mb-5 flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">
           {MONTHS[view.m]}{" "}
           <span className="text-[var(--color-muted)]">{view.y}</span>
         </h1>
-        <div className="flex gap-1">
-          <Button variant="surface" size="sm" onClick={() => shift(-1)}>
+        <div className="flex gap-1.5">
+          <Button
+            variant="surface"
+            size="sm"
+            className="w-9 px-0"
+            onClick={() => shift(-1)}
+          >
             ‹
           </Button>
-          <Button variant="surface" size="sm" onClick={() => shift(1)}>
+          <Button
+            variant="surface"
+            size="sm"
+            className="w-9 px-0"
+            onClick={() => shift(1)}
+          >
             ›
           </Button>
         </div>

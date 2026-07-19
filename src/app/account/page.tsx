@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Human from "@/components/Human";
+import Buddy from "@/components/Buddy";
+import PageHeader from "@/components/PageHeader";
 import Button from "@/components/ui/Button";
 import Modal from "@/components/ui/Modal";
 import {
@@ -66,12 +67,12 @@ export default function AccountPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="mb-4 text-xl font-bold">Аккаунт</h1>
+      <PageHeader title="Аккаунт" />
 
       {/* профиль */}
       <div className="mb-6 flex flex-col items-center rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <Human level={level} size={110} />
-        <p className="mt-2 text-lg font-semibold">{name}</p>
+        <Buddy level={level} size={130} />
+        <p className="mt-3 text-lg font-semibold">{name}</p>
         {memberSince && (
           <p className="text-xs text-[var(--color-muted)]">
             с нами с {memberSince}

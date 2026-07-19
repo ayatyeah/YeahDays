@@ -26,15 +26,18 @@ const MAP = [
   ["качок модный.png", "jacked-fashion"],
 ];
 
-// Пиксель считается фоном, если он достаточно светлый (близок к белому).
+const OUT_H = 780; // высота выходного изображения
+
+// Порог «светлый пиксель» для заливки внешнего фона (+ его размытого края)
 const BG_T = 224;
-// Высота выходного изображения (сохраняем пропорции).
-const OUT_H = 780;
+// Порог «почти чисто-белый» — только такие могут быть фоновым карманом
+const POCKET_T = 243;
 
 /**
- * Удаляем фон заливкой от границ: прозрачным становится только белое,
- * СВЯЗАННОЕ с краем кадра. Внутренние светлые детали (носки, кроссовки,
- * светлая ткань) сохраняются, т.к. окружены тёмной обводкой.
+ * Удаляем фон:
+ *  1) заливкой от границ — внешний фон (сохраняя мягкий край);
+ *  2) замкнутые чисто-белые «карманы» (подмышки, просветы) — только КРУПНЫЕ,
+ *     чтобы не задеть мелкие белые детали (носки, бренд, блики).
  */
 async function removeBg(inputPath) {
   const { data, info } = await sharp(inputPath)
@@ -44,20 +47,26 @@ async function removeBg(inputPath) {
 
   const { width, height, channels } = info;
   const px = width * height;
-  const isBg = new Uint8Array(px);
+
+  const minC = new Uint8Array(px);
+  for (let i = 0; i < px; i++) {
+    const o = i * channels;
+    let m = data[o];
+    if (data[o + 1] < m) m = data[o + 1];
+    if (data[o + 2] < m) m = data[o + 2];
+    minC[i] = m;
+  }
+
+  const bg = new Uint8Array(px);
   const stack = [];
 
-  const light = (i) => {
-    const o = i * channels;
-    return Math.min(data[o], data[o + 1], data[o + 2]) >= BG_T;
-  };
+  // 1) внешний фон — заливка от границ
   const seed = (i) => {
-    if (!isBg[i] && light(i)) {
-      isBg[i] = 1;
+    if (!bg[i] && minC[i] >= BG_T) {
+      bg[i] = 1;
       stack.push(i);
     }
   };
-
   for (let x = 0; x < width; x++) {
     seed(x);
     seed((height - 1) * width + x);
@@ -66,7 +75,6 @@ async function removeBg(inputPath) {
     seed(y * width);
     seed(y * width + width - 1);
   }
-
   while (stack.length) {
     const i = stack.pop();
     const x = i % width;
@@ -77,24 +85,61 @@ async function removeBg(inputPath) {
     if (y < height - 1) seed(i + width);
   }
 
-  // фон -> прозрачный; лёгкий feather по краю (полупрозрачность светлых
-  // пикселей, граничащих с фоном) убирает рваную обводку
+  // 2) замкнутые чисто-белые карманы (крупные -> фон)
+  const MIN_POCKET = Math.max(2000, Math.round(px * 0.0018));
+  const visited = new Uint8Array(px);
+  for (let i = 0; i < px; i++) {
+    if (visited[i] || bg[i] || minC[i] < POCKET_T) continue;
+    const comp = [];
+    const st = [i];
+    visited[i] = 1;
+    while (st.length) {
+      const j = st.pop();
+      comp.push(j);
+      const x = j % width;
+      const y = (j - x) / width;
+      const n1 = j - 1,
+        n2 = j + 1,
+        n3 = j - width,
+        n4 = j + width;
+      if (x > 0 && !visited[n1] && !bg[n1] && minC[n1] >= POCKET_T) {
+        visited[n1] = 1;
+        st.push(n1);
+      }
+      if (x < width - 1 && !visited[n2] && !bg[n2] && minC[n2] >= POCKET_T) {
+        visited[n2] = 1;
+        st.push(n2);
+      }
+      if (y > 0 && !visited[n3] && !bg[n3] && minC[n3] >= POCKET_T) {
+        visited[n3] = 1;
+        st.push(n3);
+      }
+      if (y < height - 1 && !visited[n4] && !bg[n4] && minC[n4] >= POCKET_T) {
+        visited[n4] = 1;
+        st.push(n4);
+      }
+    }
+    if (comp.length >= MIN_POCKET) {
+      for (let k = 0; k < comp.length; k++) bg[comp[k]] = 1;
+    }
+  }
+
+  // 3) прозрачность + мягкий край
   for (let i = 0; i < px; i++) {
     const o = i * channels;
-    if (isBg[i]) {
+    if (bg[i]) {
       data[o + 3] = 0;
       continue;
     }
     const x = i % width;
     const y = (i - x) / width;
     const border =
-      (x > 0 && isBg[i - 1]) ||
-      (x < width - 1 && isBg[i + 1]) ||
-      (y > 0 && isBg[i - width]) ||
-      (y < height - 1 && isBg[i + width]);
-    if (border) {
-      const minC = Math.min(data[o], data[o + 1], data[o + 2]);
-      if (minC >= 205) data[o + 3] = Math.round(((255 - minC) / (255 - 205)) * 255);
+      (x > 0 && bg[i - 1]) ||
+      (x < width - 1 && bg[i + 1]) ||
+      (y > 0 && bg[i - width]) ||
+      (y < height - 1 && bg[i + width]);
+    if (border && minC[i] >= 205) {
+      data[o + 3] = Math.round(((255 - minC[i]) / (255 - 205)) * 255);
     }
   }
 
@@ -102,7 +147,6 @@ async function removeBg(inputPath) {
 }
 
 async function main() {
-  const dims = {};
   for (const [srcName, slug] of MAP) {
     const cut = await removeBg(join(srcDir, srcName));
     const outPath = join(outDir, `${slug}.png`);
@@ -112,12 +156,7 @@ async function main() {
       .png({ compressionLevel: 9 })
       .toFile(outPath);
     const meta = await sharp(outPath).metadata();
-    dims[slug] = { w: meta.width, h: meta.height };
     console.log(`${slug}: ${meta.width}x${meta.height}`);
-  }
-  console.log("\nAspect ratios (w/h):");
-  for (const [slug, d] of Object.entries(dims)) {
-    console.log(`  ${slug}: ${(d.w / d.h).toFixed(3)}`);
   }
 }
 

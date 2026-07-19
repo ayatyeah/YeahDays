@@ -9,6 +9,15 @@ import {
   type StatKey,
 } from "@/lib/categories";
 import { levelForXp } from "@/lib/leveling";
+import type { BodyId } from "@/lib/characters";
+
+export type SkinSelection = Record<BodyId, string>;
+
+const DEFAULT_SKINS: SkinSelection = {
+  slim: "base",
+  esthete: "base",
+  jacked: "base",
+};
 
 export interface Task {
   id: string;
@@ -35,9 +44,12 @@ interface UserState {
   tasks: Task[];
   /** последний уровень, для которого пользователю показали трансформацию */
   seenLevel: number;
+  /** выбранный образ (скин) для каждого тела */
+  skins: SkinSelection;
 
   // actions
   setName: (name: string) => void;
+  setSkin: (body: BodyId, skinId: string) => void;
   addTask: (input: {
     title: string;
     category: StatKey;
@@ -62,8 +74,12 @@ export const useUserStore = create<UserState>()(
       createdAt: Date.now(),
       tasks: [],
       seenLevel: 1,
+      skins: { ...DEFAULT_SKINS },
 
       setName: (name) => set({ name: name.trim() || "Странник" }),
+
+      setSkin: (body, skinId) =>
+        set((s) => ({ skins: { ...s.skins, [body]: skinId } })),
 
       addTask: ({ title, category, difficulty, dueDate = null }) =>
         set((s) => ({
@@ -107,16 +123,23 @@ export const useUserStore = create<UserState>()(
           seenLevel: 1,
           name: "Странник",
           createdAt: Date.now(),
+          skins: { ...DEFAULT_SKINS },
         }),
     }),
     {
       name: "yeahdays-store",
-      version: 1,
+      version: 2,
+      migrate: (state) => {
+        const s = state as Partial<UserState> | undefined;
+        if (s && !s.skins) s.skins = { ...DEFAULT_SKINS };
+        return s as UserState;
+      },
       partialize: (s) => ({
         name: s.name,
         createdAt: s.createdAt,
         tasks: s.tasks,
         seenLevel: s.seenLevel,
+        skins: s.skins,
       }),
     },
   ),

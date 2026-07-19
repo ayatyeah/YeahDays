@@ -29,6 +29,7 @@ export default function HomePage() {
   const seenLevel = useUserStore((s) => s.seenLevel);
   const markSeenLevel = useUserStore((s) => s.markSeenLevel);
   const openCreate = useUiStore((s) => s.openCreate);
+  const openWardrobe = useUiStore((s) => s.openWardrobe);
 
   const totalXp = useMemo(() => selectTotalXp(tasks), [tasks]);
   const stats = useMemo(() => selectStats(tasks), [tasks]);
@@ -66,14 +67,22 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Приветствие */}
-      <p className="mb-3 text-sm text-[var(--color-fg-dim)]">
-        Привет,{" "}
-        <span className="font-semibold text-[var(--color-fg)]">
-          {hydrated ? name : "…"}
-        </span>{" "}
-        👋
-      </p>
+      {/* Приветствие + гардероб */}
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-sm text-[var(--color-fg-dim)]">
+          Привет,{" "}
+          <span className="font-semibold text-[var(--color-fg)]">
+            {hydrated ? name : "…"}
+          </span>{" "}
+          👋
+        </p>
+        <button
+          onClick={openWardrobe}
+          className="flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
+        >
+          <span>🧥</span> Гардероб
+        </button>
+      </div>
 
       {/* Статус-бар: уровень + XP */}
       <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 p-3.5">

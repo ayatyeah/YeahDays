@@ -64,10 +64,10 @@ export function tierForLevel(level: number): Tier {
 }
 
 export const TIER_MILESTONES: { tier: Tier; level: number; label: string }[] = [
-  { tier: 1, level: 1, label: "Пробуждение" },
-  { tier: 2, level: 20, label: "Сила" },
-  { tier: 3, level: 50, label: "Форма" },
-  { tier: 4, level: 100, label: "Свет" },
+  { tier: 1, level: 1, label: "Слимбой" },
+  { tier: 2, level: 20, label: "Эстет" },
+  { tier: 3, level: 50, label: "Качок" },
+  { tier: 4, level: 100, label: "Сияние" },
 ];
 
 /** Следующая веха-трансформация после текущего уровня (или null, если максимум). */

@@ -2,15 +2,16 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Ambient from "@/components/Ambient";
+import BottomNav from "@/components/BottomNav";
+import CreateTaskModal from "@/components/CreateTaskModal";
+import WardrobeModal from "@/components/WardrobeModal";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
   variable: "--font-inter",
   display: "swap",
 });
-import BottomNav from "@/components/BottomNav";
-import CreateTaskModal from "@/components/CreateTaskModal";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 export const metadata: Metadata = {
   applicationName: "YeahDays",
@@ -50,6 +51,7 @@ export default function RootLayout({
         </div>
         <BottomNav />
         <CreateTaskModal />
+        <WardrobeModal />
         <ServiceWorkerRegister />
       </body>
     </html>

@@ -1,14 +1,19 @@
 /**
- * Процедурный 3D-персонаж.
+ * Процедурный 3D-персонаж YeahDays.
  *
- * Тело собирается из примитивов, но пропорции — не константы, а функция
- * от статов пользователя. Поэтому персонаж не «переключается» между
- * 3 картинками, а плавно растёт: качаешь Силу — шире плечи и грудь,
- * Интеллект — ярче ядро-сердце, Капитал — золотая отделка,
- * Стабильность — устойчивая платформа под ногами.
+ * Атлетичный мужчина 22–28 лет, полуреалистичная стилизация:
+ * чистая геометрия, матовый графитовый «камень», без мультяшности
+ * и без фотореализма. Анатомия собирается кодом, а не импортируется
+ * из GLB — поэтому пропорции это функция статов, и персонаж растёт
+ * непрерывно, а не переключается между тремя картинками.
  *
- * Всё на MeshStandardMaterial + один HemisphereLight и 3 источника:
- * дёшево для мобильного GPU, но выглядит как премиальный рендер.
+ * Сила        → ширина плеч, объём груди/рук/ног, глубина пресса, осанка
+ * Интеллект   → свечение ядра и визора
+ * Капитал     → золотая отделка, корона
+ * Стабильность→ кольца платформы, разворот стоп, устойчивость стойки
+ *
+ * Бюджет: ~9k треугольников, MeshStandardMaterial, без текстур —
+ * тянет мобильный GPU в PWA.
  */
 
 import * as THREE from "three";
@@ -35,7 +40,10 @@ export interface AvatarShape {
  * заметный визуальный отклик, а рост не упирался в потолок.
  */
 export function normalizeStats(stats: AvatarStats, level: number): AvatarShape {
-  const n = (v: number) => Math.min(1, Math.log10(1 + v / 40) / Math.log10(1 + 60 / 40));
+  // Потолок вынесен на ~1200 XP: первые задачи дают заметный отклик
+  // (log растёт круто в начале), но тело продолжает меняться и на 40+ уровне.
+  const n = (v: number) =>
+    Math.min(1, Math.log10(1 + v / 55) / Math.log10(1 + 1200 / 55));
   return {
     strength: n(stats.strength),
     intelligence: n(stats.intelligence),
@@ -45,10 +53,30 @@ export function normalizeStats(stats: AvatarStats, level: number): AvatarShape {
   };
 }
 
+export const STAT_HEX: Record<StatKey, string> = {
+  strength: "#f97362",
+  intelligence: "#8b7cf6",
+  wealth: "#f0b23f",
+  stability: "#3fbf9a",
+};
+
+export function dominantStat(stats: AvatarStats): StatKey {
+  let best: StatKey = "strength";
+  let max = -1;
+  (Object.keys(stats) as StatKey[]).forEach((k) => {
+    if (stats[k] > max) {
+      max = stats[k];
+      best = k;
+    }
+  });
+  return best;
+}
+
 /* ────────────────────────  Материалы  ──────────────────────── */
 
 interface Materials {
   skin: THREE.MeshStandardMaterial;
+  skinDark: THREE.MeshStandardMaterial;
   accent: THREE.MeshStandardMaterial;
   core: THREE.MeshStandardMaterial;
   gold: THREE.MeshStandardMaterial;
@@ -56,56 +84,63 @@ interface Materials {
 }
 
 function makeMaterials(shape: AvatarShape): Materials {
-  // база тела светлеет и теплеет с ростом уровня
-  const bodyColor = new THREE.Color("#3a3d4a").lerp(
-    new THREE.Color("#8e93a8"),
-    Math.min(1, shape.level / 60),
+  // Матовый графит с лёгким металлическим/каменным откликом.
+  // С ростом уровня камень «оживает»: чуть светлее и теплее.
+  const base = new THREE.Color("#4a4e5c").lerp(
+    new THREE.Color("#79808f"),
+    Math.min(1, shape.level / 45),
   );
 
   const skin = new THREE.MeshStandardMaterial({
-    color: bodyColor,
-    roughness: 0.42,
-    metalness: 0.22,
-    envMapIntensity: 0.9,
+    color: base,
+    roughness: 0.62,
+    metalness: 0.34,
+    flatShading: false,
   });
 
-  // акцент подхватывает доминирующий стат
+  // Затемнённая версия для впадин: разделение пресса, подмышки, шея.
+  const skinDark = new THREE.MeshStandardMaterial({
+    color: base.clone().multiplyScalar(0.72),
+    roughness: 0.72,
+    metalness: 0.28,
+  });
+
   const accent = new THREE.MeshStandardMaterial({
-    color: new THREE.Color("#f97362"),
-    roughness: 0.3,
+    color: new THREE.Color(STAT_HEX.strength),
+    roughness: 0.4,
     metalness: 0.5,
+    emissive: new THREE.Color(STAT_HEX.strength),
+    emissiveIntensity: 0.16 + shape.strength * 0.4,
   });
 
   const core = new THREE.MeshStandardMaterial({
-    color: new THREE.Color("#8b7cf6"),
-    emissive: new THREE.Color("#8b7cf6"),
-    emissiveIntensity: 0.6 + shape.intelligence * 2.2,
-    roughness: 0.15,
+    color: new THREE.Color(STAT_HEX.intelligence),
+    roughness: 0.25,
     metalness: 0.1,
+    emissive: new THREE.Color(STAT_HEX.intelligence),
+    emissiveIntensity: 0.35 + shape.intelligence * 1.7,
   });
 
   const gold = new THREE.MeshStandardMaterial({
-    color: new THREE.Color("#f0b23f"),
-    roughness: 0.18,
-    metalness: 0.95,
-    emissive: new THREE.Color("#f0b23f"),
-    emissiveIntensity: shape.wealth * 0.35,
+    color: new THREE.Color(STAT_HEX.wealth),
+    roughness: 0.22,
+    metalness: 0.92,
+    emissive: new THREE.Color(STAT_HEX.wealth),
+    emissiveIntensity: 0.1 + shape.wealth * 0.34,
   });
 
   const platform = new THREE.MeshStandardMaterial({
-    color: new THREE.Color("#3fbf9a"),
-    roughness: 0.25,
+    color: new THREE.Color(STAT_HEX.stability),
+    roughness: 0.35,
     metalness: 0.6,
+    emissive: new THREE.Color(STAT_HEX.stability),
+    emissiveIntensity: 0.14 + shape.stability * 0.55,
     transparent: true,
-    opacity: 0.25 + shape.stability * 0.45,
-    emissive: new THREE.Color("#3fbf9a"),
-    emissiveIntensity: shape.stability * 0.5,
+    opacity: 0.5 + shape.stability * 0.45,
   });
 
-  return { skin, accent, core, gold, platform };
+  return { skin, skinDark, accent, core, gold, platform };
 }
-
-/* ────────────────────────  Сборка тела  ──────────────────────── */
 
 export interface AvatarRig {
   root: THREE.Group;
@@ -114,6 +149,8 @@ export interface AvatarRig {
   head: THREE.Group;
   armL: THREE.Group;
   armR: THREE.Group;
+  legL: THREE.Group;
+  legR: THREE.Group;
   core: THREE.Mesh;
   platform: THREE.Group;
   aura: THREE.Mesh | null;
@@ -121,234 +158,506 @@ export interface AvatarRig {
   dispose: () => void;
 }
 
-/** Капсула вручную — CapsuleGeometry есть в r185, но так надёжнее и легче. */
-function capsule(r: number, h: number, seg = 16) {
-  return new THREE.CapsuleGeometry(r, h, 4, seg);
+/* ────────────────────────  Хелперы формы  ──────────────────────── */
+
+const geoms: THREE.BufferGeometry[] = [];
+function track<T extends THREE.BufferGeometry>(g: T): T {
+  geoms.push(g);
+  return g;
 }
 
-export function buildAvatar(shape: AvatarShape): AvatarRig {
-  const mats = makeMaterials(shape);
-  const disposables: (THREE.BufferGeometry | THREE.Material)[] = [
-    ...Object.values(mats),
-  ];
-  const track = <T extends THREE.BufferGeometry>(g: T) => {
-    disposables.push(g);
-    return g;
-  };
+/**
+ * Лофт по профилю: строим тело вращения с переменным радиусом
+ * и эллиптическим сечением. Так получается V-образный торс,
+ * который капсулами не собрать.
+ */
+function loft(
+  profile: { y: number; r: number; sx?: number; sz?: number }[],
+  radialSeg = 24,
+): THREE.BufferGeometry {
+  const pts: THREE.Vector2[] = profile.map((p) => new THREE.Vector2(p.r, p.y));
+  const geo = new THREE.LatheGeometry(pts, radialSeg);
 
+  // Эллиптическое сечение: интерполируем sx/sz по высоте.
+  const pos = geo.attributes.position as THREE.BufferAttribute;
+  const yMin = profile[0].y;
+  const yMax = profile[profile.length - 1].y;
+
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    const t = (y - yMin) / (yMax - yMin || 1);
+
+    // найти сегмент профиля
+    let sx = 1;
+    let sz = 1;
+    for (let j = 0; j < profile.length - 1; j++) {
+      const a = profile[j];
+      const b = profile[j + 1];
+      const ta = (a.y - yMin) / (yMax - yMin || 1);
+      const tb = (b.y - yMin) / (yMax - yMin || 1);
+      if (t >= ta && t <= tb) {
+        const k = tb === ta ? 0 : (t - ta) / (tb - ta);
+        sx = THREE.MathUtils.lerp(a.sx ?? 1, b.sx ?? 1, k);
+        sz = THREE.MathUtils.lerp(a.sz ?? 1, b.sz ?? 1, k);
+        break;
+      }
+    }
+    pos.setX(i, pos.getX(i) * sx);
+    pos.setZ(i, pos.getZ(i) * sz);
+  }
+
+  geo.computeVertexNormals();
+  return track(geo);
+}
+
+/** Сплющенная сфера — основа для мышечных объёмов. */
+function blob(r: number, sx: number, sy: number, sz: number, seg = 16) {
+  const g = new THREE.SphereGeometry(r, seg, Math.max(8, seg - 4));
+  g.scale(sx, sy, sz);
+  return track(g);
+}
+
+function capsule(r: number, h: number, seg = 14) {
+  return track(new THREE.CapsuleGeometry(r, h, 4, seg));
+}
+
+/* ────────────────────────  Сборка  ──────────────────────── */
+
+export function buildAvatar(shape: AvatarShape): AvatarRig {
+  geoms.length = 0;
+  const mats = makeMaterials(shape);
   const root = new THREE.Group();
 
-  // ── пропорции как функция статов ──
-  const s = shape.strength;
-  const shoulderW = 0.42 + s * 0.30;   // плечи
-  const chestR = 0.26 + s * 0.13;      // грудь
-  const armR = 0.085 + s * 0.05;       // толщина рук
-  const legR = 0.105 + s * 0.045;
-  const waistR = 0.20 + s * 0.05;
-  const height = 1 + shape.level / 400; // очень мягкий рост
+  const S = shape.strength;          // 0..1 мышечная масса
+  const posture = 0.55 + S * 0.45;   // осанка: новичок чуть сутулится
 
-  /* ── Платформа (Стабильность) ── */
+  /* ─── Пропорции. Модель ~3.4 юнита ростом ─── */
+  const shoulderW = 0.62 + S * 0.30; // ширина плеч
+  const chestD = 0.30 + S * 0.13;    // глубина грудной клетки
+  const waistW = 0.335 - S * 0.085;  // талия реально сужается — иначе V схлопывается
+  const hipW = 0.40 + S * 0.05;
+  const limbR = 0.088 + S * 0.052;   // толщина конечностей
+
+  /* ══════════ ПЛАТФОРМА ══════════ */
   const platform = new THREE.Group();
-  const discG = track(new THREE.CylinderGeometry(0.62, 0.68, 0.045, 48));
-  const disc = new THREE.Mesh(discG, mats.platform);
-  disc.position.y = 0.022;
-  disc.receiveShadow = true;
-  platform.add(disc);
-
-  // кольца устойчивости — их количество растёт со стабильностью
-  const ringCount = 1 + Math.round(shape.stability * 2);
+  const ringCount = 1 + Math.round(shape.stability * 3);
   for (let i = 0; i < ringCount; i++) {
-    const rg = track(
-      new THREE.TorusGeometry(0.72 + i * 0.13, 0.006, 8, 64),
+    const rr = 0.66 + i * 0.19;
+    const ring = new THREE.Mesh(
+      track(new THREE.TorusGeometry(rr, 0.016 + i * 0.004, 8, 56)),
+      mats.platform,
     );
-    const ring = new THREE.Mesh(rg, mats.platform);
     ring.rotation.x = Math.PI / 2;
-    ring.position.y = 0.01 + i * 0.004;
+    ring.position.y = 0.012 + i * 0.014;
     platform.add(ring);
   }
+  const disc = new THREE.Mesh(
+    track(new THREE.CylinderGeometry(0.6, 0.66, 0.035, 40)),
+    mats.platform,
+  );
+  disc.position.y = -0.012;
+  platform.add(disc);
   root.add(platform);
 
-  /* ── Ноги ── */
-  const legs = new THREE.Group();
-  const legG = track(capsule(legR, 0.44));
-  for (const dir of [-1, 1]) {
-    const leg = new THREE.Mesh(legG, mats.skin);
-    leg.position.set(dir * 0.13, 0.34, 0);
-    leg.castShadow = true;
-    legs.add(leg);
+  /* ══════════ НОГИ ══════════ */
+  function buildLeg(side: number) {
+    const leg = new THREE.Group();
+    const hipX = hipW * 0.46 * side;
 
-    const footG = track(new THREE.BoxGeometry(0.16, 0.06, 0.24));
-    const foot = new THREE.Mesh(footG, mats.skin);
-    foot.position.set(dir * 0.13, 0.06, 0.03);
+    // Бедро: квадрицепс — объёмный сверху, сужается к колену
+    const thigh = new THREE.Mesh(
+      loft([
+        { y: 0.0, r: limbR * 0.86, sx: 1.0, sz: 0.94 },
+        { y: 0.18, r: limbR * 1.34, sx: 1.06, sz: 0.9 },
+        { y: 0.42, r: limbR * 1.26, sx: 1.04, sz: 0.88 },
+        { y: 0.72, r: limbR * 0.95, sx: 1.0, sz: 0.92 },
+        { y: 0.86, r: limbR * 0.8, sx: 1.0, sz: 1.0 },
+      ], 18),
+      mats.skin,
+    );
+    thigh.position.set(hipX, 0.62, 0);
+    thigh.castShadow = true;
+    leg.add(thigh);
+
+    // Колено
+    const knee = new THREE.Mesh(blob(limbR * 0.8, 1, 0.8, 1, 12), mats.skinDark);
+    knee.position.set(hipX, 0.6, 0.012);
+    leg.add(knee);
+
+    // Голень + икра: объём смещён назад и вверх
+    const shin = new THREE.Mesh(
+      loft([
+        { y: 0.0, r: limbR * 0.62, sx: 1.0, sz: 1.0 },
+        { y: 0.1, r: limbR * 0.72, sx: 1.0, sz: 1.0 },
+        { y: 0.26, r: limbR * 0.95, sx: 0.96, sz: 1.14 },
+        { y: 0.46, r: limbR * 0.78, sx: 0.94, sz: 1.0 },
+        { y: 0.62, r: limbR * 0.56, sx: 0.92, sz: 0.9 },
+      ], 16),
+      mats.skin,
+    );
+    shin.position.set(hipX, -0.02, 0);
+    shin.castShadow = true;
+    leg.add(shin);
+
+    // Стопа — с ростом Стабильности разворачивается наружу (устойчивее)
+    const foot = new THREE.Mesh(
+      track(new THREE.BoxGeometry(limbR * 1.7, 0.075, 0.31)),
+      mats.skinDark,
+    );
+    foot.position.set(hipX, 0.038, 0.055);
+    foot.rotation.y = side * (0.08 + shape.stability * 0.16);
     foot.castShadow = true;
-    legs.add(foot);
-  }
-  root.add(legs);
+    leg.add(foot);
 
-  /* ── Торс ── */
+    return leg;
+  }
+
+  const legL = buildLeg(1);
+  const legR = buildLeg(-1);
+  root.add(legL, legR);
+
+  /* ══════════ ТОРС ══════════ */
   const torso = new THREE.Group();
-  torso.position.y = 0.62;
+  torso.position.y = 1.42;
 
-  const chestG = track(capsule(chestR, 0.30));
-  const chest = new THREE.Mesh(chestG, mats.skin);
-  chest.position.y = 0.20;
-  chest.scale.set(1, 1, 0.72);
-  chest.castShadow = true;
-  torso.add(chest);
+  // Главный лофт: таз → талия → грудь → плечи. Здесь и живёт V-образность.
+  const trunk = new THREE.Mesh(
+    loft([
+      { y: -0.30, r: hipW * 0.86, sx: 1.0, sz: 0.74 },
+      { y: -0.16, r: waistW * 1.02, sx: 1.0, sz: 0.70 },
+      { y: 0.0, r: waistW, sx: 1.0, sz: 0.68 },       // талия — самое узкое
+      { y: 0.16, r: waistW * 1.30, sx: 1.0, sz: 0.76 },
+      { y: 0.34, r: shoulderW * 0.74, sx: 1.0, sz: chestD / 0.34 },
+      { y: 0.50, r: shoulderW * 0.97, sx: 1.0, sz: chestD / 0.36 },
+      { y: 0.60, r: shoulderW * 0.78, sx: 1.0, sz: 0.80 },
+    ], 28),
+    mats.skin,
+  );
+  trunk.castShadow = true;
+  trunk.receiveShadow = true;
+  torso.add(trunk);
 
-  const waistG = track(capsule(waistR, 0.14));
-  const waist = new THREE.Mesh(waistG, mats.skin);
-  waist.position.y = -0.03;
-  waist.scale.set(1, 1, 0.7);
-  waist.castShadow = true;
-  torso.add(waist);
+  // Грудные мышцы: две плиты, форма естественная, не «сценический» бодибилдинг
+  for (const side of [-1, 1]) {
+    const pec = new THREE.Mesh(
+      blob(0.155 + S * 0.055, 1.28, 0.86, 0.62, 16),
+      mats.skin,
+    );
+    pec.position.set(side * (0.135 + S * 0.05), 0.44, chestD * 0.80);
+    pec.rotation.z = side * -0.16;
+    pec.castShadow = true;
+    torso.add(pec);
+  }
+  // Разделение грудных
+  const sternum = new THREE.Mesh(
+    track(new THREE.BoxGeometry(0.018, 0.2, 0.05)),
+    mats.skinDark,
+  );
+  sternum.position.set(0, 0.44, chestD * 0.86);
+  torso.add(sternum);
 
-  // Плечевые «наплечники» — главный визуальный маркер Силы
-  const deltG = track(new THREE.SphereGeometry(0.11 + s * 0.07, 20, 16));
-  for (const dir of [-1, 1]) {
-    const delt = new THREE.Mesh(deltG, s > 0.35 ? mats.accent : mats.skin);
-    delt.position.set(dir * shoulderW * 0.5, 0.32, 0);
-    delt.scale.set(1, 0.85, 0.9);
-    delt.castShadow = true;
-    torso.add(delt);
+  /* ─── ПРЕСС: 6 кубиков + косые ─── */
+  const absDepth = 0.18 + S * 0.55; // видимость растёт с Силой
+  const absGroup = new THREE.Group();
+  for (let row = 0; row < 3; row++) {
+    for (const side of [-1, 1]) {
+      const w = 0.088 - row * 0.006;
+      const h = 0.062 - row * 0.004;
+      const ab = new THREE.Mesh(
+        blob(1, w, h, 0.055 + S * 0.02, 10),
+        mats.skin,
+      );
+      ab.position.set(
+        side * 0.058,
+        0.22 - row * 0.115,
+        waistW * 0.74 + 0.014,
+      );
+      ab.scale.setScalar(0.85 + absDepth * 0.35);
+      absGroup.add(ab);
+    }
+  }
+  // вертикальная белая линия (linea alba)
+  const alba = new THREE.Mesh(
+    track(new THREE.BoxGeometry(0.012, 0.36, 0.04)),
+    mats.skinDark,
+  );
+  alba.position.set(0, 0.11, waistW * 0.78);
+  absGroup.add(alba);
+
+  // косые мышцы
+  for (const side of [-1, 1]) {
+    const obl = new THREE.Mesh(blob(0.06, 0.7, 1.5, 0.6, 10), mats.skinDark);
+    obl.position.set(side * (waistW * 0.80), 0.06, waistW * 0.34);
+    obl.rotation.z = side * 0.42;
+    absGroup.add(obl);
+  }
+  absGroup.visible = S > 0.12; // пресс проявляется по мере прокачки
+  torso.add(absGroup);
+
+  // Широчайшие: расширяют спину, усиливают V-силуэт
+  for (const side of [-1, 1]) {
+    const lat = new THREE.Mesh(
+      blob(0.125 + S * 0.07, 0.62, 1.35, 0.66, 14),
+      mats.skin,
+    );
+    // под подмышкой, не на талии: широчайшие расширяют ВЕРХ спины
+    lat.position.set(side * (shoulderW * 0.46), 0.42, -chestD * 0.26);
+    lat.rotation.z = side * 0.52;
+    lat.castShadow = true;
+    torso.add(lat);
   }
 
-  // Ядро-сердце (Интеллект) — светится изнутри груди
-  const coreG = track(new THREE.IcosahedronGeometry(0.075 + shape.intelligence * 0.05, 1));
-  const core = new THREE.Mesh(coreG, mats.core);
-  core.position.set(0, 0.24, chestR * 0.62);
+  // Трапеции — переход шея/плечи
+  const trap = new THREE.Mesh(blob(0.14 + S * 0.05, 1.5, 0.62, 0.8, 14), mats.skin);
+  trap.position.set(0, 0.60, -0.05);
+  torso.add(trap);
+
+  // Ядро (Интеллект) — светящийся кристалл в груди
+  const core = new THREE.Mesh(
+    track(new THREE.IcosahedronGeometry(0.072, 1)),
+    mats.core,
+  );
+  core.position.set(0, 0.40, chestD * 0.92);
   torso.add(core);
 
-  // Золотые полосы (Капитал) — появляются по мере роста
-  if (shape.wealth > 0.12) {
-    const stripes = 1 + Math.round(shape.wealth * 3);
-    for (let i = 0; i < stripes; i++) {
-      const sg = track(new THREE.TorusGeometry(chestR * 0.98, 0.012, 8, 40, Math.PI * 1.2));
-      const stripe = new THREE.Mesh(sg, mats.gold);
-      stripe.position.y = 0.10 + i * 0.075;
-      stripe.rotation.x = Math.PI / 2;
-      stripe.rotation.z = -Math.PI * 0.6;
-      stripe.scale.z = 0.72;
-      torso.add(stripe);
+  // Золотая отделка (Капитал)
+  if (shape.wealth > 0.06) {
+    const belt = new THREE.Mesh(
+      track(new THREE.TorusGeometry(waistW * 1.06, 0.019, 8, 40)),
+      mats.gold,
+    );
+    belt.rotation.x = Math.PI / 2;
+    belt.position.y = -0.24;
+    belt.scale.z = 0.72;
+    torso.add(belt);
+
+    if (shape.wealth > 0.3) {
+      for (const side of [-1, 1]) {
+        const stripe = new THREE.Mesh(
+          track(new THREE.BoxGeometry(0.016, 0.30, 0.02)),
+          mats.gold,
+        );
+        stripe.position.set(side * 0.23, 0.42, chestD * 0.78);
+        stripe.rotation.z = side * 0.2;
+        torso.add(stripe);
+      }
     }
   }
   root.add(torso);
 
-  /* ── Руки ── */
-  const upperG = track(capsule(armR, 0.22));
-  const foreG = track(capsule(armR * 0.86, 0.20));
-  const handG = track(new THREE.SphereGeometry(armR * 1.15, 14, 12));
-
-  function makeArm(dir: number) {
+  /* ══════════ РУКИ ══════════ */
+  function buildArm(side: number) {
     const arm = new THREE.Group();
-    arm.position.set(dir * shoulderW * 0.52, 0.94, 0);
+    // Точка подвеса — плечевой сустав
+    arm.position.set(side * shoulderW * 0.5, 1.94, 0);
 
-    const upper = new THREE.Mesh(upperG, mats.skin);
-    upper.position.y = -0.15;
+    // Дельта — круглая шапка плеча
+    const delt = new THREE.Mesh(
+      blob(0.105 + S * 0.058, 1.05, 0.95, 1.0, 16),
+      mats.skin,
+    );
+    delt.castShadow = true;
+    arm.add(delt);
+
+    // Акцентная полоса на дельте — цвет Силы
+    const band = new THREE.Mesh(
+      track(new THREE.TorusGeometry(0.098 + S * 0.05, 0.011, 8, 28)),
+      mats.accent,
+    );
+    band.rotation.y = Math.PI / 2;
+    band.rotation.x = 0.3;
+    arm.add(band);
+
+    // Плечо: бицепс спереди, трицепс сзади
+    const upper = new THREE.Mesh(
+      loft([
+        { y: -0.44, r: limbR * 0.72, sx: 1.0, sz: 1.0 },
+        { y: -0.30, r: limbR * 0.92, sx: 1.0, sz: 1.06 },
+        { y: -0.16, r: limbR * 1.12, sx: 1.0, sz: 1.12 },
+        { y: -0.04, r: limbR * 1.0, sx: 1.0, sz: 1.0 },
+        { y: 0.02, r: limbR * 0.86, sx: 1.0, sz: 1.0 },
+      ], 14),
+      mats.skin,
+    );
     upper.castShadow = true;
     arm.add(upper);
 
-    const fore = new THREE.Mesh(foreG, mats.skin);
-    fore.position.y = -0.40;
+    // Локоть
+    const elbow = new THREE.Mesh(blob(limbR * 0.68, 1, 0.85, 1, 10), mats.skinDark);
+    elbow.position.y = -0.47;
+    arm.add(elbow);
+
+    // Предплечье: широкое у локтя, сухое к запястью
+    const fore = new THREE.Mesh(
+      loft([
+        { y: -0.42, r: limbR * 0.5, sx: 1.0, sz: 1.0 },
+        { y: -0.28, r: limbR * 0.62, sx: 1.0, sz: 1.0 },
+        { y: -0.1, r: limbR * 0.84, sx: 1.04, sz: 1.0 },
+        { y: 0.0, r: limbR * 0.76, sx: 1.0, sz: 1.0 },
+      ], 12),
+      mats.skin,
+    );
+    fore.position.y = -0.5;
     fore.castShadow = true;
     arm.add(fore);
 
-    const hand = new THREE.Mesh(handG, mats.skin);
-    hand.position.y = -0.55;
+    // Кисть
+    const hand = new THREE.Mesh(
+      blob(limbR * 0.62, 0.82, 1.25, 0.55, 10),
+      mats.skinDark,
+    );
+    hand.position.y = -0.99;
     arm.add(hand);
 
+    // Расслабленная стойка: руки немного отведены от корпуса.
+    // Чем больше масса — тем сильнее разведены (широчайшие мешают).
+    arm.rotation.z = side * (0.13 + S * 0.16);
     return arm;
   }
-  const armL = makeArm(-1);
-  const armR2 = makeArm(1);
-  root.add(armL, armR2);
 
-  /* ── Голова ── */
+  const armL = buildArm(1);
+  const armR = buildArm(-1);
+  root.add(armL, armR);
+
+  /* ══════════ ГОЛОВА ══════════ */
   const head = new THREE.Group();
-  head.position.y = 1.06;
+  head.position.y = 2.16;
 
-  const headG = track(new THREE.SphereGeometry(0.155, 28, 24));
-  const headMesh = new THREE.Mesh(headG, mats.skin);
-  headMesh.scale.set(1, 1.12, 0.94);
-  headMesh.castShadow = true;
-  head.add(headMesh);
-
-  const neckG = track(capsule(0.055, 0.06));
-  const neck = new THREE.Mesh(neckG, mats.skin);
-  neck.position.y = -0.15;
+  // Шея — толстеет с Силой
+  const neck = new THREE.Mesh(
+    capsule(0.072 + S * 0.03, 0.1, 12),
+    mats.skinDark,
+  );
+  neck.position.y = -0.1;
   head.add(neck);
 
-  // визор — «лицо» без лица: премиально и не мультяшно
-  const visorG = track(new THREE.SphereGeometry(0.158, 28, 24, Math.PI * 0.15, Math.PI * 0.7, Math.PI * 0.34, Math.PI * 0.3));
-  const visorMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color("#0d0d12"),
-    roughness: 0.08,
-    metalness: 0.9,
-    emissive: new THREE.Color("#8b7cf6"),
-    emissiveIntensity: 0.15 + shape.intelligence * 0.6,
-  });
-  disposables.push(visorMat);
-  const visor = new THREE.Mesh(visorG, visorMat);
-  visor.scale.set(1, 1.12, 0.94);
-  visor.rotation.y = -Math.PI / 2;
-  head.add(visor);
+  // Череп: слегка вытянут, скулы шире челюсти сверху
+  const skull = new THREE.Mesh(
+    loft([
+      { y: -0.20, r: 0.088, sx: 1.0, sz: 1.06 },  // подбородок
+      { y: -0.13, r: 0.115, sx: 1.0, sz: 1.05 },  // челюсть
+      { y: -0.04, r: 0.136, sx: 1.0, sz: 1.02 },  // скулы
+      { y: 0.06, r: 0.142, sx: 1.0, sz: 1.0 },
+      { y: 0.15, r: 0.128, sx: 1.0, sz: 1.0 },
+      { y: 0.21, r: 0.075, sx: 1.0, sz: 1.0 },    // темя
+    ], 22),
+    mats.skin,
+  );
+  skull.castShadow = true;
+  head.add(skull);
 
-  // корона (Капитал на высоком уровне)
+  // Надбровные дуги — дают спокойный сосредоточенный взгляд
+  const brow = new THREE.Mesh(
+    blob(0.1, 1.02, 0.2, 0.72, 14),
+    mats.skinDark,
+  );
+  brow.position.set(0, 0.028, 0.084);
+  head.add(brow);
+
+  // Глаза — минималистичные тёмные впадины, взгляд прямо
+  for (const side of [-1, 1]) {
+    const eye = new THREE.Mesh(blob(0.03, 1.25, 0.62, 0.5, 10), mats.core);
+    eye.position.set(side * 0.056, -0.005, 0.108);
+    head.add(eye);
+  }
+
+  // Нос — одна плоскость, без лишней детализации
+  const nose = new THREE.Mesh(blob(0.024, 0.7, 1.5, 1.1, 8), mats.skin);
+  nose.position.set(0, -0.045, 0.125);
+  head.add(nose);
+
+  // Челюсть: очерченная, но без агрессии
+  const jaw = new THREE.Mesh(blob(0.1, 1.0, 0.52, 0.9, 14), mats.skin);
+  jaw.position.set(0, -0.132, 0.022);
+  head.add(jaw);
+
+  // Лёгкая щетина — проявляется с уровнем
+  if (shape.level >= 5) {
+    const stubble = new THREE.Mesh(blob(0.101, 1.0, 0.44, 0.88, 14), mats.skinDark);
+    stubble.position.set(0, -0.15, 0.03);
+    stubble.scale.setScalar(1.005);
+    head.add(stubble);
+  }
+
+  // Волосы — короткая аккуратная форма
+  const hair = new THREE.Mesh(blob(0.145, 1.0, 0.72, 1.0, 18), mats.skinDark);
+  hair.position.set(0, 0.085, -0.012);
+  hair.scale.setScalar(1.02);
+  head.add(hair);
+
+  // Визор (Интеллект) — тонкая светящаяся полоса
+  if (shape.intelligence > 0.22) {
+    const visor = new THREE.Mesh(
+      track(new THREE.TorusGeometry(0.13, 0.008, 8, 24, Math.PI * 0.7)),
+      mats.core,
+    );
+    visor.rotation.set(0, 0, Math.PI * 0.86);
+    visor.position.set(0, 0.012, 0.03);
+    head.add(visor);
+  }
+
+  // Корона (Капитал)
   if (shape.wealth > 0.55) {
-    const crownG = track(new THREE.TorusGeometry(0.115, 0.014, 8, 32));
-    const crown = new THREE.Mesh(crownG, mats.gold);
-    crown.position.y = 0.15;
+    const crown = new THREE.Mesh(
+      track(new THREE.TorusGeometry(0.108, 0.013, 8, 28)),
+      mats.gold,
+    );
     crown.rotation.x = Math.PI / 2;
+    crown.position.y = 0.176;
     head.add(crown);
   }
   root.add(head);
 
-  /* ── Аура (общий уровень) ── */
+  /* ══════════ АУРА ══════════ */
   let aura: THREE.Mesh | null = null;
-  const auraStrength = Math.min(1, shape.level / 50);
-  if (auraStrength > 0.05) {
-    const auraG = track(new THREE.SphereGeometry(1.05, 32, 24));
-    const auraMat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color("#8fb8ff"),
-      transparent: true,
-      opacity: 0.05 * auraStrength,
-      side: THREE.BackSide,
-      depthWrite: false,
-    });
-    disposables.push(auraMat);
-    aura = new THREE.Mesh(auraG, auraMat);
-    aura.position.y = 0.75;
+  const auraPower = (shape.strength + shape.intelligence + shape.wealth + shape.stability) / 4;
+  if (auraPower > 0.35) {
+    aura = new THREE.Mesh(
+      track(new THREE.SphereGeometry(1.5, 24, 16)),
+      new THREE.MeshBasicMaterial({
+        color: new THREE.Color(STAT_HEX[dominantStat({
+          strength: shape.strength,
+          intelligence: shape.intelligence,
+          wealth: shape.wealth,
+          stability: shape.stability,
+        })]),
+        transparent: true,
+        opacity: 0.05 + auraPower * 0.05,
+        side: THREE.BackSide,
+        depthWrite: false,
+      }),
+    );
+    aura.position.y = 1.4;
+    aura.renderOrder = -1;
+    aura.matrixAutoUpdate = false;
+    aura.updateMatrix();
     root.add(aura);
   }
 
-  // общий рост
-  root.scale.setScalar(height);
+  /* ─── Осанка: новичок сутулится, прокачанный стоит прямо ─── */
+  torso.rotation.x = (1 - posture) * 0.1;
+  head.position.z = (1 - posture) * 0.07;
+  head.rotation.x = (1 - posture) * 0.11;
+
+  const owned = geoms.slice();
+  const dispose = () => {
+    owned.forEach((g) => g.dispose());
+    Object.values(mats).forEach((m) => m.dispose());
+    if (aura) (aura.material as THREE.Material).dispose();
+  };
 
   return {
     root,
     torso,
     head,
     armL,
-    armR: armR2,
+    armR,
+    legL,
+    legR,
     core,
     platform,
     aura,
     materials: mats,
-    dispose: () => {
-      for (const d of disposables) d.dispose();
-    },
+    dispose,
   };
 }
-
-/** Доминирующий стат — используется для подсветки сцены. */
-export function dominantStat(stats: AvatarStats): StatKey {
-  const entries = Object.entries(stats) as [StatKey, number][];
-  return entries.sort((a, b) => b[1] - a[1])[0][0];
-}
-
-export const STAT_HEX: Record<StatKey, string> = {
-  strength: "#f97362",
-  intelligence: "#8b7cf6",
-  wealth: "#f0b23f",
-  stability: "#3fbf9a",
-};

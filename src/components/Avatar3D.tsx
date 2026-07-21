@@ -184,8 +184,18 @@ export default function Avatar3D({
         // руки: расслабленные маятники
         rig.armL.rotation.x = Math.sin(t * 1.05) * 0.07 * idle;
         rig.armR.rotation.x = Math.sin(t * 1.05 + Math.PI) * 0.07 * idle;
-        rig.armL.rotation.z = 0.13 + Math.sin(t * 0.8) * 0.02 * idle;
-        rig.armR.rotation.z = -0.13 - Math.sin(t * 0.8) * 0.02 * idle;
+        // базовый развод рук задаётся телосложением в buildAvatar —
+        // здесь только дышим вокруг него, иначе накачанный персонаж
+        // прижимал бы руки к корпусу
+        rig.armL.rotation.z = restZ.current + Math.sin(t * 0.8) * 0.02 * idle;
+        rig.armR.rotation.z = -restZ.current - Math.sin(t * 0.8) * 0.02 * idle;
+
+        // перенос веса с ноги на ногу — стойка не выглядит окаменевшей
+        const shift = Math.sin(t * 0.52) * 0.014 * idle;
+        rig.legL.position.y = shift;
+        rig.legR.position.y = -shift;
+        rig.legL.rotation.z = shift * 0.5;
+        rig.legR.rotation.z = shift * 0.5;
 
         // ядро-сердце: вращение + пульс
         rig.core.rotation.y = t * 0.7;
@@ -249,6 +259,8 @@ export default function Avatar3D({
 
   // держим нормализованный intelligence, чтобы вернуть свечение после вспышки
   const rigShapeRef = useRef<number>(0);
+  /** базовый развод рук — зависит от мышечной массы */
+  const restZ = useRef<number>(0.13);
 
   /* ── Пересборка тела при изменении статов ── */
   useEffect(() => {
@@ -257,6 +269,7 @@ export default function Avatar3D({
 
     const shape = normalizeStats(stats, level);
     rigShapeRef.current = shape.intelligence;
+    restZ.current = 0.13 + shape.strength * 0.16;
 
     // снимаем старый риг
     if (rigRef.current) {

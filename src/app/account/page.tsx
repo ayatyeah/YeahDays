@@ -184,6 +184,34 @@ export default function AccountPage() {
         </p>
       </section>
 
+      {/* Атрибуция модели — требование лицензии CC BY 4.0 */}
+      <section className="mt-3 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <h2 className="text-[13px] font-semibold">Модель персонажа</h2>
+        <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
+          «Rigged Man» — автор Mr.Toadstool (Sketchfab), лицензия CC BY 4.0.
+          Модель изменена: скелет перенастроен под систему статов,
+          добавлены материалы и анимация.
+        </p>
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+          <a
+            href="https://sketchfab.com/3d-models/rigged-man-aa1e5bc1dc1c457a96c16d25ba595a1e"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11.5px] font-medium text-[var(--color-intelligence)] underline underline-offset-2"
+          >
+            Источник модели
+          </a>
+          <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[11.5px] font-medium text-[var(--color-intelligence)] underline underline-offset-2"
+          >
+            Лицензия CC BY 4.0
+          </a>
+        </div>
+      </section>
+
       <div className="mt-6">
         <Button
           variant="danger"

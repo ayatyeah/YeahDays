@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import Avatar3D from "@/components/Avatar3D";
+import Avatar3D from "@/components/AvatarLazy";
 import PlanItem from "@/components/PlanItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
 import {
@@ -75,7 +75,7 @@ export default function TodayPage() {
       </header>
 
       {/* Персонаж реагирует на выполнение */}
-      <div className="relative -mt-2 h-[240px]">
+      <div className="canvas-slot relative -mt-2 h-[240px]">
         <Avatar3D
           stats={stats}
           level={progress.level}

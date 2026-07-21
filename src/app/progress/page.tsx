@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import Avatar3D from "@/components/Avatar3D";
+import Avatar3D from "@/components/AvatarLazy";
 import {
   useUserStore,
   useHydrated,
@@ -53,7 +53,7 @@ export default function ProgressPage() {
       <h1 className="text-[26px] font-bold tracking-tight">Прогресс</h1>
 
       {/* Персонаж крупно */}
-      <div className="mt-1 h-[320px]">
+      <div className="canvas-slot mt-1 h-[320px]">
         <Avatar3D stats={stats} level={level} className="h-full w-full" scale={1.1} />
       </div>
       <p className="mb-4 mt-1 text-center text-[11px] text-[var(--color-muted)]">

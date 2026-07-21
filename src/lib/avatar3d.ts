@@ -17,60 +17,16 @@
  */
 
 import * as THREE from "three";
-import type { StatKey } from "./domain";
+import {
+  STAT_HEX,
+  dominantStat,
+  normalizeStats,
+  type AvatarStats,
+  type AvatarShape,
+} from "./statVisuals";
 
-export interface AvatarStats {
-  strength: number;
-  intelligence: number;
-  wealth: number;
-  stability: number;
-}
-
-/** Нормализованные 0..1 значения — насколько прокачан каждый стат. */
-export interface AvatarShape {
-  strength: number;
-  intelligence: number;
-  wealth: number;
-  stability: number;
-  level: number;
-}
-
-/**
- * Нормализация: логарифмическая, чтобы первые задачи давали
- * заметный визуальный отклик, а рост не упирался в потолок.
- */
-export function normalizeStats(stats: AvatarStats, level: number): AvatarShape {
-  // Потолок вынесен на ~1200 XP: первые задачи дают заметный отклик
-  // (log растёт круто в начале), но тело продолжает меняться и на 40+ уровне.
-  const n = (v: number) =>
-    Math.min(1, Math.log10(1 + v / 55) / Math.log10(1 + 1200 / 55));
-  return {
-    strength: n(stats.strength),
-    intelligence: n(stats.intelligence),
-    wealth: n(stats.wealth),
-    stability: n(stats.stability),
-    level,
-  };
-}
-
-export const STAT_HEX: Record<StatKey, string> = {
-  strength: "#f97362",
-  intelligence: "#8b7cf6",
-  wealth: "#f0b23f",
-  stability: "#3fbf9a",
-};
-
-export function dominantStat(stats: AvatarStats): StatKey {
-  let best: StatKey = "strength";
-  let max = -1;
-  (Object.keys(stats) as StatKey[]).forEach((k) => {
-    if (stats[k] > max) {
-      max = stats[k];
-      best = k;
-    }
-  });
-  return best;
-}
+export { STAT_HEX, dominantStat, normalizeStats };
+export type { AvatarStats, AvatarShape };
 
 /* ────────────────────────  Материалы  ──────────────────────── */
 

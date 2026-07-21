@@ -9,7 +9,7 @@ import {
   selectStats,
 } from "@/store/useUserStore";
 import { getLevelProgress, tierForLevel, TIER_MILESTONES } from "@/lib/leveling";
-import Avatar3D from "./Avatar3D";
+import Avatar3D from "./AvatarLazy";
 
 /**
  * Оверлей повышения уровня.
@@ -51,7 +51,7 @@ export default function LevelUpOverlay() {
     <AnimatePresence>
       {state.open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[var(--color-bg)]/92 backdrop-blur-xl"
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[var(--color-bg)]/96"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

@@ -33,6 +33,8 @@ body {
 
 body {
   background-color: var(--color-bg);
+  /* Инерционный скролл на iOS + отдельный слой композитинга */
+  -webkit-overflow-scrolling: touch;
   color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -105,4 +107,27 @@ input[type="range"]::-moz-range-thumb {
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
   }
+}
+
+/* ────────────────────────────────────────────────
+   Производительность скролла
+   ──────────────────────────────────────────────── */
+
+/* Карточки списка не пересчитывают лэйаут соседей при перерисовке. */
+.card-contain {
+  contain: layout paint style;
+}
+
+/* Свайп-карточка живёт в своём слое: transform/opacity идут на GPU
+   и не вызывают перерисовку страницы под ней. */
+.gpu-layer {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Контейнер 3D-аватара изолирован от лэйаута страницы. */
+.canvas-slot {
+  contain: strict;
+  content-visibility: auto;
 }

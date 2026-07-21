@@ -38,7 +38,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, x: -24, scale: 0.96 }}
       transition={{ type: "spring", stiffness: 320, damping: 30 }}
-      className="relative overflow-hidden rounded-3xl"
+      className="card-contain relative overflow-hidden rounded-3xl"
     >
       {/* фон-подсказка при свайпе */}
       <motion.div

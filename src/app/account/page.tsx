@@ -1,153 +1,237 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Buddy from "@/components/Buddy";
-import PageHeader from "@/components/PageHeader";
-import Button from "@/components/ui/Button";
+import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import Avatar3D from "@/components/Avatar3D";
 import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
 import {
   useUserStore,
   useHydrated,
+  selectStats,
   selectTotalXp,
+  selectCompleted,
+  selectStreak,
 } from "@/store/useUserStore";
-import { levelForXp } from "@/lib/leveling";
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-}
+import { STAT_LIST, ENERGY_LABEL, type EnergyLevel } from "@/lib/domain";
+import { getLevelProgress } from "@/lib/leveling";
+import { ENGINE_MODE } from "@/lib/api";
+import { cn } from "@/lib/cn";
 
 export default function AccountPage() {
-  const name = useUserStore((s) => s.name);
-  const createdAt = useUserStore((s) => s.createdAt);
-  const tasks = useUserStore((s) => s.tasks);
   const hydrated = useHydrated();
+  const name = useUserStore((s) => s.name);
   const setName = useUserStore((s) => s.setName);
+  const plan = useUserStore((s) => s.plan);
+  const goals = useUserStore((s) => s.goals);
+  const setGoal = useUserStore((s) => s.setGoal);
+  const moods = useUserStore((s) => s.moods);
+  const setMood = useUserStore((s) => s.setMood);
   const resetAll = useUserStore((s) => s.resetAll);
+  const createdAt = useUserStore((s) => s.createdAt);
 
-  const level = useMemo(() => levelForXp(selectTotalXp(tasks)), [tasks]);
+  const stats = useMemo(() => selectStats(plan), [plan]);
+  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
+  const completed = useMemo(() => selectCompleted(plan), [plan]);
+  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const level = getLevelProgress(totalXp).level;
 
+  const todayMood = moods[Object.keys(moods).slice(-1)[0] ?? ""] ?? {
+    energy: "medium" as EnergyLevel,
+    minutes: 30,
+  };
+
+  const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
   const [confirmReset, setConfirmReset] = useState(false);
-  const [installEvt, setInstallEvt] =
-    useState<BeforeInstallPromptEvent | null>(null);
 
-  useEffect(() => setDraft(name), [name]);
+  const days = Math.max(
+    1,
+    Math.ceil((Date.now() - createdAt) / 864e5),
+  );
 
-  useEffect(() => {
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setInstallEvt(e as BeforeInstallPromptEvent);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
-
-  const memberSince = useMemo(() => {
-    if (!hydrated) return "";
-    try {
-      return new Date(createdAt).toLocaleDateString("ru-RU", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    } catch {
-      return "";
-    }
-  }, [createdAt, hydrated]);
-
-  const dirty = draft.trim() !== name && draft.trim().length > 0;
-
-  async function install() {
-    if (!installEvt) return;
-    await installEvt.prompt();
-    await installEvt.userChoice;
-    setInstallEvt(null);
+  if (!hydrated) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHeader title="Аккаунт" />
+      <h1 className="text-[26px] font-bold tracking-tight">Профиль</h1>
 
-      {/* профиль */}
-      <div className="mb-6 flex flex-col items-center rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6">
-        <Buddy level={level} size={130} />
-        <p className="mt-3 text-lg font-semibold">{name}</p>
-        {memberSince && (
-          <p className="text-xs text-[var(--color-muted)]">
-            с нами с {memberSince}
-          </p>
-        )}
-      </div>
-
-      {/* имя */}
-      <section className="mb-6">
-        <label className="mb-2 block text-xs uppercase tracking-wider text-[var(--color-muted)]">
-          Имя
-        </label>
-        <div className="flex gap-2">
-          <input
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            maxLength={24}
-            className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 outline-none focus:border-[var(--color-fg-dim)]"
+      {/* Карточка пользователя */}
+      <section className="mt-3 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="h-24 w-20 shrink-0">
+          <Avatar3D
+            stats={stats}
+            level={level}
+            interactive={false}
+            className="h-full w-full"
           />
-          <Button
-            variant="primary"
-            disabled={!dirty}
-            onClick={() => setName(draft)}
-          >
-            Сохранить
-          </Button>
         </div>
-      </section>
-
-      {/* установка PWA */}
-      <section className="mb-6">
-        <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-          <p className="text-sm font-medium">Установить как приложение</p>
-          <p className="mt-1 text-xs text-[var(--color-muted)]">
-            Добавь YeahDays на главный экран и запускай как обычное приложение —
-            работает и офлайн.
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-lg font-bold">{name}</p>
+          <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
+            Уровень {level} · {totalXp} XP
           </p>
-          {installEvt ? (
-            <Button variant="surface" size="sm" className="mt-3" onClick={install}>
-              Установить
-            </Button>
-          ) : (
-            <p className="mt-3 text-xs text-[var(--color-fg-dim)]">
-              В браузере: меню → «Установить приложение» / «На экран “Домой”».
-            </p>
-          )}
+          <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
+            {days} {days === 1 ? "день" : "дн."} в YeahDays
+          </p>
+        </div>
+        <Button
+          size="sm"
+          onClick={() => {
+            setDraft(name);
+            setEditing(true);
+          }}
+        >
+          Изменить
+        </Button>
+      </section>
+
+      {/* Метрики */}
+      <section className="mt-3 grid grid-cols-3 gap-2.5">
+        <Stat value={completed.length} label="Выполнено" />
+        <Stat value={streak} label="Стрик" />
+        <Stat value={level} label="Уровень" />
+      </section>
+
+      {/* Приоритеты — напрямую кормят движок */}
+      <section className="mt-6">
+        <h2 className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
+          Приоритеты
+        </h2>
+        <p className="mb-3.5 mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+          Чем выше приоритет — тем чаще такие действия будут появляться
+          в подборке.
+        </p>
+        <div className="space-y-4">
+          {STAT_LIST.map((s) => (
+            <div key={s.key}>
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-2 text-[13px] font-medium">
+                  <span style={{ color: s.hex }}>{s.icon}</span>
+                  {s.label}
+                </span>
+                <span className="text-[11px] tabular-nums text-[var(--color-muted)]">
+                  {Math.round(goals[s.key] * 100)}%
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(goals[s.key] * 100)}
+                onChange={(e) => setGoal(s.key, Number(e.target.value) / 100)}
+                className="w-full accent-[var(--color-fg)]"
+                style={{ accentColor: s.hex }}
+                aria-label={`Приоритет: ${s.label}`}
+              />
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* сброс */}
-      <section className="mt-auto">
+      {/* Настройки дня */}
+      <section className="mt-6">
+        <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+          Состояние на сегодня
+        </h2>
+        <div className="grid grid-cols-3 gap-2">
+          {(["low", "medium", "high"] as EnergyLevel[]).map((e) => (
+            <button
+              key={e}
+              onClick={() => setMood({ energy: e })}
+              className={cn(
+                "rounded-2xl border py-2.5 text-[12px] font-medium transition",
+                todayMood.energy === e
+                  ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                  : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)]",
+              )}
+            >
+              {ENERGY_LABEL[e]}
+            </button>
+          ))}
+        </div>
+        <div className="mt-2.5 grid grid-cols-4 gap-2">
+          {[10, 20, 30, 60].map((m) => (
+            <button
+              key={m}
+              onClick={() => setMood({ minutes: m })}
+              className={cn(
+                "rounded-2xl border py-2.5 text-[12px] font-medium tabular-nums transition",
+                todayMood.minutes === m
+                  ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                  : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)]",
+              )}
+            >
+              {m} мин
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* О движке */}
+      <section className="mt-6 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <h2 className="text-[13px] font-semibold">Движок рекомендаций</h2>
+        <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
+          Режим: <span className="font-semibold">{ENGINE_MODE}</span>. Подборка
+          считается по формуле goalMatch + timeMatch + difficultyMatch +
+          userHistory + freshness. Каждый свайп меняет веса для следующего дня.
+        </p>
+      </section>
+
+      <div className="mt-6">
         <Button
           variant="danger"
           className="w-full"
           onClick={() => setConfirmReset(true)}
         >
-          Сбросить прогресс
+          Сбросить весь прогресс
         </Button>
-      </section>
+      </div>
 
+      {/* Модалка имени */}
+      <Modal open={editing} onClose={() => setEditing(false)} title="Как тебя звать?">
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          maxLength={24}
+          autoFocus
+          className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none focus:border-[var(--color-fg-dim)]"
+        />
+        <div className="mt-4 flex gap-2.5">
+          <Button className="flex-1" onClick={() => setEditing(false)}>
+            Отмена
+          </Button>
+          <Button
+            variant="primary"
+            className="flex-1"
+            onClick={() => {
+              setName(draft);
+              setEditing(false);
+            }}
+          >
+            Сохранить
+          </Button>
+        </div>
+      </Modal>
+
+      {/* Модалка сброса */}
       <Modal
         open={confirmReset}
         onClose={() => setConfirmReset(false)}
         title="Сбросить прогресс?"
       >
-        <p className="text-sm text-[var(--color-fg-dim)]">
-          Все задачи, опыт и уровень будут удалены безвозвратно. Персонаж
-          вернётся в самое начало.
+        <p className="text-[14px] leading-snug text-[var(--color-fg-dim)]">
+          Все выполненные действия, уровень и история свайпов будут удалены.
+          Это нельзя отменить.
         </p>
-        <div className="mt-5 flex gap-2">
-          <Button
-            variant="ghost"
-            className="flex-1"
-            onClick={() => setConfirmReset(false)}
-          >
+        <div className="mt-5 flex gap-2.5">
+          <Button className="flex-1" onClick={() => setConfirmReset(false)}>
             Отмена
           </Button>
           <Button
@@ -163,5 +247,17 @@ export default function AccountPage() {
         </div>
       </Modal>
     </div>
+  );
+}
+
+function Stat({ value, label }: { value: number; label: string }) {
+  return (
+    <motion.div
+      whileTap={{ scale: 0.97 }}
+      className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-4 text-center"
+    >
+      <p className="text-2xl font-bold tabular-nums">{value}</p>
+      <p className="mt-0.5 text-[10.5px] text-[var(--color-muted)]">{label}</p>
+    </motion.div>
   );
 }

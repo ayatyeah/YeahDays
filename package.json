@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "@types/three": "^0.185.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
     "next": "^16.2.10",
@@ -20,6 +21,7 @@
     "react-dom": "^19.2.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.3",
+    "three": "^0.185.1",
     "typescript": "^5.9.2",
     "zustand": "^5.0.14"
   },

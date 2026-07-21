@@ -1,89 +1,109 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Modal from "@/components/ui/Modal";
-import Button from "@/components/ui/Button";
-import { cn } from "@/lib/cn";
+import { useState } from "react";
+import Modal from "./ui/Modal";
+import Button from "./ui/Button";
+import { useUiStore } from "@/store/useUiStore";
+import { useUserStore } from "@/store/useUserStore";
 import {
   CATEGORY_LIST,
   DIFFICULTY_LABEL,
-  DIFFICULTY_XP,
+  ENERGY_LABEL,
+  STATS,
+  xpForAction,
+  type CategoryKey,
   type Difficulty,
-  type StatKey,
-} from "@/lib/categories";
-import { useUserStore } from "@/store/useUserStore";
-import { useUiStore } from "@/store/useUiStore";
+  type EnergyLevel,
+  type Impact,
+} from "@/lib/domain";
+import { cn } from "@/lib/cn";
 
-const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
+const DIFFICULTIES: Difficulty[] = [1, 2, 3, 4, 5];
+const ENERGIES: EnergyLevel[] = ["low", "medium", "high"];
+const DURATIONS = [5, 10, 20, 30, 45, 60];
 
+/**
+ * Создание собственного действия.
+ *
+ * Пользователь заполняет те же параметры, что есть у контента из пула —
+ * поэтому его действия участвуют в скоринге наравне с остальными,
+ * а не живут отдельным «списком задач».
+ */
 export default function CreateTaskModal() {
-  const { createOpen, createForDate, closeCreate } = useUiStore();
-  const addTask = useUserStore((s) => s.addTask);
+  const open = useUiStore((s) => s.createOpen);
+  const close = useUiStore((s) => s.closeCreate);
+  const addCustomAction = useUserStore((s) => s.addCustomAction);
+  const acceptAction = useUserStore((s) => s.acceptAction);
 
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<StatKey>("body");
-  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
-  const [dueDate, setDueDate] = useState<string>("");
+  const [category, setCategory] = useState<CategoryKey>("fitness");
+  const [difficulty, setDifficulty] = useState<Difficulty>(2);
+  const [duration, setDuration] = useState(20);
+  const [energy, setEnergy] = useState<EnergyLevel>("medium");
+  const [addToToday, setAddToToday] = useState(true);
 
-  // сброс/предзаполнение при открытии
-  useEffect(() => {
-    if (createOpen) {
-      setTitle("");
-      setCategory("body");
-      setDifficulty("medium");
-      setDueDate(createForDate ?? "");
-    }
-  }, [createOpen, createForDate]);
+  const impact = Math.min(5, Math.max(1, difficulty)) as Impact;
+  const xp = xpForAction({ difficulty, impact, duration });
+  const stat = STATS[CATEGORY_LIST.find((c) => c.key === category)!.stat];
 
-  const canSubmit = title.trim().length > 0;
+  function reset() {
+    setTitle("");
+    setCategory("fitness");
+    setDifficulty(2);
+    setDuration(20);
+    setEnergy("medium");
+    setAddToToday(true);
+  }
 
   function submit() {
-    if (!canSubmit) return;
-    addTask({
-      title,
+    const t = title.trim();
+    if (!t) return;
+    const action = {
+      id: `custom-${Date.now().toString(36)}`,
+      title: t,
+      why: "Твоё собственное действие",
       category,
       difficulty,
-      dueDate: dueDate || null,
-    });
-    closeCreate();
+      duration,
+      energy,
+      timePreference: "any" as const,
+      impact,
+      custom: true,
+    };
+    addCustomAction(action);
+    if (addToToday) acceptAction(action);
+    reset();
+    close();
   }
 
   return (
-    <Modal open={createOpen} onClose={closeCreate} title="Новая задача">
-      <div className="space-y-5">
-        {/* Название */}
-        <div>
-          <input
-            autoFocus
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="Что нужно сделать?"
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-[var(--color-fg)] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
-          />
-        </div>
+    <Modal open={open} onClose={close} title="Своё действие">
+      <div className="space-y-4">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Например: 30 минут гитары"
+          maxLength={70}
+          autoFocus
+          className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+        />
 
         {/* Категория */}
         <div>
-          <p className="mb-2 text-xs uppercase tracking-wider text-[var(--color-muted)]">
-            Сфера
-          </p>
-          <div className="grid grid-cols-3 gap-2">
+          <Label>Категория</Label>
+          <div className="flex flex-wrap gap-1.5">
             {CATEGORY_LIST.map((c) => (
               <button
                 key={c.key}
                 onClick={() => setCategory(c.key)}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-xl border px-2 py-3 text-xs font-medium transition",
+                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition",
                   category === c.key
-                    ? "border-transparent text-[var(--color-bg)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-fg-dim)] hover:text-[var(--color-fg)]",
+                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
-                style={
-                  category === c.key ? { backgroundColor: c.color } : undefined
-                }
               >
-                <span className="text-lg">{c.emoji}</span>
+                <span>{c.icon}</span>
                 {c.label}
               </button>
             ))}
@@ -92,51 +112,100 @@ export default function CreateTaskModal() {
 
         {/* Сложность */}
         <div>
-          <p className="mb-2 text-xs uppercase tracking-wider text-[var(--color-muted)]">
-            Сложность
-          </p>
-          <div className="grid grid-cols-3 gap-2">
+          <Label>Сложность · {DIFFICULTY_LABEL[difficulty]}</Label>
+          <div className="grid grid-cols-5 gap-1.5">
             {DIFFICULTIES.map((d) => (
               <button
                 key={d}
                 onClick={() => setDifficulty(d)}
                 className={cn(
-                  "rounded-xl border px-2 py-2.5 text-sm font-medium transition",
+                  "rounded-xl border py-2 text-[13px] font-bold tabular-nums transition",
                   difficulty === d
-                    ? "border-[var(--color-xp)] bg-[var(--color-surface-2)] text-[var(--color-fg)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-fg-dim)] hover:text-[var(--color-fg)]",
+                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                <div>{DIFFICULTY_LABEL[d]}</div>
-                <div className="text-[10px] text-[var(--color-xp)]">
-                  +{DIFFICULTY_XP[d]} XP
-                </div>
+                {d}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Дата (для календаря) */}
+        {/* Длительность */}
         <div>
-          <p className="mb-2 text-xs uppercase tracking-wider text-[var(--color-muted)]">
-            На день <span className="normal-case">(необязательно)</span>
-          </p>
-          <input
-            type="date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-            className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-[var(--color-fg)] outline-none focus:border-[var(--color-fg-dim)] [color-scheme:dark]"
-          />
+          <Label>Длительность</Label>
+          <div className="grid grid-cols-6 gap-1.5">
+            {DURATIONS.map((m) => (
+              <button
+                key={m}
+                onClick={() => setDuration(m)}
+                className={cn(
+                  "rounded-xl border py-2 text-[12px] font-semibold tabular-nums transition",
+                  duration === m
+                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
+                )}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div className="flex gap-2 pt-1">
-          <Button variant="ghost" className="flex-1" onClick={closeCreate}>
+        {/* Энергия */}
+        <div>
+          <Label>Сколько сил нужно</Label>
+          <div className="grid grid-cols-3 gap-1.5">
+            {ENERGIES.map((e) => (
+              <button
+                key={e}
+                onClick={() => setEnergy(e)}
+                className={cn(
+                  "rounded-xl border py-2 text-[12px] font-medium transition",
+                  energy === e
+                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
+                )}
+              >
+                {ENERGY_LABEL[e]}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Итог */}
+        <div
+          className="flex items-center justify-between rounded-2xl px-4 py-3"
+          style={{ background: `${stat.hex}14` }}
+        >
+          <span className="text-[12.5px] font-medium" style={{ color: stat.hex }}>
+            {stat.icon} {stat.label}
+          </span>
+          <span className="text-[15px] font-bold tabular-nums" style={{ color: stat.hex }}>
+            +{xp} XP
+          </span>
+        </div>
+
+        <label className="flex cursor-pointer items-center gap-2.5">
+          <input
+            type="checkbox"
+            checked={addToToday}
+            onChange={(e) => setAddToToday(e.target.checked)}
+            className="h-4 w-4 rounded accent-[var(--color-fg)]"
+          />
+          <span className="text-[13px] text-[var(--color-fg-dim)]">
+            Сразу добавить в план на сегодня
+          </span>
+        </label>
+
+        <div className="flex gap-2.5 pt-1">
+          <Button className="flex-1" onClick={close}>
             Отмена
           </Button>
           <Button
             variant="primary"
             className="flex-1"
-            disabled={!canSubmit}
+            disabled={!title.trim()}
             onClick={submit}
           >
             Создать
@@ -144,5 +213,13 @@ export default function CreateTaskModal() {
         </div>
       </div>
     </Modal>
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mb-2 text-[12px] font-semibold text-[var(--color-fg-dim)]">
+      {children}
+    </p>
   );
 }

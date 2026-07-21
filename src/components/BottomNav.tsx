@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
-import { useUiStore } from "@/store/useUiStore";
+import { useUserStore, selectToday } from "@/store/useUserStore";
+import { useMemo } from "react";
 
 type IconProps = { className?: string };
 
@@ -12,9 +13,23 @@ function HomeIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
       <path
-        d="M3 10.5 12 3l9 7.5M5 9.5V20h5v-6h4v6h5V9.5"
+        d="M4.5 8.5 12 3.5l7.5 5v11a1 1 0 0 1-1 1h-13a1 1 0 0 1-1-1v-11Z"
         stroke="currentColor"
-        strokeWidth="1.8"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <path d="M9.5 20v-6h5v6" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TodayIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path
+        d="M5 12.5 9.5 17 19 7"
+        stroke="currentColor"
+        strokeWidth="1.9"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -25,21 +40,8 @@ function HomeIcon({ className }: IconProps) {
 function CalendarIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <rect
-        x="3.5"
-        y="4.5"
-        width="17"
-        height="16"
-        rx="3"
-        stroke="currentColor"
-        strokeWidth="1.8"
-      />
-      <path
-        d="M3.5 9h17M8 3v3M16 3v3"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
+      <rect x="3.5" y="5" width="17" height="15.5" rx="3.5" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M3.5 9.5h17M8 3.5V6m8-2.5V6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -48,11 +50,10 @@ function ProgressIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
       <path
-        d="M4 20V10M10 20V4M16 20v-7M22 20H2"
+        d="M4 19V11.5M9.3 19V5.5M14.7 19v-9M20 19V8"
         stroke="currentColor"
-        strokeWidth="1.8"
+        strokeWidth="1.9"
         strokeLinecap="round"
-        strokeLinejoin="round"
       />
     </svg>
   );
@@ -61,103 +62,66 @@ function ProgressIcon({ className }: IconProps) {
 function AccountIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="8" r="3.6" stroke="currentColor" strokeWidth="1.8" />
-      <path
-        d="M5 20c0-3.5 3.1-5.5 7-5.5s7 2 7 5.5"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
+      <circle cx="12" cy="8.2" r="3.5" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M5 20c0-3.4 3.1-5.4 7-5.4s7 2 7 5.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
 
 const NAV = [
   { href: "/", label: "Главная", Icon: HomeIcon },
+  { href: "/today", label: "Сегодня", Icon: TodayIcon },
   { href: "/calendar", label: "Календарь", Icon: CalendarIcon },
-] as const;
-
-const NAV_RIGHT = [
   { href: "/progress", label: "Прогресс", Icon: ProgressIcon },
-  { href: "/account", label: "Аккаунт", Icon: AccountIcon },
+  { href: "/account", label: "Профиль", Icon: AccountIcon },
 ] as const;
-
-function NavItem({
-  href,
-  label,
-  Icon,
-  active,
-}: {
-  href: string;
-  label: string;
-  Icon: (p: IconProps) => React.ReactElement;
-  active: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "relative flex flex-1 flex-col items-center justify-center gap-1 py-1.5 text-[10px] font-medium transition-colors",
-        active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
-      )}
-    >
-      {active && (
-        <motion.span
-          layoutId="nav-active"
-          className="absolute inset-x-2 -top-[7px] h-[2px] rounded-full bg-[var(--color-fg)]"
-          transition={{ type: "spring", stiffness: 420, damping: 34 }}
-        />
-      )}
-      <Icon className="h-6 w-6" />
-      <span>{label}</span>
-    </Link>
-  );
-}
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const openCreate = useUiStore((s) => s.openCreate);
+  const plan = useUserStore((s) => s.plan);
+  const pending = useMemo(
+    () => selectToday(plan).filter((t) => !t.completed).length,
+    [plan],
+  );
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40">
       <div className="pointer-events-auto mx-auto max-w-md">
-        {/* тонкая световая линия сверху панели */}
         <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
-        <div className="safe-b relative flex items-stretch bg-[var(--color-bg-soft)]/80 px-2 pt-1.5 backdrop-blur-xl">
-          {NAV.map((item) => (
-            <NavItem
-              key={item.href}
-              {...item}
-              active={pathname === item.href}
-            />
-          ))}
-
-          {/* центральная кнопка «+» */}
-          <div className="flex w-16 shrink-0 items-start justify-center">
-            <motion.button
-              onClick={() => openCreate()}
-              aria-label="Создать задачу"
-              whileTap={{ scale: 0.9 }}
-              className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-b from-white to-[#d6d6dc] text-[var(--color-bg)] shadow-[0_8px_24px_-4px_rgba(0,0,0,0.6)] ring-4 ring-[var(--color-bg)] transition"
-            >
-              <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none">
-                <path
-                  d="M12 5v14M5 12h14"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </motion.button>
-          </div>
-
-          {NAV_RIGHT.map((item) => (
-            <NavItem
-              key={item.href}
-              {...item}
-              active={pathname === item.href}
-            />
-          ))}
+        <div className="safe-b flex items-stretch bg-[var(--color-bg-soft)]/85 px-1.5 pb-0.5 pt-2 backdrop-blur-2xl">
+          {NAV.map(({ href, label, Icon }) => {
+            const active = pathname === href;
+            const badge = href === "/today" && pending > 0 ? pending : 0;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "relative flex flex-1 flex-col items-center justify-center gap-1 py-1 text-[9.5px] font-medium transition-colors",
+                  active
+                    ? "text-[var(--color-fg)]"
+                    : "text-[var(--color-muted)]",
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="nav-active"
+                    className="absolute inset-x-3 -top-[8px] h-[2.5px] rounded-full bg-[var(--color-fg)]"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+                <span className="relative">
+                  <Icon className="h-[22px] w-[22px]" />
+                  {badge > 0 && (
+                    <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[9px] font-bold text-white">
+                      {badge}
+                    </span>
+                  )}
+                </span>
+                <span>{label}</span>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>

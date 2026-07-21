@@ -1,86 +1,130 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  useUserStore,
+  useHydrated,
+  selectTotalXp,
+  selectStats,
+} from "@/store/useUserStore";
+import { getLevelProgress, tierForLevel, TIER_MILESTONES } from "@/lib/leveling";
+import Avatar3D from "./Avatar3D";
 
-interface Props {
-  open: boolean;
-  level: number;
-  milestoneLabel: string | null;
-  onClose: () => void;
-}
+/**
+ * Оверлей повышения уровня.
+ *
+ * Сам следит за уровнем: любая страница может просто отрендерить <LevelUpOverlay />.
+ * Это момент эмоциональной награды — здесь показываем 3D-персонажа крупно.
+ */
+export default function LevelUpOverlay() {
+  const hydrated = useHydrated();
+  const plan = useUserStore((s) => s.plan);
+  const seenLevel = useUserStore((s) => s.seenLevel);
+  const markSeenLevel = useUserStore((s) => s.markSeenLevel);
 
-const PARTICLES = Array.from({ length: 22 }).map((_, i) => {
-  const angle = (i / 22) * Math.PI * 2;
-  return {
-    x: Math.cos(angle) * (120 + (i % 5) * 26),
-    y: Math.sin(angle) * (120 + (i % 5) * 26),
-    delay: (i % 6) * 0.02,
-  };
-});
+  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
+  const stats = useMemo(() => selectStats(plan), [plan]);
+  const level = getLevelProgress(totalXp).level;
 
-export default function LevelUpOverlay({
-  open,
-  level,
-  milestoneLabel,
-  onClose,
-}: Props) {
+  const [state, setState] = useState<{
+    open: boolean;
+    level: number;
+    milestone: string | null;
+  }>({ open: false, level: 1, milestone: null });
+
   useEffect(() => {
-    if (!open) return;
-    const t = setTimeout(onClose, 4200);
-    return () => clearTimeout(t);
-  }, [open, onClose]);
+    if (!hydrated || level <= seenLevel) return;
+    const crossed = tierForLevel(level) > tierForLevel(seenLevel);
+    const milestone = crossed
+      ? (TIER_MILESTONES.find((m) => m.tier === tierForLevel(level))?.label ?? null)
+      : null;
+    setState({ open: true, level, milestone });
+  }, [hydrated, level, seenLevel]);
+
+  function close() {
+    markSeenLevel(state.level);
+    setState((s) => ({ ...s, open: false }));
+  }
 
   return (
     <AnimatePresence>
-      {open && (
+      {state.open && (
         <motion.div
-          className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/75 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-[var(--color-bg)]/92 backdrop-blur-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
+          onClick={close}
         >
-          <div className="relative flex flex-col items-center">
-            {/* частицы */}
-            {PARTICLES.map((p, i) => (
-              <motion.span
+          {/* лучи */}
+          <motion.div
+            className="pointer-events-none absolute h-[440px] w-[440px]"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          >
+            {Array.from({ length: 14 }).map((_, i) => (
+              <span
                 key={i}
-                className="absolute h-1.5 w-1.5 rounded-full"
+                className="absolute left-1/2 top-0 origin-bottom"
                 style={{
-                  backgroundColor:
-                    milestoneLabel != null
-                      ? "var(--color-body)"
-                      : "var(--color-xp)",
+                  width: 2,
+                  height: "50%",
+                  marginLeft: -1,
+                  background:
+                    "linear-gradient(to top, rgba(180,200,255,0.35), transparent)",
+                  transform: `rotate(${i * (360 / 14)}deg)`,
                 }}
-                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
-                animate={{ x: p.x, y: p.y, opacity: 0, scale: 0.3 }}
-                transition={{ duration: 1.1, delay: p.delay, ease: "easeOut" }}
               />
             ))}
+          </motion.div>
 
-            <motion.div
-              initial={{ scale: 0.6, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 260, damping: 18 }}
-              className="flex flex-col items-center"
+          <motion.div
+            initial={{ scale: 0.85, y: 20 }}
+            animate={{ scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 220, damping: 20 }}
+            className="relative flex flex-col items-center px-8 text-center"
+          >
+            <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+              Новый уровень
+            </p>
+            <p className="mt-1 text-[68px] font-black leading-none tabular-nums">
+              {state.level}
+            </p>
+
+            <div className="my-2 h-[230px] w-[230px]">
+              <Avatar3D
+                stats={stats}
+                level={state.level}
+                interactive={false}
+                celebrate={1}
+                className="h-full w-full"
+              />
+            </div>
+
+            {state.milestone && (
+              <motion.p
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="rounded-full bg-[var(--color-surface)] px-4 py-2 text-[14px] font-bold"
+              >
+                Форма: {state.milestone}
+              </motion.p>
+            )}
+
+            <p className="mt-3 max-w-[260px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+              Твой персонаж стал сильнее. Так выглядит накопленный
+              результат маленьких действий.
+            </p>
+
+            <button
+              onClick={close}
+              className="mt-6 h-12 rounded-2xl bg-[var(--color-fg)] px-7 text-[15px] font-semibold text-[var(--color-bg)]"
             >
-              {milestoneLabel && (
-                <span className="mb-2 rounded-full border border-[var(--color-body)]/40 bg-[var(--color-body)]/10 px-3 py-1 text-xs font-medium tracking-wide text-[var(--color-body)]">
-                  Новая форма · {milestoneLabel}
-                </span>
-              )}
-              <span className="text-sm uppercase tracking-[0.3em] text-[var(--color-fg-dim)]">
-                Уровень
-              </span>
-              <span className="text-7xl font-bold tabular-nums text-[var(--color-fg)]">
-                {level}
-              </span>
-            </motion.div>
-          </div>
-          <p className="mt-10 text-xs text-[var(--color-muted)]">
-            нажми, чтобы продолжить
-          </p>
+              Продолжить
+            </button>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>

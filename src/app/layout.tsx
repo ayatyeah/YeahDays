@@ -4,7 +4,6 @@ import "./globals.css";
 import Ambient from "@/components/Ambient";
 import BottomNav from "@/components/BottomNav";
 import CreateTaskModal from "@/components/CreateTaskModal";
-import WardrobeModal from "@/components/WardrobeModal";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const inter = Inter({
@@ -15,23 +14,20 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   applicationName: "YeahDays",
-  title: "YeahDays — расти с каждой задачей",
+  title: "YeahDays — одно действие в день",
   description:
-    "Минималистичный трекер задач, где твой персонаж эволюционирует с каждой выполненной задачей.",
+    "Не список задач, а подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт твой персонаж.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "YeahDays",
   },
-  icons: {
-    icon: "/icon.svg",
-    apple: "/apple-icon.png",
-  },
+  icons: { icon: "/icon.svg", apple: "/apple-icon.png" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0c",
+  themeColor: "#08080b",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -46,12 +42,11 @@ export default function RootLayout({
     <html lang="ru" className={inter.variable}>
       <body>
         <Ambient />
-        <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-28 pt-6">
+        <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-24 pt-6">
           {children}
         </div>
         <BottomNav />
         <CreateTaskModal />
-        <WardrobeModal />
         <ServiceWorkerRegister />
       </body>
     </html>

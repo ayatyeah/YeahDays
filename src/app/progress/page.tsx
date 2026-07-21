@@ -53,12 +53,12 @@ export default function ProgressPage() {
       <h1 className="text-[26px] font-bold tracking-tight">Прогресс</h1>
 
       {/* Персонаж крупно */}
-      <div className="relative mt-1 h-[280px]">
+      <div className="mt-1 h-[320px]">
         <Avatar3D stats={stats} level={level} className="h-full w-full" scale={1.1} />
-        <p className="pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px] text-[var(--color-muted)]">
-          Покрути пальцем — персонаж живой
-        </p>
       </div>
+      <p className="mb-4 mt-1 text-center text-[11px] text-[var(--color-muted)]">
+        Покрути пальцем — персонаж живой
+      </p>
 
       {/* Уровень */}
       <section className="mb-5 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

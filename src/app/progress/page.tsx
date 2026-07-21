@@ -1,88 +1,165 @@
 "use client";
 
 import { useMemo } from "react";
-import Buddy from "@/components/Buddy";
-import PageHeader from "@/components/PageHeader";
-import XpBar from "@/components/XpBar";
+import { motion } from "framer-motion";
+import Avatar3D from "@/components/Avatar3D";
 import {
   useUserStore,
+  useHydrated,
   selectStats,
   selectTotalXp,
+  selectCompleted,
+  selectStreak,
+  selectBestStreak,
+  selectCategoryXp,
+  selectActiveDays,
 } from "@/store/useUserStore";
-import { CATEGORIES } from "@/lib/categories";
-import {
-  getLevelProgress,
-  tierForLevel,
-  TIER_MILESTONES,
-} from "@/lib/leveling";
+import { STAT_LIST, CATEGORIES, type CategoryKey } from "@/lib/domain";
+import { getLevelProgress, TIER_MILESTONES, tierForLevel } from "@/lib/leveling";
 import { cn } from "@/lib/cn";
 
 export default function ProgressPage() {
-  const tasks = useUserStore((s) => s.tasks);
+  const hydrated = useHydrated();
+  const plan = useUserStore((s) => s.plan);
 
-  const stats = useMemo(() => selectStats(tasks), [tasks]);
-  const totalXp = useMemo(() => selectTotalXp(tasks), [tasks]);
+  const stats = useMemo(() => selectStats(plan), [plan]);
+  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
+  const completed = useMemo(() => selectCompleted(plan), [plan]);
+  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const best = useMemo(() => selectBestStreak(plan), [plan]);
+  const catXp = useMemo(() => selectCategoryXp(plan), [plan]);
+  const activeDays = useMemo(() => selectActiveDays(plan), [plan]);
+
   const progress = getLevelProgress(totalXp);
   const level = progress.level;
   const tier = tierForLevel(level);
+  const maxStat = Math.max(...Object.values(stats), 1);
 
-  const completed = tasks.filter((t) => t.completed).length;
-  const maxStat = Math.max(stats.body, stats.mind, stats.discipline, 1);
+  const topCats = (Object.entries(catXp) as [CategoryKey, number][])
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
+  const maxCat = Math.max(...topCats.map(([, v]) => v), 1);
 
-  const statRows = [
-    { ...CATEGORIES.body, value: stats.body },
-    { ...CATEGORIES.mind, value: stats.mind },
-    { ...CATEGORIES.discipline, value: stats.discipline },
-  ];
+  if (!hydrated) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHeader title="Прогресс" />
+      <h1 className="text-[26px] font-bold tracking-tight">Прогресс</h1>
 
-      {/* мини-превью персонажа + уровень */}
-      <div className="mb-5 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <div className="flex shrink-0 justify-center" style={{ width: 92 }}>
-          <Buddy level={level} size={96} />
-        </div>
-        <div className="flex-1">
-          <p className="text-xs uppercase tracking-widest text-[var(--color-muted)]">
-            Уровень
-          </p>
-          <p className="text-3xl font-bold leading-none">{level}</p>
-          <div className="mt-2">
-            <XpBar ratio={progress.ratio} />
-          </div>
-          <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
-            {totalXp} XP всего
-          </p>
-        </div>
+      {/* Персонаж крупно */}
+      <div className="relative mt-1 h-[280px]">
+        <Avatar3D stats={stats} level={level} className="h-full w-full" scale={1.1} />
+        <p className="pointer-events-none absolute inset-x-0 bottom-1 text-center text-[11px] text-[var(--color-muted)]">
+          Покрути пальцем — персонаж живой
+        </p>
       </div>
 
-      {/* статы по сферам */}
+      {/* Уровень */}
+      <section className="mb-5 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="flex items-end justify-between">
+          <div>
+            <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+              Уровень
+            </p>
+            <p className="text-4xl font-black leading-none tabular-nums">{level}</p>
+          </div>
+          <p className="text-[13px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
+            {totalXp} XP
+          </p>
+        </div>
+        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-[var(--color-intelligence)] to-[var(--color-wealth)]"
+            initial={{ width: 0 }}
+            animate={{ width: `${progress.ratio * 100}%` }}
+            transition={{ type: "spring", stiffness: 130, damping: 22 }}
+          />
+        </div>
+        <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
+          {progress.currentInLevel} / {progress.neededForNext} до уровня {level + 1}
+        </p>
+      </section>
+
+      {/* Ключевые метрики */}
+      <section className="mb-6 grid grid-cols-3 gap-2.5">
+        <Metric value={completed.length} label="Выполнено" />
+        <Metric value={streak} label="Стрик" accent="🔥" />
+        <Metric value={activeDays.size} label="Активных дней" />
+      </section>
+
+      {/* Характеристики */}
       <section className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
           Характеристики
         </h2>
-        <div className="space-y-3">
-          {statRows.map((s) => (
+        <div className="space-y-3.5">
+          {STAT_LIST.map((s) => (
             <div key={s.key}>
-              <div className="mb-1 flex justify-between text-xs">
-                <span className="text-[var(--color-fg-dim)]">
-                  {s.emoji} {s.label}
+              <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                <span className="flex items-center gap-2 font-medium">
+                  <span style={{ color: s.hex }}>{s.icon}</span>
+                  {s.label}
                 </span>
                 <span className="tabular-nums text-[var(--color-muted)]">
-                  {s.value} XP
+                  {stats[s.key]}
                 </span>
               </div>
-              <XpBar ratio={s.value / maxStat} color={s.color} />
+              <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ background: s.hex, boxShadow: `0 0 12px ${s.hex}66` }}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${(stats[s.key] / maxStat) * 100}%` }}
+                  transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                />
+              </div>
+              <p className="mt-1 text-[10.5px] text-[var(--color-muted)]">{s.hint}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* вехи-трансформации */}
-      <section className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-[var(--color-fg-dim)]">
+      {/* Категории */}
+      {topCats.length > 0 && (
+        <section className="mb-6">
+          <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+            Где ты растёшь
+          </h2>
+          <div className="space-y-2">
+            {topCats.map(([key, value]) => {
+              const c = CATEGORIES[key];
+              return (
+                <div
+                  key={key}
+                  className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-3.5 py-2.5"
+                >
+                  <span className="text-base">{c.icon}</span>
+                  <span className="flex-1 text-[13px] font-medium">{c.label}</span>
+                  <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                    <div
+                      className="h-full rounded-full bg-[var(--color-fg-dim)]"
+                      style={{ width: `${(value / maxCat) * 100}%` }}
+                    />
+                  </div>
+                  <span className="w-10 text-right text-[11.5px] tabular-nums text-[var(--color-muted)]">
+                    {value}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Эволюция */}
+      <section className="mb-2">
+        <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
           Эволюция
         </h2>
         <div className="space-y-2">
@@ -101,7 +178,7 @@ export default function ProgressPage() {
               >
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold",
+                    "flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold",
                     reached
                       ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
                       : "bg-[var(--color-surface-2)] text-[var(--color-muted)]",
@@ -110,13 +187,13 @@ export default function ProgressPage() {
                   {reached ? "✓" : m.level}
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{m.label}</p>
+                  <p className="text-[13.5px] font-semibold">{m.label}</p>
                   <p className="text-[11px] text-[var(--color-muted)]">
                     с {m.level} уровня
                   </p>
                 </div>
                 {current && (
-                  <span className="text-[10px] uppercase tracking-wide text-[var(--color-xp)]">
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
                     сейчас
                   </span>
                 )}
@@ -124,24 +201,30 @@ export default function ProgressPage() {
             );
           })}
         </div>
+        <p className="mt-3 text-center text-[11px] text-[var(--color-muted)]">
+          Лучшая серия: {best} {best === 1 ? "день" : "дн."}
+        </p>
       </section>
+    </div>
+  );
+}
 
-      {/* итоги */}
-      <section className="grid grid-cols-3 gap-2">
-        {[
-          { label: "Создано", value: tasks.length },
-          { label: "Выполнено", value: completed },
-          { label: "Уровень", value: level },
-        ].map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-4 text-center"
-          >
-            <p className="text-2xl font-bold tabular-nums">{s.value}</p>
-            <p className="text-[11px] text-[var(--color-muted)]">{s.label}</p>
-          </div>
-        ))}
-      </section>
+function Metric({
+  value,
+  label,
+  accent,
+}: {
+  value: number;
+  label: string;
+  accent?: string;
+}) {
+  return (
+    <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-4 text-center">
+      <p className="text-2xl font-bold tabular-nums">
+        {accent && <span className="mr-0.5 text-lg">{accent}</span>}
+        {value}
+      </p>
+      <p className="mt-0.5 text-[10.5px] text-[var(--color-muted)]">{label}</p>
     </div>
   );
 }

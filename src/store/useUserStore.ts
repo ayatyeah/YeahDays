@@ -4,152 +4,278 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
-  DIFFICULTY_XP,
-  type Difficulty,
+  CATEGORIES,
+  DEFAULT_GOALS,
+  DEFAULT_MOOD,
+  dateKey,
+  xpForAction,
+  type Action,
+  type CategoryKey,
+  type DailyMood,
+  type GoalWeights,
   type StatKey,
-} from "@/lib/categories";
+} from "@/lib/domain";
+import { emptyHistory, type HistorySignals } from "@/lib/recommendation";
 import { levelForXp } from "@/lib/leveling";
-import type { BodyId } from "@/lib/characters";
 
-export type SkinSelection = Record<BodyId, string>;
+/* ────────────────────────  Типы  ──────────────────────── */
 
-const DEFAULT_SKINS: SkinSelection = {
-  slim: "base",
-  esthete: "base",
-  jacked: "base",
-};
-
-export interface Task {
+/** Действие, принятое пользователем в план дня. */
+export interface PlannedTask {
+  /** уникальный id принятия (одно действие можно брать в разные дни) */
   id: string;
-  title: string;
-  category: StatKey;
-  difficulty: Difficulty;
+  actionId: string;
+  /** снимок действия — план не ломается, если пул изменится */
+  snapshot: Action;
   xp: number;
+  date: string; // YYYY-MM-DD
   completed: boolean;
-  createdAt: number;
+  acceptedAt: number;
   completedAt: number | null;
-  /** YYYY-MM-DD, план на день (для календаря) */
-  dueDate: string | null;
 }
 
-export interface Stats {
-  body: number;
-  mind: number;
-  discipline: number;
-}
+export type Stats = Record<StatKey, number>;
+
+/** Сколько задач в день считается «днём выполненным». */
+export const DAILY_GOAL = 3;
 
 interface UserState {
   name: string;
   createdAt: number;
-  tasks: Task[];
-  /** последний уровень, для которого пользователю показали трансформацию */
+  plan: PlannedTask[];
+  customActions: Action[];
+  goals: GoalWeights;
+  moods: Record<string, DailyMood>;
+  history: HistorySignals;
   seenLevel: number;
-  /** выбранный образ (скин) для каждого тела */
-  skins: SkinSelection;
+  lastCheckIn: string | null;
 
-  // actions
   setName: (name: string) => void;
-  setSkin: (body: BodyId, skinId: string) => void;
-  addTask: (input: {
-    title: string;
-    category: StatKey;
-    difficulty: Difficulty;
-    dueDate?: string | null;
-  }) => void;
+  setGoal: (stat: StatKey, value: number) => void;
+  setMood: (mood: Partial<DailyMood>) => void;
+  completeCheckIn: () => void;
+  acceptAction: (action: Action, date?: string) => void;
+  rejectAction: (actionId: string) => void;
+  markSeen: (actionIds: string[]) => void;
   toggleTask: (id: string) => void;
-  deleteTask: (id: string) => void;
+  removeTask: (id: string) => void;
+  addCustomAction: (action: Action) => void;
   markSeenLevel: (level: number) => void;
   resetAll: () => void;
 }
 
 function makeId() {
-  // без Date.now()-only коллизий: время + случайная часть
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
+
+const initial = {
+  name: "Странник",
+  createdAt: Date.now(),
+  plan: [] as PlannedTask[],
+  customActions: [] as Action[],
+  goals: { ...DEFAULT_GOALS },
+  moods: {} as Record<string, DailyMood>,
+  history: emptyHistory(),
+  seenLevel: 1,
+  lastCheckIn: null as string | null,
+};
 
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
-      name: "Странник",
-      createdAt: Date.now(),
-      tasks: [],
-      seenLevel: 1,
-      skins: { ...DEFAULT_SKINS },
+      ...initial,
 
       setName: (name) => set({ name: name.trim() || "Странник" }),
 
-      setSkin: (body, skinId) =>
-        set((s) => ({ skins: { ...s.skins, [body]: skinId } })),
-
-      addTask: ({ title, category, difficulty, dueDate = null }) =>
+      setGoal: (stat, value) =>
         set((s) => ({
-          tasks: [
-            {
-              id: makeId(),
-              title: title.trim(),
-              category,
-              difficulty,
-              xp: DIFFICULTY_XP[difficulty],
-              completed: false,
-              createdAt: Date.now(),
-              completedAt: null,
-              dueDate,
-            },
-            ...s.tasks,
-          ],
+          goals: { ...s.goals, [stat]: Math.min(1, Math.max(0, value)) },
         })),
+
+      setMood: (mood) =>
+        set((s) => {
+          const k = dateKey();
+          const prev = s.moods[k] ?? DEFAULT_MOOD;
+          return { moods: { ...s.moods, [k]: { ...prev, ...mood } } };
+        }),
+
+      completeCheckIn: () => set({ lastCheckIn: dateKey() }),
+
+      /** Свайп вправо: действие уходит в план дня. */
+      acceptAction: (action, date) =>
+        set((s) => {
+          const d = date ?? dateKey();
+          const cat = action.category;
+          const cc = s.history.categoryCompletion[cat] ?? { taken: 0, done: 0 };
+          return {
+            plan: [
+              {
+                id: makeId(),
+                actionId: action.id,
+                snapshot: action,
+                xp: xpForAction(action),
+                date: d,
+                completed: false,
+                acceptedAt: Date.now(),
+                completedAt: null,
+              },
+              ...s.plan,
+            ],
+            history: {
+              ...s.history,
+              accepted: {
+                ...s.history.accepted,
+                [action.id]: (s.history.accepted[action.id] ?? 0) + 1,
+              },
+              lastSeen: { ...s.history.lastSeen, [action.id]: Date.now() },
+              categoryCompletion: {
+                ...s.history.categoryCompletion,
+                [cat]: { taken: cc.taken + 1, done: cc.done },
+              },
+            },
+          };
+        }),
+
+      /** Свайп влево: «не сейчас» — движок понижает вес. */
+      rejectAction: (actionId) =>
+        set((s) => ({
+          history: {
+            ...s.history,
+            rejected: {
+              ...s.history.rejected,
+              [actionId]: (s.history.rejected[actionId] ?? 0) + 1,
+            },
+            lastSeen: { ...s.history.lastSeen, [actionId]: Date.now() },
+          },
+        })),
+
+      markSeen: (actionIds) =>
+        set((s) => {
+          const now = Date.now();
+          const lastSeen = { ...s.history.lastSeen };
+          for (const id of actionIds) lastSeen[id] = now;
+          return { history: { ...s.history, lastSeen } };
+        }),
 
       toggleTask: (id) =>
-        set((s) => ({
-          tasks: s.tasks.map((t) =>
-            t.id === id
-              ? {
-                  ...t,
-                  completed: !t.completed,
-                  completedAt: !t.completed ? Date.now() : null,
-                }
-              : t,
-          ),
-        })),
+        set((s) => {
+          const task = s.plan.find((t) => t.id === id);
+          if (!task) return {};
+          const willComplete = !task.completed;
+          const cat = task.snapshot.category;
+          const stat = CATEGORIES[cat].stat;
+          const cc = s.history.categoryCompletion[cat] ?? { taken: 1, done: 0 };
+          const delta = willComplete ? 1 : -1;
 
-      deleteTask: (id) =>
-        set((s) => ({ tasks: s.tasks.filter((t) => t.id !== id) })),
+          return {
+            plan: s.plan.map((t) =>
+              t.id === id
+                ? {
+                    ...t,
+                    completed: willComplete,
+                    completedAt: willComplete ? Date.now() : null,
+                  }
+                : t,
+            ),
+            history: {
+              ...s.history,
+              completed: {
+                ...s.history.completed,
+                [task.actionId]: Math.max(
+                  0,
+                  (s.history.completed[task.actionId] ?? 0) + delta,
+                ),
+              },
+              statXp: {
+                ...s.history.statXp,
+                [stat]: Math.max(0, s.history.statXp[stat] + delta * task.xp),
+              },
+              categoryCompletion: {
+                ...s.history.categoryCompletion,
+                [cat]: {
+                  taken: Math.max(cc.taken, 1),
+                  done: Math.max(0, cc.done + delta),
+                },
+              },
+            },
+          };
+        }),
+
+      removeTask: (id) =>
+        set((s) => ({ plan: s.plan.filter((t) => t.id !== id) })),
+
+      addCustomAction: (action) =>
+        set((s) => ({ customActions: [action, ...s.customActions] })),
 
       markSeenLevel: (level) => set({ seenLevel: level }),
 
-      resetAll: () =>
-        set({
-          tasks: [],
-          seenLevel: 1,
-          name: "Странник",
-          createdAt: Date.now(),
-          skins: { ...DEFAULT_SKINS },
-        }),
+      resetAll: () => set({ ...initial, createdAt: Date.now() }),
     }),
     {
       name: "yeahdays-store",
-      version: 2,
-      migrate: (state) => {
-        const s = state as Partial<UserState> | undefined;
-        if (s && !s.skins) s.skins = { ...DEFAULT_SKINS };
-        return s as UserState;
+      version: 3,
+      /** Миграция со старой схемы (tasks[] + 3 стата) — данные не теряем. */
+      migrate: (state, version) => {
+        if (version >= 3) return state as UserState;
+        const old = (state ?? {}) as Record<string, unknown>;
+        const migrated: Record<string, unknown> = {
+          ...initial,
+          name: typeof old.name === "string" ? old.name : initial.name,
+          createdAt:
+            typeof old.createdAt === "number" ? old.createdAt : Date.now(),
+        };
+        const oldTasks = Array.isArray(old.tasks) ? old.tasks : [];
+        const CAT_MAP: Record<string, CategoryKey> = {
+          body: "fitness",
+          mind: "learning",
+          discipline: "discipline",
+        };
+        migrated.plan = oldTasks.slice(0, 200).map((t) => {
+          const o = t as Record<string, unknown>;
+          const cat = CAT_MAP[String(o.category)] ?? "discipline";
+          const snapshot: Action = {
+            id: `legacy-${String(o.id)}`,
+            title: String(o.title ?? "Задача"),
+            why: "Перенесено из прошлой версии",
+            category: cat,
+            difficulty: 2,
+            duration: 20,
+            energy: "medium",
+            timePreference: "any",
+            impact: 3,
+            custom: true,
+          };
+          return {
+            id: String(o.id ?? makeId()),
+            actionId: snapshot.id,
+            snapshot,
+            xp: typeof o.xp === "number" ? o.xp : 25,
+            date: typeof o.dueDate === "string" ? o.dueDate : dateKey(),
+            completed: Boolean(o.completed),
+            acceptedAt:
+              typeof o.createdAt === "number" ? o.createdAt : Date.now(),
+            completedAt:
+              typeof o.completedAt === "number" ? o.completedAt : null,
+          };
+        });
+        return migrated as unknown as UserState;
       },
       partialize: (s) => ({
         name: s.name,
         createdAt: s.createdAt,
-        tasks: s.tasks,
+        plan: s.plan,
+        customActions: s.customActions,
+        goals: s.goals,
+        moods: s.moods,
+        history: s.history,
         seenLevel: s.seenLevel,
-        skins: s.skins,
+        lastCheckIn: s.lastCheckIn,
       }),
     },
   ),
 );
 
-/**
- * Надёжное определение конца гидратации из localStorage.
- * Нужно, чтобы (а) не мигать SSR-значениями и (б) не показывать
- * оверлей повышения уровня до чтения сохранённого seenLevel.
- */
+/** Надёжное определение конца гидратации из localStorage. */
 export function useHydrated() {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
@@ -162,24 +288,96 @@ export function useHydrated() {
   return hydrated;
 }
 
-/* ---------- селекторы (производные величины) ---------- */
+/* ────────────────────────  Селекторы  ──────────────────────── */
 
-export function selectCompleted(tasks: Task[]) {
-  return tasks.filter((t) => t.completed);
+export function selectToday(plan: PlannedTask[], date = dateKey()) {
+  return plan.filter((t) => t.date === date);
 }
 
-export function selectTotalXp(tasks: Task[]) {
-  return selectCompleted(tasks).reduce((sum, t) => sum + t.xp, 0);
+export function selectCompleted(plan: PlannedTask[]) {
+  return plan.filter((t) => t.completed);
 }
 
-export function selectStats(tasks: Task[]): Stats {
-  const stats: Stats = { body: 0, mind: 0, discipline: 0 };
-  for (const t of tasks) {
-    if (t.completed) stats[t.category] += t.xp;
+export function selectTotalXp(plan: PlannedTask[]) {
+  return selectCompleted(plan).reduce((sum, t) => sum + t.xp, 0);
+}
+
+export function selectStats(plan: PlannedTask[]): Stats {
+  const stats: Stats = {
+    strength: 0,
+    intelligence: 0,
+    wealth: 0,
+    stability: 0,
+  };
+  for (const t of plan) {
+    if (!t.completed) continue;
+    stats[CATEGORIES[t.snapshot.category].stat] += t.xp;
   }
   return stats;
 }
 
-export function selectLevel(tasks: Task[]) {
-  return levelForXp(selectTotalXp(tasks));
+export function selectLevel(plan: PlannedTask[]) {
+  return levelForXp(selectTotalXp(plan));
+}
+
+export function selectActiveDays(plan: PlannedTask[]): Set<string> {
+  const days = new Set<string>();
+  for (const t of plan) if (t.completed) days.add(t.date);
+  return days;
+}
+
+/**
+ * Текущий стрик. Сегодняшний незакрытый день стрик не обнуляет —
+ * иначе приложение наказывало бы за то, что ты открыл его утром.
+ */
+export function selectStreak(plan: PlannedTask[]): number {
+  const days = selectActiveDays(plan);
+  if (days.size === 0) return 0;
+  const cursor = new Date();
+  if (!days.has(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
+  let streak = 0;
+  while (days.has(dateKey(cursor))) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
+
+export function selectBestStreak(plan: PlannedTask[]): number {
+  const days = [...selectActiveDays(plan)].sort();
+  let best = 0;
+  let run = 0;
+  let prev: Date | null = null;
+  for (const d of days) {
+    const cur = new Date(`${d}T00:00:00`);
+    if (prev && Math.round((cur.getTime() - prev.getTime()) / 864e5) === 1) run++;
+    else run = 1;
+    best = Math.max(best, run);
+    prev = cur;
+  }
+  return best;
+}
+
+export function selectCategoryXp(
+  plan: PlannedTask[],
+): Record<CategoryKey, number> {
+  const out = {} as Record<CategoryKey, number>;
+  for (const t of plan) {
+    if (!t.completed) continue;
+    const c = t.snapshot.category;
+    out[c] = (out[c] ?? 0) + t.xp;
+  }
+  return out;
+}
+
+export function selectMood(
+  moods: Record<string, DailyMood>,
+  date = dateKey(),
+): DailyMood {
+  return moods[date] ?? DEFAULT_MOOD;
+}
+
+export function selectTodayActionIds(plan: PlannedTask[]): string[] {
+  const d = dateKey();
+  return plan.filter((t) => t.date === d).map((t) => t.actionId);
 }

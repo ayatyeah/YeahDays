@@ -1,11 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
+import PlanItem from "@/components/PlanItem";
 import { AnimatePresence } from "framer-motion";
-import TaskItem from "@/components/TaskItem";
-import Button from "@/components/ui/Button";
-import { useUserStore } from "@/store/useUserStore";
-import { useUiStore } from "@/store/useUiStore";
+import {
+  useUserStore,
+  useHydrated,
+  selectStreak,
+  selectBestStreak,
+} from "@/store/useUserStore";
+import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
 
 const MONTHS = [
@@ -19,35 +24,40 @@ function keyOf(y: number, m: number, d: number) {
 }
 
 export default function CalendarPage() {
-  const tasks = useUserStore((s) => s.tasks);
-  const openCreate = useUiStore((s) => s.openCreate);
+  const hydrated = useHydrated();
+  const plan = useUserStore((s) => s.plan);
+  const toggleTask = useUserStore((s) => s.toggleTask);
+  const removeTask = useUserStore((s) => s.removeTask);
 
   const today = new Date();
-  const todayKey = keyOf(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayKey = dateKey(today);
 
-  const [view, setView] = useState({
-    y: today.getFullYear(),
-    m: today.getMonth(),
-  });
-  const [selected, setSelected] = useState<string>(todayKey);
+  const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
+  const [selected, setSelected] = useState(todayKey);
 
+  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const best = useMemo(() => selectBestStreak(plan), [plan]);
+
+  /** date → {taken, done} */
   const byDate = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const t of tasks) {
-      if (t.dueDate) map.set(t.dueDate, (map.get(t.dueDate) ?? 0) + 1);
+    const map = new Map<string, { taken: number; done: number }>();
+    for (const t of plan) {
+      const e = map.get(t.date) ?? { taken: 0, done: 0 };
+      e.taken++;
+      if (t.completed) e.done++;
+      map.set(t.date, e);
     }
     return map;
-  }, [tasks]);
+  }, [plan]);
 
   const selectedTasks = useMemo(
-    () => tasks.filter((t) => t.dueDate === selected),
-    [tasks, selected],
+    () => plan.filter((t) => t.date === selected),
+    [plan, selected],
   );
 
-  // сетка дней (неделя с понедельника)
   const cells = useMemo(() => {
     const first = new Date(view.y, view.m, 1);
-    const startDow = (first.getDay() + 6) % 7; // 0 = Пн
+    const startDow = (first.getDay() + 6) % 7;
     const daysInMonth = new Date(view.y, view.m + 1, 0).getDate();
     const arr: (number | null)[] = [];
     for (let i = 0; i < startDow; i++) arr.push(null);
@@ -58,105 +68,147 @@ export default function CalendarPage() {
   function shift(delta: number) {
     setView((v) => {
       const m = v.m + delta;
-      return {
-        y: v.y + Math.floor(m / 12),
-        m: ((m % 12) + 12) % 12,
-      };
+      return { y: v.y + Math.floor(m / 12), m: ((m % 12) + 12) % 12 };
     });
+  }
+
+  if (!hydrated) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
+      </div>
+    );
   }
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mb-5 flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">
-          {MONTHS[view.m]}{" "}
-          <span className="text-[var(--color-muted)]">{view.y}</span>
-        </h1>
+      <header className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-[26px] font-bold tracking-tight">
+            {MONTHS[view.m]}{" "}
+            <span className="text-[var(--color-muted)]">{view.y}</span>
+          </h1>
+          <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
+            🔥 {streak} подряд · рекорд {best}
+          </p>
+        </div>
         <div className="flex gap-1.5">
-          <Button
-            variant="surface"
-            size="sm"
-            className="w-9 px-0"
-            onClick={() => shift(-1)}
-          >
-            ‹
-          </Button>
-          <Button
-            variant="surface"
-            size="sm"
-            className="w-9 px-0"
-            onClick={() => shift(1)}
-          >
-            ›
-          </Button>
+          <NavBtn onClick={() => shift(-1)}>‹</NavBtn>
+          <NavBtn onClick={() => shift(1)}>›</NavBtn>
         </div>
       </header>
 
-      {/* дни недели */}
-      <div className="mb-1 grid grid-cols-7 gap-1 text-center text-[11px] text-[var(--color-muted)]">
+      <div className="mb-1.5 grid grid-cols-7 gap-1 text-center text-[10.5px] text-[var(--color-muted)]">
         {WEEKDAYS.map((w) => (
           <div key={w}>{w}</div>
         ))}
       </div>
 
-      {/* сетка */}
       <div className="grid grid-cols-7 gap-1">
         {cells.map((d, i) => {
           if (d === null) return <div key={i} />;
           const k = keyOf(view.y, view.m, d);
-          const has = byDate.has(k);
+          const e = byDate.get(k);
           const isToday = k === todayKey;
           const isSel = k === selected;
+          const full = e && e.done > 0 && e.done === e.taken;
+          const partial = e && e.done > 0 && e.done < e.taken;
+
           return (
-            <button
+            <motion.button
               key={i}
+              whileTap={{ scale: 0.92 }}
               onClick={() => setSelected(k)}
               className={cn(
-                "relative flex aspect-square flex-col items-center justify-center rounded-xl border text-sm transition",
+                "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[13px] transition",
                 isSel
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-transparent hover:bg-[var(--color-surface)]",
-                isToday && !isSel && "text-[var(--color-xp)]",
+                isToday && !isSel && "text-[var(--color-stability)]",
               )}
+              style={
+                full && !isSel
+                  ? { background: "var(--color-stability)18" }
+                  : undefined
+              }
             >
-              <span className={cn(isSel && "font-semibold")}>{d}</span>
-              {has && (
-                <span className="absolute bottom-1 h-1 w-1 rounded-full bg-[var(--color-xp)]" />
+              <span className={cn(isSel && "font-bold")}>{d}</span>
+              {e && (
+                <span className="absolute bottom-1.5 flex gap-0.5">
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      background: full
+                        ? "var(--color-stability)"
+                        : partial
+                          ? "var(--color-wealth)"
+                          : "var(--color-border)",
+                    }}
+                  />
+                </span>
               )}
-            </button>
+            </motion.button>
           );
         })}
       </div>
 
-      {/* задачи выбранного дня */}
+      <div className="mt-3 flex items-center justify-center gap-4 text-[10.5px] text-[var(--color-muted)]">
+        <Legend color="var(--color-stability)" label="день закрыт" />
+        <Legend color="var(--color-wealth)" label="частично" />
+        <Legend color="var(--color-border)" label="не начат" />
+      </div>
+
       <section className="mt-5 flex-1">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-[var(--color-fg-dim)]">
-            {selected === todayKey ? "Сегодня" : selected}
-          </h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => openCreate(selected)}
-          >
-            + добавить
-          </Button>
-        </div>
+        <h2 className="mb-2.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+          {selected === todayKey ? "Сегодня" : selected}
+        </h2>
 
         {selectedTasks.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-6 text-center text-sm text-[var(--color-muted)]">
-            На этот день задач нет.
+          <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-7 text-center text-[13px] text-[var(--color-muted)]">
+            В этот день действий не было.
           </p>
         ) : (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2.5">
             <AnimatePresence initial={false}>
               {selectedTasks.map((t) => (
-                <TaskItem key={t.id} task={t} />
+                <PlanItem
+                  key={t.id}
+                  task={t}
+                  onToggle={toggleTask}
+                  onRemove={removeTask}
+                />
               ))}
             </AnimatePresence>
           </div>
         )}
       </section>
     </div>
+  );
+}
+
+function NavBtn({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.9 }}
+      onClick={onClick}
+      className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-lg text-[var(--color-fg-dim)]"
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5">
+      <span className="h-1.5 w-1.5 rounded-full" style={{ background: color }} />
+      {label}
+    </span>
   );
 }

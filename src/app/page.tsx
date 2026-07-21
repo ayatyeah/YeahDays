@@ -1,189 +1,235 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import Buddy from "@/components/Buddy";
-import XpBar from "@/components/XpBar";
-import TaskItem from "@/components/TaskItem";
-import LevelUpOverlay from "@/components/LevelUpOverlay";
-import Button from "@/components/ui/Button";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
+import SwipeDeck from "@/components/SwipeDeck";
+import CheckIn from "@/components/CheckIn";
 import {
   useUserStore,
   useHydrated,
-  selectTotalXp,
-  selectStats,
+  selectMood,
+  selectToday,
+  selectTodayActionIds,
+  selectStreak,
+  DAILY_GOAL,
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
-import { CATEGORY_LIST } from "@/lib/categories";
-import {
-  getLevelProgress,
-  tierForLevel,
-  nextMilestone,
-  TIER_MILESTONES,
-} from "@/lib/leveling";
+import { fetchRecommendations, trackEvent } from "@/lib/api";
+import { dateKey, type Action } from "@/lib/domain";
+import type { ScoredAction } from "@/lib/recommendation";
 
 export default function HomePage() {
-  const tasks = useUserStore((s) => s.tasks);
-  const name = useUserStore((s) => s.name);
   const hydrated = useHydrated();
-  const seenLevel = useUserStore((s) => s.seenLevel);
-  const markSeenLevel = useUserStore((s) => s.markSeenLevel);
+
+  const name = useUserStore((s) => s.name);
+  const plan = useUserStore((s) => s.plan);
+  const goals = useUserStore((s) => s.goals);
+  const moods = useUserStore((s) => s.moods);
+  const history = useUserStore((s) => s.history);
+  const customActions = useUserStore((s) => s.customActions);
+  const lastCheckIn = useUserStore((s) => s.lastCheckIn);
+
+  const setMood = useUserStore((s) => s.setMood);
+  const completeCheckIn = useUserStore((s) => s.completeCheckIn);
+  const acceptAction = useUserStore((s) => s.acceptAction);
+  const rejectAction = useUserStore((s) => s.rejectAction);
+  const markSeen = useUserStore((s) => s.markSeen);
   const openCreate = useUiStore((s) => s.openCreate);
-  const openWardrobe = useUiStore((s) => s.openWardrobe);
 
-  const totalXp = useMemo(() => selectTotalXp(tasks), [tasks]);
-  const stats = useMemo(() => selectStats(tasks), [tasks]);
-  const progress = useMemo(() => getLevelProgress(totalXp), [totalXp]);
-  const level = progress.level;
-  const upcoming = nextMilestone(level);
-  const tierLabel =
-    TIER_MILESTONES.find((m) => m.tier === tierForLevel(level))?.label ?? "";
+  const mood = useMemo(() => selectMood(moods), [moods]);
+  const today = useMemo(() => selectToday(plan), [plan]);
+  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const takenToday = today.length;
 
-  const active = useMemo(() => tasks.filter((t) => !t.completed), [tasks]);
-  const doneCount = tasks.length - active.length;
+  const [deck, setDeck] = useState<ScoredAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const [overlay, setOverlay] = useState<{
-    open: boolean;
-    level: number;
-    milestoneLabel: string | null;
-  }>({ open: false, level: 1, milestoneLabel: null });
+  const needsCheckIn = hydrated && lastCheckIn !== dateKey();
 
+  /* ── Загрузка колоды ── */
   useEffect(() => {
-    if (!hydrated) return;
-    if (level > seenLevel) {
-      const crossedTier = tierForLevel(level) > tierForLevel(seenLevel);
-      const milestoneLabel = crossedTier
-        ? (TIER_MILESTONES.find((m) => m.tier === tierForLevel(level))?.label ??
-          null)
-        : null;
-      setOverlay({ open: true, level, milestoneLabel });
-    }
-  }, [hydrated, level, seenLevel]);
+    if (!hydrated || needsCheckIn) return;
+    let cancelled = false;
+    setLoading(true);
 
-  const closeOverlay = () => {
-    markSeenLevel(overlay.level);
-    setOverlay((o) => ({ ...o, open: false }));
-  };
+    fetchRecommendations({
+      goals,
+      mood,
+      history,
+      excludeIds: selectTodayActionIds(plan),
+      customActions,
+      limit: 12,
+    }).then((res) => {
+      if (cancelled) return;
+      setDeck(res.deck);
+      setLoading(false);
+      markSeen(res.deck.slice(0, 3).map((d) => d.action.id));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+    // history намеренно не в зависимостях: иначе колода пересобиралась бы
+    // на каждый свайп и карточки прыгали бы под пальцем
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, needsCheckIn, goals, mood.energy, mood.minutes, reloadKey]);
+
+  const handleAccept = useCallback(
+    (a: Action) => {
+      acceptAction(a);
+      trackEvent({ type: "accept", actionId: a.id, at: Date.now() });
+    },
+    [acceptAction],
+  );
+
+  const handleReject = useCallback(
+    (a: Action) => {
+      rejectAction(a.id);
+      trackEvent({ type: "reject", actionId: a.id, at: Date.now() });
+    },
+    [rejectAction],
+  );
+
+  /* ── Состояния экрана ── */
+
+  if (!hydrated) {
+    return (
+      <div className="flex flex-1 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
+      </div>
+    );
+  }
+
+  if (needsCheckIn) {
+    return (
+      <CheckIn
+        name={name}
+        mood={mood}
+        onChange={setMood}
+        onDone={completeCheckIn}
+      />
+    );
+  }
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Приветствие + гардероб */}
-      <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm text-[var(--color-fg-dim)]">
-          Привет,{" "}
-          <span className="font-semibold text-[var(--color-fg)]">
-            {hydrated ? name : "…"}
-          </span>{" "}
-          👋
-        </p>
-        <button
-          onClick={openWardrobe}
-          className="flex items-center gap-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-xs font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
-        >
-          <span>🧥</span> Гардероб
-        </button>
-      </div>
-
-      {/* Статус-бар: уровень + XP */}
-      <div className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/70 p-3.5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-lg font-bold tabular-nums">
-              {level}
-            </div>
-            <div className="leading-tight">
-              <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
-                Уровень
-              </p>
-              <p className="text-sm font-semibold">{tierLabel}</p>
-            </div>
-          </div>
-          <div className="text-right leading-tight">
-            <p className="text-[11px] text-[var(--color-muted)]">Опыт</p>
-            <p className="text-base font-bold tabular-nums text-[var(--color-xp)]">
-              {totalXp}
-              <span className="ml-0.5 text-[11px] font-medium">XP</span>
-            </p>
-          </div>
-        </div>
-        <div className="mt-3">
-          <XpBar ratio={progress.ratio} />
-          <div className="mt-1.5 flex justify-between text-[11px] text-[var(--color-muted)]">
-            <span>
-              {progress.currentInLevel} / {progress.neededForNext} до ур.{" "}
-              {level + 1}
-            </span>
-            {upcoming && <span>«{upcoming.label}» — ур. {upcoming.level}</span>}
-          </div>
-        </div>
-      </div>
-
-      {/* Персонаж */}
-      <section className="relative flex flex-1 items-center justify-center py-4">
-        <Buddy level={level} size={320} />
-      </section>
-
-      {/* Характеристики */}
-      <div className="grid grid-cols-3 gap-2">
-        {CATEGORY_LIST.map((c) => (
-          <div
-            key={c.key}
-            className="flex flex-col items-center gap-0.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)]/60 py-2"
-          >
-            <span className="text-base leading-none">{c.emoji}</span>
-            <span
-              className="text-sm font-bold tabular-nums"
-              style={{ color: c.color }}
-            >
-              {stats[c.key]}
-            </span>
-            <span className="text-[10px] text-[var(--color-muted)]">
-              {c.label}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {/* Задачи */}
-      <section className="mt-4">
-        <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-[var(--color-fg-dim)]">
-            Активные задачи
-          </h2>
-          {doneCount > 0 && (
-            <span className="text-xs text-[var(--color-muted)]">
-              выполнено: {doneCount}
-            </span>
-          )}
+      {/* Шапка: прогресс дня */}
+      <header className="mb-4 flex items-start justify-between">
+        <div>
+          <p className="text-[13px] font-medium text-[var(--color-muted)]">
+            Сегодня
+          </p>
+          <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
+            {takenToday >= DAILY_GOAL
+              ? "План собран"
+              : "Что сделаешь сегодня?"}
+          </h1>
         </div>
 
-        {active.length === 0 ? (
-          <button
-            onClick={() => openCreate()}
-            className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-6 text-center transition hover:border-[var(--color-fg-dim)] hover:bg-[var(--color-surface)]/50"
-          >
-            <p className="text-sm text-[var(--color-fg-dim)]">
-              Пусто. Нажми, чтобы создать первую задачу —
-              <br />и персонаж начнёт расти.
-            </p>
-          </button>
-        ) : (
-          <div className="flex max-h-[32vh] flex-col gap-2 overflow-y-auto pb-1">
-            <AnimatePresence initial={false}>
-              {active.map((t) => (
-                <TaskItem key={t.id} task={t} />
-              ))}
-            </AnimatePresence>
+        {streak > 0 && (
+          <div className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5">
+            <span className="text-sm">🔥</span>
+            <span className="text-sm font-bold tabular-nums">{streak}</span>
           </div>
         )}
-      </section>
+      </header>
 
-      <LevelUpOverlay
-        open={overlay.open}
-        level={overlay.level}
-        milestoneLabel={overlay.milestoneLabel}
-        onClose={closeOverlay}
-      />
+      {/* Индикатор набора плана */}
+      <div className="mb-5 flex items-center gap-2">
+        {Array.from({ length: DAILY_GOAL }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"
+          >
+            <motion.div
+              className="h-full rounded-full bg-[var(--color-fg)]"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: i < takenToday ? 1 : 0 }}
+              style={{ originX: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 26 }}
+            />
+          </motion.div>
+        ))}
+        <span className="ml-1 text-[11px] font-medium tabular-nums text-[var(--color-muted)]">
+          {Math.min(takenToday, DAILY_GOAL)}/{DAILY_GOAL}
+        </span>
+      </div>
+
+      {/* Колода */}
+      {loading ? (
+        <div className="flex flex-1 items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
+        </div>
+      ) : (
+        <SwipeDeck
+          deck={deck}
+          onAccept={handleAccept}
+          onReject={handleReject}
+          emptyState={<DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />}
+        />
+      )}
+
+      {/* Мини-сводка принятого */}
+      <AnimatePresence>
+        {takenToday > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            className="mt-4"
+          >
+            <Link
+              href="/today"
+              className="flex items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
+            >
+              <div className="min-w-0">
+                <p className="text-[13px] font-semibold">
+                  В плане на сегодня: {takenToday}
+                </p>
+                <p className="mt-0.5 truncate text-[11.5px] text-[var(--color-muted)]">
+                  {today
+                    .slice(0, 2)
+                    .map((t) => t.snapshot.title)
+                    .join(" · ")}
+                  {today.length > 2 && ` +${today.length - 2}`}
+                </p>
+              </div>
+              <span className="ml-3 shrink-0 text-[var(--color-muted)]">→</span>
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Своё действие */}
+      <button
+        onClick={() => openCreate()}
+        className="mt-2.5 text-center text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+      >
+        + Добавить своё действие
+      </button>
+    </div>
+  );
+}
+
+function DeckEmpty({ onRefresh }: { onRefresh: () => void }) {
+  return (
+    <div className="flex flex-col items-center px-6 text-center">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-2xl">
+        ✓
+      </div>
+      <h2 className="text-lg font-bold tracking-tight">Карточки закончились</h2>
+      <p className="mt-2 max-w-[280px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+        Ты просмотрел всю подборку. Собери новую — движок учтёт
+        сегодняшние свайпы.
+      </p>
+      <button
+        onClick={onRefresh}
+        className="mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
+      >
+        Новая подборка
+      </button>
     </div>
   );
 }

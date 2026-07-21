@@ -88,7 +88,9 @@ export default function BottomNav() {
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40">
       <div className="pointer-events-auto mx-auto max-w-md">
         <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
-        <div className="safe-b flex items-stretch bg-[var(--color-bg-soft)]/85 px-1.5 pb-0.5 pt-2 backdrop-blur-2xl">
+        {/* Непрозрачный фон вместо backdrop-blur: блюр заставлял браузер
+            переблюривать весь контент под навбаром на КАЖДЫЙ кадр скролла. */}
+        <div className="safe-b flex items-stretch bg-[var(--color-bg-soft)] px-1.5 pb-0.5 pt-2">
           {NAV.map(({ href, label, Icon }) => {
             const active = pathname === href;
             const badge = href === "/today" && pending > 0 ? pending : 0;

@@ -25,6 +25,12 @@ interface Avatar3DProps {
   interactive?: boolean;
   /** триггер празднования: меняем число — персонаж радуется */
   celebrate?: number;
+  /**
+   * Статичный кадр без анимации. Мобильные браузеры держат мало
+   * WebGL-контекстов, и каждый живой rAF стоит батарею; для мелких
+   * аватаров (профиль, оверлей) движение не нужно.
+   */
+  still?: boolean;
 }
 
 export default function Avatar3D({
@@ -34,6 +40,7 @@ export default function Avatar3D({
   scale = 1,
   interactive = true,
   celebrate = 0,
+  still = false,
 }: Avatar3DProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const rigRef = useRef<RiggedAvatar | null>(null);
@@ -154,6 +161,18 @@ export default function Avatar3D({
     window.addEventListener("pointermove", onMove, { passive: true });
     mount.addEventListener("pointerleave", onLeave);
 
+    /* Во время скролла 3D замирает — иначе рывки на слабых телефонах. */
+    let scrolling = 0;
+    const onScroll = () => {
+      scrolling = 1;
+      clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(() => {
+        scrolling = 0;
+      }, 140);
+    };
+    let scrollTimer = 0;
+    window.addEventListener("scroll", onScroll, { passive: true });
+
     const clock = new THREE.Clock();
     let raf = 0;
     let prevT = 0;
@@ -163,8 +182,20 @@ export default function Avatar3D({
     let acc = 0;
 
     const tick = () => {
-      raf = requestAnimationFrame(tick);
-      if (!visible) return;
+      if (!still) raf = requestAnimationFrame(tick);
+      if (!visible) {
+        prevT = clock.getElapsedTime();
+        acc = 0;
+        return;
+      }
+
+      // Во время скролла и вне экрана время всё равно двигаем, иначе
+      // после паузы накопится огромная дельта и персонаж дёрнется.
+      if (scrolling) {
+        prevT = clock.getElapsedTime();
+        acc = 0;
+        return;
+      }
 
       const t = clock.getElapsedTime();
       acc += t - prevT;
@@ -223,13 +254,33 @@ export default function Avatar3D({
 
       renderer.render(scene, camera);
     };
-    tick();
+
+    /* Статичный режим: ждём модель и рисуем один кадр. */
+    if (still) {
+      const once = () => {
+        if (rigRef.current) {
+          updatePose(rigRef.current, shapeRef.current, 0.6, {
+            celebrate: 0,
+            lookX: 0,
+            lookY: 0,
+          });
+          renderer.render(scene, camera);
+        } else {
+          raf = requestAnimationFrame(once);
+        }
+      };
+      once();
+    } else {
+      tick();
+    }
 
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
       ro.disconnect();
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(scrollTimer);
       mount.removeEventListener("pointerleave", onLeave);
       rigRef.current?.dispose();
       floor.geometry.dispose();
@@ -240,7 +291,7 @@ export default function Avatar3D({
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [interactive]);
+  }, [interactive, still, scale]);
 
   /* ── Загрузка модели: РОВНО один раз на компонент ── */
   useEffect(() => {

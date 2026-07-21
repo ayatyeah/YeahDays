@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import Avatar3D from "@/components/Avatar3D";
+import Avatar3D from "@/components/AvatarLazy";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import {
@@ -64,11 +64,12 @@ export default function AccountPage() {
 
       {/* Карточка пользователя */}
       <section className="mt-3 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <div className="h-28 w-24 shrink-0">
+        <div className="canvas-slot h-28 w-24 shrink-0">
           <Avatar3D
             stats={stats}
             level={level}
             interactive={false}
+            still
             className="h-full w-full"
           />
         </div>

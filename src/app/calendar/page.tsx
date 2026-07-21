@@ -115,12 +115,13 @@ export default function CalendarPage() {
           const partial = e && e.done > 0 && e.done < e.taken;
 
           return (
-            <motion.button
+            <button
               key={i}
-              whileTap={{ scale: 0.92 }}
               onClick={() => setSelected(k)}
               className={cn(
-                "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[13px] transition",
+                // active:scale вместо framer-motion: 42 ячейки × подписка
+                // на motion-значения заметно тормозили открытие календаря
+                "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[13px] transition-transform duration-100 active:scale-[0.92]",
                 isSel
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-transparent hover:bg-[var(--color-surface)]",
@@ -147,7 +148,7 @@ export default function CalendarPage() {
                   />
                 </span>
               )}
-            </motion.button>
+            </button>
           );
         })}
       </div>

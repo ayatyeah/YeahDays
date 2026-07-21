@@ -58,18 +58,17 @@ export default function ActionCard({
   const yesScale = useTransform(x, [30, 150], [0.8, 1.05]);
   const noScale = useTransform(x, [-150, -30], [1.05, 0.8]);
 
-  // цветное свечение по краю в сторону решения
-  const glow = useTransform(
-    x,
-    [-200, -40, 0, 40, 200],
-    [
-      "0 0 0 1px rgba(249,115,98,0.9), 0 24px 60px -12px rgba(249,115,98,0.45)",
-      "0 0 0 1px rgba(255,255,255,0.07), 0 20px 50px -14px rgba(0,0,0,0.7)",
-      "0 0 0 1px rgba(255,255,255,0.07), 0 20px 50px -14px rgba(0,0,0,0.7)",
-      "0 0 0 1px rgba(255,255,255,0.07), 0 20px 50px -14px rgba(0,0,0,0.7)",
-      "0 0 0 1px rgba(63,191,154,0.9), 0 24px 60px -12px rgba(63,191,154,0.45)",
-    ],
-  );
+  /**
+   * Свечение решения.
+   *
+   * ПРОИЗВОДИТЕЛЬНОСТЬ: раньше здесь анимировался boxShadow с размытием
+   * 60px. Тень не композитится на GPU, поэтому каждый кадр драга вызывал
+   * полную перерисовку — свайп ощущался вязким, особенно на телефоне.
+   * Теперь тень статичная, а цвет решения показывают два наложенных
+   * слоя, у которых меняется только opacity (композитится на GPU).
+   */
+  const acceptGlow = useTransform(x, [40, 190], [0, 1]);
+  const rejectGlow = useTransform(x, [-190, -40], [1, 0]);
 
   const isTop = index === 0;
 
@@ -123,14 +122,14 @@ export default function ActionCard({
       transition={{ type: "spring", stiffness: 300, damping: 32 }}
     >
       <motion.article
-        className="relative h-full w-full cursor-grab overflow-hidden rounded-[28px] bg-[var(--color-surface)] active:cursor-grabbing"
+        className="gpu-layer relative h-full w-full cursor-grab overflow-hidden rounded-[28px] bg-[var(--color-surface)] active:cursor-grabbing"
         style={{
           x: isTop ? x : 0,
           y: isTop ? y : 0,
           rotate: isTop ? rotate : 0,
           scale: isTop ? lift : 1,
           boxShadow: isTop
-            ? glow
+            ? "0 0 0 1px rgba(255,255,255,0.07), 0 20px 50px -14px rgba(0,0,0,0.7)"
             : "0 0 0 1px rgba(255,255,255,0.05), 0 12px 30px -12px rgba(0,0,0,0.6)",
           pointerEvents: isTop ? "auto" : "none",
         }}
@@ -154,6 +153,24 @@ export default function ActionCard({
             backgroundImage:
               "linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
+          }}
+        />
+
+        {/* ── Свечение решения: только opacity, композитится на GPU ── */}
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-10 rounded-[28px]"
+          style={{
+            opacity: isTop ? acceptGlow : 0,
+            boxShadow:
+              "inset 0 0 0 2px rgba(63,191,154,0.9), inset 0 0 60px rgba(63,191,154,0.25)",
+          }}
+        />
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-10 rounded-[28px]"
+          style={{
+            opacity: isTop ? rejectGlow : 0,
+            boxShadow:
+              "inset 0 0 0 2px rgba(249,115,98,0.9), inset 0 0 60px rgba(249,115,98,0.25)",
           }}
         />
 

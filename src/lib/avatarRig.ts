@@ -297,6 +297,7 @@ export async function buildRiggedAvatar(
   const holder = new THREE.Group();
   holder.add(model);
 
+  captureRawBind(model);
   applyPhysique(bones, shape);
   applyRestPose(bones, shape);
 
@@ -324,7 +325,24 @@ export async function buildRiggedAvatar(
   holder.position.y -= box2.min.y;
   root.add(holder);
 
-  /* Ядро (Интеллект) — светящийся кристалл в груди, крепится к кости. */
+  /**
+   * Навески (ядро, пояс, корона).
+   *
+   * ВАЖНО: кости живут в масштабе ~0.073 и повёрнуты (ось кости — X),
+   * поэтому крепить меши прямо к кости и подбирать радиусы «на глаз»
+   * бесполезно — так ядро улетало вбок, а пояс раздувался на всё бедро.
+   * Вместо этого считаем позицию кости В МИРЕ и кладём навеску в root
+   * с обычными мировыми размерами.
+   */
+  holder.updateMatrixWorld(true);
+  const worldOf = (b?: THREE.Bone) =>
+    b ? b.getWorldPosition(new THREE.Vector3()) : new THREE.Vector3();
+
+  const chest = worldOf(bones.spine1);
+  const headP = worldOf(bones.head);
+  const hips = worldOf(bones.pelvis);
+
+  /* Ядро (Интеллект) — компактный кристалл на груди. */
   const coreMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(STAT_HEX.intelligence),
     roughness: 0.25,
@@ -332,16 +350,11 @@ export async function buildRiggedAvatar(
     emissive: new THREE.Color(STAT_HEX.intelligence),
     emissiveIntensity: 0.35 + shape.intelligence * 1.7,
   });
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(2.6, 1), coreMat);
-  if (bones.spine1) {
-    core.position.set(0, 2.5, 5.4);
-    bones.spine1.add(core);
-  } else {
-    core.position.set(0, 2.1, 0.3);
-    root.add(core);
-  }
+  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.075, 1), coreMat);
+  core.position.set(0, chest.y + 0.1, 0.3);
+  root.add(core);
 
-  /* Пояс/корона (Капитал). */
+  /* Капитал: аккуратный пояс и корона. */
   const goldMat = new THREE.MeshStandardMaterial({
     color: new THREE.Color(STAT_HEX.wealth),
     roughness: 0.22,
@@ -349,23 +362,24 @@ export async function buildRiggedAvatar(
     emissive: new THREE.Color(STAT_HEX.wealth),
     emissiveIntensity: 0.1 + shape.wealth * 0.34,
   });
-  if (shape.wealth > 0.06 && bones.pelvis) {
+  if (shape.wealth > 0.06) {
     const belt = new THREE.Mesh(
-      new THREE.TorusGeometry(5.2, 0.55, 8, 36),
+      new THREE.TorusGeometry(0.28, 0.022, 8, 40),
       goldMat,
     );
     belt.rotation.x = Math.PI / 2;
-    belt.scale.z = 0.7;
-    bones.pelvis.add(belt);
+    belt.scale.z = 0.62;
+    belt.position.set(0, hips.y + 0.02, 0);
+    root.add(belt);
   }
-  if (shape.wealth > 0.55 && bones.head) {
+  if (shape.wealth > 0.55) {
     const crown = new THREE.Mesh(
-      new THREE.TorusGeometry(3.6, 0.42, 8, 28),
+      new THREE.TorusGeometry(0.17, 0.018, 8, 30),
       goldMat,
     );
     crown.rotation.x = Math.PI / 2;
-    crown.position.y = 4.6;
-    bones.head.add(crown);
+    crown.position.set(0, headP.y + 0.26, 0.02);
+    root.add(crown);
   }
 
   /* Платформа (Стабильность). */
@@ -379,10 +393,10 @@ export async function buildRiggedAvatar(
     opacity: 0.5 + shape.stability * 0.45,
   });
   const platform = new THREE.Group();
-  const rings = 1 + Math.round(shape.stability * 3);
+  const rings = 1 + Math.round(shape.stability * 1.5);
   for (let i = 0; i < rings; i++) {
     const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(0.66 + i * 0.19, 0.016 + i * 0.004, 8, 48),
+      new THREE.TorusGeometry(0.66 + i * 0.22, 0.016 + i * 0.004, 8, 36),
       platMat,
     );
     ring.rotation.x = Math.PI / 2;
@@ -443,4 +457,70 @@ export async function buildRiggedAvatar(
   };
 
   return { root, skinned: mesh, bones, bind, core, platform, aura, material, dispose };
+}
+
+/**
+ * Обновить телосложение и материалы БЕЗ пересборки модели.
+ *
+ * Статы меняются после каждой выполненной задачи. Клонировать ради
+ * этого скелет и перебиндивать скиннинг слишком дорого, поэтому здесь
+ * мы трогаем только то, что реально зависит от статов: масштаб костей,
+ * цвет/свечение материалов и видимость навесок.
+ *
+ * Стойку покоя после этого нужно переснять в bind — иначе следующий
+ * кадр анимации вернёт модель в исходную A-позу.
+ */
+export function restyleAvatar(rig: RiggedAvatar, shape: AvatarShape) {
+  applyPhysique(rig.bones, shape);
+
+  // стойка зависит от Силы/Стабильности — пересобираем базу
+  rig.bones.upperArmL && resetToRest(rig);
+  applyRestPose(rig.bones, shape);
+  rig.root.traverse((o) => {
+    const b = o as THREE.Bone;
+    if (b.isBone) rig.bind.set(b, b.quaternion.clone());
+  });
+
+  // база тела теплеет с уровнем
+  rig.material.color
+    .set("#4a4e5c")
+    .lerp(new THREE.Color("#79808f"), Math.min(1, shape.level / 45));
+
+  const coreMat = rig.core.material as THREE.MeshStandardMaterial;
+  coreMat.emissiveIntensity = 0.35 + shape.intelligence * 1.7;
+
+  rig.platform.traverse((o) => {
+    const m = o as THREE.Mesh;
+    if (!m.isMesh) return;
+    const mat = m.material as THREE.MeshStandardMaterial;
+    mat.emissiveIntensity = 0.14 + shape.stability * 0.55;
+    mat.opacity = 0.5 + shape.stability * 0.45;
+  });
+
+  if (rig.aura) {
+    const power =
+      (shape.strength + shape.intelligence + shape.wealth + shape.stability) / 4;
+    const mat = rig.aura.material as THREE.MeshBasicMaterial;
+    mat.opacity = Math.max(0, 0.05 + power * 0.05);
+    rig.aura.visible = power > 0.35;
+  }
+}
+
+/** Вернуть кости к исходным кватернионам GLB перед новой стойкой. */
+function resetToRest(rig: RiggedAvatar) {
+  rig.root.traverse((o) => {
+    const b = o as THREE.Bone;
+    if (!b.isBone) return;
+    const raw = rawBind.get(b);
+    if (raw) b.quaternion.copy(raw);
+  });
+}
+
+/** Кватернионы прямо из файла — снимаются один раз при сборке. */
+const rawBind = new WeakMap<THREE.Bone, THREE.Quaternion>();
+export function captureRawBind(model: THREE.Object3D) {
+  model.traverse((o) => {
+    const b = o as THREE.Bone;
+    if (b.isBone && !rawBind.has(b)) rawBind.set(b, b.quaternion.clone());
+  });
 }

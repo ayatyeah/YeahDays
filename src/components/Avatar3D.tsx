@@ -8,7 +8,11 @@ import {
   STAT_HEX,
   type AvatarStats,
 } from "@/lib/avatar3d";
-import { buildRiggedAvatar, type RiggedAvatar } from "@/lib/avatarRig";
+import {
+  buildRiggedAvatar,
+  restyleAvatar,
+  type RiggedAvatar,
+} from "@/lib/avatarRig";
 import { updatePose, celebrateLift } from "@/lib/avatarPose";
 
 interface Avatar3DProps {
@@ -52,9 +56,11 @@ export default function Avatar3D({
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
+    // Модель ~3.4 юнита, голова на Y≈3.2. Кадрируем весь рост с запасом,
+    // иначе макушку срезает (было видно на скриншотах).
     const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
-    camera.position.set(0, 1.95, 6.6);
-    camera.lookAt(0, 1.65, 0);
+    camera.position.set(0, 2.1, 8.6);
+    camera.lookAt(0, 1.78, 0);
 
     let renderer: THREE.WebGLRenderer;
     try {
@@ -68,11 +74,13 @@ export default function Avatar3D({
       return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
-    renderer.shadowMap.enabled = true;
+    // Тени дороги; на мелких аватарах (карточки, профиль) они не видны.
+    const wantShadows = scale >= 1;
+    renderer.shadowMap.enabled = wantShadows;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.width = "100%";
@@ -84,8 +92,8 @@ export default function Avatar3D({
 
     const key = new THREE.DirectionalLight(0xffffff, 2.5);
     key.position.set(3.2, 6.4, 4.6);
-    key.castShadow = true;
-    key.shadow.mapSize.set(1024, 1024);
+    key.castShadow = wantShadows;
+    key.shadow.mapSize.set(512, 512);
     key.shadow.camera.left = -3;
     key.shadow.camera.right = 3;
     key.shadow.camera.top = 5;
@@ -150,11 +158,21 @@ export default function Avatar3D({
     let raf = 0;
     let prevT = 0;
 
+    // 30 fps достаточно для спокойной idle-анимации и вдвое дешевле 60.
+    const FRAME = 1 / 30;
+    let acc = 0;
+
     const tick = () => {
       raf = requestAnimationFrame(tick);
       if (!visible) return;
 
       const t = clock.getElapsedTime();
+      acc += t - prevT;
+      if (acc < FRAME) {
+        prevT = t;
+        return;
+      }
+      acc = 0;
       const dt = Math.min(0.05, t - prevT);
       prevT = t;
       const rig = rigRef.current;
@@ -224,30 +242,23 @@ export default function Avatar3D({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [interactive]);
 
-  /* ── Пересборка персонажа при изменении статов/уровня ── */
+  /* ── Загрузка модели: РОВНО один раз на компонент ── */
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene || failed) return;
 
     let cancelled = false;
-    const shape = normalizeStats(stats, level);
-    shapeRef.current = shape;
-
-    buildRiggedAvatar(shape)
+    buildRiggedAvatar(shapeRef.current)
       .then((rig) => {
         if (cancelled) {
           rig.dispose();
           return;
         }
-        if (rigRef.current) {
-          scene.remove(rigRef.current.root);
-          rigRef.current.dispose();
-        }
         rig.root.scale.setScalar(scale);
+        // аура — полноэкранный оверлей, на мелких аватарах не нужна
+        if (rig.aura && scale < 1) rig.aura.visible = false;
         scene.add(rig.root);
         rigRef.current = rig;
-
-        // акцентный свет подхватывает доминирующий стат
         const light = accentRef.current;
         if (light) light.color = new THREE.Color(STAT_HEX[dominantStat(stats)]);
       })
@@ -258,15 +269,30 @@ export default function Avatar3D({
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [failed, scale]);
+
+  /**
+   * ── Обновление статов БЕЗ пересборки ──
+   * Раньше любое изменение XP заново клонировало скелет и перебиндивало
+   * скиннинг — это и был главный источник лагов, потому что XP меняется
+   * после каждой задачи. Статы влияют только на масштаб костей и
+   * параметры материалов, поэтому применяем их к готовому ригу.
+   */
+  useEffect(() => {
+    const shape = normalizeStats(stats, level);
+    shapeRef.current = shape;
+    const rig = rigRef.current;
+    if (!rig) return;
+    restyleAvatar(rig, shape);
+    const light = accentRef.current;
+    if (light) light.color = new THREE.Color(STAT_HEX[dominantStat(stats)]);
   }, [
     stats.strength,
     stats.intelligence,
     stats.wealth,
     stats.stability,
     level,
-    scale,
-    failed,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   ]);
 
   /* ── Триггер празднования ── */

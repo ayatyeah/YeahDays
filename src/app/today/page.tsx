@@ -75,7 +75,7 @@ export default function TodayPage() {
       </header>
 
       {/* Персонаж реагирует на выполнение */}
-      <div className="relative -mt-2 h-[210px]">
+      <div className="relative -mt-2 h-[240px]">
         <Avatar3D
           stats={stats}
           level={progress.level}

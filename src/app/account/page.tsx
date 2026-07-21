@@ -64,7 +64,7 @@ export default function AccountPage() {
 
       {/* Карточка пользователя */}
       <section className="mt-3 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        <div className="h-24 w-20 shrink-0">
+        <div className="h-28 w-24 shrink-0">
           <Avatar3D
             stats={stats}
             level={level}

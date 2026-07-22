@@ -288,6 +288,11 @@ export default function Avatar3D({
       floor.geometry.dispose();
       (floor.material as THREE.Material).dispose();
       renderer.dispose();
+      // КРИТИЧНО: без этого WebGL-контекст НЕ освобождается при уходе с
+      // экрана. Контексты копятся на каждой навигации, браузер держит
+      // лимит (~16) и начинает принудительно терять старые → аватар
+      // прогрессивно лагает и глючит. forceContextLoss отпускает GPU сразу.
+      renderer.forceContextLoss();
       if (renderer.domElement.parentNode === mount) {
         mount.removeChild(renderer.domElement);
       }

@@ -1,5 +1,5 @@
-/* YeahDays service worker — простой офлайн-кэш */
-const CACHE = "yeahdays-v2";
+/* YeahDays service worker — офлайн-кэш + управляемое обновление */
+const CACHE = "yeahdays-v3";
 const PRECACHE = [
   "/",
   "/today",
@@ -12,9 +12,10 @@ const PRECACHE = [
 ];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting()),
-  );
+  // НЕ вызываем skipWaiting: новый воркер ждёт, пока пользователь сам
+  // нажмёт «Обновить» или закроет/переоткроет приложение. Это защищает
+  // открытую сессию от внезапной подмены кэша и ошибок ленивых чанков.
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)));
 });
 
 self.addEventListener("activate", (event) => {
@@ -26,6 +27,13 @@ self.addEventListener("activate", (event) => {
       )
       .then(() => self.clients.claim()),
   );
+});
+
+// Страница просит применить обновление немедленно.
+self.addEventListener("message", (event) => {
+  if (event.data === "SKIP_WAITING" || event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("fetch", (event) => {
@@ -44,9 +52,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE).then((c) => c.put(request, copy));
           return res;
         })
-        .catch(() =>
-          caches.match(request).then((r) => r || caches.match("/")),
-        ),
+        .catch(() => caches.match(request).then((r) => r || caches.match("/"))),
     );
     return;
   }

@@ -7,6 +7,7 @@ import Avatar3D from "@/components/AvatarLazy";
 import PlanItem from "@/components/PlanItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
+import { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
   useHydrated,
@@ -57,11 +58,7 @@ export default function TodayPage() {
   }
 
   if (!hydrated) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
-      </div>
-    );
+    return <LogoLoader />;
   }
 
   return (

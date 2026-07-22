@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SwipeDeck from "@/components/SwipeDeck";
 import CheckIn from "@/components/CheckIn";
 import Onboarding from "@/components/Onboarding";
+import Logo, { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
   useHydrated,
@@ -97,11 +98,7 @@ export default function HomePage() {
   /* ── Состояния экрана ── */
 
   if (!hydrated) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
-      </div>
-    );
+    return <LogoLoader />;
   }
 
   if (!onboarded) {
@@ -121,25 +118,25 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Шапка: прогресс дня */}
-      <header className="mb-4 flex items-start justify-between">
-        <div>
-          <p className="text-[13px] font-medium text-[var(--color-muted)]">
-            Сегодня
-          </p>
-          <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
-            {takenToday >= DAILY_GOAL
-              ? "План собран"
-              : "Что сделаешь сегодня?"}
-          </h1>
-        </div>
-
+      {/* Бренд-марка + стрик */}
+      <div className="mb-3 flex items-center justify-between">
+        <Logo variant="white" className="h-4 w-auto opacity-90" />
         {streak > 0 && (
           <div className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5">
             <span className="text-sm">🔥</span>
             <span className="text-sm font-bold tabular-nums">{streak}</span>
           </div>
         )}
+      </div>
+
+      {/* Шапка: прогресс дня */}
+      <header className="mb-4">
+        <p className="text-[13px] font-medium text-[var(--color-muted)]">
+          Сегодня
+        </p>
+        <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
+          {takenToday >= DAILY_GOAL ? "План собран" : "Что сделаешь сегодня?"}
+        </h1>
       </header>
 
       {/* Индикатор набора плана */}
@@ -165,9 +162,7 @@ export default function HomePage() {
 
       {/* Колода */}
       {loading ? (
-        <div className="flex flex-1 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
-        </div>
+        <LogoLoader />
       ) : (
         <SwipeDeck
           deck={deck}

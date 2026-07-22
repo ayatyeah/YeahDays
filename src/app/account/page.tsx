@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
+import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import {
@@ -49,11 +50,7 @@ export default function AccountPage() {
   );
 
   if (!hydrated) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
-      </div>
-    );
+    return <LogoLoader />;
   }
 
   return (
@@ -219,6 +216,14 @@ export default function AccountPage() {
         >
           Сбросить весь прогресс
         </Button>
+      </div>
+
+      {/* Бренд */}
+      <div className="mt-8 mb-1 flex flex-col items-center gap-1.5 opacity-55">
+        <Logo variant="white" className="h-4 w-auto" />
+        <p className="text-[11px] text-[var(--color-muted)]">
+          Одно действие в день
+        </p>
       </div>
 
       {/* Модалка имени */}

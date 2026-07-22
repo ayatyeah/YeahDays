@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
-import { useUserStore, selectToday } from "@/store/useUserStore";
+import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useMemo } from "react";
 
 type IconProps = { className?: string };
@@ -78,11 +78,17 @@ const NAV = [
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const hydrated = useHydrated();
+  const onboarded = useUserStore((s) => s.onboarded);
   const plan = useUserStore((s) => s.plan);
   const pending = useMemo(
     () => selectToday(plan).filter((t) => !t.completed).length,
     [plan],
   );
+
+  // Во время онбординга навигация скрыта — экран полноэкранный.
+  // Прячем только когда точно знаем, что онбординг не пройден.
+  if (hydrated && !onboarded) return null;
 
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40">

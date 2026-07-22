@@ -5,6 +5,8 @@ import Ambient from "@/components/Ambient";
 import BottomNav from "@/components/BottomNav";
 import CreateTaskModal from "@/components/CreateTaskModal";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import InstallPrompt from "@/components/InstallPrompt";
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -42,11 +44,14 @@ export default function RootLayout({
     <html lang="ru" className={inter.variable}>
       <body>
         <Ambient />
-        <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-24 pt-6">
-          {children}
-        </div>
+        <ErrorBoundary>
+          <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-24 pt-6">
+            {children}
+          </div>
+        </ErrorBoundary>
         <BottomNav />
         <CreateTaskModal />
+        <InstallPrompt />
         <ServiceWorkerRegister />
       </body>
     </html>

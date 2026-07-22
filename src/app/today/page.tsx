@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
 import PlanItem from "@/components/PlanItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
+import DayCompleteOverlay from "@/components/DayCompleteOverlay";
 import {
   useUserStore,
   useHydrated,
@@ -178,6 +179,7 @@ export default function TodayPage() {
       )}
 
       <LevelUpOverlay />
+      <DayCompleteOverlay />
     </div>
   );
 }

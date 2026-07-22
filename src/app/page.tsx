@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import SwipeDeck from "@/components/SwipeDeck";
 import CheckIn from "@/components/CheckIn";
+import Onboarding from "@/components/Onboarding";
 import {
   useUserStore,
   useHydrated,
@@ -23,6 +24,7 @@ export default function HomePage() {
   const hydrated = useHydrated();
 
   const name = useUserStore((s) => s.name);
+  const onboarded = useUserStore((s) => s.onboarded);
   const plan = useUserStore((s) => s.plan);
   const goals = useUserStore((s) => s.goals);
   const moods = useUserStore((s) => s.moods);
@@ -100,6 +102,10 @@ export default function HomePage() {
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-fg)]" />
       </div>
     );
+  }
+
+  if (!onboarded) {
+    return <Onboarding />;
   }
 
   if (needsCheckIn) {

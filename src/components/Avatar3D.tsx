@@ -81,14 +81,16 @@ export default function Avatar3D({
       return;
     }
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    // 1.6 вместо 1.75: на мобильных dpr 2–3 это ~16% меньше закрашиваемых
+    // фрагментов каждый кадр при незаметной разнице на стилизованной модели.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.6));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
     // Тени дороги; на мелких аватарах (карточки, профиль) они не видны.
     const wantShadows = scale >= 1;
     renderer.shadowMap.enabled = wantShadows;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     mount.appendChild(renderer.domElement);
     renderer.domElement.style.width = "100%";
     renderer.domElement.style.height = "100%";
@@ -100,7 +102,7 @@ export default function Avatar3D({
     const key = new THREE.DirectionalLight(0xffffff, 2.5);
     key.position.set(3.2, 6.4, 4.6);
     key.castShadow = wantShadows;
-    key.shadow.mapSize.set(512, 512);
+    key.shadow.mapSize.set(256, 256);
     key.shadow.camera.left = -3;
     key.shadow.camera.right = 3;
     key.shadow.camera.top = 5;

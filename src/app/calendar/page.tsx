@@ -129,7 +129,10 @@ export default function CalendarPage() {
               )}
               style={
                 full && !isSel
-                  ? { background: "var(--color-stability)18" }
+                  ? {
+                      background:
+                        "color-mix(in srgb, var(--color-stability) 14%, transparent)",
+                    }
                   : undefined
               }
             >

@@ -19,7 +19,7 @@ const variants: Record<Variant, string> = {
   ghost:
     "bg-transparent text-[var(--color-fg-dim)] hover:text-[var(--color-fg)] hover:bg-[var(--color-surface)]",
   danger:
-    "bg-transparent text-[var(--color-discipline)] border border-[var(--color-border)] hover:bg-[var(--color-surface)]",
+    "bg-transparent text-[var(--color-strength)] border border-[var(--color-border)] hover:bg-[var(--color-surface)]",
 };
 
 const sizes: Record<Size, string> = {

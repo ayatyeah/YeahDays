@@ -7,7 +7,7 @@ import {
   dominantStat,
   STAT_HEX,
   type AvatarStats,
-} from "@/lib/avatar3d";
+} from "@/lib/statVisuals";
 import {
   buildRiggedAvatar,
   restyleAvatar,

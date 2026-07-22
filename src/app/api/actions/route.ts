@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
 import { ACTION_POOL } from "@/lib/actionPool";
 import { CATEGORY_LIST, STAT_LIST } from "@/lib/domain";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export async function GET() {
   return NextResponse.json(

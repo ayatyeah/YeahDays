@@ -19,6 +19,7 @@ import {
 } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
 import { currentSlot } from "@/lib/domain";
+import { trackEvent } from "@/lib/api";
 
 const GREETING: Record<string, string> = {
   morning: "Доброе утро",
@@ -54,6 +55,13 @@ export default function TodayPage() {
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         navigator.vibrate?.([10, 30, 20]);
       }
+      trackEvent({
+        type: "complete",
+        actionId: task.actionId,
+        at: Date.now(),
+        category: task.snapshot.category,
+        xp: task.xp,
+      });
     }
   }
 

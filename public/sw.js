@@ -1,5 +1,5 @@
 /* YeahDays service worker — офлайн-кэш + управляемое обновление */
-const CACHE = "yeahdays-v3";
+const CACHE = "yeahdays-v4";
 const PRECACHE = [
   "/",
   "/today",
@@ -7,7 +7,9 @@ const PRECACHE = [
   "/progress",
   "/account",
   "/manifest.webmanifest",
-  "/icon.svg",
+  "/favicon.png",
+  "/logo.png",
+  "/logo-white.png",
   "/models/rigged_man.glb",
 ];
 

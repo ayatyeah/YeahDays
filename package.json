@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "gen-icons": "node scripts/gen-icons.mjs"
+    "process-logo": "node scripts/process-logo.mjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",

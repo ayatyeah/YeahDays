@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { STAT_LIST, type StatKey } from "@/lib/domain";
 import { useUserStore } from "@/store/useUserStore";
 import { cn } from "@/lib/cn";
+import Logo from "@/components/Logo";
 
 /**
  * Первый запуск. Задаёт тон продукта и собирает минимум, который реально
@@ -81,8 +82,14 @@ export default function Onboarding() {
           {step === 0 && (
             <Step key="welcome">
               <div className="flex flex-1 flex-col items-center justify-center text-center">
-                <Orb />
-                <h1 className="mt-8 text-[34px] font-black leading-none tracking-tight">
+                <motion.div
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <Logo glow className="h-28 w-auto" />
+                </motion.div>
+                <h1 className="mt-5 text-[34px] font-black leading-none tracking-tight">
                   YeahDays
                 </h1>
                 <p className="mt-3 max-w-[300px] text-[16px] leading-snug text-[var(--color-fg-dim)]">
@@ -215,33 +222,5 @@ function Step({ children }: { children: React.ReactNode }) {
     >
       {children}
     </motion.div>
-  );
-}
-
-/** Живой градиентный шар — знак бренда на приветственном экране. */
-function Orb() {
-  return (
-    <div className="relative h-28 w-28">
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background:
-            "conic-gradient(from 0deg, #f97362, #f0b23f, #3fbf9a, #8b7cf6, #f97362)",
-          filter: "blur(2px)",
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-      />
-      <div className="absolute inset-[10px] rounded-full bg-[var(--color-bg)]" />
-      <motion.div
-        className="absolute inset-[26px] rounded-full"
-        style={{
-          background:
-            "radial-gradient(circle at 40% 35%, #fff, #8b7cf6 70%, transparent)",
-        }}
-        animate={{ scale: [1, 1.08, 1] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
-    </div>
   );
 }

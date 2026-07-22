@@ -10,6 +10,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 import { ACTION_POOL } from "@/lib/actionPool";
 import { recommend, emptyHistory } from "@/lib/recommendation";
 import { historyFromEvents, type StoredEvent } from "@/lib/serverHistory";
@@ -31,7 +32,9 @@ export async function POST(req: Request) {
   const mood = { ...DEFAULT_MOOD, ...(body.mood ?? {}) };
   const excludeIds = Array.isArray(body.excludeIds) ? body.excludeIds : [];
   const custom = Array.isArray(body.customActions) ? body.customActions : [];
-  const userId = typeof body.userId === "string" ? body.userId : "";
+  const session = await auth();
+  const userId =
+    session?.user?.id ?? (typeof body.userId === "string" ? body.userId : "");
 
   // История: из БД (авторитетно), с фолбэком на присланную клиентом.
   let history = { ...emptyHistory(), ...(body.history ?? {}) };

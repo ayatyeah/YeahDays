@@ -10,6 +10,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { auth } from "@/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,7 +33,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const userId = typeof body.userId === "string" ? body.userId.slice(0, 64) : "";
+  // Если вошёл — id из сессии (клиент не может подделать); иначе аноним.
+  const session = await auth();
+  const userId =
+    session?.user?.id ??
+    (typeof body.userId === "string" ? body.userId.slice(0, 64) : "");
   if (!userId) {
     return NextResponse.json({ error: "userId required" }, { status: 400 });
   }

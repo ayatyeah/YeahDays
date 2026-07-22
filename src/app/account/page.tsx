@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
+import AuthCard from "@/components/AuthCard";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -56,6 +57,11 @@ export default function AccountPage() {
   return (
     <div className="flex flex-1 flex-col">
       <h1 className="text-[26px] font-bold tracking-tight">Профиль</h1>
+
+      {/* Вход / аккаунт */}
+      <div className="mt-3">
+        <AuthCard />
+      </div>
 
       {/* Карточка пользователя */}
       <section className="mt-3 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

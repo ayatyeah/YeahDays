@@ -54,10 +54,10 @@ export default function ProgressPage() {
 
       {/* Персонаж крупно */}
       <div className="canvas-slot mt-1 h-[320px]">
-        <Avatar3D stats={stats} level={level} className="h-full w-full" scale={1.1} />
+        <Avatar3D stats={stats} level={level} className="h-full w-full" />
       </div>
       <p className="mb-4 mt-1 text-center text-[11px] text-[var(--color-muted)]">
-        Покрути пальцем — персонаж живой
+        Тело меняется с уровнем — от новичка до легенды
       </p>
 
       {/* Уровень */}

@@ -118,9 +118,14 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Бренд-марка + стрик */}
-      <div className="mb-3 flex items-center justify-between">
-        <Logo variant="white" className="h-4 w-auto opacity-90" />
+      {/* Бренд-лого + название + стрик */}
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <Logo variant="white" className="h-7 w-auto" />
+          <span className="text-[19px] font-extrabold tracking-tight">
+            YeahDays
+          </span>
+        </div>
         {streak > 0 && (
           <div className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5">
             <span className="text-sm">🔥</span>

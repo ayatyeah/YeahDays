@@ -1,5 +1,5 @@
 /* YeahDays service worker — офлайн-кэш + управляемое обновление */
-const CACHE = "yeahdays-v4";
+const CACHE = "yeahdays-v5";
 const PRECACHE = [
   "/",
   "/today",
@@ -10,7 +10,9 @@ const PRECACHE = [
   "/favicon.png",
   "/logo.png",
   "/logo-white.png",
-  "/models/rigged_man.glb",
+  "/characters/slim.png",
+  "/characters/fit.png",
+  "/characters/jacked.png",
 ];
 
 self.addEventListener("install", (event) => {

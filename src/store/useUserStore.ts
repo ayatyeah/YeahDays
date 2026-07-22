@@ -49,11 +49,17 @@ interface UserState {
   history: HistorySignals;
   seenLevel: number;
   lastCheckIn: string | null;
+  /** прошёл ли первый запуск (онбординг) */
+  onboarded: boolean;
+  /** последний день, за закрытие которого показали празднование */
+  lastCelebratedDay: string | null;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
   setMood: (mood: Partial<DailyMood>) => void;
   completeCheckIn: () => void;
+  completeOnboarding: () => void;
+  markDayCelebrated: (day: string) => void;
   acceptAction: (action: Action, date?: string) => void;
   rejectAction: (actionId: string) => void;
   markSeen: (actionIds: string[]) => void;
@@ -78,6 +84,8 @@ const initial = {
   history: emptyHistory(),
   seenLevel: 1,
   lastCheckIn: null as string | null,
+  onboarded: false,
+  lastCelebratedDay: null as string | null,
 };
 
 export const useUserStore = create<UserState>()(
@@ -100,6 +108,10 @@ export const useUserStore = create<UserState>()(
         }),
 
       completeCheckIn: () => set({ lastCheckIn: dateKey() }),
+
+      completeOnboarding: () => set({ onboarded: true }),
+
+      markDayCelebrated: (day) => set({ lastCelebratedDay: day }),
 
       /** Свайп вправо: действие уходит в план дня. */
       acceptAction: (action, date) =>
@@ -209,17 +221,33 @@ export const useUserStore = create<UserState>()(
 
       markSeenLevel: (level) => set({ seenLevel: level }),
 
-      resetAll: () => set({ ...initial, createdAt: Date.now() }),
+      // Сброс — «начать заново», но онбординг проходить второй раз не заставляем.
+      resetAll: () =>
+        set({ ...initial, createdAt: Date.now(), onboarded: true }),
     }),
     {
       name: "yeahdays-store",
-      version: 3,
-      /** Миграция со старой схемы (tasks[] + 3 стата) — данные не теряем. */
+      version: 4,
+      /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
-        if (version >= 3) return state as UserState;
+        if (version >= 4) return state as UserState;
         const old = (state ?? {}) as Record<string, unknown>;
+        // v3 (текущая схема plan[]) — просто добавляем новые поля.
+        // Существующий пользователь уже в продукте → онбординг не показываем.
+        if (version === 3) {
+          return {
+            ...old,
+            onboarded: true,
+            lastCelebratedDay:
+              typeof old.lastCelebratedDay === "string"
+                ? old.lastCelebratedDay
+                : null,
+          } as unknown as UserState;
+        }
+        // version < 3: старая схема tasks[] + 3 стата.
         const migrated: Record<string, unknown> = {
           ...initial,
+          onboarded: true,
           name: typeof old.name === "string" ? old.name : initial.name,
           createdAt:
             typeof old.createdAt === "number" ? old.createdAt : Date.now(),
@@ -270,6 +298,8 @@ export const useUserStore = create<UserState>()(
         history: s.history,
         seenLevel: s.seenLevel,
         lastCheckIn: s.lastCheckIn,
+        onboarded: s.onboarded,
+        lastCelebratedDay: s.lastCelebratedDay,
       }),
     },
   ),

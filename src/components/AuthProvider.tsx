@@ -2,6 +2,7 @@
 
 import { SessionProvider } from "next-auth/react";
 import AccountSync from "./AccountSync";
+import StateSync from "./StateSync";
 
 export default function AuthProvider({
   children,
@@ -11,6 +12,7 @@ export default function AuthProvider({
   return (
     <SessionProvider>
       <AccountSync />
+      <StateSync />
       {children}
     </SessionProvider>
   );

@@ -53,6 +53,8 @@ interface UserState {
   onboarded: boolean;
   /** последний день, за закрытие которого показали празднование */
   lastCelebratedDay: string | null;
+  /** время последнего изменения (мс) — для кросс-девайс синхронизации (LWW) */
+  updatedAt: number;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -68,6 +70,42 @@ interface UserState {
   addCustomAction: (action: Action) => void;
   markSeenLevel: (level: number) => void;
   resetAll: () => void;
+  /** заменить локальное состояние снимком с сервера (без bump updatedAt) */
+  hydrateFromRemote: (data: SyncData) => void;
+}
+
+/** Persist-слой, который синхронизируется с сервером (== partialize). */
+export interface SyncData {
+  name: string;
+  createdAt: number;
+  plan: PlannedTask[];
+  customActions: Action[];
+  goals: GoalWeights;
+  moods: Record<string, DailyMood>;
+  history: HistorySignals;
+  seenLevel: number;
+  lastCheckIn: string | null;
+  onboarded: boolean;
+  lastCelebratedDay: string | null;
+  updatedAt: number;
+}
+
+/** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
+export function pickSync(s: SyncData): SyncData {
+  return {
+    name: s.name,
+    createdAt: s.createdAt,
+    plan: s.plan,
+    customActions: s.customActions,
+    goals: s.goals,
+    moods: s.moods,
+    history: s.history,
+    seenLevel: s.seenLevel,
+    lastCheckIn: s.lastCheckIn,
+    onboarded: s.onboarded,
+    lastCelebratedDay: s.lastCelebratedDay,
+    updatedAt: s.updatedAt,
+  };
 }
 
 function makeId() {
@@ -86,36 +124,56 @@ const initial = {
   lastCheckIn: null as string | null,
   onboarded: false,
   lastCelebratedDay: null as string | null,
+  // 0 намеренно: нетронутый/пустой стор всегда проигрывает LWW серверу,
+  // чтобы пустое устройство не затёрло реальный прогресс аккаунта.
+  // Первое же действие поднимет метку до Date.now() (см. touch).
+  updatedAt: 0,
 };
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => ({
+    (set) => {
+      /**
+       * Любая мутация состояния поднимает updatedAt — это метка «последнего
+       * изменения», по которой сервер разрешает конфликты между устройствами.
+       * Гидратация из localStorage/сервера идёт мимо touch и метку не сбивает.
+       */
+      const touch = (
+        m:
+          | Partial<UserState>
+          | ((s: UserState) => Partial<UserState>),
+      ) =>
+        set((s) => ({
+          ...(typeof m === "function" ? m(s) : m),
+          updatedAt: Date.now(),
+        }));
+
+      return {
       ...initial,
 
-      setName: (name) => set({ name: name.trim() || "Странник" }),
+      setName: (name) => touch({ name: name.trim() || "Странник" }),
 
       setGoal: (stat, value) =>
-        set((s) => ({
+        touch((s) => ({
           goals: { ...s.goals, [stat]: Math.min(1, Math.max(0, value)) },
         })),
 
       setMood: (mood) =>
-        set((s) => {
+        touch((s) => {
           const k = dateKey();
           const prev = s.moods[k] ?? DEFAULT_MOOD;
           return { moods: { ...s.moods, [k]: { ...prev, ...mood } } };
         }),
 
-      completeCheckIn: () => set({ lastCheckIn: dateKey() }),
+      completeCheckIn: () => touch({ lastCheckIn: dateKey() }),
 
-      completeOnboarding: () => set({ onboarded: true }),
+      completeOnboarding: () => touch({ onboarded: true }),
 
-      markDayCelebrated: (day) => set({ lastCelebratedDay: day }),
+      markDayCelebrated: (day) => touch({ lastCelebratedDay: day }),
 
       /** Свайп вправо: действие уходит в план дня. */
       acceptAction: (action, date) =>
-        set((s) => {
+        touch((s) => {
           const d = date ?? dateKey();
           const cat = action.category;
           const cc = s.history.categoryCompletion[cat] ?? { taken: 0, done: 0 };
@@ -150,7 +208,7 @@ export const useUserStore = create<UserState>()(
 
       /** Свайп влево: «не сейчас» — движок понижает вес. */
       rejectAction: (actionId) =>
-        set((s) => ({
+        touch((s) => ({
           history: {
             ...s.history,
             rejected: {
@@ -162,7 +220,7 @@ export const useUserStore = create<UserState>()(
         })),
 
       markSeen: (actionIds) =>
-        set((s) => {
+        touch((s) => {
           const now = Date.now();
           const lastSeen = { ...s.history.lastSeen };
           for (const id of actionIds) lastSeen[id] = now;
@@ -170,7 +228,7 @@ export const useUserStore = create<UserState>()(
         }),
 
       toggleTask: (id) =>
-        set((s) => {
+        touch((s) => {
           const task = s.plan.find((t) => t.id === id);
           if (!task) return {};
           const willComplete = !task.completed;
@@ -214,35 +272,52 @@ export const useUserStore = create<UserState>()(
         }),
 
       removeTask: (id) =>
-        set((s) => ({ plan: s.plan.filter((t) => t.id !== id) })),
+        touch((s) => ({ plan: s.plan.filter((t) => t.id !== id) })),
 
       addCustomAction: (action) =>
-        set((s) => ({ customActions: [action, ...s.customActions] })),
+        touch((s) => ({ customActions: [action, ...s.customActions] })),
 
-      markSeenLevel: (level) => set({ seenLevel: level }),
+      markSeenLevel: (level) => touch({ seenLevel: level }),
 
       // Сброс — «начать заново», но онбординг проходить второй раз не заставляем.
       resetAll: () =>
-        set({ ...initial, createdAt: Date.now(), onboarded: true }),
-    }),
+        touch({ ...initial, createdAt: Date.now(), onboarded: true }),
+
+      // Приходит с сервера — ставим как есть, updatedAt берём серверный,
+      // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
+      hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
+      };
+    },
     {
       name: "yeahdays-store",
-      version: 4,
+      version: 5,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
-        if (version >= 4) return state as UserState;
         const old = (state ?? {}) as Record<string, unknown>;
-        // v3 (текущая схема plan[]) — просто добавляем новые поля.
-        // Существующий пользователь уже в продукте → онбординг не показываем.
-        if (version === 3) {
-          return {
+        // updatedAt появился в v5 — если его нет, берём createdAt (или «сейчас»).
+        const withTs = (st: Record<string, unknown>): UserState =>
+          ({
+            ...st,
+            updatedAt:
+              typeof st.updatedAt === "number"
+                ? st.updatedAt
+                : typeof st.createdAt === "number"
+                  ? st.createdAt
+                  : Date.now(),
+          }) as unknown as UserState;
+
+        if (version >= 5) return withTs(old);
+        // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
+        // Пользователь v3 уже в продукте → онбординг не показываем.
+        if (version >= 3) {
+          return withTs({
             ...old,
-            onboarded: true,
+            onboarded: version >= 4 ? old.onboarded : true,
             lastCelebratedDay:
               typeof old.lastCelebratedDay === "string"
                 ? old.lastCelebratedDay
                 : null,
-          } as unknown as UserState;
+          });
         }
         // version < 3: старая схема tasks[] + 3 стата.
         const migrated: Record<string, unknown> = {
@@ -286,21 +361,9 @@ export const useUserStore = create<UserState>()(
               typeof o.completedAt === "number" ? o.completedAt : null,
           };
         });
-        return migrated as unknown as UserState;
+        return withTs(migrated);
       },
-      partialize: (s) => ({
-        name: s.name,
-        createdAt: s.createdAt,
-        plan: s.plan,
-        customActions: s.customActions,
-        goals: s.goals,
-        moods: s.moods,
-        history: s.history,
-        seenLevel: s.seenLevel,
-        lastCheckIn: s.lastCheckIn,
-        onboarded: s.onboarded,
-        lastCelebratedDay: s.lastCelebratedDay,
-      }),
+      partialize: (s) => pickSync(s),
     },
   ),
 );

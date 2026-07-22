@@ -16,8 +16,8 @@
 
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import type { AvatarShape } from "./avatar3d";
-import { STAT_HEX, dominantStat } from "./avatar3d";
+import type { AvatarShape } from "./statVisuals";
+import { STAT_HEX, dominantStat } from "./statVisuals";
 
 /**
  * Путь к модели. Вынесен в env, чтобы модель можно было отдать

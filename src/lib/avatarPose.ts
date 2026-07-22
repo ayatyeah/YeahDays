@@ -9,7 +9,7 @@
 
 import * as THREE from "three";
 import type { BoneMap, RiggedAvatar } from "./avatarRig";
-import type { AvatarShape } from "./avatar3d";
+import type { AvatarShape } from "./statVisuals";
 
 const _q = new THREE.Quaternion();
 const _e = new THREE.Euler();

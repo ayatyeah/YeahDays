@@ -1,6 +1,15 @@
 /* YeahDays service worker — простой офлайн-кэш */
-const CACHE = "yeahdays-v1";
-const PRECACHE = ["/", "/calendar", "/progress", "/account", "/manifest.webmanifest", "/icon.svg"];
+const CACHE = "yeahdays-v2";
+const PRECACHE = [
+  "/",
+  "/today",
+  "/calendar",
+  "/progress",
+  "/account",
+  "/manifest.webmanifest",
+  "/icon.svg",
+  "/models/rigged_man.glb",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

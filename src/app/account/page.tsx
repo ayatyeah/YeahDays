@@ -12,6 +12,7 @@ import {
   selectTotalXp,
   selectCompleted,
   selectStreak,
+  selectMood,
 } from "@/store/useUserStore";
 import { STAT_LIST, ENERGY_LABEL, type EnergyLevel } from "@/lib/domain";
 import { getLevelProgress } from "@/lib/leveling";
@@ -36,10 +37,7 @@ export default function AccountPage() {
   const streak = useMemo(() => selectStreak(plan), [plan]);
   const level = getLevelProgress(totalXp).level;
 
-  const todayMood = moods[Object.keys(moods).slice(-1)[0] ?? ""] ?? {
-    energy: "medium" as EnergyLevel,
-    minutes: 30,
-  };
+  const todayMood = selectMood(moods);
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);

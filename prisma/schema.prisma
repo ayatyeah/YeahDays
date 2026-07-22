@@ -25,6 +25,21 @@ model User {
   accounts      Account[]
   sessions      Session[]
   events        Event[]
+  state         UserState?
+}
+
+// Снимок клиентского состояния (план/цели/настроение/история) для
+// кросс-девайс синхронизации. Одна строка на пользователя. Разрешение
+// конфликтов — last-write-wins по clientAt (время изменения на клиенте).
+model UserState {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// весь persist-слой Zustand как есть (включая updatedAt)
+  data      Json
+  /// время последнего изменения на клиенте (мс → Date) — для LWW
+  clientAt  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ── Модели Auth.js (Prisma adapter) ──

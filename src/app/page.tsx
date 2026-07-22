@@ -18,7 +18,7 @@ import {
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
-import { dateKey, type Action } from "@/lib/domain";
+import { dateKey, xpForAction, type Action } from "@/lib/domain";
 import type { ScoredAction } from "@/lib/recommendation";
 
 export default function HomePage() {
@@ -82,7 +82,13 @@ export default function HomePage() {
   const handleAccept = useCallback(
     (a: Action) => {
       acceptAction(a);
-      trackEvent({ type: "accept", actionId: a.id, at: Date.now() });
+      trackEvent({
+        type: "accept",
+        actionId: a.id,
+        at: Date.now(),
+        category: a.category,
+        xp: xpForAction(a),
+      });
     },
     [acceptAction],
   );
@@ -90,7 +96,12 @@ export default function HomePage() {
   const handleReject = useCallback(
     (a: Action) => {
       rejectAction(a.id);
-      trackEvent({ type: "reject", actionId: a.id, at: Date.now() });
+      trackEvent({
+        type: "reject",
+        actionId: a.id,
+        at: Date.now(),
+        category: a.category,
+      });
     },
     [rejectAction],
   );

@@ -15,16 +15,18 @@ import {
   type HistorySignals,
   type ScoredAction,
 } from "./recommendation";
-import type { Action, DailyMood, GoalWeights } from "./domain";
+import type { Action, CategoryKey, DailyMood, GoalWeights } from "./domain";
+import { getUserId } from "./userId";
 
 export type EngineMode = "local" | "remote";
 
 /**
- * Управляется env-переменной, чтобы включить бэкенд без правок кода.
- * NEXT_PUBLIC_ENGINE=remote npm run build
+ * По умолчанию remote (рекомендации и события идут через /api + Postgres).
+ * Можно переопределить: NEXT_PUBLIC_ENGINE=local — весь скоринг в браузере.
+ * При недоступной сети remote сам откатывается на локальный расчёт.
  */
 export const ENGINE_MODE: EngineMode =
-  (process.env.NEXT_PUBLIC_ENGINE as EngineMode) ?? "local";
+  (process.env.NEXT_PUBLIC_ENGINE as EngineMode) ?? "remote";
 
 export interface RecommendRequest {
   goals: GoalWeights;
@@ -83,28 +85,33 @@ async function remoteRecommend(
   const res = await fetch("/api/recommendations", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(req),
+    body: JSON.stringify({ ...req, userId: getUserId() }),
   });
   if (!res.ok) throw new Error(`Engine responded ${res.status}`);
   return (await res.json()) as RecommendResponse;
 }
 
-/**
- * Отправка сигналов обратно движку (swipe / complete).
- * Локально это no-op: история уже лежит в сторе.
- * На бэкенде здесь копится обучающая выборка.
- */
-export async function trackEvent(event: {
+export interface TrackedEvent {
   type: "accept" | "reject" | "complete" | "skip";
   actionId: string;
   at: number;
-}): Promise<void> {
+  /** для серверных агрегатов без обращения к пулу */
+  category?: CategoryKey;
+  xp?: number;
+}
+
+/**
+ * Отправка сигналов движку (swipe / complete). В local — no-op (история
+ * в сторе). В remote — событие пишется в Postgres: обучающая выборка и
+ * источник серверной истории для рекомендаций.
+ */
+export async function trackEvent(event: TrackedEvent): Promise<void> {
   if (ENGINE_MODE !== "remote") return;
   try {
     await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(event),
+      body: JSON.stringify({ ...event, userId: getUserId() }),
       keepalive: true,
     });
   } catch {

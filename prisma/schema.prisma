@@ -1,0 +1,44 @@
+// YeahDays — схема БД (Postgres на Railway).
+// Пока без аутентификации: пользователь — анонимный device-id с клиента.
+// Событие = сигнал движку (свайп/выполнение) → обучающая выборка +
+// источник истории для серверных рекомендаций.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id // анонимный id устройства (клиент генерирует)
+  createdAt DateTime @default(now())
+  events    Event[]
+}
+
+enum EventType {
+  accept
+  reject
+  complete
+  skip
+}
+
+model Event {
+  id        String    @id @default(cuid())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  actionId  String
+  type      EventType
+  /// категория действия на момент события (для агрегатов без обращения к пулу)
+  category  String?
+  /// начисленный XP (для complete)
+  xp        Int?
+  at        DateTime  @default(now())
+  createdAt DateTime  @default(now())
+
+  @@index([userId, at])
+  @@index([userId, actionId])
+  @@index([userId, type])
+}

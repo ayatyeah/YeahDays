@@ -8,6 +8,7 @@ import PlanItem from "@/components/PlanItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
 import EveningRetro from "@/components/EveningRetro";
+import Challenges from "@/components/Challenges";
 import { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
@@ -134,6 +135,8 @@ export default function TodayPage() {
           />
         </div>
       </section>
+
+      <Challenges />
 
       {/* Список */}
       {today.length === 0 ? (

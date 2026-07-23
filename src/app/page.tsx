@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SwipeDeck from "@/components/SwipeDeck";
 import CheckIn from "@/components/CheckIn";
 import Onboarding from "@/components/Onboarding";
+import ActiveTask from "@/components/ActiveTask";
 import Logo, { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
@@ -13,14 +14,13 @@ import {
   selectMood,
   selectToday,
   selectTodayActionIds,
-  DAILY_GOAL,
   useStreak,
   effectiveGoals,
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
 import { track } from "@/lib/analytics";
-import { dateKey, xpForAction, type Action } from "@/lib/domain";
+import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
 import type { ScoredAction } from "@/lib/recommendation";
 
 export default function HomePage() {
@@ -31,6 +31,10 @@ export default function HomePage() {
   const plan = useUserStore((s) => s.plan);
   const goals = useUserStore((s) => s.goals);
   const quests = useUserStore((s) => s.quests);
+  const dailyGoal = useUserStore((s) => s.dailyGoal);
+  const excludedCategories = useUserStore((s) => s.excludedCategories);
+  const energyProfile = useUserStore((s) => s.energyProfile);
+  const toggleTask = useUserStore((s) => s.toggleTask);
   const moods = useUserStore((s) => s.moods);
   const history = useUserStore((s) => s.history);
   const customActions = useUserStore((s) => s.customActions);
@@ -43,10 +47,19 @@ export default function HomePage() {
   const markSeen = useUserStore((s) => s.markSeen);
   const openCreate = useUiStore((s) => s.openCreate);
 
-  const mood = useMemo(() => selectMood(moods), [moods]);
+  const dailyMood = useMemo(() => selectMood(moods), [moods]);
+  // Энергия у людей не постоянна за день. Берём её из профиля текущего
+  // слота, а бюджет минут — из чек-ина. Утром колода мягче, вечером злее.
+  const mood = useMemo(
+    () => ({ ...dailyMood, energy: energyProfile[currentSlot()] }),
+    [dailyMood, energyProfile],
+  );
   const today = useMemo(() => selectToday(plan), [plan]);
   const streak = useStreak();
   const takenToday = today.length;
+
+  /** Незакрытое действие на сегодня — пока оно есть, новые свайпы закрыты. */
+  const activeTask = useMemo(() => today.find((t) => !t.completed), [today]);
 
   const [deck, setDeck] = useState<ScoredAction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,6 +81,7 @@ export default function HomePage() {
       history,
       excludeIds: selectTodayActionIds(plan),
       customActions,
+      excludeCategories: excludedCategories,
       limit: 12,
     }).then((res) => {
       if (cancelled) return;
@@ -82,7 +96,16 @@ export default function HomePage() {
     // history намеренно не в зависимостях: иначе колода пересобиралась бы
     // на каждый свайп и карточки прыгали бы под пальцем
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, needsCheckIn, goals, quests, mood.energy, mood.minutes, reloadKey]);
+  }, [
+    hydrated,
+    needsCheckIn,
+    goals,
+    quests,
+    excludedCategories,
+    mood.energy,
+    mood.minutes,
+    reloadKey,
+  ]);
 
   const handleAccept = useCallback(
     (a: Action) => {
@@ -158,13 +181,13 @@ export default function HomePage() {
           Сегодня
         </p>
         <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
-          {takenToday >= DAILY_GOAL ? "План собран" : "Что сделаешь сегодня?"}
+          {takenToday >= dailyGoal ? "План собран" : "Что сделаешь сегодня?"}
         </h1>
       </header>
 
       {/* Индикатор набора плана */}
       <div className="mb-5 flex items-center gap-2">
-        {Array.from({ length: DAILY_GOAL }).map((_, i) => (
+        {Array.from({ length: dailyGoal }).map((_, i) => (
           <motion.div
             key={i}
             className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"
@@ -179,13 +202,36 @@ export default function HomePage() {
           </motion.div>
         ))}
         <span className="ml-1 text-[11px] font-medium tabular-nums text-[var(--color-muted)]">
-          {Math.min(takenToday, DAILY_GOAL)}/{DAILY_GOAL}
+          {Math.min(takenToday, dailyGoal)}/{dailyGoal}
         </span>
       </div>
 
-      {/* Колода */}
+      {/* Колода — но только если нет незакрытого действия.
+          Смысл гейта: взял — сделай. Иначе набирается список из десяти
+          «когда-нибудь», и продукт превращается в обычный тудушник. */}
       {loading ? (
         <LogoLoader />
+      ) : activeTask ? (
+        <ActiveTask
+          task={activeTask}
+          onDone={() => {
+            toggleTask(activeTask.id);
+            track("action_completed", {
+              category: activeTask.snapshot.category,
+              xp: activeTask.xp,
+            });
+            trackEvent({
+              type: "complete",
+              actionId: activeTask.actionId,
+              at: Date.now(),
+              category: activeTask.snapshot.category,
+              xp: activeTask.xp,
+            });
+            if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+              navigator.vibrate?.([10, 30, 20]);
+            }
+          }}
+        />
       ) : (
         <SwipeDeck
           deck={deck}

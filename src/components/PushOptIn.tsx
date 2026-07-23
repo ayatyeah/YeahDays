@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getUserId } from "@/lib/userId";
+import { useUserStore } from "@/store/useUserStore";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
 
@@ -33,6 +34,29 @@ type State =
  */
 export default function PushOptIn() {
   const [state, setState] = useState<State>("busy");
+  const reminderHour = useUserStore((s) => s.reminderHour);
+  const setReminderHour = useUserStore((s) => s.setReminderHour);
+
+  /** Переподписать с новым часом — подписка уже есть, меняем настройку. */
+  const resubscribe = useCallback(async (hour: number) => {
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      if (!sub) return;
+      await fetch("/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: getUserId(),
+          subscription: sub.toJSON(),
+          tzOffset: new Date().getTimezoneOffset(),
+          morningHour: hour,
+        }),
+      });
+    } catch {
+      // не критично: час сохранён локально и уедет при следующей подписке
+    }
+  }, []);
 
   const supported =
     typeof window !== "undefined" &&
@@ -76,6 +100,7 @@ export default function PushOptIn() {
           userId: getUserId(),
           subscription: sub.toJSON(),
           tzOffset: new Date().getTimezoneOffset(),
+          morningHour: reminderHour,
         }),
       });
       setState(res.ok ? "on" : "off");
@@ -138,6 +163,38 @@ export default function PushOptIn() {
           </p>
         </div>
       </div>
+
+      {/* Час утреннего напоминания. Вечерний подбирается автоматически
+          по тому, когда человек реально закрывает действия. */}
+      {state !== "denied" && (
+        <div className="mt-3">
+          <p className="mb-2 text-[11.5px] text-[var(--color-muted)]">
+            Утром в{" "}
+            <span className="font-semibold text-[var(--color-fg)]">
+              {String(reminderHour).padStart(2, "0")}:00
+            </span>
+          </p>
+          <div className="grid grid-cols-6 gap-1.5">
+            {[6, 7, 8, 9, 10, 11].map((h) => (
+              <button
+                key={h}
+                onClick={() => {
+                  setReminderHour(h);
+                  if (state === "on") void resubscribe(h);
+                }}
+                className={cn(
+                  "rounded-xl border py-2 text-[12px] tabular-nums transition",
+                  reminderHour === h
+                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
+                )}
+              >
+                {h}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {state !== "denied" && (
         <button

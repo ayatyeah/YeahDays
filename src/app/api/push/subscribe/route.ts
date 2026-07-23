@@ -47,6 +47,10 @@ export async function POST(req: Request) {
 
   const tzOffset =
     typeof body.tzOffset === "number" ? Math.round(body.tzOffset) : 0;
+  const morningHour =
+    typeof body.morningHour === "number"
+      ? Math.min(23, Math.max(0, Math.round(body.morningHour)))
+      : 9;
 
   try {
     await prisma.user.upsert({
@@ -76,6 +80,7 @@ export async function POST(req: Request) {
         p256dh,
         auth: authKey,
         tzOffset,
+        morningHour,
         eveningHour,
         enabled: true,
       },
@@ -84,6 +89,7 @@ export async function POST(req: Request) {
         p256dh,
         auth: authKey,
         tzOffset,
+        morningHour,
         eveningHour,
         enabled: true,
       },

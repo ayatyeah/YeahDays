@@ -13,8 +13,9 @@ import {
   selectStats,
   selectTotalXp,
   selectCompleted,
-  selectStreak,
   selectMood,
+  useStreak,
+  FREEZES_PER_MONTH,
 } from "@/store/useUserStore";
 import { STAT_LIST, ENERGY_LABEL, type EnergyLevel } from "@/lib/domain";
 import { getLevelProgress } from "@/lib/leveling";
@@ -32,11 +33,12 @@ export default function AccountPage() {
   const setMood = useUserStore((s) => s.setMood);
   const resetAll = useUserStore((s) => s.resetAll);
   const createdAt = useUserStore((s) => s.createdAt);
+  const freezes = useUserStore((s) => s.freezes);
 
   const stats = useMemo(() => selectStats(plan), [plan]);
   const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
   const completed = useMemo(() => selectCompleted(plan), [plan]);
-  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const streak = useStreak();
   const level = getLevelProgress(totalXp).level;
 
   const todayMood = selectMood(moods);
@@ -99,6 +101,23 @@ export default function AccountPage() {
         <Stat value={completed.length} label="Выполнено" />
         <Stat value={streak} label="Стрик" />
         <Stat value={level} label="Уровень" />
+      </section>
+
+      {/* Заморозки — страховка стрика */}
+      <section className="mt-3 flex items-center gap-3 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <span className="text-xl" aria-hidden>
+          🧊
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold">
+            Заморозки стрика: {freezes.left} из {FREEZES_PER_MONTH}
+          </p>
+          <p className="mt-0.5 text-[11.5px] leading-snug text-[var(--color-muted)]">
+            {freezes.left > 0
+              ? "Пропустишь день — серия сохранится автоматически. Обновляются каждый месяц."
+              : "На этот месяц закончились. Новые придут первого числа."}
+          </p>
+        </div>
       </section>
 
       {/* Приоритеты — напрямую кормят движок */}

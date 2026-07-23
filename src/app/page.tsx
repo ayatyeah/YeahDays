@@ -13,8 +13,8 @@ import {
   selectMood,
   selectToday,
   selectTodayActionIds,
-  selectStreak,
   DAILY_GOAL,
+  useStreak,
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
@@ -42,7 +42,7 @@ export default function HomePage() {
 
   const mood = useMemo(() => selectMood(moods), [moods]);
   const today = useMemo(() => selectToday(plan), [plan]);
-  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const streak = useStreak();
   const takenToday = today.length;
 
   const [deck, setDeck] = useState<ScoredAction[]>([]);

@@ -17,6 +17,7 @@ import {
 } from "./recommendation";
 import type { Action, CategoryKey, DailyMood, GoalWeights } from "./domain";
 import { getUserId } from "./userId";
+import { enqueue, flushQueue } from "./eventQueue";
 
 export type EngineMode = "local" | "remote";
 
@@ -104,17 +105,26 @@ export interface TrackedEvent {
  * Отправка сигналов движку (swipe / complete). В local — no-op (история
  * в сторе). В remote — событие пишется в Postgres: обучающая выборка и
  * источник серверной истории для рекомендаций.
+ *
+ * Событие всегда сначала попадает в офлайн-очередь и только потом
+ * выгружается: без сети оно дождётся связи, а не исчезнет.
  */
 export async function trackEvent(event: TrackedEvent): Promise<void> {
   if (ENGINE_MODE !== "remote") return;
-  try {
-    await fetch("/api/events", {
+  enqueue(event);
+  await flushEvents();
+}
+
+/** Отправить накопленную очередь событий. Безопасно вызывать часто. */
+export async function flushEvents(): Promise<number> {
+  if (ENGINE_MODE !== "remote") return 0;
+  return flushQueue(async (events) => {
+    const res = await fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...event, userId: getUserId() }),
+      body: JSON.stringify({ userId: getUserId(), events }),
       keepalive: true,
     });
-  } catch {
-    // телеметрия не должна ломать UX
-  }
+    return res.ok;
+  });
 }

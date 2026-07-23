@@ -7,8 +7,8 @@ import { AnimatePresence } from "framer-motion";
 import {
   useUserStore,
   useHydrated,
-  selectStreak,
-  selectBestStreak,
+  useStreak,
+  useBestStreak,
 } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
@@ -35,8 +35,8 @@ export default function CalendarPage() {
   const [view, setView] = useState({ y: today.getFullYear(), m: today.getMonth() });
   const [selected, setSelected] = useState(todayKey);
 
-  const streak = useMemo(() => selectStreak(plan), [plan]);
-  const best = useMemo(() => selectBestStreak(plan), [plan]);
+  const streak = useStreak();
+  const best = useBestStreak();
 
   /** date → {taken, done} */
   const byDate = useMemo(() => {

@@ -1,7 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
+import {
+  useUserStore,
+  useHydrated,
+  selectCompleted,
+  selectStreak,
+} from "@/store/useUserStore";
+import { useSyncStatus, timeAgo } from "@/store/useSyncStatus";
+import { cn } from "@/lib/cn";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -26,9 +34,69 @@ function GoogleIcon({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Строка статуса синхронизации — превращает вход из «сменилась аватарка»
+ * в понятное «прогресс лежит в аккаунте, вот когда он туда уехал».
+ */
+function SyncRow() {
+  const state = useSyncStatus((s) => s.state);
+  const lastSyncedAt = useSyncStatus((s) => s.lastSyncedAt);
+  const syncNow = useSyncStatus((s) => s.syncNow);
+  const [, tick] = useState(0);
+
+  // «только что» должно стареть само, без действий пользователя
+  useEffect(() => {
+    const id = setInterval(() => tick((n) => n + 1), 30_000);
+    return () => clearInterval(id);
+  }, []);
+
+  const busy = state === "syncing";
+  const failed = state === "error";
+
+  const label = busy
+    ? "Синхронизация…"
+    : failed
+      ? "Нет связи с сервером"
+      : lastSyncedAt
+        ? `Прогресс в аккаунте · ${timeAgo(lastSyncedAt)}`
+        : "Прогресс в аккаунте";
+
+  return (
+    <div className="mt-3 flex items-center gap-2.5 border-t border-[var(--color-border)] pt-3">
+      <span
+        className={cn(
+          "h-2 w-2 shrink-0 rounded-full",
+          busy && "animate-pulse bg-amber-400",
+          failed && "bg-red-400",
+          !busy && !failed && "bg-emerald-400",
+        )}
+        aria-hidden
+      />
+      <p className="min-w-0 flex-1 truncate text-[12px] text-[var(--color-muted)]">
+        {label}
+      </p>
+      <button
+        onClick={() => void syncNow?.()}
+        disabled={busy || !syncNow}
+        className="shrink-0 rounded-lg px-2 py-1 text-[11.5px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
+      >
+        {failed ? "Повторить" : "Обновить"}
+      </button>
+    </div>
+  );
+}
+
 export default function AuthCard() {
   const { data: session, status } = useSession();
   const [busy, setBusy] = useState(false);
+
+  const hydrated = useHydrated();
+  const plan = useUserStore((s) => s.plan);
+  const done = useMemo(() => selectCompleted(plan).length, [plan]);
+  const streak = useMemo(() => selectStreak(plan), [plan]);
+
+  const movedEvents = useSyncStatus((s) => s.movedEvents);
+  const pulledRemote = useSyncStatus((s) => s.pulledRemote);
 
   if (status === "loading") {
     return (
@@ -39,44 +107,79 @@ export default function AuthCard() {
   if (session?.user) {
     const u = session.user;
     return (
-      <section className="flex items-center gap-3 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-        {u.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={u.image}
-            alt=""
-            className="h-11 w-11 shrink-0 rounded-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-2)] text-lg font-bold">
-            {(u.name ?? u.email ?? "?").slice(0, 1).toUpperCase()}
+      <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="flex items-center gap-3">
+          {u.image ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={u.image}
+              alt=""
+              className="h-11 w-11 shrink-0 rounded-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-2)] text-lg font-bold">
+              {(u.name ?? u.email ?? "?").slice(0, 1).toUpperCase()}
+            </div>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-[14px] font-semibold">
+              {u.name ?? "Аккаунт"}
+            </p>
+            <p className="truncate text-[12px] text-[var(--color-muted)]">
+              {u.email}
+            </p>
           </div>
-        )}
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-[14px] font-semibold">
-            {u.name ?? "Аккаунт"}
-          </p>
-          <p className="truncate text-[12px] text-[var(--color-muted)]">
-            {u.email}
-          </p>
+          <button
+            onClick={() => signOut()}
+            className="shrink-0 rounded-xl px-3 py-2 text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+          >
+            Выйти
+          </button>
         </div>
-        <button
-          onClick={() => signOut()}
-          className="shrink-0 rounded-xl px-3 py-2 text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
-        >
-          Выйти
-        </button>
+
+        <SyncRow />
+
+        {/* Разовые подтверждения, что вход реально что-то сделал */}
+        {movedEvents ? (
+          <p className="mt-2 text-[11.5px] leading-snug text-[var(--color-fg-dim)]">
+            ✓ Перенесли {movedEvents}{" "}
+            {plural(movedEvents, "действие", "действия", "действий")} с этого
+            устройства в аккаунт
+          </p>
+        ) : null}
+        {pulledRemote ? (
+          <p className="mt-2 text-[11.5px] leading-snug text-[var(--color-fg-dim)]">
+            ✓ Загрузили прогресс с другого устройства
+          </p>
+        ) : null}
       </section>
     );
   }
 
+  // Не вошёл — говорим конкретикой, что именно сейчас под угрозой.
+  const hasProgress = hydrated && (done > 0 || streak > 0);
+
   return (
     <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-      <p className="text-[13px] font-semibold">Сохрани прогресс</p>
+      <p className="text-[13px] font-semibold">
+        {hasProgress ? "Прогресс только в этом браузере" : "Сохрани прогресс"}
+      </p>
       <p className="mt-1 text-[12px] leading-snug text-[var(--color-muted)]">
-        Войди — и твои действия, стрик и персонаж будут доступны на любом
-        устройстве.
+        {hasProgress ? (
+          <>
+            {done} {plural(done, "выполненное", "выполненных", "выполненных")}{" "}
+            {plural(done, "действие", "действия", "действий")}
+            {streak > 0 ? ` и стрик ${streak}` : ""} хранятся только здесь —
+            почистишь кэш или сменишь устройство, и всё пропадёт. Войди, и они
+            переедут в аккаунт.
+          </>
+        ) : (
+          <>
+            Войди — и твои действия, стрик и персонаж будут доступны на любом
+            устройстве.
+          </>
+        )}
       </p>
       <button
         disabled={busy}
@@ -91,4 +194,13 @@ export default function AuthCard() {
       </button>
     </section>
   );
+}
+
+/** Русские склонения после числительного. */
+function plural(n: number, one: string, few: string, many: string) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
 }

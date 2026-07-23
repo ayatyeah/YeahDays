@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { getUserId } from "@/lib/userId";
+import { useSyncStatus } from "@/store/useSyncStatus";
 
 /**
  * При первом входе привязывает анонимные события устройства к аккаунту
@@ -32,7 +33,14 @@ export default function AccountSync() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ deviceId }),
     })
-      .then(() => localStorage.setItem(key, "1"))
+      .then((r) => r.json())
+      .then((json: { moved?: number }) => {
+        // показываем в профиле, что вход реально что-то перенёс
+        if (typeof json.moved === "number" && json.moved > 0) {
+          useSyncStatus.getState().setMoved(json.moved);
+        }
+        localStorage.setItem(key, "1");
+      })
       .catch(() => {});
   }, [status, accountId]);
 

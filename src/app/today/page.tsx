@@ -7,6 +7,7 @@ import Avatar3D from "@/components/AvatarLazy";
 import PlanItem from "@/components/PlanItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
+import EveningRetro from "@/components/EveningRetro";
 import { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
@@ -182,6 +183,11 @@ export default function TodayPage() {
           )}
         </div>
       )}
+
+      {/* Итог дня — вечером и только если сегодня что-то происходило */}
+      <div className="mt-4">
+        <EveningRetro />
+      </div>
 
       <LevelUpOverlay />
       <DayCompleteOverlay />

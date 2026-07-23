@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import PushOptIn from "@/components/PushOptIn";
+import Quests from "@/components/Quests";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -125,6 +126,9 @@ export default function AccountPage() {
           </p>
         </div>
       </section>
+
+      {/* Цели с горизонтом — подкручивают колоду под срок */}
+      <Quests />
 
       {/* Приоритеты — напрямую кормят движок */}
       <section className="mt-6">

@@ -20,6 +20,7 @@ import {
 } from "@/lib/domain";
 import { LogoLoader } from "@/components/Logo";
 import DaySchedule from "@/components/DaySchedule";
+import TodoList from "@/components/TodoList";
 import { formatDuration } from "@/components/ActiveTask";
 import { cn } from "@/lib/cn";
 
@@ -353,7 +354,8 @@ function DayTab() {
           ))}
       </div>
 
-      {/* Почасовое расписание выбранного дня */}
+      {/* Задачи и почасовое расписание выбранного дня */}
+      <TodoList day={day} />
       <DaySchedule day={day} />
     </>
   );

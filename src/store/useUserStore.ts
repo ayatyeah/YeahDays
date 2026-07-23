@@ -61,6 +61,90 @@ export function monthKey(d = new Date()) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
+/* ────────────────────────  Цели с горизонтом  ──────────────────────── */
+
+/**
+ * Цель — это не «приоритет стата», а конкретное обещание себе с датой:
+ * «20 действий на силу до 1 сентября». Приоритеты говорят движку, что
+ * тебе интересно; цель говорит, к чему ты идёшь и сколько осталось.
+ */
+export interface Quest {
+  id: string;
+  title: string;
+  stat: StatKey;
+  /** сколько действий нужно закрыть */
+  target: number;
+  /** дедлайн, YYYY-MM-DD */
+  deadline: string;
+  /** с какого момента считаем прогресс */
+  createdAt: number;
+}
+
+/** Итог дня — короткая рефлексия, которая заодно кормит движок. */
+export interface DayRetro {
+  /** 1..5 — как прошёл день */
+  score: number;
+  note?: string;
+}
+
+/**
+ * Прогресс цели считается ИЗ плана, а не хранится отдельным счётчиком:
+ * так он не разъедется с реальностью при отмене выполнения или синхронизации.
+ */
+export function questProgress(q: Quest, plan: PlannedTask[]): number {
+  return plan.filter(
+    (t) =>
+      t.completed &&
+      CATEGORIES[t.snapshot.category].stat === q.stat &&
+      (t.completedAt ?? t.acceptedAt) >= q.createdAt,
+  ).length;
+}
+
+/** Сколько дней осталось до дедлайна (0 — сегодня последний). */
+export function daysLeft(deadline: string, today = dateKey()): number {
+  const a = new Date(`${today}T00:00:00`);
+  const b = new Date(`${deadline}T00:00:00`);
+  return Math.round((b.getTime() - a.getTime()) / 864e5);
+}
+
+export function isQuestDone(q: Quest, plan: PlannedTask[]): boolean {
+  return questProgress(q, plan) >= q.target;
+}
+
+/**
+ * Приоритеты с учётом активных целей.
+ *
+ * Цель без влияния на колоду — просто счётчик. Здесь она поднимает вес
+ * своего стата, причём тем сильнее, чем ближе дедлайн и чем больше
+ * отставание: за три дня до срока с половиной невыполненного движок
+ * начнёт настойчиво подкидывать нужное.
+ */
+export function effectiveGoals(
+  goals: GoalWeights,
+  quests: Quest[],
+  plan: PlannedTask[],
+  today = dateKey(),
+): GoalWeights {
+  const out = { ...goals };
+  for (const q of quests) {
+    const left = daysLeft(q.deadline, today);
+    if (left < 0) continue; // просрочена — не давим
+    const remaining = q.target - questProgress(q, plan);
+    if (remaining <= 0) continue; // уже выполнена
+
+    // сколько действий в день нужно, чтобы успеть
+    const pace = remaining / Math.max(left + 1, 1);
+    const pressure = Math.min(1, pace);
+
+    // Интерполируем в ОСТАВШИЙСЯ запас, а не прибавляем фиксированную
+    // величину: иначе при высоком базовом приоритете любая цель упирается
+    // в потолок и срочная перестаёт отличаться от несрочной.
+    const base = out[q.stat] ?? 0.5;
+    out[q.stat] = base + (1 - base) * (0.3 + 0.7 * pressure);
+  }
+  return out;
+}
+
 interface UserState {
   name: string;
   createdAt: number;
@@ -79,6 +163,10 @@ interface UserState {
   updatedAt: number;
   /** заморозки стрика */
   freezes: FreezeState;
+  /** цели с дедлайном */
+  quests: Quest[];
+  /** итоги дней: ключ — YYYY-MM-DD */
+  retros: Record<string, DayRetro>;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -98,6 +186,9 @@ interface UserState {
   refillFreezes: () => void;
   /** потратить заморозку на конкретный день */
   spendFreeze: (day: string) => void;
+  addQuest: (q: Omit<Quest, "id" | "createdAt">) => void;
+  removeQuest: (id: string) => void;
+  setRetro: (day: string, retro: DayRetro) => void;
   /** заменить локальное состояние снимком с сервера (без bump updatedAt) */
   hydrateFromRemote: (data: SyncData) => void;
 }
@@ -117,12 +208,16 @@ export interface SyncData {
   lastCelebratedDay: string | null;
   updatedAt: number;
   freezes: FreezeState;
+  quests: Quest[];
+  retros: Record<string, DayRetro>;
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
 export function pickSync(s: SyncData): SyncData {
   return {
     freezes: s.freezes,
+    quests: s.quests,
+    retros: s.retros,
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -163,6 +258,8 @@ const initial = {
     days: [] as string[],
     refilled: monthKey(),
   } as FreezeState,
+  quests: [] as Quest[],
+  retros: {} as Record<string, DayRetro>,
 };
 
 export const useUserStore = create<UserState>()(
@@ -344,6 +441,20 @@ export const useUserStore = create<UserState>()(
           };
         }),
 
+      addQuest: (q) =>
+        touch((s) => ({
+          quests: [
+            ...s.quests,
+            { ...q, id: makeId(), createdAt: Date.now() } as Quest,
+          ],
+        })),
+
+      removeQuest: (id) =>
+        touch((s) => ({ quests: s.quests.filter((q) => q.id !== id) })),
+
+      setRetro: (day, retro) =>
+        touch((s) => ({ retros: { ...s.retros, [day]: retro } })),
+
       // Приходит с сервера — ставим как есть, updatedAt берём серверный,
       // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
       hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
@@ -351,15 +462,18 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 6,
+      version: 7,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
-        // updatedAt появился в v5, freezes — в v6; добираем недостающее.
+        // updatedAt появился в v5, freezes — в v6, quests/retros — в v7.
         const withTs = (st: Record<string, unknown>): UserState => {
           const f = st.freezes as Partial<FreezeState> | undefined;
           return {
             ...st,
+            quests: Array.isArray(st.quests) ? st.quests : [],
+            retros:
+              st.retros && typeof st.retros === "object" ? st.retros : {},
             updatedAt:
               typeof st.updatedAt === "number"
                 ? st.updatedAt
@@ -374,7 +488,7 @@ export const useUserStore = create<UserState>()(
           } as unknown as UserState;
         };
 
-        if (version >= 6) return withTs(old);
+        if (version >= 7) return withTs(old);
         // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
         // Пользователь v3 уже в продукте → онбординг не показываем.
         if (version >= 3) {

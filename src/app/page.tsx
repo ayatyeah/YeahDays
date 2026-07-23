@@ -15,6 +15,7 @@ import {
   selectTodayActionIds,
   DAILY_GOAL,
   useStreak,
+  effectiveGoals,
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
@@ -28,6 +29,7 @@ export default function HomePage() {
   const onboarded = useUserStore((s) => s.onboarded);
   const plan = useUserStore((s) => s.plan);
   const goals = useUserStore((s) => s.goals);
+  const quests = useUserStore((s) => s.quests);
   const moods = useUserStore((s) => s.moods);
   const history = useUserStore((s) => s.history);
   const customActions = useUserStore((s) => s.customActions);
@@ -58,7 +60,9 @@ export default function HomePage() {
     setLoading(true);
 
     fetchRecommendations({
-      goals,
+      // активные цели поднимают вес своего стата тем сильнее,
+      // чем ближе дедлайн и чем больше отставание
+      goals: effectiveGoals(goals, quests, plan),
       mood,
       history,
       excludeIds: selectTodayActionIds(plan),
@@ -77,7 +81,7 @@ export default function HomePage() {
     // history намеренно не в зависимостях: иначе колода пересобиралась бы
     // на каждый свайп и карточки прыгали бы под пальцем
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, needsCheckIn, goals, mood.energy, mood.minutes, reloadKey]);
+  }, [hydrated, needsCheckIn, goals, quests, mood.energy, mood.minutes, reloadKey]);
 
   const handleAccept = useCallback(
     (a: Action) => {

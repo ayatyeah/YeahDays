@@ -251,6 +251,10 @@ interface UserState {
   challenges: Challenge[];
   /** сколько сил в разное время суток — энергия у людей не постоянна */
   energyProfile: Record<"morning" | "afternoon" | "evening", EnergyLevel>;
+  /** id действий из пула, скрытых вручную */
+  disabledActions: string[];
+  /** почасовой план: день (YYYY-MM-DD) → час (0..23) → что делаю */
+  schedule: Record<string, Record<string, string>>;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -281,6 +285,13 @@ interface UserState {
   removeChallenge: (id: string) => void;
   /** записать прогресс челленджа за день (delta может быть отрицательной) */
   logChallenge: (id: string, delta: number, day?: string) => void;
+  toggleDisabledAction: (actionId: string) => void;
+  setScheduleSlot: (day: string, hour: number, text: string) => void;
+  clearScheduleDay: (day: string) => void;
+  /** правка задачи плана из админки */
+  updateTask: (id: string, patch: Partial<PlannedTask>) => void;
+  /** добавить выполненное задним числом */
+  addTaskForDay: (action: Action, day: string, completed: boolean) => void;
   /** заменить локальное состояние снимком с сервера (без bump updatedAt) */
   hydrateFromRemote: (data: SyncData) => void;
 }
@@ -307,6 +318,8 @@ export interface SyncData {
   excludedCategories: CategoryKey[];
   challenges: Challenge[];
   energyProfile: Record<"morning" | "afternoon" | "evening", EnergyLevel>;
+  disabledActions: string[];
+  schedule: Record<string, Record<string, string>>;
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
@@ -320,6 +333,8 @@ export function pickSync(s: SyncData): SyncData {
     excludedCategories: s.excludedCategories,
     challenges: s.challenges,
     energyProfile: s.energyProfile,
+    disabledActions: s.disabledActions,
+    schedule: s.schedule,
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -372,6 +387,8 @@ const initial = {
     afternoon: "medium",
     evening: "high",
   } as Record<"morning" | "afternoon" | "evening", EnergyLevel>,
+  disabledActions: [] as string[],
+  schedule: {} as Record<string, Record<string, string>>,
 };
 
 export const useUserStore = create<UserState>()(
@@ -614,6 +631,54 @@ export const useUserStore = create<UserState>()(
           };
         }),
 
+      toggleDisabledAction: (actionId) =>
+        touch((s) => ({
+          disabledActions: s.disabledActions.includes(actionId)
+            ? s.disabledActions.filter((x) => x !== actionId)
+            : [...s.disabledActions, actionId],
+        })),
+
+      setScheduleSlot: (day, hour, text) =>
+        touch((s) => {
+          const dayMap = { ...(s.schedule[day] ?? {}) };
+          const trimmed = text.trim();
+          if (trimmed) dayMap[String(hour)] = trimmed;
+          else delete dayMap[String(hour)];
+          const schedule = { ...s.schedule };
+          if (Object.keys(dayMap).length > 0) schedule[day] = dayMap;
+          else delete schedule[day];
+          return { schedule };
+        }),
+
+      clearScheduleDay: (day) =>
+        touch((s) => {
+          const schedule = { ...s.schedule };
+          delete schedule[day];
+          return { schedule };
+        }),
+
+      updateTask: (id, patch) =>
+        touch((s) => ({
+          plan: s.plan.map((t) => (t.id === id ? { ...t, ...patch } : t)),
+        })),
+
+      addTaskForDay: (action, day, completed) =>
+        touch((s) => ({
+          plan: [
+            {
+              id: makeId(),
+              actionId: action.id,
+              snapshot: action,
+              xp: xpForAction(action),
+              date: day,
+              completed,
+              acceptedAt: Date.now(),
+              completedAt: completed ? Date.now() : null,
+            },
+            ...s.plan,
+          ],
+        })),
+
       // Приходит с сервера — ставим как есть, updatedAt берём серверный,
       // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
       hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
@@ -621,7 +686,7 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 9,
+      version: 10,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
@@ -645,6 +710,11 @@ export const useUserStore = create<UserState>()(
               st.energyProfile && typeof st.energyProfile === "object"
                 ? st.energyProfile
                 : { morning: "low", afternoon: "medium", evening: "high" },
+            disabledActions: Array.isArray(st.disabledActions)
+              ? st.disabledActions
+              : [],
+            schedule:
+              st.schedule && typeof st.schedule === "object" ? st.schedule : {},
             updatedAt:
               typeof st.updatedAt === "number"
                 ? st.updatedAt
@@ -659,7 +729,7 @@ export const useUserStore = create<UserState>()(
           } as unknown as UserState;
         };
 
-        if (version >= 9) return withTs(old);
+        if (version >= 10) return withTs(old);
         // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
         // Пользователь v3 уже в продукте → онбординг не показываем.
         if (version >= 3) {

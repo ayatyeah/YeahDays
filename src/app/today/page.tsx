@@ -9,6 +9,7 @@ import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
 import EveningRetro from "@/components/EveningRetro";
 import Challenges from "@/components/Challenges";
+import DaySchedule from "@/components/DaySchedule";
 import { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
@@ -49,6 +50,7 @@ export default function TodayPage() {
   const allDone = today.length > 0 && done.length === today.length;
 
   const [celebrate, setCelebrate] = useState(0);
+  const [showDone, setShowDone] = useState(false);
 
   function handleToggle(id: string) {
     const task = today.find((t) => t.id === id);
@@ -169,25 +171,47 @@ export default function TodayPage() {
             ))}
           </AnimatePresence>
 
+          {/* Выполненное сворачиваем: закрытое дело не должно занимать
+              экран наравне с тем, что ещё предстоит сделать. */}
           {done.length > 0 && (
-            <>
-              <p className="mt-3 text-[12px] font-semibold text-[var(--color-muted)]">
-                Выполнено
-              </p>
+            <div className="mt-3">
+              <button
+                onClick={() => setShowDone((v) => !v)}
+                className="flex w-full items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
+              >
+                <span className="text-[12.5px] font-semibold text-[var(--color-muted)]">
+                  Выполнено: {done.length}
+                </span>
+                <span className="text-[12px] text-[var(--color-muted)]">
+                  {showDone ? "скрыть" : "показать"}
+                </span>
+              </button>
+
               <AnimatePresence initial={false}>
-                {done.map((t) => (
-                  <PlanItem
-                    key={t.id}
-                    task={t}
-                    onToggle={handleToggle}
-                    onRemove={removeTask}
-                  />
-                ))}
+                {showDone && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex flex-col gap-2.5 overflow-hidden pt-2.5"
+                  >
+                    {done.map((t) => (
+                      <PlanItem
+                        key={t.id}
+                        task={t}
+                        onToggle={handleToggle}
+                        onRemove={removeTask}
+                      />
+                    ))}
+                  </motion.div>
+                )}
               </AnimatePresence>
-            </>
+            </div>
           )}
         </div>
       )}
+
+      <DaySchedule compact />
 
       {/* Итог дня — вечером и только если сегодня что-то происходило */}
       <div className="mt-4">

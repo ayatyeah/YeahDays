@@ -33,6 +33,7 @@ export default function HomePage() {
   const quests = useUserStore((s) => s.quests);
   const dailyGoal = useUserStore((s) => s.dailyGoal);
   const excludedCategories = useUserStore((s) => s.excludedCategories);
+  const disabledActions = useUserStore((s) => s.disabledActions);
   const energyProfile = useUserStore((s) => s.energyProfile);
   const toggleTask = useUserStore((s) => s.toggleTask);
   const moods = useUserStore((s) => s.moods);
@@ -82,6 +83,7 @@ export default function HomePage() {
       excludeIds: selectTodayActionIds(plan),
       customActions,
       excludeCategories: excludedCategories,
+      disabledActions,
       limit: 12,
     }).then((res) => {
       if (cancelled) return;
@@ -102,6 +104,7 @@ export default function HomePage() {
     goals,
     quests,
     excludedCategories,
+    disabledActions,
     mood.energy,
     mood.minutes,
     reloadKey,

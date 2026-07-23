@@ -9,6 +9,7 @@ import {
   pickSync,
   type SyncData,
 } from "@/store/useUserStore";
+import { useSyncStatus } from "@/store/useSyncStatus";
 
 /**
  * Кросс-девайс синхронизация всего прогресса (план/цели/настроение/история).
@@ -35,6 +36,8 @@ export default function StateSync() {
     if (data.updatedAt <= useUserStore.getState().updatedAt) return;
     applyingRemote.current = true;
     useUserStore.getState().hydrateFromRemote(data);
+    // прогресс реально приехал с другого устройства — это и есть польза входа
+    useSyncStatus.getState().markPulled();
     // отпускаем флаг после синхронного оповещения подписчиков
     queueMicrotask(() => {
       applyingRemote.current = false;
@@ -45,6 +48,8 @@ export default function StateSync() {
     const userId = getUserId();
     if (!userId) return;
     const data = pickSync(useUserStore.getState());
+    const status = useSyncStatus.getState();
+    status.begin();
     try {
       const res = await fetch("/api/state", {
         method: "PUT",
@@ -52,37 +57,43 @@ export default function StateSync() {
         body: JSON.stringify({ userId, data }),
         keepalive: true,
       });
-      if (!res.ok) return;
+      if (!res.ok) return status.fail();
       const json = (await res.json()) as {
         applied?: boolean;
         data?: SyncData;
       };
       // сервер оказался свежее (гонка с другим устройством) — принимаем его
       if (json.applied === false && json.data) applyRemote(json.data);
+      status.markSynced();
     } catch {
       // офлайн — состояние всё равно в localStorage, синхронизируем позже
+      status.fail();
     }
   }, [applyRemote]);
 
   const pull = useCallback(async () => {
     const userId = getUserId();
     if (!userId) return;
+    const status = useSyncStatus.getState();
+    status.begin();
     try {
       const res = await fetch(
         `/api/state?userId=${encodeURIComponent(userId)}`,
         { method: "GET", cache: "no-store" },
       );
-      if (!res.ok) return;
+      if (!res.ok) return status.fail();
       const json = (await res.json()) as { data?: SyncData | null };
       const remote = json.data ?? null;
       if (remote && remote.updatedAt > useUserStore.getState().updatedAt) {
         applyRemote(remote);
+        status.markSynced();
       } else {
         // сервер пуст или устарел — заливаем локальный прогресс наверх
-        void push();
+        await push();
       }
     } catch {
       // офлайн — попробуем в следующий раз
+      status.fail();
     }
   }, [applyRemote, push]);
 
@@ -106,6 +117,12 @@ export default function StateSync() {
     if (!hydrated) return;
     void pull();
   }, [hydrated, status, pull]);
+
+  // отдаём наружу принудительную синхронизацию (кнопка в профиле)
+  useEffect(() => {
+    useSyncStatus.getState().setSyncNow(() => pull());
+    return () => useSyncStatus.getState().setSyncNow(null);
+  }, [pull]);
 
   return null;
 }

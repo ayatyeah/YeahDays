@@ -21,6 +21,7 @@ import {
 import { getLevelProgress } from "@/lib/leveling";
 import { currentSlot } from "@/lib/domain";
 import { trackEvent } from "@/lib/api";
+import { track } from "@/lib/analytics";
 
 const GREETING: Record<string, string> = {
   morning: "Доброе утро",
@@ -53,6 +54,7 @@ export default function TodayPage() {
     toggleTask(id);
     if (task && !task.completed) {
       setCelebrate((c) => c + 1);
+      track("action_completed", { category: task.snapshot.category, xp: task.xp });
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         navigator.vibrate?.([10, 30, 20]);
       }

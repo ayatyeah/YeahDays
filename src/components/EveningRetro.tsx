@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
+import { track } from "@/lib/analytics";
 
 const SCORES = [
   { v: 1, icon: "😞", label: "Тяжко" },
@@ -84,6 +85,7 @@ export default function EveningRetro() {
                     key={s.v}
                     onClick={() => {
                       setRetro(today, { score: s.v });
+                      track("retro_submitted", { score: s.v, done: doneToday });
                       setSaved(true);
                     }}
                     className={cn(

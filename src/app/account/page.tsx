@@ -6,6 +6,8 @@ import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import PushOptIn from "@/components/PushOptIn";
 import Quests from "@/components/Quests";
+import ShareCard from "@/components/ShareCard";
+import DataControls from "@/components/DataControls";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -127,6 +129,11 @@ export default function AccountPage() {
         </div>
       </section>
 
+      {/* Поделиться прогрессом */}
+      <div className="mt-3">
+        <ShareCard />
+      </div>
+
       {/* Цели с горизонтом — подкручивают колоду под срок */}
       <Quests />
 
@@ -214,6 +221,8 @@ export default function AccountPage() {
           userHistory + freshness. Каждый свайп меняет веса для следующего дня.
         </p>
       </section>
+
+      <DataControls />
 
       <div className="mt-6">
         <Button

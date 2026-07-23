@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getUserId } from "@/lib/userId";
 import { cn } from "@/lib/cn";
+import { track } from "@/lib/analytics";
 
 const VAPID_PUBLIC = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
 
@@ -78,6 +79,7 @@ export default function PushOptIn() {
         }),
       });
       setState(res.ok ? "on" : "off");
+      if (res.ok) track("push_enabled");
     } catch {
       setState("off");
     }
@@ -97,6 +99,7 @@ export default function PushOptIn() {
         await sub.unsubscribe();
       }
       setState("off");
+      track("push_disabled");
     } catch {
       setState("on");
     }

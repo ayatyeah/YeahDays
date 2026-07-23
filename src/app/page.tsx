@@ -19,6 +19,7 @@ import {
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
+import { track } from "@/lib/analytics";
 import { dateKey, xpForAction, type Action } from "@/lib/domain";
 import type { ScoredAction } from "@/lib/recommendation";
 
@@ -86,6 +87,7 @@ export default function HomePage() {
   const handleAccept = useCallback(
     (a: Action) => {
       acceptAction(a);
+      track("action_accepted", { category: a.category, difficulty: a.difficulty });
       trackEvent({
         type: "accept",
         actionId: a.id,
@@ -100,6 +102,7 @@ export default function HomePage() {
   const handleReject = useCallback(
     (a: Action) => {
       rejectAction(a.id);
+      track("action_rejected", { category: a.category });
       trackEvent({
         type: "reject",
         actionId: a.id,

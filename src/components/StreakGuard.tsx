@@ -7,6 +7,7 @@ import {
   selectActiveDays,
 } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
+import { track } from "@/lib/analytics";
 
 /**
  * Страховка стрика.
@@ -48,6 +49,7 @@ export default function StreakGuard() {
     if (freezes.left <= 0) return; // лимит месяца исчерпан
 
     spendFreeze(yKey);
+    track("streak_saved_by_freeze");
   }, [hydrated, plan, freezes, refillFreezes, spendFreeze]);
 
   return null;

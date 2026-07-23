@@ -113,6 +113,96 @@ export function challengeDaysLeft(c: Challenge, today = dateKey()): number {
   return daysLeft(dateKey(end), today);
 }
 
+/* ────────────────────────  Задачи пользователя (To-Do)  ──────────────────────── */
+
+/**
+ * Задача — то, что человек завёл сам, в отличие от карточек колоды,
+ * которые предлагает движок. Здесь привычный тудушный набор: приоритет,
+ * день, час, длительность, подзадачи, заметка, повтор.
+ *
+ * Повторяющаяся задача НЕ размножается копиями на каждый день — она одна,
+ * а выполнение отмечается в doneDays. Иначе через год в сторе лежали бы
+ * сотни строк одной и той же привычки.
+ */
+export type TodoPriority = "low" | "normal" | "high";
+
+export type RepeatKind = "daily" | "weekdays" | "weekends" | "weekly";
+
+export interface TodoRepeat {
+  kind: RepeatKind;
+  /** для weekly: день недели 0..6 (0 — воскресенье) */
+  weekday?: number;
+}
+
+export interface Subtask {
+  id: string;
+  title: string;
+  done: boolean;
+}
+
+export interface Todo {
+  id: string;
+  title: string;
+  note?: string;
+  /** день задачи (для повторяющихся — день создания) */
+  date: string;
+  /** час 0..23, если привязана ко времени */
+  hour?: number;
+  /** сколько минут закладываем */
+  duration?: number;
+  priority: TodoPriority;
+  subtasks: Subtask[];
+  repeat?: TodoRepeat;
+  /** выполнение разовой задачи */
+  done: boolean;
+  /** для повторяющихся: дни, в которые выполнено */
+  doneDays: string[];
+  createdAt: number;
+  completedAt: number | null;
+}
+
+/** Показывать ли задачу в этот день. */
+export function isTodoOnDay(t: Todo, day: string): boolean {
+  if (!t.repeat) return t.date === day;
+  if (day < t.date) return false; // до создания повтора не показываем
+  const wd = new Date(`${day}T00:00:00`).getDay();
+  switch (t.repeat.kind) {
+    case "daily":
+      return true;
+    case "weekdays":
+      return wd >= 1 && wd <= 5;
+    case "weekends":
+      return wd === 0 || wd === 6;
+    case "weekly":
+      return (
+        wd === (t.repeat.weekday ?? new Date(`${t.date}T00:00:00`).getDay())
+      );
+  }
+}
+
+/** Выполнена ли задача в конкретный день. */
+export function isTodoDone(t: Todo, day: string): boolean {
+  return t.repeat ? t.doneDays.includes(day) : t.done;
+}
+
+/** Просрочена ли разовая задача. */
+export function isTodoOverdue(t: Todo, today = dateKey()): boolean {
+  return !t.repeat && !t.done && t.date < today;
+}
+
+export const PRIORITY_LABEL: Record<TodoPriority, string> = {
+  high: "Важно",
+  normal: "Обычная",
+  low: "Потом",
+};
+
+export const REPEAT_LABEL: Record<RepeatKind, string> = {
+  daily: "каждый день",
+  weekdays: "по будням",
+  weekends: "по выходным",
+  weekly: "раз в неделю",
+};
+
 /* ────────────────────────  Заморозка стрика  ──────────────────────── */
 
 /**
@@ -255,6 +345,8 @@ interface UserState {
   disabledActions: string[];
   /** почасовой план: день (YYYY-MM-DD) → час (0..23) → что делаю */
   schedule: Record<string, Record<string, string>>;
+  /** собственные задачи пользователя */
+  todos: Todo[];
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -292,6 +384,18 @@ interface UserState {
   updateTask: (id: string, patch: Partial<PlannedTask>) => void;
   /** добавить выполненное задним числом */
   addTaskForDay: (action: Action, day: string, completed: boolean) => void;
+  addTodo: (t: Partial<Todo> & { title: string; date: string }) => void;
+  updateTodo: (id: string, patch: Partial<Todo>) => void;
+  removeTodo: (id: string) => void;
+  /** отметить/снять выполнение в конкретный день */
+  toggleTodo: (id: string, day: string) => void;
+  addSubtask: (todoId: string, title: string) => void;
+  toggleSubtask: (todoId: string, subId: string) => void;
+  removeSubtask: (todoId: string, subId: string) => void;
+  /** перенести разовую задачу на другой день */
+  moveTodo: (id: string, day: string) => void;
+  /** вернуть только что удалённую (undo) */
+  restoreTodo: (t: Todo) => void;
   /** заменить локальное состояние снимком с сервера (без bump updatedAt) */
   hydrateFromRemote: (data: SyncData) => void;
 }
@@ -320,6 +424,7 @@ export interface SyncData {
   energyProfile: Record<"morning" | "afternoon" | "evening", EnergyLevel>;
   disabledActions: string[];
   schedule: Record<string, Record<string, string>>;
+  todos: Todo[];
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
@@ -335,6 +440,7 @@ export function pickSync(s: SyncData): SyncData {
     energyProfile: s.energyProfile,
     disabledActions: s.disabledActions,
     schedule: s.schedule,
+    todos: s.todos,
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -389,6 +495,7 @@ const initial = {
   } as Record<"morning" | "afternoon" | "evening", EnergyLevel>,
   disabledActions: [] as string[],
   schedule: {} as Record<string, Record<string, string>>,
+  todos: [] as Todo[],
 };
 
 export const useUserStore = create<UserState>()(
@@ -679,6 +786,100 @@ export const useUserStore = create<UserState>()(
           ],
         })),
 
+      addTodo: (t) =>
+        touch((s) => ({
+          todos: [
+            {
+              id: makeId(),
+              title: t.title.trim(),
+              note: t.note,
+              date: t.date,
+              hour: t.hour,
+              duration: t.duration,
+              priority: t.priority ?? "normal",
+              subtasks: t.subtasks ?? [],
+              repeat: t.repeat,
+              done: false,
+              doneDays: [],
+              createdAt: Date.now(),
+              completedAt: null,
+            },
+            ...s.todos,
+          ],
+        })),
+
+      updateTodo: (id, patch) =>
+        touch((s) => ({
+          todos: s.todos.map((t) => (t.id === id ? { ...t, ...patch } : t)),
+        })),
+
+      removeTodo: (id) =>
+        touch((s) => ({ todos: s.todos.filter((t) => t.id !== id) })),
+
+      toggleTodo: (id, day) =>
+        touch((s) => ({
+          todos: s.todos.map((t) => {
+            if (t.id !== id) return t;
+            // у повторяющейся выполнение живёт по дням, у разовой — флагом
+            if (t.repeat) {
+              const has = t.doneDays.includes(day);
+              return {
+                ...t,
+                doneDays: has
+                  ? t.doneDays.filter((d) => d !== day)
+                  : [...t.doneDays, day],
+              };
+            }
+            const next = !t.done;
+            return { ...t, done: next, completedAt: next ? Date.now() : null };
+          }),
+        })),
+
+      addSubtask: (todoId, title) =>
+        touch((s) => ({
+          todos: s.todos.map((t) =>
+            t.id === todoId
+              ? {
+                  ...t,
+                  subtasks: [
+                    ...t.subtasks,
+                    { id: makeId(), title: title.trim(), done: false },
+                  ],
+                }
+              : t,
+          ),
+        })),
+
+      toggleSubtask: (todoId, subId) =>
+        touch((s) => ({
+          todos: s.todos.map((t) =>
+            t.id === todoId
+              ? {
+                  ...t,
+                  subtasks: t.subtasks.map((x) =>
+                    x.id === subId ? { ...x, done: !x.done } : x,
+                  ),
+                }
+              : t,
+          ),
+        })),
+
+      removeSubtask: (todoId, subId) =>
+        touch((s) => ({
+          todos: s.todos.map((t) =>
+            t.id === todoId
+              ? { ...t, subtasks: t.subtasks.filter((x) => x.id !== subId) }
+              : t,
+          ),
+        })),
+
+      moveTodo: (id, day) =>
+        touch((s) => ({
+          todos: s.todos.map((t) => (t.id === id ? { ...t, date: day } : t)),
+        })),
+
+      restoreTodo: (t) => touch((s) => ({ todos: [t, ...s.todos] })),
+
       // Приходит с сервера — ставим как есть, updatedAt берём серверный,
       // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
       hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
@@ -686,7 +887,7 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 10,
+      version: 11,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
@@ -715,6 +916,7 @@ export const useUserStore = create<UserState>()(
               : [],
             schedule:
               st.schedule && typeof st.schedule === "object" ? st.schedule : {},
+            todos: Array.isArray(st.todos) ? st.todos : [],
             updatedAt:
               typeof st.updatedAt === "number"
                 ? st.updatedAt
@@ -729,7 +931,7 @@ export const useUserStore = create<UserState>()(
           } as unknown as UserState;
         };
 
-        if (version >= 10) return withTs(old);
+        if (version >= 11) return withTs(old);
         // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
         // Пользователь v3 уже в продукте → онбординг не показываем.
         if (version >= 3) {

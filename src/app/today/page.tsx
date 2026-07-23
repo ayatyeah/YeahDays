@@ -10,6 +10,7 @@ import DayCompleteOverlay from "@/components/DayCompleteOverlay";
 import EveningRetro from "@/components/EveningRetro";
 import Challenges from "@/components/Challenges";
 import DaySchedule from "@/components/DaySchedule";
+import TodoList from "@/components/TodoList";
 import { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
@@ -210,6 +211,8 @@ export default function TodayPage() {
           )}
         </div>
       )}
+
+      <TodoList />
 
       <DaySchedule compact />
 

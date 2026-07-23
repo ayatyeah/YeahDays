@@ -9,6 +9,7 @@ import {
   useHydrated,
   useStreak,
   useBestStreak,
+  dayLevel,
 } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
@@ -26,6 +27,7 @@ function keyOf(y: number, m: number, d: number) {
 export default function CalendarPage() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const challenges = useUserStore((s) => s.challenges);
   const toggleTask = useUserStore((s) => s.toggleTask);
   const removeTask = useUserStore((s) => s.removeTask);
 
@@ -113,6 +115,9 @@ export default function CalendarPage() {
           const isSel = k === selected;
           const full = e && e.done > 0 && e.done === e.taken;
           const partial = e && e.done > 0 && e.done < e.taken;
+          // уровень дня по челленджам: зелёный — все нормы взяты,
+          // жёлтый — взята хотя бы минимальная планка
+          const level = dayLevel(challenges, k);
 
           return (
             <button
@@ -128,10 +133,15 @@ export default function CalendarPage() {
                 isToday && !isSel && "text-[var(--color-stability)]",
               )}
               style={
-                full && !isSel
+                !isSel && (level !== "none" || full)
                   ? {
-                      background:
-                        "color-mix(in srgb, var(--color-stability) 14%, transparent)",
+                      background: `color-mix(in srgb, ${
+                        level === "green"
+                          ? "var(--color-stability)"
+                          : level === "yellow"
+                            ? "var(--color-wealth)"
+                            : "var(--color-stability)"
+                      } ${level === "none" ? 14 : 24}%, transparent)`,
                     }
                   : undefined
               }

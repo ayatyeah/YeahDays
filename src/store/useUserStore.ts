@@ -12,6 +12,7 @@ import {
   type Action,
   type CategoryKey,
   type DailyMood,
+  type EnergyLevel,
   type GoalWeights,
   type StatKey,
 } from "@/lib/domain";
@@ -32,12 +33,85 @@ export interface PlannedTask {
   completed: boolean;
   acceptedAt: number;
   completedAt: number | null;
+  /** сколько мс заняло выполнение — от взятия в план до галочки */
+  durationMs?: number;
 }
 
 export type Stats = Record<StatKey, number>;
 
-/** Сколько задач в день считается «днём выполненным». */
-export const DAILY_GOAL = 3;
+/** Сколько задач в день считается «днём выполненным» по умолчанию. */
+export const DAILY_GOAL = 2;
+
+/* ────────────────────────  Челленджи  ──────────────────────── */
+
+/**
+ * Челлендж — ежедневное обязательство на N дней, у которого есть уровни.
+ *
+ * Отличие от цели (Quest): цель — «сделай N действий за месяц, когда
+ * получится». Челлендж — «делай это КАЖДЫЙ день», и день оценивается
+ * по порогам: дотянул до жёлтого или до зелёного.
+ */
+export interface ChallengeSet {
+  /** в какой части дня делать подход */
+  slot: "morning" | "afternoon" | "evening";
+  /** сколько за подход */
+  reps: number;
+}
+
+export interface Challenge {
+  id: string;
+  title: string;
+  /** что считаем: «задач», «отжиманий» */
+  unit: string;
+  stat: StatKey;
+  /** порог жёлтого дня */
+  yellow: number;
+  /** порог зелёного дня */
+  green: number;
+  /** подходы по времени суток (если челлендж разбит на части) */
+  sets?: ChallengeSet[];
+  /** сколько дней длится */
+  days: number;
+  /** дата старта, YYYY-MM-DD */
+  startDate: string;
+  /** сделано по дням: YYYY-MM-DD → количество */
+  log: Record<string, number>;
+}
+
+export type DayLevel = "none" | "yellow" | "green";
+
+/** Уровень дня по одному челленджу. */
+export function challengeDayLevel(c: Challenge, day: string): DayLevel {
+  const n = c.log[day] ?? 0;
+  if (n >= c.green) return "green";
+  if (n >= c.yellow) return "yellow";
+  return "none";
+}
+
+/** Итоговый уровень дня: зелёный, только если все челленджи зелёные. */
+export function dayLevel(challenges: Challenge[], day: string): DayLevel {
+  const active = challenges.filter((c) => isChallengeActive(c, day));
+  if (active.length === 0) return "none";
+  const levels = active.map((c) => challengeDayLevel(c, day));
+  if (levels.every((l) => l === "green")) return "green";
+  if (levels.some((l) => l !== "none")) return "yellow";
+  return "none";
+}
+
+/** Идёт ли челлендж в этот день (в пределах своего срока). */
+export function isChallengeActive(c: Challenge, day: string): boolean {
+  if (day < c.startDate) return false;
+  const end = new Date(`${c.startDate}T00:00:00`);
+  end.setDate(end.getDate() + c.days - 1);
+  return day <= dateKey(end);
+}
+
+/** Сколько дней челленджа осталось. */
+export function challengeDaysLeft(c: Challenge, today = dateKey()): number {
+  const end = new Date(`${c.startDate}T00:00:00`);
+  end.setDate(end.getDate() + c.days - 1);
+  return daysLeft(dateKey(end), today);
+}
 
 /* ────────────────────────  Заморозка стрика  ──────────────────────── */
 
@@ -167,6 +241,16 @@ interface UserState {
   quests: Quest[];
   /** итоги дней: ключ — YYYY-MM-DD */
   retros: Record<string, DayRetro>;
+  /** во сколько присылать утреннее напоминание (локальный час) */
+  reminderHour: number;
+  /** сколько действий в день считать нормой */
+  dailyGoal: number;
+  /** категории, которые не показывать в колоде */
+  excludedCategories: CategoryKey[];
+  /** ежедневные челленджи */
+  challenges: Challenge[];
+  /** сколько сил в разное время суток — энергия у людей не постоянна */
+  energyProfile: Record<"morning" | "afternoon" | "evening", EnergyLevel>;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -189,6 +273,14 @@ interface UserState {
   addQuest: (q: Omit<Quest, "id" | "createdAt">) => void;
   removeQuest: (id: string) => void;
   setRetro: (day: string, retro: DayRetro) => void;
+  setReminderHour: (hour: number) => void;
+  setDailyGoal: (n: number) => void;
+  toggleExcludedCategory: (c: CategoryKey) => void;
+  setSlotEnergy: (slot: "morning" | "afternoon" | "evening", e: EnergyLevel) => void;
+  addChallenge: (c: Omit<Challenge, "id" | "log">) => void;
+  removeChallenge: (id: string) => void;
+  /** записать прогресс челленджа за день (delta может быть отрицательной) */
+  logChallenge: (id: string, delta: number, day?: string) => void;
   /** заменить локальное состояние снимком с сервера (без bump updatedAt) */
   hydrateFromRemote: (data: SyncData) => void;
 }
@@ -210,6 +302,11 @@ export interface SyncData {
   freezes: FreezeState;
   quests: Quest[];
   retros: Record<string, DayRetro>;
+  reminderHour: number;
+  dailyGoal: number;
+  excludedCategories: CategoryKey[];
+  challenges: Challenge[];
+  energyProfile: Record<"morning" | "afternoon" | "evening", EnergyLevel>;
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
@@ -218,6 +315,11 @@ export function pickSync(s: SyncData): SyncData {
     freezes: s.freezes,
     quests: s.quests,
     retros: s.retros,
+    reminderHour: s.reminderHour,
+    dailyGoal: s.dailyGoal,
+    excludedCategories: s.excludedCategories,
+    challenges: s.challenges,
+    energyProfile: s.energyProfile,
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -260,6 +362,16 @@ const initial = {
   } as FreezeState,
   quests: [] as Quest[],
   retros: {} as Record<string, DayRetro>,
+  // 7 утра: раннее напоминание работает лучше — день ещё не забрал внимание
+  reminderHour: 7,
+  dailyGoal: DAILY_GOAL,
+  excludedCategories: [] as CategoryKey[],
+  challenges: [] as Challenge[],
+  energyProfile: {
+    morning: "low",
+    afternoon: "medium",
+    evening: "high",
+  } as Record<"morning" | "afternoon" | "evening", EnergyLevel>,
 };
 
 export const useUserStore = create<UserState>()(
@@ -379,6 +491,11 @@ export const useUserStore = create<UserState>()(
                     ...t,
                     completed: willComplete,
                     completedAt: willComplete ? Date.now() : null,
+                    // сколько заняло от взятия до галочки — кормит
+                    // статистику и будущую оценку реальной длительности
+                    durationMs: willComplete
+                      ? Date.now() - t.acceptedAt
+                      : undefined,
                   }
                 : t,
             ),
@@ -455,6 +572,48 @@ export const useUserStore = create<UserState>()(
       setRetro: (day, retro) =>
         touch((s) => ({ retros: { ...s.retros, [day]: retro } })),
 
+      setReminderHour: (hour) =>
+        touch({ reminderHour: Math.min(23, Math.max(0, Math.round(hour))) }),
+
+      setDailyGoal: (n) =>
+        touch({ dailyGoal: Math.min(10, Math.max(1, Math.round(n))) }),
+
+      toggleExcludedCategory: (c) =>
+        touch((s) => ({
+          excludedCategories: s.excludedCategories.includes(c)
+            ? s.excludedCategories.filter((x) => x !== c)
+            : [...s.excludedCategories, c],
+        })),
+
+      setSlotEnergy: (slot, e) =>
+        touch((s) => ({ energyProfile: { ...s.energyProfile, [slot]: e } })),
+
+      addChallenge: (c) =>
+        touch((s) => ({
+          challenges: [...s.challenges, { ...c, id: makeId(), log: {} }],
+        })),
+
+      removeChallenge: (id) =>
+        touch((s) => ({ challenges: s.challenges.filter((c) => c.id !== id) })),
+
+      logChallenge: (id, delta, day) =>
+        touch((s) => {
+          const d = day ?? dateKey();
+          return {
+            challenges: s.challenges.map((c) =>
+              c.id === id
+                ? {
+                    ...c,
+                    log: {
+                      ...c.log,
+                      [d]: Math.max(0, (c.log[d] ?? 0) + delta),
+                    },
+                  }
+                : c,
+            ),
+          };
+        }),
+
       // Приходит с сервера — ставим как есть, updatedAt берём серверный,
       // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
       hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
@@ -462,7 +621,7 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 7,
+      version: 9,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
@@ -474,6 +633,18 @@ export const useUserStore = create<UserState>()(
             quests: Array.isArray(st.quests) ? st.quests : [],
             retros:
               st.retros && typeof st.retros === "object" ? st.retros : {},
+            reminderHour:
+              typeof st.reminderHour === "number" ? st.reminderHour : 7,
+            dailyGoal:
+              typeof st.dailyGoal === "number" ? st.dailyGoal : DAILY_GOAL,
+            excludedCategories: Array.isArray(st.excludedCategories)
+              ? st.excludedCategories
+              : [],
+            challenges: Array.isArray(st.challenges) ? st.challenges : [],
+            energyProfile:
+              st.energyProfile && typeof st.energyProfile === "object"
+                ? st.energyProfile
+                : { morning: "low", afternoon: "medium", evening: "high" },
             updatedAt:
               typeof st.updatedAt === "number"
                 ? st.updatedAt
@@ -488,7 +659,7 @@ export const useUserStore = create<UserState>()(
           } as unknown as UserState;
         };
 
-        if (version >= 7) return withTs(old);
+        if (version >= 9) return withTs(old);
         // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
         // Пользователь v3 уже в продукте → онбординг не показываем.
         if (version >= 3) {

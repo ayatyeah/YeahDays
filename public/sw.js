@@ -1,5 +1,14 @@
-/* YeahDays service worker — офлайн-кэш + управляемое обновление */
-const CACHE = "yeahdays-v5";
+/* YeahDays service worker — офлайн-кэш, обновление, push-уведомления */
+
+/**
+ * Версия кэша берётся из ?v= в адресе регистрации, который подставляет
+ * приложение из id сборки. Раньше версия правилась руками — про неё
+ * забывали, и пользователи месяцами сидели на старом бандле, считая, что
+ * у них свежая версия. Теперь каждая сборка = новый кэш и новый воркер.
+ */
+const BUILD =
+  new URL(self.location.href).searchParams.get("v") || "dev";
+const CACHE = `yeahdays-${BUILD}`;
 const PRECACHE = [
   "/",
   "/today",
@@ -39,6 +48,51 @@ self.addEventListener("message", (event) => {
     self.skipWaiting();
   }
 });
+
+/* ────────────────────────  Push-уведомления  ──────────────────────── */
+
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { title: "YeahDays", body: event.data ? event.data.text() : "" };
+  }
+
+  const title = data.title || "YeahDays";
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: data.body || "",
+      icon: "/logo.png",
+      badge: "/favicon.png",
+      tag: data.tag || "yeahdays",
+      renotify: false,
+      data: { url: data.url || "/" },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = event.notification.data?.url || "/";
+
+  // если приложение уже открыто — фокусируем вкладку, а не плодим новые
+  event.waitUntil(
+    self.clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clients) => {
+        for (const client of clients) {
+          if ("focus" in client) {
+            client.navigate?.(target);
+            return client.focus();
+          }
+        }
+        return self.clients.openWindow(target);
+      }),
+  );
+});
+
+/* ────────────────────────  Кэш  ──────────────────────── */
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;

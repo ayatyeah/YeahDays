@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
+import PushOptIn from "@/components/PushOptIn";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -102,6 +103,11 @@ export default function AccountPage() {
         <Stat value={streak} label="Стрик" />
         <Stat value={level} label="Уровень" />
       </section>
+
+      {/* Напоминания */}
+      <div className="mt-3">
+        <PushOptIn />
+      </div>
 
       {/* Заморозки — страховка стрика */}
       <section className="mt-3 flex items-center gap-3 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

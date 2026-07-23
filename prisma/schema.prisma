@@ -26,6 +26,36 @@ model User {
   sessions      Session[]
   events        Event[]
   state         UserState?
+  pushSubs      PushSubscription[]
+}
+
+// Подписка устройства на web-push. У одного пользователя может быть
+// несколько (телефон + ноутбук) — шлём на все живые.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// endpoint браузера — уникальный ключ подписки
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  /// сдвиг часового пояса клиента в минутах (getTimezoneOffset)
+  tzOffset  Int      @default(0)
+  /// час утреннего напоминания по локальному времени пользователя
+  morningHour Int    @default(9)
+  /// час вечернего напоминания
+  eveningHour Int    @default(20)
+  /// выключено пользователем, но подписку не удаляем
+  enabled   Boolean  @default(true)
+  /// когда последний раз успешно доставили — чтобы не слать дубли за день
+  lastSentAt DateTime?
+  /// какой тип последним отправляли (morning|evening)
+  lastKind  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([enabled])
 }
 
 // Снимок клиентского состояния (план/цели/настроение/история) для

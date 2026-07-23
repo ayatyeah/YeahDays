@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
+/** Id сборки: подставляется в next.config, меняется на каждый билд. */
+const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || "dev";
+
 /**
  * Регистрирует service worker и мягко управляет обновлениями.
  *
@@ -42,7 +45,9 @@ export default function ServiceWorkerRegister() {
 
     const register = () => {
       navigator.serviceWorker
-        .register("/sw.js")
+        // ?v= меняется с каждой сборкой: браузер видит новый воркер, а тот
+        // заводит новый кэш вместо того, чтобы отдавать старый бандл
+        .register(`/sw.js?v=${BUILD_ID}`)
         .then((r) => {
           reg = r;
           // обновление уже дождалось нас

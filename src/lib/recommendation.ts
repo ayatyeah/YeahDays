@@ -68,6 +68,93 @@ export interface RecommendationContext {
   /** для детерминизма в тестах */
   now?: number;
   slot?: TimePreference;
+  /** состояние лестниц; если не передано — считается на месте */
+  progressions?: Map<string, ProgressionState>;
+}
+
+/* ────────────────────────  Прогрессии  ──────────────────────── */
+
+/** Сколько раз нужно закрыть ступень, чтобы открылась следующая. */
+export const MASTERY_THRESHOLD = 3;
+
+export interface ProgressionState {
+  /** максимальная ступень, доступная сейчас */
+  unlocked: number;
+  /** последняя освоенная ступень (0 — ни одной) */
+  mastered: number;
+  /** сколько всего ступеней в лестнице */
+  max: number;
+}
+
+/**
+ * Где пользователь находится в каждой лестнице.
+ *
+ * Смысл: не показывать «50 отжиманий» тому, кто не осилил 20, и не
+ * гонять вечно «10 отжиманий» того, кто закрыл их двадцать раз.
+ */
+export function progressionStates(
+  pool: Action[],
+  h: HistorySignals,
+): Map<string, ProgressionState> {
+  const ladders = new Map<string, Action[]>();
+  for (const a of pool) {
+    if (!a.progression) continue;
+    const list = ladders.get(a.progression.id) ?? [];
+    list.push(a);
+    ladders.set(a.progression.id, list);
+  }
+
+  const out = new Map<string, ProgressionState>();
+  for (const [id, steps] of ladders) {
+    steps.sort((x, y) => x.progression!.step - y.progression!.step);
+    const max = steps[steps.length - 1].progression!.step;
+    let mastered = 0;
+    for (const s of steps) {
+      const done = h.completed[s.id] ?? 0;
+      if (done >= MASTERY_THRESHOLD) {
+        mastered = Math.max(mastered, s.progression!.step);
+      }
+    }
+    out.set(id, { unlocked: Math.min(mastered + 1, max), mastered, max });
+  }
+  return out;
+}
+
+/**
+ * Насколько ступень уместна сейчас. Заблокированные ступени отсекаются
+ * фильтром до скоринга, здесь — мягкое понижение давно пройденных.
+ */
+function progressionFit(
+  a: Action,
+  states: Map<string, ProgressionState>,
+): number {
+  if (!a.progression) return 1;
+  const st = states.get(a.progression.id);
+  if (!st) return 1;
+  const delta = st.unlocked - a.progression.step;
+  if (delta <= 0) return 1; // текущая рабочая ступень
+  if (delta === 1) return 0.55; // предыдущая — сгодится в слабый день
+  return 0.15; // давно освоено, скучно
+}
+
+/**
+ * Адаптивная сложность: планка едет за реальным поведением.
+ * Стабильно закрывает взятое → поднимаем; систематически сливает → опускаем.
+ * При малой выборке не трогаем ничего — иначе шум вместо адаптации.
+ */
+export function adaptiveShift(h: HistorySignals): number {
+  let taken = 0;
+  let done = 0;
+  for (const cc of Object.values(h.categoryCompletion)) {
+    if (!cc) continue;
+    taken += cc.taken;
+    done += cc.done;
+  }
+  if (taken < 5) return 0;
+  const rate = done / taken;
+  if (rate >= 0.8) return 0.6;
+  if (rate <= 0.4) return -0.6;
+  return 0;
 }
 
 export interface ScoreBreakdown {
@@ -137,7 +224,11 @@ function timeMatch(a: Action, mood: DailyMood, slot: TimePreference): number {
  * Главный принцип продукта: маленькие победы.
  * Если сил мало — тяжёлые задачи почти не показываем.
  */
-function difficultyMatch(a: Action, mood: DailyMood): number {
+function difficultyMatch(
+  a: Action,
+  mood: DailyMood,
+  shift: number,
+): number {
   const energy = ENERGY_RANK[mood.energy]; // 1..3
   const wantEnergy = ENERGY_RANK[a.energy];
 
@@ -146,8 +237,9 @@ function difficultyMatch(a: Action, mood: DailyMood): number {
   const energyScore =
     energyGap <= 0 ? 1 : energyGap === 1 ? 0.45 : 0.12;
 
-  // целевая сложность растёт с энергией: 2 / 3 / 4
-  const target = energy + 1;
+  // целевая сложность растёт с энергией: 2 / 3 / 4,
+  // плюс адаптация под то, как человек реально закрывает взятое
+  const target = clampRange(energy + 1 + shift, 1, 5);
   const diffGap = Math.abs(a.difficulty - target);
   const diffScore = Math.max(0, 1 - diffGap * 0.28);
 
@@ -196,23 +288,33 @@ export function scoreAction(
 ): ScoredAction {
   const now = ctx.now ?? Date.now();
   const slot = ctx.slot ?? currentSlot(new Date(now));
+  const states = ctx.progressions ?? progressionStates(ctx.pool, ctx.history);
 
   const breakdown: ScoreBreakdown = {
     goalMatch: goalMatch(a, ctx.goals, ctx.history),
     timeMatch: timeMatch(a, ctx.mood, slot),
-    difficultyMatch: difficultyMatch(a, ctx.mood),
+    difficultyMatch: difficultyMatch(a, ctx.mood, adaptiveShift(ctx.history)),
     userHistory: userHistory(a, ctx.history),
     freshness: freshness(a, ctx.history, now),
   };
 
-  const score =
+  const weighted =
     breakdown.goalMatch * WEIGHTS.goalMatch +
     breakdown.timeMatch * WEIGHTS.timeMatch +
     breakdown.difficultyMatch * WEIGHTS.difficultyMatch +
     breakdown.userHistory * WEIGHTS.userHistory +
     breakdown.freshness * WEIGHTS.freshness;
 
-  return { action: a, score, breakdown, reason: explain(a, breakdown, ctx) };
+  // ступень лестницы — множитель, а не слагаемое: пройденное не должно
+  // конкурировать с актуальным только за счёт остальных сигналов
+  const score = weighted * progressionFit(a, states);
+
+  return {
+    action: a,
+    score,
+    breakdown,
+    reason: explain(a, breakdown, ctx, states),
+  };
 }
 
 /**
@@ -223,7 +325,16 @@ function explain(
   a: Action,
   b: ScoreBreakdown,
   ctx: RecommendationContext,
+  states?: Map<string, ProgressionState>,
 ): string {
+  // новая ступень лестницы — самый сильный повод показать именно это
+  if (a.progression && states) {
+    const st = states.get(a.progression.id);
+    if (st && st.mastered > 0 && a.progression.step === st.unlocked) {
+      return "Новая ступень — предыдущую ты освоил";
+    }
+  }
+
   const entries = Object.entries(b) as [keyof ScoreBreakdown, number][];
   const top = entries.sort((x, y) => y[1] - x[1])[0][0];
   const stat = CATEGORIES[a.category].stat;
@@ -262,11 +373,21 @@ export function recommend(
   const exclude = new Set(ctx.excludeIds);
   const now = ctx.now ?? Date.now();
   const seed = Math.floor(now / 864e5); // меняется раз в сутки
+  const states = ctx.progressions ?? progressionStates(ctx.pool, ctx.history);
+  const scored = { ...ctx, progressions: states };
 
   return ctx.pool
-    .filter((a) => !exclude.has(a.id))
+    .filter((a) => {
+      if (exclude.has(a.id)) return false;
+      // ступень выше открытой — ещё не заработана
+      if (a.progression) {
+        const st = states.get(a.progression.id);
+        if (st && a.progression.step > st.unlocked) return false;
+      }
+      return true;
+    })
     .map((a) => {
-      const s = scoreAction(a, ctx);
+      const s = scoreAction(a, scored);
       return { ...s, score: s.score + jitter(a.id, seed) * 0.04 };
     })
     .sort((a, b) => b.score - a.score)
@@ -285,4 +406,8 @@ function jitter(id: string, seed: number): number {
 
 function clamp01(n: number) {
   return Math.min(1, Math.max(0, n));
+}
+
+function clampRange(n: number, lo: number, hi: number) {
+  return Math.min(hi, Math.max(lo, n));
 }

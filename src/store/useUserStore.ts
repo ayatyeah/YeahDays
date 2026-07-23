@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
@@ -39,6 +39,28 @@ export type Stats = Record<StatKey, number>;
 /** Сколько задач в день считается «днём выполненным». */
 export const DAILY_GOAL = 3;
 
+/* ────────────────────────  Заморозка стрика  ──────────────────────── */
+
+/**
+ * Один пропущенный день не должен обнулять месяц работы — иначе человек
+ * решает «всё равно уже сломал» и уходит навсегда. Заморозка закрывает
+ * пропуск автоматически, если стрик реально был.
+ */
+export const FREEZES_PER_MONTH = 2;
+
+export interface FreezeState {
+  /** сколько заморозок осталось в этом месяце */
+  left: number;
+  /** дни (YYYY-MM-DD), закрытые заморозкой */
+  days: string[];
+  /** месяц последнего пополнения, YYYY-MM */
+  refilled: string;
+}
+
+export function monthKey(d = new Date()) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+}
+
 interface UserState {
   name: string;
   createdAt: number;
@@ -55,6 +77,8 @@ interface UserState {
   lastCelebratedDay: string | null;
   /** время последнего изменения (мс) — для кросс-девайс синхронизации (LWW) */
   updatedAt: number;
+  /** заморозки стрика */
+  freezes: FreezeState;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -70,6 +94,10 @@ interface UserState {
   addCustomAction: (action: Action) => void;
   markSeenLevel: (level: number) => void;
   resetAll: () => void;
+  /** пополнить заморозки, если начался новый месяц */
+  refillFreezes: () => void;
+  /** потратить заморозку на конкретный день */
+  spendFreeze: (day: string) => void;
   /** заменить локальное состояние снимком с сервера (без bump updatedAt) */
   hydrateFromRemote: (data: SyncData) => void;
 }
@@ -88,11 +116,13 @@ export interface SyncData {
   onboarded: boolean;
   lastCelebratedDay: string | null;
   updatedAt: number;
+  freezes: FreezeState;
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
 export function pickSync(s: SyncData): SyncData {
   return {
+    freezes: s.freezes,
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -128,6 +158,11 @@ const initial = {
   // чтобы пустое устройство не затёрло реальный прогресс аккаунта.
   // Первое же действие поднимет метку до Date.now() (см. touch).
   updatedAt: 0,
+  freezes: {
+    left: FREEZES_PER_MONTH,
+    days: [] as string[],
+    refilled: monthKey(),
+  } as FreezeState,
 };
 
 export const useUserStore = create<UserState>()(
@@ -143,10 +178,13 @@ export const useUserStore = create<UserState>()(
           | Partial<UserState>
           | ((s: UserState) => Partial<UserState>),
       ) =>
-        set((s) => ({
-          ...(typeof m === "function" ? m(s) : m),
-          updatedAt: Date.now(),
-        }));
+        set((s) => {
+          const patch = typeof m === "function" ? m(s) : m;
+          // пустой патч — это но-оп; метку не двигаем, иначе каждое
+          // открытие приложения гнало бы лишнюю синхронизацию
+          if (Object.keys(patch).length === 0) return {};
+          return { ...patch, updatedAt: Date.now() };
+        });
 
       return {
       ...initial,
@@ -283,6 +321,29 @@ export const useUserStore = create<UserState>()(
       resetAll: () =>
         touch({ ...initial, createdAt: Date.now(), onboarded: true }),
 
+      // Пополняем раз в календарный месяц. Историю использованных дней
+      // не чистим — по ней считается стрик за прошлое.
+      refillFreezes: () =>
+        touch((s) => {
+          const m = monthKey();
+          if (s.freezes.refilled === m) return {};
+          return {
+            freezes: { ...s.freezes, left: FREEZES_PER_MONTH, refilled: m },
+          };
+        }),
+
+      spendFreeze: (day) =>
+        touch((s) => {
+          if (s.freezes.left <= 0 || s.freezes.days.includes(day)) return {};
+          return {
+            freezes: {
+              ...s.freezes,
+              left: s.freezes.left - 1,
+              days: [...s.freezes.days, day],
+            },
+          };
+        }),
+
       // Приходит с сервера — ставим как есть, updatedAt берём серверный,
       // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
       hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
@@ -290,13 +351,14 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 5,
+      version: 6,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
-        // updatedAt появился в v5 — если его нет, берём createdAt (или «сейчас»).
-        const withTs = (st: Record<string, unknown>): UserState =>
-          ({
+        // updatedAt появился в v5, freezes — в v6; добираем недостающее.
+        const withTs = (st: Record<string, unknown>): UserState => {
+          const f = st.freezes as Partial<FreezeState> | undefined;
+          return {
             ...st,
             updatedAt:
               typeof st.updatedAt === "number"
@@ -304,9 +366,15 @@ export const useUserStore = create<UserState>()(
                 : typeof st.createdAt === "number"
                   ? st.createdAt
                   : Date.now(),
-          }) as unknown as UserState;
+            freezes: {
+              left: typeof f?.left === "number" ? f.left : FREEZES_PER_MONTH,
+              days: Array.isArray(f?.days) ? f.days : [],
+              refilled: typeof f?.refilled === "string" ? f.refilled : monthKey(),
+            },
+          } as unknown as UserState;
+        };
 
-        if (version >= 5) return withTs(old);
+        if (version >= 6) return withTs(old);
         // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
         // Пользователь v3 уже в продукте → онбординг не показываем.
         if (version >= 3) {
@@ -368,6 +436,23 @@ export const useUserStore = create<UserState>()(
   ),
 );
 
+/**
+ * Стрик с учётом заморозок — единая точка для всех экранов, чтобы
+ * ни один не показывал «сырое» число без спасённых дней.
+ */
+export function useStreak(): number {
+  const plan = useUserStore((s) => s.plan);
+  const frozen = useUserStore((s) => s.freezes.days);
+  return useMemo(() => selectStreak(plan, frozen), [plan, frozen]);
+}
+
+/** Лучший стрик за всё время, тоже с учётом заморозок. */
+export function useBestStreak(): number {
+  const plan = useUserStore((s) => s.plan);
+  const frozen = useUserStore((s) => s.freezes.days);
+  return useMemo(() => selectBestStreak(plan, frozen), [plan, frozen]);
+}
+
 /** Надёжное определение конца гидратации из localStorage. */
 export function useHydrated() {
   const [hydrated, setHydrated] = useState(false);
@@ -419,12 +504,23 @@ export function selectActiveDays(plan: PlannedTask[]): Set<string> {
   return days;
 }
 
+/** Дни, засчитанные в стрик: реально закрытые + спасённые заморозкой. */
+function streakDays(plan: PlannedTask[], frozen: string[] = []): Set<string> {
+  const days = selectActiveDays(plan);
+  for (const d of frozen) days.add(d);
+  return days;
+}
+
 /**
  * Текущий стрик. Сегодняшний незакрытый день стрик не обнуляет —
  * иначе приложение наказывало бы за то, что ты открыл его утром.
+ * Пропущенные дни, закрытые заморозкой, считаются активными.
  */
-export function selectStreak(plan: PlannedTask[]): number {
-  const days = selectActiveDays(plan);
+export function selectStreak(
+  plan: PlannedTask[],
+  frozen: string[] = [],
+): number {
+  const days = streakDays(plan, frozen);
   if (days.size === 0) return 0;
   const cursor = new Date();
   if (!days.has(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
@@ -436,8 +532,11 @@ export function selectStreak(plan: PlannedTask[]): number {
   return streak;
 }
 
-export function selectBestStreak(plan: PlannedTask[]): number {
-  const days = [...selectActiveDays(plan)].sort();
+export function selectBestStreak(
+  plan: PlannedTask[],
+  frozen: string[] = [],
+): number {
+  const days = [...streakDays(plan, frozen)].sort();
   let best = 0;
   let run = 0;
   let prev: Date | null = null;

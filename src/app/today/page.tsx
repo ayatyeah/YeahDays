@@ -14,8 +14,8 @@ import {
   selectToday,
   selectStats,
   selectTotalXp,
-  selectStreak,
   DAILY_GOAL,
+  useStreak,
 } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
 import { currentSlot } from "@/lib/domain";
@@ -37,7 +37,7 @@ export default function TodayPage() {
   const today = useMemo(() => selectToday(plan), [plan]);
   const stats = useMemo(() => selectStats(plan), [plan]);
   const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
-  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const streak = useStreak();
   const progress = useMemo(() => getLevelProgress(totalXp), [totalXp]);
 
   const done = today.filter((t) => t.completed);

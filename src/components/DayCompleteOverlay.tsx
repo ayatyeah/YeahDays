@@ -6,8 +6,8 @@ import {
   useUserStore,
   useHydrated,
   selectToday,
-  selectStreak,
   selectTotalXp,
+  useStreak,
 } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
 import { dateKey } from "@/lib/domain";
@@ -39,7 +39,7 @@ export default function DayCompleteOverlay() {
   const markDayCelebrated = useUserStore((s) => s.markDayCelebrated);
 
   const today = useMemo(() => selectToday(plan), [plan]);
-  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const streak = useStreak();
   const level = useMemo(
     () => getLevelProgress(selectTotalXp(plan)).level,
     [plan],

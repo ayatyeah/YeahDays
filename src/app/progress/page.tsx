@@ -9,10 +9,10 @@ import {
   selectStats,
   selectTotalXp,
   selectCompleted,
-  selectStreak,
-  selectBestStreak,
   selectCategoryXp,
   selectActiveDays,
+  useStreak,
+  useBestStreak,
 } from "@/store/useUserStore";
 import { STAT_LIST, CATEGORIES, type CategoryKey } from "@/lib/domain";
 import { getLevelProgress, TIER_MILESTONES, tierForLevel } from "@/lib/leveling";
@@ -25,8 +25,8 @@ export default function ProgressPage() {
   const stats = useMemo(() => selectStats(plan), [plan]);
   const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
   const completed = useMemo(() => selectCompleted(plan), [plan]);
-  const streak = useMemo(() => selectStreak(plan), [plan]);
-  const best = useMemo(() => selectBestStreak(plan), [plan]);
+  const streak = useStreak();
+  const best = useBestStreak();
   const catXp = useMemo(() => selectCategoryXp(plan), [plan]);
   const activeDays = useMemo(() => selectActiveDays(plan), [plan]);
 

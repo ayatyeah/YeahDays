@@ -6,7 +6,7 @@ import {
   useUserStore,
   useHydrated,
   selectCompleted,
-  selectStreak,
+  useStreak,
 } from "@/store/useUserStore";
 import { useSyncStatus, timeAgo } from "@/store/useSyncStatus";
 import { cn } from "@/lib/cn";
@@ -93,7 +93,7 @@ export default function AuthCard() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
   const done = useMemo(() => selectCompleted(plan).length, [plan]);
-  const streak = useMemo(() => selectStreak(plan), [plan]);
+  const streak = useStreak();
 
   const movedEvents = useSyncStatus((s) => s.movedEvents);
   const pulledRemote = useSyncStatus((s) => s.pulledRemote);

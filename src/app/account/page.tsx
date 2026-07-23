@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
@@ -220,6 +221,21 @@ export default function AccountPage() {
           считается по формуле goalMatch + timeMatch + difficultyMatch +
           userHistory + freshness. Каждый свайп меняет веса для следующего дня.
         </p>
+      </section>
+
+      <section className="mt-6">
+        <Link
+          href="/admin"
+          className="flex items-center justify-between rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
+        >
+          <span>
+            <span className="block text-[13px] font-semibold">Управление</span>
+            <span className="mt-0.5 block text-[11.5px] text-[var(--color-muted)]">
+              Действия, дни задним числом, челленджи, расписание
+            </span>
+          </span>
+          <span className="text-[var(--color-muted)]">→</span>
+        </Link>
       </section>
 
       <DataControls />

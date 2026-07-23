@@ -38,6 +38,8 @@ export interface RecommendRequest {
   customActions: Action[];
   /** направления, которые пользователь отключил */
   excludeCategories?: CategoryKey[];
+  /** отдельные действия, скрытые вручную */
+  disabledActions?: string[];
   limit?: number;
 }
 
@@ -77,6 +79,7 @@ function localRecommend(req: RecommendRequest): RecommendResponse {
       history: req.history,
       excludeIds: req.excludeIds,
       excludeCategories: req.excludeCategories,
+      disabledActions: req.disabledActions,
     },
     req.limit ?? 12,
   );

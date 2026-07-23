@@ -72,6 +72,8 @@ export interface RecommendationContext {
   progressions?: Map<string, ProgressionState>;
   /** категории, которые пользователь не хочет видеть вообще */
   excludeCategories?: CategoryKey[];
+  /** конкретные действия, скрытые вручную */
+  disabledActions?: string[];
 }
 
 /* ────────────────────────  Прогрессии  ──────────────────────── */
@@ -377,6 +379,7 @@ export function recommend(
   const seed = Math.floor(now / 864e5); // меняется раз в сутки
   const states = ctx.progressions ?? progressionStates(ctx.pool, ctx.history);
   const skipCats = new Set(ctx.excludeCategories ?? []);
+  const skipIds = new Set(ctx.disabledActions ?? []);
   const scored = { ...ctx, progressions: states };
 
   return ctx.pool
@@ -384,6 +387,7 @@ export function recommend(
       if (exclude.has(a.id)) return false;
       // осознанно отключённые направления не показываем совсем
       if (skipCats.has(a.category)) return false;
+      if (skipIds.has(a.id)) return false;
       // ступень выше открытой — ещё не заработана
       if (a.progression) {
         const st = states.get(a.progression.id);

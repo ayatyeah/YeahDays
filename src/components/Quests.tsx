@@ -11,6 +11,7 @@ import { STAT_LIST, dateKey, type StatKey } from "@/lib/domain";
 import Modal from "./ui/Modal";
 import Button from "./ui/Button";
 import { cn } from "@/lib/cn";
+import { track } from "@/lib/analytics";
 
 /** Дата через N дней в формате YYYY-MM-DD. */
 function inDays(n: number): string {
@@ -146,6 +147,7 @@ export default function Quests() {
             className="flex-1"
             onClick={() => {
               const label = STAT_LIST.find((s) => s.key === stat)!.label;
+              track("quest_created", { stat, target, horizon });
               addQuest({
                 title: `${target} действий · ${label}`,
                 stat,

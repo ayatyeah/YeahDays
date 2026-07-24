@@ -2,7 +2,7 @@
   "name": "YeahDays — одно действие в день",
   "short_name": "YeahDays",
   "description": "Не список задач, а ежедневная подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт персонаж.",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -10,10 +10,24 @@
   "theme_color": "#08080b",
   "lang": "ru",
   "dir": "ltr",
-  "categories": ["productivity", "lifestyle", "health"],
+  "categories": [
+    "productivity",
+    "lifestyle",
+    "health"
+  ],
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/icon-maskable-512.png",
       "sizes": "512x512",
@@ -22,7 +36,15 @@
     }
   ],
   "shortcuts": [
-    { "name": "План на сегодня", "short_name": "Сегодня", "url": "/today" },
-    { "name": "Прогресс", "short_name": "Прогресс", "url": "/progress" }
+    {
+      "name": "План на сегодня",
+      "short_name": "Сегодня",
+      "url": "/today"
+    },
+    {
+      "name": "Прогресс",
+      "short_name": "Прогресс",
+      "url": "/progress"
+    }
   ]
 }

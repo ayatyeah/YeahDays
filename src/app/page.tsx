@@ -1,308 +1,220 @@
-"use client";
-
-import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
-import SwipeDeck from "@/components/SwipeDeck";
-import CheckIn from "@/components/CheckIn";
-import Onboarding from "@/components/Onboarding";
-import ActiveTask from "@/components/ActiveTask";
-import Logo, { LogoLoader } from "@/components/Logo";
-import {
-  useUserStore,
-  useHydrated,
-  selectMood,
-  selectToday,
-  selectTodayActionIds,
-  useStreak,
-  effectiveGoals,
-} from "@/store/useUserStore";
-import { useUiStore } from "@/store/useUiStore";
-import { fetchRecommendations, trackEvent } from "@/lib/api";
-import { track } from "@/lib/analytics";
-import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
-import type { ScoredAction } from "@/lib/recommendation";
+import type { Metadata } from "next";
+import Logo from "@/components/Logo";
+import StandaloneRedirect from "@/components/StandaloneRedirect";
 
-export default function HomePage() {
-  const hydrated = useHydrated();
+export const metadata: Metadata = {
+  title: "YeahDays — одно действие в день",
+  description:
+    "Не список задач, а ежедневная подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт персонаж.",
+};
 
-  const name = useUserStore((s) => s.name);
-  const onboarded = useUserStore((s) => s.onboarded);
-  const plan = useUserStore((s) => s.plan);
-  const goals = useUserStore((s) => s.goals);
-  const quests = useUserStore((s) => s.quests);
-  const dailyGoal = useUserStore((s) => s.dailyGoal);
-  const excludedCategories = useUserStore((s) => s.excludedCategories);
-  const disabledActions = useUserStore((s) => s.disabledActions);
-  const energyProfile = useUserStore((s) => s.energyProfile);
-  const toggleTask = useUserStore((s) => s.toggleTask);
-  const moods = useUserStore((s) => s.moods);
-  const history = useUserStore((s) => s.history);
-  const customActions = useUserStore((s) => s.customActions);
-  const lastCheckIn = useUserStore((s) => s.lastCheckIn);
+/**
+ * Лендинг — витрина продукта.
+ *
+ * Живёт на «/», само приложение на «/app». Установка PWA от этого не
+ * страдает: scope манифеста остался «/», поэтому предложить установку
+ * можно с любой страницы, а start_url ведёт в «/app» — с домашнего
+ * экрана человек попадает сразу в приложение и лендинг больше не видит.
+ *
+ * Серверный компонент: страница статическая, ей не нужен ни стор,
+ * ни JS для отрисовки — быстрый первый экран и нормальная индексация.
+ */
 
-  const setMood = useUserStore((s) => s.setMood);
-  const completeCheckIn = useUserStore((s) => s.completeCheckIn);
-  const acceptAction = useUserStore((s) => s.acceptAction);
-  const rejectAction = useUserStore((s) => s.rejectAction);
-  const markSeen = useUserStore((s) => s.markSeen);
-  const openCreate = useUiStore((s) => s.openCreate);
+const STEPS = [
+  {
+    n: "01",
+    title: "Скажи, как ты сегодня",
+    text: "Два касания: сколько сил и сколько минут. Утром колода мягче, вечером — злее.",
+  },
+  {
+    n: "02",
+    title: "Свайпни то, что берёшь",
+    text: "Вправо — беру, влево — не сейчас. Каждый свайп меняет завтрашнюю подборку.",
+  },
+  {
+    n: "03",
+    title: "Сделай — и только потом дальше",
+    text: "Пока взятое не закрыто, новых карточек не будет. Взял — сделай.",
+  },
+];
 
-  const dailyMood = useMemo(() => selectMood(moods), [moods]);
-  // Энергия у людей не постоянна за день. Берём её из профиля текущего
-  // слота, а бюджет минут — из чек-ина. Утром колода мягче, вечером злее.
-  const mood = useMemo(
-    () => ({ ...dailyMood, energy: energyProfile[currentSlot()] }),
-    [dailyMood, energyProfile],
-  );
-  const today = useMemo(() => selectToday(plan), [plan]);
-  const streak = useStreak();
-  const takenToday = today.length;
+const FEATURES = [
+  {
+    icon: "🎴",
+    title: "Колода вместо списка",
+    text: "176 действий, которые подбираются под цель, время суток и остаток сил — а не висят виной в бесконечном списке.",
+  },
+  {
+    icon: "🪜",
+    title: "Лестницы навыков",
+    text: "20 отжиманий → 35 → 50. Следующая ступень открывается, когда освоена текущая. Виден рост, а не топтание.",
+  },
+  {
+    icon: "🧊",
+    title: "Стрик не рушится от одного дня",
+    text: "Две заморозки в месяц тратятся сами, когда серия под угрозой. Сорвался раз — не повод бросать.",
+  },
+  {
+    icon: "📅",
+    title: "Свои задачи и расписание",
+    text: "Обычный тудушник рядом: приоритеты, подзадачи, повторы, дедлайны — плюс почасовой план дня.",
+  },
+  {
+    icon: "🔔",
+    title: "Напоминания, а не спам",
+    text: "Два раза в день по твоему времени. Вечернее подстраивается под час, когда ты реально что-то делаешь.",
+  },
+  {
+    icon: "🧍",
+    title: "Персонаж растёт с тобой",
+    text: "Четыре характеристики качаются от того, что ты реально закрываешь. Прогресс видно, а не только в цифрах.",
+  },
+];
 
-  /** Незакрытое действие на сегодня — пока оно есть, новые свайпы закрыты. */
-  const activeTask = useMemo(() => today.find((t) => !t.completed), [today]);
-
-  const [deck, setDeck] = useState<ScoredAction[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [reloadKey, setReloadKey] = useState(0);
-
-  const needsCheckIn = hydrated && lastCheckIn !== dateKey();
-
-  /* ── Загрузка колоды ── */
-  useEffect(() => {
-    if (!hydrated || needsCheckIn) return;
-    let cancelled = false;
-    setLoading(true);
-
-    fetchRecommendations({
-      // активные цели поднимают вес своего стата тем сильнее,
-      // чем ближе дедлайн и чем больше отставание
-      goals: effectiveGoals(goals, quests, plan),
-      mood,
-      history,
-      excludeIds: selectTodayActionIds(plan),
-      customActions,
-      excludeCategories: excludedCategories,
-      disabledActions,
-      limit: 12,
-    }).then((res) => {
-      if (cancelled) return;
-      setDeck(res.deck);
-      setLoading(false);
-      markSeen(res.deck.slice(0, 3).map((d) => d.action.id));
-    });
-
-    return () => {
-      cancelled = true;
-    };
-    // history намеренно не в зависимостях: иначе колода пересобиралась бы
-    // на каждый свайп и карточки прыгали бы под пальцем
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    hydrated,
-    needsCheckIn,
-    goals,
-    quests,
-    excludedCategories,
-    disabledActions,
-    mood.energy,
-    mood.minutes,
-    reloadKey,
-  ]);
-
-  const handleAccept = useCallback(
-    (a: Action) => {
-      acceptAction(a);
-      track("action_accepted", { category: a.category, difficulty: a.difficulty });
-      trackEvent({
-        type: "accept",
-        actionId: a.id,
-        at: Date.now(),
-        category: a.category,
-        xp: xpForAction(a),
-      });
-    },
-    [acceptAction],
-  );
-
-  const handleReject = useCallback(
-    (a: Action) => {
-      rejectAction(a.id);
-      track("action_rejected", { category: a.category });
-      trackEvent({
-        type: "reject",
-        actionId: a.id,
-        at: Date.now(),
-        category: a.category,
-      });
-    },
-    [rejectAction],
-  );
-
-  /* ── Состояния экрана ── */
-
-  if (!hydrated) {
-    return <LogoLoader />;
-  }
-
-  if (!onboarded) {
-    return <Onboarding />;
-  }
-
-  if (needsCheckIn) {
-    return (
-      <CheckIn
-        name={name}
-        mood={mood}
-        onChange={setMood}
-        onDone={completeCheckIn}
-      />
-    );
-  }
-
+export default function LandingPage() {
   return (
-    <div className="flex flex-1 flex-col">
-      {/* Бренд-лого + название + стрик */}
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <Logo variant="white" className="h-7 w-auto" />
-          <span className="text-[19px] font-extrabold tracking-tight">
-            YeahDays
-          </span>
-        </div>
-        {streak > 0 && (
-          <div className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5">
-            <span className="text-sm">🔥</span>
-            <span className="text-sm font-bold tabular-nums">{streak}</span>
+    <>
+      {/* Установленное приложение не должно упираться в витрину */}
+      <StandaloneRedirect />
+
+      <div className="flex flex-1 flex-col pb-10">
+        {/* Шапка */}
+        <header className="flex items-center justify-between py-2">
+          <div className="flex items-center gap-2.5">
+            <Logo variant="white" className="h-7 w-auto" />
+            <span className="text-[19px] font-extrabold tracking-tight">
+              YeahDays
+            </span>
           </div>
-        )}
-      </div>
-
-      {/* Шапка: прогресс дня */}
-      <header className="mb-4">
-        <p className="text-[13px] font-medium text-[var(--color-muted)]">
-          Сегодня
-        </p>
-        <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
-          {takenToday >= dailyGoal ? "План собран" : "Что сделаешь сегодня?"}
-        </h1>
-      </header>
-
-      {/* Индикатор набора плана */}
-      <div className="mb-5 flex items-center gap-2">
-        {Array.from({ length: dailyGoal }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"
+          <Link
+            href="/app"
+            className="press rounded-xl px-3 py-2 text-[13px] font-medium text-[var(--color-fg-dim)]"
           >
-            <motion.div
-              className="h-full rounded-full bg-[var(--color-fg)]"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: i < takenToday ? 1 : 0 }}
-              style={{ originX: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 26 }}
-            />
-          </motion.div>
-        ))}
-        <span className="ml-1 text-[11px] font-medium tabular-nums text-[var(--color-muted)]">
-          {Math.min(takenToday, dailyGoal)}/{dailyGoal}
-        </span>
-      </div>
+            Открыть
+          </Link>
+        </header>
 
-      {/* Колода — но только если нет незакрытого действия.
-          Смысл гейта: взял — сделай. Иначе набирается список из десяти
-          «когда-нибудь», и продукт превращается в обычный тудушник. */}
-      {loading ? (
-        <LogoLoader />
-      ) : activeTask ? (
-        <ActiveTask
-          task={activeTask}
-          onDone={() => {
-            toggleTask(activeTask.id);
-            track("action_completed", {
-              category: activeTask.snapshot.category,
-              xp: activeTask.xp,
-            });
-            trackEvent({
-              type: "complete",
-              actionId: activeTask.actionId,
-              at: Date.now(),
-              category: activeTask.snapshot.category,
-              xp: activeTask.xp,
-            });
-            if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-              navigator.vibrate?.([10, 30, 20]);
-            }
-          }}
-        />
-      ) : (
-        <SwipeDeck
-          deck={deck}
-          onAccept={handleAccept}
-          onReject={handleReject}
-          emptyState={<DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />}
-        />
-      )}
+        {/* Первый экран */}
+        <section className="mt-10">
+          <h1 className="text-[34px] font-extrabold leading-[1.08]">
+            Одно действие в день
+            <br />
+            <span className="text-[var(--color-fg-dim)]">
+              делает тебя лучшей версией себя
+            </span>
+          </h1>
+          <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
+            Не список задач, который копит вину, а ежедневная колода действий
+            под твоё состояние. Свайпнул — сделал — день засчитан.
+          </p>
 
-      {/* Мини-сводка принятого */}
-      <AnimatePresence>
-        {takenToday > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 12 }}
-            className="mt-4"
+          <Link
+            href="/app"
+            className="press mt-7 flex h-13 w-full items-center justify-center rounded-2xl bg-[var(--color-fg)] py-4 text-[15px] font-bold text-[var(--color-bg)]"
           >
-            <Link
-              href="/today"
-              className="flex items-center justify-between rounded-2xl surface px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
-            >
-              <div className="min-w-0">
-                <p className="text-[13px] font-semibold">
-                  В плане на сегодня: {takenToday}
-                </p>
-                <p className="mt-0.5 truncate text-[11.5px] text-[var(--color-muted)]">
-                  {today
-                    .slice(0, 2)
-                    .map((t) => t.snapshot.title)
-                    .join(" · ")}
-                  {today.length > 2 && ` +${today.length - 2}`}
-                </p>
+            Начать бесплатно
+          </Link>
+          <p className="mt-2.5 text-center text-[11.5px] text-[var(--color-muted)]">
+            Без регистрации. Вход нужен только чтобы прогресс жил на всех
+            устройствах.
+          </p>
+        </section>
+
+        {/* Как это работает */}
+        <section className="mt-14">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+            Как это работает
+          </h2>
+          <div className="mt-4 space-y-3">
+            {STEPS.map((s) => (
+              <div key={s.n} className="surface rounded-3xl p-4">
+                <div className="flex items-start gap-3.5">
+                  <span className="num text-[13px] font-bold text-[var(--color-muted)]">
+                    {s.n}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-bold">{s.title}</p>
+                    <p className="mt-1 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+                      {s.text}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <span className="ml-3 shrink-0 text-[var(--color-muted)]">→</span>
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            ))}
+          </div>
+        </section>
 
-      {/* Своё действие */}
-      <button
-        onClick={() => openCreate()}
-        className="mt-2.5 text-center text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
-      >
-        + Добавить своё действие
-      </button>
-    </div>
-  );
-}
+        {/* Что внутри */}
+        <section className="mt-12">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+            Что внутри
+          </h2>
+          <div className="mt-4 space-y-3">
+            {FEATURES.map((f) => (
+              <div key={f.title} className="surface rounded-3xl p-4">
+                <div className="flex items-start gap-3.5">
+                  <span className="text-[20px]" aria-hidden>
+                    {f.icon}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[14.5px] font-bold">{f.title}</p>
+                    <p className="mt-1 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+                      {f.text}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
 
-function DeckEmpty({ onRefresh }: { onRefresh: () => void }) {
-  return (
-    <div className="flex flex-col items-center px-6 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-2xl">
-        ✓
+        {/* Честный блок про данные — доверие важнее маркетинга */}
+        <section className="mt-12">
+          <div className="surface-raised rounded-3xl p-5">
+            <h2 className="text-[15px] font-bold">Что с твоими данными</h2>
+            <ul className="mt-3 space-y-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+              <li>— Без входа всё лежит только в твоём браузере.</li>
+              <li>
+                — Войдёшь — прогресс синхронизируется, чтобы был на всех
+                устройствах.
+              </li>
+              <li>— Данные можно выгрузить или стереть в один клик.</li>
+              <li>— Мы не продаём и не передаём их рекламодателям.</li>
+            </ul>
+            <div className="mt-4 flex gap-4 text-[12.5px]">
+              <Link href="/terms" className="underline underline-offset-4">
+                Условия
+              </Link>
+              <Link href="/privacy" className="underline underline-offset-4">
+                Конфиденциальность
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Финальный призыв */}
+        <section className="mt-12 text-center">
+          <p className="text-[19px] font-bold leading-snug">
+            Начни с одного действия.
+            <br />
+            Сегодня.
+          </p>
+          <Link
+            href="/app"
+            className="press mt-5 inline-flex h-12 items-center justify-center rounded-2xl bg-[var(--color-fg)] px-7 text-[15px] font-bold text-[var(--color-bg)]"
+          >
+            Открыть YeahDays
+          </Link>
+        </section>
+
+        <footer className="mt-14 flex flex-col items-center gap-2 opacity-55">
+          <Logo variant="white" className="h-4 w-auto" />
+          <p className="text-[11px] text-[var(--color-muted)]">
+            Одно действие в день
+          </p>
+        </footer>
       </div>
-      <h2 className="text-lg font-bold tracking-tight">Карточки закончились</h2>
-      <p className="mt-2 max-w-[280px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
-        Ты просмотрел всю подборку. Собери новую — движок учтёт
-        сегодняшние свайпы.
-      </p>
-      <button
-        onClick={onRefresh}
-        className="mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
-      >
-        Новая подборка
-      </button>
-    </div>
+    </>
   );
 }

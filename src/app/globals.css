@@ -303,3 +303,97 @@ select {
   contain: strict;
   content-visibility: auto;
 }
+
+/* ────────────────────────────────────────────────
+   Liquid glass
+   ────────────────────────────────────────────────
+
+   Настоящее «жидкое стекло» — это не просто blur. Ощущение стекла даёт
+   сочетание трёх вещей, и без любой из них поверхность выглядит просто
+   мутной плёнкой:
+
+   1) преломление — размытие + подъём насыщенности, будто свет прошёл
+      через толщу материала;
+   2) блик по верхней грани — узкая светлая полоса, ловящая источник
+      света сверху;
+   3) внутренняя фаска — тонкая светлая линия по контуру изнутри,
+      которая читается как торец стекла.
+*/
+
+.liquid {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(19, 19, 25, 0.55);
+  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.06);
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* внешняя тень + внутренняя фаска сверху и снизу */
+  box-shadow:
+    var(--shadow-2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* Блик: узкая диагональная полоса света поверх поверхности. */
+.liquid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 22%,
+    transparent 46%
+  );
+  pointer-events: none;
+}
+
+/* Тёплое свечение по нижней грани — «стекло лежит на цветном фоне». */
+.liquid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    120% 80% at 50% 120%,
+    rgba(149, 132, 255, 0.14) 0%,
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+/* Вариант для панелей во всю ширину (навигация, шапка). */
+.liquid-bar {
+  background-color: rgba(11, 11, 16, 0.62);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  backdrop-filter: blur(28px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 -8px 32px rgba(0, 0, 0, 0.45);
+}
+
+/*
+  Fallback: где backdrop-filter не поддерживается, стекло превращается
+  в непрозрачную поверхность — иначе текст ляжет на контент и станет
+  нечитаемым.
+*/
+@supports not (backdrop-filter: blur(1px)) {
+  .liquid,
+  .liquid-bar,
+  .glass {
+    background-color: rgba(16, 16, 22, 0.97);
+  }
+}
+
+/* Мягкое цветное пятно под секцией — добавляет «дороговизны» фону. */
+.glow-spot {
+  position: absolute;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(72px);
+  opacity: 0.5;
+  pointer-events: none;
+}

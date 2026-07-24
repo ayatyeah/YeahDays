@@ -99,7 +99,7 @@ export default function BottomNav() {
             должен просвечивать — иначе панель выглядит наклейкой.
             Блюр здесь дешёвый: панель низкая и в своём слое (gpu-layer),
             поэтому пересчитывается только её полоса, а не весь экран. */}
-        <div className="glass gpu-layer safe-b flex items-stretch px-1.5 pb-0.5 pt-2">
+        <div className="liquid-bar gpu-layer safe-b flex items-stretch px-1.5 pb-0.5 pt-2">
           {NAV.map(({ href, label, Icon }) => {
             const active = pathname === href;
             const badge = href === "/today" && pending > 0 ? pending : 0;
@@ -117,7 +117,7 @@ export default function BottomNav() {
                 {active && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-0 -z-10 rounded-2xl bg-[rgba(255,255,255,0.07)]"
+                    className="absolute inset-0 -z-10 rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.08)] shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]"
                     transition={spring}
                   />
                 )}

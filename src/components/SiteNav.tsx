@@ -2,35 +2,59 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "./Logo";
 import { spring } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 
-const LINKS = [
-  { href: "/", label: "Главная" },
-  { href: "/app", label: "Приложение" },
-  { href: "/about", label: "Обо мне" },
-  { href: "/privacy", label: "Политика" },
+/**
+ * Секции лендинга. Это одностраничник, поэтому пункты — якоря, а не
+ * отдельные адреса. Исключение — политика: у правового документа должен
+ * быть постоянный URL, на него ссылаются сторы и Google.
+ */
+const SECTIONS = [
+  { id: "top", label: "Главная" },
+  { id: "product", label: "О продукте" },
+  { id: "about", label: "Обо мне" },
 ] as const;
 
-/**
- * Навигация витрины.
- *
- * Отдельно от BottomNav: у сайта и у приложения разные задачи. Здесь
- * человек выбирает, что почитать, поэтому навигация сверху и текстом.
- *
- * Подсветка активного пункта — один «переезжающий» объект (layoutId),
- * а не включение/выключение фона у разных ссылок: глаз читает движение
- * как связь между состояниями.
- */
 export default function SiteNav() {
   const pathname = usePathname();
+  const onLanding = pathname === "/";
+  const [active, setActive] = useState<string>("top");
+
+  /**
+   * Подсветка активного пункта по видимой секции.
+   *
+   * IntersectionObserver вместо слушателя скролла: браузер сам считает
+   * пересечения вне основного потока, поэтому подсветка не дёргает
+   * страницу на каждый пиксель прокрутки.
+   */
+  useEffect(() => {
+    if (!onLanding) return;
+    const els = SECTIONS.map((s) => document.getElementById(s.id)).filter(
+      (e): e is HTMLElement => Boolean(e),
+    );
+    if (els.length === 0) return;
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.25, 0.5, 1] },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [onLanding]);
 
   return (
     <header className="sticky top-0 z-40">
       <div className="marble-bar border-b border-[var(--color-border)]">
-        <div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3 sm:px-8">
+        <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3 sm:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
             <Logo variant="white" className="h-7 w-auto" />
             <span className="text-[17px] font-extrabold tracking-tight">
@@ -39,31 +63,41 @@ export default function SiteNav() {
           </Link>
 
           <nav className="ml-auto flex items-center gap-0.5 overflow-x-auto">
-            {LINKS.map((l) => {
-              const active =
-                l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
+            {SECTIONS.map((s) => {
+              const isActive = onLanding && active === s.id;
               return (
-                <Link
-                  key={l.href}
-                  href={l.href}
+                <a
+                  key={s.id}
+                  href={onLanding ? `#${s.id}` : `/#${s.id}`}
                   className={cn(
                     "press relative shrink-0 rounded-xl px-3 py-2 text-[13.5px] font-medium",
-                    active
+                    isActive
                       ? "text-[var(--color-fg)]"
                       : "text-[var(--color-muted)] hover:text-[var(--color-fg-dim)]",
                   )}
                 >
-                  {active && (
+                  {isActive && (
                     <motion.span
                       layoutId="site-nav-active"
                       className="absolute inset-0 -z-10 rounded-xl border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.07)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
                       transition={spring}
                     />
                   )}
-                  {l.label}
-                </Link>
+                  {s.label}
+                </a>
               );
             })}
+            <Link
+              href="/privacy"
+              className={cn(
+                "press shrink-0 rounded-xl px-3 py-2 text-[13.5px] font-medium",
+                pathname === "/privacy"
+                  ? "text-[var(--color-fg)]"
+                  : "text-[var(--color-muted)] hover:text-[var(--color-fg-dim)]",
+              )}
+            >
+              Политика
+            </Link>
           </nav>
 
           <Link

@@ -5,7 +5,7 @@ import BottomNav from "./BottomNav";
 import InstallPrompt from "./InstallPrompt";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
-const MARKETING = ["/", "/about", "/terms", "/privacy"];
+const MARKETING = ["/", "/terms", "/privacy"];
 
 /**
  * Каркас страницы.

@@ -88,7 +88,7 @@ export default function InstallPrompt() {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed inset-x-0 bottom-[86px] z-40 px-4"
         >
-          <div className="safe-b mx-auto flex max-w-md items-center gap-3 glass rounded-2xl border border-[var(--color-border-strong)] shadow-[var(--shadow-3)] p-3 shadow-xl shadow-black/40">
+          <div className="marble mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-xl">
               📲
             </div>
@@ -103,7 +103,7 @@ export default function InstallPrompt() {
             {evt ? (
               <button
                 onClick={install}
-                className="h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[13px] font-semibold text-[var(--color-bg)]"
+                className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[13px] font-semibold text-[var(--color-bg)]"
               >
                 Установить
               </button>
@@ -111,7 +111,7 @@ export default function InstallPrompt() {
             <button
               onClick={dismiss}
               aria-label="Закрыть"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+              className="press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
             >
               ✕
             </button>

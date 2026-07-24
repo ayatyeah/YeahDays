@@ -290,7 +290,7 @@ function TodoRow({
         <button
           onClick={onOpen}
           aria-label="подробнее"
-          className="shrink-0 px-1 text-[12px] text-[var(--color-muted)]"
+          className="press shrink-0 px-1 text-[12px] text-[var(--color-muted)]"
         >
           {open ? "▴" : "▾"}
         </button>
@@ -422,7 +422,7 @@ function TodoRow({
                   </span>
                   <button
                     onClick={() => removeSubtask(t.id, x.id)}
-                    className="shrink-0 px-1 text-[11px] text-[var(--color-muted)]"
+                    className="press shrink-0 px-1 text-[11px] text-[var(--color-muted)]"
                     aria-label="удалить подзадачу"
                   >
                     ✕
@@ -453,13 +453,13 @@ function TodoRow({
             <button
               onClick={onTomorrow}
               disabled={Boolean(t.repeat)}
-              className="flex-1 rounded-xl border border-[var(--color-border)] py-2 text-[11.5px] text-[var(--color-muted)] transition disabled:opacity-40"
+              className="press flex-1 rounded-xl border border-[var(--color-border)] py-2 text-[11.5px] text-[var(--color-muted)] disabled:opacity-40"
             >
               на завтра →
             </button>
             <button
               onClick={onRemove}
-              className="rounded-xl border border-[var(--color-border)] px-3 py-2 text-[11.5px] text-[var(--color-strength)]"
+              className="press rounded-xl border border-[var(--color-border)] px-3 py-2 text-[11.5px] text-[var(--color-strength)]"
             >
               удалить
             </button>

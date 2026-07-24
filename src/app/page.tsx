@@ -361,12 +361,6 @@ export default function LandingPage() {
                   само скажет: «вот одно дело, оно занимает пятнадцать минут,
                   сил у тебя хватит — сделай». Не двадцать дел. Одно.
                 </p>
-                <p>
-                  Приложение сделано на Next.js и TypeScript, с Postgres для
-                  синхронизации, входом через Google и веб-пушами. Подборку
-                  считает собственный движок. Внешней аналитики и рекламы
-                  внутри нет.
-                </p>
               </div>
               <a
                 href="mailto:balmagambet.ayat@gmail.com"
@@ -387,6 +381,50 @@ export default function LandingPage() {
               ))}
             </RevealGroup>
           </div>
+        </section>
+
+        {/* ─────────────  Личный сайт  ───────────── */}
+        <section className="border-t border-[var(--color-border)] py-16 sm:py-20">
+          <Reveal>
+            <Eyebrow>Мой сайт</Eyebrow>
+            <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
+              <h2 className="text-[32px] font-extrabold sm:text-[40px]">
+                yeahayat.dev
+              </h2>
+              <a
+                href="https://yeahayat.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="press inline-flex h-11 items-center rounded-xl border border-[var(--color-border-strong)] px-5 text-[13.5px] font-semibold"
+              >
+                Открыть в новой вкладке ↗
+              </a>
+            </div>
+          </Reveal>
+
+          {/*
+            Встраиваем живой сайт, а не скриншот — он всегда актуален.
+            loading="lazy" обязателен: без него сторонний сайт грузится
+            вместе с лендингом и тормозит первый экран.
+            sandbox ограничивает права встроенной страницы: показать себя
+            она может, а трогать наш сайт — нет.
+          */}
+          <Reveal delay={0.08} className="mt-8">
+            <div className="marble overflow-hidden rounded-[28px] p-2">
+              <iframe
+                src="https://yeahayat.dev"
+                title="Личный сайт Аята — yeahayat.dev"
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin allow-popups"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="h-[420px] w-full rounded-[22px] border-0 bg-[var(--color-bg)] sm:h-[620px]"
+              />
+            </div>
+            <p className="mt-3 text-[12.5px] text-[var(--color-muted)]">
+              Если блок пустой — сайт запретил встраивание. Открой по ссылке
+              выше.
+            </p>
+          </Reveal>
         </section>
 
         {/* ─────────────  Вопросы  ───────────── */}

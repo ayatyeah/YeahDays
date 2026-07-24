@@ -1,4 +1,6 @@
 import Link from "next/link";
+import SiteNav from "@/components/SiteNav";
+import { Section, Mail } from "@/components/LegalSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,6 +20,8 @@ const UPDATED = "24 июля 2026";
  */
 export default function TermsPage() {
   return (
+    <>
+    <SiteNav />
     <article className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
       <Link
         href="/"
@@ -117,41 +121,6 @@ export default function TermsPage() {
         </Link>
       </div>
     </article>
-  );
-}
-
-export function Section({
-  title,
-  children,
-  accent,
-}: {
-  title: string;
-  children: React.ReactNode;
-  accent?: boolean;
-}) {
-  return (
-    <section
-      className={
-        accent
-          ? "surface-raised mt-6 rounded-3xl p-4"
-          : "mt-6"
-      }
-    >
-      <h2 className="text-[15px] font-bold">{title}</h2>
-      <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">
-        {children}
-      </p>
-    </section>
-  );
-}
-
-export function Mail() {
-  return (
-    <a
-      href="mailto:balmagambet.ayat@gmail.com"
-      className="underline underline-offset-4"
-    >
-      balmagambet.ayat@gmail.com
-    </a>
+    </>
   );
 }

@@ -397,3 +397,104 @@ select {
   opacity: 0.5;
   pointer-events: none;
 }
+
+/* ────────────────────────────────────────────────
+   Мрамор
+   ────────────────────────────────────────────────
+
+   Дорогой материал отличается от дешёвого не блеском, а НЕОДНОРОДНОСТЬЮ.
+   Идеально ровная поверхность читается как пластик; камень же имеет
+   прожилки, перепады плотности и зерно. Поэтому к стеклу добавляются:
+
+   — мягкие «прожилки» из повёрнутых линейных градиентов;
+   — зеркальный блик в углу, как отражение источника света;
+   — едва заметное зерно, которое убирает ощущение цифровой плоскости.
+*/
+
+.marble {
+  position: relative;
+  isolation: isolate;
+  background-color: rgba(20, 20, 27, 0.62);
+  -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.08);
+  backdrop-filter: blur(28px) saturate(190%) brightness(1.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    var(--shadow-3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+    inset 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Прожилки: несколько тонких светлых полос под разными углами. */
+.marble::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  opacity: 0.55;
+  pointer-events: none;
+  background-image:
+    linear-gradient(
+      118deg,
+      transparent 18%,
+      rgba(255, 255, 255, 0.07) 30%,
+      transparent 34%,
+      transparent 52%,
+      rgba(255, 255, 255, 0.045) 60%,
+      transparent 64%
+    ),
+    linear-gradient(
+      62deg,
+      transparent 40%,
+      rgba(149, 132, 255, 0.09) 52%,
+      transparent 58%
+    ),
+    linear-gradient(
+      200deg,
+      transparent 62%,
+      rgba(70, 203, 164, 0.06) 74%,
+      transparent 80%
+    );
+}
+
+/* Зеркальный блик + зерно. */
+.marble::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    radial-gradient(
+      70% 45% at 12% 0%,
+      rgba(255, 255, 255, 0.16) 0%,
+      transparent 58%
+    ),
+    radial-gradient(
+      100% 70% at 50% 118%,
+      rgba(149, 132, 255, 0.13) 0%,
+      transparent 60%
+    ),
+    /* зерно: полупрозрачный шум мелким SVG, без картинки-файла */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
+  background-blend-mode: normal, normal, overlay;
+}
+
+/** Мраморная панель во всю ширину — для шапки сайта. */
+.marble-bar {
+  background-color: rgba(12, 12, 18, 0.7);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  backdrop-filter: blur(30px) saturate(200%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .marble,
+  .marble-bar {
+    background-color: rgba(18, 18, 24, 0.97);
+  }
+}

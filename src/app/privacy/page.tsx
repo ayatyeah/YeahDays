@@ -1,6 +1,7 @@
 import Link from "next/link";
+import SiteNav from "@/components/SiteNav";
 import type { Metadata } from "next";
-import { Section, Mail } from "../terms/page";
+import { Section, Mail } from "@/components/LegalSection";
 
 export const metadata: Metadata = {
   title: "Политика конфиденциальности — YeahDays",
@@ -70,6 +71,8 @@ function Table({
 
 export default function PrivacyPage() {
   return (
+    <>
+    <SiteNav />
     <article className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
       <Link
         href="/"
@@ -258,5 +261,6 @@ export default function PrivacyPage() {
         </Link>
       </div>
     </article>
+    </>
   );
 }

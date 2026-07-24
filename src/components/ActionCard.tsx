@@ -18,6 +18,8 @@ import {
   type Action,
 } from "@/lib/domain";
 import type { ScoredAction } from "@/lib/recommendation";
+import { durationInsight } from "@/lib/durations";
+import { useUserStore } from "@/store/useUserStore";
 
 export type SwipeDir = "left" | "right";
 
@@ -43,6 +45,13 @@ export default function ActionCard({
   const cat = CATEGORIES[action.category];
   const stat = STATS[cat.stat];
   const xp = xpForAction(action);
+
+  // Личная оценка длительности: показываем её вместо цифры из пула, как
+  // только замеры разошлись с ней заметно. Подписываемся точечно на замеры
+  // одного действия — карточек на экране несколько, и перерисовывать их
+  // на каждое изменение стора незачем.
+  const samples = useUserStore((s) => s.history.durations?.[action.id]);
+  const personal = durationInsight(action.duration, samples)?.personal;
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -262,7 +271,11 @@ export default function ActionCard({
 
           {/* параметры */}
           <div className="grid grid-cols-3 gap-2">
-            <Meta label="Время" value={`${action.duration} мин`} />
+            <Meta
+              label="Время"
+              value={`${personal ?? action.duration} мин`}
+              hint={personal ? "твоё" : undefined}
+            />
             <Meta label="Сложность" value={DIFFICULTY_LABEL[action.difficulty]} />
             <Meta label="Энергия" value={ENERGY_LABEL[action.energy]} />
           </div>
@@ -291,11 +304,25 @@ export default function ActionCard({
   );
 }
 
-function Meta({ label, value }: { label: string; value: string }) {
+function Meta({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
   return (
     <div className="rounded-2xl bg-[var(--color-surface-2)]/70 px-2.5 py-2 text-center">
       <p className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">
-        {label}
+        {hint ? (
+          // помечаем цифру, которую посчитали по замерам самого человека,
+          // иначе изменившееся время выглядит как ошибка в контенте
+          <span className="text-[var(--color-stability)]">{hint}</span>
+        ) : (
+          label
+        )}
       </p>
       <p className="mt-0.5 truncate text-[12px] font-semibold">{value}</p>
     </div>

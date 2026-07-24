@@ -17,6 +17,7 @@
  * в WEIGHTS, чтобы их можно было тюнить (а позже — обучать).
  */
 
+import { personalDuration } from "./durations";
 import {
   CATEGORIES,
   ENERGY_RANK,
@@ -45,6 +46,11 @@ export interface HistorySignals {
   statXp: Record<StatKey, number>;
   /** completion rate по категориям: сколько принятых довели до конца */
   categoryCompletion: Record<CategoryKey, { taken: number; done: number }>;
+  /**
+   * Замеры реальной длительности в минутах, по действиям.
+   * Из них строится личная оценка вместо глазомерной из пула — см. durations.ts.
+   */
+  durations: Record<string, number[]>;
 }
 
 export function emptyHistory(): HistorySignals {
@@ -55,6 +61,7 @@ export function emptyHistory(): HistorySignals {
     lastSeen: {},
     statXp: { strength: 0, intelligence: 0, wealth: 0, stability: 0 },
     categoryCompletion: {} as HistorySignals["categoryCompletion"],
+    durations: {},
   };
 }
 
@@ -208,15 +215,34 @@ function goalMatch(a: Action, goals: GoalWeights, h: HistorySignals): number {
 }
 
 /**
+ * Длительность действия для этого человека.
+ *
+ * Единственная точка, через которую и движок, и интерфейс получают минуты:
+ * пока замеров нет — это число из пула, дальше оно плавно уезжает к личной
+ * оценке. Держим здесь, чтобы карточка не могла показать одно время, а
+ * подбор — считать по другому.
+ */
+export function effectiveDuration(a: Action, h: HistorySignals): number {
+  return personalDuration(a.duration, h.durations?.[a.id]);
+}
+
+/**
  * timeMatch — подходит ли действие текущему времени суток
  * И укладывается ли оно в бюджет минут, который человек готов дать.
  */
-function timeMatch(a: Action, mood: DailyMood, slot: TimePreference): number {
+function timeMatch(
+  a: Action,
+  mood: DailyMood,
+  slot: TimePreference,
+  h: HistorySignals,
+): number {
   const slotScore =
     a.timePreference === "any" ? 0.75 : a.timePreference === slot ? 1 : 0.25;
 
-  // бюджет: идеально — влезает; чуть длиннее — штраф; сильно длиннее — почти ноль
-  const ratio = a.duration / Math.max(mood.minutes, 5);
+  // бюджет меряем ЛИЧНЫМИ минутами, а не глазомерной оценкой из пула:
+  // если человек стабильно читает 10 страниц за 8 минут, действие должно
+  // влезать в его десять минут, даже когда в пуле написано 15
+  const ratio = effectiveDuration(a, h) / Math.max(mood.minutes, 5);
   const budgetScore =
     ratio <= 1 ? 1 : ratio <= 1.5 ? 0.6 : ratio <= 2.5 ? 0.25 : 0.05;
 
@@ -296,7 +322,7 @@ export function scoreAction(
 
   const breakdown: ScoreBreakdown = {
     goalMatch: goalMatch(a, ctx.goals, ctx.history),
-    timeMatch: timeMatch(a, ctx.mood, slot),
+    timeMatch: timeMatch(a, ctx.mood, slot, ctx.history),
     difficultyMatch: difficultyMatch(a, ctx.mood, adaptiveShift(ctx.history)),
     userHistory: userHistory(a, ctx.history),
     freshness: freshness(a, ctx.history, now),

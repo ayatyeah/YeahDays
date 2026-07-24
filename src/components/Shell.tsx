@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import BottomNav from "./BottomNav";
 import InstallPrompt from "./InstallPrompt";
 import PageTransition from "./PageTransition";
+import WhatsNew from "./WhatsNew";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
 const MARKETING = ["/", "/terms", "/privacy"];
@@ -34,6 +35,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       </div>
       <BottomNav />
       <InstallPrompt />
+      <WhatsNew />
     </>
   );
 }

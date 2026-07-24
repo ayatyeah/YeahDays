@@ -174,6 +174,36 @@ describe("подбор под состояние", () => {
   });
 });
 
+describe("личные длительности", () => {
+  /** Действие, которое НЕ влезает в 10 минут по оценке пула. */
+  const longish = ACTION_POOL.find(
+    (a) => a.duration >= 20 && a.duration <= 40 && !a.progression,
+  )!;
+
+  it("замеры делают длинное действие доступным при малом бюджете", () => {
+    const mood = { energy: "medium", minutes: 10 } as const;
+    const rank = (h: HistorySignals) =>
+      recommend(ctx({ mood, history: h }), ACTION_POOL.length).findIndex(
+        (d) => d.action.id === longish.id,
+      );
+
+    // человек стабильно закрывает это действие за 7 минут
+    const fast = { ...emptyHistory() };
+    fast.durations = { [longish.id]: [7, 7, 8, 7, 7, 8, 7, 7] };
+
+    expect(rank(fast)).toBeLessThan(rank(emptyHistory()));
+  });
+
+  it("пустые замеры не меняют выдачу", () => {
+    // защита новых пользователей: пока данных нет, движок обязан
+    // вести себя ровно как до появления личных длительностей
+    const withEmpty = { ...emptyHistory(), durations: {} };
+    const a = recommend(ctx({ history: withEmpty }), 20).map((d) => d.action.id);
+    const b = recommend(ctx(), 20).map((d) => d.action.id);
+    expect(a).toEqual(b);
+  });
+});
+
 describe("здоровье контента", () => {
   it("id действий уникальны", () => {
     const ids = ACTION_POOL.map((a) => a.id);

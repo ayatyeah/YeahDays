@@ -18,6 +18,8 @@ import {
 } from "@/lib/domain";
 import { emptyHistory, type HistorySignals } from "@/lib/recommendation";
 import { levelForXp } from "@/lib/leveling";
+import { addSample } from "@/lib/durations";
+import { ALL_FEATURE_IDS } from "@/lib/features";
 
 /* ────────────────────────  Типы  ──────────────────────── */
 
@@ -321,6 +323,8 @@ interface UserState {
   lastCheckIn: string | null;
   /** прошёл ли первый запуск (онбординг) */
   onboarded: boolean;
+  /** id возможностей, о которых человеку уже рассказали */
+  seenFeatures: string[];
   /** последний день, за закрытие которого показали празднование */
   lastCelebratedDay: string | null;
   /** время последнего изменения (мс) — для кросс-девайс синхронизации (LWW) */
@@ -353,6 +357,7 @@ interface UserState {
   setMood: (mood: Partial<DailyMood>) => void;
   completeCheckIn: () => void;
   completeOnboarding: () => void;
+  markFeaturesSeen: (ids: string[]) => void;
   markDayCelebrated: (day: string) => void;
   acceptAction: (action: Action, date?: string) => void;
   rejectAction: (actionId: string) => void;
@@ -412,6 +417,8 @@ export interface SyncData {
   seenLevel: number;
   lastCheckIn: string | null;
   onboarded: boolean;
+  /** id возможностей, о которых человеку уже рассказали */
+  seenFeatures: string[];
   lastCelebratedDay: string | null;
   updatedAt: number;
   freezes: FreezeState;
@@ -451,6 +458,7 @@ export function pickSync(s: SyncData): SyncData {
     seenLevel: s.seenLevel,
     lastCheckIn: s.lastCheckIn,
     onboarded: s.onboarded,
+    seenFeatures: s.seenFeatures,
     lastCelebratedDay: s.lastCelebratedDay,
     updatedAt: s.updatedAt,
   };
@@ -471,6 +479,7 @@ const initial = {
   seenLevel: 1,
   lastCheckIn: null as string | null,
   onboarded: false,
+  seenFeatures: [],
   lastCelebratedDay: null as string | null,
   // 0 намеренно: нетронутый/пустой стор всегда проигрывает LWW серверу,
   // чтобы пустое устройство не затёрло реальный прогресс аккаунта.
@@ -538,7 +547,14 @@ export const useUserStore = create<UserState>()(
 
       completeCheckIn: () => touch({ lastCheckIn: dateKey() }),
 
-      completeOnboarding: () => touch({ onboarded: true }),
+      completeOnboarding: () =>
+        // новичку «что нового» не показываем: он всё это только что видел
+        touch({ onboarded: true, seenFeatures: ALL_FEATURE_IDS }),
+
+      markFeaturesSeen: (ids) =>
+        touch((s) => ({
+          seenFeatures: [...new Set([...s.seenFeatures, ...ids])],
+        })),
 
       markDayCelebrated: (day) => touch({ lastCelebratedDay: day }),
 
@@ -608,6 +624,20 @@ export const useUserStore = create<UserState>()(
           const cc = s.history.categoryCompletion[cat] ?? { taken: 1, done: 0 };
           const delta = willComplete ? 1 : -1;
 
+          // Замер длительности берём только с ПЕРВОГО закрытия задачи.
+          // Иначе снять и снова поставить галочку означало бы записать
+          // ещё один замер — с временем, накрученным этими же кликами.
+          const firstCompletion = willComplete && task.durationMs === undefined;
+          const durations = firstCompletion
+            ? {
+                ...s.history.durations,
+                [task.actionId]: addSample(
+                  s.history.durations?.[task.actionId],
+                  Date.now() - task.acceptedAt,
+                ),
+              }
+            : s.history.durations;
+
           return {
             plan: s.plan.map((t) =>
               t.id === id
@@ -643,6 +673,7 @@ export const useUserStore = create<UserState>()(
                   done: Math.max(0, cc.done + delta),
                 },
               },
+              durations,
             },
           };
         }),
@@ -657,7 +688,12 @@ export const useUserStore = create<UserState>()(
 
       // Сброс — «начать заново», но онбординг проходить второй раз не заставляем.
       resetAll: () =>
-        touch({ ...initial, createdAt: Date.now(), onboarded: true }),
+        touch({
+          ...initial,
+          createdAt: Date.now(),
+          onboarded: true,
+          seenFeatures: ALL_FEATURE_IDS,
+        }),
 
       // Пополняем раз в календарный месяц. Историю использованных дней
       // не чистим — по ней считается стрик за прошлое.
@@ -887,15 +923,19 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 11,
+      version: 12,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
         // updatedAt появился в v5, freezes — в v6, quests/retros — в v7.
         const withTs = (st: Record<string, unknown>): UserState => {
           const f = st.freezes as Partial<FreezeState> | undefined;
+          const h = st.history as Partial<HistorySignals> | undefined;
           return {
             ...st,
+            // durations появились в v12; у старых аккаунтов замеров нет,
+            // и движок просто продолжит верить оценкам пула
+            history: { ...emptyHistory(), ...h, durations: h?.durations ?? {} },
             quests: Array.isArray(st.quests) ? st.quests : [],
             retros:
               st.retros && typeof st.retros === "object" ? st.retros : {},
@@ -917,6 +957,9 @@ export const useUserStore = create<UserState>()(
             schedule:
               st.schedule && typeof st.schedule === "object" ? st.schedule : {},
             todos: Array.isArray(st.todos) ? st.todos : [],
+            // существующему аккаунту список показываем: он застал онбординг
+            // без этих разделов
+            seenFeatures: Array.isArray(st.seenFeatures) ? st.seenFeatures : [],
             updatedAt:
               typeof st.updatedAt === "number"
                 ? st.updatedAt
@@ -931,7 +974,7 @@ export const useUserStore = create<UserState>()(
           } as unknown as UserState;
         };
 
-        if (version >= 11) return withTs(old);
+        if (version >= 12) return withTs(old);
         // v3/v4 (текущая схема plan[]) — добавляем недостающие поля.
         // Пользователь v3 уже в продукте → онбординг не показываем.
         if (version >= 3) {

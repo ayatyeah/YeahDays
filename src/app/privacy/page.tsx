@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const UPDATED = "24 июля 2026";
 const OWNER = "Аят Балмагамбет";
-const CONTACT = "turar.abukhan@gmail.com";
+const CONTACT = "balmagambet.ayat@gmail.com";
 
 /**
  * Политика конфиденциальности.

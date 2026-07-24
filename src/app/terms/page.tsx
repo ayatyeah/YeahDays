@@ -148,10 +148,10 @@ export function Section({
 export function Mail() {
   return (
     <a
-      href="mailto:turar.abukhan@gmail.com"
+      href="mailto:balmagambet.ayat@gmail.com"
       className="underline underline-offset-4"
     >
-      turar.abukhan@gmail.com
+      balmagambet.ayat@gmail.com
     </a>
   );
 }

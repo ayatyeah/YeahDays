@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Logo from "@/components/Logo";
 import StandaloneRedirect from "@/components/StandaloneRedirect";
 import LandingDemo from "@/components/LandingDemo";
+import SiteNav from "@/components/SiteNav";
 
 export const metadata: Metadata = {
   title: "YeahDays — одно действие в день",
@@ -114,20 +115,7 @@ export default function LandingPage() {
     <>
       <StandaloneRedirect />
 
-      {/* ── Шапка ── */}
-      <header className="sticky top-0 z-30">
-        <div className="liquid-bar border-b border-[var(--color-border)]">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
-            <div className="flex items-center gap-2.5">
-              <Logo variant="white" className="h-7 w-auto" />
-              <span className="text-[18px] font-extrabold tracking-tight">
-                YeahDays
-              </span>
-            </div>
-            <Cta variant="ghost">Попробовать</Cta>
-          </div>
-        </div>
-      </header>
+      <SiteNav />
 
       <main className="mx-auto max-w-6xl px-5 sm:px-8">
         {/* ── Первый экран ── */}
@@ -214,7 +202,7 @@ export default function LandingPage() {
           <div className="mt-10 grid gap-8 sm:grid-cols-3">
             {SHOTS.map((s) => (
               <figure key={s.src}>
-                <div className="liquid overflow-hidden rounded-[28px] p-1.5">
+                <div className="marble overflow-hidden rounded-[28px] p-1.5">
                   <Image
                     src={s.src}
                     alt={s.cap}
@@ -239,7 +227,7 @@ export default function LandingPage() {
           </h2>
           <div className="mt-10 grid gap-10 sm:grid-cols-2 sm:gap-x-14 sm:gap-y-12">
             {BLOCKS.map((b) => (
-              <div key={b.title} className="liquid rounded-3xl p-6">
+              <div key={b.title} className="marble rounded-3xl p-6">
                 <h3 className="text-[20px] font-bold leading-snug">
                   {b.title}
                 </h3>

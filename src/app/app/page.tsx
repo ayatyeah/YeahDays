@@ -42,6 +42,7 @@ export default function HomePage() {
   const lastCheckIn = useUserStore((s) => s.lastCheckIn);
 
   const setMood = useUserStore((s) => s.setMood);
+  const setSlotEnergy = useUserStore((s) => s.setSlotEnergy);
   const completeCheckIn = useUserStore((s) => s.completeCheckIn);
   const acceptAction = useUserStore((s) => s.acceptAction);
   const rejectAction = useUserStore((s) => s.rejectAction);
@@ -154,7 +155,18 @@ export default function HomePage() {
       <CheckIn
         name={name}
         mood={mood}
-        onChange={setMood}
+        /*
+          Энергия и бюджет живут в разных местах, и это намеренно.
+          Минуты — про сегодня, поэтому идут в moods[дата]. А «сколько сил»
+          — про ТЕКУЩЕЕ время суток: значение уходит в профиль слота,
+          откуда движок его и читает. Раньше кнопки писали в moods, а на
+          экране показывалось значение из профиля — источник и приёмник
+          были разными, поэтому выбор не двигался вообще.
+        */
+        onChange={(patch) => {
+          if (patch.energy) setSlotEnergy(currentSlot(), patch.energy);
+          if (patch.minutes !== undefined) setMood({ minutes: patch.minutes });
+        }}
         onDone={completeCheckIn}
       />
     );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import Logo from "@/components/Logo";
 import StandaloneRedirect from "@/components/StandaloneRedirect";
@@ -143,6 +144,40 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Настоящие экраны, а не мокапы: продукт продаёт себя лучше,
+            чем его описание. Скриншоты сняты с живого приложения. */}
+        <section className="mt-14">
+          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+            Как выглядит
+          </h2>
+          <div className="mt-4 -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2">
+            {[
+              { src: "/shots/deck.png", cap: "Колода: свайпни то, что берёшь" },
+              { src: "/shots/today.png", cap: "День: челленджи, задачи, расписание" },
+              { src: "/shots/progress.png", cap: "Прогресс: статы и стрик" },
+            ].map((s) => (
+              <figure key={s.src} className="w-[232px] shrink-0 snap-center">
+                <div className="surface-raised overflow-hidden rounded-[26px] p-1.5">
+                  <Image
+                    src={s.src}
+                    alt={s.cap}
+                    width={560}
+                    height={1212}
+                    className="h-auto w-full rounded-[20px]"
+                    sizes="232px"
+                  />
+                </div>
+                <figcaption className="mt-2.5 px-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+                  {s.cap}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+          <p className="mt-1 text-[11px] text-[var(--color-muted)]">
+            ← листай вбок
+          </p>
         </section>
 
         {/* Что внутри */}

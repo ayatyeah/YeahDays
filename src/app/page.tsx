@@ -7,26 +7,30 @@ import StandaloneRedirect from "@/components/StandaloneRedirect";
 export const metadata: Metadata = {
   title: "YeahDays — одно действие в день",
   description:
-    "Не список задач, а ежедневная подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт персонаж.",
+    "Не список задач, а ежедневная колода действий под твоё состояние. Свайпнул — сделал — день засчитан.",
+  openGraph: {
+    title: "YeahDays — одно действие в день",
+    description:
+      "Не список задач, а ежедневная колода действий под твоё состояние.",
+    type: "website",
+  },
 };
 
 /**
- * Лендинг — витрина продукта.
+ * Лендинг — маркетинговая витрина, а не приложение в вебе.
  *
- * Живёт на «/», само приложение на «/app». Установка PWA от этого не
- * страдает: scope манифеста остался «/», поэтому предложить установку
- * можно с любой страницы, а start_url ведёт в «/app» — с домашнего
- * экрана человек попадает сразу в приложение и лендинг больше не видит.
+ * Живёт на «/», продукт на «/app». Оболочку выбирает Shell: здесь полная
+ * ширина и никакой нижней навигации.
  *
- * Серверный компонент: страница статическая, ей не нужен ни стор,
- * ни JS для отрисовки — быстрый первый экран и нормальная индексация.
+ * Серверный компонент: статика, нулевой JS для отрисовки, быстрый первый
+ * экран и нормальная индексация поисковиками.
  */
 
 const STEPS = [
   {
     n: "01",
     title: "Скажи, как ты сегодня",
-    text: "Два касания: сколько сил и сколько минут. Утром колода мягче, вечером — злее.",
+    text: "Два касания: сколько сил и сколько минут есть. Утром колода мягче, вечером допускает тяжёлое.",
   },
   {
     n: "02",
@@ -36,220 +40,303 @@ const STEPS = [
   {
     n: "03",
     title: "Сделай — и только потом дальше",
-    text: "Пока взятое не закрыто, новых карточек не будет. Взял — сделай.",
+    text: "Пока взятое не закрыто, новых карточек не будет. Никаких списков из десяти «когда-нибудь».",
   },
 ];
 
-const FEATURES = [
+const NUMBERS = [
   {
-    icon: "🎴",
-    title: "Колода вместо списка",
-    text: "176 действий, которые подбираются под цель, время суток и остаток сил — а не висят виной в бесконечном списке.",
+    k: "176",
+    title: "действий в колоде",
+    text: "Подбираются под цель, время суток и остаток сил. Девять направлений — от спорта до финансов.",
   },
   {
-    icon: "🪜",
-    title: "Лестницы навыков",
+    k: "12",
+    title: "лестниц навыков",
     text: "20 отжиманий → 35 → 50. Следующая ступень открывается, когда освоена текущая. Виден рост, а не топтание.",
   },
   {
-    icon: "🧊",
-    title: "Стрик не рушится от одного дня",
-    text: "Две заморозки в месяц тратятся сами, когда серия под угрозой. Сорвался раз — не повод бросать.",
-  },
-  {
-    icon: "📅",
-    title: "Свои задачи и расписание",
-    text: "Обычный тудушник рядом: приоритеты, подзадачи, повторы, дедлайны — плюс почасовой план дня.",
-  },
-  {
-    icon: "🔔",
-    title: "Напоминания, а не спам",
-    text: "Два раза в день по твоему времени. Вечернее подстраивается под час, когда ты реально что-то делаешь.",
-  },
-  {
-    icon: "🧍",
-    title: "Персонаж растёт с тобой",
-    text: "Четыре характеристики качаются от того, что ты реально закрываешь. Прогресс видно, а не только в цифрах.",
+    k: "2",
+    title: "заморозки стрика в месяц",
+    text: "Тратятся сами, когда серия под угрозой. Один сорванный день больше не повод бросить всё.",
   },
 ];
+
+const BLOCKS = [
+  {
+    title: "Движок, который подстраивается",
+    text: "Подборка считается по пяти сигналам: приоритеты, время суток, бюджет минут, твоя история и свежесть. Стабильно закрываешь взятое — планка растёт сама. Сливаешь — снижается. Никаких настроек, всё по поведению.",
+  },
+  {
+    title: "Задачи и расписание рядом",
+    text: "Полноценный список дел: приоритеты, подзадачи, заметки, повторы по будням и выходным, перенос на завтра, отмена удаления. Плюс почасовой план дня — от подъёма до вечера.",
+  },
+  {
+    title: "Челленджи с уровнями дня",
+    text: "Ежедневные обязательства со своими порогами: дотянул до минимума — день жёлтый, взял норму — зелёный. В календаре месяц виден одним взглядом.",
+  },
+  {
+    title: "Напоминания, а не спам",
+    text: "Два раза в день по твоему часовому поясу. Вечернее время подстраивается под час, когда ты реально закрываешь дела. Закрыл норму — вечером не потревожим.",
+  },
+];
+
+const SHOTS = [
+  { src: "/shots/deck.png", cap: "Колода — свайпни то, что берёшь" },
+  { src: "/shots/today.png", cap: "День — челленджи, задачи, расписание" },
+  { src: "/shots/progress.png", cap: "Прогресс — характеристики и стрик" },
+];
+
+function Cta({
+  children,
+  variant = "primary",
+}: {
+  children: React.ReactNode;
+  variant?: "primary" | "ghost";
+}) {
+  return (
+    <Link
+      href="/app"
+      className={
+        variant === "primary"
+          ? "press inline-flex h-14 items-center justify-center rounded-2xl bg-[var(--color-fg)] px-8 text-[16px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
+          : "press inline-flex h-11 items-center justify-center rounded-xl border border-[var(--color-border-strong)] px-5 text-[14px] font-semibold"
+      }
+    >
+      {children}
+    </Link>
+  );
+}
 
 export default function LandingPage() {
   return (
     <>
-      {/* Установленное приложение не должно упираться в витрину */}
       <StandaloneRedirect />
 
-      <div className="flex flex-1 flex-col pb-10">
-        {/* Шапка */}
-        <header className="flex items-center justify-between py-2">
-          <div className="flex items-center gap-2.5">
-            <Logo variant="white" className="h-7 w-auto" />
-            <span className="text-[19px] font-extrabold tracking-tight">
-              YeahDays
-            </span>
+      {/* ── Шапка ── */}
+      <header className="sticky top-0 z-30">
+        <div className="glass border-b border-[var(--color-border)]">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
+            <div className="flex items-center gap-2.5">
+              <Logo variant="white" className="h-7 w-auto" />
+              <span className="text-[18px] font-extrabold tracking-tight">
+                YeahDays
+              </span>
+            </div>
+            <Cta variant="ghost">Попробовать</Cta>
           </div>
-          <Link
-            href="/app"
-            className="press rounded-xl px-3 py-2 text-[13px] font-medium text-[var(--color-fg-dim)]"
-          >
-            Открыть
-          </Link>
-        </header>
+        </div>
+      </header>
 
-        {/* Первый экран */}
-        <section className="mt-10">
-          <h1 className="text-[34px] font-extrabold leading-[1.08]">
-            Одно действие в день
-            <br />
-            <span className="text-[var(--color-fg-dim)]">
-              делает тебя лучшей версией себя
-            </span>
-          </h1>
-          <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
-            Не список задач, который копит вину, а ежедневная колода действий
-            под твоё состояние. Свайпнул — сделал — день засчитан.
-          </p>
+      <main className="mx-auto max-w-6xl px-5 sm:px-8">
+        {/* ── Первый экран ── */}
+        <section className="grid items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+          <div>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]">
+              Трекер, который не давит
+            </p>
+            <h1 className="mt-5 text-[42px] font-extrabold leading-[1.03] sm:text-[58px] lg:text-[64px]">
+              Одно действие
+              <br />в день
+            </h1>
+            <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[var(--color-fg-dim)] sm:text-[19px]">
+              Списки задач копят вину: чем длиннее, тем меньше хочется их
+              открывать. YeahDays каждый день предлагает колоду действий под
+              твоё состояние. Свайпнул — сделал — день засчитан.
+            </p>
 
-          <Link
-            href="/app"
-            className="press mt-7 flex h-13 w-full items-center justify-center rounded-2xl bg-[var(--color-fg)] py-4 text-[15px] font-bold text-[var(--color-bg)]"
-          >
-            Начать бесплатно
-          </Link>
-          <p className="mt-2.5 text-center text-[11.5px] text-[var(--color-muted)]">
-            Без регистрации. Вход нужен только чтобы прогресс жил на всех
-            устройствах.
-          </p>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <Cta>Попробовать</Cta>
+              <span className="text-[13px] text-[var(--color-muted)]">
+                Бесплатно · без регистрации
+              </span>
+            </div>
+          </div>
+
+          {/* Настоящий экран продукта, а не абстрактная иллюстрация */}
+          <div className="relative mx-auto w-full max-w-[300px] lg:max-w-[340px]">
+            <div
+              aria-hidden
+              className="absolute -inset-10 -z-10 rounded-full opacity-60 blur-3xl"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(149,132,255,0.22), transparent 68%)",
+              }}
+            />
+            <div className="surface-raised overflow-hidden rounded-[34px] p-2">
+              <Image
+                src="/shots/deck.png"
+                alt="Экран колоды действий в YeahDays"
+                width={560}
+                height={1212}
+                priority
+                className="h-auto w-full rounded-[26px]"
+                sizes="(min-width: 1024px) 340px, 300px"
+              />
+            </div>
+          </div>
         </section>
 
-        {/* Как это работает */}
-        <section className="mt-14">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {/* ── Цифры ── */}
+        <section className="grid gap-8 border-t border-[var(--color-border)] py-14 sm:grid-cols-3 sm:py-16">
+          {NUMBERS.map((f) => (
+            <div key={f.title}>
+              <p className="num text-[44px] font-extrabold leading-none sm:text-[52px]">
+                {f.k}
+              </p>
+              <p className="mt-2 text-[15px] font-bold">{f.title}</p>
+              <p className="mt-2 max-w-sm text-[14px] leading-relaxed text-[var(--color-fg-dim)]">
+                {f.text}
+              </p>
+            </div>
+          ))}
+        </section>
+
+        {/* ── Как это работает ── */}
+        <section className="border-t border-[var(--color-border)] py-16 sm:py-20">
+          <h2 className="text-[30px] font-extrabold sm:text-[38px]">
             Как это работает
           </h2>
-          <div className="mt-4 space-y-3">
+          <div className="mt-10 grid gap-8 sm:grid-cols-3">
             {STEPS.map((s) => (
-              <div key={s.n} className="surface rounded-3xl p-4">
-                <div className="flex items-start gap-3.5">
-                  <span className="num text-[13px] font-bold text-[var(--color-muted)]">
-                    {s.n}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[15px] font-bold">{s.title}</p>
-                    <p className="mt-1 text-[13px] leading-snug text-[var(--color-fg-dim)]">
-                      {s.text}
-                    </p>
-                  </div>
-                </div>
+              <div key={s.n}>
+                <p className="num text-[13px] font-bold text-[var(--color-muted)]">
+                  {s.n}
+                </p>
+                <p className="mt-3 text-[19px] font-bold leading-snug">
+                  {s.title}
+                </p>
+                <p className="mt-2.5 text-[14.5px] leading-relaxed text-[var(--color-fg-dim)]">
+                  {s.text}
+                </p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Настоящие экраны, а не мокапы: продукт продаёт себя лучше,
-            чем его описание. Скриншоты сняты с живого приложения. */}
-        <section className="mt-14">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {/* ── Экраны ── */}
+        <section className="border-t border-[var(--color-border)] py-16 sm:py-20">
+          <h2 className="text-[30px] font-extrabold sm:text-[38px]">
             Как выглядит
           </h2>
-          <div className="mt-4 -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2">
-            {[
-              { src: "/shots/deck.png", cap: "Колода: свайпни то, что берёшь" },
-              { src: "/shots/today.png", cap: "День: челленджи, задачи, расписание" },
-              { src: "/shots/progress.png", cap: "Прогресс: статы и стрик" },
-            ].map((s) => (
-              <figure key={s.src} className="w-[232px] shrink-0 snap-center">
-                <div className="surface-raised overflow-hidden rounded-[26px] p-1.5">
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
+            Настоящие экраны приложения — без мокапов и приукрашивания.
+          </p>
+          <div className="mt-10 grid gap-8 sm:grid-cols-3">
+            {SHOTS.map((s) => (
+              <figure key={s.src}>
+                <div className="surface overflow-hidden rounded-[28px] p-1.5">
                   <Image
                     src={s.src}
                     alt={s.cap}
                     width={560}
                     height={1212}
-                    className="h-auto w-full rounded-[20px]"
-                    sizes="232px"
+                    className="h-auto w-full rounded-[22px]"
+                    sizes="(min-width: 640px) 300px, 90vw"
                   />
                 </div>
-                <figcaption className="mt-2.5 px-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+                <figcaption className="mt-3 text-[13.5px] text-[var(--color-muted)]">
                   {s.cap}
                 </figcaption>
               </figure>
             ))}
           </div>
-          <p className="mt-1 text-[11px] text-[var(--color-muted)]">
-            ← листай вбок
-          </p>
         </section>
 
-        {/* Что внутри */}
-        <section className="mt-12">
-          <h2 className="text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+        {/* ── Что внутри ── */}
+        <section className="border-t border-[var(--color-border)] py-16 sm:py-20">
+          <h2 className="text-[30px] font-extrabold sm:text-[38px]">
             Что внутри
           </h2>
-          <div className="mt-4 space-y-3">
-            {FEATURES.map((f) => (
-              <div key={f.title} className="surface rounded-3xl p-4">
-                <div className="flex items-start gap-3.5">
-                  <span className="text-[20px]" aria-hidden>
-                    {f.icon}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[14.5px] font-bold">{f.title}</p>
-                    <p className="mt-1 text-[13px] leading-snug text-[var(--color-fg-dim)]">
-                      {f.text}
-                    </p>
-                  </div>
-                </div>
+          <div className="mt-10 grid gap-10 sm:grid-cols-2 sm:gap-x-14 sm:gap-y-12">
+            {BLOCKS.map((b) => (
+              <div key={b.title}>
+                <h3 className="text-[20px] font-bold leading-snug">
+                  {b.title}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
+                  {b.text}
+                </p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Честный блок про данные — доверие важнее маркетинга */}
-        <section className="mt-12">
-          <div className="surface-raised rounded-3xl p-5">
-            <h2 className="text-[15px] font-bold">Что с твоими данными</h2>
-            <ul className="mt-3 space-y-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
-              <li>— Без входа всё лежит только в твоём браузере.</li>
-              <li>
-                — Войдёшь — прогресс синхронизируется, чтобы был на всех
-                устройствах.
-              </li>
-              <li>— Данные можно выгрузить или стереть в один клик.</li>
-              <li>— Мы не продаём и не передаём их рекламодателям.</li>
-            </ul>
-            <div className="mt-4 flex gap-4 text-[12.5px]">
-              <Link href="/terms" className="underline underline-offset-4">
-                Условия
-              </Link>
-              <Link href="/privacy" className="underline underline-offset-4">
-                Конфиденциальность
-              </Link>
+        {/* ── Данные ── */}
+        <section className="border-t border-[var(--color-border)] py-16 sm:py-20">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+            <div>
+              <h2 className="text-[30px] font-extrabold sm:text-[38px]">
+                Твои данные — твои
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
+                Мы не продаём их и не передаём рекламодателям. Забрать копию
+                или стереть всё можно самому, двумя кнопками в профиле.
+              </p>
             </div>
+            <ul className="space-y-4">
+              {[
+                "Без входа всё лежит только в твоём браузере.",
+                "Войдёшь — прогресс появится на всех устройствах.",
+                "Выгрузка всех данных одним файлом.",
+                "Удаление аккаунта без следа и без переписки с поддержкой.",
+              ].map((t) => (
+                <li key={t} className="flex gap-3.5">
+                  <span
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-stability)]"
+                    aria-hidden
+                  />
+                  <span className="text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
+                    {t}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        {/* Финальный призыв */}
-        <section className="mt-12 text-center">
-          <p className="text-[19px] font-bold leading-snug">
+        {/* ── Финальный призыв ── */}
+        <section className="border-t border-[var(--color-border)] py-20 text-center sm:py-28">
+          <h2 className="mx-auto max-w-2xl text-[34px] font-extrabold leading-[1.1] sm:text-[46px]">
             Начни с одного действия.
             <br />
             Сегодня.
+          </h2>
+          <p className="mx-auto mt-5 max-w-lg text-[16px] leading-relaxed text-[var(--color-fg-dim)]">
+            Установи как приложение на телефон — работает офлайн и
+            открывается с домашнего экрана.
           </p>
-          <Link
-            href="/app"
-            className="press mt-5 inline-flex h-12 items-center justify-center rounded-2xl bg-[var(--color-fg)] px-7 text-[15px] font-bold text-[var(--color-bg)]"
-          >
-            Открыть YeahDays
-          </Link>
+          <div className="mt-9">
+            <Cta>Попробовать</Cta>
+          </div>
         </section>
+      </main>
 
-        <footer className="mt-14 flex flex-col items-center gap-2 opacity-55">
-          <Logo variant="white" className="h-4 w-auto" />
-          <p className="text-[11px] text-[var(--color-muted)]">
-            Одно действие в день
-          </p>
-        </footer>
-      </div>
+      {/* ── Подвал ── */}
+      <footer className="border-t border-[var(--color-border)]">
+        <div className="mx-auto flex max-w-6xl flex-col gap-5 px-5 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <div className="flex items-center gap-2.5 opacity-70">
+            <Logo variant="white" className="h-5 w-auto" />
+            <span className="text-[13px] text-[var(--color-muted)]">
+              Одно действие в день
+            </span>
+          </div>
+          <nav className="flex gap-6 text-[13.5px] text-[var(--color-muted)]">
+            <Link href="/app" className="transition hover:text-[var(--color-fg)]">
+              Приложение
+            </Link>
+            <Link href="/terms" className="transition hover:text-[var(--color-fg)]">
+              Условия
+            </Link>
+            <Link
+              href="/privacy"
+              className="transition hover:text-[var(--color-fg)]"
+            >
+              Конфиденциальность
+            </Link>
+          </nav>
+        </div>
+      </footer>
     </>
   );
 }

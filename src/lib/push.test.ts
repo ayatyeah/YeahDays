@@ -57,7 +57,7 @@ describe("тексты уведомлений", () => {
 
   it("утром зовёт к колоде, если план пуст", () => {
     const m = morningMessage({ doneToday: 0, plannedToday: 0, streak: 4 });
-    expect(m.url).toBe("/");
+    expect(m.url).toBe("/app");
     expect(m.body).toContain("4"); // упоминаем стрик как мотивацию
   });
 

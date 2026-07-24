@@ -21,6 +21,7 @@ import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
+import { useTimeSlot, SLOT_LABEL } from "@/lib/useTimeSlot";
 import type { ScoredAction } from "@/lib/recommendation";
 
 export default function HomePage() {
@@ -49,12 +50,13 @@ export default function HomePage() {
   const markSeen = useUserStore((s) => s.markSeen);
   const openCreate = useUiStore((s) => s.openCreate);
 
+  const slot = useTimeSlot();
   const dailyMood = useMemo(() => selectMood(moods), [moods]);
   // Энергия у людей не постоянна за день. Берём её из профиля текущего
   // слота, а бюджет минут — из чек-ина. Утром колода мягче, вечером злее.
   const mood = useMemo(
-    () => ({ ...dailyMood, energy: energyProfile[currentSlot()] }),
-    [dailyMood, energyProfile],
+    () => ({ ...dailyMood, energy: energyProfile[slot] }),
+    [dailyMood, energyProfile, slot],
   );
   const today = useMemo(() => selectToday(plan), [plan]);
   const streak = useStreak();
@@ -108,6 +110,7 @@ export default function HomePage() {
     disabledActions,
     mood.energy,
     mood.minutes,
+    slot,
     reloadKey,
   ]);
 
@@ -193,7 +196,10 @@ export default function HomePage() {
       {/* Шапка: прогресс дня */}
       <header className="mb-4">
         <p className="text-[13px] font-medium text-[var(--color-muted)]">
-          Сегодня
+          {/* Показываем слот: подборка привязана ко времени суток, и без
+              подписи это невидимая механика — человек не понимает,
+              почему вечером карточки другие, чем утром. */}
+          Сегодня · {SLOT_LABEL[slot]}
         </p>
         <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
           {takenToday >= dailyGoal ? "План собран" : "Что сделаешь сегодня?"}

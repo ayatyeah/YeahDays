@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import Logo from "@/components/Logo";
 import StandaloneRedirect from "@/components/StandaloneRedirect";
+import LandingDemo from "@/components/LandingDemo";
 
 export const metadata: Metadata = {
   title: "YeahDays — одно действие в день",
@@ -115,7 +116,7 @@ export default function LandingPage() {
 
       {/* ── Шапка ── */}
       <header className="sticky top-0 z-30">
-        <div className="glass border-b border-[var(--color-border)]">
+        <div className="liquid-bar border-b border-[var(--color-border)]">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
             <div className="flex items-center gap-2.5">
               <Logo variant="white" className="h-7 w-auto" />
@@ -153,27 +154,15 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Настоящий экран продукта, а не абстрактная иллюстрация */}
-          <div className="relative mx-auto w-full max-w-[300px] lg:max-w-[340px]">
+          {/* Живое демо вместо картинки: показать, как ОЩУЩАЕТСЯ,
+              важнее, чем показать, как выглядит */}
+          <div className="relative">
             <div
+              className="glow-spot left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2"
+              style={{ background: "rgba(149,132,255,0.30)" }}
               aria-hidden
-              className="absolute -inset-10 -z-10 rounded-full opacity-60 blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(149,132,255,0.22), transparent 68%)",
-              }}
             />
-            <div className="surface-raised overflow-hidden rounded-[34px] p-2">
-              <Image
-                src="/shots/deck.png"
-                alt="Экран колоды действий в YeahDays"
-                width={560}
-                height={1212}
-                priority
-                className="h-auto w-full rounded-[26px]"
-                sizes="(min-width: 1024px) 340px, 300px"
-              />
-            </div>
+            <LandingDemo />
           </div>
         </section>
 
@@ -199,7 +188,7 @@ export default function LandingPage() {
           </h2>
           <div className="mt-10 grid gap-8 sm:grid-cols-3">
             {STEPS.map((s) => (
-              <div key={s.n}>
+              <div key={s.n} className="liquid rounded-3xl p-5">
                 <p className="num text-[13px] font-bold text-[var(--color-muted)]">
                   {s.n}
                 </p>
@@ -225,7 +214,7 @@ export default function LandingPage() {
           <div className="mt-10 grid gap-8 sm:grid-cols-3">
             {SHOTS.map((s) => (
               <figure key={s.src}>
-                <div className="surface overflow-hidden rounded-[28px] p-1.5">
+                <div className="liquid overflow-hidden rounded-[28px] p-1.5">
                   <Image
                     src={s.src}
                     alt={s.cap}
@@ -250,7 +239,7 @@ export default function LandingPage() {
           </h2>
           <div className="mt-10 grid gap-10 sm:grid-cols-2 sm:gap-x-14 sm:gap-y-12">
             {BLOCKS.map((b) => (
-              <div key={b.title}>
+              <div key={b.title} className="liquid rounded-3xl p-6">
                 <h3 className="text-[20px] font-bold leading-snug">
                   {b.title}
                 </h3>
@@ -296,7 +285,12 @@ export default function LandingPage() {
         </section>
 
         {/* ── Финальный призыв ── */}
-        <section className="border-t border-[var(--color-border)] py-20 text-center sm:py-28">
+        <section className="relative border-t border-[var(--color-border)] py-20 text-center sm:py-28">
+          <div
+            className="glow-spot left-1/2 top-1/2 h-[380px] w-[600px] -translate-x-1/2 -translate-y-1/2"
+            style={{ background: "rgba(70,203,164,0.16)" }}
+            aria-hidden
+          />
           <h2 className="mx-auto max-w-2xl text-[34px] font-extrabold leading-[1.1] sm:text-[46px]">
             Начни с одного действия.
             <br />

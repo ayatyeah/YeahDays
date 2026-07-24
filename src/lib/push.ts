@@ -141,7 +141,7 @@ export function morningMessage(ctx: DayContext): PushPayload {
       ctx.streak > 0
         ? `Стрик ${ctx.streak} — выбери, что сделаешь сегодня.`
         : "Выбери одно действие — этого достаточно.",
-    url: "/",
+    url: "/app",
     tag: "yd-morning",
   };
 }
@@ -160,14 +160,14 @@ export function eveningMessage(ctx: DayContext): PushPayload {
     return {
       title: `Стрик ${ctx.streak} ещё можно сохранить`,
       body: "Одно небольшое действие — и день закрыт.",
-      url: "/",
+      url: "/app",
       tag: "yd-evening",
     };
   }
   return {
     title: "Ещё есть время на одно действие",
     body: "Даже две минуты считаются.",
-    url: "/",
+    url: "/app",
     tag: "yd-evening",
   };
 }

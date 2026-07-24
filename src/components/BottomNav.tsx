@@ -70,7 +70,7 @@ function AccountIcon({ className }: IconProps) {
 }
 
 const NAV = [
-  { href: "/", label: "Главная", Icon: HomeIcon },
+  { href: "/app", label: "Главная", Icon: HomeIcon },
   { href: "/today", label: "Сегодня", Icon: TodayIcon },
   { href: "/calendar", label: "Календарь", Icon: CalendarIcon },
   { href: "/progress", label: "Прогресс", Icon: ProgressIcon },

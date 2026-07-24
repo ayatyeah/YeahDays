@@ -153,7 +153,7 @@ export default function TodayPage() {
             берёшь на сегодня.
           </p>
           <Link
-            href="/"
+            href="/app"
             className="mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
           >
             Подобрать действия

@@ -11,6 +11,7 @@ const BUILD =
 const CACHE = `yeahdays-${BUILD}`;
 const PRECACHE = [
   "/",
+  "/app",
   "/today",
   "/calendar",
   "/progress",
@@ -67,14 +68,14 @@ self.addEventListener("push", (event) => {
       badge: "/favicon.png",
       tag: data.tag || "yeahdays",
       renotify: false,
-      data: { url: data.url || "/" },
+      data: { url: data.url || "/app" },
     }),
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = event.notification.data?.url || "/";
+  const target = event.notification.data?.url || "/app";
 
   // если приложение уже открыто — фокусируем вкладку, а не плодим новые
   event.waitUntil(
@@ -110,7 +111,7 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE).then((c) => c.put(request, copy));
           return res;
         })
-        .catch(() => caches.match(request).then((r) => r || caches.match("/"))),
+        .catch(() => caches.match(request).then((r) => r || caches.match("/app"))),
     );
     return;
   }

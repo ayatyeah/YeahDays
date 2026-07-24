@@ -242,13 +242,13 @@ function DemoCard({
       {next && (
         <motion.div
           style={{ scale: nextScale }}
-          className="liquid absolute inset-x-3 top-3 h-[248px] rounded-[26px]"
+          className="surface absolute inset-x-3 top-[14px] h-[252px] rounded-[26px] opacity-70"
           aria-hidden
         />
       )}
 
       <motion.article
-        className="gpu-layer absolute inset-0 cursor-grab active:cursor-grabbing"
+        className="gpu-layer absolute inset-x-0 top-0 h-[252px] cursor-grab active:cursor-grabbing"
         style={{ x, rotate }}
         drag="x"
         dragConstraints={{ left: 0, right: 0 }}
@@ -267,7 +267,7 @@ function DemoCard({
         }}
         transition={spring}
       >
-        <div className="liquid relative flex h-full flex-col rounded-[26px] p-5">
+        <div className="surface-raised relative flex h-full flex-col rounded-[26px] bg-[var(--color-surface)] p-5">
           {/* Подсказки решения */}
           <motion.span
             style={{ opacity: takeOpacity }}

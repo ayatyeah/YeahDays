@@ -71,7 +71,7 @@ export default function DataControls() {
         <button
           onClick={exportData}
           disabled={busy}
-          className="h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[13.5px] font-medium transition active:scale-[0.99] disabled:opacity-60"
+          className="h-11 w-full rounded-2xl surface text-[13.5px] font-medium transition active:scale-[0.99] disabled:opacity-60"
         >
           Выгрузить мои данные (JSON)
         </button>

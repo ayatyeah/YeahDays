@@ -175,7 +175,7 @@ function ActionsTab() {
               key={a.id}
               onClick={() => toggleDisabled(a.id)}
               className={cn(
-                "flex w-full items-center gap-2.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-left transition",
+                "flex w-full items-center gap-2.5 rounded-2xl surface px-3 py-2.5 text-left transition",
                 off && "opacity-45",
               )}
             >
@@ -328,7 +328,7 @@ function DayTab() {
           .map((c) => (
             <div
               key={c.id}
-              className="flex items-center gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5"
+              className="flex items-center gap-2 rounded-2xl surface px-3 py-2.5"
             >
               <span className="min-w-0 flex-1 truncate text-[12.5px]">
                 {c.title}
@@ -371,7 +371,7 @@ function TaskRow({
   onRemove: () => void;
 }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5">
+    <div className="flex items-center gap-2.5 rounded-2xl surface px-3 py-2.5">
       <button
         onClick={onToggle}
         className={cn(
@@ -424,7 +424,7 @@ function AddActionPicker({
   }, [q]);
 
   return (
-    <div className="mt-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+    <div className="mt-2 rounded-2xl surface p-3">
       <input
         value={q}
         onChange={(e) => setQ(e.target.value)}
@@ -480,7 +480,7 @@ function ChallengesTab() {
           return (
             <div
               key={c.id}
-              className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3"
+              className="press rounded-2xl surface p-3"
             >
               <div className="flex items-start gap-2">
                 <span className="min-w-0 flex-1">
@@ -514,7 +514,7 @@ function ChallengesTab() {
       <h2 className="mb-2 mt-5 text-[12.5px] font-semibold text-[var(--color-fg-dim)]">
         Новый челлендж
       </h2>
-      <div className="space-y-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3">
+      <div className="space-y-2 rounded-2xl surface p-3">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}

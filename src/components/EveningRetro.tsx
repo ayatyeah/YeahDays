@@ -53,7 +53,7 @@ export default function EveningRetro() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 12 }}
-          className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+          className="press rounded-3xl surface p-4"
         >
           {saved ? (
             <p className="py-2 text-center text-[13px] font-medium">

@@ -109,7 +109,7 @@ export default function TodayPage() {
       </div>
 
       {/* Прогресс дня */}
-      <section className="mb-5 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <section className="mb-5 rounded-3xl surface p-4">
         <div className="mb-2.5 flex items-end justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
@@ -178,7 +178,7 @@ export default function TodayPage() {
             <div className="mt-3">
               <button
                 onClick={() => setShowDone((v) => !v)}
-                className="flex w-full items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
+                className="flex w-full items-center justify-between rounded-2xl surface px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
               >
                 <span className="text-[12.5px] font-semibold text-[var(--color-muted)]">
                   Выполнено: {done.length}

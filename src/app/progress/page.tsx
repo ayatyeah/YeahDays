@@ -61,7 +61,7 @@ export default function ProgressPage() {
       </p>
 
       {/* Уровень */}
-      <section className="mb-5 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <section className="mb-5 rounded-3xl surface p-4">
         <div className="flex items-end justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
@@ -219,7 +219,7 @@ function Metric({
   accent?: string;
 }) {
   return (
-    <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-4 text-center">
+    <div className="press rounded-3xl surface px-3 py-4 text-center">
       <p className="text-2xl font-bold tabular-nums">
         {accent && <span className="mr-0.5 text-lg">{accent}</span>}
         {value}

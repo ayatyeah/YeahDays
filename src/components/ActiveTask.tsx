@@ -52,7 +52,7 @@ export default function ActiveTask({
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-1 flex-col justify-center"
     >
-      <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+      <div className="press rounded-3xl surface p-5">
         <div className="flex items-center gap-2">
           <span className="text-[15px]" aria-hidden>
             {cat.icon}

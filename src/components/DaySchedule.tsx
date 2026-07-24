@@ -75,7 +75,7 @@ export default function DaySchedule({
       </div>
 
       {expanded && (
-        <div className="overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="overflow-hidden rounded-3xl surface">
           {hours.map((h) => {
             const isNow = isToday && h === nowHour;
             const value = dayPlan[String(h)] ?? "";

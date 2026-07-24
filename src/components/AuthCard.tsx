@@ -100,14 +100,14 @@ export default function AuthCard() {
 
   if (status === "loading") {
     return (
-      <div className="h-[68px] animate-pulse rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]" />
+      <div className="h-[68px] animate-pulse rounded-3xl surface" />
     );
   }
 
   if (session?.user) {
     const u = session.user;
     return (
-      <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <section className="press rounded-3xl surface p-4">
         <div className="flex items-center gap-3">
           {u.image ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -161,7 +161,7 @@ export default function AuthCard() {
   const hasProgress = hydrated && (done > 0 || streak > 0);
 
   return (
-    <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <section className="press rounded-3xl surface p-4">
       <p className="text-[13px] font-semibold">
         {hasProgress ? "Прогресс только в этом браузере" : "Сохрани прогресс"}
       </p>

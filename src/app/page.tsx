@@ -255,7 +255,7 @@ export default function HomePage() {
           >
             <Link
               href="/today"
-              className="flex items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
+              className="flex items-center justify-between rounded-2xl surface px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
             >
               <div className="min-w-0">
                 <p className="text-[13px] font-semibold">

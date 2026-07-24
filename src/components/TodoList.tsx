@@ -15,6 +15,7 @@ import {
 } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
+import { listVariants, itemVariants, spring, springSnappy } from "@/lib/motion";
 
 const PRIORITY_COLOR: Record<TodoPriority, string> = {
   high: "var(--color-strength)",
@@ -153,7 +154,12 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
           {filter === "done" ? "Пока ничего не закрыто" : "Задач нет"}
         </p>
       ) : (
-        <div className="space-y-1.5">
+        <motion.div
+          variants={listVariants}
+          initial="initial"
+          animate="animate"
+          className="list-virtual space-y-1.5"
+        >
           <AnimatePresence initial={false}>
             {list.map((t) => (
               <TodoRow
@@ -168,7 +174,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
               />
             ))}
           </AnimatePresence>
-        </div>
+        </motion.div>
       )}
 
       {/* Отмена удаления */}
@@ -229,10 +235,12 @@ function TodoRow({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      className="overflow-hidden rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]"
+      variants={itemVariants}
+      initial="initial"
+      animate="animate"
+      exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+      transition={spring}
+      className="overflow-hidden rounded-2xl surface"
     >
       <div className="flex items-center gap-2.5 px-3 py-2.5">
         <button

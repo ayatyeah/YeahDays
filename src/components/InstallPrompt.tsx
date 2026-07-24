@@ -88,7 +88,7 @@ export default function InstallPrompt() {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed inset-x-0 bottom-[86px] z-40 px-4"
         >
-          <div className="safe-b mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-xl shadow-black/40">
+          <div className="safe-b mx-auto flex max-w-md items-center gap-3 glass rounded-2xl border border-[var(--color-border-strong)] shadow-[var(--shadow-3)] p-3 shadow-xl shadow-black/40">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-xl">
               📲
             </div>

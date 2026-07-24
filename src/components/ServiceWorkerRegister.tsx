@@ -112,7 +112,7 @@ export default function ServiceWorkerRegister() {
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="fixed inset-x-0 top-3 z-[70] px-4"
         >
-          <div className="safe-b mx-auto flex max-w-md items-center gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3 shadow-xl shadow-black/40">
+          <div className="safe-b mx-auto flex max-w-md items-center gap-3 glass rounded-2xl border border-[var(--color-border-strong)] shadow-[var(--shadow-3)] p-3 shadow-xl shadow-black/40">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-lg">
               ✨
             </div>

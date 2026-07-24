@@ -18,7 +18,7 @@ const UPDATED = "24 июля 2026";
  */
 export default function TermsPage() {
   return (
-    <article className="prose-none flex flex-1 flex-col pb-10">
+    <article className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
       <Link
         href="/"
         className="mb-6 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"

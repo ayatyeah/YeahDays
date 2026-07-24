@@ -2,11 +2,10 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Ambient from "@/components/Ambient";
-import BottomNav from "@/components/BottomNav";
+import Shell from "@/components/Shell";
 import CreateTaskModal from "@/components/CreateTaskModal";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
-import InstallPrompt from "@/components/InstallPrompt";
 import AuthProvider from "@/components/AuthProvider";
 
 const inter = Inter({
@@ -54,13 +53,9 @@ export default function RootLayout({
         <AuthProvider>
           <Ambient />
           <ErrorBoundary>
-            <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-24 pt-6">
-              {children}
-            </div>
+            <Shell>{children}</Shell>
           </ErrorBoundary>
-          <BottomNav />
           <CreateTaskModal />
-          <InstallPrompt />
           <ServiceWorkerRegister />
         </AuthProvider>
       </body>

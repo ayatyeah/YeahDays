@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import BottomNav from "./BottomNav";
 import InstallPrompt from "./InstallPrompt";
+import PageTransition from "./PageTransition";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
 const MARKETING = ["/", "/terms", "/privacy"];
@@ -29,7 +30,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-24 pt-6">
-        {children}
+        <PageTransition>{children}</PageTransition>
       </div>
       <BottomNav />
       <InstallPrompt />

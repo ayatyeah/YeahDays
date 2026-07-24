@@ -211,7 +211,7 @@ function NavBtn({
     <motion.button
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
-      className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] text-lg text-[var(--color-fg-dim)]"
+      className="flex h-9 w-9 items-center justify-center rounded-xl surface text-lg text-[var(--color-fg-dim)]"
     >
       {children}
     </motion.button>

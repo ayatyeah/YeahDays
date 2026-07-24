@@ -192,7 +192,7 @@ function QuestRow({
       : ((quest.target - done) / Math.max(left + 1, 1)).toFixed(1);
 
   return (
-    <div className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <div className="press rounded-3xl surface p-4">
       <div className="flex items-start gap-2">
         <span className="text-[15px]" style={{ color: stat.hex }} aria-hidden>
           {stat.icon}

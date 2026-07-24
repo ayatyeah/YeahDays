@@ -2,23 +2,36 @@
 
 /* ---- Design tokens ---- */
 @theme {
-  --color-bg: #08080b;
-  --color-bg-soft: #0e0e13;
-  --color-surface: #15151b;
-  --color-surface-2: #1e1e26;
-  --color-border: #26262f;
-  --color-muted: #6a6a78;
-  --color-fg: #ededf0;
-  --color-fg-dim: #9c9caa;
+  --color-bg: #07070a;
+  --color-bg-soft: #0d0d12;
+  --color-surface: #131319;
+  --color-surface-2: #1c1c24;
+  /* Граница — не серая линия, а «подсвеченный край»: полупрозрачный белый
+     читается как отражение света, а не как нарисованный контур. Именно
+     сплошные серые рамки делали интерфейс похожим на вайрфрейм. */
+  --color-border: rgba(255, 255, 255, 0.075);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-muted: #71717f;
+  --color-fg: #f2f2f5;
+  --color-fg-dim: #a3a3b2;
 
   /* 4 характеристики персонажа */
-  --color-strength: #f97362;
-  --color-intelligence: #8b7cf6;
-  --color-wealth: #f0b23f;
-  --color-stability: #3fbf9a;
+  --color-strength: #ff7a68;
+  --color-intelligence: #9584ff;
+  --color-wealth: #f7bb4a;
+  --color-stability: #46cba4;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Глубина: слоистые тени вместо одной размытой — так поверхность
+   выглядит лежащей на фоне, а не приклеенной к нему. */
+:root {
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 64px rgba(0, 0, 0, 0.42);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ---- Base ---- */
@@ -33,19 +46,35 @@ body {
 
 body {
   background-color: var(--color-bg);
-  /* Инерционный скролл на iOS + отдельный слой композитинга */
   -webkit-overflow-scrolling: touch;
   color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
-  background-image: radial-gradient(
-    120% 90% at 50% 4%,
-    #16161e 0%,
-    #0c0c11 44%,
-    #07070a 100%
-  );
+  /* Два мягких цветных пятна вместо одного серого градиента: фон перестаёт
+     быть плоским чёрным, но не отвлекает — глубина считывается
+     периферийным зрением. */
+  background-image:
+    radial-gradient(
+      100% 55% at 50% -8%,
+      rgba(149, 132, 255, 0.11) 0%,
+      transparent 62%
+    ),
+    radial-gradient(
+      85% 45% at 92% 8%,
+      rgba(70, 203, 164, 0.06) 0%,
+      transparent 60%
+    ),
+    radial-gradient(120% 90% at 50% 4%, #14141c 0%, #0b0b10 46%, #07070a 100%);
+  background-attachment: fixed;
+}
+
+/* Заголовки: плотнее трекинг — крупный текст перестаёт выглядеть
+   «растянутым», это одна из главных примет дешёвой вёрстки. */
+h1,
+h2 {
+  letter-spacing: -0.022em;
 }
 
 /* respect the notch / home indicator on installed PWA */
@@ -58,7 +87,7 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: var(--color-border-strong);
   border-radius: 999px;
 }
 
@@ -68,44 +97,181 @@ input[type="number"]::-webkit-inner-spin-button {
   margin: 0;
 }
 
-/* слайдеры приоритетов */
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+/* ────────────────────────────────────────────────
+   Поверхности
+   ──────────────────────────────────────────────── */
+
+/**
+ * Карточка. Верхняя грань светлее — имитация света сверху; из-за неё
+ * поверхность кажется объёмной, хотя это всего один градиент.
+ */
+.surface {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.045) 0%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-1);
+}
+
+.surface-raised {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0) 46%
+  );
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-2);
+}
+
+/** Стекло — для навигации и оверлеев поверх контента. */
+.glass {
+  background-color: rgba(14, 14, 19, 0.72);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+/**
+ * Отклик на нажатие. На телефоне нет ховера, и без физической отдачи
+ * интерфейс ощущается мёртвым — это дешевле всего исправить именно так.
+ */
+.press {
+  transition:
+    transform 0.14s var(--ease-out),
+    opacity 0.14s var(--ease-out),
+    border-color 0.2s var(--ease-out),
+    background-color 0.2s var(--ease-out);
+}
+.press:active {
+  transform: scale(0.975);
+}
+
+/* Крупные числа: плотнее и без прыжков ширины при изменении */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+/* ────────────────────────────────────────────────
+   Поля ввода
+   ──────────────────────────────────────────────── */
+
 input[type="range"] {
   height: 22px;
   background: transparent;
   cursor: pointer;
 }
 input[type="range"]::-webkit-slider-runnable-track {
-  height: 5px;
+  height: 6px;
   border-radius: 999px;
   background: var(--color-surface-2);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -6px;
-  height: 17px;
-  width: 17px;
+  height: 18px;
+  width: 18px;
   border-radius: 999px;
   background: var(--color-fg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(0, 0, 0, 0.3);
 }
 input[type="range"]::-moz-range-track {
-  height: 5px;
+  height: 6px;
   border-radius: 999px;
   background: var(--color-surface-2);
 }
 input[type="range"]::-moz-range-thumb {
-  height: 17px;
-  width: 17px;
+  height: 18px;
+  width: 18px;
   border: none;
   border-radius: 999px;
   background: var(--color-fg);
 }
 
+/* Нативный селект на мобильных выглядит чужеродно — приводим к системе */
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: linear-gradient(
+      45deg,
+      transparent 50%,
+      var(--color-muted) 50%
+    ),
+    linear-gradient(135deg, var(--color-muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) calc(50% + 1px),
+    calc(100% - 9px) calc(50% + 1px);
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 28px;
+}
+
+/* ────────────────────────────────────────────────
+   Анимации
+   ──────────────────────────────────────────────── */
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/** Скелетон загрузки — блик пробегает по плейсхолдеру. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(70, 203, 164, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(70, 203, 164, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(70, 203, 164, 0);
+  }
+}
+.pulse-ring {
+  animation: pulse-ring 2.2s var(--ease-out) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -118,6 +284,12 @@ input[type="range"]::-moz-range-thumb {
   contain: layout paint style;
 }
 
+/* Длинные списки: браузер не рисует то, что за экраном. */
+.list-virtual > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 64px;
+}
+
 /* Свайп-карточка живёт в своём слое: transform/opacity идут на GPU
    и не вызывают перерисовку страницы под ней. */
 .gpu-layer {
@@ -126,7 +298,7 @@ input[type="range"]::-moz-range-thumb {
   backface-visibility: hidden;
 }
 
-/* Контейнер 3D-аватара изолирован от лэйаута страницы. */
+/* Контейнер аватара изолирован от лэйаута страницы. */
 .canvas-slot {
   contain: strict;
   content-visibility: auto;

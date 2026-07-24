@@ -71,7 +71,7 @@ export default function AccountPage() {
       </div>
 
       {/* Карточка пользователя */}
-      <section className="mt-3 flex items-center gap-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <section className="mt-3 flex items-center gap-4 rounded-3xl surface p-4">
         <div className="canvas-slot h-28 w-24 shrink-0">
           <Avatar3D
             stats={stats}
@@ -114,7 +114,7 @@ export default function AccountPage() {
       </div>
 
       {/* Заморозки — страховка стрика */}
-      <section className="mt-3 flex items-center gap-3 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <section className="mt-3 flex items-center gap-3 rounded-3xl surface p-4">
         <span className="text-xl" aria-hidden>
           🧊
         </span>
@@ -214,7 +214,7 @@ export default function AccountPage() {
       </section>
 
       {/* О движке */}
-      <section className="mt-6 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <section className="mt-6 rounded-3xl surface p-4">
         <h2 className="text-[13px] font-semibold">Движок рекомендаций</h2>
         <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
           Режим: <span className="font-semibold">{ENGINE_MODE}</span>. Подборка
@@ -226,7 +226,7 @@ export default function AccountPage() {
       <section className="mt-6">
         <Link
           href="/admin"
-          className="flex items-center justify-between rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
+          className="flex items-center justify-between rounded-3xl surface px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
         >
           <span>
             <span className="block text-[13px] font-semibold">Управление</span>
@@ -318,7 +318,7 @@ function Stat({ value, label }: { value: number; label: string }) {
   return (
     <motion.div
       whileTap={{ scale: 0.97 }}
-      className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-4 text-center"
+      className="press rounded-3xl surface px-3 py-4 text-center"
     >
       <p className="text-2xl font-bold tabular-nums">{value}</p>
       <p className="mt-0.5 text-[10.5px] text-[var(--color-muted)]">{label}</p>

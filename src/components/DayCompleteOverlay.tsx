@@ -103,7 +103,7 @@ export default function DayCompleteOverlay() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
           >
-            <div className="flex flex-col items-center rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]/95 px-7 py-5 text-center shadow-2xl shadow-black/50">
+            <div className="flex flex-col items-center rounded-3xl surface/95 px-7 py-5 text-center shadow-2xl shadow-black/50">
               <span className="text-4xl">🔥</span>
               <p className="mt-2 text-[19px] font-black tracking-tight">
                 День закрыт!

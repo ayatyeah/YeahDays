@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { spring, springSnappy } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useMemo } from "react";
@@ -93,10 +94,12 @@ export default function BottomNav() {
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40">
       <div className="pointer-events-auto mx-auto max-w-md">
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent" />
-        {/* Непрозрачный фон вместо backdrop-blur: блюр заставлял браузер
-            переблюривать весь контент под навбаром на КАЖДЫЙ кадр скролла. */}
-        <div className="safe-b flex items-stretch bg-[var(--color-bg-soft)] px-1.5 pb-0.5 pt-2">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--color-border-strong)] to-transparent" />
+        {/* Стекло, а не сплошная плашка: контент, уезжающий под навбар,
+            должен просвечивать — иначе панель выглядит наклейкой.
+            Блюр здесь дешёвый: панель низкая и в своём слое (gpu-layer),
+            поэтому пересчитывается только её полоса, а не весь экран. */}
+        <div className="glass gpu-layer safe-b flex items-stretch px-1.5 pb-0.5 pt-2">
           {NAV.map(({ href, label, Icon }) => {
             const active = pathname === href;
             const badge = href === "/today" && pending > 0 ? pending : 0;
@@ -105,27 +108,36 @@ export default function BottomNav() {
                 key={href}
                 href={href}
                 className={cn(
-                  "relative flex flex-1 flex-col items-center justify-center gap-1 py-1 text-[9.5px] font-medium transition-colors",
-                  active
-                    ? "text-[var(--color-fg)]"
-                    : "text-[var(--color-muted)]",
+                  "press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-1.5 text-[9.5px] font-medium",
+                  active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
+                {/* Подсветка «переезжает» между вкладками одним объектом,
+                    а не гаснет и загорается — глаз читает это как движение. */}
                 {active && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-x-3 -top-[8px] h-[2.5px] rounded-full bg-[var(--color-fg)]"
-                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                    className="absolute inset-0 -z-10 rounded-2xl bg-[rgba(255,255,255,0.07)]"
+                    transition={spring}
                   />
                 )}
-                <span className="relative">
+                <motion.span
+                  className="relative"
+                  animate={{ scale: active ? 1.06 : 1, y: active ? -1 : 0 }}
+                  transition={springSnappy}
+                >
                   <Icon className="h-[22px] w-[22px]" />
                   {badge > 0 && (
-                    <span className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[9px] font-bold text-white">
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={springSnappy}
+                      className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[9px] font-bold text-white shadow-[0_2px_8px_rgba(255,122,104,0.5)]"
+                    >
                       {badge}
-                    </span>
+                    </motion.span>
                   )}
-                </span>
+                </motion.span>
                 <span>{label}</span>
               </Link>
             );

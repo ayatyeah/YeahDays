@@ -85,7 +85,7 @@ export default function ShareCard() {
   if (done === 0) return null; // делиться пока нечем
 
   return (
-    <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <section className="press rounded-3xl surface p-4">
       <div className="flex items-start gap-3">
         <span className="text-xl" aria-hidden>
           ✨

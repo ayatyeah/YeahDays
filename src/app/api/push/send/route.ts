@@ -22,6 +22,7 @@ import {
   type DayContext,
   type PushPayload,
 } from "@/lib/push";
+import { nextGoal } from "@/lib/milestone";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,8 +32,10 @@ interface SnapshotShape {
   plan?: {
     date?: string;
     completed?: boolean;
+    xp?: number;
   }[];
   freezes?: { days?: string[] };
+  dailyGoal?: number;
 }
 
 function authorized(req: Request): boolean {
@@ -65,7 +68,26 @@ function dayContext(data: unknown, today: string): DayContext {
     cursor.setUTCDate(cursor.getUTCDate() - 1);
   }
 
-  return { doneToday, plannedToday: todays.length, streak };
+  // «тянущая вперёд» веха: считаем ту же ближайшую цель, что и на экране, но
+  // в пуш берём только дальние типы (эволюция/уровень/стрик) — «день» и
+  // «зелёный день» противоречили бы вечернему «день засчитан».
+  const totalXp = plan.reduce(
+    (s, t) => (t?.completed ? s + (t.xp ?? 0) : s),
+    0,
+  );
+  const goal = nextGoal({
+    totalXp,
+    takenToday: todays.length,
+    dailyGoal: snap.dailyGoal ?? 2,
+    streak,
+    toGreenDay: null,
+  });
+  const goalShort =
+    goal && (goal.kind === "evolution" || goal.kind === "level" || goal.kind === "streak")
+      ? goal.short
+      : null;
+
+  return { doneToday, plannedToday: todays.length, streak, goalShort };
 }
 
 export async function POST(req: Request) {

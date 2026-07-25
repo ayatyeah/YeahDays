@@ -123,6 +123,13 @@ export interface DayContext {
   plannedToday: number;
   /** текущий стрик */
   streak: number;
+  /**
+   * Ближайшая «тянущая вперёд» веха для вечернего пуша — уже готовая
+   * короткая строка вроде «120 XP до «Собранного»». Заполняется только
+   * дальними вехами (эволюция/уровень/стрик), чтобы не спорить с «день
+   * засчитан». null — предлагать нечего.
+   */
+  goalShort?: string | null;
 }
 
 /** Утро: зовём выбрать действия. */
@@ -149,9 +156,15 @@ export function morningMessage(ctx: DayContext): PushPayload {
 /** Вечер: спасаем день, но без вины и давления. */
 export function eveningMessage(ctx: DayContext): PushPayload {
   if (ctx.doneToday > 0) {
+    // если есть дальняя веха — зовём сделать ещё шаг к ней; иначе про стрик
+    const tail = ctx.goalShort
+      ? `${ctx.goalShort}.`
+      : ctx.streak > 0
+        ? `Стрик ${ctx.streak} держится.`
+        : "Так держать.";
     return {
       title: "День засчитан",
-      body: `Сегодня закрыто: ${ctx.doneToday}. ${ctx.streak > 0 ? `Стрик ${ctx.streak} держится.` : "Так держать."}`,
+      body: `Сегодня закрыто: ${ctx.doneToday}. ${tail}`,
       url: "/today",
       tag: "yd-evening",
     };

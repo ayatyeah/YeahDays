@@ -66,6 +66,23 @@ describe("тексты уведомлений", () => {
     expect(e.title).toMatch(/засчитан/i);
   });
 
+  it("если день закрыт и есть дальняя веха — зовёт к ней", () => {
+    const e = eveningMessage({
+      doneToday: 2,
+      plannedToday: 2,
+      streak: 5,
+      goalShort: "120 XP до «Собранного»",
+    });
+    expect(e.body).toContain("120 XP до «Собранного»");
+    // веха важнее упоминания стрика — не льём обе цифры в одно сообщение
+    expect(e.body).not.toContain("Стрик 5");
+  });
+
+  it("без вехи вечернее сообщение прежнее — про стрик", () => {
+    const e = eveningMessage({ doneToday: 2, plannedToday: 2, streak: 5 });
+    expect(e.body).toContain("Стрик 5");
+  });
+
   it("вечером предупреждает про стрик, если ничего не сделано", () => {
     const e = eveningMessage({ doneToday: 0, plannedToday: 1, streak: 7 });
     expect(e.title).toContain("7");

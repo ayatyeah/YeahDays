@@ -14,15 +14,27 @@ import {
   selectMood,
   selectToday,
   selectTodayActionIds,
+  selectTotalXp,
   useStreak,
   effectiveGoals,
+  isChallengeActive,
 } from "@/store/useUserStore";
 import { useUiStore } from "@/store/useUiStore";
 import { fetchRecommendations, trackEvent } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
 import { useTimeSlot, SLOT_LABEL } from "@/lib/useTimeSlot";
+import { nextGoal, type GoalKind } from "@/lib/milestone";
 import type { ScoredAction } from "@/lib/recommendation";
+
+/** Значок ближайшей цели по её типу. */
+const GOAL_ICON: Record<GoalKind, string> = {
+  green: "🟢",
+  day: "🎯",
+  evolution: "✨",
+  level: "⭐",
+  streak: "🔥",
+};
 
 export default function HomePage() {
   const hydrated = useHydrated();
@@ -33,6 +45,7 @@ export default function HomePage() {
   const goals = useUserStore((s) => s.goals);
   const quests = useUserStore((s) => s.quests);
   const dailyGoal = useUserStore((s) => s.dailyGoal);
+  const challenges = useUserStore((s) => s.challenges);
   const excludedCategories = useUserStore((s) => s.excludedCategories);
   const disabledActions = useUserStore((s) => s.disabledActions);
   const energyProfile = useUserStore((s) => s.energyProfile);
@@ -64,6 +77,32 @@ export default function HomePage() {
 
   /** Незакрытое действие на сегодня — пока оно есть, новые свайпы закрыты. */
   const activeTask = useMemo(() => today.find((t) => !t.completed), [today]);
+
+  /**
+   * Ближайшая цель — «до чего осталось чуть-чуть». Самый сильный крючок
+   * возврата: конкретный следующий шаг вместо абстрактного прогресса.
+   * Пока день не собран — тянет закрыть день; после — к эволюции и уровню.
+   */
+  const goal = useMemo(() => {
+    const day = dateKey();
+    // ближайший к зелёному из активных сегодня челленджей
+    let toGreenDay: number | null = null;
+    for (const c of challenges) {
+      if (!isChallengeActive(c, day)) continue;
+      const count = c.log[day] ?? 0;
+      if (count < c.green) {
+        const left = c.green - count;
+        toGreenDay = toGreenDay == null ? left : Math.min(toGreenDay, left);
+      }
+    }
+    return nextGoal({
+      totalXp: selectTotalXp(plan),
+      takenToday,
+      dailyGoal,
+      streak,
+      toGreenDay,
+    });
+  }, [plan, challenges, takenToday, dailyGoal, streak]);
 
   const [deck, setDeck] = useState<ScoredAction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -240,6 +279,28 @@ export default function HomePage() {
           {Math.min(takenToday, dailyGoal)}/{dailyGoal}
         </span>
       </div>
+
+      {/* Ближайшая цель — «осталось чуть-чуть». Ключ по тексту, чтобы строка
+          мягко переанимировалась в момент, когда веха меняется. */}
+      <AnimatePresence mode="wait">
+        {goal && (
+          <motion.div
+            key={goal.text}
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.22 }}
+            className="mb-5 -mt-2 flex items-center gap-2"
+          >
+            <span className="text-[13px]" aria-hidden>
+              {GOAL_ICON[goal.kind]}
+            </span>
+            <span className="text-[12.5px] font-medium text-[var(--color-fg-dim)]">
+              {goal.text}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Колода — но только если нет незакрытого действия.
           Смысл гейта: взял — сделай. Иначе набирается список из десяти

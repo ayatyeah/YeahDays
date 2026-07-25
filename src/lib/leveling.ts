@@ -9,7 +9,7 @@
 /** Сколько ВСЕГО накопленного XP нужно, чтобы достичь данного уровня. */
 export function xpForLevel(level: number): number {
   if (level <= 1) return 0;
-  // 0, 60, 160, 300, 480, ... (60 * (n-1) + 40 * (n-1)^2)
+  // n = level-1; 60n + 40n²  →  0, 100, 280, 540, 880, 1300, ...
   const n = level - 1;
   return Math.round(60 * n + 40 * n * n);
 }

@@ -69,6 +69,20 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
 
+  /**
+   * Колода грузится один раз на чек-ине, и плана нет в зависимостях эффекта
+   * (иначе карточки прыгали бы на каждый свайп). Из-за этого только что
+   * выполненное действие возвращалось наверх колоды: гейт «взял — сделай»
+   * снимался, SwipeDeck монтировался заново и снова показывал ту же карточку.
+   * Отфильтровываем взятое сегодня на месте — дёшево и не трогает загрузку.
+   * В рамках одной сессии свайпа план меняется только на «беру», а это сразу
+   * включает гейт и разбирает SwipeDeck, так что карточки не пропадают под рукой.
+   */
+  const visibleDeck = useMemo(() => {
+    const taken = new Set(selectTodayActionIds(plan));
+    return deck.filter((d) => !taken.has(d.action.id));
+  }, [deck, plan]);
+
   const needsCheckIn = hydrated && lastCheckIn !== dateKey();
 
   /* ── Загрузка колоды ── */
@@ -255,7 +269,7 @@ export default function HomePage() {
         />
       ) : (
         <SwipeDeck
-          deck={deck}
+          deck={visibleDeck}
           onAccept={handleAccept}
           onReject={handleReject}
           emptyState={<DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />}

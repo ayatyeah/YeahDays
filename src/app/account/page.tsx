@@ -24,7 +24,6 @@ import {
 } from "@/store/useUserStore";
 import { STAT_LIST, ENERGY_LABEL, type EnergyLevel } from "@/lib/domain";
 import { getLevelProgress } from "@/lib/leveling";
-import { ENGINE_MODE } from "@/lib/api";
 import { cn } from "@/lib/cn";
 
 export default function AccountPage() {
@@ -213,13 +212,14 @@ export default function AccountPage() {
         </div>
       </section>
 
-      {/* О движке */}
+      {/* Как подбираются действия — человеческим языком, без формул движка */}
       <section className="mt-6 rounded-3xl surface p-4">
-        <h2 className="text-[13px] font-semibold">Движок рекомендаций</h2>
+        <h2 className="text-[13px] font-semibold">Как я подбираю действия</h2>
         <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
-          Режим: <span className="font-semibold">{ENGINE_MODE}</span>. Подборка
-          считается по формуле goalMatch + timeMatch + difficultyMatch +
-          userHistory + freshness. Каждый свайп меняет веса для следующего дня.
+          Смотрю на твои приоритеты, время суток и сколько у тебя сейчас сил,
+          и не предлагаю то, что не влезает в бюджет минут. Каждый свайп
+          немного меняет подборку на завтра: чем чаще берёшь — тем больше
+          похожего, отклоняешь — тем реже.
         </p>
       </section>
 

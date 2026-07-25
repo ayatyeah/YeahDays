@@ -30,7 +30,15 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pb-24 pt-6">
+      {/* pb: место под нижнюю навигацию + под баннер установки, когда он
+          виден (--install-offset ставит InstallPrompt). Без второго слагаемого
+          баннер накрывал бы нижние кнопки экрана. */}
+      <div
+        className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-6"
+        style={{
+          paddingBottom: "calc(6rem + var(--install-offset, 0px))",
+        }}
+      >
         <PageTransition>{children}</PageTransition>
       </div>
       <BottomNav />

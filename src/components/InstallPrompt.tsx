@@ -62,6 +62,16 @@ export default function InstallPrompt() {
     return () => window.clearTimeout(t);
   }, [hydrated, onboarded, evt, ios]);
 
+  // Пока баннер висит, резервируем под него место внизу: он fixed и иначе
+  // накрывает нижние кнопки экрана (на колоде — сам свайп «беру/не сейчас»).
+  // Через CSS-переменную, чтобы отступ добавлял общий каркас, а не каждый
+  // экран по отдельности. Компонент один, поэтому конфликтов за переменную нет.
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--install-offset", show ? "76px" : "0px");
+    return () => root.style.setProperty("--install-offset", "0px");
+  }, [show]);
+
   function dismiss() {
     setShow(false);
     try {

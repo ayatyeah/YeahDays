@@ -24,6 +24,8 @@ import { fetchRecommendations, trackEvent } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
 import { useTimeSlot, SLOT_LABEL } from "@/lib/useTimeSlot";
+import { useRoutineBlock } from "@/lib/useRoutineBlock";
+import { DAY_NAME } from "@/lib/routine";
 import { nextGoal, type GoalKind } from "@/lib/milestone";
 import type { ScoredAction } from "@/lib/recommendation";
 
@@ -35,6 +37,26 @@ const GOAL_ICON: Record<GoalKind, string> = {
   level: "⭐",
   streak: "🔥",
 };
+
+/**
+ * Обернуть маршрутное действие в карточку колоды. Оно не проходит через
+ * движок (это твой план, а не кандидат из пула), поэтому breakdown нулевой,
+ * а score заведомо выше любого пулового — чтобы стоять первым.
+ */
+function routineScored(action: Action, reason: string): ScoredAction {
+  return {
+    action,
+    score: 100,
+    breakdown: {
+      goalMatch: 0,
+      timeMatch: 0,
+      difficultyMatch: 0,
+      userHistory: 0,
+      freshness: 0,
+    },
+    reason,
+  };
+}
 
 export default function HomePage() {
   const hydrated = useHydrated();
@@ -121,6 +143,34 @@ export default function HomePage() {
     const taken = new Set(selectTodayActionIds(plan));
     return deck.filter((d) => !taken.has(d.action.id));
   }, [deck, plan]);
+
+  /**
+   * Маршрут: то, что у тебя по плану на этот день недели и час. Главная
+   * задача блока и её аналоги идут ПЕРВЫМИ в колоде — сначала «сделай своё
+   * по расписанию», а «лень — вот полегче». Ниже остаётся обычная подборка,
+   * если по плану ничего не откликнулось.
+   */
+  const routineBlock = useRoutineBlock();
+  const fullDeck = useMemo(() => {
+    if (!routineBlock?.main) return visibleDeck;
+    const taken = new Set(selectTodayActionIds(plan));
+    const slot = SLOT_LABEL[currentSlot()];
+    const dayName = DAY_NAME[new Date().getDay()];
+
+    const cards: ScoredAction[] = [];
+    if (!taken.has(routineBlock.main.id)) {
+      cards.push(routineScored(routineBlock.main, `По плану · ${dayName}, ${slot}`));
+    }
+    for (const alt of routineBlock.analogs ?? []) {
+      if (!taken.has(alt.id)) {
+        cards.push(routineScored(alt, "Полегче — если сейчас тяжело"));
+      }
+    }
+    // общий пул без тех действий, что уже показали как маршрутные
+    const routineIds = new Set(cards.map((c) => c.action.id));
+    const rest = visibleDeck.filter((d) => !routineIds.has(d.action.id));
+    return [...cards, ...rest];
+  }, [routineBlock, visibleDeck, plan]);
 
   const needsCheckIn = hydrated && lastCheckIn !== dateKey();
 
@@ -330,7 +380,7 @@ export default function HomePage() {
         />
       ) : (
         <SwipeDeck
-          deck={visibleDeck}
+          deck={fullDeck}
           onAccept={handleAccept}
           onReject={handleReject}
           emptyState={<DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />}

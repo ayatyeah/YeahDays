@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
+import { routineLabelAt } from "@/lib/routine";
 import { cn } from "@/lib/cn";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
@@ -47,6 +48,8 @@ export default function DaySchedule({
 
   const nowHour = new Date().getHours();
   const isToday = day === dateKey();
+  // день недели показываемой даты — по нему подставляем подписи маршрута
+  const weekday = useMemo(() => new Date(`${day}T00:00:00`).getDay(), [day]);
 
   return (
     <section className="mt-5">
@@ -79,6 +82,9 @@ export default function DaySchedule({
           {hours.map((h) => {
             const isNow = isToday && h === nowHour;
             const value = dayPlan[String(h)] ?? "";
+            // подпись из маршрута — как ghost-текст, пока час не переписан вручную
+            const routine = routineLabelAt(weekday, h);
+            const placeholder = routine ?? (isNow ? "сейчас…" : "");
             return (
               <div
                 key={h}
@@ -100,9 +106,16 @@ export default function DaySchedule({
                 <input
                   value={value}
                   onChange={(e) => setScheduleSlot(day, h, e.target.value)}
-                  placeholder={isNow ? "сейчас…" : ""}
+                  placeholder={placeholder}
                   maxLength={80}
-                  className="min-w-0 flex-1 bg-transparent py-3 pr-3 text-[13px] outline-none placeholder:text-[var(--color-muted)]"
+                  className={cn(
+                    "min-w-0 flex-1 bg-transparent py-3 pr-3 text-[13px] outline-none",
+                    // подпись маршрута заметнее пустого плейсхолдера: это твой
+                    // план, а не подсказка «впиши что-нибудь»
+                    routine
+                      ? "placeholder:text-[var(--color-fg-dim)]"
+                      : "placeholder:text-[var(--color-muted)]",
+                  )}
                   aria-label={`План на ${h}:00`}
                 />
               </div>

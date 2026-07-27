@@ -1,44 +1,63 @@
 "use client";
 
+import { useRef } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import { springSoft } from "@/lib/motion";
 
 /**
  * Переход между разделами приложения.
  *
- * Раньше содержимое просто подменялось: экран моргал, а из-за разной
- * высоты разделов страница ещё и прыгала — казалось, что «раздел меняется
- * по размерам».
+ * Раньше был простой fade — экран моргал, направление движения не читалось.
+ * Теперь переход НАПРАВЛЕННЫЙ: идёшь по нижней навигации вправо (Главная →
+ * Профиль) — новый экран въезжает справа; идёшь влево — слева. Мозг читает
+ * это как перемещение в пространстве, а не подмену контента, и приложение
+ * начинает ощущаться цельным.
  *
- * Что здесь важно:
+ * mode="popLayout" вынимает уходящий экран из потока сразу, поэтому новый не
+ * ждёт конца его анимации. min-height держит каркас, пока новый монтируется,
+ * — без него футер и навбар подпрыгивают на кадр.
  *
- * — `mode="popLayout"` вместо ожидания: уходящий экран вынимается из
- *   потока сразу, поэтому новый не ждёт конца его анимации и переход
- *   не ощущается медленным;
- * — уходящий экран анимируется ТОЛЬКО прозрачностью, без сдвига высоты,
- *   иначе схлопывание контента дёргает скролл;
- * — короткая длительность: переход должен подсказать смену контекста,
- *   а не показывать себя. Всё, что дольше ~0.2с, читается как тормоза;
- * — min-height держит каркас, пока новый экран монтируется, — без него
- *   футер и навбар подпрыгивают на кадр.
+ * Порядок совпадает с BottomNav — это и есть «карта» приложения слева направо.
  */
+const ORDER: Record<string, number> = {
+  "/app": 0,
+  "/today": 1,
+  "/calendar": 2,
+  "/progress": 3,
+  "/account": 4,
+};
+
+function indexOf(path: string): number {
+  return ORDER[path] ?? 0;
+}
+
 export default function PageTransition({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const prev = useRef(pathname);
+
+  // направление: +1 — вперёд (вправо по навбару), -1 — назад
+  const dir = indexOf(pathname) >= indexOf(prev.current) ? 1 : -1;
+  prev.current = pathname;
 
   return (
-    <AnimatePresence mode="popLayout" initial={false}>
+    <AnimatePresence mode="popLayout" initial={false} custom={dir}>
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          duration: 0.18,
-          ease: [0.22, 1, 0.36, 1],
+        custom={dir}
+        // въезд со стороны движения, выезд — в противоположную; лёгкий
+        // масштаб добавляет глубины, будто экраны лежат стопкой
+        initial={{ opacity: 0, x: dir * 40, scale: 0.98 }}
+        animate={{ opacity: 1, x: 0, scale: 1, transition: springSoft }}
+        exit={{
+          opacity: 0,
+          x: dir * -32,
+          scale: 0.98,
+          transition: { duration: 0.16, ease: [0.4, 0, 1, 1] },
         }}
         // свой слой: переход идёт на GPU и не перерисовывает страницу под ним
         className="gpu-layer flex min-h-[60vh] flex-1 flex-col"

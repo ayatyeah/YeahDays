@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import type { PlannedTask } from "@/store/useUserStore";
-import { CATEGORIES, DIFFICULTY_LABEL } from "@/lib/domain";
+import { CATEGORIES, DIFFICULTY_LABEL, STATS } from "@/lib/domain";
+import { springBouncy } from "@/lib/motion";
 
 /** мс → «7 мин 12 с» */
 export function formatDuration(ms: number): string {
@@ -42,17 +43,29 @@ export default function ActiveTask({
   }, [task.acceptedAt]);
 
   const cat = CATEGORIES[task.snapshot.category];
+  const accent = STATS[cat.stat].hex;
   // насколько уложился в заявленную длительность
   const planned = task.snapshot.duration * 60_000;
   const over = planned > 0 && elapsed > planned;
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      // «вырастает» на месте колоды: взгляд следует снизу вверх, будто
+      // карточка перетекла в задачу. Перелёт пружины читается как «схватил».
+      initial={{ opacity: 0, y: 28, scale: 0.94 }}
+      animate={{ opacity: 1, y: 0, scale: 1, transition: springBouncy }}
+      exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.16 } }}
       className="flex flex-1 flex-col justify-center"
     >
-      <div className="press rounded-3xl surface p-5">
+      <div className="press relative overflow-hidden rounded-3xl surface p-5">
+        {/* Акцент категории — тот же цвет, что был на карточке: связывает
+            задачу с действием, из которого она выросла. */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-24 opacity-[0.14]"
+          style={{
+            background: `radial-gradient(120% 100% at 50% 0%, ${accent} 0%, transparent 70%)`,
+          }}
+        />
         <div className="flex items-center gap-2">
           <span className="text-[15px]" aria-hidden>
             {cat.icon}

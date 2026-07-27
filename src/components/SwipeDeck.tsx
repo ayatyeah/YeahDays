@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import ActionCard, { type SwipeDir } from "./ActionCard";
+import { haptic } from "@/lib/motion";
 import type { ScoredAction } from "@/lib/recommendation";
 import type { Action } from "@/lib/domain";
 
@@ -39,9 +40,8 @@ export default function SwipeDeck({
       if (dir === "right") onAccept(action);
       else onReject(action);
       setCursor((c) => c + 1);
-      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-        navigator.vibrate?.(dir === "right" ? [8, 20, 14] : 10);
-      }
+      // «беру» ощущается весомее, чем «мимо» — разные паттерны отдачи
+      haptic(dir === "right" ? "medium" : "select");
     },
     [onAccept, onReject],
   );

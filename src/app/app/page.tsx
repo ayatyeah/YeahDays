@@ -27,6 +27,7 @@ import { useTimeSlot, SLOT_LABEL } from "@/lib/useTimeSlot";
 import { useRoutineNow } from "@/lib/useRoutineBlock";
 import { DAY_NAME, type RoutineBlock } from "@/lib/routine";
 import { nextGoal, type GoalKind } from "@/lib/milestone";
+import { haptic, springSoft, springBouncy } from "@/lib/motion";
 import type { ScoredAction } from "@/lib/recommendation";
 
 /** Значок ближайшей цели по её типу. */
@@ -290,10 +291,21 @@ export default function HomePage() {
           </span>
         </div>
         {streak > 0 && (
-          <div className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5">
-            <span className="text-sm">🔥</span>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1, transition: springBouncy }}
+            className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5"
+          >
+            {/* Огонь живой — лёгкое «дыхание» намекает, что серия горит */}
+            <motion.span
+              className="text-sm"
+              animate={{ scale: [1, 1.15, 1], rotate: [0, -6, 0] }}
+              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              🔥
+            </motion.span>
             <span className="text-sm font-bold tabular-nums">{streak}</span>
-          </div>
+          </motion.div>
         )}
       </div>
 
@@ -362,38 +374,52 @@ export default function HomePage() {
 
       {/* Колода — но только если нет незакрытого действия.
           Смысл гейта: взял — сделай. Иначе набирается список из десяти
-          «когда-нибудь», и продукт превращается в обычный тудушник. */}
-      {loading ? (
-        <LogoLoader />
-      ) : activeTask ? (
-        <ActiveTask
-          task={activeTask}
-          onDone={() => {
-            toggleTask(activeTask.id);
-            track("action_completed", {
-              category: activeTask.snapshot.category,
-              xp: activeTask.xp,
-            });
-            trackEvent({
-              type: "complete",
-              actionId: activeTask.actionId,
-              at: Date.now(),
-              category: activeTask.snapshot.category,
-              xp: activeTask.xp,
-            });
-            if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-              navigator.vibrate?.([10, 30, 20]);
-            }
-          }}
-        />
-      ) : (
-        <SwipeDeck
-          deck={fullDeck}
-          onAccept={handleAccept}
-          onReject={handleReject}
-          emptyState={<DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />}
-        />
-      )}
+          «когда-нибудь», и продукт превращается в обычный тудушник.
+
+          Свап колода↔активная задача обёрнут в AnimatePresence: взял карточку
+          — колода уходит вниз, а активная задача «вырастает» на её месте.
+          Взгляд следует за одним вертикальным движением — карточка будто
+          перетекла в задачу, а не сменилась экраном. */}
+      <AnimatePresence mode="popLayout" initial={false}>
+        {loading ? (
+          <LogoLoader key="loader" />
+        ) : activeTask ? (
+          <ActiveTask
+            key="active"
+            task={activeTask}
+            onDone={() => {
+              toggleTask(activeTask.id);
+              haptic("success");
+              track("action_completed", {
+                category: activeTask.snapshot.category,
+                xp: activeTask.xp,
+              });
+              trackEvent({
+                type: "complete",
+                actionId: activeTask.actionId,
+                at: Date.now(),
+                category: activeTask.snapshot.category,
+                xp: activeTask.xp,
+              });
+            }}
+          />
+        ) : (
+          <motion.div
+            key="deck"
+            className="flex flex-1 flex-col"
+            exit={{ opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.18 } }}
+          >
+            <SwipeDeck
+              deck={fullDeck}
+              onAccept={handleAccept}
+              onReject={handleReject}
+              emptyState={
+                <DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />
+              }
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Мини-сводка принятого */}
       <AnimatePresence>
@@ -487,21 +513,35 @@ function RoutineHint({
 
 function DeckEmpty({ onRefresh }: { onRefresh: () => void }) {
   return (
-    <div className="flex flex-col items-center px-6 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-2xl">
-        ✓
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0, transition: springSoft }}
+      className="flex flex-1 flex-col items-center justify-center px-6 text-center"
+    >
+      {/* Пульсирующее кольцо вместо статичной галочки: экран «пусто» должен
+          дышать, а не выглядеть тупиком. */}
+      <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
+        <motion.span
+          className="absolute inset-0 rounded-full border border-[var(--color-stability)]/40"
+          animate={{ scale: [1, 1.35, 1], opacity: [0.5, 0, 0.5] }}
+          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-2xl">
+          ✦
+        </div>
       </div>
-      <h2 className="text-lg font-bold tracking-tight">Карточки закончились</h2>
+      <h2 className="text-lg font-bold tracking-tight">Ты разобрал колоду</h2>
       <p className="mt-2 max-w-[280px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
-        Ты просмотрел всю подборку. Собери новую — движок учтёт
-        сегодняшние свайпы.
+        Прошёл всю сегодняшнюю подборку. Собрать новую — движок учтёт свайпы
+        и подберёт иначе.
       </p>
-      <button
+      <motion.button
         onClick={onRefresh}
-        className="mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
+        whileTap={{ scale: 0.96 }}
+        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
       >
         Новая подборка
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 }

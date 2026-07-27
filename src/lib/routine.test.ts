@@ -4,6 +4,7 @@ import {
   routineForDay,
   routineLabelAt,
   currentRoutineBlock,
+  routineNow,
 } from "./routine";
 
 /** Собрать дату на нужный день недели и час (для детерминизма). */
@@ -84,5 +85,28 @@ describe("поиск по времени и дню", () => {
     // 08–12 в понедельник — TypeScript и в 8, и в 11
     expect(routineLabelAt(1, 8)).toContain("TypeScript");
     expect(routineLabelAt(1, 11)).toContain("TypeScript");
+  });
+});
+
+describe("контекст «сейчас / дальше»", () => {
+  it("в час обеда: работы нет, но виден якорь и что дальше", () => {
+    // среда 12:30 — обед; следующий рабочий блок в 13:00 (React)
+    const now = routineNow(at(3, 12));
+    expect(now.work).toBeNull();
+    expect(now.anchor?.label).toBe("Обед");
+    expect(now.next?.main?.title).toContain("React");
+    expect(now.next?.start).toBe(13);
+  });
+
+  it("в рабочий час: work заполнен, якоря нет", () => {
+    const now = routineNow(at(2, 9)); // вторник утро — Next.js
+    expect(now.work?.main?.title).toContain("Next.js");
+    expect(now.anchor).toBeNull();
+  });
+
+  it("поздним вечером следующего рабочего блока сегодня уже нет", () => {
+    const now = routineNow(at(1, 23)); // ночь — сон
+    expect(now.work).toBeNull();
+    expect(now.next).toBeNull();
   });
 });

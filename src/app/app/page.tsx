@@ -24,8 +24,8 @@ import { fetchRecommendations, trackEvent } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
 import { useTimeSlot, SLOT_LABEL } from "@/lib/useTimeSlot";
-import { useRoutineBlock } from "@/lib/useRoutineBlock";
-import { DAY_NAME } from "@/lib/routine";
+import { useRoutineNow } from "@/lib/useRoutineBlock";
+import { DAY_NAME, type RoutineBlock } from "@/lib/routine";
 import { nextGoal, type GoalKind } from "@/lib/milestone";
 import type { ScoredAction } from "@/lib/recommendation";
 
@@ -150,7 +150,8 @@ export default function HomePage() {
    * по расписанию», а «лень — вот полегче». Ниже остаётся обычная подборка,
    * если по плану ничего не откликнулось.
    */
-  const routineBlock = useRoutineBlock();
+  const routine = useRoutineNow();
+  const routineBlock = routine.work;
   const fullDeck = useMemo(() => {
     if (!routineBlock?.main) return visibleDeck;
     const taken = new Set(selectTodayActionIds(plan));
@@ -352,6 +353,13 @@ export default function HomePage() {
         )}
       </AnimatePresence>
 
+      {/* Подсказка маршрута, когда работы по плану сейчас нет: час обеда,
+          сна, отдыха или пауза между блоками. Без неё колода в такой момент
+          выглядит «пустой без своих задач», хотя всё по плану. */}
+      {!activeTask && !routineBlock && (routine.anchor || routine.next) && (
+        <RoutineHint anchor={routine.anchor} next={routine.next} />
+      )}
+
       {/* Колода — но только если нет незакрытого действия.
           Смысл гейта: взял — сделай. Иначе набирается список из десяти
           «когда-нибудь», и продукт превращается в обычный тудушник. */}
@@ -426,6 +434,54 @@ export default function HomePage() {
         + Добавить своё действие
       </button>
     </div>
+  );
+}
+
+/** Значок якоря по его подписи — чтобы «сейчас обед» читалось с одного взгляда. */
+function anchorIcon(label: string): string {
+  if (/обед/i.test(label)) return "🍽";
+  if (/сон/i.test(label)) return "😴";
+  if (/завтрак/i.test(label)) return "🍳";
+  if (/отдых|восстановл/i.test(label)) return "☕";
+  return "🕘";
+}
+
+/**
+ * Подсказка, когда работы по плану сейчас нет.
+ *
+ * Отвечает на вопрос «где мои задачи?» в час обеда/сна/паузы: показывает,
+ * что идёт сейчас (якорь) и что ближайшее по плану. Ниже всё равно остаётся
+ * обычная колода — если хочется что-то сделать всё равно.
+ */
+function RoutineHint({
+  anchor,
+  next,
+}: {
+  anchor: RoutineBlock | null;
+  next: RoutineBlock | null;
+}) {
+  const nextTime = next ? `${String(next.start).padStart(2, "0")}:00` : null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.22 }}
+      className="mb-4 flex items-center gap-3 rounded-2xl surface px-4 py-3"
+    >
+      <span className="text-[18px]" aria-hidden>
+        {anchor ? anchorIcon(anchor.label) : "🗒"}
+      </span>
+      <div className="min-w-0">
+        <p className="text-[13px] font-semibold">
+          {anchor ? `Сейчас по плану — ${anchor.label.toLowerCase()}` : "Пауза в плане"}
+        </p>
+        <p className="mt-0.5 text-[11.5px] leading-snug text-[var(--color-muted)]">
+          {next && nextTime
+            ? `Дальше в ${nextTime} · ${next.main!.title}`
+            : "На сегодня по плану всё — а колода ниже всегда открыта"}
+        </p>
+      </div>
+    </motion.div>
   );
 }
 

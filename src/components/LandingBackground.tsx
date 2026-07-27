@@ -3,16 +3,15 @@
 import { motion } from "framer-motion";
 
 /**
- * Атмосферный фон лендинга.
+ * Атмосферный фон лендинга — лёгкий.
  *
- * Пустой тёмный фон читается как «недоделано»; живая глубина за контентом —
- * как «дорого». Здесь три слоя: тонкая сетка (задаёт масштаб и порядок), два
- * больших цветных свечения, которые медленно дышат и дрейфуют, и зерно,
- * чтобы градиенты не полосили на тёмном.
+ * ВАЖНО про производительность: раньше здесь были два `filter: blur(40px)`
+ * дива с непрерывной анимацией — каждый кадр браузер перерисовывал размытую
+ * область, и длинный лендинг лагал. Теперь мягкость даёт САМ радиальный
+ * градиент (прозрачный к краю), без filter, а движется только `transform` —
+ * оно композитится на GPU без перерисовок. Дёшево и всё ещё живое.
  *
- * fixed + -z-10 + pointer-events-none: живёт под всем контентом, не мешает
- * кликам и не скроллится. Движение очень медленное (десятки секунд) — фон не
- * должен перетягивать внимание с текста.
+ * fixed + -z-10 + pointer-events-none: под контентом, не мешает кликам.
  */
 export default function LandingBackground() {
   return (
@@ -20,51 +19,40 @@ export default function LandingBackground() {
       className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
       aria-hidden
     >
-      {/* сетка */}
+      {/* тонкая сетка — статична, ничего не стоит */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.035]"
         style={{
           backgroundImage:
             "linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px)",
-          backgroundSize: "56px 56px",
+          backgroundSize: "60px 60px",
           maskImage:
-            "radial-gradient(120% 90% at 50% 0%, black 0%, transparent 75%)",
+            "radial-gradient(120% 80% at 50% 0%, black 0%, transparent 70%)",
           WebkitMaskImage:
-            "radial-gradient(120% 90% at 50% 0%, black 0%, transparent 75%)",
+            "radial-gradient(120% 80% at 50% 0%, black 0%, transparent 70%)",
         }}
       />
 
-      {/* верхнее фиолетовое свечение — дышит и чуть дрейфует */}
+      {/* мягкое фиолетовое пятно — мягкость от градиента, а не от blur */}
       <motion.div
-        className="absolute -top-[10%] left-[8%] h-[42vw] w-[42vw] rounded-full"
+        className="absolute -top-[15%] left-[2%] h-[46vw] w-[46vw] will-change-transform"
         style={{
           background:
-            "radial-gradient(circle, rgba(139,124,246,0.22) 0%, transparent 68%)",
-          filter: "blur(40px)",
+            "radial-gradient(circle, rgba(139,124,246,0.16) 0%, transparent 60%)",
         }}
-        animate={{ x: [0, 40, 0], y: [0, 26, 0], scale: [1, 1.08, 1] }}
-        transition={{ duration: 26, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
+        transition={{ duration: 34, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      {/* нижнее тёплое свечение — в противофазе */}
+      {/* тёплое пятно в противофазе */}
       <motion.div
-        className="absolute right-[4%] top-[42%] h-[46vw] w-[46vw] rounded-full"
+        className="absolute right-[-5%] top-[38%] h-[50vw] w-[50vw] will-change-transform"
         style={{
           background:
-            "radial-gradient(circle, rgba(249,115,98,0.16) 0%, transparent 66%)",
-          filter: "blur(48px)",
+            "radial-gradient(circle, rgba(249,115,98,0.11) 0%, transparent 60%)",
         }}
-        animate={{ x: [0, -44, 0], y: [0, -30, 0], scale: [1.06, 1, 1.06] }}
-        transition={{ duration: 32, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      {/* зерно поверх — убирает полошение градиентов */}
-      <div
-        className="absolute inset-0 opacity-[0.03] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-        }}
+        animate={{ x: [0, -50, 0], y: [0, -34, 0] }}
+        transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
   );

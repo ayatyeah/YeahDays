@@ -23,7 +23,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: unknown) {
     // В проде здесь была бы отправка в Sentry/аналитику.
-    console.error("YeahDays crash:", error);
+    console.error("YeahGrind crash:", error);
   }
 
   private reload = () => {

@@ -294,7 +294,7 @@ export default function HomePage() {
         <div className="flex items-center gap-2.5">
           <Logo variant="white" className="h-7 w-auto" />
           <span className="text-[19px] font-extrabold tracking-tight">
-            YeahDays
+            YeahGrind
           </span>
         </div>
         {streak > 0 && (

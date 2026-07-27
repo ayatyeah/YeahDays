@@ -58,7 +58,7 @@ export default function SiteNav() {
           <Link href="/" className="flex shrink-0 items-center gap-2.5">
             <Logo variant="white" className="h-7 w-auto" />
             <span className="text-[17px] font-extrabold tracking-tight">
-              YeahDays
+              YeahGrind
             </span>
           </Link>
 

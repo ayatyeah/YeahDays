@@ -155,7 +155,7 @@ const PORTFOLIO = A("rt-portfolio", "Проекты / портфолио", "По
 const CLIENTS = A("rt-clients", "Клиентские сайты / CLICKI", "Реальные задачи и реальные деньги", "career", 3, 90, "high", "morning");
 const NEXT_PROJ = A("rt-next-proj", "Next.js проект", "Свой продукт растёт из ежедневной работы над ним", "career", 4, 90, "high", "afternoon");
 const BACKEND_PROJ = A("rt-backend-proj", "Backend проект", "Сервер — половина продукта", "career", 4, 90, "high", "afternoon");
-const BRAND = A("rt-brand", "Личный бренд: YeahGrind / YeahDays", "Бренд копится по чуть-чуть и потом работает на тебя", "career", 3, 60, "medium", "afternoon");
+const BRAND = A("rt-brand", "Личный бренд: YeahGrind", "Бренд копится по чуть-чуть и потом работает на тебя", "career", 3, 60, "medium", "afternoon");
 const CLICKI = A("rt-clicki", "CLICKI / работа", "Основная работа — фундамент всего остального", "career", 3, 90, "medium", "evening");
 const OWN_PROJ = A("rt-own-proj", "Свой проект", "Вечер на своё дело, а не только на чужое", "career", 4, 90, "high", "evening");
 
@@ -208,7 +208,7 @@ export const ROUTINE: RoutineBlock[] = [
   work("b-wed-13", [WED], 13, 17, "React практика", REACT_PRACTICE, CODE_A),
   work("b-thu-13", [THU], 13, 17, "Backend проект", BACKEND_PROJ, PROJECT_A),
   work("b-fri-13", [FRI], 13, 17, "Архитектура + API", ARCH, CODE_A),
-  work("b-sat-13", [SAT], 13, 17, "Личный бренд YeahGrind / YeahDays", BRAND, PROJECT_A),
+  work("b-sat-13", [SAT], 13, 17, "Личный бренд YeahGrind", BRAND, PROJECT_A),
   work("b-sun-13", [SUN], 13, 17, "Разбор недели + отдых", WEEK_REVIEW, REFLECT_A),
 
   // 17–18 — отдых / движение

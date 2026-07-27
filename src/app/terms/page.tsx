@@ -4,8 +4,8 @@ import { Section, Mail } from "@/components/LegalSection";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Условия использования — YeahDays",
-  description: "Правила использования YeahDays.",
+  title: "Условия использования — YeahGrind",
+  description: "Правила использования YeahGrind.",
 };
 
 const UPDATED = "24 июля 2026";
@@ -38,7 +38,7 @@ export default function TermsPage() {
       </p>
 
       <Section title="1. О чём это">
-        YeahDays — приложение для ежедневных небольших действий: оно
+        YeahGrind — приложение для ежедневных небольших действий: оно
         предлагает подборку дел, помогает вести свои задачи и показывает
         прогресс. Пользуясь им, ты соглашаешься с этими условиями. Если
         что-то не устраивает — просто не пользуйся.

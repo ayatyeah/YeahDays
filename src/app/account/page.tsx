@@ -86,7 +86,7 @@ export default function AccountPage() {
             Уровень {level} · {totalXp} XP
           </p>
           <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
-            {days} {days === 1 ? "день" : "дн."} в YeahDays
+            {days} {days === 1 ? "день" : "дн."} в YeahGrind
           </p>
         </div>
         <Button

@@ -60,7 +60,7 @@ export async function GET() {
       status: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Disposition": `attachment; filename="yeahdays-export.json"`,
+        "Content-Disposition": `attachment; filename="yeahgrind-export.json"`,
       },
     });
   } catch (e) {

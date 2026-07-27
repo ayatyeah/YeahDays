@@ -103,7 +103,7 @@ export default function InstallPrompt() {
               📲
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold">Установи YeahDays</p>
+              <p className="text-[13px] font-semibold">Установи YeahGrind</p>
               <p className="truncate text-[11.5px] text-[var(--color-muted)]">
                 {ios && !evt
                   ? "Поделиться → «На экран «Домой»"

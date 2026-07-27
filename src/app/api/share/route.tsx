@@ -94,7 +94,7 @@ export async function GET(req: Request) {
               letterSpacing: -0.5,
             }}
           >
-            YeahDays
+            YeahGrind
           </div>
         </div>
 

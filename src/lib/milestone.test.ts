@@ -52,21 +52,19 @@ describe("ближайшая цель", () => {
     expect(g?.kind).toBe("level");
   });
 
-  it("на потолке уровней ведёт к круглой вехе стрика", () => {
-    // очень большой XP → следующего уровня фактически нет в обозримости,
-    // но круглая веха стрика найдётся
-    const huge = xpForLevel(60);
-    const g = nextGoal(input({ totalXp: huge, streak: 5 }));
-    // либо уровень (если ещё есть куда), либо стрик — но не day/green
-    expect(["level", "streak"]).toContain(g?.kind);
+  it("близкая веха стрика важнее обычного уровня", () => {
+    // стрик 5 → до круглых 7 всего 2 дня (≤ порога) → показываем стрик,
+    // хотя уровневая цель тоже существует
+    const g = nextGoal(input({ totalXp: 42, streak: 5 }));
+    expect(g?.kind).toBe("streak");
+    expect(g?.remaining).toBe(7 - 5);
+    expect(g?.text).toContain("серия 7");
   });
 
-  it("веха стрика считает до ближайшего круглого числа", () => {
-    // подберём XP ровно на границе уровня, чтобы toNextLevel === 0
-    const g = nextGoal(input({ totalXp: xpForLevel(5), streak: 5 }));
-    if (g?.kind === "streak") {
-      expect(g.remaining).toBe(7 - 5); // ближайшая веха — 7
-    }
+  it("далёкую веху стрика не показывает — ведёт к уровню", () => {
+    // стрик 10 → до 14 ещё 4 дня (> порога) → обычная уровневая цель
+    const g = nextGoal(input({ totalXp: 42, streak: 10 }));
+    expect(g?.kind).toBe("level");
   });
 });
 

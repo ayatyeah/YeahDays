@@ -56,6 +56,9 @@ export interface GoalInput {
 /** «Эволюция тела близко», если до неё не больше этого XP. */
 const EVOLUTION_NEAR_XP = 150;
 
+/** «Веха стрика близко», если до круглого числа не больше этого дней. */
+const STREAK_NEAR_DAYS = 3;
+
 /** Круглые вехи стрика, ради которых стоит тянуться. */
 const STREAK_TARGETS = [7, 14, 30, 50, 75, 100, 150, 200, 365];
 
@@ -117,26 +120,29 @@ export function nextGoal(input: GoalInput): Goal | null {
     };
   }
 
-  // 4. Следующий уровень — ровный повседневный шаг.
+  // 4. Круглая веха стрика, если она уже близко — «2 дня до серии 30».
+  //    Стоит ПЕРЕД уровнем осознанно: уровни без потолка, toNextLevel > 0
+  //    всегда, и без этой проверки ветка стрика была бы недостижима вовсе.
+  const streakTarget = STREAK_TARGETS.find((t) => t > streak);
+  if (streakTarget && streakTarget - streak <= STREAK_NEAR_DAYS) {
+    const n = streakTarget - streak;
+    const word = plural(n, "день", "дня", "дней");
+    return {
+      kind: "streak",
+      text: `Ещё ${n} ${word} — и серия ${streakTarget} дней`,
+      short: `${n} ${word} до серии ${streakTarget}`,
+      remaining: n,
+    };
+  }
+
+  // 5. Следующий уровень — ровный повседневный шаг (срабатывает всегда,
+  //    поэтому null ниже — только страховка на невозможный случай).
   if (toNextLevel > 0) {
     return {
       kind: "level",
       text: `${toNextLevel} XP до ${level + 1} уровня`,
       short: `${toNextLevel} XP до ур. ${level + 1}`,
       remaining: toNextLevel,
-    };
-  }
-
-  // 5. Круглая веха стрика — когда по уровням расти уже некуда.
-  const target = STREAK_TARGETS.find((t) => t > streak);
-  if (target) {
-    const n = target - streak;
-    const word = plural(n, "день", "дня", "дней");
-    return {
-      kind: "streak",
-      text: `Ещё ${n} ${word} — и серия ${target} дней`,
-      short: `${n} ${word} до серии ${target}`,
-      remaining: n,
     };
   }
 

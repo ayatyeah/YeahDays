@@ -130,6 +130,11 @@ export default function HomePage() {
   const [deck, setDeck] = useState<ScoredAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
+  // Растёт при каждой РЕАЛЬНОЙ перезагрузке колоды (чек-ин, ручное обновление,
+  // смена сил/слота). Передаётся в SwipeDeck как resetKey: только тогда он
+  // забывает свайпнутые карточки. На тик часа маршрута ссылка колоды меняется,
+  // но deckVersion — нет, поэтому отклонённые карточки не воскресают.
+  const [deckVersion, setDeckVersion] = useState(0);
 
   /**
    * Колода грузится один раз на чек-ине, и плана нет в зависимостях эффекта
@@ -196,6 +201,7 @@ export default function HomePage() {
     }).then((res) => {
       if (cancelled) return;
       setDeck(res.deck);
+      setDeckVersion((v) => v + 1); // это новая подборка — SwipeDeck сбросит свайпы
       setLoading(false);
       markSeen(res.deck.slice(0, 3).map((d) => d.action.id));
     });
@@ -213,6 +219,7 @@ export default function HomePage() {
     quests,
     excludedCategories,
     disabledActions,
+    customActions, // созданное «своё действие» должно появиться в колоде сразу
     mood.energy,
     mood.minutes,
     slot,
@@ -381,9 +388,7 @@ export default function HomePage() {
           Взгляд следует за одним вертикальным движением — карточка будто
           перетекла в задачу, а не сменилась экраном. */}
       <AnimatePresence mode="popLayout" initial={false}>
-        {loading ? (
-          <LogoLoader key="loader" />
-        ) : activeTask ? (
+        {activeTask ? (
           <ActiveTask
             key="active"
             task={activeTask}
@@ -403,6 +408,8 @@ export default function HomePage() {
               });
             }}
           />
+        ) : loading ? (
+          <LogoLoader key="loader" />
         ) : (
           <motion.div
             key="deck"
@@ -411,6 +418,7 @@ export default function HomePage() {
           >
             <SwipeDeck
               deck={fullDeck}
+              resetKey={deckVersion}
               onAccept={handleAccept}
               onReject={handleReject}
               emptyState={

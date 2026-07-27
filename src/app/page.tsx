@@ -5,6 +5,7 @@ import Logo from "@/components/Logo";
 import StandaloneRedirect from "@/components/StandaloneRedirect";
 import LandingDemo from "@/components/LandingDemo";
 import LandingBackground from "@/components/LandingBackground";
+import CookieConsent from "@/components/CookieConsent";
 import SiteNav from "@/components/SiteNav";
 import Reveal, { RevealGroup, RevealItem } from "@/components/Reveal";
 
@@ -196,6 +197,7 @@ export default function LandingPage() {
     <>
       <StandaloneRedirect />
       <LandingBackground />
+      <CookieConsent />
       <SiteNav />
 
       <main className="mx-auto max-w-6xl px-5 sm:px-8">
@@ -243,7 +245,7 @@ export default function LandingPage() {
           {NUMBERS.map((n) => (
             <RevealItem
               key={n.t}
-              className="marble rounded-3xl p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-3)]"
+              className="surface rounded-3xl p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-border-strong)]"
             >
               <p className="num bg-gradient-to-br from-[var(--color-fg)] to-[var(--color-fg-dim)] bg-clip-text text-[50px] font-black leading-none text-transparent">
                 {n.k}
@@ -280,7 +282,7 @@ export default function LandingPage() {
 
           <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-3">
             {STEPS.map((s) => (
-              <RevealItem key={s.n} className="marble rounded-3xl p-6">
+              <RevealItem key={s.n} className="surface rounded-3xl p-6">
                 <p className="num text-[13px] font-bold text-[var(--color-muted)]">
                   {s.n}
                 </p>
@@ -305,7 +307,7 @@ export default function LandingPage() {
           <RevealGroup className="mt-8 grid gap-8 sm:grid-cols-3">
             {SHOTS.map((s) => (
               <RevealItem key={s.src}>
-                <div className="marble overflow-hidden rounded-[28px] p-1.5 transition duration-300 hover:-translate-y-1.5 hover:shadow-[var(--shadow-3)]">
+                <div className="surface overflow-hidden rounded-[28px] p-1.5 transition duration-300 hover:-translate-y-1.5">
                   <Image
                     src={s.src}
                     alt={s.cap}
@@ -331,7 +333,7 @@ export default function LandingPage() {
             {FEATURES.map((f) => (
               <RevealItem
                 key={f.title}
-                className="marble group rounded-3xl p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-3)]"
+                className="surface group rounded-3xl p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-border-strong)]"
               >
                 {/* Иконка в обрамлённой плитке с бликом — читается как «лого»
                     фичи, а не как одинокий эмодзи на плоскости. */}
@@ -369,28 +371,47 @@ export default function LandingPage() {
               </h2>
               <div className="mt-6 space-y-5 text-[15.5px] leading-relaxed text-[var(--color-fg-dim)]">
                 <p>
-                  Меня зовут Аят, я разработчик. YeahDays появился из личной
-                  проблемы: списки задач у меня не работали. Чем длиннее
-                  становился список, тем меньше хотелось его открывать — он
-                  превращался в напоминание о том, чего я не сделал.
+                  Меня зовут Аят, я разработчик из Казахстана. YeahDays вырос из
+                  моей собственной проблемы: обычные списки задач у меня не
+                  работали. Чем длиннее становился список, тем меньше хотелось
+                  его открывать — он превращался не в план, а в напоминание о
+                  том, чего я так и не сделал.
                 </p>
                 <p>
                   Мне не нужен был ещё один органайзер. Нужно было что-то, что
-                  само скажет: «вот одно дело, оно занимает пятнадцать минут,
-                  сил у тебя хватит — сделай». Не двадцать дел. Одно.
+                  само скажет: «вот одно дело, оно на пятнадцать минут, сил у
+                  тебя сейчас хватит — сделай». Не двадцать дел. Одно. И чтобы,
+                  пока я его не закрыл, приложение не подсовывало следующее.
+                </p>
+                <p>
+                  Так появилась колода: каждый день — небольшая подборка под
+                  твоё состояние, где важнее сделать одно, чем запланировать
+                  десять. Я собираю всё честно — без тёмных паттернов, без
+                  давления виной, с полным контролем над своими данными. Это
+                  инструмент, которым я хочу пользоваться сам.
                 </p>
               </div>
-              <a
-                href="mailto:balmagambet.ayat@gmail.com"
-                className="press mt-7 inline-flex h-12 items-center rounded-2xl border border-[var(--color-border-strong)] px-5 text-[14px] font-semibold"
-              >
-                Написать мне
-              </a>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a
+                  href="mailto:balmagambet.ayat@gmail.com"
+                  className="press inline-flex h-12 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
+                >
+                  Написать мне
+                </a>
+                <a
+                  href="https://yeahayat.dev"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="press inline-flex h-12 items-center rounded-2xl border border-[var(--color-border-strong)] px-5 text-[14px] font-semibold"
+                >
+                  yeahayat.dev ↗
+                </a>
+              </div>
             </Reveal>
 
             <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:content-start">
               {BELIEFS.map((b) => (
-                <RevealItem key={b.t} className="marble rounded-3xl p-5">
+                <RevealItem key={b.t} className="surface rounded-3xl p-5">
                   <p className="text-[15.5px] font-bold leading-snug">{b.t}</p>
                   <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">
                     {b.d}
@@ -399,50 +420,6 @@ export default function LandingPage() {
               ))}
             </RevealGroup>
           </div>
-        </section>
-
-        {/* ─────────────  Личный сайт  ───────────── */}
-        <section className="border-t border-[var(--color-border)] py-16 sm:py-20">
-          <Reveal>
-            <Eyebrow>Мой сайт</Eyebrow>
-            <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
-              <h2 className="text-[32px] font-extrabold sm:text-[40px]">
-                yeahayat.dev
-              </h2>
-              <a
-                href="https://yeahayat.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="press inline-flex h-11 items-center rounded-xl border border-[var(--color-border-strong)] px-5 text-[13.5px] font-semibold"
-              >
-                Открыть в новой вкладке ↗
-              </a>
-            </div>
-          </Reveal>
-
-          {/*
-            Встраиваем живой сайт, а не скриншот — он всегда актуален.
-            loading="lazy" обязателен: без него сторонний сайт грузится
-            вместе с лендингом и тормозит первый экран.
-            sandbox ограничивает права встроенной страницы: показать себя
-            она может, а трогать наш сайт — нет.
-          */}
-          <Reveal delay={0.08} className="mt-8">
-            <div className="marble overflow-hidden rounded-[28px] p-2">
-              <iframe
-                src="https://yeahayat.dev"
-                title="Личный сайт Аята — yeahayat.dev"
-                loading="lazy"
-                sandbox="allow-scripts allow-same-origin allow-popups"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="h-[420px] w-full rounded-[22px] border-0 bg-[var(--color-bg)] sm:h-[620px]"
-              />
-            </div>
-            <p className="mt-3 text-[12.5px] text-[var(--color-muted)]">
-              Если блок пустой — сайт запретил встраивание. Открой по ссылке
-              выше.
-            </p>
-          </Reveal>
         </section>
 
         {/* ─────────────  Вопросы  ───────────── */}
@@ -455,7 +432,7 @@ export default function LandingPage() {
           </Reveal>
           <RevealGroup className="mt-8 grid gap-4 lg:grid-cols-2">
             {FAQ.map((f) => (
-              <RevealItem key={f.q} className="marble rounded-3xl p-5">
+              <RevealItem key={f.q} className="surface rounded-3xl p-5">
                 <p className="text-[15.5px] font-bold">{f.q}</p>
                 <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">
                   {f.a}
@@ -494,7 +471,7 @@ export default function LandingPage() {
               ].map((t) => (
                 <RevealItem
                   key={t}
-                  className="marble flex items-start gap-3.5 rounded-2xl p-4"
+                  className="surface flex items-start gap-3.5 rounded-2xl p-4"
                 >
                   <span
                     className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[var(--color-stability)]"

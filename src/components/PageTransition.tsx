@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { springSoft } from "@/lib/motion";
@@ -38,11 +38,16 @@ export default function PageTransition({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const prev = useRef(pathname);
+  const prevRef = useRef(pathname);
 
-  // направление: +1 — вперёд (вправо по навбару), -1 — назад
-  const dir = indexOf(pathname) >= indexOf(prev.current) ? 1 : -1;
-  prev.current = pathname;
+  // направление: +1 — вперёд (вправо по навбару), -1 — назад.
+  // ref читаем в рендере, но ОБНОВЛЯЕМ в эффекте (не в теле рендера): иначе
+  // двойной проход StrictMode/сброшенный concurrent-рендер посчитал бы
+  // направление неверно.
+  const dir = indexOf(pathname) >= indexOf(prevRef.current) ? 1 : -1;
+  useEffect(() => {
+    prevRef.current = pathname;
+  }, [pathname]);
 
   return (
     <AnimatePresence mode="popLayout" initial={false} custom={dir}>

@@ -294,7 +294,9 @@ export function effectiveGoals(
   const out = { ...goals };
   for (const q of quests) {
     const left = daysLeft(q.deadline, today);
-    if (left < 0) continue; // просрочена — не давим
+    // NaN — битый дедлайн; `NaN < 0` = false, поэтому проверяем явно, иначе
+    // pressure/pace станут NaN и отравят вес → score колоды → сортировка.
+    if (!Number.isFinite(left) || left < 0) continue;
     const remaining = q.target - questProgress(q, plan);
     if (remaining <= 0) continue; // уже выполнена
 
@@ -645,11 +647,14 @@ export const useUserStore = create<UserState>()(
                     ...t,
                     completed: willComplete,
                     completedAt: willComplete ? Date.now() : null,
-                    // сколько заняло от взятия до галочки — кормит
-                    // статистику и будущую оценку реальной длительности
-                    durationMs: willComplete
-                      ? Date.now() - t.acceptedAt
-                      : undefined,
+                    // Замер пишем только с ПЕРВОГО закрытия и больше не трогаем:
+                    // при снятии галочки НЕ сбрасываем в undefined, иначе цикл
+                    // «поставил → снял → снова поставил» записал бы второй,
+                    // раздутый замер (время накручено самими кликами).
+                    durationMs:
+                      willComplete && t.durationMs === undefined
+                        ? Date.now() - t.acceptedAt
+                        : t.durationMs,
                   }
                 : t,
             ),
@@ -916,9 +921,51 @@ export const useUserStore = create<UserState>()(
 
       restoreTodo: (t) => touch((s) => ({ todos: [t, ...s.todos] })),
 
-      // Приходит с сервера — ставим как есть, updatedAt берём серверный,
-      // чтобы не выглядеть «свежее» и не затереть источник на следующем пуше.
-      hydrateFromRemote: (data) => set(() => ({ ...pickSync(data) })),
+      // Приходит с сервера. Бэкфилл обязателен: снимок мог прийти от клиента
+      // старой версии без полей, добавленных позже (freezes, durations,
+      // energyProfile…). Без него они станут undefined, а useStreak/goalMatch
+      // читают их без защиты — белый экран. Миграция persist прикрывает только
+      // путь из localStorage; серверный путь идёт мимо неё.
+      hydrateFromRemote: (data) =>
+        set(() => {
+          const d = pickSync(data);
+          const arr = <T,>(v: unknown, fallback: T[]): T[] =>
+            Array.isArray(v) ? (v as T[]) : fallback;
+          const obj = <T,>(v: unknown, fallback: T): T =>
+            v && typeof v === "object" ? (v as T) : fallback;
+          return {
+            ...d,
+            goals: { ...DEFAULT_GOALS, ...obj(d.goals, {}) },
+            history: {
+              ...emptyHistory(),
+              ...obj(d.history, {}),
+              durations: obj(d.history?.durations, {}),
+            },
+            freezes: {
+              left: FREEZES_PER_MONTH,
+              days: [],
+              refilled: monthKey(),
+              ...obj(d.freezes, {}),
+            },
+            energyProfile: {
+              morning: "low" as EnergyLevel,
+              afternoon: "medium" as EnergyLevel,
+              evening: "high" as EnergyLevel,
+              ...obj(d.energyProfile, {}),
+            },
+            plan: arr(d.plan, []),
+            todos: arr(d.todos, []),
+            challenges: arr(d.challenges, []),
+            quests: arr(d.quests, []),
+            customActions: arr(d.customActions, []),
+            excludedCategories: arr(d.excludedCategories, []),
+            disabledActions: arr(d.disabledActions, []),
+            seenFeatures: arr(d.seenFeatures, []),
+            moods: obj(d.moods, {}),
+            retros: obj(d.retros, {}),
+            schedule: obj(d.schedule, {}),
+          };
+        }),
       };
     },
     {

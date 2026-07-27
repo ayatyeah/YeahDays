@@ -11,6 +11,12 @@ interface SwipeDeckProps {
   deck: ScoredAction[];
   onAccept: (a: Action) => void;
   onReject: (a: Action) => void;
+  /**
+   * Меняется только при РЕАЛЬНОЙ новой подборке. Именно по нему сбрасываем
+   * свайпнутое — а не по ссылке deck: та меняется ещё и на тике часа маршрута,
+   * из-за чего курсор обнулялся и отклонённые карточки воскресали.
+   */
+  resetKey?: unknown;
   /** колода закончилась */
   emptyState?: React.ReactNode;
 }
@@ -21,25 +27,34 @@ export default function SwipeDeck({
   deck,
   onAccept,
   onReject,
+  resetKey,
   emptyState,
 }: SwipeDeckProps) {
-  const [cursor, setCursor] = useState(0);
+  // Свайпнутые id, а не позиционный курсор: устойчиво к пересборке колоды
+  // (смена маршрутного блока меняет ссылку, но не должна воскрешать карточки).
+  const [swiped, setSwiped] = useState<Set<string>>(() => new Set());
   const [forced, setForced] = useState<SwipeDir | null>(null);
 
-  // новая колода — начинаем сначала
+  // новая подборка — забываем свайпы
   useEffect(() => {
-    setCursor(0);
+    setSwiped(new Set());
     setForced(null);
-  }, [deck]);
+  }, [resetKey]);
 
-  const visible = deck.slice(cursor, cursor + VISIBLE);
+  const visible = deck
+    .filter((s) => !swiped.has(s.action.id))
+    .slice(0, VISIBLE);
 
   const handleSwipe = useCallback(
     (dir: SwipeDir, action: Action) => {
       setForced(null);
       if (dir === "right") onAccept(action);
       else onReject(action);
-      setCursor((c) => c + 1);
+      setSwiped((prev) => {
+        const next = new Set(prev);
+        next.add(action.id);
+        return next;
+      });
       // «беру» ощущается весомее, чем «мимо» — разные паттерны отдачи
       haptic(dir === "right" ? "medium" : "select");
     },

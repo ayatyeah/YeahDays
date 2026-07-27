@@ -102,6 +102,11 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // API никогда не кэшируем: /api/state — это синк аккаунта, и stale-ответ
+  // из кэша воркера отдавал устаревший снимок (аккаунт «не обновлялся» при
+  // входе). Пусть идут в сеть напрямую; свой HTTP-кэш у них есть.
+  if (url.pathname.startsWith("/api/")) return;
+
   // навигации: сеть -> кэш -> корень
   if (request.mode === "navigate") {
     event.respondWith(

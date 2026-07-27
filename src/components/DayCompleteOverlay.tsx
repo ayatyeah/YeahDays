@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   useUserStore,
@@ -57,18 +57,37 @@ export default function DayCompleteOverlay() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  // Таймер авто-скрытия держим в ref и чистим ТОЛЬКО при размонтировании.
+  // Ключевая тонкость: markDayCelebrated меняет lastCelebratedDay, из-за чего
+  // триггер-эффект переигрывается. Если бы cleanup таймера жил в эффекте с
+  // зависимостями, эта переигровка (или зависимость от state.open) гасила бы
+  // таймер — плашка висела бы до ухода со страницы. Ref развязывает таймер и
+  // жизненный цикл эффекта: поставили один раз — сработает через 3.8с.
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // день, для которого уже показали плашку в этой сессии — чтобы триггер,
+  // если он переиграется, не сбросил таймер повторной постановкой.
+  const shownFor = useRef<string | null>(null);
+
   useEffect(() => {
-    if (!hydrated) return;
-    if (allDone && lastCelebratedDay !== todayKey) {
-      setState({ open: true, pill: level <= seenLevel });
-      markDayCelebrated(todayKey);
-      const t = window.setTimeout(
-        () => setState((s) => ({ ...s, open: false })),
-        3800,
-      );
-      return () => window.clearTimeout(t);
-    }
+    if (!hydrated || !allDone) return;
+    if (lastCelebratedDay === todayKey) return; // уже праздновали (из стора)
+    if (shownFor.current === todayKey) return; // уже показали в этой сессии
+    shownFor.current = todayKey;
+
+    setState({ open: true, pill: level <= seenLevel });
+    markDayCelebrated(todayKey);
+    hideTimer.current = setTimeout(
+      () => setState((s) => ({ ...s, open: false })),
+      3800,
+    );
   }, [hydrated, allDone, lastCelebratedDay, todayKey, level, seenLevel, markDayCelebrated]);
+
+  useEffect(
+    () => () => {
+      if (hideTimer.current) clearTimeout(hideTimer.current);
+    },
+    [],
+  );
 
   if (!mounted) return null;
 

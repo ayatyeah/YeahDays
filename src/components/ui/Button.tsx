@@ -11,21 +11,30 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
 }
 
+/**
+ * Единый вид кнопки на всё приложение.
+ *
+ * Раньше компонент отставал от «премиальных» инлайн-кнопок на колоде:
+ * мельче (h-11), меньше скруглён (rounded-xl), без сжатия при нажатии — из-за
+ * чего кнопки в модалках выглядели дешевле, чем «Беру»/«Сделал». Теперь тот же
+ * язык: rounded-2xl, `.press` (тап-сжатие), тень у главной кнопки, высоты как
+ * у CTA. Меняешь тут — меняется во всех модалках сразу.
+ */
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[var(--color-fg)] text-[var(--color-bg)] hover:opacity-90 active:opacity-80",
+    "bg-[var(--color-fg)] text-[var(--color-bg)] shadow-[var(--shadow-2)] hover:opacity-95",
   surface:
-    "bg-[var(--color-surface-2)] text-[var(--color-fg)] border border-[var(--color-border)] hover:bg-[var(--color-surface)]",
+    "bg-[var(--color-surface-2)] text-[var(--color-fg)] border border-[var(--color-border-strong)] hover:bg-[var(--color-surface)]",
   ghost:
     "bg-transparent text-[var(--color-fg-dim)] hover:text-[var(--color-fg)] hover:bg-[var(--color-surface)]",
   danger:
-    "bg-transparent text-[var(--color-strength)] border border-[var(--color-border)] hover:bg-[var(--color-surface)]",
+    "bg-transparent text-[var(--color-strength)] border border-[var(--color-border-strong)] hover:bg-[var(--color-strength)]/10",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm rounded-lg",
-  md: "h-11 px-4 text-sm rounded-xl",
-  lg: "h-13 px-5 text-base rounded-2xl",
+  sm: "h-10 px-4 text-[13px] rounded-xl",
+  md: "h-12 px-5 text-[14px] rounded-2xl",
+  lg: "h-14 px-6 text-[15px] rounded-2xl",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -36,7 +45,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
     <button
       ref={ref}
       className={cn(
-        "inline-flex select-none items-center justify-center gap-2 font-medium transition disabled:cursor-not-allowed disabled:opacity-40",
+        // press — общий тап-эффект (scale), он же несёт transition цвета/границы
+        "press inline-flex select-none items-center justify-center gap-2 font-semibold disabled:cursor-not-allowed disabled:opacity-40",
         variants[variant],
         sizes[size],
         className,

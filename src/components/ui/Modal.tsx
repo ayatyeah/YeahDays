@@ -1,7 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
   open: boolean;
@@ -10,7 +11,23 @@ interface ModalProps {
   children: React.ReactNode;
 }
 
+/**
+ * Модальное окно.
+ *
+ * Рендерится ПОРТАЛОМ в body, а не на месте вызова. Это принципиально:
+ * контент страницы завёрнут в .gpu-layer (translateZ(0)) ради плавных
+ * переходов, а `transform`-предок превращает `position: fixed` внутри себя
+ * в относительный. Без портала модалка на длинной странице (например,
+ * «Профиль») уезжала вниз за пределы экрана вместо центра. Портал выносит
+ * её из-под трансформа — и fixed снова считается от вьюпорта.
+ *
+ * На мобильном — лист снизу (items-end, под большой палец), на десктопе —
+ * по центру.
+ */
 export default function Modal({ open, onClose, title, children }: ModalProps) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -22,7 +39,9 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
     };
   }, [open, onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
@@ -50,6 +69,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   useUserStore,
   useHydrated,
@@ -51,6 +52,11 @@ export default function DayCompleteOverlay() {
   const [state, setState] = useState({ open: false, pill: true });
   const todayKey = dateKey();
 
+  // портал в body — иначе fixed-конфетти позиционируется от .gpu-layer
+  // страницы, а не от экрана, и сыплется не туда. См. ui/Modal.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
     if (!hydrated) return;
     if (allDone && lastCelebratedDay !== todayKey) {
@@ -64,7 +70,9 @@ export default function DayCompleteOverlay() {
     }
   }, [hydrated, allDone, lastCelebratedDay, todayKey, level, seenLevel, markDayCelebrated]);
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {state.open && (
         <div
@@ -118,6 +126,7 @@ export default function DayCompleteOverlay() {
           )}
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

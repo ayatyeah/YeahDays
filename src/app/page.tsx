@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Logo from "@/components/Logo";
 import StandaloneRedirect from "@/components/StandaloneRedirect";
 import LandingDemo from "@/components/LandingDemo";
+import LandingBackground from "@/components/LandingBackground";
 import SiteNav from "@/components/SiteNav";
 import Reveal, { RevealGroup, RevealItem } from "@/components/Reveal";
 
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
  */
 
 const NUMBERS = [
-  { k: "176", t: "действий в колоде", d: "Девять направлений — от спорта до финансов" },
+  { k: "159", t: "действий в колоде", d: "Девять направлений — от спорта до финансов" },
   { k: "12", t: "лестниц навыков", d: "Ступени открываются по мере освоения" },
   { k: "2", t: "заморозки в месяц", d: "Стрик не рушится от одного пропуска" },
   { k: "0 ₸", t: "стоимость", d: "Бесплатно и без регистрации" },
@@ -60,7 +61,7 @@ const FEATURES = [
   {
     icon: "🎴",
     title: "Колода вместо списка",
-    text: "176 действий подбираются по пяти сигналам: приоритеты, время суток, бюджет минут, история и свежесть. Каждая карточка объясняет, почему показана именно она.",
+    text: "159 действий подбираются по пяти сигналам: приоритеты, время суток, бюджет минут, история и свежесть. Каждая карточка объясняет, почему показана именно она.",
   },
   {
     icon: "🪜",
@@ -194,6 +195,7 @@ export default function LandingPage() {
   return (
     <>
       <StandaloneRedirect />
+      <LandingBackground />
       <SiteNav />
 
       <main className="mx-auto max-w-6xl px-5 sm:px-8">
@@ -204,9 +206,14 @@ export default function LandingPage() {
         >
           <Reveal>
             <Eyebrow>Трекер, который не давит</Eyebrow>
-            <h1 className="mt-5 text-[42px] font-extrabold leading-[1.03] sm:text-[58px] lg:text-[64px]">
-              Одно действие
-              <br />в день
+            <h1 className="mt-5 text-[52px] font-black leading-[0.98] tracking-[-0.03em] sm:text-[72px] lg:text-[84px]">
+              Одно
+              <br />
+              действие
+              <br />
+              <span className="bg-gradient-to-br from-[var(--color-fg)] via-[var(--color-fg)] to-[var(--color-intelligence)] bg-clip-text text-transparent">
+                в день
+              </span>
             </h1>
             <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[var(--color-fg-dim)] sm:text-[19px]">
               Списки задач копят вину: чем длиннее, тем меньше хочется их
@@ -234,11 +241,14 @@ export default function LandingPage() {
         {/* ─────────────  Цифры  ───────────── */}
         <RevealGroup className="grid gap-4 border-t border-[var(--color-border)] py-14 sm:grid-cols-2 lg:grid-cols-4">
           {NUMBERS.map((n) => (
-            <RevealItem key={n.t} className="marble rounded-3xl p-5">
-              <p className="num text-[40px] font-extrabold leading-none">
+            <RevealItem
+              key={n.t}
+              className="marble rounded-3xl p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-3)]"
+            >
+              <p className="num bg-gradient-to-br from-[var(--color-fg)] to-[var(--color-fg-dim)] bg-clip-text text-[50px] font-black leading-none text-transparent">
                 {n.k}
               </p>
-              <p className="mt-2.5 text-[14.5px] font-bold">{n.t}</p>
+              <p className="mt-3 text-[14.5px] font-bold">{n.t}</p>
               <p className="mt-1.5 text-[13px] leading-snug text-[var(--color-fg-dim)]">
                 {n.d}
               </p>
@@ -295,7 +305,7 @@ export default function LandingPage() {
           <RevealGroup className="mt-8 grid gap-8 sm:grid-cols-3">
             {SHOTS.map((s) => (
               <RevealItem key={s.src}>
-                <div className="marble overflow-hidden rounded-[28px] p-1.5">
+                <div className="marble overflow-hidden rounded-[28px] p-1.5 transition duration-300 hover:-translate-y-1.5 hover:shadow-[var(--shadow-3)]">
                   <Image
                     src={s.src}
                     alt={s.cap}
@@ -319,11 +329,19 @@ export default function LandingPage() {
           </Reveal>
           <RevealGroup className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f) => (
-              <RevealItem key={f.title} className="marble rounded-3xl p-5">
-                <span className="text-[22px]" aria-hidden>
+              <RevealItem
+                key={f.title}
+                className="marble group rounded-3xl p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--color-border-strong)] hover:shadow-[var(--shadow-3)]"
+              >
+                {/* Иконка в обрамлённой плитке с бликом — читается как «лого»
+                    фичи, а не как одинокий эмодзи на плоскости. */}
+                <span
+                  className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.05)] text-[20px] shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] transition-transform duration-300 group-hover:scale-110"
+                  aria-hidden
+                >
                   {f.icon}
                 </span>
-                <p className="mt-3 text-[15.5px] font-bold leading-snug">
+                <p className="mt-4 text-[15.5px] font-bold leading-snug">
                   {f.title}
                 </p>
                 <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">

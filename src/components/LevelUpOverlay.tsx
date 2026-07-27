@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   useUserStore,
   useHydrated,
@@ -27,6 +28,12 @@ export default function LevelUpOverlay() {
   const stats = useMemo(() => selectStats(plan), [plan]);
   const level = getLevelProgress(totalXp).level;
 
+  // портал в body: страница завёрнута в .gpu-layer (transform), а fixed внутри
+  // transform-предка позиционируется от него, а не от экрана — полноэкранный
+  // оверлей уезжал бы по длине страницы. См. ui/Modal.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const [state, setState] = useState<{
     open: boolean;
     level: number;
@@ -47,7 +54,9 @@ export default function LevelUpOverlay() {
     setState((s) => ({ ...s, open: false }));
   }
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {state.open && (
         <motion.div
@@ -120,13 +129,14 @@ export default function LevelUpOverlay() {
 
             <button
               onClick={close}
-              className="mt-6 h-12 rounded-2xl bg-[var(--color-fg)] px-7 text-[15px] font-semibold text-[var(--color-bg)]"
+              className="press mt-6 h-12 rounded-2xl bg-[var(--color-fg)] px-7 text-[15px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
             >
               Продолжить
             </button>
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }

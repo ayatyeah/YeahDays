@@ -85,10 +85,10 @@ export default function Quests() {
               key={s.key}
               onClick={() => setStat(s.key)}
               className={cn(
-                "rounded-2xl border py-2.5 text-[12.5px] font-medium transition",
+                "press rounded-2xl border py-2.5 text-[12.5px] font-medium",
                 stat === s.key
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
-                  : "border-[var(--color-border)] text-[var(--color-muted)]",
+                  : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border-strong)]",
               )}
             >
               <span style={{ color: s.hex }}>{s.icon}</span> {s.label}
@@ -122,10 +122,10 @@ export default function Quests() {
                 key={d}
                 onClick={() => setHorizon(d)}
                 className={cn(
-                  "rounded-2xl border py-2 text-[12px] tabular-nums transition",
+                  "press rounded-2xl border py-2 text-[12px] tabular-nums",
                   horizon === d
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
-                    : "border-[var(--color-border)] text-[var(--color-muted)]",
+                    : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border-strong)]",
                 )}
               >
                 {d} дн

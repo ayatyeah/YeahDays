@@ -1,25 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { currentRoutineBlock, type RoutineBlock } from "./routine";
+import { routineNow, type RoutineNow } from "./routine";
 
 /**
- * Текущий блок маршрута, который сам обновляется при смене часа.
+ * Контекст маршрута «сейчас», который сам обновляется при смене часа.
  *
  * Границы блоков — почасовые (08–12, 13–17…), а не по слотам, поэтому
  * useTimeSlot тут не подходит: он меняется только на границах утро/день/вечер.
  * Проверяем раз в минуту и при возврате на вкладку; состояние трогаем, только
- * когда блок реально стал другим, — иначе лишние перерисовки колоды.
+ * когда контекст реально стал другим, — иначе лишние перерисовки колоды.
  */
-export function useRoutineBlock(): RoutineBlock | null {
-  const [block, setBlock] = useState<RoutineBlock | null>(() =>
-    currentRoutineBlock(),
-  );
+export function useRoutineNow(): RoutineNow {
+  const [now, setNow] = useState<RoutineNow>(() => routineNow());
 
   useEffect(() => {
     const tick = () => {
-      const next = currentRoutineBlock();
-      setBlock((prev) => (prev?.id === next?.id ? prev : next));
+      const next = routineNow();
+      setNow((prev) =>
+        prev.work?.id === next.work?.id &&
+        prev.anchor?.id === next.anchor?.id &&
+        prev.next?.id === next.next?.id
+          ? prev
+          : next,
+      );
     };
     tick();
     const id = setInterval(tick, 60_000);
@@ -33,5 +37,5 @@ export function useRoutineBlock(): RoutineBlock | null {
     };
   }, []);
 
-  return block;
+  return now;
 }

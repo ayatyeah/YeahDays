@@ -1076,6 +1076,22 @@ export function selectCompleted(plan: PlannedTask[]) {
   return plan.filter((t) => t.completed);
 }
 
+/**
+ * Есть ли в снимке реальный прогресс — то, что человек НАРАБОТАЛ, а не то,
+ * что записал онбординг. Нужно синхронизации: при входе на свежем устройстве
+ * (прошёл онбординг → updatedAt свежий, но пусто) аккаунт с настоящей историей
+ * не должен проиграть last-write-wins и быть затёртым пустышкой.
+ */
+export function hasProgress(s: Partial<SyncData>): boolean {
+  if (Array.isArray(s.plan) && s.plan.some((t) => t?.completed)) return true;
+  if (Array.isArray(s.todos) && s.todos.length > 0) return true;
+  if (Array.isArray(s.challenges) && s.challenges.length > 0) return true;
+  if (Array.isArray(s.quests) && s.quests.length > 0) return true;
+  const done = s.history?.completed;
+  if (done && Object.values(done).some((n) => n > 0)) return true;
+  return false;
+}
+
 export function selectTotalXp(plan: PlannedTask[]) {
   return selectCompleted(plan).reduce((sum, t) => sum + t.xp, 0);
 }

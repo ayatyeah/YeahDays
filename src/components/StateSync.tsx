@@ -7,6 +7,7 @@ import {
   useUserStore,
   useHydrated,
   pickSync,
+  hasProgress,
   type SyncData,
 } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
@@ -30,10 +31,17 @@ export default function StateSync() {
   const applyingRemote = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /** Принять серверный снимок, если он свежее локального. */
-  const applyRemote = useCallback((data: SyncData) => {
+  /**
+   * Принять серверный снимок.
+   *
+   * По умолчанию — только если он свежее локального (last-write-wins).
+   * force обходит это правило: он нужен на свежем устройстве, где локальный
+   * updatedAt новее лишь из-за онбординга, а реальной работы нет — тогда
+   * аккаунт с историей должен победить, иначе он был бы затёрт пустышкой.
+   */
+  const applyRemote = useCallback((data: SyncData, force = false) => {
     if (!data || typeof data.updatedAt !== "number") return;
-    if (data.updatedAt <= useUserStore.getState().updatedAt) return;
+    if (!force && data.updatedAt <= useUserStore.getState().updatedAt) return;
     applyingRemote.current = true;
     useUserStore.getState().hydrateFromRemote(data);
     // прогресс реально приехал с другого устройства — это и есть польза входа
@@ -84,8 +92,15 @@ export default function StateSync() {
       if (!res.ok) return status.fail();
       const json = (await res.json()) as { data?: SyncData | null };
       const remote = json.data ?? null;
-      if (remote && remote.updatedAt > useUserStore.getState().updatedAt) {
-        applyRemote(remote);
+      const local = useUserStore.getState();
+
+      // Свежее устройство: аккаунт с историей побеждает пустой локальный стор,
+      // даже если тот формально новее (онбординг успел бампнуть updatedAt).
+      const adoptAccount =
+        !!remote && hasProgress(remote) && !hasProgress(local);
+
+      if (remote && (remote.updatedAt > local.updatedAt || adoptAccount)) {
+        applyRemote(remote, adoptAccount);
         status.markSynced();
       } else {
         // сервер пуст или устарел — заливаем локальный прогресс наверх

@@ -264,6 +264,39 @@ export function currentRoutineBlock(date = new Date()): RoutineBlock | null {
   return b ?? null;
 }
 
+export interface RoutineNow {
+  /** рабочий блок прямо сейчас (главная задача + аналоги), либо null */
+  work: RoutineBlock | null;
+  /** якорь прямо сейчас (Обед, Сон, Отдых…), либо null */
+  anchor: RoutineBlock | null;
+  /** ближайший рабочий блок сегодня ПОСЛЕ текущего часа, либо null */
+  next: RoutineBlock | null;
+}
+
+/**
+ * Полный контекст маршрута «сейчас»: что идёт, что дальше.
+ *
+ * Нужно, чтобы колода никогда не выглядела пустой без объяснения. В час
+ * обеда работы по плану нет — но человеку важно видеть «сейчас обед, дальше
+ * в 13:00 — Разбор недели», а не гадать, почему задач нет.
+ */
+export function routineNow(date = new Date()): RoutineNow {
+  const weekday = date.getDay();
+  const hour = date.getHours();
+  const current =
+    ROUTINE.find((x) => x.days.includes(weekday) && hour >= x.start && hour < x.end) ?? null;
+  const next =
+    ROUTINE.filter((x) => !x.anchor && x.main && x.days.includes(weekday) && x.start > hour).sort(
+      (a, b) => a.start - b.start,
+    )[0] ?? null;
+
+  return {
+    work: current && !current.anchor && current.main ? current : null,
+    anchor: current?.anchor ? current : null,
+    next,
+  };
+}
+
 /** Русское название дня недели (getDay). */
 export const DAY_NAME: Record<number, string> = {
   0: "воскресенье",

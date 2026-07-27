@@ -33,6 +33,41 @@ export const springSnappy: Transition = {
   damping: 30,
 };
 
+/** С лёгким перелётом — для наград и «вау»-моментов (морф, конфетти, уровень). */
+export const springBouncy: Transition = {
+  type: "spring",
+  stiffness: 420,
+  damping: 20,
+  mass: 0.9,
+};
+
+/**
+ * Тактильная отдача — единая на всё приложение.
+ *
+ * Раньше navigator.vibrate вызывался вразнобой по компонентам с разными
+ * магическими паттернами. Один хелпер = один язык ощущений: свайп, выбор,
+ * успех и предупреждение отличаются на ощупь и везде одинаковы.
+ * Молча ничего не делает там, где вибрации нет (десктоп, iOS Safari).
+ */
+type HapticKind = "light" | "select" | "medium" | "success" | "warning";
+
+const HAPTIC_PATTERNS: Record<HapticKind, number | number[]> = {
+  light: 8,
+  select: 5,
+  medium: 14,
+  success: [10, 30, 20],
+  warning: [22, 40, 22],
+};
+
+export function haptic(kind: HapticKind = "light"): void {
+  if (typeof navigator === "undefined" || !("vibrate" in navigator)) return;
+  try {
+    navigator.vibrate?.(HAPTIC_PATTERNS[kind]);
+  } catch {
+    // некоторые браузеры бросают, если вибрация запрещена политикой — игнорируем
+  }
+}
+
 /** Появление экрана: лёгкий подъём + проявление. */
 export const pageVariants: Variants = {
   initial: { opacity: 0, y: 10 },

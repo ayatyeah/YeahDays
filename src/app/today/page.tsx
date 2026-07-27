@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
+import AnimatedNumber from "@/components/AnimatedNumber";
 import PlanItem from "@/components/PlanItem";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
@@ -125,7 +126,7 @@ export default function TodayPage() {
               Уровень {progress.level}
             </p>
             <p className="mt-0.5 text-[13px] font-semibold tabular-nums">
-              {totalXp} XP
+              <AnimatedNumber value={totalXp} /> XP
             </p>
           </div>
         </div>

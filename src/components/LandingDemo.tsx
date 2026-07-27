@@ -113,7 +113,7 @@ export default function LandingDemo() {
           {/* Шапка «приложения» */}
           <div className="mb-4 flex items-center justify-between">
             <span className="text-[15px] font-extrabold tracking-tight">
-              YeahDays
+              YeahGrind
             </span>
             <span className="flex items-center gap-1.5 rounded-full bg-[rgba(255,255,255,0.06)] px-2.5 py-1">
               <span className="text-[11px]">🔥</span>

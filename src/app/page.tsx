@@ -10,11 +10,11 @@ import SiteNav from "@/components/SiteNav";
 import Reveal, { RevealGroup, RevealItem } from "@/components/Reveal";
 
 export const metadata: Metadata = {
-  title: "YeahDays — одно действие в день",
+  title: "YeahGrind — одно действие в день",
   description:
     "Не список задач, а ежедневная колода действий под твоё состояние. Свайпнул — сделал — день засчитан.",
   openGraph: {
-    title: "YeahDays — одно действие в день",
+    title: "YeahGrind — одно действие в день",
     description:
       "Не список задач, а ежедневная колода действий под твоё состояние.",
     type: "website",
@@ -151,7 +151,7 @@ const FAQ = [
   },
   {
     q: "Чем это отличается от обычного тудушника?",
-    a: "Тудушник хранит то, что ты в него записал. YeahDays сам предлагает, что делать сегодня, под твоё состояние — и не даёт набрать десять дел, пока не закрыто текущее. Список задач при этом тоже есть.",
+    a: "Тудушник хранит то, что ты в него записал. YeahGrind сам предлагает, что делать сегодня, под твоё состояние — и не даёт набрать десять дел, пока не закрыто текущее. Список задач при этом тоже есть.",
   },
   {
     q: "Что если я пропущу день?",
@@ -219,7 +219,7 @@ export default function LandingPage() {
             </h1>
             <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[var(--color-fg-dim)] sm:text-[19px]">
               Списки задач копят вину: чем длиннее, тем меньше хочется их
-              открывать. YeahDays каждый день предлагает колоду действий под
+              открывать. YeahGrind каждый день предлагает колоду действий под
               твоё состояние. Свайпнул — сделал — день засчитан.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-4">
@@ -273,7 +273,7 @@ export default function LandingPage() {
             </h2>
             <p className="mt-6 max-w-2xl text-[16px] leading-relaxed text-[var(--color-fg-dim)]">
               Обычный трекер — это хранилище: ты сам придумал задачи, сам их
-              записал, сам про них забыл. YeahDays устроен наоборот. Он знает
+              записал, сам про них забыл. YeahGrind устроен наоборот. Он знает
               176 полезных действий и каждый день собирает из них небольшую
               колоду именно под тебя: под твои приоритеты, под время суток,
               под то, сколько у тебя сейчас сил и минут.
@@ -363,7 +363,7 @@ export default function LandingPage() {
             <Reveal>
               <Eyebrow>Обо мне</Eyebrow>
               <h2 className="mt-4 text-[32px] font-extrabold leading-[1.1] sm:text-[40px]">
-                Я делаю YeahDays
+                Я делаю YeahGrind
                 <br />
                 <span className="text-[var(--color-fg-dim)]">
                   для себя в первую очередь
@@ -371,7 +371,7 @@ export default function LandingPage() {
               </h2>
               <div className="mt-6 space-y-5 text-[15.5px] leading-relaxed text-[var(--color-fg-dim)]">
                 <p>
-                  Меня зовут Аят, я разработчик из Казахстана. YeahDays вырос из
+                  Меня зовут Аят, я разработчик из Казахстана. YeahGrind вырос из
                   моей собственной проблемы: обычные списки задач у меня не
                   работали. Чем длиннее становился список, тем меньше хотелось
                   его открывать — он превращался не в план, а в напоминание о

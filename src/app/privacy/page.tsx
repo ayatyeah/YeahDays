@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import { Section, Mail } from "@/components/LegalSection";
 
 export const metadata: Metadata = {
-  title: "Политика конфиденциальности — YeahDays",
+  title: "Политика конфиденциальности — YeahGrind",
   description:
-    "Какие данные собирает YeahDays, на каком основании, кому передаёт и как их удалить.",
+    "Какие данные собирает YeahGrind, на каком основании, кому передаёт и как их удалить.",
 };
 
 const UPDATED = "27 июля 2026";
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
 
       <Section title="1. Кто обрабатывает данные">
         Оператором персональных данных является {OWNER} (далее — «мы»),
-        владелец сервиса YeahDays. Связаться: <Mail />. Мы отвечаем на
+        владелец сервиса YeahGrind. Связаться: <Mail />. Мы отвечаем на
         обращения по данным в срок до 30 дней.
       </Section>
 
@@ -149,7 +149,7 @@ export default function PrivacyPage() {
         <br />
         <br />
         <strong>Использование данных Google API.</strong> Полученные данные
-        используются исключительно для работы твоего аккаунта в YeahDays. Мы
+        используются исключительно для работы твоего аккаунта в YeahGrind. Мы
         не передаём их третьим лицам, не используем для рекламы, не продаём
         и не применяем для обучения моделей. Это соответствует требованиям
         Google API Services User Data Policy, включая Limited Use.

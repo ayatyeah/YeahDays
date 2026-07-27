@@ -92,7 +92,7 @@ export default function Onboarding() {
                   <Logo glow className="h-28 w-auto" />
                 </motion.div>
                 <h1 className="mt-5 text-[34px] font-black leading-none tracking-tight">
-                  YeahDays
+                  YeahGrind
                 </h1>
                 <p className="mt-3 max-w-[300px] text-[16px] leading-snug text-[var(--color-fg-dim)]">
                   Одно небольшое действие в день делает тебя лучшей версией

@@ -112,7 +112,7 @@ export function track(event: AnalyticsEvent, props: Props = {}): void {
 /** Сообщить об ошибке. Тоже безопасно вызывать всегда. */
 export function reportError(error: unknown, context: Props = {}): void {
   if (typeof console !== "undefined") {
-    console.error("[yeahdays]", error, context);
+    console.error("[yeahgrind]", error, context);
   }
   if (!errorReportingEnabled || typeof window === "undefined") return;
   try {

@@ -15,15 +15,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  applicationName: "YeahDays",
-  title: "YeahDays — одно действие в день",
+  applicationName: "YeahGrind",
+  title: "YeahGrind — одно действие в день",
   description:
     "Не список задач, а подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт твой персонаж.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "YeahDays",
+    title: "YeahGrind",
   },
   icons: {
     icon: [

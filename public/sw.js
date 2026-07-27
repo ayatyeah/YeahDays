@@ -1,4 +1,4 @@
-/* YeahDays service worker — офлайн-кэш, обновление, push-уведомления */
+/* YeahGrind service worker — офлайн-кэш, обновление, push-уведомления */
 
 /**
  * Версия кэша берётся из ?v= в адресе регистрации, который подставляет
@@ -57,10 +57,10 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {};
   } catch {
-    data = { title: "YeahDays", body: event.data ? event.data.text() : "" };
+    data = { title: "YeahGrind", body: event.data ? event.data.text() : "" };
   }
 
-  const title = data.title || "YeahDays";
+  const title = data.title || "YeahGrind";
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || "",

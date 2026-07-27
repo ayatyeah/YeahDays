@@ -29,7 +29,7 @@ export default function DataControls() {
       const href = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = href;
-      a.download = "yeahdays-export.json";
+      a.download = "yeahgrind-export.json";
       a.click();
       URL.revokeObjectURL(href);
     } catch {

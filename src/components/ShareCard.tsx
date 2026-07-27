@@ -54,14 +54,14 @@ export default function ShareCard() {
     try {
       const res = await fetch(url);
       const blob = await res.blob();
-      const file = new File([blob], "yeahdays.png", { type: "image/png" });
+      const file = new File([blob], "yeahgrind.png", { type: "image/png" });
       track("share_created", { streak, done });
 
       // нативный шеринг там, где он есть — сразу в сторис/мессенджер
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: "YeahDays",
+          title: "YeahGrind",
           text: `Стрик ${streak} — ${done} действий`,
         });
         return;
@@ -71,7 +71,7 @@ export default function ShareCard() {
       const href = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = href;
-      a.download = "yeahdays.png";
+      a.download = "yeahgrind.png";
       a.click();
       URL.revokeObjectURL(href);
       setNote("Картинка сохранена");

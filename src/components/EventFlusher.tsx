@@ -25,10 +25,33 @@ export default function EventFlusher() {
 
     const id = setInterval(flush, 60_000);
 
+    // Service worker будит нас, когда сеть вернулась уже после закрытия
+    // приложения: Background Sync срабатывает в фоне, а выгрузить очередь
+    // может только страница — ключи и хранилище живут здесь.
+    const onMessage = (event: MessageEvent) => {
+      if ((event.data as { type?: string })?.type === "YD_FLUSH_EVENTS") flush();
+    };
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.addEventListener("message", onMessage);
+      navigator.serviceWorker.ready
+        .then((reg) => {
+          const sync = (reg as ServiceWorkerRegistration & {
+            sync?: { register: (tag: string) => Promise<void> };
+          }).sync;
+          return sync?.register("yd-flush-events");
+        })
+        .catch(() => {
+          /* Background Sync есть не везде — обычные триггеры остаются */
+        });
+    }
+
     return () => {
       window.removeEventListener("online", flush);
       document.removeEventListener("visibilitychange", onVisible);
       window.removeEventListener("pagehide", flush);
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.removeEventListener("message", onMessage);
+      }
       clearInterval(id);
     };
   }, []);

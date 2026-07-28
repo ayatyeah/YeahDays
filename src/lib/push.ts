@@ -27,6 +27,10 @@ export interface PushPayload {
   /** куда вести по клику */
   url?: string;
   tag?: string;
+  /** task | todo | day — по типу service worker решает, какие кнопки показать */
+  kind?: string;
+  /** задача плана: с ней в уведомлении появляется кнопка «Сделал» */
+  taskId?: string;
 }
 
 export interface PushTarget {
@@ -140,6 +144,7 @@ export function morningMessage(ctx: DayContext): PushPayload {
       body: `${ctx.plannedToday} ${plural(ctx.plannedToday, "действие", "действия", "действий")} ждут тебя.`,
       url: "/today",
       tag: "yd-morning",
+      kind: "day",
     };
   }
   return {
@@ -150,6 +155,7 @@ export function morningMessage(ctx: DayContext): PushPayload {
         : "Выбери одно действие — этого достаточно.",
     url: "/app",
     tag: "yd-morning",
+    kind: "day",
   };
 }
 
@@ -167,6 +173,7 @@ export function eveningMessage(ctx: DayContext): PushPayload {
       body: `Сегодня закрыто: ${ctx.doneToday}. ${tail}`,
       url: "/today",
       tag: "yd-evening",
+      kind: "day",
     };
   }
   if (ctx.streak > 0) {
@@ -175,6 +182,7 @@ export function eveningMessage(ctx: DayContext): PushPayload {
       body: "Одно небольшое действие — и день закрыт.",
       url: "/app",
       tag: "yd-evening",
+      kind: "day",
     };
   }
   return {
@@ -182,6 +190,7 @@ export function eveningMessage(ctx: DayContext): PushPayload {
     body: "Даже две минуты считаются.",
     url: "/app",
     tag: "yd-evening",
+    kind: "day",
   };
 }
 

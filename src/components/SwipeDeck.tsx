@@ -64,7 +64,9 @@ export default function SwipeDeck({
   const exhausted = visible.length === 0;
 
   return (
-    <div className="flex flex-1 flex-col">
+    // data-no-swipe: колода забирает горизонтальный жест себе. Без этого
+    // «беру / не беру» одновременно листало бы разделы приложения.
+    <div className="flex flex-1 flex-col" data-no-swipe>
       {/* Колода */}
       <div className="relative flex-1" style={{ minHeight: 380 }}>
         <AnimatePresence mode="popLayout">

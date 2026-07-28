@@ -1,20 +1,23 @@
 {
+  "id": "/app",
   "name": "YeahGrind — одно действие в день",
   "short_name": "YeahGrind",
   "description": "Не список задач, а ежедневная подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт персонаж.",
-  "start_url": "/app",
+  "start_url": "/app?source=pwa",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
   "orientation": "portrait",
   "background_color": "#08080b",
   "theme_color": "#08080b",
   "lang": "ru",
   "dir": "ltr",
-  "categories": [
-    "productivity",
-    "lifestyle",
-    "health"
-  ],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "categories": ["productivity", "lifestyle", "health"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -35,16 +38,50 @@
       "purpose": "maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "/shots/deck.png",
+      "sizes": "560x1212",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Колода действий на сегодня"
+    },
+    {
+      "src": "/shots/today.png",
+      "sizes": "560x1212",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "План на день"
+    },
+    {
+      "src": "/shots/progress.png",
+      "sizes": "560x1212",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Прогресс и персонаж"
+    }
+  ],
   "shortcuts": [
     {
       "name": "План на сегодня",
       "short_name": "Сегодня",
-      "url": "/today"
+      "description": "Что взято на день и что осталось закрыть",
+      "url": "/today?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Колода действий",
+      "short_name": "Колода",
+      "description": "Подобрать, что сделать прямо сейчас",
+      "url": "/app?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Прогресс",
       "short_name": "Прогресс",
-      "url": "/progress"
+      "description": "Уровень, стрик и характеристики",
+      "url": "/progress?source=shortcut",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

@@ -1,22 +1,22 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getUserId } from "@/lib/userId";
 import { useUserStore } from "@/store/useUserStore";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
-
-const VAPID_PUBLIC = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
-
-/** base64url → Uint8Array, как требует PushManager. */
-function urlBase64ToUint8Array(base64: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
-  const normalized = (base64 + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(normalized);
-  const out = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-  return out;
-}
+import { haptic } from "@/lib/motion";
+import {
+  clearSchedule,
+  currentSubscription,
+  permissionState,
+  pushSupported,
+  requestPermission,
+  showNow,
+  subscribeToPush,
+  triggersSupported,
+  unsubscribeFromPush,
+} from "@/lib/notify";
+import { TODO_LEAD_MIN } from "@/lib/notifyPlan";
 
 type State =
   | "unsupported" // браузер не умеет (или ключей нет)
@@ -26,103 +26,62 @@ type State =
   | "busy";
 
 /**
- * Включение напоминаний.
+ * Настройки напоминаний.
  *
- * Осознанно НЕ спрашиваем разрешение при первом запуске: браузерный
- * запрос без контекста почти всегда получает «Заблокировать», и второго
- * шанса не будет. Показываем понятную карточку и просим только по нажатию.
+ * Осознанно НЕ спрашиваем разрешение при первом запуске: браузерный запрос
+ * без контекста почти всегда получает «Заблокировать», и второго шанса не
+ * будет. Показываем понятную карточку и просим только по нажатию.
+ *
+ * Управление разделено по СМЫСЛУ, а не по технологии: человеку важно
+ * «дёргать ли меня по ходу задачи», а не «push это или локальный триггер».
+ * Каждый тумблер можно выключить отдельно — иначе первое же неуместное
+ * уведомление выключает всё разом и навсегда.
  */
 export default function PushOptIn() {
   const [state, setState] = useState<State>("busy");
+  const [tested, setTested] = useState(false);
+
   const reminderHour = useUserStore((s) => s.reminderHour);
   const setReminderHour = useUserStore((s) => s.setReminderHour);
+  const notify = useUserStore((s) => s.notify);
+  const setNotify = useUserStore((s) => s.setNotify);
 
-  /** Переподписать с новым часом — подписка уже есть, меняем настройку. */
-  const resubscribe = useCallback(async (hour: number) => {
-    try {
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.getSubscription();
-      if (!sub) return;
-      await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: getUserId(),
-          subscription: sub.toJSON(),
-          tzOffset: new Date().getTimezoneOffset(),
-          morningHour: hour,
-        }),
-      });
-    } catch {
-      // не критично: час сохранён локально и уедет при следующей подписке
-    }
-  }, []);
-
-  const supported =
-    typeof window !== "undefined" &&
-    "serviceWorker" in navigator &&
-    "PushManager" in window &&
-    "Notification" in window &&
-    Boolean(VAPID_PUBLIC);
+  const supported = pushSupported();
 
   useEffect(() => {
     if (!supported) {
       setState("unsupported");
       return;
     }
-    if (Notification.permission === "denied") {
+    if (permissionState() === "denied") {
       setState("denied");
       return;
     }
-    navigator.serviceWorker.ready
-      .then((reg) => reg.pushManager.getSubscription())
-      .then((sub) => setState(sub ? "on" : "off"))
-      .catch(() => setState("off"));
+    void currentSubscription().then((sub) => setState(sub ? "on" : "off"));
   }, [supported]);
 
   const enable = useCallback(async () => {
     setState("busy");
-    try {
-      const permission = await Notification.requestPermission();
-      if (permission !== "granted") {
-        setState(permission === "denied" ? "denied" : "off");
-        return;
-      }
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC) as BufferSource,
-      });
-      const res = await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: getUserId(),
-          subscription: sub.toJSON(),
-          tzOffset: new Date().getTimezoneOffset(),
-          morningHour: reminderHour,
-        }),
-      });
-      setState(res.ok ? "on" : "off");
-      if (res.ok) track("push_enabled");
-    } catch {
-      setState("off");
+    const permission = await requestPermission();
+    if (permission !== "granted") {
+      setState(permission === "denied" ? "denied" : "off");
+      return;
     }
-  }, []);
+    const ok = await subscribeToPush(reminderHour);
+    setState(ok ? "on" : "off");
+    if (ok) {
+      haptic("success");
+      track("push_enabled");
+    }
+  }, [reminderHour]);
 
   const disable = useCallback(async () => {
     setState("busy");
     try {
-      const reg = await navigator.serviceWorker.ready;
-      const sub = await reg.pushManager.getSubscription();
-      if (sub) {
-        await fetch("/api/push/subscribe", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ endpoint: sub.endpoint }),
-        }).catch(() => {});
-        await sub.unsubscribe();
-      }
+      // снимаем и подписку, и всё, что уже запланировано: иначе выключение
+      // «работало бы», но телефон продолжал звенеть по старым триггерам
+      await clearSchedule();
+      await unsubscribeFromPush();
       setState("off");
       track("push_disabled");
     } catch {
@@ -130,17 +89,32 @@ export default function PushOptIn() {
     }
   }, []);
 
+  const test = useCallback(async () => {
+    const ok = await showNow({
+      title: "Так это выглядит",
+      body: "Настоящие напоминания приходят по ходу задачи и по плану дня.",
+      tag: "yd-test",
+    });
+    if (ok) {
+      setTested(true);
+      track("notification_test_sent");
+      window.setTimeout(() => setTested(false), 2500);
+    }
+  }, []);
+
   if (state === "unsupported") return null;
 
+  const on = state === "on";
+
   return (
-    <section className="press rounded-3xl surface p-4">
+    <section className="rounded-3xl surface p-4">
       <div className="flex items-start gap-3">
         <span className="text-xl" aria-hidden>
           🔔
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold">
-            {state === "on" ? "Напоминания включены" : "Напоминания"}
+            {on ? "Напоминания включены" : "Напоминания"}
           </p>
           <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
             {state === "denied" ? (
@@ -148,72 +122,212 @@ export default function PushOptIn() {
                 Уведомления заблокированы в браузере. Включить можно в его
                 настройках для этого сайта.
               </>
-            ) : state === "on" ? (
+            ) : on ? (
               <>
-                Утром — что сделать сегодня, вечером — напоминание закрыть день.
-                Вечернее время подстраивается под то, когда ты обычно
-                занимаешься.
+                Приходят по делу: пока идёт задача, по плану дня и за{" "}
+                {TODO_LEAD_MIN} минут до дел со временем.
               </>
             ) : (
               <>
-                Два коротких напоминания в день: утром — колода, вечером — если
-                день ещё не закрыт. Без спама и не когда попало.
+                Напоминание в момент, когда оно нужно: время задачи вышло, до
+                дела осталось {TODO_LEAD_MIN} минут, день ещё не закрыт. Без
+                спама и не когда попало.
               </>
             )}
           </p>
         </div>
       </div>
 
-      {/* Час утреннего напоминания. Вечерний подбирается автоматически
-          по тому, когда человек реально закрывает действия. */}
       {state !== "denied" && (
-        <div className="mt-3">
-          <p className="mb-2 text-[11.5px] text-[var(--color-muted)]">
-            Утром в{" "}
-            <span className="font-semibold text-[var(--color-fg)]">
-              {String(reminderHour).padStart(2, "0")}:00
-            </span>
-          </p>
-          <div className="grid grid-cols-6 gap-1.5">
-            {[6, 7, 8, 9, 10, 11].map((h) => (
-              <button
-                key={h}
-                onClick={() => {
-                  setReminderHour(h);
-                  if (state === "on") void resubscribe(h);
-                }}
-                className={cn(
-                  "rounded-xl border py-2 text-[12px] tabular-nums transition",
-                  reminderHour === h
-                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
-                    : "border-[var(--color-border)] text-[var(--color-muted)]",
-                )}
-              >
-                {h}
-              </button>
-            ))}
+        <>
+          {/* Час утреннего напоминания. Вечерний подбирается автоматически
+              по тому, когда человек реально закрывает действия. */}
+          <div className="mt-4">
+            <p className="mb-2 text-[11.5px] text-[var(--color-muted)]">
+              Утром в{" "}
+              <span className="font-semibold text-[var(--color-fg)]">
+                {String(reminderHour).padStart(2, "0")}:00
+              </span>
+            </p>
+            <div className="grid grid-cols-6 gap-1.5">
+              {[6, 7, 8, 9, 10, 11].map((h) => (
+                <button
+                  key={h}
+                  type="button"
+                  onClick={() => {
+                    setReminderHour(h);
+                    haptic("select");
+                    if (on) void subscribeToPush(h);
+                  }}
+                  className={cn(
+                    "rounded-xl border py-2 text-[12px] tabular-nums transition",
+                    reminderHour === h
+                      ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                      : "border-[var(--color-border)] text-[var(--color-muted)]",
+                  )}
+                >
+                  {h}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
 
-      {state !== "denied" && (
-        <button
-          onClick={state === "on" ? disable : enable}
-          disabled={state === "busy"}
-          className={cn(
-            "mt-3 h-11 w-full rounded-2xl text-[14px] font-semibold transition active:scale-[0.99] disabled:opacity-60",
-            state === "on"
-              ? "border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-muted)]"
-              : "bg-[var(--color-fg)] text-[var(--color-bg)]",
+          {/* Что именно присылать */}
+          <div className="mt-4 flex flex-col gap-1">
+            <Toggle
+              label="Ритм дня"
+              hint="Утром — колода, вечером — если день не закрыт"
+              value={notify.daily}
+              onChange={(v) => setNotify({ daily: v })}
+            />
+            <Toggle
+              label="Ход задачи"
+              hint="Половина времени, время вышло, задача застряла"
+              value={notify.tasks}
+              onChange={(v) => setNotify({ tasks: v })}
+            />
+            <Toggle
+              label="Дела со временем"
+              hint={`За ${TODO_LEAD_MIN} минут до начала`}
+              value={notify.todos}
+              onChange={(v) => setNotify({ todos: v })}
+            />
+          </div>
+
+          {/* Тихие часы */}
+          <div className="mt-4 rounded-2xl bg-[var(--color-surface-2)] p-3">
+            <p className="text-[12px] font-semibold">Не беспокоить</p>
+            <p className="mt-0.5 text-[11px] leading-snug text-[var(--color-muted)]">
+              Ночные напоминания о задачах отменяются, дела со временем
+              переносятся на утро.
+            </p>
+            <div className="mt-2.5 flex items-center gap-2">
+              <HourSelect
+                label="с"
+                value={notify.quietFrom}
+                onChange={(v) => setNotify({ quietFrom: v })}
+              />
+              <HourSelect
+                label="до"
+                value={notify.quietTo}
+                onChange={(v) => setNotify({ quietTo: v })}
+              />
+            </div>
+          </div>
+
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              onClick={on ? disable : enable}
+              disabled={state === "busy"}
+              className={cn(
+                "h-11 flex-1 rounded-2xl text-[14px] font-semibold transition active:scale-[0.99] disabled:opacity-60",
+                on
+                  ? "border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-muted)]"
+                  : "bg-[var(--color-fg)] text-[var(--color-bg)]",
+              )}
+            >
+              {state === "busy" ? "…" : on ? "Выключить" : "Включить напоминания"}
+            </button>
+
+            {on && (
+              // Проверка — не игрушка: на iOS уведомления приходят только
+              // установленному приложению, и без кнопки человек узнавал бы
+              // об этом через неделю тишины.
+              <button
+                type="button"
+                onClick={test}
+                className="h-11 shrink-0 rounded-2xl border border-[var(--color-border)] px-4 text-[13px] font-medium text-[var(--color-fg-dim)] transition active:scale-[0.99]"
+              >
+                {tested ? "Отправлено" : "Проверить"}
+              </button>
+            )}
+          </div>
+
+          {on && !triggersSupported() && (
+            <p className="mt-2.5 text-[10.5px] leading-snug text-[var(--color-muted)]">
+              На этом устройстве напоминания приходят через сервер: если
+              приложение установлено на домашний экран, они работают и когда
+              оно закрыто.
+            </p>
           )}
-        >
-          {state === "busy"
-            ? "…"
-            : state === "on"
-              ? "Выключить напоминания"
-              : "Включить напоминания"}
-        </button>
+        </>
       )}
     </section>
+  );
+}
+
+/** Переключатель настройки: подпись, пояснение и сам тумблер. */
+function Toggle({
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  label: string;
+  hint: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={value}
+      onClick={() => {
+        haptic("select");
+        onChange(!value);
+      }}
+      className="flex items-center gap-3 rounded-2xl px-1 py-2 text-left transition active:scale-[0.99]"
+    >
+      <span className="min-w-0 flex-1">
+        <span className="block text-[12.5px] font-medium">{label}</span>
+        <span className="mt-0.5 block text-[11px] leading-snug text-[var(--color-muted)]">
+          {hint}
+        </span>
+      </span>
+      <span
+        className={cn(
+          "relative h-6 w-10 shrink-0 rounded-full transition-colors",
+          value
+            ? "bg-[var(--color-stability)]"
+            : "bg-[var(--color-surface-2)] border border-[var(--color-border)]",
+        )}
+      >
+        <span
+          className={cn(
+            "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform",
+            value ? "translate-x-[18px]" : "translate-x-0.5",
+          )}
+        />
+      </span>
+    </button>
+  );
+}
+
+function HourSelect({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <label className="flex flex-1 items-center gap-2 text-[11.5px] text-[var(--color-muted)]">
+      {label}
+      <select
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[12.5px] tabular-nums text-[var(--color-fg)]"
+      >
+        {Array.from({ length: 24 }, (_, h) => (
+          <option key={h} value={h}>
+            {String(h).padStart(2, "0")}:00
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }

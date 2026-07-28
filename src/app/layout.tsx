@@ -25,6 +25,14 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "YeahGrind",
   },
+  // На iOS автоопределение превращает числа в телефонные ссылки — в
+  // приложении про XP и стрики это выглядит как баг.
+  formatDetection: { telephone: false, date: false, address: false },
+  other: {
+    // современный аналог apple-mobile-web-app-capable; Android и десктоп
+    // ориентируются именно на него
+    "mobile-web-app-capable": "yes",
+  },
   icons: {
     icon: [
       { url: "/favicon.png", sizes: "64x64", type: "image/png" },
@@ -41,7 +49,12 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  // под вырез и домашнюю полосу: контент рисуется во весь экран, отступы
+  // добавляем сами через env(safe-area-inset-*)
   viewportFit: "cover",
+  // клавиатура сжимает контент, а не наезжает на него: поля ввода в
+  // модалках перестают прятаться под ней
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

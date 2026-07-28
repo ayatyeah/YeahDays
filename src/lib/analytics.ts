@@ -70,6 +70,9 @@ export type AnalyticsEvent =
   | "retro_submitted"
   | "push_enabled"
   | "push_disabled"
+  | "notification_completed"
+  | "notification_snoozed"
+  | "notification_test_sent"
   | "share_created"
   | "signed_in"
   | "streak_saved_by_freeze";

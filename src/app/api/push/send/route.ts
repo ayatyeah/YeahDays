@@ -22,6 +22,7 @@ import {
   type DayContext,
   type PushPayload,
 } from "@/lib/push";
+import { DEFAULT_NOTIFY, inQuietHours } from "@/lib/notifyPlan";
 import { nextGoal } from "@/lib/milestone";
 
 export const runtime = "nodejs";
@@ -36,6 +37,17 @@ interface SnapshotShape {
   }[];
   freezes?: { days?: string[] };
   dailyGoal?: number;
+  notify?: {
+    daily?: boolean;
+    quietFrom?: number;
+    quietTo?: number;
+  };
+}
+
+/** Настройки уведомлений живут в снимке состояния, отдельной таблицы нет. */
+function prefsOf(data: unknown) {
+  const snap = (data ?? {}) as SnapshotShape;
+  return { ...DEFAULT_NOTIFY, ...(snap.notify ?? {}) };
 }
 
 function authorized(req: Request): boolean {
@@ -113,6 +125,13 @@ export async function POST(req: Request) {
     for (const sub of subs) {
       const hour = localHour(sub.tzOffset, now);
       const today = localDateKey(sub.tzOffset, now);
+
+      const prefs = prefsOf(sub.user?.state?.data);
+      // человек выключил ритм дня или спит — ничего не шлём
+      if (!prefs.daily || inQuietHours(hour, prefs.quietFrom, prefs.quietTo)) {
+        skipped++;
+        continue;
+      }
 
       const kind =
         hour === sub.morningHour

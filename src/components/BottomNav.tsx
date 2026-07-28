@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { spring, springSnappy } from "@/lib/motion";
+import { haptic, spring, springSnappy } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
+import { useNavStore } from "@/store/useNavStore";
+import type { TabKey } from "@/lib/nav";
 import { useMemo } from "react";
 
 type IconProps = { className?: string };
@@ -70,15 +70,16 @@ function AccountIcon({ className }: IconProps) {
 }
 
 const NAV = [
-  { href: "/app", label: "Главная", Icon: HomeIcon },
-  { href: "/today", label: "Сегодня", Icon: TodayIcon },
-  { href: "/calendar", label: "Календарь", Icon: CalendarIcon },
-  { href: "/progress", label: "Прогресс", Icon: ProgressIcon },
-  { href: "/account", label: "Профиль", Icon: AccountIcon },
-] as const;
+  { tab: "home", label: "Главная", Icon: HomeIcon },
+  { tab: "today", label: "Сегодня", Icon: TodayIcon },
+  { tab: "calendar", label: "Календарь", Icon: CalendarIcon },
+  { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
+  { tab: "account", label: "Профиль", Icon: AccountIcon },
+] as const satisfies readonly { tab: TabKey; label: string; Icon: React.FC<IconProps> }[];
 
 export default function BottomNav() {
-  const pathname = usePathname();
+  const tab = useNavStore((s) => s.tab);
+  const go = useNavStore((s) => s.go);
   const hydrated = useHydrated();
   const onboarded = useUserStore((s) => s.onboarded);
   const plan = useUserStore((s) => s.plan);
@@ -100,13 +101,21 @@ export default function BottomNav() {
             Блюр здесь дешёвый: панель низкая и в своём слое (gpu-layer),
             поэтому пересчитывается только её полоса, а не весь экран. */}
         <div className="liquid-bar gpu-layer safe-b flex items-stretch px-1.5 pb-0.5 pt-2">
-          {NAV.map(({ href, label, Icon }) => {
-            const active = pathname === href;
-            const badge = href === "/today" && pending > 0 ? pending : 0;
+          {NAV.map(({ tab: key, label, Icon }) => {
+            const active = tab === key;
+            const badge = key === "today" && pending > 0 ? pending : 0;
             return (
-              <Link
-                key={href}
-                href={href}
+              <button
+                key={key}
+                type="button"
+                // Переключение раздела, а не переход по ссылке: никакой
+                // навигации, никакого запроса — только смена видимой секции.
+                onClick={() => {
+                  if (!active) haptic("select");
+                  go(key);
+                }}
+                aria-current={active ? "page" : undefined}
+                aria-label={label}
                 className={cn(
                   "press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-1.5 text-[9.5px] font-medium",
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
@@ -139,7 +148,7 @@ export default function BottomNav() {
                   )}
                 </motion.span>
                 <span>{label}</span>
-              </Link>
+              </button>
             );
           })}
         </div>

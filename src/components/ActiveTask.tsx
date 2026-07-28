@@ -47,6 +47,7 @@ export default function ActiveTask({
   // насколько уложился в заявленную длительность
   const planned = task.snapshot.duration * 60_000;
   const over = planned > 0 && elapsed > planned;
+  const ratio = planned > 0 ? Math.min(1, elapsed / planned) : 0;
 
   return (
     <motion.section
@@ -95,6 +96,25 @@ export default function ActiveTask({
             {over ? "дольше плана" : "идёт"}
           </span>
         </div>
+
+        {/* Полоса времени. Цифры показывают, СКОЛЬКО прошло, но не отвечают
+            на главный вопрос — «много это или мало от задуманного». Полоса
+            отвечает с одного взгляда и заранее готовит к тому, что в конце
+            прилетит напоминание. */}
+        {planned > 0 && (
+          <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+            <motion.div
+              className="h-full rounded-full"
+              style={{
+                background: over ? "var(--color-strength)" : accent,
+                originX: 0,
+              }}
+              initial={false}
+              animate={{ scaleX: over ? 1 : ratio }}
+              transition={{ duration: 0.6, ease: "linear" }}
+            />
+          </div>
+        )}
 
         <button
           onClick={onDone}

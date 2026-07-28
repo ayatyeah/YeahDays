@@ -27,6 +27,7 @@ model User {
   events        Event[]
   state         UserState?
   pushSubs      PushSubscription[]
+  scheduled     ScheduledNotification[]
 }
 
 // Подписка устройства на web-push. У одного пользователя может быть
@@ -56,6 +57,39 @@ model PushSubscription {
 
   @@index([userId])
   @@index([enabled])
+}
+
+// Уведомление, поставленное на конкретное время: «время задачи вышло»,
+// «через 5 минут созвон». Существует потому, что не все браузеры умеют
+// планировать уведомления сами (Notification Triggers есть только в
+// Chrome/Android). Там, где не умеют, момент показа держит сервер.
+//
+// key — идемпотентность: расписание пересобирается на каждое изменение
+// плана, и без него на одну задачу накапливались бы десятки строк.
+model ScheduledNotification {
+  id        String    @id @default(cuid())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// ключ вида task:<id>:end или todo:<id>:<дата>
+  key       String
+  /// когда показать
+  fireAt    DateTime
+  title     String
+  body      String
+  /// куда вести по нажатию
+  url       String    @default("/app")
+  /// task | todo | day — для настроек и аналитики
+  kind      String    @default("task")
+  /// задача плана, если уведомление про неё (кнопка «Сделал»)
+  taskId    String?
+  /// проставляется после успешной отправки — второй раз не шлём
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([userId, key])
+  @@index([fireAt, sentAt])
+  @@index([userId])
 }
 
 // Снимок клиентского состояния (план/цели/настроение/история) для

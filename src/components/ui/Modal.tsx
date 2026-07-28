@@ -33,9 +33,13 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
+    // пока лист открыт, свайп между разделами выключен: иначе жест внутри
+    // модалки уводил бы экран из-под неё
+    document.body.dataset.modalOpen = "1";
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      delete document.body.dataset.modalOpen;
     };
   }, [open, onClose]);
 

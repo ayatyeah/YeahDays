@@ -5,6 +5,8 @@ import BottomNav from "./BottomNav";
 import InstallPrompt from "./InstallPrompt";
 import PageTransition from "./PageTransition";
 import WhatsNew from "./WhatsNew";
+import NotificationCenter from "./NotificationCenter";
+import { tabFromPath } from "@/lib/nav";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
 const MARKETING = ["/", "/terms", "/privacy"];
@@ -19,10 +21,16 @@ const MARKETING = ["/", "/terms", "/privacy"];
  * — витрина: полная ширина, без навигации и без баннера установки.
  *   Лендинг, зажатый в 448px на десктопе, выглядит как сайт из 2010-го —
  *   именно ширина, а не цвета, выдаёт «непрофессионально» в первую секунду.
+ *
+ * Внутри приложения есть третий случай — разделы оболочки (AppShell).
+ * Они переключаются без навигации и анимируют себя сами, поэтому обёртка
+ * PageTransition для них не нужна: два перехода на один жест — это
+ * заметная задержка и двойное движение.
  */
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isMarketing = MARKETING.includes(pathname);
+  const isSection = tabFromPath(pathname) !== null;
 
   if (isMarketing) {
     return <div className="min-h-dvh">{children}</div>;
@@ -39,11 +47,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           paddingBottom: "calc(6rem + var(--install-offset, 0px))",
         }}
       >
-        <PageTransition>{children}</PageTransition>
+        {isSection ? children : <PageTransition>{children}</PageTransition>}
       </div>
       <BottomNav />
       <InstallPrompt />
       <WhatsNew />
+      <NotificationCenter />
     </>
   );
 }

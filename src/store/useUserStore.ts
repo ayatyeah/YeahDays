@@ -20,6 +20,7 @@ import { emptyHistory, type HistorySignals } from "@/lib/recommendation";
 import { levelForXp } from "@/lib/leveling";
 import { addSample } from "@/lib/durations";
 import { ALL_FEATURE_IDS } from "@/lib/features";
+import { DEFAULT_NOTIFY, type NotifyPrefs } from "@/lib/notifyPlan";
 
 /* ────────────────────────  Типы  ──────────────────────── */
 
@@ -353,6 +354,8 @@ interface UserState {
   schedule: Record<string, Record<string, string>>;
   /** собственные задачи пользователя */
   todos: Todo[];
+  /** что и когда напоминать */
+  notify: NotifyPrefs;
 
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
@@ -377,6 +380,7 @@ interface UserState {
   removeQuest: (id: string) => void;
   setRetro: (day: string, retro: DayRetro) => void;
   setReminderHour: (hour: number) => void;
+  setNotify: (patch: Partial<NotifyPrefs>) => void;
   setDailyGoal: (n: number) => void;
   toggleExcludedCategory: (c: CategoryKey) => void;
   setSlotEnergy: (slot: "morning" | "afternoon" | "evening", e: EnergyLevel) => void;
@@ -434,6 +438,7 @@ export interface SyncData {
   disabledActions: string[];
   schedule: Record<string, Record<string, string>>;
   todos: Todo[];
+  notify: NotifyPrefs;
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
@@ -450,6 +455,7 @@ export function pickSync(s: SyncData): SyncData {
     disabledActions: s.disabledActions,
     schedule: s.schedule,
     todos: s.todos,
+    notify: s.notify,
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -507,6 +513,9 @@ const initial = {
   disabledActions: [] as string[],
   schedule: {} as Record<string, Record<string, string>>,
   todos: [] as Todo[],
+  // Настройки уведомлений синхронизируются вместе с остальным состоянием:
+  // человек выключил ночные напоминания на телефоне — на планшете тоже тихо.
+  notify: { ...DEFAULT_NOTIFY } as NotifyPrefs,
 };
 
 export const useUserStore = create<UserState>()(
@@ -740,6 +749,9 @@ export const useUserStore = create<UserState>()(
       setReminderHour: (hour) =>
         touch({ reminderHour: Math.min(23, Math.max(0, Math.round(hour))) }),
 
+      setNotify: (patch) =>
+        touch((s) => ({ notify: { ...s.notify, ...patch } })),
+
       setDailyGoal: (n) =>
         touch({ dailyGoal: Math.min(10, Math.max(1, Math.round(n))) }),
 
@@ -953,6 +965,7 @@ export const useUserStore = create<UserState>()(
               evening: "high" as EnergyLevel,
               ...obj(d.energyProfile, {}),
             },
+            notify: { ...DEFAULT_NOTIFY, ...obj(d.notify, {}) },
             plan: arr(d.plan, []),
             todos: arr(d.todos, []),
             challenges: arr(d.challenges, []),
@@ -970,7 +983,7 @@ export const useUserStore = create<UserState>()(
     },
     {
       name: "yeahdays-store",
-      version: 12,
+      version: 13,
       /** Миграция со старых схем — данные не теряем. */
       migrate: (state, version) => {
         const old = (state ?? {}) as Record<string, unknown>;
@@ -1004,6 +1017,14 @@ export const useUserStore = create<UserState>()(
             schedule:
               st.schedule && typeof st.schedule === "object" ? st.schedule : {},
             todos: Array.isArray(st.todos) ? st.todos : [],
+            // notify появился в v13: старым аккаунтам включаем всё по
+            // умолчанию — они уже дали разрешение на уведомления осознанно
+            notify: {
+              ...DEFAULT_NOTIFY,
+              ...(st.notify && typeof st.notify === "object"
+                ? (st.notify as Partial<NotifyPrefs>)
+                : {}),
+            },
             // существующему аккаунту список показываем: он застал онбординг
             // без этих разделов
             seenFeatures: Array.isArray(st.seenFeatures) ? st.seenFeatures : [],

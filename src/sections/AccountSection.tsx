@@ -115,7 +115,7 @@ export default function AccountSection() {
 
       {/* Голосовой помощник ДиДи — статус фонового процесса на ноуте */}
       <div className="mt-3">
-        <DidiPanel />
+        <DidiPanel linkToFull />
       </div>
 
       {/* Заморозки — страховка стрика */}

@@ -30,6 +30,7 @@ model User {
   scheduled     ScheduledNotification[]
   assistantStatus AssistantStatus?
   assistantEvents AssistantEvent[]
+  assistantChat   AssistantChat[]
 }
 
 // Живой статус фонового процесса ДиДи: раз в ~15с шлёт heartbeat сюда,
@@ -59,6 +60,27 @@ model AssistantEvent {
   createdAt DateTime @default(now())
 
   @@index([userId, createdAt])
+}
+
+// Текстовая переписка со страницы /didi. Браузер и процесс ДиДи не
+// соединяются друг с другом напрямую (та же причина, что у AssistantStatus:
+// HTTPS-страница не достучится до локального HTTP-процесса) — оба пишут и
+// читают через эту таблицу на сервере. role="user" пишет браузер
+// (/api/assistant/chat, сессия), role="assistant" пишет ДиДи
+// (/api/assistant/chat/reply, ASSISTANT_SECRET). pulledAt — когда ДиДи
+// забрала сообщение в обработку; NULL — ещё в очереди.
+model AssistantChat {
+  id        String    @id @default(cuid())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// user | assistant
+  role      String
+  content   String
+  pulledAt  DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, role, pulledAt])
 }
 
 // Подписка устройства на web-push. У одного пользователя может быть

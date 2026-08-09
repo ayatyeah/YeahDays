@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { getUserId } from "@/lib/userId";
 import { cn } from "@/lib/cn";
 
@@ -44,7 +45,7 @@ function timeAgo(ts: number): string {
  * процесс локально на HTTP), поэтому оба говорят с одним и тем же
  * сервером, а не друг с другом напрямую.
  */
-export default function DidiPanel() {
+export default function DidiPanel({ linkToFull = false }: { linkToFull?: boolean }) {
   const [state, setState] = useState<PanelState | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -151,6 +152,15 @@ export default function DidiPanel() {
             </li>
           ))}
         </ul>
+      )}
+
+      {linkToFull && (
+        <Link
+          href="/didi"
+          className="mt-3.5 block border-t border-[var(--color-border)] pt-3 text-center text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+        >
+          Открыть чат и полную историю →
+        </Link>
       )}
     </section>
   );

@@ -21,9 +21,6 @@ export const config = {
   ttsModel: process.env.OPENAI_TTS_MODEL ?? "gpt-4o-mini-tts",
   ttsVoice: process.env.OPENAI_TTS_VOICE ?? "alloy",
 
-  picovoiceAccessKey: required("PICOVOICE_ACCESS_KEY"),
-  keywordPath: required("PORCUPINE_KEYWORD_PATH"),
-
   yeahgrindBaseUrl: (process.env.YEAHGRIND_BASE_URL ?? "http://localhost:3000").replace(
     /\/+$/,
     "",

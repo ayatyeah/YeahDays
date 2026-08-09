@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import PushOptIn from "@/components/PushOptIn";
+import DidiPanel from "@/components/DidiPanel";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
 import DataControls from "@/components/DataControls";
@@ -110,6 +111,11 @@ export default function AccountSection() {
       {/* Напоминания */}
       <div className="mt-3">
         <PushOptIn />
+      </div>
+
+      {/* Голосовой помощник ДиДи — статус фонового процесса на ноуте */}
+      <div className="mt-3">
+        <DidiPanel />
       </div>
 
       {/* Заморозки — страховка стрика */}

@@ -5,6 +5,8 @@ import { say } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
 import { TOOLS, TOOL_SPECS } from "./tools.js";
 import { SYSTEM_PROMPT, GREETING } from "./systemPrompt.js";
+import { startPresenceLoop, isEnabled } from "./presence.js";
+import { logEvent } from "./yeahgrind.js";
 
 /** Предохранитель от зацикливания модели на вызовах инструментов. */
 const MAX_TOOL_ROUNDS = 6;
@@ -49,8 +51,10 @@ async function runConversation(
           } else {
             result = await toolDef.execute(args);
           }
+          void logEvent("tool", `${call.function.name}: ${result.slice(0, 300)}`);
         } catch (e) {
           result = `Ошибка: ${e instanceof Error ? e.message : String(e)}`;
+          void logEvent("error", `${call.function.name}: ${result}`);
         }
       }
 
@@ -62,8 +66,13 @@ async function runConversation(
 }
 
 async function main() {
+  startPresenceLoop();
   console.log("ДиДи запущена. Жду кодовое слово…");
   await runWakeLoop(async (recordCommand) => {
+    if (!isEnabled()) {
+      console.log("[ДиДи] на паузе (выключено из панели в браузере) — игнорирую пробуждение");
+      return;
+    }
     await say(GREETING);
 
     const commandWav = await recordCommand();
@@ -73,8 +82,10 @@ async function main() {
       return;
     }
     console.log(`[вы] ${text}`);
+    void logEvent("heard", text);
 
     const reply = await runConversation(text, recordCommand);
+    void logEvent("reply", reply);
     await say(reply);
   });
 }

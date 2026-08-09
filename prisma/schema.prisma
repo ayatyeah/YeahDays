@@ -28,6 +28,37 @@ model User {
   state         UserState?
   pushSubs      PushSubscription[]
   scheduled     ScheduledNotification[]
+  assistantStatus AssistantStatus?
+  assistantEvents AssistantEvent[]
+}
+
+// Живой статус фонового процесса ДиДи: раз в ~15с шлёт heartbeat сюда,
+// панель в профиле по свежести lastSeenAt решает online/offline. enabled —
+// переключатель ИЗ браузера: ДиДи вычитывает его при каждом heartbeat и
+// молчит на кодовое слово, если выключен. Один процесс на пользователя,
+// поэтому одна строка, не лог.
+model AssistantStatus {
+  userId     String    @id
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastSeenAt DateTime?
+  enabled    Boolean   @default(true)
+  updatedAt  DateTime  @updatedAt
+}
+
+// Лента того, что ДиДи услышала/сделала/ответила — для панели в профиле.
+// Не путать с ScheduledNotification (та — про push, эта — про голосового
+// помощника). Храним ограниченное число записей на пользователя (обрезка
+// при вставке), это журнал для UI, а не аудит на годы.
+model AssistantEvent {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  /// heard | reply | tool | error
+  kind      String
+  text      String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 // Подписка устройства на web-push. У одного пользователя может быть

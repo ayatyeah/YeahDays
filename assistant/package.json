@@ -2,7 +2,7 @@
   "name": "didi-assistant",
   "version": "0.1.0",
   "private": true,
-  "description": "ДиДи — голосовой помощник на OpenAI: wake-word, управление ноутом, задачи и настроение YeahGrind.",
+  "description": "ДиДи — голосовой помощник на OpenAI: кодовое слово через распознавание речи, управление ноутом, задачи и настроение YeahGrind.",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -14,7 +14,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@picovoice/porcupine-node": "^3.0.3",
     "@picovoice/pvrecorder-node": "^1.2.4",
     "dotenv": "^16.4.5",
     "openai": "^4.104.0"

@@ -1,16 +1,15 @@
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech } from "./audio.js";
-import { chatStep, transcribeWav } from "./openai.js";
+import { transcribeWav } from "./openai.js";
 import { say, bindRecorder } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
-import { TOOLS, TOOL_SPECS } from "./tools.js";
-import { SYSTEM_PROMPT, GREETING } from "./systemPrompt.js";
+import { GREETING } from "./systemPrompt.js";
 import { startPresenceLoop, isEnabled } from "./presence.js";
 import { logEvent } from "./yeahgrind.js";
 import { logHeard } from "./heardLog.js";
+import { runConversationTurn, trimHistory, freshHistory } from "./conversation.js";
+import { startChatLoop } from "./chat.js";
 
-/** Предохранитель от зацикливания модели на вызовах инструментов за один ход. */
-const MAX_TOOL_ROUNDS = 6;
 /**
  * Кодовая фраза ищется распознаванием речи (Whisper понимает русский), а
  * не локальным классификатором — ни Picovoice, ни openWakeWord не умеют
@@ -32,8 +31,6 @@ const MAX_EDIT_DISTANCE = 2;
  * плата за "не повторять кодовое слово каждый раз".
  */
 const MEMORY_WINDOW_MS = Number(process.env.MEMORY_WINDOW_MINUTES ?? "5") * 60_000;
-/** Не даём истории расти бесконечно в длинной сессии — округляем до системного + последние N. */
-const MAX_HISTORY_MESSAGES = 24;
 
 function levenshtein(a: string, b: string): number {
   const dp: number[][] = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
@@ -76,71 +73,10 @@ function extractAfterWake(text: string): string | null {
     .trim();
 }
 
-/**
- * Один ход диалога поверх переданной истории (мутирует её же — так
- * следующий вызов в рамках окна памяти видит весь предыдущий обмен).
- * Возвращает финальный текстовый ответ.
- */
-async function runConversationTurn(
-  history: ChatCompletionMessageParam[],
-  userText: string,
-  recordCommand: () => Promise<Buffer>,
-): Promise<string> {
-  history.push({ role: "user", content: userText });
-
-  for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const msg = await chatStep(history, TOOL_SPECS);
-    history.push(msg as ChatCompletionMessageParam);
-
-    if (!msg.tool_calls || msg.tool_calls.length === 0) {
-      return msg.content?.trim() || "Готово.";
-    }
-
-    for (const call of msg.tool_calls) {
-      if (call.type !== "function") continue;
-      const toolDef = TOOLS[call.function.name];
-      let result: string;
-
-      if (!toolDef) {
-        result = `Неизвестный инструмент: ${call.function.name}`;
-      } else {
-        let args: Record<string, unknown> = {};
-        try {
-          args = JSON.parse(call.function.arguments || "{}");
-        } catch {
-          // модель иногда возвращает битый JSON — не роняем весь разговор
-        }
-        try {
-          if (toolDef.destructive) {
-            const confirmed = await confirmVoice(toolDef.describe(args), recordCommand);
-            result = confirmed
-              ? await toolDef.execute(args)
-              : "Отменено пользователем — действие не выполнено.";
-          } else {
-            result = await toolDef.execute(args);
-          }
-          void logEvent("tool", `${call.function.name}: ${result.slice(0, 300)}`);
-        } catch (e) {
-          result = `Ошибка: ${e instanceof Error ? e.message : String(e)}`;
-          void logEvent("error", `${call.function.name}: ${result}`);
-        }
-      }
-
-      history.push({ role: "tool", tool_call_id: call.id, content: result });
-    }
-  }
-
-  return "Слишком много шагов подряд — останавливаюсь, чтобы не зациклиться.";
-}
-
-/** system + последние MAX_HISTORY_MESSAGES — не даём истории расти бесконечно. */
-function trimHistory(history: ChatCompletionMessageParam[]): ChatCompletionMessageParam[] {
-  if (history.length <= MAX_HISTORY_MESSAGES + 1) return history;
-  return [history[0]!, ...history.slice(-MAX_HISTORY_MESSAGES)];
-}
-
 async function main() {
   startPresenceLoop();
+  void startChatLoop(); // текстовый чат страницы /didi — независимо от голосового цикла ниже
+
   const recorder = createRecorder();
   bindRecorder(recorder);
   await calibrateSilenceThreshold(recorder);
@@ -167,6 +103,9 @@ async function main() {
 
     if (continuing) {
       commandText = text;
+      console.log(`[вы, продолжение] ${text}`);
+      void logEvent("heard", text);
+      void logHeard(wav, text);
     } else {
       const remainder = extractAfterWake(text);
       if (remainder === null) {
@@ -195,16 +134,11 @@ async function main() {
         console.log(`[вы] ${commandText}`);
         void logHeard(cmdWav, commandText);
       }
-      history = [{ role: "system", content: SYSTEM_PROMPT }]; // новый разговор
+      history = freshHistory(); // новый разговор
     }
 
-    if (continuing) {
-      console.log(`[вы, продолжение] ${text}`);
-      void logEvent("heard", text);
-      void logHeard(wav, text);
-    }
-
-    const reply = await runConversationTurn(history!, commandText, () => recordSpeech(recorder));
+    const recordCommand = () => recordSpeech(recorder);
+    const reply = await runConversationTurn(history!, commandText, (q) => confirmVoice(q, recordCommand));
     history = trimHistory(history!);
     conversationDeadline = Date.now() + MEMORY_WINDOW_MS;
 

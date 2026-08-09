@@ -9,7 +9,7 @@ import { startPresenceLoop, isEnabled } from "./presence.js";
 import { logEvent } from "./yeahgrind.js";
 import { logHeard } from "./heardLog.js";
 
-/** Предохранитель от зацикливания модели на вызовах инструментов. */
+/** Предохранитель от зацикливания модели на вызовах инструментов за один ход. */
 const MAX_TOOL_ROUNDS = 6;
 /**
  * Кодовая фраза ищется распознаванием речи (Whisper понимает русский), а
@@ -22,6 +22,18 @@ const MAX_TOOL_ROUNDS = 6;
  */
 const WAKE_VARIANTS = ["джарвис", "жарвис", "jarvis"];
 const MAX_EDIT_DISTANCE = 2;
+
+/**
+ * Память диалога: сколько молчания считаем "надолго" и разговор закончен.
+ * Пока не истекло — следующая фраза идёт в тот же контекст БЕЗ повторного
+ * "Джарвис". Дальше по счётчику: любая тишина комнаты, которую распознает
+ * как фразу и ошибочно сочтёт обращённой к ДиДи (см. предупреждение в
+ * README про ложные срабатывания STT), в этом окне тоже попадёт в диалог —
+ * плата за "не повторять кодовое слово каждый раз".
+ */
+const MEMORY_WINDOW_MS = Number(process.env.MEMORY_WINDOW_MINUTES ?? "5") * 60_000;
+/** Не даём истории расти бесконечно в длинной сессии — округляем до системного + последние N. */
+const MAX_HISTORY_MESSAGES = 24;
 
 function levenshtein(a: string, b: string): number {
   const dp: number[][] = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
@@ -64,18 +76,21 @@ function extractAfterWake(text: string): string | null {
     .trim();
 }
 
-async function runConversation(
+/**
+ * Один ход диалога поверх переданной истории (мутирует её же — так
+ * следующий вызов в рамках окна памяти видит весь предыдущий обмен).
+ * Возвращает финальный текстовый ответ.
+ */
+async function runConversationTurn(
+  history: ChatCompletionMessageParam[],
   userText: string,
   recordCommand: () => Promise<Buffer>,
 ): Promise<string> {
-  const messages: ChatCompletionMessageParam[] = [
-    { role: "system", content: SYSTEM_PROMPT },
-    { role: "user", content: userText },
-  ];
+  history.push({ role: "user", content: userText });
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const msg = await chatStep(messages, TOOL_SPECS);
-    messages.push(msg as ChatCompletionMessageParam);
+    const msg = await chatStep(history, TOOL_SPECS);
+    history.push(msg as ChatCompletionMessageParam);
 
     if (!msg.tool_calls || msg.tool_calls.length === 0) {
       return msg.content?.trim() || "Готово.";
@@ -111,11 +126,17 @@ async function runConversation(
         }
       }
 
-      messages.push({ role: "tool", tool_call_id: call.id, content: result });
+      history.push({ role: "tool", tool_call_id: call.id, content: result });
     }
   }
 
   return "Слишком много шагов подряд — останавливаюсь, чтобы не зациклиться.";
+}
+
+/** system + последние MAX_HISTORY_MESSAGES — не даём истории расти бесконечно. */
+function trimHistory(history: ChatCompletionMessageParam[]): ChatCompletionMessageParam[] {
+  if (history.length <= MAX_HISTORY_MESSAGES + 1) return history;
+  return [history[0]!, ...history.slice(-MAX_HISTORY_MESSAGES)];
 }
 
 async function main() {
@@ -124,6 +145,9 @@ async function main() {
   bindRecorder(recorder);
   await calibrateSilenceThreshold(recorder);
   console.log('ДиДи запущена. Слушаю — скажи "Джарвис" в любой фразе.');
+
+  let history: ChatCompletionMessageParam[] | null = null;
+  let conversationDeadline = 0;
 
   for (;;) {
     const wav = await recordUntilSilence(recorder);
@@ -138,36 +162,52 @@ async function main() {
     }
     if (!text) continue;
 
-    const remainder = extractAfterWake(text);
-    if (remainder === null) {
-      console.log(`[распознала, но не кодовое слово] "${text}"`);
-      continue;
-    }
+    const continuing = history !== null && Date.now() < conversationDeadline;
+    let commandText: string;
 
-    if (!isEnabled()) {
-      console.log("[ДиДи] на паузе (выключено из панели в браузере) — игнорирую");
-      continue;
-    }
-
-    console.log(`[вы] ${text}`);
-    void logEvent("heard", text);
-    void logHeard(wav, text);
-
-    let commandText = remainder;
-    if (commandText.length < 2) {
-      // сказали только кодовое слово — здороваемся и отдельно слушаем команду
-      await say(GREETING);
-      const cmdWav = await recordSpeech(recorder);
-      commandText = await transcribeWav(cmdWav);
-      if (!commandText || commandText.trim().length < 2) {
-        await say("Не расслышала, повтори, пожалуйста.");
+    if (continuing) {
+      commandText = text;
+    } else {
+      const remainder = extractAfterWake(text);
+      if (remainder === null) {
+        console.log(`[распознала, но не кодовое слово] "${text}"`);
         continue;
       }
-      console.log(`[вы] ${commandText}`);
-      void logHeard(cmdWav, commandText);
+      if (!isEnabled()) {
+        console.log("[ДиДи] на паузе (выключено из панели в браузере) — игнорирую");
+        continue;
+      }
+
+      console.log(`[вы] ${text}`);
+      void logEvent("heard", text);
+      void logHeard(wav, text);
+
+      commandText = remainder;
+      if (commandText.length < 2) {
+        // сказали только кодовое слово — здороваемся и отдельно слушаем команду
+        await say(GREETING);
+        const cmdWav = await recordSpeech(recorder);
+        commandText = await transcribeWav(cmdWav);
+        if (!commandText || commandText.trim().length < 2) {
+          await say("Не расслышала, повтори, пожалуйста.");
+          continue;
+        }
+        console.log(`[вы] ${commandText}`);
+        void logHeard(cmdWav, commandText);
+      }
+      history = [{ role: "system", content: SYSTEM_PROMPT }]; // новый разговор
     }
 
-    const reply = await runConversation(commandText, () => recordSpeech(recorder));
+    if (continuing) {
+      console.log(`[вы, продолжение] ${text}`);
+      void logEvent("heard", text);
+      void logHeard(wav, text);
+    }
+
+    const reply = await runConversationTurn(history!, commandText, () => recordSpeech(recorder));
+    history = trimHistory(history!);
+    conversationDeadline = Date.now() + MEMORY_WINDOW_MS;
+
     void logEvent("reply", reply);
     await say(reply);
   }

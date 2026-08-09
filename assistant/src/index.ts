@@ -3,7 +3,7 @@ import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSp
 import { transcribeWav } from "./openai.js";
 import { say, bindRecorder } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
-import { GREETING } from "./systemPrompt.js";
+import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { startPresenceLoop, isEnabled } from "./presence.js";
 import { logEvent } from "./yeahgrind.js";
 import { logHeard } from "./heardLog.js";
@@ -81,6 +81,11 @@ async function main() {
   bindRecorder(recorder);
   await calibrateSilenceThreshold(recorder);
   console.log('ДиДи запущена. Слушаю — скажи "Джарвис" в любой фразе.');
+
+  // Приветствие произносится ОДИН РАЗ при старте процесса (автозапуск при
+  // входе в Windows или ручной npm start) — не путать с GREETING, который
+  // звучит на каждое кодовое слово.
+  await say(BOOT_GREETING);
 
   let history: ChatCompletionMessageParam[] | null = null;
   let conversationDeadline = 0;

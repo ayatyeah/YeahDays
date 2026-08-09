@@ -82,3 +82,25 @@ export function setMood(energy: "low" | "medium" | "high", minutes = 30) {
     }),
   });
 }
+
+/** "Я жива" + заодно узнаём, не поставили ли ДиДи на паузу из панели в браузере. */
+export function heartbeat(): Promise<{ enabled: boolean }> {
+  return call("/api/assistant/heartbeat", {
+    method: "POST",
+    body: JSON.stringify({ userId: config.yeahgrindUserId }),
+  }) as Promise<{ enabled: boolean }>;
+}
+
+export type EventKind = "heard" | "reply" | "tool" | "error";
+
+/** Для ленты в панели профиля. Best-effort — сеть подвела, разговор всё равно продолжается. */
+export async function logEvent(kind: EventKind, text: string): Promise<void> {
+  try {
+    await call("/api/assistant/event", {
+      method: "POST",
+      body: JSON.stringify({ userId: config.yeahgrindUserId, kind, text: text.slice(0, 2000) }),
+    });
+  } catch (e) {
+    console.warn("[yeahgrind] logEvent не прошёл:", e instanceof Error ? e.message : e);
+  }
+}

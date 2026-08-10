@@ -2,15 +2,35 @@ import type { ChatCompletionMessageParam } from "openai/resources/chat/completio
 import { chatStep } from "./openai.js";
 import { TOOLS, TOOL_SPECS } from "./tools.js";
 import { SYSTEM_PROMPT } from "./systemPrompt.js";
-import { logEvent } from "./yeahgrind.js";
+import { logEvent, getFacts } from "./yeahgrind.js";
 
 /** Предохранитель от зацикливания модели на вызовах инструментов за один ход. */
 const MAX_TOOL_ROUNDS = 6;
 /** Не даём истории расти бесконечно в долгой сессии — system + последние N. */
 const MAX_HISTORY_MESSAGES = 24;
 
-export function freshHistory(): ChatCompletionMessageParam[] {
-  return [{ role: "system", content: SYSTEM_PROMPT }];
+/**
+ * Начало нового разговора: системный промпт + всё, что пользователь ранее
+ * попросил запомнить о себе ("Джарвис, запомни ...", см. quickCommands.ts) —
+ * долговременная память, отдельная от истории текущего диалога. Читается
+ * заново на каждый новый разговор (для голоса — на каждую команду, для
+ * текстового чата — на старте процесса и на "стоп"), так что свежедобавленный
+ * факт увидит следующий разговор, а не обязательно текущий.
+ */
+export async function freshHistory(): Promise<ChatCompletionMessageParam[]> {
+  const history: ChatCompletionMessageParam[] = [{ role: "system", content: SYSTEM_PROMPT }];
+  try {
+    const facts = await getFacts();
+    if (facts.length > 0) {
+      history.push({
+        role: "system",
+        content: `Вот что пользователь ранее попросил запомнить о себе:\n${facts.map((f) => `- ${f}`).join("\n")}`,
+      });
+    }
+  } catch (e) {
+    console.warn("[conversation] getFacts не прошёл:", e instanceof Error ? e.message : e);
+  }
+  return history;
 }
 
 export function trimHistory(history: ChatCompletionMessageParam[]): ChatCompletionMessageParam[] {

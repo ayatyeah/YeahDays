@@ -138,7 +138,7 @@ async function main() {
     void logChatMessage("user", commandText);
 
     // Быстрые команды — без единого обращения к GPT: и дешевле, и мгновенно.
-    const quick = tryQuickCommand(commandText);
+    const quick = await tryQuickCommand(commandText);
     if (quick.handled) {
       console.log(`[быстрая команда] ${commandText} → ${quick.reply}`);
       void logEvent("reply", quick.reply!);
@@ -148,7 +148,7 @@ async function main() {
     }
 
     const recordCommand = () => recordSpeech(recorder);
-    const history = freshHistory(); // каждая команда — новый разговор, без памяти между репликами
+    const history = await freshHistory(); // каждая команда — новый разговор, без памяти между репликами
     const reply = await runConversationTurn(history, commandText, (q) => confirmVoice(q, recordCommand));
 
     void logEvent("reply", reply);

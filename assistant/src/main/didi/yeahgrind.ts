@@ -131,9 +131,26 @@ export async function rememberFact(content: string): Promise<void> {
   });
 }
 
+export interface Fact {
+  id: string;
+  content: string;
+  at: number;
+}
+
 /** Всё, что ДиДи попросили запомнить, старое первым — для подмешивания в начало разговора. */
 export async function getFacts(): Promise<string[]> {
+  const facts = await listFacts();
+  return facts.map((f) => f.content);
+}
+
+/** С id — для панели "Факты" в desktop-приложении (нужен id, чтобы можно было удалить). */
+export async function listFacts(): Promise<Fact[]> {
   const params = new URLSearchParams({ userId: config.yeahgrindUserId });
-  const res = (await call(`/api/assistant/memory?${params}`)) as { facts: { content: string }[] };
-  return res.facts.map((f) => f.content);
+  const res = (await call(`/api/assistant/memory?${params}`)) as { facts: Fact[] };
+  return res.facts;
+}
+
+export async function forgetFact(id: string): Promise<void> {
+  const params = new URLSearchParams({ userId: config.yeahgrindUserId, id });
+  await call(`/api/assistant/memory?${params}`, { method: "DELETE" });
 }

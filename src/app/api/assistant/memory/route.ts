@@ -2,8 +2,9 @@
  * /api/assistant/memory — долговременная память ДиДи о пользователе
  * ("Джарвис, запомни ..."), отдельно от истории одного разговора.
  *
- * GET  ?userId= → все факты, старые первыми (устойчивый порядок для промпта)
- * POST { userId, content } → добавить факт
+ * GET    ?userId=             → все факты, старые первыми (устойчивый порядок для промпта)
+ * POST   { userId, content }  → добавить факт
+ * DELETE ?userId=&id=         → удалить факт (панель "Факты" в desktop-приложении)
  */
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
@@ -50,4 +51,19 @@ export async function POST(req: Request) {
 
   const fact = await prisma.assistantFact.create({ data: { userId, content } });
   return NextResponse.json({ ok: true, id: fact.id });
+}
+
+export async function DELETE(req: Request) {
+  if (!authorized(req)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const url = new URL(req.url);
+  const userId = url.searchParams.get("userId") ?? "";
+  const id = url.searchParams.get("id") ?? "";
+  if (!userId || !id) {
+    return NextResponse.json({ error: "userId and id required" }, { status: 400 });
+  }
+
+  await prisma.assistantFact.deleteMany({ where: { id, userId } });
+  return NextResponse.json({ ok: true });
 }

@@ -1,0 +1,19 @@
+appId: com.yeahdays.didi
+productName: DiDi
+directories:
+  output: release
+  buildResources: build
+files:
+  - out/**/*
+  - package.json
+# Нативный аддон (микрофон) не может жить внутри .asar — должен быть
+# распакован рядом, иначе dlopen на путь внутри архива падает.
+asarUnpack:
+  - '**/*.node'
+win:
+  target: nsis
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+  createDesktopShortcut: always

@@ -3,6 +3,7 @@ import { config } from "./config.js";
 import { runConversationTurn, trimHistory, freshHistory } from "./conversation.js";
 import { NEGATIVE, POSITIVE } from "./confirm.js";
 import { tryQuickCommand } from "./quickCommands.js";
+import { log } from "./logger.js";
 
 /** Как часто опрашивать очередь сообщений со страницы /didi. */
 const CHAT_POLL_MS = 2000;
@@ -90,25 +91,25 @@ export async function startChatLoop(): Promise<void> {
       const pending = await pullPending();
       const msg = pending[0];
       if (msg) {
-        console.log(`[чат] ${msg.content}`);
+        log(`[чат] ${msg.content}`);
 
         // Быстрые команды — без обращения к GPT, дешевле и мгновенно.
         const quick = await tryQuickCommand(msg.content);
         if (quick.handled) {
           if (quick.resetHistory) history = await freshHistory();
-          console.log(`[чат, быстрая команда] → ${quick.reply}`);
+          log(`[чат, быстрая команда] → ${quick.reply}`);
           await postReply(quick.reply!);
           continue;
         }
 
         const reply = await runConversationTurn(history, msg.content, textConfirm);
         history = trimHistory(history);
-        console.log(`[чат → ответ] ${reply}`);
+        log(`[чат → ответ] ${reply}`);
         await postReply(reply);
         continue; // сразу проверить очередь ещё раз, не дожидаясь sleep
       }
     } catch (e) {
-      console.warn("[чат] ошибка опроса:", e instanceof Error ? e.message : e);
+      log(`[чат] ошибка опроса: ${e instanceof Error ? e.message : e}`, "warn");
     }
     await sleep(CHAT_POLL_MS);
   }

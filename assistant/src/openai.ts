@@ -34,6 +34,11 @@ export async function chatStep(
     tools,
     tool_choice: "auto",
   });
+  if (res.usage) {
+    console.log(
+      `[usage] ${config.chatModel}: prompt=${res.usage.prompt_tokens} completion=${res.usage.completion_tokens} total=${res.usage.total_tokens} (история из ${messages.length} сообщений)`,
+    );
+  }
   const choice = res.choices[0];
   if (!choice?.message) throw new Error("OpenAI не вернул ответ");
   return choice.message;

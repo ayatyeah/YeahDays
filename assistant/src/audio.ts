@@ -101,16 +101,22 @@ const DEBUG_EVERY_N_FRAMES = 8; // 8 * 32мс ≈ 0.25с
 
 /**
  * Ждёт начала речи (несколько громких кадров подряд — не единичный щелчок).
- * Без ограничения по времени: это отдельная фаза от самой записи, иначе
- * "жду речь" и "пишу фразу" делят один и тот же лимит кадров, и если не
- * успеть заговорить за ~12.5с, функция тихо возвращает пусто и всё
- * по новой — выглядит как "не отвечает", хотя на самом деле просто ждала
- * не в то окно.
+ * Без timeoutMs — без ограничения по времени вообще (так слушает фоновый
+ * цикл в ожидании кодового слова: это отдельная фаза от самой записи,
+ * иначе "жду речь" и "пишу фразу" делят один лимит кадров, и если не
+ * успеть заговорить за ~12.5с, функция тихо возвращает пусто и всё по
+ * новой — выглядит как "не отвечает"). С timeoutMs — специально для
+ * "сказали только кодовое слово, ждём команду": если в этот раз никто
+ * ничего не говорит, не висеть вечно, а тихо вернуться к фоновому
+ * прослушиванию — раньше здесь ждала бесконечно.
  */
-async function waitForSpeechStart(recorder: PvRecorder): Promise<void> {
+async function waitForSpeechStart(recorder: PvRecorder, timeoutMs?: number): Promise<boolean> {
   let loudStreak = 0;
   let frameCount = 0;
+  const deadline = timeoutMs != null ? Date.now() + timeoutMs : Infinity;
   for (;;) {
+    if (Date.now() > deadline) return false;
+
     const frame = await recorder.read();
     const level = rms(frame);
     const loud = level >= silenceThreshold;
@@ -124,23 +130,25 @@ async function waitForSpeechStart(recorder: PvRecorder): Promise<void> {
 
     if (loudStreak >= SPEECH_START_FRAMES) {
       if (DEBUG) console.log(`[audio] речь началась (уровень ${level.toFixed(0)}), пишу…`);
-      return;
+      return true;
     }
   }
 }
 
 /**
  * Пишет фразу от начала (уже обнаруженного) до тишины и возвращает WAV.
- * null — если получился обрывок короче MIN_UTTERANCE_SAMPLES: отправлять
- * такое в Whisper бессмысленно, он либо ничего не разберёт, либо ответит
- * ошибкой формата.
+ * null — если получился обрывок короче MIN_UTTERANCE_SAMPLES (отправлять
+ * такое в Whisper бессмысленно) ИЛИ если задан timeoutMs и речь вообще не
+ * началась за это время.
  *
- * Используется и для ожидания кодовой фразы, и для записи команды — в
- * STT-детекции это одна и та же операция: "дождись и запиши следующую
- * фразу целиком", а распознаёт её вызывающий код (index.ts).
+ * Используется и для ожидания кодовой фразы (без таймаута), и для записи
+ * команды после неё (с таймаутом) — в STT-детекции это одна и та же
+ * операция: "дождись и запиши следующую фразу целиком", а распознаёт её
+ * вызывающий код (index.ts).
  */
-export async function recordUntilSilence(recorder: PvRecorder): Promise<Buffer | null> {
-  await waitForSpeechStart(recorder);
+export async function recordUntilSilence(recorder: PvRecorder, timeoutMs?: number): Promise<Buffer | null> {
+  const started = await waitForSpeechStart(recorder, timeoutMs);
+  if (!started) return null; // таймаут ожидания начала речи — не фраза, не ошибка
 
   const collected: number[] = [];
   let silentFrames = 0;

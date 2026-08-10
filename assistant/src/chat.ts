@@ -2,6 +2,7 @@ import type { ChatCompletionMessageParam } from "openai/resources/chat/completio
 import { config } from "./config.js";
 import { runConversationTurn, trimHistory, freshHistory } from "./conversation.js";
 import { NEGATIVE, POSITIVE } from "./confirm.js";
+import { tryQuickCommand } from "./quickCommands.js";
 
 /** Как часто опрашивать очередь сообщений со страницы /didi. */
 const CHAT_POLL_MS = 2000;
@@ -90,6 +91,16 @@ export async function startChatLoop(): Promise<void> {
       const msg = pending[0];
       if (msg) {
         console.log(`[чат] ${msg.content}`);
+
+        // Быстрые команды — без обращения к GPT, дешевле и мгновенно.
+        const quick = tryQuickCommand(msg.content);
+        if (quick.handled) {
+          if (quick.resetHistory) history = freshHistory();
+          console.log(`[чат, быстрая команда] → ${quick.reply}`);
+          await postReply(quick.reply!);
+          continue;
+        }
+
         const reply = await runConversationTurn(history, msg.content, textConfirm);
         history = trimHistory(history);
         console.log(`[чат → ответ] ${reply}`);

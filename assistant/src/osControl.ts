@@ -1,4 +1,4 @@
-import { spawn, exec } from "node:child_process";
+import { exec } from "node:child_process";
 import { promisify } from "node:util";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -16,15 +16,30 @@ async function logAction(line: string) {
   await appendFile(config.logFile, `[${ts}] ${line}\n`).catch(() => {});
 }
 
+/**
+ * Раньше запускалась через spawn(...).unref() и всегда возвращала "Открываю:
+ * X" — даже когда Windows не находила программу с таким именем (например
+ * "Valorant": игры от Riot запускаются не по имени, а через отдельный
+ * лаунчер). Ошибка тихо проглатывалась, ДиДи врала об успехе. Теперь ждём
+ * exec() и реально проверяем код возврата — start сам по себе завершается
+ * сразу после передачи управления найденной программе, так что ждать
+ * закрытия самого приложения не приходится.
+ */
 export async function openApp(nameOrPath: string): Promise<string> {
   await logAction(`open_app: ${nameOrPath}`);
-  const child = spawn("cmd.exe", ["/c", "start", '""', nameOrPath], {
-    detached: true,
-    stdio: "ignore",
-    windowsHide: true,
-  });
-  child.unref();
-  return `Открываю: ${nameOrPath}`;
+  const target = nameOrPath.replace(/"/g, '""');
+  try {
+    await execAsync(`start "" "${target}"`, { timeout: 8000 });
+    return `Открываю: ${nameOrPath}`;
+  } catch (e) {
+    const msg = (e instanceof Error ? e.message : String(e)).split("\n")[0];
+    return (
+      `Не получилось: Windows не нашла программу "${nameOrPath}" по имени ` +
+      `(${msg}). У некоторых программ (например игры из лаунчеров вроде Riot ` +
+      `Client/Steam/Epic) нет простого имени для запуска — попробуй run_command, ` +
+      `чтобы найти установленный .exe и запустить его напрямую по полному пути.`
+    );
+  }
 }
 
 export async function openUrl(url: string): Promise<string> {

@@ -5,10 +5,11 @@ import { say, bindRecorder } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
 import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { startPresenceLoop, isEnabled } from "./presence.js";
-import { logEvent } from "./yeahgrind.js";
+import { logEvent, logChatMessage } from "./yeahgrind.js";
 import { logHeard } from "./heardLog.js";
 import { runConversationTurn, trimHistory, freshHistory } from "./conversation.js";
 import { startChatLoop } from "./chat.js";
+import { tryQuickCommand } from "./quickCommands.js";
 
 /**
  * Кодовая фраза ищется распознаванием речи (Whisper понимает русский), а
@@ -31,6 +32,8 @@ const MAX_EDIT_DISTANCE = 2;
  * плата за "не повторять кодовое слово каждый раз".
  */
 const MEMORY_WINDOW_MS = Number(process.env.MEMORY_WINDOW_MINUTES ?? "5") * 60_000;
+/** Сколько ждать начала команды после голого "Джарвис", прежде чем тихо вернуться к фоновому прослушиванию. */
+const WAKE_COMMAND_TIMEOUT_MS = Number(process.env.WAKE_COMMAND_TIMEOUT_SECONDS ?? "3") * 1000;
 
 function levenshtein(a: string, b: string): number {
   const dp: number[][] = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
@@ -128,9 +131,16 @@ async function main() {
 
       commandText = remainder;
       if (commandText.length < 2) {
-        // сказали только кодовое слово — здороваемся и отдельно слушаем команду
+        // сказали только кодовое слово — здороваемся и отдельно слушаем
+        // команду, но не вечно: WAKE_COMMAND_TIMEOUT_MS на начало фразы,
+        // дальше молча возвращаемся к фоновому прослушиванию, а не висим
+        // в ожидании команды, которая, может, вообще не прозвучит
         await say(GREETING);
-        const cmdWav = await recordSpeech(recorder);
+        const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS);
+        if (!cmdWav) {
+          console.log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
+          continue;
+        }
         commandText = await transcribeWav(cmdWav);
         if (!commandText || commandText.trim().length < 2) {
           await say("Не расслышала, повтори, пожалуйста.");
@@ -142,12 +152,32 @@ async function main() {
       history = freshHistory(); // новый разговор
     }
 
+    // Голосовой обмен — тоже в ленту чата на /didi (role="user"), не
+    // только в технический лог событий: иначе голос и текст выглядели бы
+    // как два разных места, хотя по смыслу одна переписка.
+    void logChatMessage("user", commandText);
+
+    // Быстрые команды — без единого обращения к GPT: и дешевле, и мгновенно.
+    const quick = tryQuickCommand(commandText);
+    if (quick.handled) {
+      console.log(`[быстрая команда] ${commandText} → ${quick.reply}`);
+      if (quick.resetHistory) {
+        history = null;
+        conversationDeadline = 0;
+      }
+      void logEvent("reply", quick.reply!);
+      void logChatMessage("assistant", quick.reply!);
+      await say(quick.reply!);
+      continue;
+    }
+
     const recordCommand = () => recordSpeech(recorder);
     const reply = await runConversationTurn(history!, commandText, (q) => confirmVoice(q, recordCommand));
     history = trimHistory(history!);
     conversationDeadline = Date.now() + MEMORY_WINDOW_MS;
 
     void logEvent("reply", reply);
+    void logChatMessage("assistant", reply);
     await say(reply);
   }
 }

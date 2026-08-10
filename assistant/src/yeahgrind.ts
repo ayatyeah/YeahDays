@@ -104,3 +104,21 @@ export async function logEvent(kind: EventKind, text: string): Promise<void> {
     console.warn("[yeahgrind] logEvent не прошёл:", e instanceof Error ? e.message : e);
   }
 }
+
+/**
+ * Голосовые обмены — тоже в ленту чата на /didi (role="user" для того, что
+ * услышала, role="assistant" для ответа), не только в технический лог
+ * событий. Без этого голос и текст на странице выглядели бы как два
+ * разных места, хотя по смыслу это одна переписка. Best-effort, как и
+ * logEvent — сеть подвела, разговор всё равно продолжается.
+ */
+export async function logChatMessage(role: "user" | "assistant", content: string): Promise<void> {
+  try {
+    await call("/api/assistant/chat/reply", {
+      method: "POST",
+      body: JSON.stringify({ userId: config.yeahgrindUserId, role, content: content.slice(0, 4000) }),
+    });
+  } catch (e) {
+    console.warn("[yeahgrind] logChatMessage не прошёл:", e instanceof Error ? e.message : e);
+  }
+}

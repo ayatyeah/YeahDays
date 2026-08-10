@@ -1,8 +1,11 @@
 /**
- * /api/assistant/chat/reply — ДиДи пишет сюда свой ответ на сообщение из
- * чата на странице /didi.
+ * /api/assistant/chat/reply — ДиДи пишет сюда и свои ответы, и то, что
+ * услышала голосом (role="user" от самой ДиДи, не от браузера) — так
+ * голосовые обмены попадают в ту же ленту чата на /didi, а не только в
+ * технический лог событий (AssistantEvent). Без этого голос и текст
+ * выглядели как два разных места, хотя по смыслу это одна переписка.
  *
- * POST { userId, content } → создаёт сообщение role="assistant"
+ * POST { userId, content, role? } → role: "assistant" (по умолчанию) | "user"
  */
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
@@ -23,10 +26,11 @@ export async function POST(req: Request) {
   const body = await req.json().catch(() => ({}) as Record<string, unknown>);
   const userId = typeof body.userId === "string" ? body.userId : "";
   const content = typeof body.content === "string" ? body.content.slice(0, 4000) : "";
+  const role = body.role === "user" ? "user" : "assistant";
   if (!userId || !content) {
     return NextResponse.json({ error: "userId and content required" }, { status: 400 });
   }
 
-  await prisma.assistantChat.create({ data: { userId, role: "assistant", content } });
+  await prisma.assistantChat.create({ data: { userId, role, content } });
   return NextResponse.json({ ok: true });
 }

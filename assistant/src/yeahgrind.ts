@@ -122,3 +122,18 @@ export async function logChatMessage(role: "user" | "assistant", content: string
     console.warn("[yeahgrind] logChatMessage не прошёл:", e instanceof Error ? e.message : e);
   }
 }
+
+/** "Джарвис, запомни ..." — пишется напрямую, без GPT (quickCommands.ts). */
+export async function rememberFact(content: string): Promise<void> {
+  await call("/api/assistant/memory", {
+    method: "POST",
+    body: JSON.stringify({ userId: config.yeahgrindUserId, content: content.slice(0, 2000) }),
+  });
+}
+
+/** Всё, что ДиДи попросили запомнить, старое первым — для подмешивания в начало разговора. */
+export async function getFacts(): Promise<string[]> {
+  const params = new URLSearchParams({ userId: config.yeahgrindUserId });
+  const res = (await call(`/api/assistant/memory?${params}`)) as { facts: { content: string }[] };
+  return res.facts.map((f) => f.content);
+}

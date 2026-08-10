@@ -31,6 +31,7 @@ model User {
   assistantStatus AssistantStatus?
   assistantEvents AssistantEvent[]
   assistantChat   AssistantChat[]
+  assistantFacts  AssistantFact[]
 }
 
 // Живой статус фонового процесса ДиДи: раз в ~15с шлёт heartbeat сюда,
@@ -81,6 +82,22 @@ model AssistantChat {
 
   @@index([userId, createdAt])
   @@index([userId, role, pulledAt])
+}
+
+// Долговременная память ДиДи о пользователе — то, что он попросил
+// запомнить ("Джарвис, запомни ..."), а не контекст одного разговора
+// (тот живёт только в истории чата и пропадает с процессом/окном памяти).
+// Пишется командой напрямую, без GPT (см. quickCommands.ts) — дёшево и
+// предсказуемо. Читается при старте каждого нового разговора и
+// подмешивается в историю, чтобы ДиДи знала это без явного вопроса.
+model AssistantFact {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 // Подписка устройства на web-push. У одного пользователя может быть

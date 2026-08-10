@@ -77,7 +77,7 @@ async function textConfirm(question: string): Promise<boolean> {
  * в комнате, нельзя.
  */
 export async function startChatLoop(): Promise<void> {
-  let history: ChatCompletionMessageParam[] = freshHistory();
+  let history: ChatCompletionMessageParam[] = await freshHistory();
 
   for (;;) {
     try {
@@ -93,9 +93,9 @@ export async function startChatLoop(): Promise<void> {
         console.log(`[чат] ${msg.content}`);
 
         // Быстрые команды — без обращения к GPT, дешевле и мгновенно.
-        const quick = tryQuickCommand(msg.content);
+        const quick = await tryQuickCommand(msg.content);
         if (quick.handled) {
-          if (quick.resetHistory) history = freshHistory();
+          if (quick.resetHistory) history = await freshHistory();
           console.log(`[чат, быстрая команда] → ${quick.reply}`);
           await postReply(quick.reply!);
           continue;

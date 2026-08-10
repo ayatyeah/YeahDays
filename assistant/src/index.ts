@@ -1,4 +1,3 @@
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech } from "./audio.js";
 import { transcribeWav } from "./openai.js";
 import { say, bindRecorder } from "./voice.js";
@@ -7,7 +6,7 @@ import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { startPresenceLoop, isEnabled } from "./presence.js";
 import { logEvent, logChatMessage } from "./yeahgrind.js";
 import { logHeard } from "./heardLog.js";
-import { runConversationTurn, trimHistory, freshHistory } from "./conversation.js";
+import { runConversationTurn, freshHistory } from "./conversation.js";
 import { startChatLoop } from "./chat.js";
 import { tryQuickCommand } from "./quickCommands.js";
 
@@ -23,15 +22,6 @@ import { tryQuickCommand } from "./quickCommands.js";
 const WAKE_VARIANTS = ["джарвис", "жарвис", "jarvis"];
 const MAX_EDIT_DISTANCE = 2;
 
-/**
- * Память диалога: сколько молчания считаем "надолго" и разговор закончен.
- * Пока не истекло — следующая фраза идёт в тот же контекст БЕЗ повторного
- * "Джарвис". Дальше по счётчику: любая тишина комнаты, которую распознает
- * как фразу и ошибочно сочтёт обращённой к ДиДи (см. предупреждение в
- * README про ложные срабатывания STT), в этом окне тоже попадёт в диалог —
- * плата за "не повторять кодовое слово каждый раз".
- */
-const MEMORY_WINDOW_MS = Number(process.env.MEMORY_WINDOW_MINUTES ?? "5") * 60_000;
 /** Сколько ждать начала команды после голого "Джарвис", прежде чем тихо вернуться к фоновому прослушиванию. */
 const WAKE_COMMAND_TIMEOUT_MS = Number(process.env.WAKE_COMMAND_TIMEOUT_SECONDS ?? "3") * 1000;
 
@@ -90,9 +80,6 @@ async function main() {
   // звучит на каждое кодовое слово.
   await say(BOOT_GREETING);
 
-  let history: ChatCompletionMessageParam[] | null = null;
-  let conversationDeadline = 0;
-
   for (;;) {
     const wav = await recordUntilSilence(recorder);
     if (!wav) continue; // короткий шум/щелчок — не фраза, даже в Whisper не идём
@@ -106,50 +93,43 @@ async function main() {
     }
     if (!text) continue;
 
-    const continuing = history !== null && Date.now() < conversationDeadline;
-    let commandText: string;
+    // Каждая команда требует свежего "Джарвис" — без окна памяти между
+    // репликами. Раньше 5 минут после ответа ЛЮБАЯ распознанная фраза в
+    // комнате уходила в диалог с ДиДи без повторного кодового слова — на
+    // практике это означало ложные срабатывания на посторонний разговор.
+    const remainder = extractAfterWake(text);
+    if (remainder === null) {
+      console.log(`[распознала, но не кодовое слово] "${text}"`);
+      continue;
+    }
+    if (!isEnabled()) {
+      console.log("[ДиДи] на паузе (выключено из панели в браузере) — игнорирую");
+      continue;
+    }
 
-    if (continuing) {
-      commandText = text;
-      console.log(`[вы, продолжение] ${text}`);
-      void logEvent("heard", text);
-      void logHeard(wav, text);
-    } else {
-      const remainder = extractAfterWake(text);
-      if (remainder === null) {
-        console.log(`[распознала, но не кодовое слово] "${text}"`);
+    console.log(`[вы] ${text}`);
+    void logEvent("heard", text);
+    void logHeard(wav, text);
+
+    let commandText = remainder;
+    if (commandText.length < 2) {
+      // сказали только кодовое слово — здороваемся и отдельно слушаем
+      // команду, но не вечно: WAKE_COMMAND_TIMEOUT_MS на начало фразы,
+      // дальше молча возвращаемся к фоновому прослушиванию, а не висим
+      // в ожидании команды, которая, может, вообще не прозвучит
+      await say(GREETING);
+      const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS);
+      if (!cmdWav) {
+        console.log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
         continue;
       }
-      if (!isEnabled()) {
-        console.log("[ДиДи] на паузе (выключено из панели в браузере) — игнорирую");
+      commandText = await transcribeWav(cmdWav);
+      if (!commandText || commandText.trim().length < 2) {
+        await say("Не расслышала, повтори, пожалуйста.");
         continue;
       }
-
-      console.log(`[вы] ${text}`);
-      void logEvent("heard", text);
-      void logHeard(wav, text);
-
-      commandText = remainder;
-      if (commandText.length < 2) {
-        // сказали только кодовое слово — здороваемся и отдельно слушаем
-        // команду, но не вечно: WAKE_COMMAND_TIMEOUT_MS на начало фразы,
-        // дальше молча возвращаемся к фоновому прослушиванию, а не висим
-        // в ожидании команды, которая, может, вообще не прозвучит
-        await say(GREETING);
-        const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS);
-        if (!cmdWav) {
-          console.log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
-          continue;
-        }
-        commandText = await transcribeWav(cmdWav);
-        if (!commandText || commandText.trim().length < 2) {
-          await say("Не расслышала, повтори, пожалуйста.");
-          continue;
-        }
-        console.log(`[вы] ${commandText}`);
-        void logHeard(cmdWav, commandText);
-      }
-      history = freshHistory(); // новый разговор
+      console.log(`[вы] ${commandText}`);
+      void logHeard(cmdWav, commandText);
     }
 
     // Голосовой обмен — тоже в ленту чата на /didi (role="user"), не
@@ -161,10 +141,6 @@ async function main() {
     const quick = tryQuickCommand(commandText);
     if (quick.handled) {
       console.log(`[быстрая команда] ${commandText} → ${quick.reply}`);
-      if (quick.resetHistory) {
-        history = null;
-        conversationDeadline = 0;
-      }
       void logEvent("reply", quick.reply!);
       void logChatMessage("assistant", quick.reply!);
       await say(quick.reply!);
@@ -172,9 +148,8 @@ async function main() {
     }
 
     const recordCommand = () => recordSpeech(recorder);
-    const reply = await runConversationTurn(history!, commandText, (q) => confirmVoice(q, recordCommand));
-    history = trimHistory(history!);
-    conversationDeadline = Date.now() + MEMORY_WINDOW_MS;
+    const history = freshHistory(); // каждая команда — новый разговор, без памяти между репликами
+    const reply = await runConversationTurn(history, commandText, (q) => confirmVoice(q, recordCommand));
 
     void logEvent("reply", reply);
     void logChatMessage("assistant", reply);

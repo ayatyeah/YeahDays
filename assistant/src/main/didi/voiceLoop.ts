@@ -10,20 +10,19 @@ import { logHeard } from "./heardLog.js";
 import { runConversationTurn, freshHistory } from "./conversation.js";
 import { tryQuickCommand } from "./quickCommands.js";
 import { log } from "./logger.js";
+import { tryStartLocalWakeword, type WakewordDetector } from "./wakeword.js";
 
 /**
- * Кодовая фраза ищется распознаванием речи (Whisper понимает русский), а
- * не локальным классификатором — ни Picovoice, ни openWakeWord не умеют
- * обучать русские слова, см. assistant/README.md. Сравнение нечёткое
- * (Levenshtein), потому что STT не всегда расслышит "джарвис" точь-в-точь —
- * и, как выяснилось на живом тесте, иногда транскрибирует его вообще
- * латиницей ("Jarvis") как известное имя, несмотря на language:"ru" —
- * поэтому вариантов два алфавита, а не только кириллица.
+ * STT-путь (запасной, если локальный детектор недоступен — нет Python/
+ * openwakeword): кодовая фраза ищется не классификатором, а обычным
+ * распознаванием речи — прогоняем всё через Whisper и ищем в тексте слово,
+ * близкое к «джарвис»/«жарвис» (нечёткое сравнение, Levenshtein), либо
+ * «jarvis» латиницей — Whisper иногда транслитерирует его как известное имя.
  */
 const WAKE_VARIANTS = ["джарвис", "жарвис", "jarvis"];
 const MAX_EDIT_DISTANCE = 2;
 
-/** Сколько ждать начала команды после голого "Джарвис", прежде чем тихо вернуться к фоновому прослушиванию. */
+/** Сколько ждать начала команды после срабатывания кодового слова, прежде чем тихо вернуться к фоновому прослушиванию. */
 const WAKE_COMMAND_TIMEOUT_MS = Number(process.env.WAKE_COMMAND_TIMEOUT_SECONDS ?? "3") * 1000;
 
 function levenshtein(a: string, b: string): number {
@@ -69,6 +68,7 @@ function extractAfterWake(text: string): string | null {
 
 let stopRequested = false;
 let recorderRef: PvRecorder | null = null;
+let detectorRef: WakewordDetector | null = null;
 let running = false;
 
 export function isVoiceLoopRunning(): boolean {
@@ -88,6 +88,149 @@ export function stopVoiceLoop(): void {
   } catch {
     // recorder уже мог быть остановлен/освобождён — не критично
   }
+  try {
+    detectorRef?.stop();
+  } catch {
+    // не запускался или уже остановлен
+  }
+}
+
+/**
+ * Всё, что происходит с расшифрованной командой ПОСЛЕ того, как кодовое
+ * слово так или иначе сработало (локально или через STT) — общее для
+ * обоих путей детекции, чтобы не дублировать логику быстрых команд,
+ * подтверждений и обращения к GPT.
+ */
+async function handleCommand(recorder: PvRecorder, commandText: string): Promise<void> {
+  void logChatMessage("user", commandText);
+
+  const quick = await tryQuickCommand(commandText);
+  if (quick.handled) {
+    log(`[быстрая команда] ${commandText} → ${quick.reply}`);
+    void logEvent("reply", quick.reply!);
+    void logChatMessage("assistant", quick.reply!);
+    await say(quick.reply!);
+    return;
+  }
+
+  const recordCommand = () => recordSpeech(recorder);
+  const history = await freshHistory(); // каждая команда — новый разговор, без памяти между репликами
+  const reply = await runConversationTurn(history, commandText, (q) => confirmVoice(q, recordCommand));
+
+  void logEvent("reply", reply);
+  void logChatMessage("assistant", reply);
+  await say(reply);
+}
+
+/** Записывает и распознаёт команду после срабатывания кодового слова — общее для обоих путей. */
+async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
+  if (!isEnabled()) {
+    log("[ДиДи] на паузе (выключено из панели) — игнорирую");
+    return;
+  }
+  await say(GREETING);
+  const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS);
+  if (!cmdWav) {
+    log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
+    return;
+  }
+  const commandText = await transcribeWav(cmdWav);
+  if (!commandText || commandText.trim().length < 2) {
+    await say("Не расслышала, повтори, пожалуйста.");
+    return;
+  }
+  log(`[вы] ${commandText}`);
+  void logHeard(cmdWav, commandText);
+  await handleCommand(recorder, commandText);
+}
+
+/**
+ * Локальный путь (openWakeWord, Python-подпроцесс): кадры с микрофона
+ * кормятся детектору напрямую, ничего не уходит в OpenAI, пока он не
+ * сообщит о срабатывании — в отличие от STT-пути, где КАЖДАЯ распознанная
+ * фраза сначала едет в Whisper. Плата: "одним дыханием" ("Джарвис, добавь
+ * молоко") больше не работает — детектор ловит только сам факт кодового
+ * слова, не текст следом, поэтому команда всегда пишется отдельным,
+ * вторым заходом после короткой паузы (как у обычных умных колонок).
+ */
+async function runLocalWakeLoop(recorder: PvRecorder, detector: WakewordDetector): Promise<void> {
+  let woke = false;
+  detector.onWake((score) => {
+    woke = true;
+    log(`[wakeword] локально распознано "Джарвис" (score=${score.toFixed(2)})`);
+  });
+
+  for (;;) {
+    if (stopRequested) break;
+    let frame: Int16Array;
+    try {
+      frame = await recorder.read();
+    } catch (e) {
+      if (stopRequested) break;
+      log(`[audio] ошибка чтения микрофона: ${e instanceof Error ? e.message : e}`, "error");
+      continue;
+    }
+    if (stopRequested) break;
+
+    detector.feed(frame);
+    if (!woke) continue;
+    woke = false;
+
+    try {
+      await captureAndHandleCommand(recorder);
+    } catch (e) {
+      log(`[ДиДи] ошибка обработки команды: ${e instanceof Error ? e.message : e}`, "error");
+    }
+  }
+}
+
+/** Запасной путь без локального детектора — как было раньше: всё слышимое едет в Whisper, там же ищем кодовое слово. */
+async function runSttWakeLoop(recorder: PvRecorder): Promise<void> {
+  for (;;) {
+    if (stopRequested) break;
+
+    let wav: Buffer | null;
+    try {
+      wav = await recordUntilSilence(recorder);
+    } catch (e) {
+      if (stopRequested) break;
+      log(`[audio] ошибка записи: ${e instanceof Error ? e.message : e}`, "error");
+      continue;
+    }
+    if (stopRequested) break;
+    if (!wav) continue; // короткий шум/щелчок — не фраза, даже в Whisper не идём
+
+    let text: string;
+    try {
+      text = await transcribeWav(wav);
+    } catch (e) {
+      log(`[STT] ошибка транскрипции: ${e instanceof Error ? e.message : e}`, "warn");
+      continue;
+    }
+    if (!text) continue;
+
+    const remainder = extractAfterWake(text);
+    if (remainder === null) {
+      log(`[распознала, но не кодовое слово] "${text}"`);
+      continue;
+    }
+    if (!isEnabled()) {
+      log("[ДиДи] на паузе (выключено из панели) — игнорирую");
+      continue;
+    }
+
+    log(`[вы] ${text}`);
+    void logEvent("heard", text);
+    void logHeard(wav, text);
+
+    if (remainder.length >= 2) {
+      // сказано одним дыханием — команда сразу, без отдельного захода
+      await handleCommand(recorder, remainder);
+      continue;
+    }
+
+    await captureAndHandleCommand(recorder);
+  }
 }
 
 /** Голосовой цикл ДиДи: слушает микрофон, ждёт "Джарвис", выполняет команды. Один запуск — до stopVoiceLoop(). */
@@ -103,96 +246,24 @@ export async function startVoiceLoop(): Promise<void> {
   recorderRef = recorder;
   bindRecorder(recorder);
   await calibrateSilenceThreshold(recorder);
-  log('ДиДи запущена. Слушаю — скажи "Джарвис" в любой фразе.');
+
+  const detector = await tryStartLocalWakeword();
+  detectorRef = detector;
+  if (detector) {
+    log('ДиДи запущена. Кодовое слово распознаётся локально (openWakeWord) — в OpenAI ничего не уходит, пока не скажешь "Джарвис".');
+  } else {
+    log('ДиДи запущена. Локальный детектор недоступен (нет Python/openwakeword) — слушаю через Whisper, скажи "Джарвис" в любой фразе.', "warn");
+  }
 
   // Приветствие произносится ОДИН РАЗ при старте цикла — не путать с
   // GREETING, который звучит на каждое кодовое слово.
   await say(BOOT_GREETING);
 
   try {
-    for (;;) {
-      if (stopRequested) break;
-
-      let wav: Buffer | null;
-      try {
-        wav = await recordUntilSilence(recorder);
-      } catch (e) {
-        if (stopRequested) break;
-        log(`[audio] ошибка записи: ${e instanceof Error ? e.message : e}`, "error");
-        continue;
-      }
-      if (stopRequested) break;
-      if (!wav) continue; // короткий шум/щелчок — не фраза, даже в Whisper не идём
-
-      let text: string;
-      try {
-        text = await transcribeWav(wav);
-      } catch (e) {
-        log(`[STT] ошибка транскрипции: ${e instanceof Error ? e.message : e}`, "warn");
-        continue;
-      }
-      if (!text) continue;
-
-      // Каждая команда требует свежего "Джарвис" — без окна памяти между
-      // репликами: раньше любая распознанная фраза в комнате в течение
-      // нескольких минут после ответа уходила в диалог без повторного
-      // кодового слова — на практике это были ложные срабатывания.
-      const remainder = extractAfterWake(text);
-      if (remainder === null) {
-        log(`[распознала, но не кодовое слово] "${text}"`);
-        continue;
-      }
-      if (!isEnabled()) {
-        log("[ДиДи] на паузе (выключено из панели) — игнорирую");
-        continue;
-      }
-
-      log(`[вы] ${text}`);
-      void logEvent("heard", text);
-      void logHeard(wav, text);
-
-      let commandText = remainder;
-      if (commandText.length < 2) {
-        // сказали только кодовое слово — здороваемся и отдельно слушаем
-        // команду, но не вечно: WAKE_COMMAND_TIMEOUT_MS на начало фразы,
-        // дальше молча возвращаемся к фоновому прослушиванию
-        await say(GREETING);
-        const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS);
-        if (!cmdWav) {
-          log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
-          continue;
-        }
-        commandText = await transcribeWav(cmdWav);
-        if (!commandText || commandText.trim().length < 2) {
-          await say("Не расслышала, повтори, пожалуйста.");
-          continue;
-        }
-        log(`[вы] ${commandText}`);
-        void logHeard(cmdWav, commandText);
-      }
-
-      // Голосовой обмен — тоже в ленту чата на /didi (role="user"), не
-      // только в технический лог событий: иначе голос и текст выглядели бы
-      // как два разных места, хотя по смыслу одна переписка.
-      void logChatMessage("user", commandText);
-
-      // Быстрые команды — без единого обращения к GPT: и дешевле, и мгновенно.
-      const quick = await tryQuickCommand(commandText);
-      if (quick.handled) {
-        log(`[быстрая команда] ${commandText} → ${quick.reply}`);
-        void logEvent("reply", quick.reply!);
-        void logChatMessage("assistant", quick.reply!);
-        await say(quick.reply!);
-        continue;
-      }
-
-      const recordCommand = () => recordSpeech(recorder);
-      const history = await freshHistory(); // каждая команда — новый разговор, без памяти между репликами
-      const reply = await runConversationTurn(history, commandText, (q) => confirmVoice(q, recordCommand));
-
-      void logEvent("reply", reply);
-      void logChatMessage("assistant", reply);
-      await say(reply);
+    if (detector) {
+      await runLocalWakeLoop(recorder, detector);
+    } else {
+      await runSttWakeLoop(recorder);
     }
   } finally {
     try {
@@ -201,7 +272,13 @@ export async function startVoiceLoop(): Promise<void> {
     } catch {
       // уже остановлен/освобождён
     }
+    try {
+      detector?.stop();
+    } catch {
+      // уже остановлен
+    }
     recorderRef = null;
+    detectorRef = null;
     running = false;
     log("Голосовой цикл остановлен.");
   }

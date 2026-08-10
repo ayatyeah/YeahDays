@@ -13,6 +13,17 @@ export const client = new OpenAI({ apiKey: config.openaiApiKey });
  * когда он оформлен как голый список слов, а не естественная фраза.
  * Убрано — ломало вообще все ответы, а не только редкие имена.
  */
+/**
+ * На слабом/неоднозначном звуке (дыхание, шум комнаты, тихое бормотание)
+ * Whisper иногда не возвращает пустую строку, а ГАЛЛЮЦИНИРУЕТ правдоподобный
+ * текст — и, что характерно, часто не на русском, а на случайном другом
+ * языке ("อ่า", корейская тарабарщина), несмотря на language:"ru". Раз
+ * пользователь говорит по-русски (или изредка "Jarvis" на латинице), текст
+ * вне кириллицы/латиницы/цифр/пунктуации почти наверняка такая галлюцинация,
+ * а не реальная речь — считаем это тишиной, а не распознанной фразой.
+ */
+const HALLUCINATION_RE = /^[\sа-яёА-ЯЁ0-9a-zA-Z.,!?;:'"()\-—–…«»]*$/;
+
 export async function transcribeWav(wav: Buffer): Promise<string> {
   const file = await toFile(wav, "command.wav", { type: "audio/wav" });
   const res = await client.audio.transcriptions.create({
@@ -20,7 +31,8 @@ export async function transcribeWav(wav: Buffer): Promise<string> {
     model: config.transcribeModel,
     language: "ru",
   });
-  return res.text.trim();
+  const text = res.text.trim();
+  return HALLUCINATION_RE.test(text) ? text : "";
 }
 
 /** Один шаг диалога: модель либо отвечает текстом, либо просит вызвать инструменты. */

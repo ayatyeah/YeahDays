@@ -16,8 +16,16 @@ const SILENCE_FRAMES_TO_STOP = 24; // ≈ 0.75с — компромисс: ко�
 const MAX_UTTERANCE_FRAMES = 400; // ≈ 12.5с
 /** Подряд громких кадров, чтобы считать это НАЧАЛОМ речи, а не щелчком/шорохом комнаты. */
 const SPEECH_START_FRAMES = 4; // ≈ 128мс
-/** Короче этого — не полноценная фраза, а обрывок шума; в Whisper не отправляем. */
-const MIN_UTTERANCE_SAMPLES = SAMPLE_RATE * 1.0; // 1с
+/**
+ * Короче этого — не полноценная фраза, а обрывок шума; в Whisper не
+ * отправляем. 1с по умолчанию — для фонового прослушивания (ждём кодовое
+ * слово или ищем его через STT), где короткие щелчки — почти всегда не
+ * речь. Для записи КОМАНДЫ после уже сработавшего кодового слова
+ * recordUntilSilence зовут с меньшим значением (voiceLoop.ts) — там
+ * контекст уже установлен, это заведомо попытка что-то сказать, а не шум,
+ * и короткая команда вроде "стоп" не должна отбрасываться как обрывок.
+ */
+const MIN_UTTERANCE_SECONDS_DEFAULT = 1.0;
 
 function rms(frame: Int16Array): number {
   let sum = 0;
@@ -149,16 +157,20 @@ async function waitForSpeechStart(recorder: PvRecorder, timeoutMs?: number): Pro
 
 /**
  * Пишет фразу от начала (уже обнаруженного) до тишины и возвращает WAV.
- * null — если получился обрывок короче MIN_UTTERANCE_SAMPLES (отправлять
+ * null — если получился обрывок короче minUtteranceSeconds (отправлять
  * такое в Whisper бессмысленно) ИЛИ если задан timeoutMs и речь вообще не
  * началась за это время.
  *
  * Используется и для ожидания кодовой фразы (без таймаута), и для записи
  * команды после неё (с таймаутом) — в STT-детекции это одна и та же
  * операция: "дождись и запиши следующую фразу целиком", а распознаёт её
- * вызывающий код (index.ts).
+ * вызывающий код (voiceLoop.ts).
  */
-export async function recordUntilSilence(recorder: PvRecorder, timeoutMs?: number): Promise<Buffer | null> {
+export async function recordUntilSilence(
+  recorder: PvRecorder,
+  timeoutMs?: number,
+  minUtteranceSeconds = MIN_UTTERANCE_SECONDS_DEFAULT,
+): Promise<Buffer | null> {
   const started = await waitForSpeechStart(recorder, timeoutMs);
   if (!started) return null; // таймаут ожидания начала речи — не фраза, не ошибка
 
@@ -177,8 +189,9 @@ export async function recordUntilSilence(recorder: PvRecorder, timeoutMs?: numbe
   }
 
   const seconds = (collected.length / SAMPLE_RATE).toFixed(2);
-  if (collected.length < MIN_UTTERANCE_SAMPLES) {
-    if (DEBUG) log(`[audio] обрывок ${seconds}с — короче 0.5с, отбрасываю`);
+  const minSamples = SAMPLE_RATE * minUtteranceSeconds;
+  if (collected.length < minSamples) {
+    if (DEBUG) log(`[audio] обрывок ${seconds}с — короче ${minUtteranceSeconds}с, отбрасываю`);
     return null;
   }
   if (DEBUG) log(`[audio] записано ${seconds}с, распознаю…`);

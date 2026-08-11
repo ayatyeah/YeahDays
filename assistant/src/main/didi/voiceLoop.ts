@@ -153,7 +153,8 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
  * слова, не текст следом, поэтому команда всегда пишется отдельным,
  * вторым заходом после короткой паузы (как у обычных умных колонок).
  */
-async function runLocalWakeLoop(recorder: PvRecorder, detector: WakewordDetector): Promise<void> {
+/** true — вышел штатно (стоп из UI); false — детектор умер по ходу дела, вызывающий код переключается на STT-путь. */
+async function runLocalWakeLoop(recorder: PvRecorder, detector: WakewordDetector): Promise<boolean> {
   let woke = false;
   detector.onWake((score) => {
     woke = true;
@@ -161,16 +162,18 @@ async function runLocalWakeLoop(recorder: PvRecorder, detector: WakewordDetector
   });
 
   for (;;) {
-    if (stopRequested) break;
+    if (stopRequested) return true;
+    if (!detector.isAlive()) return false;
+
     let frame: Int16Array;
     try {
       frame = await recorder.read();
     } catch (e) {
-      if (stopRequested) break;
+      if (stopRequested) return true;
       log(`[audio] ошибка чтения микрофона: ${e instanceof Error ? e.message : e}`, "error");
       continue;
     }
-    if (stopRequested) break;
+    if (stopRequested) return true;
 
     detector.feed(frame);
     if (!woke) continue;
@@ -261,7 +264,14 @@ export async function startVoiceLoop(): Promise<void> {
 
   try {
     if (detector) {
-      await runLocalWakeLoop(recorder, detector);
+      const stoppedCleanly = await runLocalWakeLoop(recorder, detector);
+      if (!stoppedCleanly && !stopRequested) {
+        log(
+          "Локальный детектор упал по ходу работы — до конца этого запуска перехожу на распознавание через Whisper (перезапусти голос со Статуса, чтобы попробовать локальный снова).",
+          "warn",
+        );
+        await runSttWakeLoop(recorder);
+      }
     } else {
       await runSttWakeLoop(recorder);
     }

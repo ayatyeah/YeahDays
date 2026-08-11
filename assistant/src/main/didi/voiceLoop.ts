@@ -142,7 +142,11 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
     return;
   }
   await say(GREETING);
-  const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS);
+  // 0.4с, а не дефолтный 1с: тут уже точно не фоновый шум — человек только
+  // что услышал "Да?" и явно пытается что-то сказать, а не бормочет мимо
+  // микрофона. Короткая команда вроде "стоп" не должна отбрасываться как
+  // обрывок (реальный случай: "обрывок 0.99с" выбрасывал настоящую команду).
+  const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS, 0.4);
   if (!cmdWav) {
     log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
     return;

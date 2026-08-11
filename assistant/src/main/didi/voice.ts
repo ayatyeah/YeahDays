@@ -2,6 +2,7 @@ import type { PvRecorder } from "@picovoice/pvrecorder-node";
 import { speak } from "./openai.js";
 import { playWav } from "./audio.js";
 import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
+import { log } from "./logger.js";
 
 let activeRecorder: PvRecorder | null = null;
 
@@ -29,17 +30,27 @@ const audioCache = new Map<string, Buffer>();
  * на 12-секундные обрывки шума.
  */
 export async function say(text: string): Promise<void> {
-  console.log(`[ДиДи] ${text}`);
-  let wav = audioCache.get(text);
-  if (!wav) {
-    wav = await speak(text);
-    if (text === GREETING || text === BOOT_GREETING) audioCache.set(text, wav);
-  }
-  activeRecorder?.stop();
+  // Раньше это был console.log — в упакованном приложении (без окна
+  // консоли) он никуда не виден вообще, ни сама фраза, ни ошибка синтеза/
+  // воспроизведения, если та случится дальше без try/catch у вызывающего
+  // кода (как раньше было с say(BOOT_GREETING) в startVoiceLoop.ts). log()
+  // хотя бы попадает в живой журнал на вкладке "Статус".
+  log(`[ДиДи] ${text}`);
   try {
-    await playWav(wav);
-  } finally {
-    activeRecorder?.start();
+    let wav = audioCache.get(text);
+    if (!wav) {
+      wav = await speak(text);
+      if (text === GREETING || text === BOOT_GREETING) audioCache.set(text, wav);
+    }
+    activeRecorder?.stop();
+    try {
+      await playWav(wav);
+    } finally {
+      activeRecorder?.start();
+    }
+  } catch (e) {
+    log(`[voice] не удалось озвучить "${text}": ${e instanceof Error ? e.message : e}`, "error");
+    throw e;
   }
 }
 
@@ -97,8 +108,12 @@ export function startStreamingSpeech(): StreamingSpeech {
         await new Promise((resolve) => setTimeout(resolve, 20));
         continue;
       }
-      console.log(`[ДиДи] ${next.text}`);
-      await playWav(await next.wav);
+      log(`[ДиДи] ${next.text}`);
+      try {
+        await playWav(await next.wav);
+      } catch (e) {
+        log(`[voice] не удалось озвучить "${next.text}": ${e instanceof Error ? e.message : e}`, "error");
+      }
     }
   })();
 

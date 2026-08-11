@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SwipeDeck from "@/components/SwipeDeck";
 import CheckIn from "@/components/CheckIn";
-import Onboarding from "@/components/Onboarding";
 import ActiveTask from "@/components/ActiveTask";
 import Logo, { LogoLoader } from "@/components/Logo";
 import {
@@ -63,7 +62,6 @@ export default function HomeSection() {
   const hydrated = useHydrated();
 
   const name = useUserStore((s) => s.name);
-  const onboarded = useUserStore((s) => s.onboarded);
   const plan = useUserStore((s) => s.plan);
   const goals = useUserStore((s) => s.goals);
   const quests = useUserStore((s) => s.quests);
@@ -260,10 +258,6 @@ export default function HomeSection() {
 
   if (!hydrated) {
     return <LogoLoader />;
-  }
-
-  if (!onboarded) {
-    return <Onboarding />;
   }
 
   if (needsCheckIn) {

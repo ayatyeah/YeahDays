@@ -176,7 +176,7 @@ const SHOTS = [
 function Cta({ children }: { children: React.ReactNode }) {
   return (
     <Link
-      href="/app"
+      href="/today"
       className="press inline-flex h-14 items-center justify-center rounded-2xl bg-[var(--color-fg)] px-8 text-[16px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
     >
       {children}
@@ -519,7 +519,7 @@ export default function LandingPage() {
             </span>
           </div>
           <nav className="flex flex-wrap gap-6 text-[13.5px] text-[var(--color-muted)]">
-            <Link href="/app" className="transition hover:text-[var(--color-fg)]">
+            <Link href="/today" className="transition hover:text-[var(--color-fg)]">
               Приложение
             </Link>
             <a href="#product" className="transition hover:text-[var(--color-fg)]">

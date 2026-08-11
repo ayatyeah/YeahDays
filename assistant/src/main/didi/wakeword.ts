@@ -37,21 +37,35 @@ export interface WakewordDetector {
  */
 export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> {
   const script = scriptPath();
+  log(`[wakeword] пробую поднять локальный детектор: python "${script}"`);
 
   let child: ChildProcessWithoutNullStreams;
   try {
     child = spawn("python", [script], { stdio: ["pipe", "pipe", "pipe"] });
-  } catch {
+  } catch (e) {
+    log(`[wakeword] не удалось запустить процесс: ${e instanceof Error ? e.message : e}`, "warn");
     return null;
   }
 
   const wakeCallbacks: Array<(score: number) => void> = [];
+  const stderrLines: string[] = [];
 
   const ready = await new Promise<boolean>((resolve) => {
-    const timeout = setTimeout(() => resolve(false), 15_000); // загрузка ONNX-модели — не мгновенная
+    const timeout = setTimeout(() => {
+      log(
+        `[wakeword] не дождалась READY за 15с (модель не загрузилась или python завис)${stderrLines.length ? " — последний stderr: " + stderrLines.at(-1) : ""}`,
+        "warn",
+      );
+      resolve(false);
+    }, 15_000); // загрузка ONNX-модели — не мгновенная
 
-    child.on("error", () => {
+    child.on("error", (e) => {
+      // сюда попадает в первую очередь ENOENT — "python" не нашёлся в PATH
+      // именно в том окружении, в котором Electron был запущен (у GUI-
+      // процесса, запущенного двойным кликом на ярлык, PATH может отличаться
+      // от того, что видно из терминала при разработке).
       clearTimeout(timeout);
+      log(`[wakeword] ошибка процесса: ${e.message}`, "warn");
       resolve(false);
     });
 
@@ -76,7 +90,9 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
     });
 
     child.stderr.on("data", (chunk: Buffer) => {
-      log(`[wakeword] stderr: ${chunk.toString("utf8").trim()}`, "warn");
+      const text = chunk.toString("utf8").trim();
+      stderrLines.push(text);
+      log(`[wakeword] stderr: ${text}`, "warn");
     });
   });
 

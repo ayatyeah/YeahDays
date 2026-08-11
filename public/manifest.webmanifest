@@ -3,7 +3,7 @@
   "name": "YeahGrind — одно действие в день",
   "short_name": "YeahGrind",
   "description": "Не список задач, а ежедневная подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт персонаж.",
-  "start_url": "/app?source=pwa",
+  "start_url": "/today?source=pwa",
   "scope": "/",
   "display": "standalone",
   "display_override": ["standalone", "minimal-ui", "browser"],

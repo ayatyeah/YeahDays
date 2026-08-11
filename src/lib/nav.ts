@@ -12,7 +12,7 @@
  * чтобы «назад» и ссылки продолжали работать.
  */
 
-export const TABS = ["home", "today", "calendar", "progress", "account"] as const;
+export const TABS = ["today", "home", "calendar", "progress", "account"] as const;
 
 export type TabKey = (typeof TABS)[number];
 
@@ -26,7 +26,7 @@ export const TAB_PATH: Record<TabKey, string> = {
 };
 
 export const TAB_LABEL: Record<TabKey, string> = {
-  home: "Главная",
+  home: "Колода",
   today: "Сегодня",
   calendar: "Календарь",
   progress: "Прогресс",

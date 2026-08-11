@@ -151,15 +151,15 @@ export default function TodaySection() {
           </div>
           <h2 className="text-lg font-bold tracking-tight">План пока пуст</h2>
           <p className="mt-2 max-w-[270px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
-            Открой главный экран и свайпни вправо действия, которые
-            берёшь на сегодня.
+            Впиши свои задачи ниже, или открой «Колоду» и свайпни вправо
+            действия, которые берёшь на сегодня.
           </p>
           <button
             type="button"
             onClick={() => go("home")}
             className="press mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
           >
-            Подобрать действия
+            Открыть колоду
           </button>
         </div>
       ) : (

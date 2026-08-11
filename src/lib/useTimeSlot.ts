@@ -15,6 +15,13 @@ import { currentSlot, type TimePreference } from "./domain";
  * Проверяем раз в минуту, а не ставим таймер до следующего слота: дешевле,
  * переживает засыпание вкладки и перевод часов. Состояние меняется только
  * когда слот реально стал другим, поэтому лишних перерисовок нет.
+ *
+ * Но пока вкладка ВИДНА, тикающий интервал молчит: смена слота дёргает
+ * колоду (см. HomeSection — slot в зависимостях фетча рекомендаций) и
+ * человек видел, как карточки "сами по себе" прыгают посреди чтения —
+ * граница часа ничего не спрашивает. Обновляем только пока вкладка в
+ * фоне (никто не смотрит) или в момент возврата на неё — это уже
+ * ожидаемый момент «может, что-то обновилось», как у любого приложения.
  */
 export function useTimeSlot(): Exclude<TimePreference, "any"> {
   const [slot, setSlot] = useState<Exclude<TimePreference, "any">>(() =>
@@ -22,17 +29,20 @@ export function useTimeSlot(): Exclude<TimePreference, "any"> {
   );
 
   useEffect(() => {
-    const tick = () => {
+    const sync = () => {
       const now = currentSlot();
       setSlot((prev) => (prev === now ? prev : now));
     };
+    // интервал молчит, пока видно — обновляет только пока в фоне
+    const tick = () => {
+      if (document.visibilityState !== "visible") sync();
+    };
 
-    tick(); // вкладка могла проспать смену слота
     const id = setInterval(tick, 60_000);
 
-    // возврат на вкладку — самый частый момент, когда время «прыгнуло»
+    // возврат на вкладку — единственный момент, когда обновляем ВИДИМЫЙ экран
     const onVisible = () => {
-      if (document.visibilityState === "visible") tick();
+      if (document.visibilityState === "visible") sync();
     };
     document.addEventListener("visibilitychange", onVisible);
 

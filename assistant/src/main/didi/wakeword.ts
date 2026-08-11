@@ -22,6 +22,8 @@ export interface WakewordDetector {
   /** Скормить один кадр (тот же формат, что пишет PvRecorder — Int16Array). Ничего не возвращает, срабатывание — через onWake. */
   feed(frame: Int16Array): void;
   onWake(cb: (score: number) => void): void;
+  /** false — процесс неожиданно завершился (упал/убит) уже ПОСЛЕ успешного старта. voiceLoop.ts проверяет это, чтобы не кормить кадрами мёртвый пайп молча. */
+  isAlive(): boolean;
   stop(): void;
 }
 
@@ -87,18 +89,26 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
     return null;
   }
 
-  child.on("exit", (code) => {
-    log(`[wakeword] процесс распознавания слова неожиданно завершился (код ${code}) — голосовой цикл остановлен`, "error");
+  let alive = true;
+  child.on("exit", (code, signal) => {
+    alive = false;
+    // code === null обычно значит "убит сигналом", не обычное завершение —
+    // сама причина (segfault в onnxruntime, OOM, и т.п.) без stderr-вывода
+    // от Python отсюда не видна, поэтому пишем всё, что есть.
+    log(`[wakeword] процесс распознавания слова неожиданно завершился (код ${code}, сигнал ${signal})`, "error");
   });
 
   return {
     feed(frame: Int16Array) {
-      if (!child.stdin.writable) return;
+      if (!alive || !child.stdin.writable) return;
       const buf = Buffer.from(frame.buffer, frame.byteOffset, frame.byteLength);
       child.stdin.write(buf);
     },
     onWake(cb) {
       wakeCallbacks.push(cb);
+    },
+    isAlive() {
+      return alive;
     },
     stop() {
       try {

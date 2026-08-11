@@ -1,7 +1,7 @@
 import type { PvRecorder } from "@picovoice/pvrecorder-node";
 import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech } from "./audio.js";
 import { transcribeWav } from "./openai.js";
-import { say, bindRecorder } from "./voice.js";
+import { say, bindRecorder, startStreamingSpeech } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
 import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { isEnabled } from "./presence.js";
@@ -115,11 +115,24 @@ async function handleCommand(recorder: PvRecorder, commandText: string): Promise
 
   const recordCommand = () => recordSpeech(recorder);
   const history = await freshHistory(); // каждая команда — новый разговор, без памяти между репликами
-  const reply = await runConversationTurn(history, commandText, (q) => confirmVoice(q, recordCommand));
+
+  // Озвучиваем по предложениям по мере генерации, не дожидаясь всего
+  // ответа целиком — see voice.ts::startStreamingSpeech.
+  const speech = startStreamingSpeech();
+  const reply = await runConversationTurn(
+    history,
+    commandText,
+    (q) => confirmVoice(q, recordCommand),
+    (chunk) => speech.push(chunk),
+  );
+  // Редкий случай: пустой content или "слишком много шагов" — этот текст
+  // никогда не проходил через onTextChunk, значит ничего не поставлено в
+  // очередь озвучки. Досылаем его целиком, чтобы не остаться немой.
+  if (!speech.hasSpoken()) speech.push(reply);
+  await speech.finish();
 
   void logEvent("reply", reply);
   void logChatMessage("assistant", reply);
-  await say(reply);
 }
 
 /** Записывает и распознаёт команду после срабатывания кодового слова — общее для обоих путей. */

@@ -49,11 +49,12 @@ export async function runConversationTurn(
   history: ChatCompletionMessageParam[],
   userText: string,
   confirm: (question: string) => Promise<boolean>,
+  onTextChunk?: (chunk: string) => void,
 ): Promise<string> {
   history.push({ role: "user", content: userText });
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const msg = await chatStep(history, TOOL_SPECS);
+    const msg = await chatStep(history, TOOL_SPECS, onTextChunk);
     history.push(msg as ChatCompletionMessageParam);
 
     if (!msg.tool_calls || msg.tool_calls.length === 0) {

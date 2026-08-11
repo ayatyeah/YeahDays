@@ -42,3 +42,86 @@ export async function say(text: string): Promise<void> {
     activeRecorder?.start();
   }
 }
+
+export interface StreamingSpeech {
+  /** Кусок текста, как он приходит из потокового ответа модели (necessarily не целое предложение). */
+  push(chunk: string): void;
+  /** true, если хоть одно предложение уже поставлено в очередь на озвучку. */
+  hasSpoken(): boolean;
+  /** Вызвать, когда модель закончила генерацию. Ждёт, пока доиграет всё поставленное в очередь, и включает микрофон обратно. */
+  finish(): Promise<void>;
+}
+
+/** Разбивает буфер на завершённые предложения; хвост без конечной пунктуации возвращает отдельно, ждать его окончания в следующих чанках. */
+function extractSentences(buffer: string): { sentences: string[]; rest: string } {
+  const matches = buffer.match(/[^.!?…]+[.!?…]+[\s"»]*/g);
+  if (!matches) return { sentences: [], rest: buffer };
+  const consumed = matches.join("");
+  return { sentences: matches.map((s) => s.trim()).filter(Boolean), rest: buffer.slice(consumed.length) };
+}
+
+/**
+ * Озвучивает ответ модели по мере генерации, не дожидаясь, пока модель
+ * допечатает его целиком: как только накопленный текст складывается в
+ * завершённое предложение, синтез WAV для него запускается сразу, в
+ * фоне, пока модель продолжает генерировать остальной ответ — а
+ * проигрывание идёт по очереди строго по порядку предложений (иначе
+ * вторая фраза могла бы прозвучать раньше первой, если её синтез
+ * оказался быстрее). Recorder глушится ОДИН раз на весь ответ, а не на
+ * каждое предложение — иначе между предложениями были бы лишние паузы
+ * на stop()/start() микрофона.
+ */
+export function startStreamingSpeech(): StreamingSpeech {
+  let buffer = "";
+  let muted = false;
+  let finished = false;
+  let queuedAny = false;
+  const pending: Array<{ text: string; wav: Promise<Buffer> }> = [];
+
+  function enqueue(text: string): void {
+    if (!text) return;
+    queuedAny = true;
+    if (!muted) {
+      activeRecorder?.stop();
+      muted = true;
+    }
+    const cached = audioCache.get(text);
+    pending.push({ text, wav: cached ? Promise.resolve(cached) : speak(text) });
+  }
+
+  const consumer = (async () => {
+    for (;;) {
+      const next = pending.shift();
+      if (!next) {
+        if (finished) break;
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        continue;
+      }
+      console.log(`[ДиДи] ${next.text}`);
+      await playWav(await next.wav);
+    }
+  })();
+
+  return {
+    push(chunk: string) {
+      buffer += chunk;
+      const { sentences, rest } = extractSentences(buffer);
+      buffer = rest;
+      for (const s of sentences) enqueue(s);
+    },
+    hasSpoken() {
+      return queuedAny;
+    },
+    async finish() {
+      const tail = buffer.trim();
+      buffer = "";
+      if (tail) enqueue(tail);
+      finished = true;
+      await consumer;
+      if (muted) {
+        activeRecorder?.start();
+        muted = false;
+      }
+    },
+  };
+}

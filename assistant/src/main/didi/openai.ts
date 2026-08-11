@@ -1,5 +1,10 @@
 import OpenAI, { toFile } from "openai";
-import type { ChatCompletionMessageParam, ChatCompletionTool } from "openai/resources/chat/completions";
+import type {
+  ChatCompletionMessage,
+  ChatCompletionMessageParam,
+  ChatCompletionMessageToolCall,
+  ChatCompletionTool,
+} from "openai/resources/chat/completions";
 import { config } from "./config.js";
 
 export const client = new OpenAI({ apiKey: config.openaiApiKey });
@@ -35,25 +40,72 @@ export async function transcribeWav(wav: Buffer): Promise<string> {
   return HALLUCINATION_RE.test(text) ? text : "";
 }
 
-/** Один шаг диалога: модель либо отвечает текстом, либо просит вызвать инструменты. */
+/**
+ * Один шаг диалога: модель либо отвечает текстом, либо просит вызвать
+ * инструменты. Собран через stream:true, а не одним ожиданием полного
+ * ответа — при обычных (не-инструментальных) репликах onTextChunk
+ * получает текст кусками по мере генерации, и вызывающий код (voiceLoop.ts)
+ * может начинать озвучивать уже готовые предложения, не дожидаясь, пока
+ * модель допечатает весь ответ целиком. При раунде с вызовом инструмента
+ * контента обычно нет вообще — onTextChunk просто не вызывается.
+ */
 export async function chatStep(
   messages: ChatCompletionMessageParam[],
   tools: ChatCompletionTool[],
-) {
-  const res = await client.chat.completions.create({
+  onTextChunk?: (chunk: string) => void,
+): Promise<ChatCompletionMessage> {
+  const stream = await client.chat.completions.create({
     model: config.chatModel,
     messages,
     tools,
     tool_choice: "auto",
+    stream: true,
+    stream_options: { include_usage: true },
   });
-  if (res.usage) {
-    console.log(
-      `[usage] ${config.chatModel}: prompt=${res.usage.prompt_tokens} completion=${res.usage.completion_tokens} total=${res.usage.total_tokens} (история из ${messages.length} сообщений)`,
-    );
+
+  let content = "";
+  const toolCalls: Record<
+    number,
+    { id: string; type: "function"; function: { name: string; arguments: string } }
+  > = {};
+
+  for await (const chunk of stream) {
+    const delta = chunk.choices[0]?.delta;
+    if (delta?.content) {
+      content += delta.content;
+      onTextChunk?.(delta.content);
+    }
+    if (delta?.tool_calls) {
+      for (const tc of delta.tool_calls) {
+        const entry = (toolCalls[tc.index] ??= {
+          id: "",
+          type: "function",
+          function: { name: "", arguments: "" },
+        });
+        if (tc.id) entry.id = tc.id;
+        if (tc.function?.name) entry.function.name += tc.function.name;
+        if (tc.function?.arguments) entry.function.arguments += tc.function.arguments;
+      }
+    }
+    if (chunk.usage) {
+      console.log(
+        `[usage] ${config.chatModel}: prompt=${chunk.usage.prompt_tokens} completion=${chunk.usage.completion_tokens} total=${chunk.usage.total_tokens} (история из ${messages.length} сообщений)`,
+      );
+    }
   }
-  const choice = res.choices[0];
-  if (!choice?.message) throw new Error("OpenAI не вернул ответ");
-  return choice.message;
+
+  const toolCallList: ChatCompletionMessageToolCall[] = Object.values(toolCalls).map((tc) => ({
+    id: tc.id,
+    type: "function",
+    function: tc.function,
+  }));
+
+  return {
+    role: "assistant",
+    content: content || null,
+    refusal: null,
+    ...(toolCallList.length > 0 ? { tool_calls: toolCallList } : {}),
+  } as ChatCompletionMessage;
 }
 
 /**

@@ -9,7 +9,9 @@ import {
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { LogoLoader } from "@/components/Logo";
+import Onboarding from "@/components/Onboarding";
 import { useNavStore } from "@/store/useNavStore";
+import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { haptic } from "@/lib/motion";
 import { TABS, neighbourTab, type TabKey } from "@/lib/nav";
 
@@ -66,6 +68,8 @@ function prefersReducedMotion(): boolean {
 
 export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   const pathname = usePathname();
+  const hydrated = useHydrated();
+  const onboarded = useUserStore((s) => s.onboarded);
   const tab = useNavStore((s) => s.tab);
   const dir = useNavStore((s) => s.dir);
   const mounted = useNavStore((s) => s.mounted);
@@ -248,6 +252,18 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     },
     [endDrag],
   );
+
+  /*
+   * Онбординг гейтится здесь, а не внутри отдельного раздела: раньше это
+   * жило только в HomeSection, что молча предполагало "home" единственным
+   * возможным первым разделом. Раздел по умолчанию сменился на "today" —
+   * без этой проверки на уровне оболочки новый пользователь, попавший
+   * сразу на "today" (обычный случай теперь), вообще не видел онбординг и
+   * застревал без нижней навигации (та тоже скрыта, пока !onboarded).
+   */
+  if (hydrated && !onboarded) {
+    return <Onboarding />;
+  }
 
   return (
     <div

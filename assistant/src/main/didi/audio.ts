@@ -98,13 +98,13 @@ export async function calibrateSilenceThreshold(recorder: PvRecorder): Promise<v
   samples.sort((a, b) => a - b);
   const median = samples[Math.floor(samples.length / 2)]!;
   silenceThreshold = Math.min(Math.max(median * 2.5, 350), 700);
-  console.log(`[audio] фоновый шум (медиана) ≈${median.toFixed(0)}, порог тишины выставлен на ${silenceThreshold.toFixed(0)}`);
+  log(`[audio] фоновый шум (медиана) ≈${median.toFixed(0)}, порог тишины выставлен на ${silenceThreshold.toFixed(0)}`);
 }
 
 export function createRecorder(): PvRecorder {
   const recorder = new PvRecorder(FRAME_LENGTH, config.audioDeviceIndex);
   recorder.start();
-  console.log(`[audio] слушаю через "${recorder.getSelectedDevice()}"…`);
+  log(`[audio] слушаю через "${recorder.getSelectedDevice()}"…`);
   return recorder;
 }
 
@@ -137,12 +137,11 @@ async function waitForSpeechStart(recorder: PvRecorder, timeoutMs?: number): Pro
 
     frameCount++;
     if (DEBUG && frameCount % DEBUG_EVERY_N_FRAMES === 0) {
-      const bar = "#".repeat(Math.min(50, Math.floor(level / 50)));
-      console.log(`[level] ${level.toFixed(0).padStart(5)} ${bar.padEnd(50)} порог=${silenceThreshold.toFixed(0)}`);
+      log(`[level] ${level.toFixed(0).padStart(5)} порог=${silenceThreshold.toFixed(0)}`);
     }
 
     if (loudStreak >= SPEECH_START_FRAMES) {
-      if (DEBUG) console.log(`[audio] речь началась (уровень ${level.toFixed(0)}), пишу…`);
+      if (DEBUG) log(`[audio] речь началась (уровень ${level.toFixed(0)}), пишу…`);
       return true;
     }
   }
@@ -179,10 +178,10 @@ export async function recordUntilSilence(recorder: PvRecorder, timeoutMs?: numbe
 
   const seconds = (collected.length / SAMPLE_RATE).toFixed(2);
   if (collected.length < MIN_UTTERANCE_SAMPLES) {
-    if (DEBUG) console.log(`[audio] обрывок ${seconds}с — короче 0.5с, отбрасываю`);
+    if (DEBUG) log(`[audio] обрывок ${seconds}с — короче 0.5с, отбрасываю`);
     return null;
   }
-  if (DEBUG) console.log(`[audio] записано ${seconds}с, распознаю…`);
+  if (DEBUG) log(`[audio] записано ${seconds}с, распознаю…`);
   return pcmToWav(Int16Array.from(collected), SAMPLE_RATE);
 }
 

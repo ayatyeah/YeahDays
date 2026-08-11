@@ -55,13 +55,15 @@ function pushPath(path: string) {
 }
 
 export const useNavStore = create<NavState>((set, get) => ({
-  // Всегда "home" на старте: должно совпадать на сервере и при гидратации
+  // Всегда "today" на старте: должно совпадать на сервере и при гидратации
   // на клиенте, иначе React увидит расхождение (SSR/CSR mismatch). Верный
   // раздел для deep-link выставляет AppShell в useLayoutEffect до отрисовки
-  // — там уже безопасно читать адрес.
-  tab: "home",
+  // — там уже безопасно читать адрес. Значение само по себе произвольное
+  // (важно только совпадение сервер/клиент) — "today", потому что это и
+  // есть раздел по умолчанию (см. start_url в manifest.webmanifest).
+  tab: "today",
   dir: 1,
-  mounted: ["home"],
+  mounted: ["today"],
   scroll: {},
 
   go: (tab) => {

@@ -7,6 +7,7 @@ import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import PushOptIn from "@/components/PushOptIn";
 import DidiPanel from "@/components/DidiPanel";
+import DidiSyncId from "@/components/DidiSyncId";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
 import DataControls from "@/components/DataControls";
@@ -117,6 +118,7 @@ export default function AccountSection() {
       <div className="mt-3">
         <DidiPanel linkToFull />
       </div>
+      <DidiSyncId />
 
       {/* Заморозки — страховка стрика */}
       <section className="mt-3 flex items-center gap-3 rounded-3xl surface p-4">

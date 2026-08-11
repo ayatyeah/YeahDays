@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { PvRecorder } from "@picovoice/pvrecorder-node";
 import { config } from "./config.js";
+import { log } from "./logger.js";
 
 /** Стандарт для распознавания речи 16-бит моно — то же, чем раньше пользовался Porcupine. */
 const FRAME_LENGTH = 512;
@@ -45,8 +46,20 @@ function pcmToWav(samples: Int16Array, sampleRate: number): Buffer {
   return buf;
 }
 
-/** Проигрывает WAV синхронно (блокирует до конца звука) через встроенный SoundPlayer. */
+/**
+ * Проигрывает WAV синхронно (блокирует до конца звука) через встроенный
+ * SoundPlayer — тот, что назначен ПО УМОЛЧАНИЮ в Windows (динамик/наушники,
+ * что бы ни было default playback device). Если PlaySync() отрабатывает
+ * без ошибки, но звука не слышно на практике — самое частое реальное
+ * объяснение снаружи этого кода: не тот default-девайс в Windows, звук
+ * приглушён в микшере громкости конкретно для этого процесса, либо просто
+ * физически выключены колонки/наушники — SoundPlayer этого никак не видит
+ * и не может сообщить как ошибку.
+ */
 export async function playWav(wav: Buffer): Promise<void> {
+  if (wav.length < 100) {
+    log(`[audio] подозрительно маленький WAV на воспроизведение (${wav.length} байт) — TTS мог вернуть пустышку`, "warn");
+  }
   const dir = await mkdtemp(path.join(tmpdir(), "didi-"));
   const file = path.join(dir, "out.wav");
   await writeFile(file, wav);

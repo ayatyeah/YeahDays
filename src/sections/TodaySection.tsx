@@ -89,139 +89,153 @@ export default function TodaySection() {
         </h1>
       </header>
 
-      {/* Персонаж реагирует на выполнение */}
-      <div className="canvas-slot relative -mt-2 h-[240px]">
-        <Avatar3D
-          stats={stats}
-          level={progress.level}
-          celebrate={celebrate}
-          className="h-full w-full"
-        />
-        {allDone && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="pointer-events-none absolute inset-x-0 bottom-0 text-center"
-          >
-            <span className="rounded-full bg-[var(--color-stability)]/15 px-3 py-1.5 text-[12px] font-semibold text-[var(--color-stability)]">
-              День закрыт 🔥 стрик {streak}
-            </span>
-          </motion.div>
-        )}
-      </div>
-
-      {/* Прогресс дня */}
-      <section className="mb-5 rounded-3xl surface p-4">
-        <div className="mb-2.5 flex items-end justify-between">
-          <div>
-            <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
-              Выполнено
-            </p>
-            <p className="mt-0.5 text-2xl font-bold leading-none tabular-nums">
-              {done.length}
-              <span className="text-[var(--color-muted)]">/{today.length || DAILY_GOAL}</span>
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
-              Уровень {progress.level}
-            </p>
-            <p className="mt-0.5 text-[13px] font-semibold tabular-nums">
-              <AnimatedNumber value={totalXp} /> XP
-            </p>
-          </div>
-        </div>
-        <div className="h-2.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
-          <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[var(--color-stability)] to-[var(--color-intelligence)]"
-            initial={{ width: 0 }}
-            animate={{ width: `${ratio * 100}%` }}
-            transition={{ type: "spring", stiffness: 140, damping: 22 }}
-          />
-        </div>
-      </section>
-
-      <Challenges />
-
-      {/* Список */}
-      {today.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-2xl">
-            ✦
-          </div>
-          <h2 className="text-lg font-bold tracking-tight">План пока пуст</h2>
-          <p className="mt-2 max-w-[270px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
-            Впиши свои задачи ниже, или открой «Колоду» и свайпни вправо
-            действия, которые берёшь на сегодня.
-          </p>
-          <button
-            type="button"
-            onClick={() => go("home")}
-            className="press mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
-          >
-            Открыть колоду
-          </button>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2.5">
-          <AnimatePresence initial={false}>
-            {active.map((t) => (
-              <PlanItem
-                key={t.id}
-                task={t}
-                onToggle={handleToggle}
-                onRemove={removeTask}
+      {/*
+        На lg: и шире это дашборд в две колонки: широкая слева (прогресс,
+        задачи — то, чем реально пользуются) и узкая справа (персонаж,
+        челленджи, расписание, итог дня). Каждая колонка — свой независимый
+        вертикальный поток (flex-col), а не общая grid-сетка строк: контент
+        слева и справа разной высоты (пустой план короче полного, у кого-то
+        нет челленджей), и общая сетка строк сводила бы заголовки в
+        разных колонках на одну визуальную линию — некрасиво и непредсказуемо.
+        Порядок внутри каждой колонки — тот же, что раньше был во всей
+        мобильной раскладке одним потоком; на мобильном (без lg:) обе
+        колонки просто складываются друг под друга — сначала задачи, потом
+        персонаж и всё остальное.
+      */}
+      <div className="lg:flex lg:items-start lg:gap-6">
+        <div className="flex flex-col lg:flex-1 lg:gap-5">
+          {/* Прогресс дня */}
+          <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
+            <div className="mb-2.5 flex items-end justify-between">
+              <div>
+                <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                  Выполнено
+                </p>
+                <p className="mt-0.5 text-2xl font-bold leading-none tabular-nums">
+                  {done.length}
+                  <span className="text-[var(--color-muted)]">/{today.length || DAILY_GOAL}</span>
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                  Уровень {progress.level}
+                </p>
+                <p className="mt-0.5 text-[13px] font-semibold tabular-nums">
+                  <AnimatedNumber value={totalXp} /> XP
+                </p>
+              </div>
+            </div>
+            <div className="h-2.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-[var(--color-stability)] to-[var(--color-intelligence)]"
+                initial={{ width: 0 }}
+                animate={{ width: `${ratio * 100}%` }}
+                transition={{ type: "spring", stiffness: 140, damping: 22 }}
               />
-            ))}
-          </AnimatePresence>
+            </div>
+          </section>
 
-          {/* Выполненное сворачиваем: закрытое дело не должно занимать
-              экран наравне с тем, что ещё предстоит сделать. */}
-          {done.length > 0 && (
-            <div className="mt-3">
+          {/* Список */}
+          {today.length === 0 ? (
+            <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-2xl">
+                ✦
+              </div>
+              <h2 className="text-lg font-bold tracking-tight">План пока пуст</h2>
+              <p className="mt-2 max-w-[270px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+                Впиши свои задачи ниже, или открой «Колоду» и свайпни вправо
+                действия, которые берёшь на сегодня.
+              </p>
               <button
-                onClick={() => setShowDone((v) => !v)}
-                className="flex w-full items-center justify-between rounded-2xl surface px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
+                type="button"
+                onClick={() => go("home")}
+                className="press mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
               >
-                <span className="text-[12.5px] font-semibold text-[var(--color-muted)]">
-                  Выполнено: {done.length}
-                </span>
-                <span className="text-[12px] text-[var(--color-muted)]">
-                  {showDone ? "скрыть" : "показать"}
-                </span>
+                Открыть колоду
               </button>
-
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2.5">
               <AnimatePresence initial={false}>
-                {showDone && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="flex flex-col gap-2.5 overflow-hidden pt-2.5"
-                  >
-                    {done.map((t) => (
-                      <PlanItem
-                        key={t.id}
-                        task={t}
-                        onToggle={handleToggle}
-                        onRemove={removeTask}
-                      />
-                    ))}
-                  </motion.div>
-                )}
+                {active.map((t) => (
+                  <PlanItem
+                    key={t.id}
+                    task={t}
+                    onToggle={handleToggle}
+                    onRemove={removeTask}
+                  />
+                ))}
               </AnimatePresence>
+
+              {/* Выполненное сворачиваем: закрытое дело не должно занимать
+                  экран наравне с тем, что ещё предстоит сделать. */}
+              {done.length > 0 && (
+                <div className="mt-3">
+                  <button
+                    onClick={() => setShowDone((v) => !v)}
+                    className="flex w-full items-center justify-between rounded-2xl surface px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
+                  >
+                    <span className="text-[12.5px] font-semibold text-[var(--color-muted)]">
+                      Выполнено: {done.length}
+                    </span>
+                    <span className="text-[12px] text-[var(--color-muted)]">
+                      {showDone ? "скрыть" : "показать"}
+                    </span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {showDone && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="flex flex-col gap-2.5 overflow-hidden pt-2.5"
+                      >
+                        {done.map((t) => (
+                          <PlanItem
+                            key={t.id}
+                            task={t}
+                            onToggle={handleToggle}
+                            onRemove={removeTask}
+                          />
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )}
             </div>
           )}
+
+          <TodoList />
         </div>
-      )}
 
-      <TodoList />
+        <div className="mt-5 flex flex-col gap-5 lg:mt-0 lg:w-[320px] lg:shrink-0">
+          {/* Персонаж реагирует на выполнение */}
+          <div className="canvas-slot relative h-[240px]">
+            <Avatar3D
+              stats={stats}
+              level={progress.level}
+              celebrate={celebrate}
+              className="h-full w-full"
+            />
+            {allDone && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="pointer-events-none absolute inset-x-0 bottom-0 text-center"
+              >
+                <span className="rounded-full bg-[var(--color-stability)]/15 px-3 py-1.5 text-[12px] font-semibold text-[var(--color-stability)]">
+                  День закрыт 🔥 стрик {streak}
+                </span>
+              </motion.div>
+            )}
+          </div>
 
-      <DaySchedule compact />
-
-      {/* Итог дня — вечером и только если сегодня что-то происходило */}
-      <div className="mt-4">
-        <EveningRetro />
+          <Challenges />
+          <DaySchedule compact />
+          <EveningRetro />
+        </div>
       </div>
 
       <LevelUpOverlay />

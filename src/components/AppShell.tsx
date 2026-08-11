@@ -13,6 +13,7 @@ import Onboarding from "@/components/Onboarding";
 import { useNavStore } from "@/store/useNavStore";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { haptic } from "@/lib/motion";
+import { cn } from "@/lib/cn";
 import { TABS, neighbourTab, type TabKey } from "@/lib/nav";
 
 /**
@@ -287,7 +288,11 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
             hidden={!active}
             aria-hidden={!active}
             inert={!active}
-            className="section-pane"
+            // "today" один занимает всю ширину под свою сетку колонок
+            // (см. TodaySection); остальным на широких экранах даём
+            // читаемую колонку по центру, а не растягиваем во всю ширину —
+            // их внутренняя вёрстка не рассчитана на 1100px в одну колонку.
+            className={cn("section-pane", t !== "today" && "lg:mx-auto lg:max-w-2xl lg:w-full")}
           >
             <Section />
           </div>

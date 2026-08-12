@@ -8,6 +8,7 @@ import {
   isTodoDone,
   isTodoOverdue,
   PRIORITY_LABEL,
+  PRIORITY_COLOR,
   REPEAT_LABEL,
   type Todo,
   type TodoPriority,
@@ -16,12 +17,6 @@ import {
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
 import { listVariants, itemVariants, spring, springSnappy } from "@/lib/motion";
-
-const PRIORITY_COLOR: Record<TodoPriority, string> = {
-  high: "var(--color-strength)",
-  normal: "var(--color-intelligence)",
-  low: "var(--color-muted)",
-};
 
 type Filter = "active" | "all" | "done";
 

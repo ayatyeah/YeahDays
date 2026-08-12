@@ -11,6 +11,7 @@ import { startVoiceLoop, stopVoiceLoop, isVoiceLoopRunning } from "./didi/voiceL
 import { startChatLoop } from "./didi/chat.js";
 import { startPresenceLoop } from "./didi/presence.js";
 import { didiLog, log } from "./didi/logger.js";
+import { setLocalEnabled } from "./didi/presence.js";
 import { didiState, getState } from "./didi/state.js";
 import { listFacts, rememberFact, forgetFact } from "./didi/yeahgrind.js";
 import { getPanel, setEnabled, getChatHistory, sendChatMessage } from "./didi/bridge.js";
@@ -101,7 +102,10 @@ function startServicesOnce(): void {
 
 function registerIpc(): void {
   ipcMain.handle("didi:getPanel", () => getPanel());
-  ipcMain.handle("didi:setEnabled", (_e, enabled: boolean) => setEnabled(enabled));
+  ipcMain.handle("didi:setEnabled", async (_e, enabled: boolean) => {
+    await setEnabled(enabled); // сообщает серверу
+    setLocalEnabled(enabled); // и локальному кэшу сразу же, не ждём heartbeat
+  });
   ipcMain.handle("didi:getChatHistory", () => getChatHistory());
   ipcMain.handle("didi:sendChatMessage", (_e, content: string) => sendChatMessage(content));
   ipcMain.handle("didi:getFacts", () => listFacts());

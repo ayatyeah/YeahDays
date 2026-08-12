@@ -38,7 +38,7 @@ export default function ChatPanel() {
   return (
     <div className="card">
       <div className="chat-feed">
-        {messages.length === 0 && <div className="muted">Переписки пока нет — скажи «Салем» или напиши сюда.</div>}
+        {messages.length === 0 && <div className="muted">Переписки пока нет — скажи «СалемАй» или напиши сюда.</div>}
         {messages.map((m) => (
           <div key={m.id} className={`bubble ${m.role}`}>
             {m.content}

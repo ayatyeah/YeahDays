@@ -199,6 +199,14 @@ export const PRIORITY_LABEL: Record<TodoPriority, string> = {
   low: "Потом",
 };
 
+/** Цвет по приоритету — общий для TodoList и TimelineSchedule, чтобы задача
+ * выглядела одинаково в списке и на почасовой шкале. */
+export const PRIORITY_COLOR: Record<TodoPriority, string> = {
+  high: "var(--color-strength)",
+  normal: "var(--color-intelligence)",
+  low: "var(--color-muted)",
+};
+
 export const REPEAT_LABEL: Record<RepeatKind, string> = {
   daily: "каждый день",
   weekdays: "по будням",

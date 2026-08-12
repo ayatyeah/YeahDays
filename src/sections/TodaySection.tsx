@@ -9,7 +9,7 @@ import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
 import EveningRetro from "@/components/EveningRetro";
 import Challenges from "@/components/Challenges";
-import DaySchedule from "@/components/DaySchedule";
+import TimelineSchedule from "@/components/TimelineSchedule";
 import TodoList from "@/components/TodoList";
 import { LogoLoader } from "@/components/Logo";
 import {
@@ -233,7 +233,7 @@ export default function TodaySection() {
           </div>
 
           <Challenges />
-          <DaySchedule compact />
+          <TimelineSchedule compact />
           <EveningRetro />
         </div>
       </div>

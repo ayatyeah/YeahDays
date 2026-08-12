@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import PlanItem from "@/components/PlanItem";
-import DaySchedule from "@/components/DaySchedule";
+import TimelineSchedule from "@/components/TimelineSchedule";
 import { AnimatePresence } from "framer-motion";
 import {
   useUserStore,
@@ -202,7 +202,7 @@ export default function CalendarSection() {
           "Сегодня", просто привязан к выбранной здесь дате, а не всегда
           к сегодня. key={selected} — чистый локальный стейт (свёрнуто/
           ночные часы) при переключении дня, а не протечка с прошлого. */}
-      <DaySchedule key={selected} day={selected} />
+      <TimelineSchedule key={selected} day={selected} />
     </div>
   );
 }

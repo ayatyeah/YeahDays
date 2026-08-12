@@ -19,7 +19,7 @@ import {
   type CategoryKey,
 } from "@/lib/domain";
 import { LogoLoader } from "@/components/Logo";
-import DaySchedule from "@/components/DaySchedule";
+import TimelineSchedule from "@/components/TimelineSchedule";
 import TodoList from "@/components/TodoList";
 import { formatDuration } from "@/components/ActiveTask";
 import { cn } from "@/lib/cn";
@@ -356,7 +356,7 @@ function DayTab() {
 
       {/* Задачи и почасовое расписание выбранного дня */}
       <TodoList day={day} />
-      <DaySchedule day={day} />
+      <TimelineSchedule day={day} />
     </>
   );
 }

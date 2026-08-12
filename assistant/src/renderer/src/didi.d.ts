@@ -1,3 +1,5 @@
+import type { DetailedHTMLProps, HTMLAttributes } from "react";
+
 export interface PanelEvent {
   id: string;
   kind: string;
@@ -76,5 +78,18 @@ export interface DidiApi {
 declare global {
   interface Window {
     didi: DidiApi;
+  }
+
+  namespace JSX {
+    interface IntrinsicElements {
+      // React не знает про <webview> — его регистрирует сам Electron
+      // (webviewTag: true в main/index.ts), тег не входит в стандартный
+      // HTML-набор.
+      webview: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement> & {
+        src?: string;
+        partition?: string;
+        allowpopups?: string;
+      };
+    }
   }
 }

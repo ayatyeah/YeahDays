@@ -38,6 +38,13 @@ if (!gotLock) {
   });
 }
 
+/** Иконка окна во время работы (отдельно от иконки .exe — ту электрон-билдер зашивает в бинарник при сборке, см. electron-builder.yml). */
+function windowIconPath(): string {
+  return app.isPackaged
+    ? path.join(process.resourcesPath, "icon.png")
+    : path.join(process.cwd(), "build", "icon.png");
+}
+
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 980,
@@ -45,11 +52,17 @@ function createWindow(): void {
     minWidth: 720,
     minHeight: 560,
     title: "ДиДи",
+    icon: windowIconPath(),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
+      // Вкладка "YeahGrind" рендерит сам сайт внутри окна — по умолчанию
+      // Electron этот тег отключает (историческая CVE-поверхность), но
+      // сам webview всё равно в своём изолированном процессе без доступа
+      // к Node, так что риск не выше обычной вкладки браузера.
+      webviewTag: true,
     },
   });
 

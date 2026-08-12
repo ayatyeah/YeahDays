@@ -1,5 +1,8 @@
 // YeahDays — схема БД (Postgres на Railway).
-// Пока без аутентификации: пользователь — анонимный device-id с клиента.
+// Регистрация обязательна (email/пароль или Google) — анонимный
+// device-id с клиента используется только до первого входа, дальше
+// AccountSync (src/components/AccountSync.tsx) переносит его данные на
+// аккаунт через /api/link.
 // Событие = сигнал движку (свайп/выполнение) → обучающая выборка +
 // источник истории для серверных рекомендаций.
 
@@ -12,14 +15,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Пользователь: анонимный (id = device-id, без email) ИЛИ с аккаунтом
-// Google (email + Account). Anonymous-данные линкуются к аккаунту при входе.
+// Пользователь: регистрация по паролю (username+passwordHash) ИЛИ через
+// Google (Account) — оба ведут в одну и ту же модель. passwordHash пуст у
+// google-only аккаунтов. Anonymous-данные линкуются к аккаунту при входе
+// (см. комментарий над моделью).
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+  username      String?   @unique
+  passwordHash  String?
+  birthYear     Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]

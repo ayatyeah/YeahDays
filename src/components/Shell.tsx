@@ -10,7 +10,7 @@ import NotificationCenter from "./NotificationCenter";
 import { tabFromPath } from "@/lib/nav";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
-const MARKETING = ["/", "/terms", "/privacy"];
+const MARKETING = ["/", "/terms", "/privacy", "/login", "/register", "/download"];
 
 /**
  * Каркас страницы.

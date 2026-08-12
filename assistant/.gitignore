@@ -6,3 +6,5 @@ release/
 *.log
 keywords/
 heard-log/
+# ~46МБ, скачивается один раз — см. "Локальный детектор" в README
+wakeword/vosk-model-ru/

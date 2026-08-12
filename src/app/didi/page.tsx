@@ -15,7 +15,7 @@ export default function DidiPage() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="mb-4 flex items-baseline justify-between">
-        <h1 className="text-[26px] font-bold tracking-tight">ДиДи</h1>
+        <h1 className="text-[26px] font-bold tracking-tight">СалемАй</h1>
         <Link
           href="/account"
           className="text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"

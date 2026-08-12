@@ -51,7 +51,7 @@ function createWindow(): void {
     height: 720,
     minWidth: 720,
     minHeight: 560,
-    title: "ДиДи",
+    title: "СалемАй",
     icon: windowIconPath(),
     autoHideMenuBar: true,
     webPreferences: {

@@ -1,5 +1,5 @@
 appId: com.yeahdays.didi
-productName: DiDi
+productName: SalemAI
 directories:
   output: release
   buildResources: build

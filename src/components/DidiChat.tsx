@@ -88,7 +88,7 @@ export default function DidiChat() {
       <div className="flex min-h-[280px] flex-1 flex-col gap-2 overflow-y-auto">
         {messages.length === 0 && (
           <p className="my-auto text-center text-[12.5px] text-[var(--color-muted)]">
-            Напиши что-нибудь — ДиДи ответит, как только процесс на ноуте это увидит.
+            Напиши что-нибудь — СалемАй ответит, как только процесс на ноуте это увидит.
           </p>
         )}
         {messages.map((m) => (
@@ -121,7 +121,7 @@ export default function DidiChat() {
               void send();
             }
           }}
-          placeholder="Написать ДиДи…"
+          placeholder="Написать СалемАй…"
           maxLength={2000}
           className="h-11 min-w-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3.5 text-[13.5px] outline-none focus:border-[var(--color-fg-dim)]"
         />

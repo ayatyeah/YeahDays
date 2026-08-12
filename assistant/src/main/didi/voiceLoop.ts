@@ -11,16 +11,21 @@ import { runConversationTurn, freshHistory } from "./conversation.js";
 import { tryQuickCommand } from "./quickCommands.js";
 import { log } from "./logger.js";
 import { setState } from "./state.js";
-import { tryStartLocalWakeword, type WakewordDetector } from "./wakeword.js";
+import type { WakewordDetector } from "./wakeword.js";
 
 /**
- * STT-путь (запасной, если локальный детектор недоступен — нет Python/
- * openwakeword): кодовая фраза ищется не классификатором, а обычным
- * распознаванием речи — прогоняем всё через Whisper и ищем в тексте слово,
- * близкое к «джарвис»/«жарвис» (нечёткое сравнение, Levenshtein), либо
- * «jarvis» латиницей — Whisper иногда транслитерирует его как известное имя.
+ * Кодовая фраза ищется не классификатором, а обычным распознаванием речи —
+ * прогоняем всё через Whisper и ищем в тексте слово, близкое к «салем»
+ * (нечёткое сравнение, Levenshtein), либо «salem» латиницей.
+ *
+ * Локальный детектор (openWakeWord) сейчас НЕ используется — единственная
+ * готовая предобученная модель в библиотеке заточена под фразу "hey
+ * jarvis" и физически не отличит "Салем" от шума; своя модель для нового
+ * слова не обучена (это отдельная задача с синтезом обучающих сэмплов и
+ * тренировкой ONNX, не разовая правка). См. tryStartLocalWakeword в
+ * wakeword.ts — код рабочий и ждёт своей модели, просто не вызывается.
  */
-const WAKE_VARIANTS = ["джарвис", "жарвис", "jarvis"];
+const WAKE_VARIANTS = ["салем", "салам", "salem"];
 const MAX_EDIT_DISTANCE = 2;
 
 /** Сколько ждать начала команды после срабатывания кодового слова, прежде чем тихо вернуться к фоновому прослушиванию. */
@@ -139,7 +144,7 @@ async function handleCommand(recorder: PvRecorder, commandText: string): Promise
 /** Записывает и распознаёт команду после срабатывания кодового слова — общее для обоих путей. */
 async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
   if (!isEnabled()) {
-    log("[ДиДи] на паузе (выключено из панели) — игнорирую");
+    log("[СалемАй] на паузе (выключено из панели) — игнорирую");
     return;
   }
   await say(GREETING);
@@ -150,7 +155,7 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
   // обрывок (реальный случай: "обрывок 0.99с" выбрасывал настоящую команду).
   const cmdWav = await recordUntilSilence(recorder, WAKE_COMMAND_TIMEOUT_MS, 0.4);
   if (!cmdWav) {
-    log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
+    log("[СалемАй] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
     return;
   }
   setState("thinking");
@@ -202,7 +207,7 @@ async function runLocalWakeLoop(recorder: PvRecorder, detector: WakewordDetector
     try {
       await captureAndHandleCommand(recorder);
     } catch (e) {
-      log(`[ДиДи] ошибка обработки команды: ${e instanceof Error ? e.message : e}`, "error");
+      log(`[СалемАй] ошибка обработки команды: ${e instanceof Error ? e.message : e}`, "error");
     } finally {
       // Что бы ни случилось внутри (тишина, ошибка, обычный ответ) — цикл
       // возвращается ждать кодовое слово, орб должен вернуться в спокойное
@@ -250,7 +255,7 @@ async function runSttWakeLoop(recorder: PvRecorder): Promise<void> {
       continue;
     }
     if (!isEnabled()) {
-      log("[ДиДи] на паузе (выключено из панели) — игнорирую");
+      log("[СалемАй] на паузе (выключено из панели) — игнорирую");
       setState("idle");
       continue;
     }
@@ -287,42 +292,24 @@ export async function startVoiceLoop(): Promise<void> {
   bindRecorder(recorder);
   await calibrateSilenceThreshold(recorder);
 
-  const detector = await tryStartLocalWakeword();
-  detectorRef = detector;
-  if (detector) {
-    log('ДиДи запущена. Кодовое слово распознаётся локально (openWakeWord) — в OpenAI ничего не уходит, пока не скажешь "Джарвис".');
-  } else {
-    log('ДиДи запущена. Локальный детектор недоступен (нет Python/openwakeword) — слушаю через Whisper, скажи "Джарвис" в любой фразе.', "warn");
-  }
+  // Локальный детектор пока не запускаем — см. комментарий у WAKE_VARIANTS
+  // выше: готовая модель понимает только "hey jarvis", под "Салем" своей
+  // пока нет. runLocalWakeLoop/tryStartLocalWakeword остаются в коде
+  // рабочими на будущее, просто не вызываются — весь путь идёт через Whisper.
+  log('СалемАй запущена. Слушаю через Whisper, скажи "Салем" в любой фразе.');
 
   // Приветствие произносится ОДИН РАЗ при старте цикла — не путать с
   // GREETING, который звучит на каждое кодовое слово.
   await say(BOOT_GREETING);
 
   try {
-    if (detector) {
-      const stoppedCleanly = await runLocalWakeLoop(recorder, detector);
-      if (!stoppedCleanly && !stopRequested) {
-        log(
-          "Локальный детектор упал по ходу работы — до конца этого запуска перехожу на распознавание через Whisper (перезапусти голос со Статуса, чтобы попробовать локальный снова).",
-          "warn",
-        );
-        await runSttWakeLoop(recorder);
-      }
-    } else {
-      await runSttWakeLoop(recorder);
-    }
+    await runSttWakeLoop(recorder);
   } finally {
     try {
       recorder.stop();
       recorder.release();
     } catch {
       // уже остановлен/освобождён
-    }
-    try {
-      detector?.stop();
-    } catch {
-      // уже остановлен
     }
     recorderRef = null;
     detectorRef = null;

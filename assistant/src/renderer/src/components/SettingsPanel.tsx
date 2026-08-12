@@ -115,7 +115,7 @@ export default function SettingsPanel() {
 
       <div className="card">
         <button className="btn danger" onClick={() => void window.didi.quit()}>
-          Выйти из ДиДи полностью
+          Выйти из СалемАй полностью
         </button>
       </div>
     </div>

@@ -92,10 +92,10 @@ export default function DidiPanel({ linkToFull = false }: { linkToFull?: boolean
   if (!state) return null;
 
   const statusText = !state.online
-    ? "ДиДи офлайн"
+    ? "СалемАй офлайн"
     : state.enabled
-      ? "ДиДи слушает"
-      : "ДиДи на паузе";
+      ? "СалемАй слушает"
+      : "СалемАй на паузе";
   const dotClass = !state.online
     ? "bg-[var(--color-muted)]"
     : state.enabled

@@ -21,7 +21,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: { signIn: "/login" },
   providers: [
-    Google,
+    Google({
+      // Без этого Google-вход с email, уже зарегистрированным по паролю,
+      // падает с OAuthAccountNotLinked вместо входа в тот же аккаунт — а
+      // именно так люди и будут привязывать Google из профиля. Цена —
+      // если кто-то заранее зарегистрировал чужой email своим паролем,
+      // сработает автослияние; при отсутствии подтверждения email на
+      // регистрации это осознанный риск (см. src/app/api/auth/register).
+      allowDangerousEmailAccountLinking: true,
+    }),
     Credentials({
       credentials: {
         identifier: { label: "Email или логин" },

@@ -20,6 +20,8 @@ const api = {
   rememberFact: (content: string) => ipcRenderer.invoke("didi:rememberFact", content),
   forgetFact: (id: string) => ipcRenderer.invoke("didi:forgetFact", id),
 
+  getState: () => ipcRenderer.invoke("didi:getState"),
+
   isVoiceLoopRunning: () => ipcRenderer.invoke("didi:isVoiceLoopRunning"),
   startVoiceLoop: () => ipcRenderer.invoke("didi:startVoiceLoop"),
   stopVoiceLoop: () => ipcRenderer.invoke("didi:stopVoiceLoop"),
@@ -38,6 +40,12 @@ const api = {
     const listener = (_e: unknown, entry: { level: string; message: string; at: number }) => callback(entry);
     ipcRenderer.on("didi:log", listener);
     return () => ipcRenderer.removeListener("didi:log", listener);
+  },
+
+  onState: (callback: (state: "idle" | "listening" | "thinking" | "speaking") => void) => {
+    const listener = (_e: unknown, state: "idle" | "listening" | "thinking" | "speaking") => callback(state);
+    ipcRenderer.on("didi:state", listener);
+    return () => ipcRenderer.removeListener("didi:state", listener);
   },
 };
 

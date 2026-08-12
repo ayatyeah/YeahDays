@@ -40,6 +40,8 @@ export interface LogEntry {
   at: number;
 }
 
+export type DidiState = "idle" | "listening" | "thinking" | "speaking";
+
 export interface DidiApi {
   getPanel: () => Promise<PanelStatus>;
   setEnabled: (enabled: boolean) => Promise<void>;
@@ -50,6 +52,8 @@ export interface DidiApi {
   getFacts: () => Promise<Fact[]>;
   rememberFact: (content: string) => Promise<void>;
   forgetFact: (id: string) => Promise<void>;
+
+  getState: () => Promise<DidiState>;
 
   isVoiceLoopRunning: () => Promise<boolean>;
   startVoiceLoop: () => Promise<void>;
@@ -66,6 +70,7 @@ export interface DidiApi {
   quit: () => Promise<void>;
 
   onLog: (callback: (entry: LogEntry) => void) => () => void;
+  onState: (callback: (state: DidiState) => void) => () => void;
 }
 
 declare global {

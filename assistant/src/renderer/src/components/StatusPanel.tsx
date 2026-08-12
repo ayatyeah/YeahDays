@@ -52,49 +52,57 @@ export default function StatusPanel() {
     logEndRef.current?.scrollIntoView({ block: "end" });
   }, [logs]);
 
-  const toggleEnabled = async () => {
-    if (!panel) return;
-    await window.didi.setEnabled(!panel.enabled);
-    setPanel({ ...panel, enabled: !panel.enabled });
-  };
+  const [toggling, setToggling] = useState(false);
+  const isOn = loopRunning === true;
 
-  const toggleLoop = async () => {
-    if (loopRunning) await window.didi.stopVoiceLoop();
-    else await window.didi.startVoiceLoop();
-    setLoopRunning(await window.didi.isVoiceLoopRunning());
+  // Одна кнопка вместо двух прежних (пауза + старт/стоп цикла) — по
+  // нажатию сразу и снимает паузу, и поднимает голосовой цикл, чтобы
+  // ловить "Джарвис" начинало ровно то самое нажатие, без второго шага.
+  const toggle = async () => {
+    setToggling(true);
+    try {
+      if (isOn) {
+        await window.didi.stopVoiceLoop();
+        if (panel?.enabled) await window.didi.setEnabled(false);
+      } else {
+        if (panel && !panel.enabled) await window.didi.setEnabled(true);
+        await window.didi.startVoiceLoop();
+      }
+      const [p, running] = await Promise.all([window.didi.getPanel(), window.didi.isVoiceLoopRunning()]);
+      setPanel(p);
+      setLoopRunning(running);
+    } finally {
+      setToggling(false);
+    }
   };
 
   return (
     <div>
-      <div className="card row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-        <div className="row" style={{ gap: 14 }}>
-          <Orb state={loopRunning ? voiceState : "idle"} />
-          <div>
-            <div style={{ fontWeight: 600 }}>{loopRunning ? STATE_LABEL[voiceState] : "Голос выключен"}</div>
-            <div className="row" style={{ gap: 6, marginTop: 2 }}>
-              <span className={`status-dot ${panel?.online ? "on" : "off"}`} />
-              <span className="muted">{panel?.online ? "Онлайн" : "Офлайн"} · {panel?.enabled ? "слушает" : "на паузе"}</span>
-            </div>
-            <div className="muted">Голосовой цикл: {loopRunning === null ? "…" : loopRunning ? "запущен" : "остановлен"}</div>
-          </div>
-        </div>
-        <div className="row">
-          <button className="btn" onClick={toggleEnabled} disabled={!panel}>
-            {panel?.enabled ? "Поставить на паузу" : "Включить"}
-          </button>
-          <button className="btn" onClick={toggleLoop}>
-            {loopRunning ? "Остановить голос" : "Запустить голос"}
-          </button>
+      <div className="hero">
+        <Orb state={isOn ? voiceState : "idle"} />
+        <div className="hero-state">{isOn ? STATE_LABEL[voiceState] : "Выключен"}</div>
+
+        <button
+          className={`power-btn ${isOn ? "on" : "off"}`}
+          onClick={() => void toggle()}
+          disabled={toggling || loopRunning === null}
+        >
+          {isOn ? "Выключить" : "Включить"}
+        </button>
+
+        <div className="hero-meta">
+          <span className={`status-dot ${panel?.online ? "on" : "off"}`} />
+          <span className="muted">{panel?.online ? "YeahGrind на связи" : "YeahGrind недоступен"}</span>
         </div>
       </div>
 
-      <div className="card">
-        <div className="muted" style={{ marginBottom: 8 }}>Живой журнал</div>
-        <div style={{ maxHeight: 320, overflowY: "auto" }}>
+      <div className="card log-card">
+        <div className="log-title">Живой журнал</div>
+        <div className="log-feed">
           {logs.length === 0 && <div className="muted">Пока пусто — жди события.</div>}
           {logs.map((l, i) => (
             <div key={i} className={`log-line ${l.level}`}>
-              {new Date(l.at).toLocaleTimeString("ru-RU")} {l.message}
+              <span className="log-time">{new Date(l.at).toLocaleTimeString("ru-RU")}</span> {l.message}
             </div>
           ))}
           <div ref={logEndRef} />

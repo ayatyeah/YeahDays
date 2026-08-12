@@ -3,6 +3,7 @@ import { speak } from "./openai.js";
 import { playWav } from "./audio.js";
 import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { log } from "./logger.js";
+import { setState } from "./state.js";
 
 let activeRecorder: PvRecorder | null = null;
 
@@ -43,6 +44,7 @@ export async function say(text: string): Promise<void> {
       if (text === GREETING || text === BOOT_GREETING) audioCache.set(text, wav);
     }
     activeRecorder?.stop();
+    setState("speaking");
     try {
       await playWav(wav);
     } finally {
@@ -110,6 +112,7 @@ export function startStreamingSpeech(): StreamingSpeech {
       }
       log(`[ДиДи] ${next.text}`);
       try {
+        setState("speaking");
         await playWav(await next.wav);
       } catch (e) {
         log(`[voice] не удалось озвучить "${next.text}": ${e instanceof Error ? e.message : e}`, "error");

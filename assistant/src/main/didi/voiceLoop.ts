@@ -10,6 +10,7 @@ import { logHeard } from "./heardLog.js";
 import { runConversationTurn, freshHistory } from "./conversation.js";
 import { tryQuickCommand } from "./quickCommands.js";
 import { log } from "./logger.js";
+import { setState } from "./state.js";
 import { tryStartLocalWakeword, type WakewordDetector } from "./wakeword.js";
 
 /**
@@ -142,6 +143,7 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
     return;
   }
   await say(GREETING);
+  setState("listening");
   // 0.4с, а не дефолтный 1с: тут уже точно не фоновый шум — человек только
   // что услышал "Да?" и явно пытается что-то сказать, а не бормочет мимо
   // микрофона. Короткая команда вроде "стоп" не должна отбрасываться как
@@ -151,6 +153,7 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
     log("[ДиДи] тишина после пробуждения — возвращаюсь к фоновому прослушиванию");
     return;
   }
+  setState("thinking");
   const commandText = await transcribeWav(cmdWav);
   if (!commandText || commandText.trim().length < 2) {
     await say("Не расслышала, повтори, пожалуйста.");
@@ -200,6 +203,11 @@ async function runLocalWakeLoop(recorder: PvRecorder, detector: WakewordDetector
       await captureAndHandleCommand(recorder);
     } catch (e) {
       log(`[ДиДи] ошибка обработки команды: ${e instanceof Error ? e.message : e}`, "error");
+    } finally {
+      // Что бы ни случилось внутри (тишина, ошибка, обычный ответ) — цикл
+      // возвращается ждать кодовое слово, орб должен вернуться в спокойное
+      // состояние вне зависимости от того, на каком шаге всё закончилось.
+      setState("idle");
     }
   }
 }
@@ -209,6 +217,7 @@ async function runSttWakeLoop(recorder: PvRecorder): Promise<void> {
   for (;;) {
     if (stopRequested) break;
 
+    setState("listening");
     let wav: Buffer | null;
     try {
       wav = await recordUntilSilence(recorder);
@@ -220,22 +229,29 @@ async function runSttWakeLoop(recorder: PvRecorder): Promise<void> {
     if (stopRequested) break;
     if (!wav) continue; // короткий шум/щелчок — не фраза, даже в Whisper не идём
 
+    setState("thinking");
     let text: string;
     try {
       text = await transcribeWav(wav);
     } catch (e) {
       log(`[STT] ошибка транскрипции: ${e instanceof Error ? e.message : e}`, "warn");
+      setState("idle");
       continue;
     }
-    if (!text) continue;
+    if (!text) {
+      setState("idle");
+      continue;
+    }
 
     const remainder = extractAfterWake(text);
     if (remainder === null) {
       log(`[распознала, но не кодовое слово] "${text}"`);
+      setState("idle");
       continue;
     }
     if (!isEnabled()) {
       log("[ДиДи] на паузе (выключено из панели) — игнорирую");
+      setState("idle");
       continue;
     }
 
@@ -243,13 +259,16 @@ async function runSttWakeLoop(recorder: PvRecorder): Promise<void> {
     void logEvent("heard", text);
     void logHeard(wav, text);
 
-    if (remainder.length >= 2) {
-      // сказано одним дыханием — команда сразу, без отдельного захода
-      await handleCommand(recorder, remainder);
-      continue;
+    try {
+      if (remainder.length >= 2) {
+        // сказано одним дыханием — команда сразу, без отдельного захода
+        await handleCommand(recorder, remainder);
+      } else {
+        await captureAndHandleCommand(recorder);
+      }
+    } finally {
+      setState("idle");
     }
-
-    await captureAndHandleCommand(recorder);
   }
 }
 
@@ -261,6 +280,7 @@ export async function startVoiceLoop(): Promise<void> {
   }
   running = true;
   stopRequested = false;
+  setState("idle");
 
   const recorder = createRecorder();
   recorderRef = recorder;

@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import type { LogEntry, PanelStatus } from "../didi";
+import type { DidiState, LogEntry, PanelStatus } from "../didi";
+import Orb from "./Orb";
+
+const STATE_LABEL: Record<DidiState, string> = {
+  idle: "Ожидание",
+  listening: "Слушаю",
+  thinking: "Думаю",
+  speaking: "Отвечаю",
+};
 
 export default function StatusPanel() {
   const [panel, setPanel] = useState<PanelStatus | null>(null);
   const [loopRunning, setLoopRunning] = useState<boolean | null>(null);
   const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [voiceState, setVoiceState] = useState<DidiState>("idle");
   const logEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,6 +44,11 @@ export default function StatusPanel() {
   }, []);
 
   useEffect(() => {
+    void window.didi.getState().then(setVoiceState);
+    return window.didi.onState(setVoiceState);
+  }, []);
+
+  useEffect(() => {
     logEndRef.current?.scrollIntoView({ block: "end" });
   }, [logs]);
 
@@ -52,11 +66,15 @@ export default function StatusPanel() {
 
   return (
     <div>
-      <div className="card row" style={{ justifyContent: "space-between" }}>
-        <div className="row">
-          <span className={`status-dot ${panel?.online ? "on" : "off"}`} />
+      <div className="card row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+        <div className="row" style={{ gap: 14 }}>
+          <Orb state={loopRunning ? voiceState : "idle"} />
           <div>
-            <div>{panel?.online ? "Онлайн" : "Офлайн"} · {panel?.enabled ? "слушает" : "на паузе"}</div>
+            <div style={{ fontWeight: 600 }}>{loopRunning ? STATE_LABEL[voiceState] : "Голос выключен"}</div>
+            <div className="row" style={{ gap: 6, marginTop: 2 }}>
+              <span className={`status-dot ${panel?.online ? "on" : "off"}`} />
+              <span className="muted">{panel?.online ? "Онлайн" : "Офлайн"} · {panel?.enabled ? "слушает" : "на паузе"}</span>
+            </div>
             <div className="muted">Голосовой цикл: {loopRunning === null ? "…" : loopRunning ? "запущен" : "остановлен"}</div>
           </div>
         </div>

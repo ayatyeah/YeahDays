@@ -11,6 +11,7 @@ import { startVoiceLoop, stopVoiceLoop, isVoiceLoopRunning } from "./didi/voiceL
 import { startChatLoop } from "./didi/chat.js";
 import { startPresenceLoop } from "./didi/presence.js";
 import { didiLog, log } from "./didi/logger.js";
+import { didiState, getState } from "./didi/state.js";
 import { listFacts, rememberFact, forgetFact } from "./didi/yeahgrind.js";
 import { getPanel, setEnabled, getChatHistory, sendChatMessage } from "./didi/bridge.js";
 
@@ -94,6 +95,8 @@ function registerIpc(): void {
   ipcMain.handle("didi:rememberFact", (_e, content: string) => rememberFact(content));
   ipcMain.handle("didi:forgetFact", (_e, id: string) => forgetFact(id));
 
+  ipcMain.handle("didi:getState", () => getState());
+
   ipcMain.handle("didi:isVoiceLoopRunning", () => isVoiceLoopRunning());
   ipcMain.handle("didi:startVoiceLoop", () => {
     void startVoiceLoop();
@@ -138,6 +141,9 @@ if (gotLock) {
     // Живая лента логов (то, что раньше просто летело в консоль CLI) — в окно.
     didiLog.on("line", (entry: { level: string; message: string; at: number }) => {
       mainWindow?.webContents.send("didi:log", entry);
+    });
+    didiState.on("change", (state: string) => {
+      mainWindow?.webContents.send("didi:state", state);
     });
 
     app.on("activate", () => {

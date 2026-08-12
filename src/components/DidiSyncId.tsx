@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 
 /**
  * ID аккаунта, который нужно скопировать в настройки desktop-приложения
- * ДиДи (поле YEAHGRIND_USER_ID), чтобы она читала и писала задачи именно
+ * СалемАй (поле YEAHGRIND_USER_ID), чтобы она читала и писала задачи именно
  * этого аккаунта, а не анонимного device-id. Только для вошедших через
  * Google — у анонимного устройства свой device-id уже есть в localStorage
  * и работает без этого экрана; здесь конкретно про привязку к аккаунту.
@@ -30,10 +30,10 @@ export default function DidiSyncId() {
 
   return (
     <section className="mt-3 rounded-3xl surface p-4">
-      <p className="text-[13px] font-semibold">ID для синхронизации с ДиДи</p>
+      <p className="text-[13px] font-semibold">ID для синхронизации с СалемАй</p>
       <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
         Скопируй и вставь в поле «YEAHGRIND_USER_ID» в настройках приложения
-        ДиДи на компьютере — она начнёт читать и писать задачи именно этого
+        СалемАй на компьютере — она начнёт читать и писать задачи именно этого
         аккаунта.
       </p>
       <div className="mt-3 flex items-center gap-2">

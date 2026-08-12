@@ -32,7 +32,7 @@ export default function FactsPanel() {
   return (
     <div className="card">
       <div className="muted" style={{ marginBottom: 10 }}>
-        То, что ДиДи попросили запомнить о тебе («Джарвис, запомни ...») — читается заново в начале каждого нового разговора.
+        То, что СалемАй попросили запомнить о тебе («Салем, запомни ...») — читается заново в начале каждого нового разговора.
       </div>
       <div className="row" style={{ marginBottom: 12 }}>
         <input

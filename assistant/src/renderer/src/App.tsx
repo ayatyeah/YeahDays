@@ -14,8 +14,8 @@ export default function App() {
     <>
       <div className="topbar">
         <span className="brand">
-          <span className="brand-badge">Д</span>
-          ДиДи
+          <span className="brand-badge">С</span>
+          СалемАй
         </span>
         <div className="tabs">
           <button className={`tab ${tab === "status" ? "active" : ""}`} onClick={() => setTab("status")}>

@@ -1,11 +1,16 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
 
 /**
- * Auth.js (v5). Провайдер — Google; хранилище — тот же Postgres через
- * Prisma-адаптер. Сессии — JWT (без обращения к БД на каждый запрос).
+ * Auth.js (v5). Два способа входа — Google и логин/пароль; хранилище —
+ * тот же Postgres через Prisma-адаптер. Сессии — JWT (без обращения к БД
+ * на каждый запрос — важно и для Credentials: PrismaAdapter сам по себе
+ * не хранит сессии для credentials-провайдеров, только JWT-стратегия
+ * работает с обоими провайдерами одинаково).
  * trustHost обязателен вне Vercel (у нас Railway).
  *
  * AUTH_SECRET, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET — из env.
@@ -14,7 +19,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   trustHost: true,
-  providers: [Google],
+  pages: { signIn: "/login" },
+  providers: [
+    Google,
+    Credentials({
+      credentials: {
+        identifier: { label: "Email или логин" },
+        password: { label: "Пароль", type: "password" },
+      },
+      async authorize(credentials) {
+        const identifier = String(credentials?.identifier ?? "").trim();
+        const password = String(credentials?.password ?? "");
+        if (!identifier || !password) return null;
+
+        const user = await prisma.user.findFirst({
+          where: { OR: [{ email: identifier }, { username: identifier }] },
+        });
+        if (!user?.passwordHash) return null; // google-only аккаунт — пароля нет вовсе
+
+        const valid = await bcrypt.compare(password, user.passwordHash);
+        if (!valid) return null;
+
+        return { id: user.id, name: user.name, email: user.email, image: user.image };
+      },
+    }),
+  ],
   callbacks: {
     jwt({ token, user }) {
       if (user?.id) token.id = user.id;

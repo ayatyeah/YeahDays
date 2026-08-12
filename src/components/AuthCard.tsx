@@ -86,6 +86,40 @@ function SyncRow() {
   );
 }
 
+function LinkGoogleRow() {
+  const [hasGoogle, setHasGoogle] = useState<boolean | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/account/providers")
+      .then((r) => r.json())
+      .then((json: { hasGoogle?: boolean }) => {
+        if (!cancelled) setHasGoogle(!!json.hasGoogle);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (hasGoogle !== false) return null; // ещё грузится, уже привязан, или не узнали — молчим
+
+  return (
+    <button
+      disabled={busy}
+      onClick={() => {
+        setBusy(true);
+        void signIn("google", { callbackUrl: "/account" });
+      }}
+      className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)] disabled:opacity-60"
+    >
+      <GoogleIcon className="h-4 w-4" />
+      Привязать Google — входить можно будет и так
+    </button>
+  );
+}
+
 export default function AuthCard() {
   const { data: session, status } = useSession();
   const [busy, setBusy] = useState(false);
@@ -139,6 +173,7 @@ export default function AuthCard() {
         </div>
 
         <SyncRow />
+        <LinkGoogleRow />
 
         {/* Разовые подтверждения, что вход реально что-то сделал */}
         {movedEvents ? (

@@ -18,8 +18,8 @@ import {
 import type { TabKey } from "@/lib/nav";
 
 const NAV = [
+  { tab: "home", label: "Главная", Icon: HomeIcon },
   { tab: "today", label: "Сегодня", Icon: TodayIcon },
-  { tab: "home", label: "Колода", Icon: HomeIcon },
   { tab: "calendar", label: "Календарь", Icon: CalendarIcon },
   { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
   { tab: "account", label: "Профиль", Icon: AccountIcon },

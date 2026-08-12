@@ -37,11 +37,20 @@ export interface WakewordDetector {
  */
 export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> {
   const script = scriptPath();
-  log(`[wakeword] пробую поднять локальный детектор: python "${script}"`);
+  log(`[wakeword] пробую поднять локальный детектор: py -3.13 "${script}"`);
 
+  // "python" в PATH на Windows нередко резолвится в 0-байтовый alias-стаб
+  // Microsoft Store (AppData\Local\Microsoft\WindowsApps\python.exe) — он
+  // молча зависает без единой строки в stdout/stderr, если его запускает
+  // GUI-процесс без консоли (ровно наш случай: Electron main). Настоящий
+  // py-лаунчер (C:\Windows\py.exe, обычный exe, не Store-алиас) с явной
+  // версией эту проблему обходит; -3.13 — конкретно та установка, где
+  // стоят openwakeword/onnxruntime (см. `py -0`). Если лаунчера или этой
+  // версии нет, ниже сработает штатный child.on("error") с ENOENT и
+  // тихим откатом на Whisper — как и раньше для машин без Python вовсе.
   let child: ChildProcessWithoutNullStreams;
   try {
-    child = spawn("python", [script], { stdio: ["pipe", "pipe", "pipe"] });
+    child = spawn("py", ["-3.13", script], { stdio: ["pipe", "pipe", "pipe"] });
   } catch (e) {
     log(`[wakeword] не удалось запустить процесс: ${e instanceof Error ? e.message : e}`, "warn");
     return null;
@@ -49,6 +58,12 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
 
   const wakeCallbacks: Array<(score: number) => void> = [];
   const stderrLines: string[] = [];
+
+  // once(), а не on() — и снимается явно ниже сразу после READY, иначе
+  // остался бы висеть и задвоился бы с постоянным обработчиком "упал
+  // ПОСЛЕ старта" (тот вешается только когда ready === true), выдавая
+  // неверный текст ("до READY") на самом деле для более позднего краша.
+  let earlyExit: (code: number | null, signal: NodeJS.Signals | null) => void = () => {};
 
   const ready = await new Promise<boolean>((resolve) => {
     const timeout = setTimeout(() => {
@@ -60,7 +75,7 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
     }, 15_000); // загрузка ONNX-модели — не мгновенная
 
     child.on("error", (e) => {
-      // сюда попадает в первую очередь ENOENT — "python" не нашёлся в PATH
+      // сюда попадает в первую очередь ENOENT — "py" не нашёлся в PATH
       // именно в том окружении, в котором Electron был запущен (у GUI-
       // процесса, запущенного двойным кликом на ярлык, PATH может отличаться
       // от того, что видно из терминала при разработке).
@@ -68,6 +83,17 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
       log(`[wakeword] ошибка процесса: ${e.message}`, "warn");
       resolve(false);
     });
+
+    // Регистрируем ДО получения READY, а не только после (как раньше) —
+    // если процесс упадёт ещё во время загрузки модели, раньше это тихо
+    // тонуло в общем таймауте 15с ("не дождалась READY") без объяснения
+    // причины; теперь видно явно и сразу.
+    earlyExit = (code, signal) => {
+      clearTimeout(timeout);
+      log(`[wakeword] процесс завершился до READY (код ${code}, сигнал ${signal})`, "warn");
+      resolve(false);
+    };
+    child.once("exit", earlyExit);
 
     const rl = createInterface({ input: child.stdout });
     rl.on("line", (line) => {
@@ -95,6 +121,8 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
       log(`[wakeword] stderr: ${text}`, "warn");
     });
   });
+
+  child.removeListener("exit", earlyExit);
 
   if (!ready) {
     try {

@@ -3,8 +3,9 @@ import StatusPanel from "./components/StatusPanel";
 import ChatPanel from "./components/ChatPanel";
 import FactsPanel from "./components/FactsPanel";
 import SettingsPanel from "./components/SettingsPanel";
+import YeahGrindPanel from "./components/YeahGrindPanel";
 
-type Tab = "status" | "chat" | "facts" | "settings";
+type Tab = "status" | "chat" | "facts" | "grind" | "settings";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("status");
@@ -23,6 +24,9 @@ export default function App() {
           <button className={`tab ${tab === "facts" ? "active" : ""}`} onClick={() => setTab("facts")}>
             Факты
           </button>
+          <button className={`tab ${tab === "grind" ? "active" : ""}`} onClick={() => setTab("grind")}>
+            YeahGrind
+          </button>
           <button className={`tab ${tab === "settings" ? "active" : ""}`} onClick={() => setTab("settings")}>
             Настройки
           </button>
@@ -32,6 +36,7 @@ export default function App() {
         {tab === "status" && <StatusPanel />}
         {tab === "chat" && <ChatPanel />}
         {tab === "facts" && <FactsPanel />}
+        {tab === "grind" && <YeahGrindPanel />}
         {tab === "settings" && <SettingsPanel />}
       </div>
     </>

@@ -7,7 +7,7 @@
  * Набор расширяется по мере того, какие конкретные команды реально
  * повторяются, а не гадаем заранее.
  */
-import { rememberFact } from "./yeahgrind.js";
+import { rememberFact, getTodayStatus } from "./yeahgrind.js";
 
 interface QuickResult {
   handled: boolean;
@@ -40,6 +40,9 @@ function firstWordMatches(text: string, sample: string, maxDistance = 1): boolea
 const STOP_WORDS = ["стоп", "хватит", "отставить"];
 const THANKS_WORDS = ["спасибо", "благодарю"];
 const TIME_WORDS = ["который", "сколько"]; // "который час" / "сколько времени"
+// "Гринд"/"грайнд" — Whisper слышит "Grind" по-разному; плюс обычные
+// русские формулировки того же вопроса, необязательно с названием бренда.
+const GRIND_RE = /гринд|грайнд|задачи на сегодня|план на сегодня|мои дела на сегодня/i;
 
 /**
  * "Запомни ..." / "Запомни про меня, что ..." — текст, идущий после
@@ -85,5 +88,41 @@ export async function tryQuickCommand(text: string): Promise<QuickResult> {
     return { handled: true, reply: `Сейчас ${hh}:${mm}.` };
   }
 
+  if (GRIND_RE.test(text)) {
+    return await describeTodayTasks();
+  }
+
   return { handled: false };
+}
+
+async function describeTodayTasks(): Promise<QuickResult> {
+  try {
+    const status = await getTodayStatus();
+    const items = [
+      ...status.todos
+        .slice()
+        .sort((a, b) => (a.hour ?? 99) - (b.hour ?? 99))
+        .map((t) => ({ title: t.title, hour: t.hour, done: t.done })),
+      ...status.plan.map((p) => ({ title: p.title, hour: null as number | null, done: p.completed })),
+    ];
+
+    if (items.length === 0) {
+      return { handled: true, reply: "На сегодня задач нет." };
+    }
+
+    const pending = items.filter((i) => !i.done);
+    const doneCount = items.length - pending.length;
+    const toSay = pending.length > 0 ? pending : items;
+    const spoken = toSay.map((i) => (i.hour !== null ? `в ${i.hour} часов ${i.title}` : i.title)).join(", ");
+    const lead =
+      pending.length > 0
+        ? `На сегодня осталось ${pending.length}: `
+        : `Все ${items.length} задач на сегодня выполнены: `;
+    const tail = doneCount > 0 && pending.length > 0 ? ` Ещё ${doneCount} уже закрыто.` : "";
+
+    return { handled: true, reply: `${lead}${spoken}.${tail}` };
+  } catch (e) {
+    console.warn("[quickCommands] getTodayStatus не прошёл:", e instanceof Error ? e.message : e);
+    return { handled: true, reply: "Не получилось получить задачи с YeahGrind, попробуй чуть позже." };
+  }
 }

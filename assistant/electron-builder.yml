@@ -7,6 +7,9 @@ files:
   - out/**/*
   - wakeword/**/*
   - package.json
+extraResources:
+  - from: build/icon.png
+    to: icon.png
 # Нативный аддон (микрофон) и Python-скрипт локального детектора не могут
 # жить внутри .asar — оба должны быть распакованы рядом: dlopen на .node
 # внутри архива падает, а python.exe вообще не умеет читать виртуальную
@@ -16,8 +19,11 @@ asarUnpack:
   - 'wakeword/**/*'
 win:
   target: nsis
+  icon: build/icon.ico
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
   perMachine: false
   createDesktopShortcut: always
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico

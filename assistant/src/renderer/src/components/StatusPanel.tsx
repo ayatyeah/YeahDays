@@ -19,14 +19,23 @@ export default function StatusPanel() {
   useEffect(() => {
     let cancelled = false;
     const tick = async () => {
+      // Раньше оба запроса шли одним Promise.all — если сеть до YeahGrind
+      // моргала, падали ОБА разом, и loopRunning (чисто локальный IPC,
+      // сети не касается вообще) навсегда застревал в null. А от него
+      // зависит disabled кнопки — кнопка залипала намертво без единой
+      // строки в логе. Теперь независимо: один упал — второй всё равно
+      // применяется.
       try {
-        const [p, running] = await Promise.all([window.didi.getPanel(), window.didi.isVoiceLoopRunning()]);
-        if (!cancelled) {
-          setPanel(p);
-          setLoopRunning(running);
-        }
+        const p = await window.didi.getPanel();
+        if (!cancelled) setPanel(p);
       } catch {
-        // сеть/сервер недоступны — просто попробуем на следующем тике
+        // сеть/сервер недоступны — попробуем на следующем тике
+      }
+      try {
+        const running = await window.didi.isVoiceLoopRunning();
+        if (!cancelled) setLoopRunning(running);
+      } catch {
+        // не должно падать (чистый IPC), но на всякий случай не роняем тик
       }
     };
     void tick();
@@ -57,22 +66,38 @@ export default function StatusPanel() {
 
   // Одна кнопка вместо двух прежних (пауза + старт/стоп цикла) — по
   // нажатию сразу и снимает паузу, и поднимает голосовой цикл, чтобы
-  // ловить "Джарвис" начинало ровно то самое нажатие, без второго шага.
+  // ловить "СалемАй" начинало ровно то самое нажатие, без второго шага.
+  //
+  // setEnabled раньше вызывался ТОЛЬКО если panel уже был загружен
+  // (`if (panel && !panel.enabled)`) — а panel вполне мог быть ещё null
+  // (первый тик не успел отработать, сеть моргнула). Тогда локальный
+  // цикл стартовал, кодовое слово исправно ловилось, а КАЖДАЯ команда
+  // молча дропалась на "на паузе (выключено из панели)" — с виду
+  // "кнопка не работает", хотя технически всё крутилось. Теперь
+  // setEnabled(true) вызывается безусловно при включении, без оглядки
+  // на то, успел ли panel подгрузиться — лишний вызов дёшево, а
+  // пропущенный ломает всю функциональность молча.
   const toggle = async () => {
     setToggling(true);
     try {
       if (isOn) {
         await window.didi.stopVoiceLoop();
-        if (panel?.enabled) await window.didi.setEnabled(false);
+        await window.didi.setEnabled(false).catch(() => {});
       } else {
-        if (panel && !panel.enabled) await window.didi.setEnabled(true);
+        await window.didi.setEnabled(true).catch(() => {});
         await window.didi.startVoiceLoop();
       }
-      const [p, running] = await Promise.all([window.didi.getPanel(), window.didi.isVoiceLoopRunning()]);
-      setPanel(p);
-      setLoopRunning(running);
     } finally {
-      setToggling(false);
+      try {
+        const [p, running] = await Promise.allSettled([
+          window.didi.getPanel(),
+          window.didi.isVoiceLoopRunning(),
+        ]);
+        if (p.status === "fulfilled") setPanel(p.value);
+        if (running.status === "fulfilled") setLoopRunning(running.value);
+      } finally {
+        setToggling(false);
+      }
     }
   };
 

@@ -153,8 +153,16 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
   }
 
   let alive = true;
+  let stoppedByUs = false;
   child.on("exit", (code, signal) => {
     alive = false;
+    if (stoppedByUs) {
+      // Сами остановили (кнопка "Выключить") — это не поломка, писать
+      // как error было вводящим в заблуждение: выглядело так, будто
+      // процесс упал сам по себе, ровно в момент штатного выключения.
+      log("[wakeword] процесс распознавания слова остановлен.");
+      return;
+    }
     // code === null обычно значит "убит сигналом", не обычное завершение —
     // сама причина без stderr-вывода от Python отсюда не видна, поэтому
     // ничего больше сказать не можем.
@@ -174,6 +182,7 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
       return alive;
     },
     stop() {
+      stoppedByUs = true;
       try {
         child.stdin.end();
         child.kill();

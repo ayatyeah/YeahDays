@@ -59,9 +59,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
      * рождения) собираются только через /register. Без этой проверки
      * PrismaAdapter создал бы новую строку User прямо здесь при первом
      * же "Войти через Google" от кого угодно, в обход формы.
+     *
+     * Но если человек уже вошёл (жмёт "Привязать Google" из профиля) —
+     * это привязка к ТЕКУЩЕЙ сессии, и Auth.js сам линкует новую identity
+     * к session.user.id независимо от того, совпадает ли email Google с
+     * чем-то в базе (см. handleLoginOrRegister — ветка "if (user)" не
+     * трогает email вообще). Блокировать по email в этом случае нельзя:
+     * тогда привязка Google с ДРУГИМ email (не как у пароля) ошибочно
+     * принималась бы за попытку регистрации и отклонялась.
      */
     async signIn({ account, profile }) {
       if (account?.provider === "google") {
+        const session = await auth();
+        if (session?.user?.id) return true; // привязка к уже вошедшему — всегда можно
+
         const email = profile?.email;
         if (!email) return false;
         const existing = await prisma.user.findUnique({

@@ -44,6 +44,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { OR: [{ email: identifier }, { username: identifier }] },
         });
         if (!user?.passwordHash) return null; // google-only аккаунт — пароля нет вовсе
+        if (user.banned) return null; // забанен — тот же ответ, что "неверный пароль"
 
         const valid = await bcrypt.compare(password, user.passwordHash);
         if (!valid) return null;
@@ -77,14 +78,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!email) return false;
         const existing = await prisma.user.findUnique({
           where: { email },
-          select: { id: true },
+          select: { id: true, banned: true },
         });
         if (!existing) return "/login?googleFirst=1";
+        if (existing.banned) return false;
       }
       return true;
     },
-    jwt({ token, user }) {
+    /**
+     * jwt() выполняется на КАЖДЫЙ auth()/useSession(), не только при входе
+     * (см. официальную документацию Auth.js) — этим и пользуемся: если
+     * владелец забанил аккаунт или удалил его из /admin уже после того,
+     * как у человека есть валидный JWT, следующая же проверка это увидит
+     * и обнулит сессию (return null здесь = auth() отдаёт "не вошёл").
+     * Обычный "без обращения к БД на каждый запрос" довод для credentials
+     * тут осознанно нарушен — без этого бан не мешал бы уже открытой сессии
+     * до истечения токена (JWT нельзя отозвать раньше срока иначе).
+     */
+    async jwt({ token, user }) {
       if (user?.id) token.id = user.id;
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { banned: true },
+        });
+        if (!dbUser || dbUser.banned) return null;
+      }
       return token;
     },
     session({ session, token }) {

@@ -59,8 +59,8 @@ export const useNavStore = create<NavState>((set, get) => ({
   // на клиенте, иначе React увидит расхождение (SSR/CSR mismatch). Верный
   // раздел для deep-link выставляет AppShell в useLayoutEffect до отрисовки
   // — там уже безопасно читать адрес. Значение само по себе произвольное
-  // (важно только совпадение сервер/клиент) — "today", потому что это и
-  // есть раздел по умолчанию (см. start_url в manifest.webmanifest).
+  // (важно только совпадение сервер/клиент) — реальный раздел по умолчанию
+  // после входа задают login/page.tsx и manifest.webmanifest ("/app").
   tab: "today",
   dir: 1,
   mounted: ["today"],

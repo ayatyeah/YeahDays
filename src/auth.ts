@@ -53,6 +53,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    /**
+     * Google — только вход/привязка к УЖЕ существующему аккаунту, не
+     * самостоятельная регистрация: обязательные поля (логин, пароль, год
+     * рождения) собираются только через /register. Без этой проверки
+     * PrismaAdapter создал бы новую строку User прямо здесь при первом
+     * же "Войти через Google" от кого угодно, в обход формы.
+     */
+    async signIn({ account, profile }) {
+      if (account?.provider === "google") {
+        const email = profile?.email;
+        if (!email) return false;
+        const existing = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true },
+        });
+        if (!existing) return "/login?googleFirst=1";
+      }
+      return true;
+    },
     jwt({ token, user }) {
       if (user?.id) token.id = user.id;
       return token;

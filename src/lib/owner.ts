@@ -6,10 +6,15 @@ import { auth } from "@/auth";
  * нужна. Тот же email работает независимо от того, как вошли — паролем
  * или через привязанный Google (оба ведут в одну строку User).
  */
+function normalize(email: string) {
+  return email.trim().toLowerCase();
+}
+
 export async function requireOwner() {
   const session = await auth();
   const email = session?.user?.email;
-  if (!email || !process.env.OWNER_EMAIL || email !== process.env.OWNER_EMAIL) {
+  const owner = process.env.OWNER_EMAIL;
+  if (!email || !owner || normalize(email) !== normalize(owner)) {
     return null;
   }
   return session;

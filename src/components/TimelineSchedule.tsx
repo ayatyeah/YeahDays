@@ -315,7 +315,7 @@ export default function TimelineSchedule({
                         onClick={() => (compact ? openSheet(null, h) : openSheet(null, h))}
                         className="flex h-full w-full items-center text-left text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
                       >
-                        {routine ?? (isNow ? "сейчас…" : "+ добавить")}
+                        {routine ?? "Добавить задачу"}
                       </button>
                     )}
                   </div>

@@ -36,14 +36,15 @@ const GREETING: Record<string, string> = {
 export default function TodaySection() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const name = useUserStore((s) => s.name);
   const toggleTask = useUserStore((s) => s.toggleTask);
   const removeTask = useUserStore((s) => s.removeTask);
   const go = useNavStore((s) => s.go);
 
   const today = useMemo(() => selectToday(plan), [plan]);
-  const stats = useMemo(() => selectStats(plan), [plan]);
-  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
+  const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
+  const totalXp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
   const streak = useStreak();
   const progress = useMemo(() => getLevelProgress(totalXp), [totalXp]);
 

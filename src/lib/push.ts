@@ -10,6 +10,8 @@
  */
 
 import webpush from "web-push";
+import { prisma } from "@/lib/db";
+import { inQuietHours } from "@/lib/notifyPlan";
 
 const PUBLIC = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
 const PRIVATE = process.env.VAPID_PRIVATE_KEY ?? "";
@@ -67,6 +69,52 @@ export async function sendPush(
     console.error("push failed:", code ?? e);
     return "failed";
   }
+}
+
+/**
+ * Разослать одно уведомление СРАЗУ на все включённые подписки аккаунта —
+ * в отличие от /api/push/dispatch (минутный крон, очередь ScheduledNotification),
+ * это прямой путь без задержки: вызывающий код (например, голосовой
+ * помощник) сам решает, что и когда сказать, здесь просто доставка.
+ * Тихие часы всё равно уважаем — по локальному времени КАЖДОГО устройства
+ * отдельно, тот же принцип, что и в dispatch.
+ */
+export async function sendPushToUser(
+  userId: string,
+  payload: PushPayload,
+): Promise<{ sent: number; skipped: number; expired: number }> {
+  if (!pushConfigured) return { sent: 0, skipped: 0, expired: 0 };
+
+  const [subs, state] = await Promise.all([
+    prisma.pushSubscription.findMany({ where: { userId, enabled: true } }),
+    prisma.userState.findUnique({ where: { userId }, select: { data: true } }),
+  ]);
+
+  const notify = (state?.data as { notify?: { quietFrom?: number; quietTo?: number } } | null)
+    ?.notify;
+  const quietFrom = notify?.quietFrom ?? 23;
+  const quietTo = notify?.quietTo ?? 7;
+
+  let sent = 0;
+  let skipped = 0;
+  let expired = 0;
+
+  for (const sub of subs) {
+    if (inQuietHours(localHour(sub.tzOffset), quietFrom, quietTo)) {
+      skipped++;
+      continue;
+    }
+    const res = await sendPush({ endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth }, payload);
+    if (res === "sent") sent++;
+    else if (res === "expired") {
+      await prisma.pushSubscription.delete({ where: { id: sub.id } }).catch(() => {});
+      expired++;
+    } else {
+      skipped++;
+    }
+  }
+
+  return { sent, skipped, expired };
 }
 
 /* ────────────────────────  Когда слать  ──────────────────────── */

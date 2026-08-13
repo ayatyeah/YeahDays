@@ -35,6 +35,7 @@ const PIECES = Array.from({ length: 34 }).map((_, i) => ({
 export default function DayCompleteOverlay() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const seenLevel = useUserStore((s) => s.seenLevel);
   const lastCelebratedDay = useUserStore((s) => s.lastCelebratedDay);
   const markDayCelebrated = useUserStore((s) => s.markDayCelebrated);
@@ -42,8 +43,8 @@ export default function DayCompleteOverlay() {
   const today = useMemo(() => selectToday(plan), [plan]);
   const streak = useStreak();
   const level = useMemo(
-    () => getLevelProgress(selectTotalXp(plan)).level,
-    [plan],
+    () => getLevelProgress(selectTotalXp(plan, todos)).level,
+    [plan, todos],
   );
   const allDone = today.length > 0 && today.every((t) => t.completed);
 

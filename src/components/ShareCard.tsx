@@ -24,12 +24,13 @@ import { track } from "@/lib/analytics";
 export default function ShareCard() {
   const name = useUserStore((s) => s.name);
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const streak = useStreak();
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
 
-  const stats = useMemo(() => selectStats(plan), [plan]);
-  const xp = useMemo(() => selectTotalXp(plan), [plan]);
+  const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
+  const xp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
   const done = useMemo(() => selectCompleted(plan).length, [plan]);
   const level = getLevelProgress(xp).level;
 

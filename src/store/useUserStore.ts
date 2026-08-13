@@ -1168,11 +1168,53 @@ export function hasProgress(s: Partial<SyncData>): boolean {
   return false;
 }
 
-export function selectTotalXp(plan: PlannedTask[]) {
-  return selectCompleted(plan).reduce((sum, t) => sum + t.xp, 0);
+/**
+ * XP за выполненную почасовую задачу — тот же общий пул и уровень, что и
+ * у колоды (карточек), не отдельная параллельная валюта. Величины ниже
+ * шкалы xpForAction() (~17-62): задача заводится в два клика, без ввода
+ * сложности/impact/длительности как у полноценного действия, поэтому
+ * не должна перевешивать основной цикл колоды.
+ */
+export const TODO_PRIORITY_XP: Record<TodoPriority, number> = {
+  low: 8,
+  normal: 14,
+  high: 22,
+};
+
+/** Час → стат, которому идёт XP — то же деление дня, что и у режима (routine.ts): утро/день/вечер/ночь. */
+function statForHour(h: number): StatKey {
+  if (h >= 5 && h < 11) return "strength";
+  if (h >= 11 && h < 16) return "intelligence";
+  if (h >= 16 && h < 21) return "wealth";
+  return "stability";
 }
 
-export function selectStats(plan: PlannedTask[]): Stats {
+/** Сколько раз задача засчитана выполненной: разовая — 0/1, повторяющаяся — по числу дней в doneDays. */
+function todoCompletions(t: Todo): number {
+  return t.repeat ? t.doneDays.length : t.done ? 1 : 0;
+}
+
+export function selectTodoXp(todos: Todo[]): number {
+  return todos.reduce((sum, t) => sum + todoCompletions(t) * TODO_PRIORITY_XP[t.priority], 0);
+}
+
+export function selectTodoStats(todos: Todo[]): Stats {
+  const stats: Stats = { strength: 0, intelligence: 0, wealth: 0, stability: 0 };
+  for (const t of todos) {
+    const n = todoCompletions(t);
+    if (!n) continue;
+    // без часа — час выполнения не хранится, берём текущий на момент подсчёта
+    const stat = statForHour(t.hour ?? new Date().getHours());
+    stats[stat] += n * TODO_PRIORITY_XP[t.priority];
+  }
+  return stats;
+}
+
+export function selectTotalXp(plan: PlannedTask[], todos: Todo[] = []) {
+  return selectCompleted(plan).reduce((sum, t) => sum + t.xp, 0) + selectTodoXp(todos);
+}
+
+export function selectStats(plan: PlannedTask[], todos: Todo[] = []): Stats {
   const stats: Stats = {
     strength: 0,
     intelligence: 0,
@@ -1183,11 +1225,13 @@ export function selectStats(plan: PlannedTask[]): Stats {
     if (!t.completed) continue;
     stats[CATEGORIES[t.snapshot.category].stat] += t.xp;
   }
+  const todoStats = selectTodoStats(todos);
+  for (const k of Object.keys(stats) as StatKey[]) stats[k] += todoStats[k];
   return stats;
 }
 
-export function selectLevel(plan: PlannedTask[]) {
-  return levelForXp(selectTotalXp(plan));
+export function selectLevel(plan: PlannedTask[], todos: Todo[] = []) {
+  return levelForXp(selectTotalXp(plan, todos));
 }
 
 export function selectActiveDays(plan: PlannedTask[]): Set<string> {

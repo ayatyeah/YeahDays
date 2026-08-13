@@ -573,7 +573,12 @@ export default function TimelineSchedule({
             0 8px 24px -8px rgba(0, 0, 0, 0.5),
             inset 0 1px 1px rgba(255, 255, 255, 0.12);
         }
-        .glass-chip {
+        /* :global — styled-jsx только помечает свои JSX-теги скоуп-классом
+           автоматически, а на motion.div (member-expression тег, не обычный
+           div) эта разметка не срабатывает. Без :global правило молча не
+           матчится вообще: ни фона, ни рамки, ни тени — просто голый текст
+           поверх сетки. */
+        :global(.glass-chip) {
           background: color-mix(in srgb, var(--chip-color) 16%, var(--color-surface));
           border: 1px solid color-mix(in srgb, var(--chip-color) 45%, transparent);
           background-image: linear-gradient(
@@ -585,7 +590,7 @@ export default function TimelineSchedule({
             box-shadow 0.15s,
             transform 0.15s;
         }
-        .glass-chip:active {
+        :global(.glass-chip:active) {
           box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--chip-color) 60%, transparent);
         }
       `}</style>

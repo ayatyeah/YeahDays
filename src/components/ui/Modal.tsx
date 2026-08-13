@@ -57,7 +57,7 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
             onClick={onClose}
           />
           <motion.div
-            className="relative z-10 w-full max-w-md rounded-t-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-8 shadow-2xl sm:rounded-3xl safe-b"
+            className="relative z-10 max-h-[85dvh] w-full max-w-md overflow-y-auto rounded-t-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-8 shadow-2xl sm:rounded-3xl safe-b"
             initial={{ y: 40, opacity: 0, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 40, opacity: 0, scale: 0.98 }}
@@ -70,6 +70,10 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
               </h2>
             )}
             {children}
+            {/* Хром игнорирует padding-bottom на конце скролл-контейнера —
+                известная особенность. pb-8 выше ничего не даёт на длинном
+                контенте, реальный отступ снизу даёт только этот спейсер. */}
+            <div aria-hidden className="h-6" />
           </motion.div>
         </div>
       )}

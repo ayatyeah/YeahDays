@@ -21,9 +21,10 @@ import { cn } from "@/lib/cn";
 export default function ProgressSection() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
 
-  const stats = useMemo(() => selectStats(plan), [plan]);
-  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
+  const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
+  const totalXp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
   const completed = useMemo(() => selectCompleted(plan), [plan]);
   const streak = useStreak();
   const best = useBestStreak();

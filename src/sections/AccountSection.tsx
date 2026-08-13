@@ -33,6 +33,7 @@ export default function AccountSection() {
   const name = useUserStore((s) => s.name);
   const setName = useUserStore((s) => s.setName);
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const goals = useUserStore((s) => s.goals);
   const setGoal = useUserStore((s) => s.setGoal);
   const moods = useUserStore((s) => s.moods);
@@ -41,8 +42,8 @@ export default function AccountSection() {
   const createdAt = useUserStore((s) => s.createdAt);
   const freezes = useUserStore((s) => s.freezes);
 
-  const stats = useMemo(() => selectStats(plan), [plan]);
-  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
+  const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
+  const totalXp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
   const completed = useMemo(() => selectCompleted(plan), [plan]);
   const streak = useStreak();
   const level = getLevelProgress(totalXp).level;

@@ -63,6 +63,7 @@ export default function HomeSection() {
 
   const name = useUserStore((s) => s.name);
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const goals = useUserStore((s) => s.goals);
   const quests = useUserStore((s) => s.quests);
   const dailyGoal = useUserStore((s) => s.dailyGoal);
@@ -118,13 +119,13 @@ export default function HomeSection() {
       }
     }
     return nextGoal({
-      totalXp: selectTotalXp(plan),
+      totalXp: selectTotalXp(plan, todos),
       takenToday,
       dailyGoal,
       streak,
       toGreenDay,
     });
-  }, [plan, challenges, takenToday, dailyGoal, streak]);
+  }, [plan, todos, challenges, takenToday, dailyGoal, streak]);
 
   const [deck, setDeck] = useState<ScoredAction[]>([]);
   const [loading, setLoading] = useState(true);

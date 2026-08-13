@@ -19,9 +19,10 @@ import { dominantStat, STAT_HEX } from "@/lib/statVisuals";
  */
 export default function Ambient() {
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
 
   const tint = useMemo(() => {
-    const stats = selectStats(plan);
+    const stats = selectStats(plan, todos);
     const total = Object.values(stats).reduce((a, b) => a + b, 0);
     if (total === 0) return "110,115,135";
     const hex = STAT_HEX[dominantStat(stats)];
@@ -29,7 +30,7 @@ export default function Ambient() {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
     return `${r},${g},${b}`;
-  }, [plan]);
+  }, [plan, todos]);
 
   return (
     <div

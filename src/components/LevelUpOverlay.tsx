@@ -21,11 +21,12 @@ import Avatar3D from "./AvatarLazy";
 export default function LevelUpOverlay() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const seenLevel = useUserStore((s) => s.seenLevel);
   const markSeenLevel = useUserStore((s) => s.markSeenLevel);
 
-  const totalXp = useMemo(() => selectTotalXp(plan), [plan]);
-  const stats = useMemo(() => selectStats(plan), [plan]);
+  const totalXp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
+  const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
   const level = getLevelProgress(totalXp).level;
 
   // портал в body: страница завёрнута в .gpu-layer (transform), а fixed внутри

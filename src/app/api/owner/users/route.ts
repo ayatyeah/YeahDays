@@ -27,6 +27,7 @@ export async function GET() {
       birthYear: true,
       createdAt: true,
       passwordHash: true,
+      banned: true,
       accounts: { select: { provider: true } },
     },
   });
@@ -40,6 +41,7 @@ export async function GET() {
       birthYear: u.birthYear,
       createdAt: u.createdAt,
       hasPassword: !!u.passwordHash,
+      banned: u.banned,
       providers: u.accounts.map((a) => a.provider),
     })),
   });

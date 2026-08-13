@@ -16,6 +16,7 @@ interface OwnerUser {
   birthYear: number | null;
   createdAt: string;
   hasPassword: boolean;
+  banned: boolean;
   providers: string[];
 }
 
@@ -48,6 +49,7 @@ export default function OwnerConsole() {
   const [users, setUsers] = useState<OwnerUser[] | null>(null);
   const [requests, setRequests] = useState<ResetRequest[] | null>(null);
   const [passwordTarget, setPasswordTarget] = useState<OwnerUser | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<OwnerUser | null>(null);
 
   const loadUsers = () =>
     fetch("/api/owner/users")
@@ -63,6 +65,23 @@ export default function OwnerConsole() {
     void loadUsers();
     void loadRequests();
   }, []);
+
+  const toggleBan = async (u: OwnerUser) => {
+    const banned = !u.banned;
+    setUsers((prev) => (prev ? prev.map((x) => (x.id === u.id ? { ...x, banned } : x)) : prev));
+    try {
+      const res = await fetch(`/api/owner/users/${u.id}/ban`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ banned }),
+      });
+      // сервер мог отклонить (например, бан себя же) — перечитываем
+      // реальное состояние вместо того, чтобы доверять оптимистичному
+      if (!res.ok) void loadUsers();
+    } catch {
+      void loadUsers();
+    }
+  };
 
   const toggleRequestStatus = async (r: ResetRequest) => {
     const next = r.status === "done" ? "new" : "done";
@@ -120,10 +139,15 @@ export default function OwnerConsole() {
             <p className="text-[13px] text-[var(--color-muted)]">Пока нет пользователей.</p>
           ) : (
             users.map((u) => (
-              <div key={u.id} className="flex items-center gap-2.5 rounded-2xl surface px-3 py-2.5">
-                <div className="min-w-0 flex-1">
+              <div key={u.id} className="rounded-2xl surface px-3 py-2.5">
+                <div className={cn("min-w-0", u.banned && "opacity-50")}>
                   <p className="truncate text-[13px] font-medium">
                     {u.name || u.username || u.email || u.id}
+                    {u.banned && (
+                      <span className="ml-1.5 text-[10px] font-bold uppercase text-[var(--color-strength)]">
+                        забанен
+                      </span>
+                    )}
                   </p>
                   <p className="truncate text-[11px] text-[var(--color-muted)]">
                     {[u.email, u.username && `@${u.username}`, u.birthYear]
@@ -135,9 +159,22 @@ export default function OwnerConsole() {
                     {u.hasPassword ? " · есть пароль" : " · без пароля"}
                   </p>
                 </div>
-                <Button size="sm" onClick={() => setPasswordTarget(u)}>
-                  Сменить пароль
-                </Button>
+                <div className="mt-2.5 flex gap-1.5">
+                  <Button size="sm" className="flex-1" onClick={() => setPasswordTarget(u)}>
+                    Пароль
+                  </Button>
+                  <Button size="sm" className="flex-1" onClick={() => void toggleBan(u)}>
+                    {u.banned ? "Разбанить" : "Забанить"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    className="flex-1"
+                    onClick={() => setDeleteTarget(u)}
+                  >
+                    Удалить
+                  </Button>
+                </div>
               </div>
             ))
           )}
@@ -182,7 +219,62 @@ export default function OwnerConsole() {
           void loadUsers();
         }}
       />
+      <DeleteModal
+        user={deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onDone={() => {
+          setDeleteTarget(null);
+          void loadUsers();
+        }}
+      />
     </div>
+  );
+}
+
+function DeleteModal({
+  user,
+  onClose,
+  onDone,
+}: {
+  user: OwnerUser | null;
+  onClose: () => void;
+  onDone: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    if (!user) return;
+    setBusy(true);
+    try {
+      await fetch(`/api/owner/users/${user.id}`, { method: "DELETE" });
+      onDone();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal open={!!user} onClose={onClose} title="Удалить пользователя?">
+      <div className="space-y-3">
+        <p className="text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
+          {user?.email ?? user?.id} и все его данные (план, задачи, история,
+          push-подписки) удалятся без возможности восстановить.
+        </p>
+        <div className="flex gap-2.5">
+          <Button className="flex-1" onClick={onClose}>
+            Отмена
+          </Button>
+          <Button
+            variant="danger"
+            className="flex-1"
+            disabled={busy}
+            onClick={() => void submit()}
+          >
+            {busy ? "Удаляю…" : "Удалить"}
+          </Button>
+        </div>
+      </div>
+    </Modal>
   );
 }
 

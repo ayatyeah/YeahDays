@@ -51,11 +51,15 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findFirst({
     where: { OR: [{ email: identifierStr.toLowerCase() }, { username: identifierStr }] },
-    select: { id: true, name: true, email: true, passwordHash: true },
+    select: { id: true, name: true, email: true, passwordHash: true, banned: true },
   });
-  // google-only аккаунт (без пароля) — тем же сообщением, что и неверный пароль,
-  // чтобы не палить наружу, какие аккаунты существуют
-  if (!user?.passwordHash || !(await bcrypt.compare(passwordStr, user.passwordHash))) {
+  // google-only аккаунт (без пароля) и бан — тем же сообщением, что и неверный
+  // пароль, чтобы не палить наружу, какие аккаунты существуют или забанены
+  if (
+    !user?.passwordHash ||
+    user.banned ||
+    !(await bcrypt.compare(passwordStr, user.passwordHash))
+  ) {
     return NextResponse.json({ error: "Неверный логин или пароль" }, { status: 401 });
   }
 

@@ -167,7 +167,13 @@ export async function calibrateSilenceThreshold(recorder: PvRecorder): Promise<v
   }
   samples.sort((a, b) => a - b);
   const median = samples[Math.floor(samples.length / 2)]!;
-  silenceThreshold = Math.min(Math.max(median * 2.5, 350), 700);
+  // Потолок 700 был занижен под тихую комнату времён первой калибровки —
+  // в реально шумной комнате (медиана шума ощутимо выше 700 сама по себе)
+  // порог тишины оказывался НИЖЕ фонового шума: обычный шум комнаты сам
+  // по себе не давал детектору тишины сработать, запись обрывалась
+  // ненадёжно, Whisper получал огрызки — прямая причина "не расслышала".
+  // 3500 — с большим запасом под шумные комнаты, нижний пол (350) не трогаем.
+  silenceThreshold = Math.min(Math.max(median * 2.5, 350), 3500);
   log(`[audio] фоновый шум (медиана) ≈${median.toFixed(0)}, порог тишины выставлен на ${silenceThreshold.toFixed(0)}`);
 }
 

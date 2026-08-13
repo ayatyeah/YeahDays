@@ -7,7 +7,7 @@ import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { isEnabled } from "./presence.js";
 import { logEvent, logChatMessage } from "./yeahgrind.js";
 import { logHeard } from "./heardLog.js";
-import { runConversationTurn, freshHistory } from "./conversation.js";
+import { runConversationTurn, freshHistory, recordTurn, resetRecentMemory } from "./conversation.js";
 import { tryQuickCommand } from "./quickCommands.js";
 import { log } from "./logger.js";
 import { setState } from "./state.js";
@@ -146,16 +146,18 @@ async function handleCommand(
     log(`[быстрая команда] ${commandText} → ${quick.reply}`);
     void logEvent("reply", quick.reply!);
     void logChatMessage("assistant", quick.reply!);
+    if (quick.resetHistory) resetRecentMemory();
     await say(quick.reply!);
     return;
   }
 
   const recordCommand = () => recordSpeech(recorder);
-  // каждая команда — новый разговор, без памяти между репликами; запрос
-  // фактов не зависит от текста команды, поэтому вызывающий код (см.
-  // captureAndHandleCommand) может запустить его ЗАРАНЕЕ, параллельно с
-  // распознаванием речи, а не последовательно после
+  // Базовая история (system + факты + скользящее окно последних команд —
+  // см. conversation.ts::recordTurn) не зависит от текста ЭТОЙ команды,
+  // поэтому вызывающий код (captureAndHandleCommand) может запустить её
+  // ЗАРАНЕЕ, параллельно с распознаванием речи, а не последовательно после.
   const history = await (historyPromise ?? freshHistory());
+  const turnStart = history.length;
 
   // Озвучиваем по предложениям по мере генерации, не дожидаясь всего
   // ответа целиком — see voice.ts::startStreamingSpeech.
@@ -166,6 +168,9 @@ async function handleCommand(
     (q) => confirmVoice(q, recordCommand),
     (chunk) => speech.push(chunk),
   );
+  // Запоминаем ход целиком (вопрос + промежуточные вызовы тулов + ответ) —
+  // следующее пробуждение кодовым словом увидит его в freshHistory().
+  recordTurn(history.slice(turnStart));
   // Редкий случай: пустой content или "слишком много шагов" — этот текст
   // никогда не проходил через onTextChunk, значит ничего не поставлено в
   // очередь озвучки. Досылаем его целиком, чтобы не остаться немой.

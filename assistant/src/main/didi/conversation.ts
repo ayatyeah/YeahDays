@@ -10,12 +10,41 @@ const MAX_TOOL_ROUNDS = 6;
 const MAX_HISTORY_MESSAGES = 24;
 
 /**
- * Начало нового разговора: системный промпт + всё, что пользователь ранее
- * попросил запомнить о себе ("Джарвис, запомни ...", см. quickCommands.ts) —
- * долговременная память, отдельная от истории текущего диалога. Читается
- * заново на каждый новый разговор (для голоса — на каждую команду, для
- * текстового чата — на старте процесса и на "стоп"), так что свежедобавленный
- * факт увидит следующий разговор, а не обязательно текущий.
+ * Голосовые команды раньше начинались каждая с чистого листа — специально,
+ * чтобы случайный разговор в комнате до срабатывания кодового слова не
+ * попадал в контекст (см. assistant/.env.example). Но кодовое слово УЖЕ
+ * фильтрует это на входе: сюда попадают только команды, которые прошли
+ * через явное "СалемАй" — то, что было сказано ДО или ПОСЛЕ этого окна,
+ * сюда не просачивается в принципе. Поэтому короткая память между
+ * пробуждениями безопасна: это не то же самое, что "слушать всё подряд".
+ *
+ * Храним сами СООБЩЕНИЯ завершённых ходов (не только текст) — по одному
+ * массиву на ход, чтобы можно было обрезать по числу ХОДОВ, а не по
+ * произвольному числу сообщений (у хода с вызовом инструмента сообщений
+ * больше, чем у простого текстового ответа).
+ */
+const MAX_RECENT_TURNS = 20;
+let recentTurns: ChatCompletionMessageParam[][] = [];
+
+/** Записать сообщения только что завершённого хода в скользящее окно памяти. */
+export function recordTurn(messages: ChatCompletionMessageParam[]): void {
+  if (messages.length === 0) return;
+  recentTurns.push(messages);
+  if (recentTurns.length > MAX_RECENT_TURNS) {
+    recentTurns = recentTurns.slice(-MAX_RECENT_TURNS);
+  }
+}
+
+/** "Салем, стоп" и подобное — явный сигнал "дальше это уже другая тема", см. quickCommands.ts::resetHistory. */
+export function resetRecentMemory(): void {
+  recentTurns = [];
+}
+
+/**
+ * Системный промпт + долговременная память ("Салем, запомни ...", см.
+ * quickCommands.ts) + скользящее окно последних MAX_RECENT_TURNS команд.
+ * Долговременная память читается заново на каждый вызов, так что
+ * свежедобавленный факт увидит уже следующая команда.
  */
 export async function freshHistory(): Promise<ChatCompletionMessageParam[]> {
   const history: ChatCompletionMessageParam[] = [{ role: "system", content: SYSTEM_PROMPT }];
@@ -30,6 +59,7 @@ export async function freshHistory(): Promise<ChatCompletionMessageParam[]> {
   } catch (e) {
     console.warn("[conversation] getFacts не прошёл:", e instanceof Error ? e.message : e);
   }
+  for (const turn of recentTurns) history.push(...turn);
   return history;
 }
 

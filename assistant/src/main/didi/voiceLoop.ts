@@ -1,5 +1,5 @@
 import type { PvRecorder } from "@picovoice/pvrecorder-node";
-import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech } from "./audio.js";
+import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech, stopPlayer } from "./audio.js";
 import { transcribeWav } from "./openai.js";
 import { say, bindRecorder, startStreamingSpeech } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
@@ -134,7 +134,11 @@ export function stopVoiceLoop(): void {
  * обоих путей детекции, чтобы не дублировать логику быстрых команд,
  * подтверждений и обращения к GPT.
  */
-async function handleCommand(recorder: PvRecorder, commandText: string): Promise<void> {
+async function handleCommand(
+  recorder: PvRecorder,
+  commandText: string,
+  historyPromise?: Promise<Awaited<ReturnType<typeof freshHistory>>>,
+): Promise<void> {
   void logChatMessage("user", commandText);
 
   const quick = await tryQuickCommand(commandText);
@@ -147,7 +151,11 @@ async function handleCommand(recorder: PvRecorder, commandText: string): Promise
   }
 
   const recordCommand = () => recordSpeech(recorder);
-  const history = await freshHistory(); // каждая команда — новый разговор, без памяти между репликами
+  // каждая команда — новый разговор, без памяти между репликами; запрос
+  // фактов не зависит от текста команды, поэтому вызывающий код (см.
+  // captureAndHandleCommand) может запустить его ЗАРАНЕЕ, параллельно с
+  // распознаванием речи, а не последовательно после
+  const history = await (historyPromise ?? freshHistory());
 
   // Озвучиваем по предложениям по мере генерации, не дожидаясь всего
   // ответа целиком — see voice.ts::startStreamingSpeech.
@@ -186,6 +194,10 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
     return;
   }
   setState("thinking");
+  // Не зависит от результата распознавания — запускаем сразу же, пока
+  // расшифровывается сама команда, а не после: экономит целый сетевой
+  // поход в оба конца на каждую фразу (ждали бы его иначе строго после STT).
+  const historyPromise = freshHistory();
   const commandText = await transcribeWav(cmdWav);
   if (!commandText || commandText.trim().length < 2) {
     await say("Не расслышала, повтори, пожалуйста.");
@@ -193,7 +205,7 @@ async function captureAndHandleCommand(recorder: PvRecorder): Promise<void> {
   }
   log(`[вы] ${commandText}`);
   void logHeard(cmdWav, commandText);
-  await handleCommand(recorder, commandText);
+  await handleCommand(recorder, commandText, historyPromise);
 }
 
 /**
@@ -363,6 +375,7 @@ export async function startVoiceLoop(): Promise<void> {
     } catch {
       // уже остановлен
     }
+    stopPlayer(); // не оставляем висящий powershell.exe после остановки голоса
     recorderRef = null;
     detectorRef = null;
     running = false;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import {
   useUserStore,
   isTodoOnDay,
@@ -155,6 +155,22 @@ export default function TimelineSchedule({
     if (next !== t.hour) updateTodo(t.id, { hour: next });
   }
 
+  /**
+   * Перетаскивание задачи из лотка "Без часа" прямо на сетку часов —
+   * альтернатива открытию шторки ради одного тапа на "Час". Лоток и сетка
+   * не связаны родитель/потомок (лоток выше сетки, отдельный блок), поэтому
+   * offset (дельта от старта) тут бесполезен — берём абсолютную точку
+   * указателя (info.point, координаты вьюпорта) и сверяем с реальным
+   * прямоугольником сетки, а не с тем, где чип начал путь.
+   */
+  function handleTrayDrop(t: Todo, info: PanInfo) {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect || info.point.y < rect.top || info.point.y > rect.bottom) return; // отпустили не над сеткой — чип просто вернётся на место
+    const hour = startHour + Math.floor((info.point.y - rect.top) / ROW_HEIGHT);
+    const clamped = Math.min(endHour, Math.max(startHour, hour));
+    updateTodo(t.id, { hour: clamped, minute: 0 });
+  }
+
   function openSheet(t: Todo | null, presetHour?: number) {
     setEditingId(t?.id ?? null);
     setFTitle(t?.title ?? "");
@@ -227,9 +243,14 @@ export default function TimelineSchedule({
               Добавь задачу — время можно назначить позже
             </button>
           ) : (
-            <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+            <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none", overflowY: "visible" }}>
               {unscheduled.map((t) => (
-                <TrayChip key={t.id} todo={t} onClick={() => openSheet(t)} />
+                <TrayChip
+                  key={t.id}
+                  todo={t}
+                  onClick={() => openSheet(t)}
+                  onDragEnd={(info) => handleTrayDrop(t, info)}
+                />
               ))}
             </div>
           )}
@@ -598,19 +619,35 @@ export default function TimelineSchedule({
   );
 }
 
-function TrayChip({ todo, onClick }: { todo: Todo; onClick: () => void }) {
+function TrayChip({
+  todo,
+  onClick,
+  onDragEnd,
+}: {
+  todo: Todo;
+  onClick: () => void;
+  /** Если задан — чип можно утащить (обычно на сетку часов), см. handleTrayDrop. */
+  onDragEnd?: (info: PanInfo) => void;
+}) {
   return (
-    <button
-      onClick={onClick}
-      className="glass-chip flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[12.5px] font-medium"
+    <motion.button
+      onTap={onClick}
+      drag={!!onDragEnd}
+      dragSnapToOrigin
+      dragElastic={0.15}
+      dragMomentum={false}
+      whileDrag={{ scale: 1.06, zIndex: 40 }}
+      onDragEnd={(_, info) => onDragEnd?.(info)}
+      className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[12.5px] font-medium active:cursor-grabbing"
       style={{
         // @ts-expect-error -- кастомное свойство для CSS в родителе
         "--chip-color": PRIORITY_COLOR[todo.priority],
+        cursor: onDragEnd ? "grab" : "pointer",
       }}
     >
       <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: PRIORITY_COLOR[todo.priority] }} />
       <span className="max-w-[140px] truncate">{todo.title}</span>
-    </button>
+    </motion.button>
   );
 }
 

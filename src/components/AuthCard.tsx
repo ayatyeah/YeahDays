@@ -10,6 +10,8 @@ import {
 } from "@/store/useUserStore";
 import { useSyncStatus, timeAgo } from "@/store/useSyncStatus";
 import { cn } from "@/lib/cn";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -120,6 +122,144 @@ function LinkGoogleRow() {
   );
 }
 
+function ChangePasswordRow() {
+  const [hasPassword, setHasPassword] = useState<boolean | null>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/account/providers")
+      .then((r) => r.json())
+      .then((json: { hasPassword?: boolean }) => {
+        if (!cancelled) setHasPassword(!!json.hasPassword);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [open]); // после закрытия модалки — перечитать (сменили пароль → hasPassword мог стать true)
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+      >
+        {hasPassword ? "Сменить пароль" : "Задать пароль — входить можно будет и так"}
+      </button>
+      <ChangePasswordModal open={open} onClose={() => setOpen(false)} hasPassword={hasPassword} />
+    </>
+  );
+}
+
+const passwordInputClass =
+  "h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
+
+function ChangePasswordModal({
+  open,
+  onClose,
+  hasPassword,
+}: {
+  open: boolean;
+  onClose: () => void;
+  hasPassword: boolean | null;
+}) {
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setCurrent("");
+    setNext("");
+    setConfirm("");
+    setError(null);
+    setDone(false);
+  }, [open]);
+
+  const submit = async () => {
+    if (next !== confirm) {
+      setError("Пароли не совпадают");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/account/password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: current, newPassword: next }),
+      });
+      const json = (await res.json()) as { error?: string };
+      if (!res.ok) {
+        setError(json.error ?? "Не получилось");
+        return;
+      }
+      setDone(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Modal open={open} onClose={onClose} title={hasPassword ? "Сменить пароль" : "Задать пароль"}>
+      {done ? (
+        <div className="space-y-3">
+          <p className="text-[13.5px] text-[var(--color-fg-dim)]">Пароль обновлён.</p>
+          <Button variant="primary" className="w-full" onClick={onClose}>
+            Готово
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {hasPassword && (
+            <input
+              type="password"
+              value={current}
+              onChange={(e) => setCurrent(e.target.value)}
+              placeholder="Текущий пароль"
+              autoFocus
+              className={passwordInputClass}
+            />
+          )}
+          <input
+            type="password"
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+            placeholder="Новый пароль (минимум 8 символов)"
+            autoFocus={!hasPassword}
+            className={passwordInputClass}
+          />
+          <input
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            placeholder="Повтори новый пароль"
+            className={passwordInputClass}
+          />
+          {error && <p className="text-[12.5px] text-[var(--color-strength)]">{error}</p>}
+          <div className="flex gap-2.5">
+            <Button className="flex-1" onClick={onClose}>
+              Отмена
+            </Button>
+            <Button
+              variant="primary"
+              className="flex-1"
+              disabled={busy || next.length < 8 || (!!hasPassword && !current)}
+              onClick={() => void submit()}
+            >
+              {busy ? "Сохраняю…" : "Сохранить"}
+            </Button>
+          </div>
+        </div>
+      )}
+    </Modal>
+  );
+}
+
 export default function AuthCard() {
   const { data: session, status } = useSession();
   const [busy, setBusy] = useState(false);
@@ -174,6 +314,7 @@ export default function AuthCard() {
 
         <SyncRow />
         <LinkGoogleRow />
+        <ChangePasswordRow />
 
         {/* Разовые подтверждения, что вход реально что-то сделал */}
         {movedEvents ? (

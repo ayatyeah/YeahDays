@@ -151,6 +151,8 @@ export interface Todo {
   date: string;
   /** час 0..23, если привязана ко времени */
   hour?: number;
+  /** минута начала внутри часа (0/10/20/30/40/50) */
+  minute?: number;
   /** сколько минут закладываем */
   duration?: number;
   priority: TodoPriority;
@@ -334,6 +336,8 @@ interface UserState {
   lastCheckIn: string | null;
   /** прошёл ли первый запуск (онбординг) */
   onboarded: boolean;
+  /** видел ли гайд «как это устроено» после онбординга */
+  seenGuide: boolean;
   /** id возможностей, о которых человеку уже рассказали */
   seenFeatures: string[];
   /** последний день, за закрытие которого показали празднование */
@@ -352,6 +356,8 @@ interface UserState {
   dailyGoal: number;
   /** категории, которые не показывать в колоде */
   excludedCategories: CategoryKey[];
+  /** true — колода собирается только из своих действий, встроенный пул не участвует */
+  useOwnActionsOnly: boolean;
   /** ежедневные челленджи */
   challenges: Challenge[];
   /** сколько сил в разное время суток — энергия у людей не постоянна */
@@ -370,6 +376,7 @@ interface UserState {
   setMood: (mood: Partial<DailyMood>) => void;
   completeCheckIn: () => void;
   completeOnboarding: () => void;
+  completeGuide: () => void;
   markFeaturesSeen: (ids: string[]) => void;
   markDayCelebrated: (day: string) => void;
   acceptAction: (action: Action, date?: string) => void;
@@ -380,6 +387,8 @@ interface UserState {
   addCustomAction: (action: Action) => void;
   markSeenLevel: (level: number) => void;
   resetAll: () => void;
+  /** сбросить локальный стор к чистым дефолтам без пометки «изменено» — для смены аккаунта в этом браузере, см. StateSync.tsx */
+  hardResetLocal: () => void;
   /** пополнить заморозки, если начался новый месяц */
   refillFreezes: () => void;
   /** потратить заморозку на конкретный день */
@@ -391,6 +400,7 @@ interface UserState {
   setNotify: (patch: Partial<NotifyPrefs>) => void;
   setDailyGoal: (n: number) => void;
   toggleExcludedCategory: (c: CategoryKey) => void;
+  setUseOwnActionsOnly: (value: boolean) => void;
   setSlotEnergy: (slot: "morning" | "afternoon" | "evening", e: EnergyLevel) => void;
   addChallenge: (c: Omit<Challenge, "id" | "log">) => void;
   removeChallenge: (id: string) => void;
@@ -431,6 +441,7 @@ export interface SyncData {
   seenLevel: number;
   lastCheckIn: string | null;
   onboarded: boolean;
+  seenGuide: boolean;
   /** id возможностей, о которых человеку уже рассказали */
   seenFeatures: string[];
   lastCelebratedDay: string | null;
@@ -441,6 +452,7 @@ export interface SyncData {
   reminderHour: number;
   dailyGoal: number;
   excludedCategories: CategoryKey[];
+  useOwnActionsOnly: boolean;
   challenges: Challenge[];
   energyProfile: Record<"morning" | "afternoon" | "evening", EnergyLevel>;
   disabledActions: string[];
@@ -458,6 +470,7 @@ export function pickSync(s: SyncData): SyncData {
     reminderHour: s.reminderHour,
     dailyGoal: s.dailyGoal,
     excludedCategories: s.excludedCategories,
+    useOwnActionsOnly: s.useOwnActionsOnly,
     challenges: s.challenges,
     energyProfile: s.energyProfile,
     disabledActions: s.disabledActions,
@@ -474,6 +487,7 @@ export function pickSync(s: SyncData): SyncData {
     seenLevel: s.seenLevel,
     lastCheckIn: s.lastCheckIn,
     onboarded: s.onboarded,
+    seenGuide: s.seenGuide,
     seenFeatures: s.seenFeatures,
     lastCelebratedDay: s.lastCelebratedDay,
     updatedAt: s.updatedAt,
@@ -484,7 +498,7 @@ function makeId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-const initial = {
+export const initial = {
   name: "Странник",
   createdAt: Date.now(),
   plan: [] as PlannedTask[],
@@ -495,6 +509,7 @@ const initial = {
   seenLevel: 1,
   lastCheckIn: null as string | null,
   onboarded: false,
+  seenGuide: false,
   seenFeatures: [],
   lastCelebratedDay: null as string | null,
   // 0 намеренно: нетронутый/пустой стор всегда проигрывает LWW серверу,
@@ -512,6 +527,7 @@ const initial = {
   reminderHour: 7,
   dailyGoal: DAILY_GOAL,
   excludedCategories: [] as CategoryKey[],
+  useOwnActionsOnly: true,
   challenges: [] as Challenge[],
   energyProfile: {
     morning: "low",
@@ -569,6 +585,8 @@ export const useUserStore = create<UserState>()(
       completeOnboarding: () =>
         // новичку «что нового» не показываем: он всё это только что видел
         touch({ onboarded: true, seenFeatures: ALL_FEATURE_IDS }),
+
+      completeGuide: () => touch({ seenGuide: true }),
 
       markFeaturesSeen: (ids) =>
         touch((s) => ({
@@ -717,6 +735,11 @@ export const useUserStore = create<UserState>()(
           seenFeatures: ALL_FEATURE_IDS,
         }),
 
+      // Не через touch: updatedAt должен остаться 0, иначе пустой стор
+      // формально «новее» реального прогресса аккаунта, который вот-вот
+      // приедет через pull() — и в LWW-сравнении победит пустышка.
+      hardResetLocal: () => set(() => ({ ...initial, createdAt: Date.now() })),
+
       // Пополняем раз в календарный месяц. Историю использованных дней
       // не чистим — по ней считается стрик за прошлое.
       refillFreezes: () =>
@@ -769,6 +792,8 @@ export const useUserStore = create<UserState>()(
             ? s.excludedCategories.filter((x) => x !== c)
             : [...s.excludedCategories, c],
         })),
+
+      setUseOwnActionsOnly: (value) => touch({ useOwnActionsOnly: value }),
 
       setSlotEnergy: (slot, e) =>
         touch((s) => ({ energyProfile: { ...s.energyProfile, [slot]: e } })),
@@ -856,6 +881,7 @@ export const useUserStore = create<UserState>()(
               note: t.note,
               date: t.date,
               hour: t.hour,
+              minute: t.minute,
               duration: t.duration,
               priority: t.priority ?? "normal",
               subtasks: t.subtasks ?? [],
@@ -980,6 +1006,12 @@ export const useUserStore = create<UserState>()(
             quests: arr(d.quests, []),
             customActions: arr(d.customActions, []),
             excludedCategories: arr(d.excludedCategories, []),
+            useOwnActionsOnly:
+              typeof d.useOwnActionsOnly === "boolean" ? d.useOwnActionsOnly : true,
+            // старым снимкам без этого поля гайд не показываем, если у
+            // аккаунта уже есть реальный прогресс — он не новичок
+            seenGuide:
+              typeof d.seenGuide === "boolean" ? d.seenGuide : hasProgress(d),
             disabledActions: arr(d.disabledActions, []),
             seenFeatures: arr(d.seenFeatures, []),
             moods: obj(d.moods, {}),
@@ -1014,6 +1046,10 @@ export const useUserStore = create<UserState>()(
             excludedCategories: Array.isArray(st.excludedCategories)
               ? st.excludedCategories
               : [],
+            useOwnActionsOnly:
+              typeof st.useOwnActionsOnly === "boolean"
+                ? st.useOwnActionsOnly
+                : true,
             challenges: Array.isArray(st.challenges) ? st.challenges : [],
             energyProfile:
               st.energyProfile && typeof st.energyProfile === "object"
@@ -1036,6 +1072,12 @@ export const useUserStore = create<UserState>()(
             // существующему аккаунту список показываем: он застал онбординг
             // без этих разделов
             seenFeatures: Array.isArray(st.seenFeatures) ? st.seenFeatures : [],
+            // гайд «как это устроено» — не спамим тех, кто уже реально
+            // пользуется приложением
+            seenGuide:
+              typeof st.seenGuide === "boolean"
+                ? st.seenGuide
+                : hasProgress(st as Partial<SyncData>),
             updatedAt:
               typeof st.updatedAt === "number"
                 ? st.updatedAt

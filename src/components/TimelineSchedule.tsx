@@ -26,6 +26,7 @@ const MIN_BLOCK_HEIGHT = 30;
 const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
+const MINUTE_OPTIONS = [0, 10, 20, 30, 40, 50];
 
 function fmtDuration(mins: number): string {
   if (mins < 60) return `${mins}м`;
@@ -70,6 +71,7 @@ export default function TimelineSchedule({
   const [fTitle, setFTitle] = useState("");
   const [fPriority, setFPriority] = useState<TodoPriority>("normal");
   const [fHour, setFHour] = useState<number | undefined>(undefined);
+  const [fMinute, setFMinute] = useState(0);
   const [fDuration, setFDuration] = useState(60);
   const [fDone, setFDone] = useState(false);
 
@@ -118,6 +120,9 @@ export default function TimelineSchedule({
       list.push(t);
       map.set(h, list);
     }
+    for (const list of map.values()) {
+      list.sort((a, b) => (a.minute ?? 0) - (b.minute ?? 0));
+    }
     return map;
   }, [scheduled, overdueIds]);
 
@@ -155,6 +160,7 @@ export default function TimelineSchedule({
     setFTitle(t?.title ?? "");
     setFPriority(t?.priority ?? "normal");
     setFHour(t ? t.hour : presetHour);
+    setFMinute(t?.minute ?? 0);
     setFDuration(t?.duration ?? 60);
     setFDone(t ? isTodoDone(t, day) : false);
     setSheetOpen(true);
@@ -165,12 +171,13 @@ export default function TimelineSchedule({
   function saveSheet() {
     const title = fTitle.trim();
     if (!title) return;
+    const minute = fHour !== undefined ? fMinute : undefined;
     if (editingId) {
-      updateTodo(editingId, { title, priority: fPriority, hour: fHour, duration: fDuration });
+      updateTodo(editingId, { title, priority: fPriority, hour: fHour, minute, duration: fDuration });
       const wasDone = onDay.find((t) => t.id === editingId);
       if (wasDone && isTodoDone(wasDone, day) !== fDone) toggleTodo(editingId, day);
     } else {
-      addTodo({ title, date: day, priority: fPriority, hour: fHour, duration: fDuration });
+      addTodo({ title, date: day, priority: fPriority, hour: fHour, minute, duration: fDuration });
     }
     closeSheet();
   }
@@ -256,7 +263,8 @@ export default function TimelineSchedule({
                       style={{ background: PRIORITY_COLOR[upcoming.priority] }}
                     />
                     <span className="truncate">
-                      Далее в {String(upcoming.hour).padStart(2, "0")}:00: {upcoming.title}
+                      Далее в {String(upcoming.hour).padStart(2, "0")}:
+                      {String(upcoming.minute ?? 0).padStart(2, "0")}: {upcoming.title}
                     </span>
                   </>
                 ) : (
@@ -316,7 +324,8 @@ export default function TimelineSchedule({
 
               {Array.from(byHour.entries()).flatMap(([h, list]) =>
                 list.map((t, i) => {
-                  const top = (h - startHour) * ROW_HEIGHT + 2;
+                  const top =
+                    (h - startHour) * ROW_HEIGHT + ((t.minute ?? 0) / 60) * ROW_HEIGHT + 2;
                   const height = Math.max(
                     MIN_BLOCK_HEIGHT,
                     ((t.duration ?? 60) / 60) * ROW_HEIGHT - 4,
@@ -472,6 +481,28 @@ export default function TimelineSchedule({
               ))}
             </div>
           </div>
+
+          {fHour !== undefined && (
+            <div>
+              <SheetLabel>Минуты</SheetLabel>
+              <div className="grid grid-cols-6 gap-1.5">
+                {MINUTE_OPTIONS.map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setFMinute(m)}
+                    className={cn(
+                      "rounded-xl border py-2.5 text-[12.5px] font-semibold tabular-nums transition",
+                      fMinute === m
+                        ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                        : "border-[var(--color-border)] text-[var(--color-muted)]",
+                    )}
+                  >
+                    :{String(m).padStart(2, "0")}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div>
             <SheetLabel>Длительность</SheetLabel>

@@ -40,6 +40,8 @@ export interface RecommendRequest {
   excludeCategories?: CategoryKey[];
   /** отдельные действия, скрытые вручную */
   disabledActions?: string[];
+  /** true — встроенный пул из 159 действий не участвует, колода только из customActions */
+  useOwnActionsOnly?: boolean;
   limit?: number;
 }
 
@@ -70,7 +72,9 @@ export async function fetchRecommendations(
 }
 
 function localRecommend(req: RecommendRequest): RecommendResponse {
-  const pool = [...ACTION_POOL, ...req.customActions];
+  const pool = req.useOwnActionsOnly
+    ? req.customActions
+    : [...ACTION_POOL, ...req.customActions];
   const deck = recommend(
     {
       pool,

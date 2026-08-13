@@ -98,6 +98,13 @@ function LoginForm() {
           <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
             {busy ? "Входим…" : "Войти"}
           </Button>
+
+          <Link
+            href="/forgot-password"
+            className="text-center text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+          >
+            Забыли пароль?
+          </Link>
         </form>
 
         <div className="my-5 flex items-center gap-3 text-[12px] text-[var(--color-muted)]">

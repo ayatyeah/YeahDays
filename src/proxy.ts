@@ -10,7 +10,14 @@ import { auth } from "@/auth";
  * Файл называется proxy.ts, а не middleware.ts — в Next.js 16 конвенция
  * переименована (см. npx @next/codemod middleware-to-proxy).
  */
-const PUBLIC_PATHS = new Set(["/", "/terms", "/privacy", "/login", "/register"]);
+const PUBLIC_PATHS = new Set([
+  "/",
+  "/terms",
+  "/privacy",
+  "/login",
+  "/register",
+  "/forgot-password",
+]);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;

@@ -32,6 +32,13 @@ export async function POST(req: Request) {
   const mood = { ...DEFAULT_MOOD, ...(body.mood ?? {}) };
   const excludeIds = Array.isArray(body.excludeIds) ? body.excludeIds : [];
   const custom = Array.isArray(body.customActions) ? body.customActions : [];
+  const excludeCategories = Array.isArray(body.excludeCategories)
+    ? body.excludeCategories
+    : undefined;
+  const disabledActions = Array.isArray(body.disabledActions)
+    ? body.disabledActions
+    : undefined;
+  const pool = body.useOwnActionsOnly ? custom : [...ACTION_POOL, ...custom];
   const session = await auth();
   const userId =
     session?.user?.id ?? (typeof body.userId === "string" ? body.userId : "");
@@ -60,7 +67,7 @@ export async function POST(req: Request) {
   }
 
   const deck = recommend(
-    { pool: [...ACTION_POOL, ...custom], goals, mood, history, excludeIds },
+    { pool, goals, mood, history, excludeIds, excludeCategories, disabledActions },
     Math.min(body.limit ?? 12, 40),
   );
 

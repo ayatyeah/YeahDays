@@ -22,6 +22,7 @@ import { useUserStore } from "@/store/useUserStore";
  */
 export default function WhatsNew() {
   const onboarded = useUserStore((s) => s.onboarded);
+  const seenGuide = useUserStore((s) => s.seenGuide);
   const seen = useUserStore((s) => s.seenFeatures);
   const markSeen = useUserStore((s) => s.markFeaturesSeen);
 
@@ -30,7 +31,9 @@ export default function WhatsNew() {
   useEffect(() => {
     // ждём гидратации persist: на первом рендере seen ещё пустой,
     // и без задержки шторка мигнула бы даже новичку
-    if (!onboarded) return;
+    // seenGuide тоже ждём — AppGuide.tsx показывается первым, две шторки
+    // снизу разом выглядели бы сломанно
+    if (!onboarded || !seenGuide) return;
     const unseen = unseenFeatures(seen);
     if (unseen.length === 0) return;
     const t = setTimeout(() => setItems(unseen), 600);

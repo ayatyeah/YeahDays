@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { signIn, useSession } from "next-auth/react";
 import { STAT_LIST, dateKey, type StatKey } from "@/lib/domain";
 import { useUserStore } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
@@ -33,7 +32,6 @@ export default function Onboarding() {
   const completeOnboarding = useUserStore((s) => s.completeOnboarding);
   const go = useNavStore((s) => s.go);
 
-  const { status } = useSession();
   const [step, setStep] = useState(0);
   const [name, setNameDraft] = useState(
     storedName === "Странник" ? "" : storedName,
@@ -77,9 +75,10 @@ export default function Onboarding() {
       addTodo({ title, date: today });
     }
     completeOnboarding();
-    // На "Сегодня", к своим только что вписанным задачам — не в колоду
-    // готовых карточек. Раньше отсюда сразу шли чек-ин и SwipeDeck.
-    go("today");
+    // На "Главная" — колода теперь собирается только из своих действий
+    // (useOwnActionsOnly), так что это уже не чужой контент, а ровно те
+    // же задачи, что человек только что вписал сам.
+    go("home");
   }
 
   function next() {
@@ -299,53 +298,7 @@ export default function Onboarding() {
         </motion.button>
       </div>
 
-      {/*
-        Вход на первом же экране, а не только в «Профиле».
-
-        Без него человек со вторым устройством обязан пройти регистрацию
-        заново — придумать имя, выбрать приоритеты — и лишь потом искать,
-        где войти. Он создаёт локальный аккаунт, которого не хотел.
-
-        Подхват прогресса делать не нужно: у пустого стора updatedAt = 0,
-        поэтому снимок с сервера всегда выигрывает, а StateSync смонтирован
-        в AuthProvider и работает уже здесь. После входа onboarded приедет
-        с сервера, и этот экран исчезнет сам.
-      */}
-      {step === 0 && status !== "authenticated" && (
-        <button
-          onClick={() => signIn("google")}
-          disabled={status === "loading"}
-          className="press mt-3 flex h-12 w-full items-center justify-center gap-2.5 rounded-2xl border border-[var(--color-border-strong)] text-[14px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
-        >
-          <GoogleMark />
-          Уже пользуешься? Войти через Google
-        </button>
-      )}
     </div>
-  );
-}
-
-/** Логотип Google в официальных цветах — узнаётся быстрее любой подписи. */
-function GoogleMark() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[17px] w-[17px]" aria-hidden>
-      <path
-        fill="#4285F4"
-        d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.8z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 24c3.2 0 5.9-1.1 7.9-2.9l-3.9-3c-1.1.7-2.4 1.2-4 1.2-3.1 0-5.7-2.1-6.6-4.9H1.4v3.1A12 12 0 0 0 12 24z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.4 14.4a7.2 7.2 0 0 1 0-4.6V6.7H1.4a12 12 0 0 0 0 10.8l4-3.1z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 4.8c1.8 0 3.4.6 4.6 1.8l3.5-3.5C17.9 1.2 15.2 0 12 0A12 12 0 0 0 1.4 6.7l4 3.1C6.3 6.9 8.9 4.8 12 4.8z"
-      />
-    </svg>
   );
 }
 

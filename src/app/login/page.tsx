@@ -44,7 +44,8 @@ export default function LoginPage() {
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/today";
+  const callbackUrl = params.get("callbackUrl") || "/app";
+  const googleFirst = params.get("googleFirst") === "1";
 
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -72,6 +73,13 @@ function LoginForm() {
           <Logo glow className="h-10 w-auto" />
           <h1 className="text-[20px] font-bold tracking-tight">Вход</h1>
         </div>
+
+        {googleFirst && (
+          <p className="mb-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-center text-[13px] leading-snug text-[var(--color-fg-dim)]">
+            Для этого email ещё нет аккаунта — сначала зарегистрируйся, а
+            Google привяжешь после в профиле.
+          </p>
+        )}
 
         <form onSubmit={submit} className="flex flex-col gap-3">
           <input

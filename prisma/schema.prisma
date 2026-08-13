@@ -224,6 +224,25 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// Заявка «забыли пароль» с публичной формы (/forgot-password) — сайт не
+// шлёт email/SMS, поэтому это не автосброс, а очередь для владельца:
+// человек оставляет контакты, дальше владелец находит его в /admin (вкладка
+// «Пользователи») и меняет пароль вручную, списавшись через telegram.
+// Без связи с User: email в заявке может не совпадать с учёткой (опечатка,
+// другой адрес) — владелец сверяет глазами, а не по FK.
+model PasswordResetRequest {
+  id        String   @id @default(cuid())
+  email     String
+  phone     String
+  birthYear Int
+  telegram  String
+  /// new | done
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+}
+
 enum EventType {
   accept
   reject

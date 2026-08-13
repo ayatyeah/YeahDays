@@ -70,6 +70,7 @@ export default function HomeSection() {
   const challenges = useUserStore((s) => s.challenges);
   const excludedCategories = useUserStore((s) => s.excludedCategories);
   const disabledActions = useUserStore((s) => s.disabledActions);
+  const useOwnActionsOnly = useUserStore((s) => s.useOwnActionsOnly);
   const energyProfile = useUserStore((s) => s.energyProfile);
   const toggleTask = useUserStore((s) => s.toggleTask);
   const moods = useUserStore((s) => s.moods);
@@ -197,6 +198,7 @@ export default function HomeSection() {
       customActions,
       excludeCategories: excludedCategories,
       disabledActions,
+      useOwnActionsOnly,
       limit: 12,
     }).then((res) => {
       if (cancelled) return;
@@ -219,6 +221,7 @@ export default function HomeSection() {
     quests,
     excludedCategories,
     disabledActions,
+    useOwnActionsOnly,
     customActions, // созданное «своё действие» должно появиться в колоде сразу
     mood.energy,
     mood.minutes,
@@ -418,7 +421,11 @@ export default function HomeSection() {
               onAccept={handleAccept}
               onReject={handleReject}
               emptyState={
-                <DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />
+                useOwnActionsOnly && customActions.length === 0 ? (
+                  <DeckNoOwnActions onAdd={() => openCreate()} />
+                ) : (
+                  <DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />
+                )
               }
             />
           </motion.div>
@@ -512,6 +519,34 @@ function RoutineHint({
             : "На сегодня по плану всё — а колода ниже всегда открыта"}
         </p>
       </div>
+    </motion.div>
+  );
+}
+
+function DeckNoOwnActions({ onAdd }: { onAdd: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0, transition: springSoft }}
+      className="flex flex-1 flex-col items-center justify-center px-6 text-center"
+    >
+      <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-2xl">
+          ✎
+        </div>
+      </div>
+      <h2 className="text-lg font-bold tracking-tight">Колода пока пуста</h2>
+      <p className="mt-2 max-w-[280px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+        Встроенный набор действий выключен — колода собирается только из
+        того, что добавишь сам. Добавь первое действие, и оно появится тут.
+      </p>
+      <motion.button
+        onClick={onAdd}
+        whileTap={{ scale: 0.96 }}
+        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
+      >
+        + Добавить своё действие
+      </motion.button>
     </motion.div>
   );
 }

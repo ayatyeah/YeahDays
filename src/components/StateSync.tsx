@@ -24,10 +24,12 @@ import { useSyncStatus } from "@/store/useSyncStatus";
  * прогресс уезжает в аккаунт, на другом устройстве — приезжает обратно.
  */
 const DEBOUNCE_MS = 1500;
+/** чей аккаунт сейчас лежит в локальном сторе этого браузера (см. эффект ниже) */
+const ACTIVE_ACCOUNT_KEY = "yd-active-account";
 
 export default function StateSync() {
   const hydrated = useHydrated();
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const applyingRemote = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -127,11 +129,31 @@ export default function StateSync() {
     };
   }, [hydrated, push]);
 
-  // pull после гидратации и при каждой смене статуса входа
+  /*
+   * Смена аккаунта в этом браузере (A вышел, вошёл B — или наоборот) не
+   * должна тащить за собой то, что осталось от предыдущего юзера в
+   * localStorage: иначе pull() ниже сравнит чужие устаревшие данные с
+   * реальным состоянием нового юзера и в худшем случае push() их поверх
+   * затрёт. Помним, чей аккаунт сейчас в сторе, и при расхождении чистим
+   * его перед pull() — пустой стор безопасен (updatedAt: 0 всегда проигрывает
+   * LWW), а анонимный след ("" → аккаунт при первом входе) намеренно не
+   * трогаем, чтобы не потерять донный перенос через /api/link.
+   */
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || status === "loading") return;
+    const currentKey = session?.user?.id ?? "";
+    let lastKey: string | null = null;
+    try {
+      lastKey = localStorage.getItem(ACTIVE_ACCOUNT_KEY);
+    } catch {}
+    if (lastKey && lastKey !== currentKey) {
+      useUserStore.getState().hardResetLocal();
+    }
+    try {
+      localStorage.setItem(ACTIVE_ACCOUNT_KEY, currentKey);
+    } catch {}
     void pull();
-  }, [hydrated, status, pull]);
+  }, [hydrated, status, session?.user?.id, pull]);
 
   // отдаём наружу принудительную синхронизацию (кнопка в профиле)
   useEffect(() => {

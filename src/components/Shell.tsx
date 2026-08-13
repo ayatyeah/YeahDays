@@ -6,11 +6,20 @@ import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";
 import PageTransition from "./PageTransition";
 import WhatsNew from "./WhatsNew";
+import AppGuide from "./AppGuide";
 import NotificationCenter from "./NotificationCenter";
 import { tabFromPath } from "@/lib/nav";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
-const MARKETING = ["/", "/terms", "/privacy", "/login", "/register", "/download"];
+const MARKETING = [
+  "/",
+  "/terms",
+  "/privacy",
+  "/login",
+  "/register",
+  "/download",
+  "/forgot-password",
+];
 
 /**
  * Каркас страницы.
@@ -58,6 +67,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       </div>
       <BottomNav />
       <InstallPrompt />
+      <AppGuide />
       <WhatsNew />
       <NotificationCenter />
     </>

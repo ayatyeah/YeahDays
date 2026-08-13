@@ -1,4 +1,5 @@
-import { execFile } from "node:child_process";
+import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
+import { createInterface } from "node:readline";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -63,7 +64,67 @@ function pcmToWav(samples: Int16Array, sampleRate: number): Buffer {
  * приглушён в микшере громкости конкретно для этого процесса, либо просто
  * физически выключены колонки/наушники — SoundPlayer этого никак не видит
  * и не может сообщить как ошибку.
+ *
+ * Раньше на КАЖДЫЙ вызов запускался новый powershell.exe — старт самого
+ * процесса (инициализация .NET CLR) стоит реальные ~150-400мс, и это
+ * платилось на каждое озвученное предложение (см. voice.ts::startStreamingSpeech,
+ * там playWav зовётся по разу на предложение). Держим один-единственный
+ * powershell.exe живым на весь голосовой цикл и гоняем через его stdin/stdout
+ * пути к файлам построчно — сам механизм воспроизведения (SoundPlayer.PlaySync)
+ * не меняется, меняется только то, что процесс не пересоздаётся заново.
  */
+let player: ChildProcessWithoutNullStreams | null = null;
+let playerOut: ReturnType<typeof createInterface> | null = null;
+const pending: Array<(err: Error | null) => void> = [];
+
+/** Скрипт живёт в стеке PowerShell весь голосовой цикл: читает путь построчно из stdin, проигрывает, печатает маркер. */
+const PLAYER_SCRIPT = [
+  "$ErrorActionPreference = 'SilentlyContinue'",
+  "while ($true) {",
+  "  $line = [Console]::In.ReadLine()",
+  "  if ($null -eq $line) { break }",
+  "  try {",
+  "    (New-Object Media.SoundPlayer $line).PlaySync()",
+  "    [Console]::Out.WriteLine('__DONE__')",
+  "  } catch {",
+  "    [Console]::Out.WriteLine('__ERR__')",
+  "  }",
+  "}",
+].join("; ");
+
+function ensurePlayer(): ChildProcessWithoutNullStreams {
+  if (player && player.exitCode === null && !player.killed) return player;
+
+  const proc = spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", PLAYER_SCRIPT], {
+    stdio: ["pipe", "pipe", "pipe"],
+    windowsHide: true,
+  });
+  player = proc;
+  playerOut = createInterface({ input: proc.stdout });
+  playerOut.on("line", (line) => {
+    const resolve = pending.shift();
+    if (!resolve) return;
+    resolve(line === "__DONE__" ? null : new Error("SoundPlayer вернул ошибку"));
+  });
+  proc.on("exit", () => {
+    // Процесс упал сам (не мы его останавливали) — не оставляем висящие
+    // ожидания зависшими: следующий playWav() просто пересоздаст процесс.
+    if (player === proc) player = null;
+    while (pending.length) pending.shift()!(new Error("плеер завершился раньше ответа"));
+  });
+  return proc;
+}
+
+/** Останавливает постоянный процесс-плеер — звать при выключении голосового цикла, чтобы не плодить висящие powershell.exe. */
+export function stopPlayer(): void {
+  playerOut?.close();
+  playerOut = null;
+  player?.stdin.end();
+  player?.kill();
+  player = null;
+  while (pending.length) pending.shift()!(new Error("плеер остановлен"));
+}
+
 export async function playWav(wav: Buffer): Promise<void> {
   if (wav.length < 100) {
     log(`[audio] подозрительно маленький WAV на воспроизведение (${wav.length} байт) — TTS мог вернуть пустышку`, "warn");
@@ -71,14 +132,15 @@ export async function playWav(wav: Buffer): Promise<void> {
   const dir = await mkdtemp(path.join(tmpdir(), "didi-"));
   const file = path.join(dir, "out.wav");
   await writeFile(file, wav);
-  const psPath = file.replace(/'/g, "''");
-  await new Promise<void>((resolve, reject) => {
-    execFile(
-      "powershell.exe",
-      ["-NoProfile", "-Command", `(New-Object Media.SoundPlayer '${psPath}').PlaySync()`],
-      (err) => (err ? reject(err) : resolve()),
-    );
-  }).finally(() => rm(dir, { recursive: true, force: true }).catch(() => {}));
+  try {
+    const proc = ensurePlayer();
+    await new Promise<void>((resolve, reject) => {
+      pending.push((err) => (err ? reject(err) : resolve()));
+      proc.stdin.write(file + "\n");
+    });
+  } finally {
+    await rm(dir, { recursive: true, force: true }).catch(() => {});
+  }
 }
 
 /** Порог тишины — калибруется под комнату при старте, см. calibrateSilenceThreshold(). */

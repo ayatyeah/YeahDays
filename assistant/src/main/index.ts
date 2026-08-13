@@ -13,7 +13,7 @@ import { startPresenceLoop } from "./didi/presence.js";
 import { didiLog, log } from "./didi/logger.js";
 import { setLocalEnabled } from "./didi/presence.js";
 import { didiState, getState } from "./didi/state.js";
-import { listFacts, rememberFact, forgetFact } from "./didi/yeahgrind.js";
+import { listFacts, rememberFact, forgetFact, login } from "./didi/yeahgrind.js";
 import { getPanel, setEnabled, getChatHistory, sendChatMessage } from "./didi/bridge.js";
 
 const { app, BrowserWindow, ipcMain } = electron;
@@ -108,6 +108,9 @@ function registerIpc(): void {
   });
   ipcMain.handle("didi:getChatHistory", () => getChatHistory());
   ipcMain.handle("didi:sendChatMessage", (_e, content: string) => sendChatMessage(content));
+  ipcMain.handle("didi:login", (_e, identifier: string, password: string) =>
+    login(identifier, password),
+  );
   ipcMain.handle("didi:getFacts", () => listFacts());
   ipcMain.handle("didi:rememberFact", (_e, content: string) => rememberFact(content));
   ipcMain.handle("didi:forgetFact", (_e, id: string) => forgetFact(id));

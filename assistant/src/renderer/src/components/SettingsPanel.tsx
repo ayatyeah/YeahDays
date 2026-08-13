@@ -7,6 +7,12 @@ export default function SettingsPanel() {
   const [autostart, setAutostart] = useState(false);
   const [saved, setSaved] = useState(false);
 
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const [loginBusy, setLoginBusy] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [loggedInAs, setLoggedInAs] = useState<string | null>(null);
+
   const load = async () => {
     const [s, r, a] = await Promise.all([
       window.didi.getConfigSummary(),
@@ -35,6 +41,21 @@ export default function SettingsPanel() {
     setAutostart(value);
   };
 
+  const doLogin = async () => {
+    setLoginBusy(true);
+    setLoginError(null);
+    try {
+      const res = await window.didi.login(identifier, password);
+      set("YEAHGRIND_USER_ID", res.userId);
+      setLoggedInAs(res.name ?? res.email ?? res.userId);
+      setPassword("");
+    } catch (e) {
+      setLoginError(e instanceof Error ? e.message : "Не получилось войти");
+    } finally {
+      setLoginBusy(false);
+    }
+  };
+
   if (!summary) return <div className="card muted">Загрузка…</div>;
 
   return (
@@ -44,6 +65,51 @@ export default function SettingsPanel() {
           Не хватает обязательных полей ниже — без них голосовой цикл и связь с YeahGrind не запустятся.
         </div>
       )}
+
+      <div className="card">
+        <div className="muted" style={{ marginBottom: 10 }}>Вход в аккаунт YeahGrind</div>
+        {loggedInAs ? (
+          <div>
+            <div>Вошли как {loggedInAs}</div>
+            <div className="muted" style={{ marginTop: 4 }}>
+              Нажми «Сохранить и перезапустить» ниже, чтобы применилось.
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="field">
+              <label>Email или логин</label>
+              <input
+                type="text"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && void doLogin()}
+              />
+            </div>
+            <div className="field">
+              <label>Пароль</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && void doLogin()}
+              />
+            </div>
+            {loginError && (
+              <div className="muted" style={{ color: "var(--err)", marginBottom: 10 }}>
+                {loginError}
+              </div>
+            )}
+            <button
+              className="btn primary"
+              onClick={() => void doLogin()}
+              disabled={loginBusy || !identifier.trim() || !password}
+            >
+              {loginBusy ? "Входим…" : "Войти"}
+            </button>
+          </>
+        )}
+      </div>
 
       <div className="card">
         <div className="field">
@@ -65,7 +131,7 @@ export default function SettingsPanel() {
           />
         </div>
         <div className="field">
-          <label>YEAHGRIND_USER_ID (localStorage["yd-uid"] в браузере YeahGrind)</label>
+          <label>YEAHGRIND_USER_ID (заполняется входом выше; вручную — если аккаунта нет или анонимно)</label>
           <input
             type="text"
             value={raw.YEAHGRIND_USER_ID ?? ""}

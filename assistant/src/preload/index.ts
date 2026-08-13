@@ -16,6 +16,8 @@ const api = {
   getChatHistory: () => ipcRenderer.invoke("didi:getChatHistory"),
   sendChatMessage: (content: string) => ipcRenderer.invoke("didi:sendChatMessage", content),
 
+  login: (identifier: string, password: string) => ipcRenderer.invoke("didi:login", identifier, password),
+
   getFacts: () => ipcRenderer.invoke("didi:getFacts"),
   rememberFact: (content: string) => ipcRenderer.invoke("didi:rememberFact", content),
   forgetFact: (id: string) => ipcRenderer.invoke("didi:forgetFact", id),

@@ -44,9 +44,17 @@ export interface LogEntry {
 
 export type DidiState = "idle" | "listening" | "thinking" | "speaking";
 
+export interface LoginResult {
+  userId: string;
+  name: string | null;
+  email: string | null;
+}
+
 export interface DidiApi {
   getPanel: () => Promise<PanelStatus>;
   setEnabled: (enabled: boolean) => Promise<void>;
+
+  login: (identifier: string, password: string) => Promise<LoginResult>;
 
   getChatHistory: () => Promise<ChatMessage[]>;
   sendChatMessage: (content: string) => Promise<void>;

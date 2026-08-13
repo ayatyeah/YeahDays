@@ -118,6 +118,26 @@ export const TOOLS: Record<string, ToolDef> = {
       ),
   ),
 
+  notify_phone: tool(
+    "notify_phone",
+    "Отправить push-уведомление на телефон пользователя (и другие устройства, где установлено PWA YeahGrind) прямо сейчас.",
+    {
+      type: "object",
+      properties: {
+        text: { type: "string", description: "Текст уведомления" },
+        title: { type: "string", description: "Заголовок, по умолчанию «СалемАй»" },
+      },
+      required: ["text"],
+      additionalProperties: false,
+    },
+    false,
+    () => "",
+    async (a) => {
+      await yg.notify(str(a, "text"), str(a, "title") || undefined);
+      return "Отправлено.";
+    },
+  ),
+
   open_app: tool(
     "open_app",
     "Открыть приложение или файл на ноутбуке по имени/пути (как через Пуск или проводник).",

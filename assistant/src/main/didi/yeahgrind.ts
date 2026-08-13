@@ -83,6 +83,32 @@ export function setMood(energy: "low" | "medium" | "high", minutes = 30) {
   });
 }
 
+export interface LoginResult {
+  userId: string;
+  name: string | null;
+  email: string | null;
+}
+
+/**
+ * Вход по email/логину+паролю — тем же, что и на сайте. Возвращает
+ * userId, который вызывающий код (SettingsPanel) сохраняет в настройки
+ * вместо ручного копирования ID со страницы профиля.
+ */
+export function login(identifier: string, password: string): Promise<LoginResult> {
+  return call("/api/assistant/login", {
+    method: "POST",
+    body: JSON.stringify({ identifier, password }),
+  }) as Promise<LoginResult>;
+}
+
+/** Мгновенный push на все устройства аккаунта (телефон с установленным PWA и т.д.). */
+export async function notify(text: string, title = "СалемАй"): Promise<void> {
+  await call("/api/assistant/notify", {
+    method: "POST",
+    body: JSON.stringify({ userId: config.yeahgrindUserId, title, text }),
+  });
+}
+
 /** "Я жива" + заодно узнаём, не поставили ли ДиДи на паузу из панели в браузере. */
 export function heartbeat(): Promise<{ enabled: boolean }> {
   return call("/api/assistant/heartbeat", {

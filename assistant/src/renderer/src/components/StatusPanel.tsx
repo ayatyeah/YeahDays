@@ -63,6 +63,28 @@ export default function StatusPanel() {
 
   const [toggling, setToggling] = useState(false);
   const isOn = loopRunning === true;
+  // enabled — общий на все устройства этого аккаунта флаг паузы (та же
+  // строка AssistantStatus, что дёргает и виджет на сайте, DidiPanel.tsx).
+  // isOn отражает только локальный процесс микрофона — если кто-то
+  // поставил на паузу С САЙТА, пока голосовой цикл тут уже запущен,
+  // кнопка молча продолжала бы показывать "Выключить" (как будто всё
+  // работает), а каждая команда дропалась бы с "на паузе" в журнале без
+  // единого видимого признака почему.
+  const pausedRemotely = isOn && panel?.enabled === false;
+
+  const resume = async () => {
+    setToggling(true);
+    try {
+      await window.didi.setEnabled(true);
+    } finally {
+      try {
+        const p = await window.didi.getPanel();
+        setPanel(p);
+      } finally {
+        setToggling(false);
+      }
+    }
+  };
 
   // Одна кнопка вместо двух прежних (пауза + старт/стоп цикла) — по
   // нажатию сразу и снимает паузу, и поднимает голосовой цикл, чтобы
@@ -104,16 +126,31 @@ export default function StatusPanel() {
   return (
     <div>
       <div className="hero">
-        <Orb state={isOn ? voiceState : "idle"} />
-        <div className="hero-state">{isOn ? STATE_LABEL[voiceState] : "Выключен"}</div>
+        <Orb state={pausedRemotely ? "idle" : isOn ? voiceState : "idle"} />
+        <div className="hero-state">
+          {pausedRemotely ? "На паузе (выключено с сайта)" : isOn ? STATE_LABEL[voiceState] : "Выключен"}
+        </div>
 
-        <button
-          className={`power-btn ${isOn ? "on" : "off"}`}
-          onClick={() => void toggle()}
-          disabled={toggling || loopRunning === null}
-        >
-          {isOn ? "Выключить" : "Включить"}
-        </button>
+        {pausedRemotely && (
+          <p className="muted" style={{ marginTop: -4, marginBottom: 8, textAlign: "center" }}>
+            Кодовое слово ловится, но команды игнорируются — пауза стоит
+            на аккаунте (профиль на сайте или другое устройство), не тут.
+          </p>
+        )}
+
+        {pausedRemotely ? (
+          <button className="power-btn on" onClick={() => void resume()} disabled={toggling}>
+            Возобновить
+          </button>
+        ) : (
+          <button
+            className={`power-btn ${isOn ? "on" : "off"}`}
+            onClick={() => void toggle()}
+            disabled={toggling || loopRunning === null}
+          >
+            {isOn ? "Выключить" : "Включить"}
+          </button>
+        )}
 
         <div className="hero-meta">
           <span className={`status-dot ${panel?.online ? "on" : "off"}`} />

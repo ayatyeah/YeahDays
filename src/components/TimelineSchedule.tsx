@@ -1,15 +1,18 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   useUserStore,
   isTodoOnDay,
   isTodoDone,
   PRIORITY_COLOR,
+  PRIORITY_LABEL,
   type Todo,
   type TodoPriority,
 } from "@/store/useUserStore";
+import Modal from "@/components/ui/Modal";
+import Button from "@/components/ui/Button";
 import { dateKey } from "@/lib/domain";
 import { routineLabelAt } from "@/lib/routine";
 import { cn } from "@/lib/cn";
@@ -21,18 +24,29 @@ const DEFAULT_TO = 23;
 const ROW_HEIGHT = 56;
 const MIN_BLOCK_HEIGHT = 30;
 const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
+const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
+const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
+
+function fmtDuration(mins: number): string {
+  if (mins < 60) return `${mins}м`;
+  if (mins % 60 === 0) return `${mins / 60}ч`;
+  return `${Math.floor(mins / 60)}ч${mins % 60}м`;
+}
 
 /**
- * Почасовой план дня — настоящие задачи как перетаскиваемые плашки, а не
- * свободный текст (это заменило прежний DaySchedule с текстовым полем на
- * каждый час — старые данные в schedule[] остались в сторе нетронутыми на
- * случай отката, просто здесь больше не рендерятся).
+ * Почасовой план дня — стеклянные плашки задач поверх сетки часов.
  *
- * Клик по пустому часу — создаёт задачу прямо на этом часе (title, hour,
- * duration=60, priority="normal" через тот же addTodo, что и в TodoList —
- * это ровно те же задачи, просто другой способ их завести и увидеть).
- * Перетаскивание плашки по вертикали — меняет час (updateTodo). Цвет —
- * по приоритету (тот же PRIORITY_COLOR, что и в списке задач).
+ * Дизайн-язык (тонированное стекло, «остров» текущего времени, свайп
+ * вправо/влево — выполнено) взят из макета hourly-planner-liquid-glass.html
+ * и адаптирован под тёмную тему сайта (макет был светлым — тот же приём
+ * "матовое стекло поверх фона", что и в iOS Dark Mode, просто на тёмной
+ * подложке вместо светлой).
+ *
+ * compact (сайдбар "Сегодня") — только сетка часов, без лотков/FAB/шторки:
+ * там уже есть TodoList для не-почасовых задач, дублировать некуда.
+ * !compact (Календарь) — полная версия: просроченное и нераспланированное
+ * вынесены в лотки сверху, "остров" показывает "сейчас/далее", FAB и
+ * шторка — единый способ завести/отредактировать задачу.
  */
 export default function TimelineSchedule({
   day = dateKey(),
@@ -49,12 +63,18 @@ export default function TimelineSchedule({
 
   const [expanded, setExpanded] = useState(!compact);
   const [showNight, setShowNight] = useState(false);
-  const [addingHour, setAddingHour] = useState<number | null>(null);
-  const [draft, setDraft] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [fTitle, setFTitle] = useState("");
+  const [fPriority, setFPriority] = useState<TodoPriority>("normal");
+  const [fHour, setFHour] = useState<number | undefined>(undefined);
+  const [fDuration, setFDuration] = useState(60);
+  const [fDone, setFDone] = useState(false);
+
   const hours = useMemo(() => {
-    if (showNight) return Array.from({ length: 24 }, (_, i) => i);
+    if (showNight) return ALL_HOURS;
     return Array.from(
       { length: DEFAULT_TO - DEFAULT_FROM + 1 },
       (_, i) => i + DEFAULT_FROM,
@@ -63,42 +83,54 @@ export default function TimelineSchedule({
   const startHour = hours[0] ?? 0;
   const endHour = hours[hours.length - 1] ?? 23;
 
+  const todayKey = dateKey();
+  const isToday = day === todayKey;
+  const nowHour = new Date().getHours();
+  const weekday = useMemo(() => new Date(`${day}T00:00:00`).getDay(), [day]);
+
+  const onDay = useMemo(() => todos.filter((t) => isTodoOnDay(t, day)), [todos, day]);
+
   const scheduled = useMemo(
+    () => onDay.filter((t) => t.hour != null && t.hour >= startHour && t.hour <= endHour),
+    [onDay, startHour, endHour],
+  );
+  /** Час прошёл сегодня, а дело не закрыто — не теряется в сетке, а всплывает наверх. */
+  const overdue = useMemo(
     () =>
-      todos.filter(
-        (t) =>
-          isTodoOnDay(t, day) &&
-          t.hour != null &&
-          t.hour >= startHour &&
-          t.hour <= endHour,
-      ),
-    [todos, day, startHour, endHour],
+      isToday
+        ? onDay.filter((t) => t.hour != null && t.hour < nowHour && !isTodoDone(t, day))
+        : [],
+    [onDay, isToday, nowHour, day],
+  );
+  const overdueIds = useMemo(() => new Set(overdue.map((t) => t.id)), [overdue]);
+  const unscheduled = useMemo(
+    () => onDay.filter((t) => t.hour == null && !overdueIds.has(t.id)),
+    [onDay, overdueIds],
   );
 
   /** Группировка по часу — задачи в одно время встают бок о бок, не наложением. */
   const byHour = useMemo(() => {
     const map = new Map<number, Todo[]>();
     for (const t of scheduled) {
+      if (overdueIds.has(t.id)) continue;
       const h = t.hour!;
       const list = map.get(h) ?? [];
       list.push(t);
       map.set(h, list);
     }
     return map;
-  }, [scheduled]);
+  }, [scheduled, overdueIds]);
 
-  const nowHour = new Date().getHours();
-  const isToday = day === dateKey();
-  const weekday = useMemo(() => new Date(`${day}T00:00:00`).getDay(), [day]);
-  const filled = scheduled.length;
+  const filled = scheduled.length - overdue.length;
 
-  function commitAdd(hour: number) {
-    const title = draft.trim();
-    setAddingHour(null);
-    setDraft("");
-    if (!title) return;
-    addTodo({ title, date: day, hour, duration: 60, priority: "normal" });
-  }
+  const ongoing = isToday
+    ? scheduled.find((t) => t.hour === nowHour && !isTodoDone(t, day) && !overdueIds.has(t.id))
+    : undefined;
+  const upcoming = isToday
+    ? scheduled
+        .filter((t) => t.hour! > nowHour && !isTodoDone(t, day))
+        .sort((a, b) => a.hour! - b.hour!)[0]
+    : undefined;
 
   function cyclePriority(t: Todo) {
     const next =
@@ -106,11 +138,45 @@ export default function TimelineSchedule({
     updateTodo(t.id, { priority: next });
   }
 
-  function handleDragEnd(t: Todo, offsetY: number) {
-    const deltaHours = Math.round(offsetY / ROW_HEIGHT);
+  function handleDragEnd(t: Todo, offset: { x: number; y: number }) {
+    // Горизонтально дальше, чем вертикально — свайп "выполнено", не сдвиг часа.
+    if (Math.abs(offset.x) > Math.abs(offset.y) && Math.abs(offset.x) > 56) {
+      toggleTodo(t.id, day);
+      return;
+    }
+    const deltaHours = Math.round(offset.y / ROW_HEIGHT);
     if (!deltaHours) return;
     const next = Math.min(endHour, Math.max(startHour, t.hour! + deltaHours));
     if (next !== t.hour) updateTodo(t.id, { hour: next });
+  }
+
+  function openSheet(t: Todo | null, presetHour?: number) {
+    setEditingId(t?.id ?? null);
+    setFTitle(t?.title ?? "");
+    setFPriority(t?.priority ?? "normal");
+    setFHour(t ? t.hour : presetHour);
+    setFDuration(t?.duration ?? 60);
+    setFDone(t ? isTodoDone(t, day) : false);
+    setSheetOpen(true);
+  }
+  function closeSheet() {
+    setSheetOpen(false);
+  }
+  function saveSheet() {
+    const title = fTitle.trim();
+    if (!title) return;
+    if (editingId) {
+      updateTodo(editingId, { title, priority: fPriority, hour: fHour, duration: fDuration });
+      const wasDone = onDay.find((t) => t.id === editingId);
+      if (wasDone && isTodoDone(wasDone, day) !== fDone) toggleTodo(editingId, day);
+    } else {
+      addTodo({ title, date: day, priority: fPriority, hour: fHour, duration: fDuration });
+    }
+    closeSheet();
+  }
+  function deleteSheet() {
+    if (editingId) removeTodo(editingId);
+    closeSheet();
   }
 
   return (
@@ -129,140 +195,194 @@ export default function TimelineSchedule({
         )}
       </div>
 
-      {expanded && (
-        <div className="flex overflow-hidden rounded-3xl surface">
-          {/* Подписи часов — своя колонка, чтобы не мешать расчёту позиции плашек. */}
-          <div className="w-14 shrink-0">
-            {hours.map((h) => {
-              const isNow = isToday && h === nowHour;
-              return (
-                <div
-                  key={h}
-                  style={{ height: ROW_HEIGHT }}
-                  className={cn(
-                    "flex items-center justify-center border-b border-[var(--color-border)] text-[12px] tabular-nums last:border-b-0",
-                    isNow ? "font-bold text-[var(--color-fg)]" : "text-[var(--color-muted)]",
-                  )}
-                >
-                  {String(h).padStart(2, "0")}:00
-                </div>
-              );
-            })}
+      {!compact && overdue.length > 0 && (
+        <div className="mb-3">
+          <p className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-[var(--color-strength)]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
+            Просрочено
+          </p>
+          <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+            {overdue.map((t) => (
+              <TrayChip key={t.id} todo={t} onClick={() => openSheet(t)} />
+            ))}
           </div>
+        </div>
+      )}
 
-          {/* Сетка часов + плашки задач поверх (absolute, координаты — только относительно этого контейнера). */}
-          <div ref={containerRef} className="relative min-w-0 flex-1">
-            {hours.map((h) => {
-              const isNow = isToday && h === nowHour;
-              const routine = routineLabelAt(weekday, h);
-              const hasBlocks = (byHour.get(h)?.length ?? 0) > 0;
-              return (
-                <div
-                  key={h}
-                  style={{ height: ROW_HEIGHT }}
-                  className={cn(
-                    "border-b border-[var(--color-border)] px-2 last:border-b-0",
-                    isNow && "bg-[var(--color-surface-2)]",
-                  )}
-                >
-                  {!hasBlocks &&
-                    (addingHour === h ? (
-                      <input
-                        autoFocus
-                        value={draft}
-                        onChange={(e) => setDraft(e.target.value)}
-                        onBlur={() => commitAdd(h)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") commitAdd(h);
-                          if (e.key === "Escape") {
-                            setAddingHour(null);
-                            setDraft("");
-                          }
-                        }}
-                        placeholder="Что запланировано?"
-                        maxLength={80}
-                        className="h-full w-full bg-transparent text-[13px] outline-none placeholder:text-[var(--color-muted)]"
-                      />
-                    ) : (
+      {!compact && (
+        <div className="mb-3">
+          <p className="mb-1.5 text-[12px] font-semibold text-[var(--color-fg-dim)]">Без часа</p>
+          {unscheduled.length === 0 ? (
+            <button
+              onClick={() => openSheet(null)}
+              className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-left text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+            >
+              Добавь задачу — время можно назначить позже
+            </button>
+          ) : (
+            <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+              {unscheduled.map((t) => (
+                <TrayChip key={t.id} todo={t} onClick={() => openSheet(t)} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {expanded && (
+        <div
+          className="glass-panel relative overflow-hidden rounded-3xl"
+          style={!compact ? { maxHeight: "min(70vh, 640px)", overflowY: "auto" } : undefined}
+        >
+          {!compact && isToday && (
+            <div className="sticky top-2 z-10 mb-1 flex justify-center px-2">
+              <div className="now-island flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold text-white">
+                <span className="shrink-0 rounded-full bg-white/15 px-2 py-1 font-mono text-[11.5px] tabular-nums">
+                  {String(new Date().getHours()).padStart(2, "0")}:
+                  {String(new Date().getMinutes()).padStart(2, "0")}
+                </span>
+                {ongoing ? (
+                  <>
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ background: PRIORITY_COLOR[ongoing.priority] }}
+                    />
+                    <span className="truncate">Сейчас: {ongoing.title}</span>
+                  </>
+                ) : upcoming ? (
+                  <>
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ background: PRIORITY_COLOR[upcoming.priority] }}
+                    />
+                    <span className="truncate">
+                      Далее в {String(upcoming.hour).padStart(2, "0")}:00: {upcoming.title}
+                    </span>
+                  </>
+                ) : (
+                  <span className="truncate opacity-70">Свободно до конца дня</span>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex">
+            {/* Подписи часов — своя колонка, чтобы не мешать расчёту позиции плашек. */}
+            <div className="w-14 shrink-0">
+              {hours.map((h) => {
+                const isNow = isToday && h === nowHour;
+                return (
+                  <div
+                    key={h}
+                    style={{ height: ROW_HEIGHT }}
+                    className={cn(
+                      "flex items-center justify-center border-b border-[var(--color-border)] text-[12px] tabular-nums last:border-b-0",
+                      isNow ? "font-bold text-[var(--color-fg)]" : "text-[var(--color-muted)]",
+                    )}
+                  >
+                    {String(h).padStart(2, "0")}:00
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Сетка часов + плашки задач поверх (absolute, координаты — только относительно этого контейнера). */}
+            <div ref={containerRef} className="relative min-w-0 flex-1">
+              {hours.map((h) => {
+                const isNow = isToday && h === nowHour;
+                const routine = routineLabelAt(weekday, h);
+                const hasBlocks = (byHour.get(h)?.length ?? 0) > 0;
+                return (
+                  <div
+                    key={h}
+                    style={{ height: ROW_HEIGHT }}
+                    className={cn(
+                      "border-b border-[var(--color-border)] px-2 last:border-b-0",
+                      isNow && "bg-[var(--color-surface-2)]",
+                    )}
+                  >
+                    {!hasBlocks && (
                       <button
                         type="button"
-                        onClick={() => {
-                          setAddingHour(h);
-                          setDraft("");
-                        }}
+                        onClick={() => (compact ? openSheet(null, h) : openSheet(null, h))}
                         className="flex h-full w-full items-center text-left text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
                       >
                         {routine ?? (isNow ? "сейчас…" : "+ добавить")}
                       </button>
-                    ))}
-                </div>
-              );
-            })}
+                    )}
+                  </div>
+                );
+              })}
 
-            {Array.from(byHour.entries()).flatMap(([h, list]) =>
-              list.map((t, i) => {
-                const top = (h - startHour) * ROW_HEIGHT + 2;
-                const height = Math.max(
-                  MIN_BLOCK_HEIGHT,
-                  ((t.duration ?? 60) / 60) * ROW_HEIGHT - 4,
-                );
-                const widthPct = 100 / list.length;
-                const done = isTodoDone(t, day);
-                return (
-                  <motion.div
-                    key={t.id}
-                    drag="y"
-                    dragConstraints={containerRef}
-                    dragElastic={0.08}
-                    dragMomentum={false}
-                    dragSnapToOrigin
-                    onDragEnd={(_, info) => handleDragEnd(t, info.offset.y)}
-                    layout
-                    transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                    className="group absolute cursor-grab overflow-hidden rounded-xl border px-2 py-1 active:cursor-grabbing"
-                    style={{
-                      top,
-                      height,
-                      left: `calc(${i * widthPct}% + ${i > 0 ? 3 : 0}px)`,
-                      width: `calc(${widthPct}% - 3px)`,
-                      background: `color-mix(in srgb, ${PRIORITY_COLOR[t.priority]} 16%, var(--color-surface))`,
-                      borderColor: `color-mix(in srgb, ${PRIORITY_COLOR[t.priority]} 45%, transparent)`,
-                    }}
-                  >
-                    <div className="flex h-full items-start gap-1.5">
-                      <button
-                        type="button"
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={() => cyclePriority(t)}
-                        className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
-                        style={{ background: PRIORITY_COLOR[t.priority] }}
-                        aria-label="Сменить приоритет"
-                      />
-                      <button
-                        type="button"
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={() => toggleTodo(t.id, day)}
-                        className={cn(
-                          "min-w-0 flex-1 truncate text-left text-[12px] font-medium leading-tight",
-                          done && "text-[var(--color-muted)] line-through",
-                        )}
-                      >
-                        {t.title}
-                      </button>
-                      <button
-                        type="button"
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={() => removeTodo(t.id)}
-                        className="shrink-0 text-[11px] text-[var(--color-muted)] opacity-0 transition hover:text-[var(--color-strength)] group-hover:opacity-100"
-                        aria-label="Удалить задачу"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </motion.div>
-                );
-              }),
-            )}
+              {Array.from(byHour.entries()).flatMap(([h, list]) =>
+                list.map((t, i) => {
+                  const top = (h - startHour) * ROW_HEIGHT + 2;
+                  const height = Math.max(
+                    MIN_BLOCK_HEIGHT,
+                    ((t.duration ?? 60) / 60) * ROW_HEIGHT - 4,
+                  );
+                  const widthPct = 100 / list.length;
+                  const done = isTodoDone(t, day);
+                  return (
+                    <motion.div
+                      key={t.id}
+                      drag
+                      dragConstraints={containerRef}
+                      dragElastic={0.1}
+                      dragMomentum={false}
+                      dragSnapToOrigin
+                      onDragEnd={(_, info) => handleDragEnd(t, info.offset)}
+                      onTap={() => openSheet(t)}
+                      layout
+                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                      className="glass-chip group absolute cursor-grab overflow-hidden rounded-xl px-2 py-1 active:cursor-grabbing"
+                      style={{
+                        top,
+                        height,
+                        left: `calc(${i * widthPct}% + ${i > 0 ? 3 : 0}px)`,
+                        width: `calc(${widthPct}% - 3px)`,
+                        // @ts-expect-error -- кастомное свойство для CSS ниже
+                        "--chip-color": PRIORITY_COLOR[t.priority],
+                      }}
+                    >
+                      <div className="flex h-full items-start gap-1.5">
+                        <button
+                          type="button"
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            cyclePriority(t);
+                          }}
+                          className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
+                          style={{ background: PRIORITY_COLOR[t.priority] }}
+                          aria-label="Сменить приоритет"
+                        />
+                        <span
+                          className={cn(
+                            "min-w-0 flex-1 truncate text-left text-[12px] font-medium leading-tight",
+                            done && "text-[var(--color-muted)] line-through",
+                          )}
+                        >
+                          {t.title}
+                        </span>
+                        <button
+                          type="button"
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeTodo(t.id);
+                          }}
+                          className="shrink-0 text-[11px] text-[var(--color-muted)] opacity-0 transition hover:text-[var(--color-strength)] group-hover:opacity-100"
+                          aria-label="Удалить задачу"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </motion.div>
+                  );
+                }),
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -275,6 +395,191 @@ export default function TimelineSchedule({
           {showNight ? "скрыть ночные часы" : "показать все 24 часа"}
         </button>
       )}
+
+      {!compact && (
+        <button
+          onClick={() => openSheet(null)}
+          aria-label="Добавить задачу"
+          className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-[26px] font-semibold text-white shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5)] lg:bottom-8"
+          style={{ background: "linear-gradient(155deg, var(--color-intelligence), color-mix(in srgb, var(--color-intelligence) 70%, black))" }}
+        >
+          +
+        </button>
+      )}
+
+      <Modal open={sheetOpen} onClose={closeSheet} title={editingId ? "Задача" : "Новая задача"}>
+        <div className="space-y-4">
+          <input
+            value={fTitle}
+            onChange={(e) => setFTitle(e.target.value)}
+            placeholder="Например: созвон с командой"
+            maxLength={80}
+            autoFocus
+            className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+          />
+
+          <div>
+            <SheetLabel>Важность</SheetLabel>
+            <div className="grid grid-cols-3 gap-1.5">
+              {PRIORITY_ORDER.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setFPriority(p)}
+                  className={cn(
+                    "flex flex-col items-center gap-1.5 rounded-xl border py-2.5 text-[12px] font-semibold transition",
+                    fPriority === p
+                      ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                      : "border-[var(--color-border)] text-[var(--color-muted)]",
+                  )}
+                >
+                  <span
+                    className="h-3 w-3 rounded-full"
+                    style={{ background: PRIORITY_COLOR[p] }}
+                  />
+                  {PRIORITY_LABEL[p]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SheetLabel>Час</SheetLabel>
+            <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+              <button
+                onClick={() => setFHour(undefined)}
+                className={cn(
+                  "shrink-0 rounded-xl border px-3.5 py-2.5 text-[12.5px] font-semibold transition",
+                  fHour === undefined
+                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                    : "border-[var(--color-border)] text-[var(--color-muted)]",
+                )}
+              >
+                Без часа
+              </button>
+              {ALL_HOURS.map((h) => (
+                <button
+                  key={h}
+                  onClick={() => setFHour(h)}
+                  className={cn(
+                    "shrink-0 rounded-xl border px-3.5 py-2.5 text-[12.5px] font-semibold tabular-nums transition",
+                    fHour === h
+                      ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                      : "border-[var(--color-border)] text-[var(--color-muted)]",
+                  )}
+                >
+                  {String(h).padStart(2, "0")}:00
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SheetLabel>Длительность</SheetLabel>
+            <div className="grid grid-cols-4 gap-1.5">
+              {DURATION_OPTIONS.map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setFDuration(d)}
+                  className={cn(
+                    "rounded-xl border py-2 text-[12px] font-semibold tabular-nums transition",
+                    fDuration === d
+                      ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                      : "border-[var(--color-border)] text-[var(--color-muted)]",
+                  )}
+                >
+                  {fmtDuration(d)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <label className="flex cursor-pointer items-center gap-2.5">
+            <input
+              type="checkbox"
+              checked={fDone}
+              onChange={(e) => setFDone(e.target.checked)}
+              className="h-4 w-4 rounded accent-[var(--color-fg)]"
+            />
+            <span className="text-[13px] text-[var(--color-fg-dim)]">Выполнено</span>
+          </label>
+
+          <div className="flex gap-2.5 pt-1">
+            {editingId && (
+              <Button variant="danger" onClick={deleteSheet}>
+                Удалить
+              </Button>
+            )}
+            <Button className="flex-1" onClick={closeSheet}>
+              Отмена
+            </Button>
+            <Button
+              variant="primary"
+              className="flex-1"
+              disabled={!fTitle.trim()}
+              onClick={saveSheet}
+            >
+              Сохранить
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      <style jsx>{`
+        .glass-panel {
+          background: rgba(255, 255, 255, 0.035);
+          backdrop-filter: blur(20px) saturate(140%);
+          -webkit-backdrop-filter: blur(20px) saturate(140%);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            0 20px 44px -28px rgba(0, 0, 0, 0.7);
+        }
+        .now-island {
+          background: rgba(10, 10, 14, 0.72);
+          backdrop-filter: blur(18px) saturate(150%);
+          -webkit-backdrop-filter: blur(18px) saturate(150%);
+          box-shadow:
+            0 8px 24px -8px rgba(0, 0, 0, 0.5),
+            inset 0 1px 1px rgba(255, 255, 255, 0.12);
+        }
+        .glass-chip {
+          background: color-mix(in srgb, var(--chip-color) 16%, var(--color-surface));
+          border: 1px solid color-mix(in srgb, var(--chip-color) 45%, transparent);
+          background-image: linear-gradient(
+            165deg,
+            color-mix(in srgb, var(--chip-color) 10%, white) 0%,
+            transparent 40%
+          );
+          transition:
+            box-shadow 0.15s,
+            transform 0.15s;
+        }
+        .glass-chip:active {
+          box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--chip-color) 60%, transparent);
+        }
+      `}</style>
     </section>
+  );
+}
+
+function TrayChip({ todo, onClick }: { todo: Todo; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="glass-chip flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[12.5px] font-medium"
+      style={{
+        // @ts-expect-error -- кастомное свойство для CSS в родителе
+        "--chip-color": PRIORITY_COLOR[todo.priority],
+      }}
+    >
+      <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: PRIORITY_COLOR[todo.priority] }} />
+      <span className="max-w-[140px] truncate">{todo.title}</span>
+    </button>
+  );
+}
+
+function SheetLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="mb-2 text-[12px] font-semibold text-[var(--color-fg-dim)]">{children}</p>
   );
 }

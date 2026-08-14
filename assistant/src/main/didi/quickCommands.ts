@@ -7,7 +7,7 @@
  * Набор расширяется по мере того, какие конкретные команды реально
  * повторяются, а не гадаем заранее.
  */
-import { rememberFact, getTodayStatus, addTodo } from "./yeahgrind.js";
+import { rememberFact, getTodayStatus, addTodo, listDevices } from "./yeahgrind.js";
 import { openApp, clickYandexWaveButton } from "./osControl.js";
 
 interface QuickResult {
@@ -45,18 +45,47 @@ const TIME_WORDS = ["который", "сколько"]; // "который ча
 // русские формулировки того же вопроса, необязательно с названием бренда.
 const GRIND_RE = /гринд|грайнд|задачи на сегодня|план на сегодня|мои дела на сегодня/i;
 const WAVE_RE = /мо(ю|я|ей)\s+волн|запусти\s+волну|включи\s+волну/i;
+const DEVICES_RE = /список устройств|мои устройства|какие устройства|сколько.*устройств/i;
+
+/** Склонение "устройство" под число — 1 устройство, 2-4 устройства, 5+ устройств. */
+function pluralDevices(n: number): string {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return "устройство";
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return "устройства";
+  return "устройств";
+}
+
+/** "Список устройств" / "сколько у меня устройств" — читает вслух, на каких устройствах включены уведомления. */
+async function describeDevices(): Promise<string> {
+  try {
+    const devices = await listDevices();
+    const active = devices.filter((d) => d.enabled);
+    if (active.length === 0) {
+      return "Нет ни одного устройства с включёнными уведомлениями.";
+    }
+    const names = active.map((d) => d.label).join(", ");
+    return `Уведомления включены на ${active.length} ${pluralDevices(active.length)}: ${names}.`;
+  } catch (e) {
+    console.warn("[quickCommands] listDevices не прошёл:", e instanceof Error ? e.message : e);
+    return "Не получилось получить список устройств.";
+  }
+}
 
 /**
- * Десктопное приложение Яндекс Музыки (не браузер — веб-версия просто
- * открывает страницу, но не запускает воспроизведение сама, проверено
- * вживую). У приложения зарегистрирован свой URI-протокол
- * (HKCU\Software\Classes\yandexmusic, ведёт на
- * "...\YandexMusic\Яндекс Музыка.exe" "%1") — используем его, чтобы
- * открыть/поднять окно, а реальный запуск воспроизведения — клик по
- * плитке "Моя волна" (см. osControl.ts::clickYandexWaveButton, обычный
- * URI не запускает трек сам). Клик — в фоне, не блокирует спокойный
- * быстрый ответ голосом: приложению нужно время долистать/отрисовать
- * страницу после навигации по ссылке, ждать это молча было бы неуместно.
+ * Десктопное приложение Яндекс Музыки, не браузер — пробовали браузер
+ * (Firefox), но там окно ненадёжно для автоматизации: одно и то же окно
+ * может держать несколько вкладок, а поиск и подъём нужного окна в фокус
+ * из фонового процесса ломался по-разному на каждом заходе (то заголовок
+ * менялся при переключении вкладки, то клик попадал в другое окно того же
+ * процесса). У десктоп-приложения своё отдельное окно/процесс — проверено
+ * вживую дважды подряд, срабатывает надёжно. У приложения зарегистрирован
+ * свой URI-протокол (HKCU\Software\Classes\yandexmusic, ведёт на
+ * "...\YandexMusic\Яндекс Музыка.exe" "%1") — открываем/поднимаем им окно,
+ * а реальный запуск воспроизведения — клик по плитке "Моя волна" (см.
+ * osControl.ts::clickYandexWaveButton, сам URI трек не запускает). Клик —
+ * в фоне, не блокирует быстрый голосовой ответ: приложению нужно время
+ * отрисоваться после навигации по ссылке.
  */
 async function runMyWave(): Promise<string> {
   const result = await openApp("yandexmusic://music.yandex.ru/my/wave");
@@ -183,6 +212,10 @@ export async function tryQuickCommand(text: string): Promise<QuickResult> {
 
   if (WAVE_RE.test(text)) {
     return { handled: true, reply: await runMyWave() };
+  }
+
+  if (DEVICES_RE.test(text)) {
+    return { handled: true, reply: await describeDevices() };
   }
 
   const protocolName = extractProtocolName(text);

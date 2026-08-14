@@ -109,6 +109,19 @@ export async function notify(text: string, title = "СалемАй"): Promise<vo
   });
 }
 
+export interface DeviceInfo {
+  label: string;
+  enabled: boolean;
+  updatedAt: number;
+}
+
+/** Список устройств, подписанных на push — та же таблица, что рассылка в notify(). */
+export async function listDevices(): Promise<DeviceInfo[]> {
+  const params = new URLSearchParams({ userId: config.yeahgrindUserId });
+  const res = (await call(`/api/assistant/devices?${params}`)) as { devices: DeviceInfo[] };
+  return res.devices;
+}
+
 /** "Я жива" + заодно узнаём, не поставили ли ДиДи на паузу из панели в браузере. */
 export function heartbeat(): Promise<{ enabled: boolean }> {
   return call("/api/assistant/heartbeat", {

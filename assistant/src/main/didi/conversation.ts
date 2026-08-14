@@ -40,14 +40,41 @@ export function resetRecentMemory(): void {
   recentTurns = [];
 }
 
+const WEEKDAYS = ["воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота"];
+
 /**
- * Системный промпт + долговременная память ("Салем, запомни ...", см.
- * quickCommands.ts) + скользящее окно последних MAX_RECENT_TURNS команд.
- * Долговременная память читается заново на каждый вызов, так что
- * свежедобавленный факт увидит уже следующая команда.
+ * "Добавь задачу на завтра" — GPT нигде больше не видит текущую дату
+ * (модель не знает, какое сегодня число, только примерно когда её
+ * обучили), поэтому без этого либо оставляет date пустым (уходит в
+ * addTodo как "сегодня" по умолчанию), либо галлюцинирует случайную
+ * дату — оба варианта тихо кладут задачу не туда, где её потом ищут.
+ * Считается заново на каждый вызов (не константа в промпте), чтобы не
+ * протухало, если процесс ДиДи живёт сутками.
+ */
+function currentDateContext(): string {
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+    now.getDate(),
+  ).padStart(2, "0")}`;
+  const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  return (
+    `Сегодня ${dateStr}, ${WEEKDAYS[now.getDay()]}, сейчас ${time}. ` +
+    `Считай относительные даты ("завтра", "послезавтра", "в понедельник") от этого — ` +
+    `параметр date у инструментов (add_todo и т.д.) всегда в формате YYYY-MM-DD.`
+  );
+}
+
+/**
+ * Системный промпт + текущая дата/время + долговременная память ("Салем,
+ * запомни ...", см. quickCommands.ts) + скользящее окно последних
+ * MAX_RECENT_TURNS команд. Долговременная память читается заново на
+ * каждый вызов, так что свежедобавленный факт увидит уже следующая команда.
  */
 export async function freshHistory(): Promise<ChatCompletionMessageParam[]> {
-  const history: ChatCompletionMessageParam[] = [{ role: "system", content: SYSTEM_PROMPT }];
+  const history: ChatCompletionMessageParam[] = [
+    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: currentDateContext() },
+  ];
   try {
     const facts = await getFacts();
     if (facts.length > 0) {

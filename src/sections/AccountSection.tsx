@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import PushOptIn from "@/components/PushOptIn";
+import DeviceList from "@/components/DeviceList";
 import DidiPanel from "@/components/DidiPanel";
 import DidiSyncId from "@/components/DidiSyncId";
 import Quests from "@/components/Quests";
@@ -113,6 +114,11 @@ export default function AccountSection() {
       {/* Напоминания */}
       <div className="mt-3">
         <PushOptIn />
+      </div>
+
+      {/* Список устройств с включёнными уведомлениями */}
+      <div className="mt-3">
+        <DeviceList />
       </div>
 
       {/* Голосовой помощник СалемАй — статус фонового процесса на ноуте */}

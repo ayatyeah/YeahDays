@@ -14,10 +14,12 @@ import { pcmToWav } from "./audio.js";
 const SAMPLE_RATE = 24000;
 const NOTES = [
   { freq: 523.25, start: 0.0 }, // C5
-  { freq: 659.25, start: 0.16 }, // E5
-  { freq: 783.99, start: 0.32 }, // G5
+  { freq: 659.25, start: 0.25 }, // E5
+  { freq: 783.99, start: 0.5 }, // G5
+  { freq: 1046.5, start: 0.75 }, // C6
+  { freq: 783.99, start: 1.05 }, // G5 — возврат вниз, чтобы не просто уезжало вверх, а звучало как законченная фраза
 ];
-const NOTE_DURATION = 0.55;
+const NOTE_DURATION = 1.1;
 const PEAK_AMP = 0.16; // тихо и мягко, не сигнал тревоги
 
 function renderNote(freq: number, dur: number, sampleRate: number): Float32Array {

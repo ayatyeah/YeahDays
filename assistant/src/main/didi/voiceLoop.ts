@@ -1,7 +1,7 @@
 import type { PvRecorder } from "@picovoice/pvrecorder-node";
 import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech, stopPlayer } from "./audio.js";
 import { transcribeWav } from "./openai.js";
-import { say, bindRecorder, startStreamingSpeech } from "./voice.js";
+import { say, bindRecorder, startStreamingSpeech, pickFillerPhrase } from "./voice.js";
 import { confirmVoice } from "./confirm.js";
 import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { isEnabled } from "./presence.js";
@@ -160,8 +160,11 @@ async function handleCommand(
   const turnStart = history.length;
 
   // Озвучиваем по предложениям по мере генерации, не дожидаясь всего
-  // ответа целиком — see voice.ts::startStreamingSpeech.
+  // ответа целиком — see voice.ts::startStreamingSpeech. Филлер-фраза идёт
+  // в ту же очередь первой, чтобы не молчать все 8-10с, пока GPT думает —
+  // реальный ответ дозвучит следом, как только подтянутся его предложения.
   const speech = startStreamingSpeech();
+  speech.sayNow(pickFillerPhrase());
   const reply = await runConversationTurn(
     history,
     commandText,

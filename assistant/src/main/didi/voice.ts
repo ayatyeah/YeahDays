@@ -23,6 +23,19 @@ export function bindRecorder(recorder: PvRecorder): void {
 const audioCache = new Map<string, Buffer>();
 
 /**
+ * GPT-запрос на обычную реплику (без quick-команды) занимает ~8-10с — до
+ * сих пор в это время была полная тишина, и пользователь не понимал, жив
+ * ли ассистент вообще. Одна из этих фраз ставится в очередь озвучки СРАЗУ
+ * после отправки команды модели (см. voiceLoop.ts::handleCommand), пока
+ * первые токены реального ответа ещё не пришли.
+ */
+const FILLER_PHRASES = ["Секунду.", "Размышляю."];
+
+export function pickFillerPhrase(): string {
+  return FILLER_PHRASES[Math.floor(Math.random() * FILLER_PHRASES.length)]!;
+}
+
+/**
  * Озвучить текст и дождаться конца воспроизведения. Останавливает запись
  * на время своей же речи и включает заново после — без этого микрофон
  * ловит собственный голос ДиДи из колонок как "начало фразы" сразу после
@@ -59,6 +72,8 @@ export async function say(text: string): Promise<void> {
 export interface StreamingSpeech {
   /** Кусок текста, как он приходит из потокового ответа модели (necessarily не целое предложение). */
   push(chunk: string): void;
+  /** Готовая фраза целиком — ставится в ту же очередь сразу, без ожидания знака препинания (см. FILLER_PHRASES). */
+  sayNow(text: string): void;
   /** true, если хоть одно предложение уже поставлено в очередь на озвучку. */
   hasSpoken(): boolean;
   /** Вызвать, когда модель закончила генерацию. Ждёт, пока доиграет всё поставленное в очередь, и включает микрофон обратно. */
@@ -126,6 +141,9 @@ export function startStreamingSpeech(): StreamingSpeech {
       const { sentences, rest } = extractSentences(buffer);
       buffer = rest;
       for (const s of sentences) enqueue(s);
+    },
+    sayNow(text: string) {
+      enqueue(text);
     },
     hasSpoken() {
       return queuedAny;

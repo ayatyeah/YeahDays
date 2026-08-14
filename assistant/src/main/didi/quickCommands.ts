@@ -7,7 +7,8 @@
  * Набор расширяется по мере того, какие конкретные команды реально
  * повторяются, а не гадаем заранее.
  */
-import { rememberFact, getTodayStatus } from "./yeahgrind.js";
+import { rememberFact, getTodayStatus, addTodo } from "./yeahgrind.js";
+import { openApp, openUrl } from "./osControl.js";
 
 interface QuickResult {
   handled: boolean;
@@ -61,6 +62,63 @@ function extractRememberContent(text: string): string | null {
   return content.length > 0 ? content : null;
 }
 
+/**
+ * "Протокол <имя>" — именованный набор действий, выполняется целиком без
+ * GPT (см. PROTOCOLS ниже). Первое слово сверяется нечётко, как и у
+ * "запомни" — Whisper не всегда точен на редком слове.
+ */
+function extractProtocolName(text: string): string | null {
+  const trimmed = text.trim();
+  const firstWord = (trimmed.split(/\s+/)[0] ?? "").toLowerCase().replace(/[.,!?]+$/, "");
+  if (levenshtein(firstWord, "протокол") > 2) return null;
+  const rest = trimmed
+    .slice(firstWord.length)
+    .trim()
+    .toLowerCase()
+    .replace(/[.,!?]+$/, "");
+  return rest.length > 0 ? rest : null;
+}
+
+/**
+ * Именованные voice-макросы: одна команда запускает сразу несколько
+ * действий подряд. Список расширяется по мере того, какие протоколы
+ * реально нужны — как и остальные quick-команды, без обращения к GPT
+ * (детерминированная последовательность, не рассуждение).
+ */
+const PROTOCOLS: Record<string, () => Promise<string>> = {
+  пятница: runFridayProtocol,
+};
+
+function matchProtocol(name: string): (() => Promise<string>) | null {
+  for (const key of Object.keys(PROTOCOLS)) {
+    if (levenshtein(name, key) <= 2) return PROTOCOLS[key]!;
+  }
+  return null;
+}
+
+/**
+ * VS Code + Яндекс Музыка (Моя волна) + отметка начала работы в YeahGrind
+ * (задача "Начало работы" на текущий час — своего отдельного "таймера" в
+ * YeahGrind ещё нет, это ближайший существующий эквивалент, который сразу
+ * виден в браузере) + задачи на сегодня вслух.
+ */
+async function runFridayProtocol(): Promise<string> {
+  const vscode = await openApp("Code");
+  const music = await openUrl("https://music.yandex.ru/my/wave");
+
+  let workNote: string;
+  try {
+    await addTodo({ title: "Начало работы", hour: new Date().getHours() });
+    workNote = "Отметила начало работы в YeahGrind.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол) не прошёл:", e instanceof Error ? e.message : e);
+    workNote = "Не получилось отметить начало работы в YeahGrind.";
+  }
+
+  const tasks = await todayTasksSummary();
+  return `Протокол «Пятница». ${vscode}. ${music}. ${workNote} ${tasks}`;
+}
+
 export async function tryQuickCommand(text: string): Promise<QuickResult> {
   if (STOP_WORDS.some((w) => firstWordMatches(text, w))) {
     return { handled: true, reply: "Остановился, сэр.", resetHistory: true };
@@ -89,13 +147,31 @@ export async function tryQuickCommand(text: string): Promise<QuickResult> {
   }
 
   if (GRIND_RE.test(text)) {
-    return await describeTodayTasks();
+    return { handled: true, reply: await todayTasksSummary() };
+  }
+
+  const protocolName = extractProtocolName(text);
+  if (protocolName !== null) {
+    const protocol = matchProtocol(protocolName);
+    if (protocol) {
+      try {
+        return { handled: true, reply: await protocol() };
+      } catch (e) {
+        console.warn("[quickCommands] протокол упал:", e instanceof Error ? e.message : e);
+        return { handled: true, reply: "Протокол сорвался на середине, извини." };
+      }
+    }
+    return {
+      handled: true,
+      reply: `Не знаю протокол «${protocolName}». Есть: ${Object.keys(PROTOCOLS).join(", ")}.`,
+    };
   }
 
   return { handled: false };
 }
 
-async function describeTodayTasks(): Promise<QuickResult> {
+/** Текст для голоса: задачи на сегодня (todos + план), просроченные — вперёд, готовые — отдельно посчитаны. */
+export async function todayTasksSummary(): Promise<string> {
   try {
     const status = await getTodayStatus();
     const items = [
@@ -107,7 +183,7 @@ async function describeTodayTasks(): Promise<QuickResult> {
     ];
 
     if (items.length === 0) {
-      return { handled: true, reply: "На сегодня задач нет." };
+      return "На сегодня задач нет.";
     }
 
     const pending = items.filter((i) => !i.done);
@@ -120,9 +196,9 @@ async function describeTodayTasks(): Promise<QuickResult> {
         : `Все ${items.length} задач на сегодня выполнены: `;
     const tail = doneCount > 0 && pending.length > 0 ? ` Ещё ${doneCount} уже закрыто.` : "";
 
-    return { handled: true, reply: `${lead}${spoken}.${tail}` };
+    return `${lead}${spoken}.${tail}`;
   } catch (e) {
     console.warn("[quickCommands] getTodayStatus не прошёл:", e instanceof Error ? e.message : e);
-    return { handled: true, reply: "Не получилось получить задачи с YeahGrind, попробуй чуть позже." };
+    return "Не получилось получить задачи с YeahGrind, попробуй чуть позже.";
   }
 }

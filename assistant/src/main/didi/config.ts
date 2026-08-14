@@ -31,9 +31,10 @@ export const config = {
   chatModel: process.env.OPENAI_CHAT_MODEL ?? "gpt-5-mini",
   transcribeModel: process.env.OPENAI_TRANSCRIBE_MODEL ?? "gpt-4o-mini-transcribe",
   ttsModel: process.env.OPENAI_TTS_MODEL ?? "gpt-4o-mini-tts",
-  // nova — женский голос у OpenAI TTS (в отличие от нейтрального alloy):
+  // shimmer — женский голос у OpenAI TTS, мягче/тише nova (та описана как
+  // "яркий, живой" — на живом тесте оказалась жёстче, чем нужно):
   // https://platform.openai.com/docs/guides/text-to-speech
-  ttsVoice: process.env.OPENAI_TTS_VOICE ?? "nova",
+  ttsVoice: process.env.OPENAI_TTS_VOICE ?? "shimmer",
 
   yeahgrindBaseUrl: (process.env.YEAHGRIND_BASE_URL || "http://localhost:3000").replace(/\/+$/, ""),
   yeahgrindUserId: optional("YEAHGRIND_USER_ID"),

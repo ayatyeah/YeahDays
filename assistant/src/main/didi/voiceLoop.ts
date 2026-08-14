@@ -2,6 +2,7 @@ import type { PvRecorder } from "@picovoice/pvrecorder-node";
 import { createRecorder, calibrateSilenceThreshold, recordUntilSilence, recordSpeech, stopPlayer } from "./audio.js";
 import { transcribeWav } from "./openai.js";
 import { say, bindRecorder, startStreamingSpeech, pickFillerPhrase } from "./voice.js";
+import { getThinkingChime } from "./chime.js";
 import { confirmVoice } from "./confirm.js";
 import { GREETING, BOOT_GREETING } from "./systemPrompt.js";
 import { isEnabled } from "./presence.js";
@@ -164,6 +165,7 @@ async function handleCommand(
   // в ту же очередь первой, чтобы не молчать все 8-10с, пока GPT думает —
   // реальный ответ дозвучит следом, как только подтянутся его предложения.
   const speech = startStreamingSpeech();
+  speech.playClip(getThinkingChime());
   speech.sayNow(pickFillerPhrase());
   const reply = await runConversationTurn(
     history,

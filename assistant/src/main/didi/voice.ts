@@ -74,6 +74,8 @@ export interface StreamingSpeech {
   push(chunk: string): void;
   /** Готовая фраза целиком — ставится в ту же очередь сразу, без ожидания знака препинания (см. FILLER_PHRASES). */
   sayNow(text: string): void;
+  /** Готовый WAV (не синтез, не текст) — например мелодия "думаю", см. chime.ts. Не считается за hasSpoken(). */
+  playClip(wav: Buffer): void;
   /** true, если хоть одно предложение уже поставлено в очередь на озвучку. */
   hasSpoken(): boolean;
   /** Вызвать, когда модель закончила генерацию. Ждёт, пока доиграет всё поставленное в очередь, и включает микрофон обратно. */
@@ -106,13 +108,17 @@ export function startStreamingSpeech(): StreamingSpeech {
   let queuedAny = false;
   const pending: Array<{ text: string; wav: Promise<Buffer> }> = [];
 
-  function enqueue(text: string): void {
-    if (!text) return;
-    queuedAny = true;
+  function mute(): void {
     if (!muted) {
       activeRecorder?.stop();
       muted = true;
     }
+  }
+
+  function enqueue(text: string): void {
+    if (!text) return;
+    queuedAny = true;
+    mute();
     const cached = audioCache.get(text);
     pending.push({ text, wav: cached ? Promise.resolve(cached) : speak(text) });
   }
@@ -144,6 +150,10 @@ export function startStreamingSpeech(): StreamingSpeech {
     },
     sayNow(text: string) {
       enqueue(text);
+    },
+    playClip(wav: Buffer) {
+      mute();
+      pending.push({ text: "(мелодия)", wav: Promise.resolve(wav) });
     },
     hasSpoken() {
       return queuedAny;

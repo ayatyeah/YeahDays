@@ -46,6 +46,20 @@ export async function openUrl(url: string): Promise<string> {
   return openApp(url);
 }
 
+/**
+ * Пробел в окно, у которого сейчас фокус — у большинства веб-плееров (в
+ * т.ч. Яндекс Музыка) это play/pause. Нет официального URL-параметра для
+ * автовоспроизведения (проверено — только сторонние userscript-костыли),
+ * так что это best-effort: сработает, если только что открытая вкладка
+ * успела прогрузиться и получить фокус за отведённую паузу. Не гарантия.
+ */
+export async function pressSpace(delayMs = 1800): Promise<void> {
+  const script =
+    `Start-Sleep -Milliseconds ${delayMs}; ` +
+    `$w = New-Object -ComObject WScript.Shell; $w.SendKeys(' ')`;
+  await execAsync(script, { shell: "powershell.exe", timeout: delayMs + 5000 });
+}
+
 /** Произвольная PowerShell-команда. Всегда должна проходить через подтверждение в tools.ts. */
 export async function runCommand(command: string): Promise<string> {
   await logAction(`run_command: ${command}`);

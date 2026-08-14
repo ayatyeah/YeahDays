@@ -34,8 +34,8 @@ function rms(frame: Int16Array): number {
   return Math.sqrt(sum / frame.length);
 }
 
-/** Минимальный WAV-writer: моно PCM16, без внешних зависимостей. */
-function pcmToWav(samples: Int16Array, sampleRate: number): Buffer {
+/** Минимальный WAV-writer: моно PCM16, без внешних зависимостей. Экспортирован — тем же пользуется chime.ts для звука "думаю". */
+export function pcmToWav(samples: Int16Array, sampleRate: number): Buffer {
   const dataSize = samples.length * 2;
   const buf = Buffer.alloc(44 + dataSize);
   buf.write("RIFF", 0);

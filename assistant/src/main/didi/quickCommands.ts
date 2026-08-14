@@ -8,7 +8,7 @@
  * повторяются, а не гадаем заранее.
  */
 import { rememberFact, getTodayStatus, addTodo } from "./yeahgrind.js";
-import { openApp, openUrl } from "./osControl.js";
+import { openApp, openUrl, pressSpace } from "./osControl.js";
 
 interface QuickResult {
   handled: boolean;
@@ -104,7 +104,9 @@ function matchProtocol(name: string): (() => Promise<string>) | null {
  */
 async function runFridayProtocol(): Promise<string> {
   const vscode = await openApp("Code");
-  const music = await openUrl("https://music.yandex.ru/my/wave");
+  const music = await openUrl("https://music.yandex.kz/my/wave");
+  // best-effort автоплей — см. osControl.ts::pressSpace, гарантии нет.
+  void pressSpace();
 
   let workNote: string;
   try {

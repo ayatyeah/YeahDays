@@ -12,6 +12,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { preferredHour } from "@/lib/push";
+import { labelFromUserAgent } from "@/lib/deviceLabel";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -71,6 +72,7 @@ export async function POST(req: Request) {
       return new Date(localMs).getUTCHours();
     });
     const eveningHour = preferredHour(hours, 20);
+    const label = labelFromUserAgent(req.headers.get("user-agent") ?? "");
 
     await prisma.pushSubscription.upsert({
       where: { endpoint },
@@ -79,6 +81,7 @@ export async function POST(req: Request) {
         endpoint,
         p256dh,
         auth: authKey,
+        label,
         tzOffset,
         morningHour,
         eveningHour,
@@ -88,6 +91,7 @@ export async function POST(req: Request) {
         userId,
         p256dh,
         auth: authKey,
+        label,
         tzOffset,
         morningHour,
         eveningHour,

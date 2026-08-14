@@ -121,6 +121,9 @@ model PushSubscription {
   endpoint  String   @unique
   p256dh    String
   auth      String
+  /// человекочитаемое "Chrome · Windows" — разбирается из User-Agent при
+  /// подписке, чтобы список устройств в профиле не показывал голый endpoint
+  label     String?
   /// сдвиг часового пояса клиента в минутах (getTimezoneOffset)
   tzOffset  Int      @default(0)
   /// час утреннего напоминания по локальному времени пользователя

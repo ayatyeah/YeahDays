@@ -6,7 +6,7 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
-type Tab = "users" | "requests";
+type Tab = "users" | "requests" | "devices";
 
 interface OwnerUser {
   id: string;
@@ -30,11 +30,31 @@ interface ResetRequest {
   createdAt: string;
 }
 
+interface OwnerDevice {
+  id: string;
+  label: string;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastSentAt: string | null;
+  userId: string;
+  userLabel: string;
+}
+
 function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("ru-RU", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+  });
+}
+
+function fmtDateTime(iso: string) {
+  return new Date(iso).toLocaleString("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -48,6 +68,7 @@ export default function OwnerConsole() {
   const [tab, setTab] = useState<Tab>("users");
   const [users, setUsers] = useState<OwnerUser[] | null>(null);
   const [requests, setRequests] = useState<ResetRequest[] | null>(null);
+  const [devices, setDevices] = useState<OwnerDevice[] | null>(null);
   const [passwordTarget, setPasswordTarget] = useState<OwnerUser | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<OwnerUser | null>(null);
 
@@ -61,9 +82,15 @@ export default function OwnerConsole() {
       .then((r) => r.json())
       .then((json: { requests?: ResetRequest[] }) => setRequests(json.requests ?? []));
 
+  const loadDevices = () =>
+    fetch("/api/owner/devices")
+      .then((r) => r.json())
+      .then((json: { devices?: OwnerDevice[] }) => setDevices(json.devices ?? []));
+
   useEffect(() => {
     void loadUsers();
     void loadRequests();
+    void loadDevices();
   }, []);
 
   const toggleBan = async (u: OwnerUser) => {
@@ -109,11 +136,12 @@ export default function OwnerConsole() {
         </Link>
       </header>
 
-      <div className="mb-4 grid grid-cols-2 gap-2">
+      <div className="mb-4 grid grid-cols-3 gap-2">
         {(
           [
             ["users", "Пользователи"],
             ["requests", `Заявки${pendingCount ? ` · ${pendingCount}` : ""}`],
+            ["devices", `Устройства${devices ? ` · ${devices.length}` : ""}`],
           ] as [Tab, string][]
         ).map(([key, label]) => (
           <button
@@ -205,6 +233,41 @@ export default function OwnerConsole() {
                 <Button size="sm" onClick={() => void toggleRequestStatus(r)}>
                   {r.status === "done" ? "Вернуть в очередь" : "Отметить решённым"}
                 </Button>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {tab === "devices" && (
+        <div className="space-y-1.5">
+          {devices === null ? (
+            <p className="text-[13px] text-[var(--color-muted)]">Загрузка…</p>
+          ) : devices.length === 0 ? (
+            <p className="text-[13px] text-[var(--color-muted)]">
+              Ни одно устройство ещё не подписалось на уведомления.
+            </p>
+          ) : (
+            devices.map((d) => (
+              <div
+                key={d.id}
+                className={cn("rounded-2xl surface px-3 py-2.5", !d.enabled && "opacity-50")}
+              >
+                <p className="truncate text-[13px] font-medium">
+                  {d.label}
+                  <span
+                    className={cn(
+                      "ml-1.5 text-[10px] font-bold uppercase",
+                      d.enabled ? "text-[var(--color-stability)]" : "text-[var(--color-muted)]",
+                    )}
+                  >
+                    {d.enabled ? "активно" : "выключено"}
+                  </span>
+                </p>
+                <p className="truncate text-[11px] text-[var(--color-muted)]">
+                  {d.userLabel} · с {fmtDate(d.createdAt)} · обновлено {fmtDateTime(d.updatedAt)}
+                  {d.lastSentAt && ` · последняя отправка ${fmtDateTime(d.lastSentAt)}`}
+                </p>
               </div>
             ))
           )}

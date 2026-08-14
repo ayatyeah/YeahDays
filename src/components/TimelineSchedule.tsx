@@ -260,7 +260,12 @@ export default function TimelineSchedule({
       {expanded && (
         <div
           className="glass-panel relative overflow-hidden rounded-3xl"
-          style={!compact ? { maxHeight: "min(70vh, 640px)", overflowY: "auto" } : undefined}
+          // compact (виджет на "Сегодня") — сетка на все 24 часа без этого
+          // ограничения раскрывала бы страницу на лишнюю тысячу пикселей
+          // при разворачивании; тот же приём, что и у полного календаря,
+          // просто ниже потолок — здесь это второстепенный виджет, а не
+          // основной экран.
+          style={{ maxHeight: compact ? "min(50vh, 360px)" : "min(70vh, 640px)", overflowY: "auto" }}
         >
           {!compact && isToday && (
             <div className="sticky top-2 z-10 mb-1 flex justify-center px-2">

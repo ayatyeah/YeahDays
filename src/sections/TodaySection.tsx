@@ -136,6 +136,13 @@ export default function TodaySection() {
             </div>
           </section>
 
+          {/* Расписание дня — сразу после прогресса, а не в конце страницы:
+              это самое конкретное "что и когда сегодня", раньше требовало
+              долистать мимо персонажа и челленджей, чтобы увидеть. */}
+          <div className="mb-5 lg:mb-0">
+            <TimelineSchedule compact />
+          </div>
+
           {/* Список */}
           {today.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
@@ -234,7 +241,6 @@ export default function TodaySection() {
           </div>
 
           <Challenges />
-          <TimelineSchedule compact />
           <EveningRetro />
         </div>
       </div>

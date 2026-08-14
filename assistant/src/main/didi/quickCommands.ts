@@ -8,7 +8,7 @@
  * повторяются, а не гадаем заранее.
  */
 import { rememberFact, getTodayStatus, addTodo } from "./yeahgrind.js";
-import { openApp } from "./osControl.js";
+import { openApp, clickYandexWaveButton } from "./osControl.js";
 
 interface QuickResult {
   handled: boolean;
@@ -51,15 +51,29 @@ const WAVE_RE = /мо(ю|я|ей)\s+волн|запусти\s+волну|вкл�
  * открывает страницу, но не запускает воспроизведение сама, проверено
  * вживую). У приложения зарегистрирован свой URI-протокол
  * (HKCU\Software\Classes\yandexmusic, ведёт на
- * "...\YandexMusic\Яндекс Музыка.exe" "%1") — используем его вместо
- * открытия сайта.
+ * "...\YandexMusic\Яндекс Музыка.exe" "%1") — используем его, чтобы
+ * открыть/поднять окно, а реальный запуск воспроизведения — клик по
+ * плитке "Моя волна" (см. osControl.ts::clickYandexWaveButton, обычный
+ * URI не запускает трек сам). Клик — в фоне, не блокирует спокойный
+ * быстрый ответ голосом: приложению нужно время долистать/отрисовать
+ * страницу после навигации по ссылке, ждать это молча было бы неуместно.
  */
 async function runMyWave(): Promise<string> {
   const result = await openApp("yandexmusic://music.yandex.ru/my/wave");
   if (result.startsWith("Не получилось")) {
     return "Не получилось запустить Яндекс Музыку — проверь, что приложение установлено.";
   }
+  void clickWaveAfterLaunch();
   return "Запускаю Мою волну.";
+}
+
+async function clickWaveAfterLaunch(): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  try {
+    await clickYandexWaveButton();
+  } catch (e) {
+    console.warn("[quickCommands] clickYandexWaveButton не прошёл:", e instanceof Error ? e.message : e);
+  }
 }
 
 /**

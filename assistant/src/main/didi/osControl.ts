@@ -47,17 +47,75 @@ export async function openUrl(url: string): Promise<string> {
 }
 
 /**
- * Пробел в окно, у которого сейчас фокус — у большинства веб-плееров (в
- * т.ч. Яндекс Музыка) это play/pause. Нет официального URL-параметра для
- * автовоспроизведения (проверено — только сторонние userscript-костыли),
- * так что это best-effort: сработает, если только что открытая вкладка
- * успела прогрузиться и получить фокус за отведённую паузу. Не гарантия.
+ * Клик по плитке "Моя волна" в десктопном приложении Яндекс Музыки.
+ *
+ * Обычный Windows UI Automation не видит внутри окна вообще ничего —
+ * проверено вживую (FindAll возвращает только сам корневой элемент):
+ * Chromium/Electron не отдают дерево accessibility, пока не обнаружат
+ * активный скринридер, а обычный автоматизационный клиент это не
+ * триггерит. Поэтому вместо поиска элемента — реальный клик мышью по
+ * вычисленной точке внутри окна:
+ * 1. Находим окно по имени процесса (ждём до 5с, если приложение только
+ *    что запущено и ещё не создало окно).
+ * 2. Поднимаем его в фокус. Просто SetForegroundWindow из фонового
+ *    процесса Windows тихо игнорирует (foreground lock) — обходится
+ *    фиктивным нажатием Alt прямо перед вызовом, стандартный трюк.
+ * 3. Кликаем по точке на 57%/35% от левого верхнего угла окна — туда
+ *    прямо сейчас попадает плитка "Моя волна" целиком (сама плитка
+ *    огромная, так что небольшая неточность не страшна). Проверено
+ *    вживую пользователем — сработало.
+ *
+ * Хрупкое место: если пользователь сам изменит размер/положение окна
+ * относительно текущего — пропорция может уехать мимо плитки.
  */
-export async function pressSpace(delayMs = 1800): Promise<void> {
-  const script =
-    `Start-Sleep -Milliseconds ${delayMs}; ` +
-    `$w = New-Object -ComObject WScript.Shell; $w.SendKeys(' ')`;
-  await execAsync(script, { shell: "powershell.exe", timeout: delayMs + 5000 });
+export async function clickYandexWaveButton(): Promise<string> {
+  const script = `
+Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public class DidiYandexClick {
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+  [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+  [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+  [DllImport("user32.dll")] public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
+  [DllImport("user32.dll")] public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint dwData, UIntPtr dwExtraInfo);
+  [DllImport("user32.dll")] public static extern bool SetCursorPos(int X, int Y);
+  public struct RECT { public int Left, Top, Right, Bottom; }
+}
+'@
+
+$proc = $null
+for ($i = 0; $i -lt 10 -and -not $proc; $i++) {
+  $proc = Get-Process | Where-Object { $_.MainWindowTitle -ne "" -and $_.Path -match "YandexMusic" } | Select-Object -First 1
+  if (-not $proc) { Start-Sleep -Milliseconds 500 }
+}
+if (-not $proc) { Write-Host "NOWINDOW"; exit }
+$hwnd = $proc.MainWindowHandle
+
+[DidiYandexClick]::keybd_event(0x12, 0, 0, [UIntPtr]::Zero)
+[DidiYandexClick]::keybd_event(0x12, 0, 2, [UIntPtr]::Zero)
+[DidiYandexClick]::ShowWindow($hwnd, 9) | Out-Null
+[DidiYandexClick]::SetForegroundWindow($hwnd) | Out-Null
+Start-Sleep -Milliseconds 400
+
+$rect = New-Object DidiYandexClick+RECT
+[DidiYandexClick]::GetWindowRect($hwnd, [ref]$rect) | Out-Null
+$w = $rect.Right - $rect.Left
+$h = $rect.Bottom - $rect.Top
+$x = $rect.Left + [int]($w * 0.57)
+$y = $rect.Top + [int]($h * 0.35)
+[DidiYandexClick]::SetCursorPos($x, $y) | Out-Null
+Start-Sleep -Milliseconds 150
+[DidiYandexClick]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)
+Start-Sleep -Milliseconds 50
+[DidiYandexClick]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)
+Write-Host "OK"
+`;
+  const { stdout } = await execAsync(script, { shell: "powershell.exe", timeout: 15_000 });
+  if (!stdout.includes("OK")) {
+    throw new Error("Окно Яндекс Музыки не найдено — приложение не запущено?");
+  }
+  return "Кликнула по Моей волне.";
 }
 
 /** Произвольная PowerShell-команда. Всегда должна проходить через подтверждение в tools.ts. */

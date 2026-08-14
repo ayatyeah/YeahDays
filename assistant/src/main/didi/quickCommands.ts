@@ -8,7 +8,7 @@
  * повторяются, а не гадаем заранее.
  */
 import { rememberFact, getTodayStatus, addTodo } from "./yeahgrind.js";
-import { openApp, openUrl, pressSpace } from "./osControl.js";
+import { openApp } from "./osControl.js";
 
 interface QuickResult {
   handled: boolean;
@@ -44,6 +44,23 @@ const TIME_WORDS = ["который", "сколько"]; // "который ча
 // "Гринд"/"грайнд" — Whisper слышит "Grind" по-разному; плюс обычные
 // русские формулировки того же вопроса, необязательно с названием бренда.
 const GRIND_RE = /гринд|грайнд|задачи на сегодня|план на сегодня|мои дела на сегодня/i;
+const WAVE_RE = /мо(ю|я|ей)\s+волн|запусти\s+волну|включи\s+волну/i;
+
+/**
+ * Десктопное приложение Яндекс Музыки (не браузер — веб-версия просто
+ * открывает страницу, но не запускает воспроизведение сама, проверено
+ * вживую). У приложения зарегистрирован свой URI-протокол
+ * (HKCU\Software\Classes\yandexmusic, ведёт на
+ * "...\YandexMusic\Яндекс Музыка.exe" "%1") — используем его вместо
+ * открытия сайта.
+ */
+async function runMyWave(): Promise<string> {
+  const result = await openApp("yandexmusic://music.yandex.ru/my/wave");
+  if (result.startsWith("Не получилось")) {
+    return "Не получилось запустить Яндекс Музыку — проверь, что приложение установлено.";
+  }
+  return "Запускаю Мою волну.";
+}
 
 /**
  * "Запомни ..." / "Запомни про меня, что ..." — текст, идущий после
@@ -104,9 +121,7 @@ function matchProtocol(name: string): (() => Promise<string>) | null {
  */
 async function runFridayProtocol(): Promise<string> {
   const vscode = await openApp("Code");
-  const music = await openUrl("https://music.yandex.kz/my/wave");
-  // best-effort автоплей — см. osControl.ts::pressSpace, гарантии нет.
-  void pressSpace();
+  const music = await runMyWave();
 
   let workNote: string;
   try {
@@ -150,6 +165,10 @@ export async function tryQuickCommand(text: string): Promise<QuickResult> {
 
   if (GRIND_RE.test(text)) {
     return { handled: true, reply: await todayTasksSummary() };
+  }
+
+  if (WAVE_RE.test(text)) {
+    return { handled: true, reply: await runMyWave() };
   }
 
   const protocolName = extractProtocolName(text);

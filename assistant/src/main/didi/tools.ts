@@ -69,16 +69,28 @@ export const TOOLS: Record<string, ToolDef> = {
     },
     false,
     () => "",
-    async (a) =>
-      JSON.stringify(
-        await yg.addTodo({
-          title: str(a, "title"),
-          hour: num(a, "hour"),
-          duration: num(a, "duration"),
-          priority: (str(a, "priority") as "low" | "normal" | "high") || undefined,
-          date: str(a, "date") || undefined,
-        }),
-      ),
+    async (a) => {
+      const title = str(a, "title");
+      const hour = num(a, "hour");
+      const date = str(a, "date") || undefined;
+      const result = await yg.addTodo({
+        title,
+        hour,
+        duration: num(a, "duration"),
+        priority: (str(a, "priority") as "low" | "normal" | "high") || undefined,
+        date,
+      });
+      // Уведомление на все устройства с PWA — задачу могли добавить голосом
+      // за компьютером, а увидеть/среагировать хочется с телефона. Не
+      // блокирует ответ (не await) и не роняет сам tool-call, если сеть
+      // подвела — задача в YeahGrind уже создана, это только оповещение.
+      const timePart = hour !== undefined ? ` в ${hour}:00` : "";
+      const datePart = date ? ` (${date})` : "";
+      yg.notify(`${title}${timePart}${datePart}`, "Новая задача").catch((e) => {
+        console.warn("[tools] notify (add_todo) не прошёл:", e instanceof Error ? e.message : e);
+      });
+      return JSON.stringify(result);
+    },
   ),
 
   complete_todo: tool(

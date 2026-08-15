@@ -464,13 +464,17 @@ export default function HomeSection() {
         )}
       </AnimatePresence>
 
-      {/* Своё действие */}
-      <button
-        onClick={() => openCreate()}
-        className="mt-2.5 text-center text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
-      >
-        + Добавить своё действие
-      </button>
+      {/* Своё действие — не дублируем, когда пустая колода уже показывает
+          собственную крупную кнопку с тем же действием (DeckNoOwnActions
+          выше): та же надпись дважды на экране выглядела как баг вёрстки. */}
+      {!(useOwnActionsOnly && customActions.length === 0) && (
+        <button
+          onClick={() => openCreate()}
+          className="mt-2.5 text-center text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+        >
+          + Добавить своё действие
+        </button>
+      )}
     </div>
   );
 }

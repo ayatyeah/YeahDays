@@ -1,6 +1,6 @@
 {
   "name": "didi-assistant",
-  "version": "0.4.20",
+  "version": "0.4.21",
   "private": true,
   "description": "ДиДи — голосовой помощник на OpenAI, отдельное desktop-приложение (Electron): кодовое слово через распознавание речи, управление ноутом, задачи и настроение YeahGrind через общую БД.",
   "type": "module",
@@ -20,7 +20,7 @@
   "dependencies": {
     "@picovoice/pvrecorder-node": "^1.2.4",
     "dotenv": "^16.4.5",
-    "openai": "^4.104.0",
+    "openai": "^7.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

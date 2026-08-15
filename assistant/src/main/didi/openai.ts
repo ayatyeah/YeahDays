@@ -5,6 +5,7 @@ import type {
   ChatCompletionMessageToolCall,
   ChatCompletionTool,
 } from "openai/resources/chat/completions";
+import type { ResponseInputItem, Tool as ResponsesTool } from "openai/resources/responses/responses";
 import { config } from "./config.js";
 
 export const client = new OpenAI({ apiKey: config.openaiApiKey });
@@ -41,64 +42,107 @@ export async function transcribeWav(wav: Buffer): Promise<string> {
 }
 
 /**
+ * conversation.ts/tools.ts говорят на языке Chat Completions
+ * (messages/ChatCompletionTool) — этот формат живёт в истории, в
+ * recordTurn(), в фактах. web_search как ОТДЕЛЬНЫЙ инструмент, который
+ * модель сама решает вызывать или нет, есть только в Responses API
+ * (client.responses.create), не в Chat Completions — поэтому здесь
+ * перевод в обе стороны, а не переписывание всего остального на новый
+ * формат. Правильность форматов (event.delta, ResponseFunctionToolCall,
+ * function_call_output) сверена по типам самого SDK (node_modules/openai),
+ * а не по памяти — Responses API моложе большинства обучающих данных.
+ */
+function toResponsesInput(messages: ChatCompletionMessageParam[]): ResponseInputItem[] {
+  const input: ResponseInputItem[] = [];
+  for (const m of messages) {
+    if (m.role === "tool") {
+      input.push({
+        type: "function_call_output",
+        call_id: m.tool_call_id,
+        output: typeof m.content === "string" ? m.content : JSON.stringify(m.content),
+      });
+      continue;
+    }
+    if (m.role === "assistant" && m.tool_calls && m.tool_calls.length > 0) {
+      if (m.content) {
+        input.push({ role: "assistant", content: String(m.content) });
+      }
+      for (const tc of m.tool_calls) {
+        if (tc.type !== "function") continue;
+        input.push({
+          type: "function_call",
+          call_id: tc.id,
+          name: tc.function.name,
+          arguments: tc.function.arguments,
+        });
+      }
+      continue;
+    }
+    if (m.role === "system" || m.role === "user" || m.role === "assistant") {
+      input.push({ role: m.role, content: typeof m.content === "string" ? m.content : String(m.content ?? "") });
+    }
+    // developer/function roles не встречаются в этой истории — намеренно не обрабатываем
+  }
+  return input;
+}
+
+/** ChatCompletionTool (вложенный .function.*) → плоский формат Responses API, плюс web_search. */
+function toResponsesTools(tools: ChatCompletionTool[]): ResponsesTool[] {
+  const fnTools: ResponsesTool[] = tools
+    .filter((t): t is ChatCompletionTool & { type: "function" } => t.type === "function")
+    .map((t) => ({
+      type: "function",
+      name: t.function.name,
+      description: t.function.description ?? null,
+      parameters: (t.function.parameters as Record<string, unknown>) ?? {},
+      strict: false,
+    }));
+  return [...fnTools, { type: "web_search" }];
+}
+
+/**
  * Один шаг диалога: модель либо отвечает текстом, либо просит вызвать
- * инструменты. Собран через stream:true, а не одним ожиданием полного
- * ответа — при обычных (не-инструментальных) репликах onTextChunk
- * получает текст кусками по мере генерации, и вызывающий код (voiceLoop.ts)
- * может начинать озвучивать уже готовые предложения, не дожидаясь, пока
- * модель допечатает весь ответ целиком. При раунде с вызовом инструмента
- * контента обычно нет вообще — onTextChunk просто не вызывается.
+ * инструменты (включая встроенный web_search — сама решает, нужен ли
+ * поиск, см. toResponsesTools). Собран через stream:true, а не одним
+ * ожиданием полного ответа — при обычных (не-инструментальных) репликах
+ * onTextChunk получает текст кусками по мере генерации, и вызывающий код
+ * (voiceLoop.ts) может начинать озвучивать уже готовые предложения, не
+ * дожидаясь, пока модель допечатает весь ответ целиком. При раунде с
+ * вызовом инструмента контента обычно нет вообще — onTextChunk просто не
+ * вызывается.
  */
 export async function chatStep(
   messages: ChatCompletionMessageParam[],
   tools: ChatCompletionTool[],
   onTextChunk?: (chunk: string) => void,
 ): Promise<ChatCompletionMessage> {
-  const stream = await client.chat.completions.create({
+  const stream = await client.responses.create({
     model: config.chatModel,
-    messages,
-    tools,
-    tool_choice: "auto",
+    input: toResponsesInput(messages),
+    tools: toResponsesTools(tools),
     stream: true,
-    stream_options: { include_usage: true },
   });
 
   let content = "";
-  const toolCalls: Record<
-    number,
-    { id: string; type: "function"; function: { name: string; arguments: string } }
-  > = {};
+  const toolCallList: ChatCompletionMessageToolCall[] = [];
 
-  for await (const chunk of stream) {
-    const delta = chunk.choices[0]?.delta;
-    if (delta?.content) {
-      content += delta.content;
-      onTextChunk?.(delta.content);
-    }
-    if (delta?.tool_calls) {
-      for (const tc of delta.tool_calls) {
-        const entry = (toolCalls[tc.index] ??= {
-          id: "",
-          type: "function",
-          function: { name: "", arguments: "" },
-        });
-        if (tc.id) entry.id = tc.id;
-        if (tc.function?.name) entry.function.name += tc.function.name;
-        if (tc.function?.arguments) entry.function.arguments += tc.function.arguments;
-      }
-    }
-    if (chunk.usage) {
+  for await (const event of stream) {
+    if (event.type === "response.output_text.delta") {
+      content += event.delta;
+      onTextChunk?.(event.delta);
+    } else if (event.type === "response.output_item.done" && event.item.type === "function_call") {
+      toolCallList.push({
+        id: event.item.call_id,
+        type: "function",
+        function: { name: event.item.name, arguments: event.item.arguments },
+      });
+    } else if (event.type === "response.completed" && event.response.usage) {
+      const u = event.response.usage;
       console.log(
-        `[usage] ${config.chatModel}: prompt=${chunk.usage.prompt_tokens} completion=${chunk.usage.completion_tokens} total=${chunk.usage.total_tokens} (история из ${messages.length} сообщений)`,
+        `[usage] ${config.chatModel}: prompt=${u.input_tokens} completion=${u.output_tokens} total=${u.total_tokens} (история из ${messages.length} сообщений)`,
       );
     }
   }
-
-  const toolCallList: ChatCompletionMessageToolCall[] = Object.values(toolCalls).map((tc) => ({
-    id: tc.id,
-    type: "function",
-    function: tc.function,
-  }));
 
   return {
     role: "assistant",

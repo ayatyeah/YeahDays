@@ -23,8 +23,8 @@
  */
 
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
+import { upsertUserStateIfNewer } from "@/lib/userState";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -118,23 +118,7 @@ async function loadState(userId: string): Promise<StateShape> {
 async function saveState(userId: string, data: StateShape) {
   const updatedAt = Date.now();
   const next = { ...data, updatedAt };
-  await prisma.user.upsert({
-    where: { id: userId },
-    create: { id: userId },
-    update: {},
-  });
-  await prisma.userState.upsert({
-    where: { userId },
-    create: {
-      userId,
-      data: next as unknown as Prisma.InputJsonValue,
-      clientAt: new Date(updatedAt),
-    },
-    update: {
-      data: next as unknown as Prisma.InputJsonValue,
-      clientAt: new Date(updatedAt),
-    },
-  });
+  await upsertUserStateIfNewer(userId, next, updatedAt);
   return next;
 }
 

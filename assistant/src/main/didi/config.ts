@@ -28,7 +28,10 @@ function optional(name: string): string {
 
 export const config = {
   openaiApiKey: optional("OPENAI_API_KEY"),
-  chatModel: process.env.OPENAI_CHAT_MODEL ?? "gpt-5-mini",
+  // gpt-4.1-mini, не gpt-5-mini: web_search (см. openai.ts::chatStep) живёт
+  // только в Responses API, а её список моделей не включает gpt-5-mini —
+  // ближайший по цене/классу вариант оттуда.
+  chatModel: process.env.OPENAI_CHAT_MODEL ?? "gpt-4.1-mini",
   transcribeModel: process.env.OPENAI_TRANSCRIBE_MODEL ?? "gpt-4o-mini-transcribe",
   ttsModel: process.env.OPENAI_TTS_MODEL ?? "gpt-4o-mini-tts",
   // shimmer — женский голос у OpenAI TTS, мягче/тише nova (та описана как

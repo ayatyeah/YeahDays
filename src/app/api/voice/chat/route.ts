@@ -7,6 +7,12 @@
  * десктоп-версии, чтобы не дублировать бизнес-логику (валидацию, upsert
  * состояния) в третьем месте.
  *
+ * Responses API (client.responses.create), не Chat Completions — только
+ * там есть встроенный web_search как ОТДЕЛЬНЫЙ инструмент (модель сама
+ * решает, искать ли), см. assistant/src/main/didi/openai.ts::chatStep для
+ * того же выбора и объяснения. Формат tools/input — плоский, без вложенного
+ * .function, сверен по типам самого SDK (openai/resources/responses).
+ *
  * Один запрос — один ход: без истории между вызовами. Кнопка на странице
  * — это дискретная команда ("добавь", "отметь"), а не длинный диалог;
  * упрощение осознанное, можно добавить историю позже, если понадобится.
@@ -15,7 +21,7 @@
  */
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import type { ChatCompletionMessageParam, ChatCompletionTool } from "openai/resources/chat/completions";
+import type { ResponseInputItem, Tool } from "openai/resources/responses/responses";
 import { auth } from "@/auth";
 
 export const runtime = "nodejs";
@@ -23,10 +29,15 @@ export const dynamic = "force-dynamic";
 
 const apiKey = process.env.OPENAI_API_KEY ?? "";
 const client = apiKey ? new OpenAI({ apiKey }) : null;
+// gpt-4.1-mini, не gpt-5-mini: web_search живёт в Responses API, её список
+// моделей gpt-5-mini не включает — см. assistant/config.ts за тем же выбором.
+const MODEL = "gpt-4.1-mini";
 const MAX_ROUNDS = 4;
 
 const SYSTEM_PROMPT = `Тебя зовут СалемАй. Ты голосовой помощник внутри приложения YeahGrind —
-управляешь задачами и настроением пользователя через инструменты.
+управляешь задачами и настроением пользователя через инструменты, а
+для остального (текущие события, факты, что угодно вне YeahGrind) —
+можешь искать в интернете (web_search), если вопрос явно об этом.
 
 Отвечай кратко и по делу — это голосовая команда, а не текст. Обычно
 1-2 предложения, без списков и форматирования. Всегда по-русски.
@@ -35,66 +46,63 @@ const SYSTEM_PROMPT = `Тебя зовут СалемАй. Ты голосово
 system-сообщении ниже — пользователь может сказать "завтра", "в пятницу"
 и т.д., переводи это в YYYY-MM-DD.`;
 
-const TOOLS: ChatCompletionTool[] = [
+const TOOLS: Tool[] = [
   {
     type: "function",
-    function: {
-      name: "get_today_status",
-      description: "Прочитать план на сегодня, задачи и настроение пользователя.",
-      parameters: { type: "object", properties: {}, additionalProperties: false },
-    },
+    name: "get_today_status",
+    description: "Прочитать план на сегодня, задачи и настроение пользователя.",
+    parameters: { type: "object", properties: {}, additionalProperties: false },
+    strict: false,
   },
   {
     type: "function",
-    function: {
-      name: "add_todo",
-      description: "Добавить задачу на сегодня или другую дату.",
-      parameters: {
-        type: "object",
-        properties: {
-          title: { type: "string", description: "Текст задачи" },
-          hour: { type: "number", description: "Час 0-23, если задача привязана ко времени" },
-          duration: { type: "number", description: "Сколько минут займёт" },
-          priority: { type: "string", enum: ["low", "normal", "high"] },
-          date: { type: "string", description: "YYYY-MM-DD, по умолчанию сегодня" },
-        },
-        required: ["title"],
-        additionalProperties: false,
+    name: "add_todo",
+    description: "Добавить задачу на сегодня или другую дату.",
+    parameters: {
+      type: "object",
+      properties: {
+        title: { type: "string", description: "Текст задачи" },
+        hour: { type: "number", description: "Час 0-23, если задача привязана ко времени" },
+        duration: { type: "number", description: "Сколько минут займёт" },
+        priority: { type: "string", enum: ["low", "normal", "high"] },
+        date: { type: "string", description: "YYYY-MM-DD, по умолчанию сегодня" },
       },
+      required: ["title"],
+      additionalProperties: false,
     },
+    strict: false,
   },
   {
     type: "function",
-    function: {
-      name: "complete_todo",
-      description: "Отметить задачу выполненной по её id (id узнаётся через get_today_status).",
-      parameters: {
-        type: "object",
-        properties: {
-          id: { type: "string" },
-          done: { type: "boolean", description: "true — выполнено, false — снять отметку" },
-        },
-        required: ["id"],
-        additionalProperties: false,
+    name: "complete_todo",
+    description: "Отметить задачу выполненной по её id (id узнаётся через get_today_status).",
+    parameters: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+        done: { type: "boolean", description: "true — выполнено, false — снять отметку" },
       },
+      required: ["id"],
+      additionalProperties: false,
     },
+    strict: false,
   },
   {
     type: "function",
-    function: {
-      name: "set_mood",
-      description: "Записать текущее настроение/энергию пользователя на сегодня.",
-      parameters: {
-        type: "object",
-        properties: {
-          energy: { type: "string", enum: ["low", "medium", "high"] },
-          minutes: { type: "number", description: "Сколько минут готов вложить сегодня" },
-        },
-        required: ["energy"],
-        additionalProperties: false,
+    name: "set_mood",
+    description: "Записать текущее настроение/энергию пользователя на сегодня.",
+    parameters: {
+      type: "object",
+      properties: {
+        energy: { type: "string", enum: ["low", "medium", "high"] },
+        minutes: { type: "number", description: "Сколько минут готов вложить сегодня" },
       },
+      required: ["energy"],
+      additionalProperties: false,
     },
+    strict: false,
   },
+  { type: "web_search" },
 ];
 
 function todayKey(): string {
@@ -174,7 +182,7 @@ export async function POST(req: Request) {
   }
 
   const origin = new URL(req.url).origin;
-  const history: ChatCompletionMessageParam[] = [
+  const input: ResponseInputItem[] = [
     { role: "system", content: SYSTEM_PROMPT },
     { role: "system", content: currentDateContext() },
     { role: "user", content: message },
@@ -182,35 +190,35 @@ export async function POST(req: Request) {
 
   try {
     for (let round = 0; round < MAX_ROUNDS; round++) {
-      const completion = await client.chat.completions.create({
-        model: "gpt-5-mini",
-        messages: history,
+      const response = await client.responses.create({
+        model: MODEL,
+        input,
         tools: TOOLS,
-        tool_choice: "auto",
       });
-      const msg = completion.choices[0]?.message;
-      if (!msg) break;
-      history.push(msg);
 
-      if (!msg.tool_calls || msg.tool_calls.length === 0) {
-        return NextResponse.json({ reply: msg.content?.trim() || "Готово." });
+      const functionCalls = response.output.filter((item) => item.type === "function_call");
+      if (functionCalls.length === 0) {
+        return NextResponse.json({ reply: response.output_text?.trim() || "Готово." });
       }
 
-      for (const call of msg.tool_calls) {
-        if (call.type !== "function") continue;
+      // response.output допускает варианты (computer-use и т.п.), которых у
+      // нас в tools нет и в рантайме взяться неоткуда — echo обратно в
+      // input безопасен, тип шире факта.
+      input.push(...(response.output as ResponseInputItem[]));
+      for (const call of functionCalls) {
         let args: Record<string, unknown> = {};
         try {
-          args = JSON.parse(call.function.arguments || "{}");
+          args = JSON.parse(call.arguments || "{}");
         } catch {
           // модель иногда возвращает битый JSON — не роняем весь ход
         }
         let result: string;
         try {
-          result = await runTool(call.function.name, args, origin, userId);
+          result = await runTool(call.name, args, origin, userId);
         } catch (e) {
           result = `Ошибка: ${e instanceof Error ? e.message : String(e)}`;
         }
-        history.push({ role: "tool", tool_call_id: call.id, content: result });
+        input.push({ type: "function_call_output", call_id: call.call_id, output: result });
       }
     }
     return NextResponse.json({ reply: "Слишком много шагов подряд — останавливаюсь." });

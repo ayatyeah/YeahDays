@@ -61,8 +61,14 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       {/* pb (моб.): место под нижнюю навигацию + под баннер установки, когда
           он виден (--install-offset ставит InstallPrompt) — без второго
           слагаемого баннер накрывал бы нижние кнопки экрана. На lg: нижней
-          навигации нет вообще, отступ обычный, а слева — место под сайдбар. */}
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-6 pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-10">
+          навигации нет вообще, отступ обычный, а слева — место под сайдбар.
+          pt: max(...) с вырезом/чёлкой — статичный pt-6 (24px) был меньше
+          реального выреза на iPhone (~50-59px из-за viewportFit:"cover" +
+          statusBarStyle:"black-translucent" в layout.tsx — контент рисуется
+          ПОД статус-баром, а не под ним само по себе), заголовок страницы
+          налезал на часы/иконки. На устройствах без выреза env(...) даёт 0,
+          и max() просто оставляет исходные 1.5rem/2.5rem без изменений. */}
+      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]">
         {isSection ? children : <PageTransition>{children}</PageTransition>}
       </div>
       <BottomNav />

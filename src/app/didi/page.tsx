@@ -3,13 +3,15 @@
 import Link from "next/link";
 import DidiPanel from "@/components/DidiPanel";
 import DidiChat from "@/components/DidiChat";
+import SalemAiVoice from "@/components/SalemAiVoice";
 
 /**
- * Отдельная страница ДиДи: статус фонового процесса + переключатель
- * (DidiPanel, уже стоит в профиле) и текстовый чат с ней. Не раздел
- * нижней навигации — как /manage, отдельная страница, куда ведёт ссылка
- * из профиля: это возможности для настройки/общения с ассистентом, а не
- * часть ежедневного цикла задач, вокруг которого построены основные вкладки.
+ * Отдельная страница СалемАй: статус фонового процесса + переключатель
+ * (DidiPanel, уже стоит в профиле), голосовая команда прямо из браузера
+ * (SalemAiVoice — работает сама по себе, без десктоп-приложения) и
+ * текстовый чат (DidiChat — тот, наоборот, ждёт, пока десктоп-процесс
+ * вычитает сообщение из очереди). Не раздел нижней навигации — как
+ * /manage, отдельная страница, куда ведёт ссылка из профиля.
  */
 export default function DidiPage() {
   return (
@@ -25,6 +27,10 @@ export default function DidiPage() {
       </header>
 
       <DidiPanel />
+
+      <div className="mt-3">
+        <SalemAiVoice />
+      </div>
 
       <div className="mt-3 flex flex-1 flex-col">
         <DidiChat />

@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import DidiPanel from "@/components/DidiPanel";
 import DidiChat from "@/components/DidiChat";
@@ -29,7 +30,9 @@ export default function DidiPage() {
       <DidiPanel />
 
       <div className="mt-3">
-        <SalemAiVoice />
+        <Suspense fallback={null}>
+          <SalemAiVoice />
+        </Suspense>
       </div>
 
       <div className="mt-3 flex flex-1 flex-col">

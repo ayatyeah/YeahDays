@@ -65,6 +65,14 @@ export default function TimelineSchedule({
   const [expanded, setExpanded] = useState(!compact);
   const [showNight, setShowNight] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  /**
+   * onTap у framer-motion срабатывает по ВРЕМЕНИ между нажатием и отпусканием,
+   * а не по пройденному расстоянию — быстрый перенос задачи на другой час
+   * укладывается в это окно, и onTap стреляет ВМЕСТЕ с onDragEnd. Без этого
+   * флага перетаскивание тут же открывало шторку редактирования сразу после
+   * переноса — человек ничего не касался, а карточка "Задача" уже открыта.
+   */
+  const justDraggedRef = useRef(false);
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -366,8 +374,21 @@ export default function TimelineSchedule({
                       dragElastic={0.1}
                       dragMomentum={false}
                       dragSnapToOrigin
-                      onDragEnd={(_, info) => handleDragEnd(t, info.offset)}
-                      onTap={() => openSheet(t)}
+                      onDragStart={() => {
+                        justDraggedRef.current = true;
+                      }}
+                      onDragEnd={(_, info) => {
+                        handleDragEnd(t, info.offset);
+                        // сбрасываем на следующий кадр — framer успевает
+                        // выстрелить onTap сразу вслед за onDragEnd
+                        requestAnimationFrame(() => {
+                          justDraggedRef.current = false;
+                        });
+                      }}
+                      onTap={() => {
+                        if (justDraggedRef.current) return;
+                        openSheet(t);
+                      }}
                       layout
                       transition={{ type: "spring", stiffness: 500, damping: 40 }}
                       className="glass-chip group absolute cursor-grab overflow-hidden rounded-xl px-2 py-1 active:cursor-grabbing"
@@ -634,15 +655,31 @@ function TrayChip({
   /** Если задан — чип можно утащить (обычно на сетку часов), см. handleTrayDrop. */
   onDragEnd?: (info: PanInfo) => void;
 }) {
+  // onTap у framer-motion срабатывает по времени нажатия, а не по
+  // расстоянию — быстрый перенос чипа на сетку укладывается в то же окно и
+  // onTap стреляет вслед за onDragEnd, тут же открывая шторку редактирования
+  // сразу после переноса (см. тот же флаг на карточках в сетке выше).
+  const justDraggedRef = useRef(false);
   return (
     <motion.button
-      onTap={onClick}
+      onTap={() => {
+        if (justDraggedRef.current) return;
+        onClick();
+      }}
       drag={!!onDragEnd}
       dragSnapToOrigin
       dragElastic={0.15}
       dragMomentum={false}
       whileDrag={{ scale: 1.06, zIndex: 40 }}
-      onDragEnd={(_, info) => onDragEnd?.(info)}
+      onDragStart={() => {
+        justDraggedRef.current = true;
+      }}
+      onDragEnd={(_, info) => {
+        onDragEnd?.(info);
+        requestAnimationFrame(() => {
+          justDraggedRef.current = false;
+        });
+      }}
       className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[12.5px] font-medium active:cursor-grabbing"
       style={{
         // @ts-expect-error -- кастомное свойство для CSS в родителе

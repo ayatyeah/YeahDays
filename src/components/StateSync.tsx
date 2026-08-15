@@ -17,13 +17,19 @@ import { useSyncStatus } from "@/store/useSyncStatus";
  *
  * — pull при загрузке и при смене статуса входа (вошёл/вышел);
  * — push с дебаунсом на каждое изменение стора;
- * — разрешение конфликтов last-write-wins по updatedAt.
+ * — поллинг pull() пока вкладка/PWA видима — задача, добавленная на ноуте
+ *   (или голосом через СалемАй — та тоже просто пишет в UserState.data),
+ *   должна появиться на телефоне без ручной перезагрузки;
+ * — разрешение конфликтов last-write-wins по updatedAt (то же правило и
+ *   для поллинга: применяется только если сервер реально свежее локального).
  *
  * Работает и для анонимного устройства (device-id), и для Google-аккаунта:
  * сервер сам выбирает ключ (сессия → device-id). При входе локальный
  * прогресс уезжает в аккаунт, на другом устройстве — приезжает обратно.
  */
 const DEBOUNCE_MS = 1500;
+/** Компромисс между "почти мгновенно" и лишними запросами на пустом месте. */
+const POLL_MS = 5000;
 /** чей аккаунт сейчас лежит в локальном сторе этого браузера (см. эффект ниже) */
 const ACTIVE_ACCOUNT_KEY = "yd-active-account";
 
@@ -160,6 +166,42 @@ export default function StateSync() {
     useSyncStatus.getState().setSyncNow(() => pull());
     return () => useSyncStatus.getState().setSyncNow(null);
   }, [pull]);
+
+  /*
+   * Поллинг pull() пока страница видима — свёрнутая вкладка/фон на телефоне
+   * не должны молотить сеть и батарею впустую. При возврате на вкладку
+   * дёргаем pull() сразу же, а не ждём следующий тик интервала — иначе
+   * можно было простоять в фоне минуту и всё равно ждать до 5с после
+   * возврата, что и выглядело бы как "не мгновенно".
+   */
+  useEffect(() => {
+    if (!hydrated || status === "loading") return;
+
+    let interval: ReturnType<typeof setInterval> | null = null;
+    const startPolling = () => {
+      if (interval) return;
+      interval = setInterval(() => void pull(), POLL_MS);
+    };
+    const stopPolling = () => {
+      if (interval) clearInterval(interval);
+      interval = null;
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        void pull();
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+
+    if (document.visibilityState === "visible") startPolling();
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [hydrated, status, pull]);
 
   return null;
 }

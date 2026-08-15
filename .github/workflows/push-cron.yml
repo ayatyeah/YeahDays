@@ -1,0 +1,26 @@
+name: Push notifications cron
+
+# Railway не даёт бесплатный встроенный крон-триггер для существующего
+# веб-сервиса — вместо отдельного Railway cron-сервиса используем то, что
+# уже бесплатно есть в этом же репозитории. GitHub Actions не гарантирует
+# точную минуту (минимальный шаг расписания — 5 минут, и даже это может
+# опоздать при нагрузке на раннеры GitHub), поэтому дальше 5 минут не идём.
+# /api/push/dispatch специально имеет GRACE_MS=10 минут — опоздание на
+# пару минут не теряет уведомление, см. src/app/api/push/dispatch/route.ts.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Morning/evening digest (hourly-ish, cheap to call every run)
+        run: |
+          curl -sf -X POST "https://yeahdays-production.up.railway.app/api/push/send" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "send failed (non-fatal)"
+      - name: Scheduled task/todo reminders
+        run: |
+          curl -sf -X POST "https://yeahdays-production.up.railway.app/api/push/dispatch" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "dispatch failed (non-fatal)"

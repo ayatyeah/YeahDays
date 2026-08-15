@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { cn } from "@/lib/cn";
 
 type State = "idle" | "recording" | "thinking" | "speaking" | "error";
@@ -44,14 +45,23 @@ function speak(text: string, onDone: () => void) {
  * Распознавание — сервер (Whisper, см. /api/voice/transcribe), ответ
  * читает сам браузер (speechSynthesis) — не гонять ещё один платный TTS-
  * запрос ради голоса, который и так неплохо звучит на iOS/Android из коробки.
+ *
+ * ?autostart=1 в адресе запускает запись сразу при открытии страницы —
+ * настоящий "Привет, Siri, СалемАй" с PWA не сделать (SiriKit/App Intents
+ * требуют нативное приложение), но через Команды (Shortcuts) можно
+ * повесить свою голосовую фразу на "Открыть URL: .../didi?autostart=1" —
+ * по факту голосовой вызов одной фразой, без ручного тапа по кнопке.
  */
 export default function SalemAiVoice() {
+  const searchParams = useSearchParams();
   const [state, setState] = useState<State>("idle");
   const [turns, setTurns] = useState<Turn[]>([]);
   const [error, setError] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const autostartedRef = useRef(false);
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
@@ -84,6 +94,14 @@ export default function SalemAiVoice() {
     mediaRecorderRef.current?.stop();
     stopStream();
   }, [stopStream]);
+
+  useEffect(() => {
+    if (autostartedRef.current) return;
+    if (searchParams.get("autostart") !== "1") return;
+    autostartedRef.current = true;
+    sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    void startRecording();
+  }, [searchParams, startRecording]);
 
   async function handleRecorded(mimeType: string | undefined) {
     setState("thinking");
@@ -130,7 +148,7 @@ export default function SalemAiVoice() {
   const busy = state === "thinking" || state === "speaking";
 
   return (
-    <section className="rounded-3xl surface p-4">
+    <section ref={sectionRef} className="rounded-3xl surface p-4">
       <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">Голосом</h2>
       <p className="mb-4 text-[11.5px] leading-snug text-[var(--color-muted)]">
         Работает прямо здесь, даже если ноутбук с десктоп-приложением выключен.

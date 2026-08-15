@@ -11,9 +11,9 @@
  */
 
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { upsertUserStateIfNewer } from "@/lib/userState";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -65,39 +65,16 @@ export async function PUT(req: Request) {
   }
 
   try {
-    const existing = await prisma.userState.findUnique({
-      where: { userId },
-      select: { data: true, clientAt: true },
-    });
-
-    // На сервере уже свежее — не затираем, отдаём серверный снимок.
-    if (existing && existing.clientAt.getTime() > clientAt) {
+    const result = await upsertUserStateIfNewer(userId, data, clientAt);
+    if (!result.applied) {
+      // На сервере уже не старше — не затираем, отдаём серверный снимок.
       return NextResponse.json({
         ok: true,
         applied: false,
-        data: existing.data,
-        updatedAt: existing.clientAt.getTime(),
+        data: result.data,
+        updatedAt: result.clientAt,
       });
     }
-
-    // Гарантируем строку User (для анонимных device-id).
-    await prisma.user.upsert({
-      where: { id: userId },
-      create: { id: userId },
-      update: {},
-    });
-    await prisma.userState.upsert({
-      where: { userId },
-      create: {
-        userId,
-        data: data as Prisma.InputJsonValue,
-        clientAt: new Date(clientAt),
-      },
-      update: {
-        data: data as Prisma.InputJsonValue,
-        clientAt: new Date(clientAt),
-      },
-    });
     return NextResponse.json({ ok: true, applied: true });
   } catch (e) {
     console.error("state PUT failed:", e);

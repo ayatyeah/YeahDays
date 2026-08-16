@@ -21,8 +21,8 @@ import { cn } from "@/lib/cn";
 const DEFAULT_FROM = 6;
 const DEFAULT_TO = 23;
 /** px на час — задаёт и высоту строки, и масштаб длительности задачи. */
-const ROW_HEIGHT = 56;
-const MIN_BLOCK_HEIGHT = 30;
+const ROW_HEIGHT = 76;
+const MIN_BLOCK_HEIGHT = 36;
 const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -77,6 +77,7 @@ export default function TimelineSchedule({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fTitle, setFTitle] = useState("");
+  const [fNote, setFNote] = useState("");
   const [fPriority, setFPriority] = useState<TodoPriority>("normal");
   const [fHour, setFHour] = useState<number | undefined>(undefined);
   const [fMinute, setFMinute] = useState(0);
@@ -118,21 +119,60 @@ export default function TimelineSchedule({
     [onDay, overdueIds],
   );
 
-  /** Группировка по часу — задачи в одно время встают бок о бок, не наложением. */
-  const byHour = useMemo(() => {
-    const map = new Map<number, Todo[]>();
-    for (const t of scheduled) {
-      if (overdueIds.has(t.id)) continue;
-      const h = t.hour!;
-      const list = map.get(h) ?? [];
-      list.push(t);
-      map.set(h, list);
+  /**
+   * Раскладка плашек по реальному пересечению времени, а не по общему часу.
+   * Раньше "делим ширину пополам" срабатывало для ЛЮБЫХ двух задач в одном
+   * часе — даже если одна кончается ровно там, где начинается другая (10
+   * минут подъёма и следом полтора часа тренировки не пересекаются вообще,
+   * но обе попадали в час "06" и жались в узкие половинки). Теперь колонка
+   * нужна только тем задачам, что реально идут одновременно — как в
+   * обычном календаре (алгоритм "meeting rooms": каждой задаче — первая
+   * освободившаяся к её началу колонка).
+   */
+  const layout = useMemo(() => {
+    const visible = scheduled.filter((t) => !overdueIds.has(t.id));
+    const withRange = visible
+      .map((t) => {
+        const startMin = t.hour! * 60 + (t.minute ?? 0);
+        return { todo: t, startMin, endMin: startMin + (t.duration ?? 60) };
+      })
+      .sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
+
+    const result: { todo: Todo; startMin: number; column: number; columns: number }[] = [];
+    let cluster: typeof withRange = [];
+    let clusterMaxEnd = -Infinity;
+
+    const flushCluster = () => {
+      if (cluster.length === 0) return;
+      const columnEnds: number[] = [];
+      const startIdx = result.length;
+      for (const item of cluster) {
+        let col = columnEnds.findIndex((end) => end <= item.startMin);
+        if (col === -1) {
+          col = columnEnds.length;
+          columnEnds.push(item.endMin);
+        } else {
+          columnEnds[col] = item.endMin;
+        }
+        result.push({ todo: item.todo, startMin: item.startMin, column: col, columns: 0 });
+      }
+      const columns = columnEnds.length;
+      for (let i = startIdx; i < result.length; i++) result[i]!.columns = columns;
+      cluster = [];
+      clusterMaxEnd = -Infinity;
+    };
+
+    for (const item of withRange) {
+      if (cluster.length > 0 && item.startMin >= clusterMaxEnd) flushCluster();
+      cluster.push(item);
+      clusterMaxEnd = Math.max(clusterMaxEnd, item.endMin);
     }
-    for (const list of map.values()) {
-      list.sort((a, b) => (a.minute ?? 0) - (b.minute ?? 0));
-    }
-    return map;
+    flushCluster();
+
+    return result;
   }, [scheduled, overdueIds]);
+
+  const hoursWithBlocks = useMemo(() => new Set(layout.map((l) => l.todo.hour!)), [layout]);
 
   const filled = scheduled.length - overdue.length;
 
@@ -182,6 +222,7 @@ export default function TimelineSchedule({
   function openSheet(t: Todo | null, presetHour?: number) {
     setEditingId(t?.id ?? null);
     setFTitle(t?.title ?? "");
+    setFNote(t?.note ?? "");
     setFPriority(t?.priority ?? "normal");
     setFHour(t ? t.hour : presetHour);
     setFMinute(t?.minute ?? 0);
@@ -195,13 +236,14 @@ export default function TimelineSchedule({
   function saveSheet() {
     const title = fTitle.trim();
     if (!title) return;
+    const note = fNote.trim() || undefined;
     const minute = fHour !== undefined ? fMinute : undefined;
     if (editingId) {
-      updateTodo(editingId, { title, priority: fPriority, hour: fHour, minute, duration: fDuration });
+      updateTodo(editingId, { title, note, priority: fPriority, hour: fHour, minute, duration: fDuration });
       const wasDone = onDay.find((t) => t.id === editingId);
       if (wasDone && isTodoDone(wasDone, day) !== fDone) toggleTodo(editingId, day);
     } else {
-      addTodo({ title, date: day, priority: fPriority, hour: fHour, minute, duration: fDuration });
+      addTodo({ title, note, date: day, priority: fPriority, hour: fHour, minute, duration: fDuration });
     }
     closeSheet();
   }
@@ -333,7 +375,7 @@ export default function TimelineSchedule({
               {hours.map((h) => {
                 const isNow = isToday && h === nowHour;
                 const routine = routineLabelAt(weekday, h);
-                const hasBlocks = (byHour.get(h)?.length ?? 0) > 0;
+                const hasBlocks = hoursWithBlocks.has(h);
                 return (
                   <div
                     key={h}
@@ -356,15 +398,13 @@ export default function TimelineSchedule({
                 );
               })}
 
-              {Array.from(byHour.entries()).flatMap(([h, list]) =>
-                list.map((t, i) => {
-                  const top =
-                    (h - startHour) * ROW_HEIGHT + ((t.minute ?? 0) / 60) * ROW_HEIGHT + 2;
+              {layout.map(({ todo: t, startMin, column, columns }) => {
+                  const top = (startMin / 60 - startHour) * ROW_HEIGHT + 2;
                   const height = Math.max(
                     MIN_BLOCK_HEIGHT,
                     ((t.duration ?? 60) / 60) * ROW_HEIGHT - 4,
                   );
-                  const widthPct = 100 / list.length;
+                  const widthPct = 100 / columns;
                   const done = isTodoDone(t, day);
                   return (
                     <motion.div
@@ -395,7 +435,7 @@ export default function TimelineSchedule({
                       style={{
                         top,
                         height,
-                        left: `calc(${i * widthPct}% + ${i > 0 ? 3 : 0}px)`,
+                        left: `calc(${column * widthPct}% + ${column > 0 ? 3 : 0}px)`,
                         width: `calc(${widthPct}% - 3px)`,
                         // @ts-expect-error -- кастомное свойство для CSS ниже
                         "--chip-color": PRIORITY_COLOR[t.priority],
@@ -415,7 +455,7 @@ export default function TimelineSchedule({
                         />
                         <span
                           className={cn(
-                            "min-w-0 flex-1 truncate text-left text-[12px] font-medium leading-tight",
+                            "line-clamp-2 min-w-0 flex-1 text-left text-[12px] font-medium leading-tight",
                             done && "text-[var(--color-muted)] line-through",
                           )}
                         >
@@ -436,8 +476,7 @@ export default function TimelineSchedule({
                       </div>
                     </motion.div>
                   );
-                }),
-              )}
+                })}
             </div>
           </div>
         </div>
@@ -473,6 +512,18 @@ export default function TimelineSchedule({
             autoFocus
             className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
           />
+
+          <div>
+            <SheetLabel>Заметка (необязательно)</SheetLabel>
+            <textarea
+              value={fNote}
+              onChange={(e) => setFNote(e.target.value)}
+              placeholder="Подробности, которые не влезли в название"
+              maxLength={1000}
+              rows={3}
+              className="w-full resize-none rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-[14px] leading-snug outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+            />
+          </div>
 
           <div>
             <SheetLabel>Важность</SheetLabel>

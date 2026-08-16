@@ -18,15 +18,34 @@ import { upsertUserStateIfNewer } from "@/lib/userState";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/**
+ * auth() дёргает jwt()-колбэк (см. auth.ts), а тот на КАЖДЫЙ вызов ходит в
+ * базу — проверяет бан. Это отдельный от userState-чтения запрос, и раньше
+ * он падал вне try/catch: любая заминка там роняла весь GET/PUT необработанным
+ * исключением (500 без тела), а не мягким ответом — StateSync видел !res.ok
+ * и красный «Нет связи с сервером» на каждом поллинге, без шанса отвалиться
+ * тихо и попробовать через 5 секунд снова.
+ */
 async function resolveUserId(fallback?: unknown): Promise<string> {
-  const session = await auth();
+  let session;
+  try {
+    session = await auth();
+  } catch (e) {
+    console.error("state: auth() failed:", e);
+    throw new Error("AUTH_UNAVAILABLE");
+  }
   if (session?.user?.id) return session.user.id;
   return typeof fallback === "string" ? fallback.slice(0, 64) : "";
 }
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const userId = await resolveUserId(url.searchParams.get("userId"));
+  let userId: string;
+  try {
+    userId = await resolveUserId(url.searchParams.get("userId"));
+  } catch {
+    return NextResponse.json({ error: "Auth temporarily unavailable" }, { status: 503 });
+  }
   if (!userId) return NextResponse.json({ data: null, updatedAt: null });
 
   try {
@@ -50,7 +69,12 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const userId = await resolveUserId(body.userId);
+  let userId: string;
+  try {
+    userId = await resolveUserId(body.userId);
+  } catch {
+    return NextResponse.json({ error: "Auth temporarily unavailable" }, { status: 503 });
+  }
   if (!userId) {
     return NextResponse.json({ error: "userId required" }, { status: 400 });
   }

@@ -23,6 +23,14 @@ const DEFAULT_TO = 23;
 /** px на час — задаёт и высоту строки, и масштаб длительности задачи. */
 const ROW_HEIGHT = 76;
 const MIN_BLOCK_HEIGHT = 36;
+/** Потолок высоты плашки — длинные задачи (2+ часа) не растягиваются в
+ *  длинный столбик, а остаются компактным прямоугольником с тем же видом,
+ *  что и короткие. Сетка часов (ROW_HEIGHT) при этом не трогается. */
+const MAX_BLOCK_HEIGHT = 58;
+/** Гарантированный видимый зазор между соседними плашками, идущими впритык
+ *  по времени — раньше он был жёстко зашит как "-4"/"-2" в разных местах и
+ *  на практике съедался почти до нуля, из-за чего задачи выглядели слипшимися. */
+const BLOCK_GAP = 6;
 const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -416,15 +424,16 @@ export default function TimelineSchedule({
 
               {layout.map(({ todo: t, startMin, column, columns, capEndMin }) => {
                   const top = (startMin / 60 - startHour) * ROW_HEIGHT + 2;
-                  const desiredHeight = Math.max(
-                    MIN_BLOCK_HEIGHT,
-                    ((t.duration ?? 60) / 60) * ROW_HEIGHT - 4,
+                  const desiredHeight = Math.min(
+                    MAX_BLOCK_HEIGHT,
+                    Math.max(MIN_BLOCK_HEIGHT, ((t.duration ?? 60) / 60) * ROW_HEIGHT - BLOCK_GAP),
                   );
-                  // Не даём минимальной высоте короткой задачи заехать поверх
-                  // начала следующей — обрезаем по фактическому старту соседа.
+                  // Не даём плашке заехать поверх начала следующей — обрезаем
+                  // по фактическому старту соседа, оставляя видимый зазор.
                   const availableHeight =
-                    ((capEndMin ?? Infinity) / 60 - startHour) * ROW_HEIGHT - 2 - top;
-                  const height = Math.max(16, Math.min(desiredHeight, availableHeight));
+                    ((capEndMin ?? Infinity) / 60 - startHour) * ROW_HEIGHT + 2 - BLOCK_GAP - top;
+                  const height = Math.max(22, Math.min(desiredHeight, availableHeight));
+                  const compact = height < 34;
                   const widthPct = 100 / columns;
                   const done = isTodoDone(t, day);
                   return (
@@ -462,7 +471,7 @@ export default function TimelineSchedule({
                         "--chip-color": PRIORITY_COLOR[t.priority],
                       }}
                     >
-                      <div className="flex h-full items-start gap-1.5">
+                      <div className="flex h-full items-center gap-1.5">
                         <button
                           type="button"
                           onPointerDown={(e) => e.stopPropagation()}
@@ -470,13 +479,14 @@ export default function TimelineSchedule({
                             e.stopPropagation();
                             cyclePriority(t);
                           }}
-                          className="mt-0.5 h-2 w-2 shrink-0 rounded-full"
+                          className="h-2 w-2 shrink-0 rounded-full"
                           style={{ background: PRIORITY_COLOR[t.priority] }}
                           aria-label="Сменить приоритет"
                         />
                         <span
                           className={cn(
-                            "line-clamp-2 min-w-0 flex-1 text-left text-[12px] font-medium leading-tight",
+                            "min-w-0 flex-1 text-left text-[12px] font-medium leading-tight",
+                            compact ? "line-clamp-1" : "line-clamp-2",
                             done && "text-[var(--color-muted)] line-through",
                           )}
                         >

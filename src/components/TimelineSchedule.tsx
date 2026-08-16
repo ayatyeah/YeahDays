@@ -138,7 +138,7 @@ export default function TimelineSchedule({
       })
       .sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
 
-    const result: { todo: Todo; startMin: number; column: number; columns: number }[] = [];
+    const result: { todo: Todo; startMin: number; column: number; columns: number; capEndMin?: number }[] = [];
     let cluster: typeof withRange = [];
     let clusterMaxEnd = -Infinity;
 
@@ -169,7 +169,23 @@ export default function TimelineSchedule({
     }
     flushCluster();
 
-    return result;
+    /**
+     * У короткой задачи (10-15 минут) есть минимальная высота карточки —
+     * иначе такую задачу саму по себе, без соседей, было бы не видно и не
+     * нажать. Но когда короткие задачи идут впритык одна за другой (весь
+     * этот план — сплошь буферы/душ/дыхательная между длинными блоками),
+     * эта минимальная высота у ПЕРВОЙ заезжает поверх начала ВТОРОЙ — они
+     * визуально накладываются, хотя по времени не пересекаются вообще.
+     * Обрезаем рендер-высоту по старту следующей задачи (по времени, не по
+     * колонке — так безопаснее и для будущих реально одновременных задач).
+     */
+    const byStart = [...result].sort((a, b) => a.startMin - b.startMin);
+    const capMinByTodoId = new Map<string, number>();
+    for (let i = 0; i < byStart.length - 1; i++) {
+      capMinByTodoId.set(byStart[i]!.todo.id, byStart[i + 1]!.startMin);
+    }
+
+    return result.map((r) => ({ ...r, capEndMin: capMinByTodoId.get(r.todo.id) ?? Infinity }));
   }, [scheduled, overdueIds]);
 
   const hoursWithBlocks = useMemo(() => new Set(layout.map((l) => l.todo.hour!)), [layout]);
@@ -398,12 +414,17 @@ export default function TimelineSchedule({
                 );
               })}
 
-              {layout.map(({ todo: t, startMin, column, columns }) => {
+              {layout.map(({ todo: t, startMin, column, columns, capEndMin }) => {
                   const top = (startMin / 60 - startHour) * ROW_HEIGHT + 2;
-                  const height = Math.max(
+                  const desiredHeight = Math.max(
                     MIN_BLOCK_HEIGHT,
                     ((t.duration ?? 60) / 60) * ROW_HEIGHT - 4,
                   );
+                  // Не даём минимальной высоте короткой задачи заехать поверх
+                  // начала следующей — обрезаем по фактическому старту соседа.
+                  const availableHeight =
+                    ((capEndMin ?? Infinity) / 60 - startHour) * ROW_HEIGHT - 2 - top;
+                  const height = Math.max(16, Math.min(desiredHeight, availableHeight));
                   const widthPct = 100 / columns;
                   const done = isTodoDone(t, day);
                   return (
@@ -676,14 +697,16 @@ export default function TimelineSchedule({
            div) эта разметка не срабатывает. Без :global правило молча не
            матчится вообще: ни фона, ни рамки, ни тени — просто голый текст
            поверх сетки. */
+        /*
+         * Раньше — полупрозрачный фон + диагональный блик (глянец). На
+         * плотном плане, где карточки часто идут почти впритык друг к
+         * другу, полупрозрачность и блики соседних карточек просвечивали
+         * друг сквозь друга и мешали читать — особенно на границах. Теперь
+         * — плоский, непрозрачный матовый фон, без градиента-блика.
+         */
         :global(.glass-chip) {
-          background: color-mix(in srgb, var(--chip-color) 16%, var(--color-surface));
-          border: 1px solid color-mix(in srgb, var(--chip-color) 45%, transparent);
-          background-image: linear-gradient(
-            165deg,
-            color-mix(in srgb, var(--chip-color) 10%, white) 0%,
-            transparent 40%
-          );
+          background: color-mix(in srgb, var(--chip-color) 20%, var(--color-surface-2) 96%);
+          border: 1px solid color-mix(in srgb, var(--chip-color) 50%, transparent);
           transition:
             box-shadow 0.15s,
             transform 0.15s;

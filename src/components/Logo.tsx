@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { useThemeStore } from "@/store/useThemeStore";
 
 interface LogoProps {
   /** color — фирменный градиент; white — чистый белый знак */
@@ -14,12 +15,21 @@ interface LogoProps {
 const GLOW =
   "[filter:drop-shadow(0_0_18px_rgba(160,120,255,0.45))_drop-shadow(0_0_34px_rgba(249,90,110,0.25))]";
 
-/** Логотип YeahGrind. Чёткая «YG»; свечение — опциональный CSS-эффект. */
+/**
+ * Логотип YeahGrind. Чёткая «YG»; свечение — опциональный CSS-эффект.
+ *
+ * variant="white" просят места, рассчитанные на тёмный фон (шапки,
+ * сайдбар) — на светлой теме белый знак на белом просто исчезнет,
+ * поэтому здесь он принудительно подменяется на цветной, независимо
+ * от того, что попросил вызывающий компонент.
+ */
 export default function Logo({ variant = "color", glow, className }: LogoProps) {
+  const theme = useThemeStore((s) => s.theme);
+  const effective = variant === "white" && theme === "light" ? "color" : variant;
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={variant === "white" ? "/logo-white.png" : "/logo.png"}
+      src={effective === "white" ? "/logo-white.png" : "/logo.png"}
       alt="YeahGrind"
       draggable={false}
       className={cn("select-none object-contain", glow && GLOW, className)}

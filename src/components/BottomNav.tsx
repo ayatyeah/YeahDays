@@ -73,7 +73,7 @@ export default function BottomNav() {
                 {active && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-0 -z-10 rounded-2xl border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.08)] shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]"
+                    className="absolute inset-0 -z-10 rounded-2xl border border-[var(--color-highlight-border)] bg-[var(--color-highlight-bg)] shadow-[inset_0_1px_0_var(--color-highlight-shine)]"
                     transition={spring}
                   />
                 )}

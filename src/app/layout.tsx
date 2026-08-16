@@ -7,6 +7,15 @@ import CreateTaskModal from "@/components/CreateTaskModal";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AuthProvider from "@/components/AuthProvider";
+import ThemeApplier from "@/components/ThemeApplier";
+
+/**
+ * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
+ * со светлой темой на долю секунды мелькнёт тёмная (дефолт стора), пока
+ * зустанд не восстановит значение из localStorage. Ключ и форма записи
+ * должны совпадать с persist-конфигом useThemeStore.
+ */
+const THEME_INIT_SCRIPT = `(function(){try{var raw=localStorage.getItem('yeahdays-theme');if(!raw)return;var theme=JSON.parse(raw).state.theme;if(theme==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();`;
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -60,9 +69,16 @@ export const viewport: Viewport = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // suppressHydrationWarning — data-theme ставится инлайн-скриптом ДО
+  // гидрации (см. THEME_INIT_SCRIPT), поэтому серверный HTML и первый
+  // клиентский рендер этого атрибута расходятся намеренно; это ожидаемо
+  // и не патчится React, но без флага заливает консоль лишним варнингом.
   return (
-    <html lang="ru" className={inter.variable}>
+    <html lang="ru" className={inter.variable} suppressHydrationWarning>
       <body>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <ThemeApplier />
         <AuthProvider>
           <Ambient />
           <ErrorBoundary>

@@ -6,6 +6,7 @@ import SwipeDeck from "@/components/SwipeDeck";
 import CheckIn from "@/components/CheckIn";
 import ActiveTask from "@/components/ActiveTask";
 import Logo, { LogoLoader } from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 import {
   useUserStore,
   useHydrated,
@@ -296,23 +297,26 @@ export default function HomeSection() {
             YeahGrind
           </span>
         </div>
-        {streak > 0 && (
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1, transition: springBouncy }}
-            className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5"
-          >
-            {/* Огонь живой — лёгкое «дыхание» намекает, что серия горит */}
-            <motion.span
-              className="text-sm"
-              animate={{ scale: [1, 1.15, 1], rotate: [0, -6, 0] }}
-              transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        <div className="flex items-center gap-2">
+          {streak > 0 && (
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1, transition: springBouncy }}
+              className="flex items-center gap-1.5 rounded-full bg-[var(--color-surface)] px-3 py-1.5 shadow-[var(--shadow-1)]"
             >
-              🔥
-            </motion.span>
-            <span className="text-sm font-bold tabular-nums">{streak}</span>
-          </motion.div>
-        )}
+              {/* Огонь живой — лёгкое «дыхание» намекает, что серия горит */}
+              <motion.span
+                className="text-sm"
+                animate={{ scale: [1, 1.15, 1], rotate: [0, -6, 0] }}
+                transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+              >
+                🔥
+              </motion.span>
+              <span className="text-sm font-bold tabular-nums">{streak}</span>
+            </motion.div>
+          )}
+          <ThemeToggle />
+        </div>
       </div>
 
       {/* Шапка: прогресс дня */}

@@ -9,18 +9,14 @@
 
 import type { StatKey } from "./domain";
 
-export interface AvatarStats {
-  strength: number;
-  intelligence: number;
-  wealth: number;
-  stability: number;
-}
+export type AvatarStats = Record<StatKey, number>;
 
 export const STAT_HEX: Record<StatKey, string> = {
   strength: "#f97362",
   intelligence: "#8b7cf6",
   wealth: "#f0b23f",
   stability: "#3fbf9a",
+  health: "#ef6b8b",
 };
 
 export function dominantStat(stats: AvatarStats): StatKey {

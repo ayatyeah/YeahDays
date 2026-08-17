@@ -66,9 +66,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           реального выреза на iPhone (~50-59px из-за viewportFit:"cover" +
           statusBarStyle:"black-translucent" в layout.tsx — контент рисуется
           ПОД статус-баром, а не под ним само по себе), заголовок страницы
-          налезал на часы/иконки. На устройствах без выреза env(...) даёт 0,
-          и max() просто оставляет исходные 1.5rem/2.5rem без изменений. */}
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]">
+          налезал на часы/иконки. На устройствах без выреза (или без
+          установленного PWA, где env(...) часто отдаёт 0) заголовок стоял
+          впритык к системной строке состояния — подняли пол с 1.5rem до
+          2.75rem специально под этот случай; max() всё равно берёт вырез,
+          если он больше. */}
+      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(2.75rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]">
         {isSection ? children : <PageTransition>{children}</PageTransition>}
       </div>
       <BottomNav />

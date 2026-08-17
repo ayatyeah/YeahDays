@@ -29,7 +29,7 @@ export default function ProgressSection() {
   const streak = useStreak();
   const best = useBestStreak();
   const catXp = useMemo(() => selectCategoryXp(plan), [plan]);
-  const activeDays = useMemo(() => selectActiveDays(plan), [plan]);
+  const activeDays = useMemo(() => selectActiveDays(plan, todos), [plan, todos]);
 
   const progress = getLevelProgress(totalXp);
   const level = progress.level;
@@ -53,159 +53,173 @@ export default function ProgressSection() {
     <div className="flex flex-1 flex-col">
       <h1 className="text-[26px] font-bold tracking-tight">Прогресс</h1>
 
-      {/* Персонаж крупно */}
-      <div className="canvas-slot mt-1 h-[320px]">
-        <Avatar3D stats={stats} level={level} className="h-full w-full" />
-      </div>
-      <p className="mb-4 mt-1 text-center text-[11px] text-[var(--color-muted)]">
-        Тело меняется с уровнем — от новичка до легенды
-      </p>
-
-      {/* Уровень */}
-      <section className="mb-5 rounded-3xl surface p-4">
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
-              Уровень
-            </p>
-            <p className="text-4xl font-black leading-none tabular-nums">{level}</p>
+      {/*
+        lg:+: два столбца, как на Today — широкий слева (персонаж, уровень,
+        метрики — то, что видно первым делом), узкий справа (разбивка по
+        характеристикам, категориям, эволюция — детали для тех, кто
+        углубляется). Порядок внутри каждого столбца — ровно тот же, что
+        раньше был одним потоком, разбит цельным куском (не вперемешку),
+        поэтому на мобильном (без lg:) всё складывается в исходном порядке.
+      */}
+      <div className="lg:flex lg:items-start lg:gap-6">
+        <div className="flex flex-col lg:flex-1 lg:gap-5">
+          {/* Персонаж крупно */}
+          <div className="canvas-slot mt-1 h-[320px] lg:mt-0">
+            <Avatar3D stats={stats} level={level} className="h-full w-full" />
           </div>
-          <p className="text-[13px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
-            {totalXp} XP
+          <p className="mb-4 mt-1 text-center text-[11px] text-[var(--color-muted)] lg:mb-0 lg:mt-0">
+            Тело меняется с уровнем — от новичка до легенды
           </p>
-        </div>
-        <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
-          <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[var(--color-intelligence)] to-[var(--color-wealth)]"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress.ratio * 100}%` }}
-            transition={{ type: "spring", stiffness: 130, damping: 22 }}
-          />
-        </div>
-        <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
-          {progress.currentInLevel} / {progress.neededForNext} до уровня {level + 1}
-        </p>
-      </section>
 
-      {/* Ключевые метрики */}
-      <section className="mb-6 grid grid-cols-3 gap-2.5">
-        <Metric value={completed.length} label="Выполнено" />
-        <Metric value={streak} label="Стрик" accent="🔥" />
-        <Metric value={activeDays.size} label="Активных дней" />
-      </section>
-
-      {/* Характеристики */}
-      <section className="mb-6">
-        <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
-          Характеристики
-        </h2>
-        <div className="space-y-3.5">
-          {STAT_LIST.map((s) => (
-            <div key={s.key}>
-              <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
-                <span className="flex items-center gap-2 font-medium">
-                  <span style={{ color: s.hex }}>{s.icon}</span>
-                  {s.label}
-                </span>
-                <span className="tabular-nums text-[var(--color-muted)]">
-                  {stats[s.key]}
-                </span>
+          {/* Уровень */}
+          <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                  Уровень
+                </p>
+                <p className="text-4xl font-black leading-none tabular-nums">{level}</p>
               </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ background: s.hex, boxShadow: `0 0 12px ${s.hex}66` }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(stats[s.key] / maxStat) * 100}%` }}
-                  transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                />
-              </div>
-              <p className="mt-1 text-[10.5px] text-[var(--color-muted)]">{s.hint}</p>
+              <p className="text-[13px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
+                {totalXp} XP
+              </p>
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-[var(--color-intelligence)] to-[var(--color-wealth)]"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress.ratio * 100}%` }}
+                transition={{ type: "spring", stiffness: 130, damping: 22 }}
+              />
+            </div>
+            <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
+              {progress.currentInLevel} / {progress.neededForNext} до уровня {level + 1}
+            </p>
+          </section>
 
-      {/* Категории */}
-      {topCats.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
-            Где ты растёшь
-          </h2>
-          <div className="space-y-2">
-            {topCats.map(([key, value]) => {
-              const c = CATEGORIES[key];
-              return (
-                <div
-                  key={key}
-                  className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-3.5 py-2.5"
-                >
-                  <span className="text-base">{c.icon}</span>
-                  <span className="flex-1 text-[13px] font-medium">{c.label}</span>
-                  <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
-                    <div
-                      className="h-full rounded-full bg-[var(--color-fg-dim)]"
-                      style={{ width: `${(value / maxCat) * 100}%` }}
+          {/* Ключевые метрики */}
+          <section className="mb-6 grid grid-cols-3 gap-2.5 lg:mb-0">
+            <Metric value={completed.length} label="Выполнено" />
+            <Metric value={streak} label="Стрик" accent="🔥" />
+            <Metric value={activeDays.size} label="Активных дней" />
+          </section>
+        </div>
+
+        <div className="flex flex-col lg:w-[320px] lg:shrink-0 lg:gap-5">
+          {/* Характеристики */}
+          <section className="mb-6 lg:mb-0">
+            <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+              Характеристики
+            </h2>
+            <div className="space-y-3.5">
+              {STAT_LIST.map((s) => (
+                <div key={s.key}>
+                  <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                    <span className="flex items-center gap-2 font-medium">
+                      <span style={{ color: s.hex }}>{s.icon}</span>
+                      {s.label}
+                    </span>
+                    <span className="tabular-nums text-[var(--color-muted)]">
+                      {stats[s.key]}
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                    <motion.div
+                      className="h-full rounded-full"
+                      style={{ background: s.hex, boxShadow: `0 0 12px ${s.hex}66` }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(stats[s.key] / maxStat) * 100}%` }}
+                      transition={{ type: "spring", stiffness: 120, damping: 20 }}
                     />
                   </div>
-                  <span className="w-10 text-right text-[11.5px] tabular-nums text-[var(--color-muted)]">
-                    {value}
-                  </span>
+                  <p className="mt-1 text-[10.5px] text-[var(--color-muted)]">{s.hint}</p>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
+              ))}
+            </div>
+          </section>
 
-      {/* Эволюция */}
-      <section className="mb-2">
-        <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
-          Эволюция
-        </h2>
-        <div className="space-y-2">
-          {TIER_MILESTONES.map((m) => {
-            const reached = level >= m.level;
-            const current = tier === m.tier;
-            return (
-              <div
-                key={m.tier}
-                className={cn(
-                  "flex items-center gap-3 rounded-2xl border px-4 py-3",
-                  current
-                    ? "border-[var(--color-fg-dim)] bg-[var(--color-surface-2)]"
-                    : "border-[var(--color-border)] bg-[var(--color-surface)]",
-                )}
-              >
-                <div
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold",
-                    reached
-                      ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
-                      : "bg-[var(--color-surface-2)] text-[var(--color-muted)]",
-                  )}
-                >
-                  {reached ? "✓" : m.level}
-                </div>
-                <div className="flex-1">
-                  <p className="text-[13.5px] font-semibold">{m.label}</p>
-                  <p className="text-[11px] text-[var(--color-muted)]">
-                    с {m.level} уровня
-                  </p>
-                </div>
-                {current && (
-                  <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
-                    сейчас
-                  </span>
-                )}
+          {/* Категории */}
+          {topCats.length > 0 && (
+            <section className="mb-6 lg:mb-0">
+              <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+                Где ты растёшь
+              </h2>
+              <div className="space-y-2">
+                {topCats.map(([key, value]) => {
+                  const c = CATEGORIES[key];
+                  return (
+                    <div
+                      key={key}
+                      className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-3.5 py-2.5"
+                    >
+                      <span className="text-base">{c.icon}</span>
+                      <span className="flex-1 text-[13px] font-medium">{c.label}</span>
+                      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                        <div
+                          className="h-full rounded-full bg-[var(--color-fg-dim)]"
+                          style={{ width: `${(value / maxCat) * 100}%` }}
+                        />
+                      </div>
+                      <span className="w-10 text-right text-[11.5px] tabular-nums text-[var(--color-muted)]">
+                        {value}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </section>
+          )}
+
+          {/* Эволюция */}
+          <section className="mb-2 lg:mb-0">
+            <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+              Эволюция
+            </h2>
+            <div className="space-y-2">
+              {TIER_MILESTONES.map((m) => {
+                const reached = level >= m.level;
+                const current = tier === m.tier;
+                return (
+                  <div
+                    key={m.tier}
+                    className={cn(
+                      "flex items-center gap-3 rounded-2xl border px-4 py-3",
+                      current
+                        ? "border-[var(--color-fg-dim)] bg-[var(--color-surface-2)]"
+                        : "border-[var(--color-border)] bg-[var(--color-surface)]",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold",
+                        reached
+                          ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
+                          : "bg-[var(--color-surface-2)] text-[var(--color-muted)]",
+                      )}
+                    >
+                      {reached ? "✓" : m.level}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-[13.5px] font-semibold">{m.label}</p>
+                      <p className="text-[11px] text-[var(--color-muted)]">
+                        с {m.level} уровня
+                      </p>
+                    </div>
+                    {current && (
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
+                        сейчас
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-3 text-center text-[11px] text-[var(--color-muted)]">
+              Лучшая серия: {best} {best === 1 ? "день" : "дн."}
+            </p>
+          </section>
         </div>
-        <p className="mt-3 text-center text-[11px] text-[var(--color-muted)]">
-          Лучшая серия: {best} {best === 1 ? "день" : "дн."}
-        </p>
-      </section>
+      </div>
     </div>
   );
 }

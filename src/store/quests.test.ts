@@ -53,7 +53,7 @@ describe("прогресс цели", () => {
   it("считает только действия нужного стата", () => {
     const plan = [
       done("fitness", T0 + 1000), // сила
-      done("health", T0 + 2000), // сила
+      done("fitness", T0 + 2000), // тоже сила
       done("learning", T0 + 3000), // интеллект — мимо
     ];
     expect(questProgress(quest(), plan)).toBe(2);
@@ -136,7 +136,7 @@ describe("влияние цели на колоду", () => {
 
   it("вес не вылезает за 1", () => {
     const g = effectiveGoals(
-      { strength: 0.95, intelligence: 0.5, wealth: 0.5, stability: 0.5 },
+      { strength: 0.95, intelligence: 0.5, wealth: 0.5, stability: 0.5, health: 0.5 },
       [quest({ deadline: today, target: 100 })],
       [],
       today,

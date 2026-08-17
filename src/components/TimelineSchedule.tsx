@@ -6,8 +6,10 @@ import {
   useUserStore,
   isTodoOnDay,
   isTodoDone,
+  selectActiveDays,
   PRIORITY_COLOR,
   PRIORITY_LABEL,
+  TODO_PRIORITY_XP,
   type Todo,
   type TodoPriority,
 } from "@/store/useUserStore";
@@ -15,59 +17,8 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { dateKey, STATS } from "@/lib/domain";
 import { routineLabelAt } from "@/lib/routine";
+import { categorizeTodo, fmtDuration } from "@/lib/todoCategory";
 import { cn } from "@/lib/cn";
-
-interface TodoCategory {
-  icon: string;
-  color: string;
-  statLabel: string;
-  subLabel?: string;
-}
-
-/**
- * Иконка/подпись категории по заголовку задачи. У Todo нет отдельного поля
- * категории (это не Action из движка рекомендаций, а свободный пункт
- * плана) — угадываем по ключевым словам в названии, как уже делает
- * anchorIcon() в HomeSection для якорей маршрута. Нераспознанные заголовки
- * получают нейтральный фолбэк без подписи, а не падают или пустуют.
- */
-function categorizeTodo(title: string): TodoCategory {
-  const t = title.toLowerCase();
-
-  // \b (граница слова) в JS регэкспах считает словом только [A-Za-z0-9_] —
-  // кириллица для \b невидима, и "\bбег\b" тихо НЕ матчит "бег" вообще
-  // (с обеих сторон "не-\w"). Поэтому у кириллических ключевых слов ниже —
-  // просто вхождение подстроки, без \b; \b оставлен только там, где слово
-  // латиницей (sleep/node/npm/git/ts/js).
-  if (/медитац/.test(t)) return { icon: "🧘", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/^sleep\b|сон/.test(t)) return { icon: "😴", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/душ/.test(t)) return { icon: "🚿", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/дыхательн/.test(t)) return { icon: "🌬️", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/подъём|подъем/.test(t)) return { icon: "⏰", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/обед|завтрак|перекус|ужин/.test(t)) return { icon: "🍽️", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/буфер|перерыв|пауза/.test(t)) return { icon: "⏸️", color: STATS.stability.color, statLabel: STATS.stability.label };
-  if (/растяжк|mobility/.test(t)) return { icon: "🤸", color: STATS.stability.color, statLabel: STATS.stability.label };
-
-  if (/interview|интервью|собеседован/.test(t)) {
-    return { icon: "🗣️", color: STATS.intelligence.color, statLabel: STATS.intelligence.label, subLabel: "Собеседования" };
-  }
-  if (/english|английск/.test(t)) {
-    return { icon: "📖", color: STATS.intelligence.color, statLabel: STATS.intelligence.label, subLabel: "Английский" };
-  }
-  if (/^ts:|typescript|\bnode\b|\bnpm\b|\bgit\b|react|массив|строки|базовые типы|^js:|javascript|алгоритм/.test(t)) {
-    return { icon: "💻", color: STATS.intelligence.color, statLabel: STATS.intelligence.label, subLabel: "Код" };
-  }
-
-  if (/push:|pull:|legs:|тренировк|бег|running|гантел|фитнес/.test(t)) {
-    return { icon: "💪", color: STATS.strength.color, statLabel: STATS.strength.label, subLabel: "Спорт" };
-  }
-
-  if (/yeahgrind|репо|проект|tiktok|съёмка|монтаж|didi/.test(t)) {
-    return { icon: "🛠️", color: STATS.wealth.color, statLabel: STATS.wealth.label, subLabel: "Проект" };
-  }
-
-  return { icon: "•", color: "var(--color-muted)", statLabel: "" };
-}
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
@@ -78,12 +29,6 @@ const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTE_OPTIONS = [0, 10, 20, 30, 40, 50];
-
-function fmtDuration(mins: number): string {
-  if (mins < 60) return `${mins}м`;
-  if (mins % 60 === 0) return `${mins / 60}ч`;
-  return `${Math.floor(mins / 60)}ч${mins % 60}м`;
-}
 
 /**
  * Почасовой план дня — стеклянные плашки задач поверх сетки часов.
@@ -108,6 +53,7 @@ export default function TimelineSchedule({
   compact?: boolean;
 }) {
   const todos = useUserStore((s) => s.todos);
+  const plan = useUserStore((s) => s.plan);
   const addTodo = useUserStore((s) => s.addTodo);
   const updateTodo = useUserStore((s) => s.updateTodo);
   const removeTodo = useUserStore((s) => s.removeTodo);
@@ -118,6 +64,8 @@ export default function TimelineSchedule({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [sheetOpen, setSheetOpen] = useState(false);
+  /** view — экран просмотра (тап по карточке); edit — знакомая форма («Изменить» в шапке). */
+  const [mode, setMode] = useState<"view" | "edit">("view");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [fTitle, setFTitle] = useState("");
   const [fNote, setFNote] = useState("");
@@ -251,6 +199,9 @@ export default function TimelineSchedule({
     setFMinute(t?.minute ?? 0);
     setFDuration(t?.duration ?? 60);
     setFDone(t ? isTodoDone(t, day) : false);
+    // Новую задачу смотреть нечего — сразу в форму. Существующую — сперва
+    // экран просмотра, "Изменить" в шапке уводит в форму.
+    setMode(t ? "view" : "edit");
     setSheetOpen(true);
   }
   function closeSheet() {
@@ -274,6 +225,26 @@ export default function TimelineSchedule({
     if (editingId) removeTodo(editingId);
     closeSheet();
   }
+
+  /* ── Экран просмотра: данные текущей задачи ── */
+  const viewingTodo = useMemo(
+    () => onDay.find((t) => t.id === editingId) ?? null,
+    [onDay, editingId],
+  );
+  const viewCategory = viewingTodo ? categorizeTodo(viewingTodo.title) : null;
+  const viewXp = viewingTodo ? TODO_PRIORITY_XP[viewingTodo.priority] : 0;
+  /** Вес — тот же TODO_PRIORITY_XP, что уже определяет ценность задачи в
+   *  системе: чем важнее задача, тем больше её доля в закрытии дня. */
+  const dayWeightTotal = useMemo(
+    () => onDay.reduce((sum, t) => sum + TODO_PRIORITY_XP[t.priority], 0),
+    [onDay],
+  );
+  const viewPercent =
+    viewingTodo && dayWeightTotal ? Math.round((viewXp / dayWeightTotal) * 100) : 0;
+  const dayActive = useMemo(
+    () => selectActiveDays(plan, todos).has(day),
+    [plan, todos, day],
+  );
 
   return (
     <section className="mt-5">
@@ -452,7 +423,127 @@ export default function TimelineSchedule({
         </button>
       )}
 
-      <Modal open={sheetOpen} onClose={closeSheet} title={editingId ? "Задача" : "Новая задача"}>
+      <Modal
+        open={sheetOpen}
+        onClose={closeSheet}
+        title={mode === "edit" ? (editingId ? "Задача" : "Новая задача") : undefined}
+        headerAction={
+          mode === "view" && (
+            <button
+              type="button"
+              onClick={() => setMode("edit")}
+              className="press shrink-0 rounded-xl bg-[var(--color-surface-2)] px-3.5 py-2 text-[13px] font-semibold transition hover:bg-[var(--color-border)]"
+            >
+              Изменить
+            </button>
+          )
+        }
+      >
+        {mode === "view" && viewingTodo && viewCategory ? (
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[19px]"
+                style={{
+                  background: `color-mix(in srgb, ${STATS[viewCategory.stat].color} 18%, var(--color-surface-2) 90%)`,
+                }}
+                aria-hidden
+              >
+                {viewCategory.icon}
+              </div>
+              <div className="min-w-0 flex-1 pt-0.5">
+                <h3
+                  className={cn(
+                    "text-[17px] font-bold leading-tight",
+                    isTodoDone(viewingTodo, day) && "text-[var(--color-muted)] line-through",
+                  )}
+                >
+                  {viewingTodo.title}
+                </h3>
+                <p
+                  className="mt-0.5 text-[11px] font-bold uppercase tracking-wide"
+                  style={{ color: STATS[viewCategory.stat].color }}
+                >
+                  {STATS[viewCategory.stat].label}
+                  {viewCategory.subLabel ? ` · ${viewCategory.subLabel}` : ""}
+                </p>
+              </div>
+            </div>
+
+            {viewingTodo.note && (
+              <p className="rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
+                {viewingTodo.note}
+              </p>
+            )}
+
+            <div className="grid grid-cols-3 gap-2">
+              <ViewMeta
+                label="Час"
+                value={
+                  viewingTodo.hour != null
+                    ? `${String(viewingTodo.hour).padStart(2, "0")}:${String(viewingTodo.minute ?? 0).padStart(2, "0")}`
+                    : "—"
+                }
+              />
+              <ViewMeta label="Длительность" value={fmtDuration(viewingTodo.duration ?? 60)} />
+              <ViewMeta label="Важность" value={PRIORITY_LABEL[viewingTodo.priority]} />
+            </div>
+
+            <div
+              className="flex items-center gap-3 rounded-2xl px-4 py-3.5"
+              style={{
+                background: `color-mix(in srgb, ${STATS[viewCategory.stat].color} 12%, var(--color-surface-2) 92%)`,
+              }}
+            >
+              <span className="text-[22px]" aria-hidden>
+                {STATS[viewCategory.stat].icon}
+              </span>
+              <div>
+                <p className="text-[15px] font-bold" style={{ color: STATS[viewCategory.stat].color }}>
+                  +{viewXp} XP
+                </p>
+                <p className="text-[12px] text-[var(--color-fg-dim)]">
+                  в {STATS[viewCategory.stat].label.toLowerCase()}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 rounded-2xl bg-[var(--color-surface-2)] px-4 py-3">
+              <span className="text-[16px]" aria-hidden>
+                🔥
+              </span>
+              <p className="text-[12.5px] font-medium text-[var(--color-fg-dim)]">
+                {dayActive ? "Этот день уже в серии" : "Выполнение закроет этот день в серию"}
+              </p>
+            </div>
+
+            <div>
+              <div className="mb-1.5 flex items-baseline justify-between">
+                <span className="text-[12px] font-semibold text-[var(--color-fg-dim)]">
+                  Покрытие дня
+                </span>
+                <span className="text-[12px] font-bold tabular-nums">{viewPercent}%</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${viewPercent}%`, background: STATS[viewCategory.stat].color }}
+                />
+              </div>
+              <p className="mt-1.5 text-[11px] leading-snug text-[var(--color-muted)]">
+                Чем важнее задача, тем больше её вклад в закрытие дня.
+              </p>
+            </div>
+
+            <Button
+              variant={isTodoDone(viewingTodo, day) ? "surface" : "primary"}
+              className="w-full"
+              onClick={() => toggleTodo(viewingTodo.id, day)}
+            >
+              {isTodoDone(viewingTodo, day) ? "Снять отметку" : "Отметить выполненным"}
+            </Button>
+          </div>
+        ) : (
         <div className="space-y-4">
           <input
             value={fTitle}
@@ -601,6 +692,7 @@ export default function TimelineSchedule({
             </Button>
           </div>
         </div>
+        )}
       </Modal>
 
       <style jsx>{`
@@ -681,6 +773,7 @@ function TimelineChip({
   onDragged: (offset: { x: number; y: number }, targetHour: number | null) => void;
 }) {
   const cat = categorizeTodo(todo.title);
+  const statColor = STATS[cat.stat].color;
   // onTap стреляет по времени нажатия, а не по расстоянию — быстрый перенос
   // чипа укладывается в то же окно и открыл бы шторку сразу вслед за
   // переносом без этого флага (тот же приём, что и у TrayChip ниже).
@@ -731,13 +824,13 @@ function TimelineChip({
       )}
       style={{
         // @ts-expect-error -- кастомное свойство для CSS ниже
-        "--chip-color": cat.color,
+        "--chip-color": statColor,
       }}
     >
       <div
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[16px]"
         style={{
-          background: `color-mix(in srgb, ${cat.color} 18%, var(--color-surface-2) 90%)`,
+          background: `color-mix(in srgb, ${statColor} 18%, var(--color-surface-2) 90%)`,
         }}
         aria-hidden
       >
@@ -752,15 +845,13 @@ function TimelineChip({
         >
           {todo.title}
         </p>
-        {cat.statLabel && (
-          <p
-            className="mt-0.5 truncate text-[10px] font-bold uppercase tracking-wide"
-            style={{ color: cat.color }}
-          >
-            {cat.statLabel}
-            {cat.subLabel ? ` · ${cat.subLabel}` : ""}
-          </p>
-        )}
+        <p
+          className="mt-0.5 truncate text-[10px] font-bold uppercase tracking-wide"
+          style={{ color: statColor }}
+        >
+          {STATS[cat.stat].label}
+          {cat.subLabel ? ` · ${cat.subLabel}` : ""}
+        </p>
       </div>
       <button
         type="button"
@@ -840,5 +931,15 @@ function TrayChip({
 function SheetLabel({ children }: { children: React.ReactNode }) {
   return (
     <p className="mb-2 text-[12px] font-semibold text-[var(--color-fg-dim)]">{children}</p>
+  );
+}
+
+/** Мета-плитка на экране просмотра задачи — по образцу Meta из ActionCard. */
+function ViewMeta({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-[var(--color-surface-2)] px-2.5 py-2.5 text-center">
+      <p className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">{label}</p>
+      <p className="mt-0.5 truncate text-[12.5px] font-semibold">{value}</p>
+    </div>
   );
 }

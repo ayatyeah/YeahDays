@@ -15,11 +15,12 @@
   --color-fg: #f2f2f5;
   --color-fg-dim: #a3a3b2;
 
-  /* 4 характеристики персонажа */
+  /* 5 характеристик персонажа */
   --color-strength: #ff7a68;
   --color-intelligence: #9584ff;
   --color-wealth: #f7bb4a;
   --color-stability: #46cba4;
+  --color-health: #ef6b8b;
 
   /* Подсветка активной вкладки в навигации — на тёмном фоне это белое
      полупрозрачное «стекло», на светлом (см. [data-theme="light"] ниже)

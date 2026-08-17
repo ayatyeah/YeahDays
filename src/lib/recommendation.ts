@@ -21,6 +21,7 @@ import { personalDuration } from "./durations";
 import {
   CATEGORIES,
   ENERGY_RANK,
+  STATS,
   currentSlot,
   type Action,
   type CategoryKey,
@@ -59,7 +60,7 @@ export function emptyHistory(): HistorySignals {
     rejected: {},
     completed: {},
     lastSeen: {},
-    statXp: { strength: 0, intelligence: 0, wealth: 0, stability: 0 },
+    statXp: { strength: 0, intelligence: 0, wealth: 0, stability: 0, health: 0 },
     categoryCompletion: {} as HistorySignals["categoryCompletion"],
     durations: {},
   };
@@ -386,7 +387,7 @@ function explain(
 }
 
 function statLabel(s: StatKey) {
-  return { strength: "Сила", intelligence: "Интеллект", wealth: "Капитал", stability: "Стабильность" }[s];
+  return STATS[s].label;
 }
 
 /**

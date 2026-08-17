@@ -8,6 +8,8 @@ interface ModalProps {
   open: boolean;
   onClose: () => void;
   title?: string;
+  /** Кнопка/элемент справа от заголовка — напр. "Изменить" на экране просмотра. */
+  headerAction?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -24,7 +26,7 @@ interface ModalProps {
  * На мобильном — лист снизу (items-end, под большой палец), на десктопе —
  * по центру.
  */
-export default function Modal({ open, onClose, title, children }: ModalProps) {
+export default function Modal({ open, onClose, title, headerAction, children }: ModalProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -64,10 +66,17 @@ export default function Modal({ open, onClose, title, children }: ModalProps) {
             transition={{ type: "spring", stiffness: 260, damping: 26 }}
           >
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[var(--color-border)] sm:hidden" />
-            {title && (
-              <h2 className="mb-4 text-lg font-semibold tracking-tight">
-                {title}
-              </h2>
+            {(title || headerAction) && (
+              <div className="mb-4 flex items-center gap-3">
+                {title && (
+                  <h2 className="text-lg font-semibold tracking-tight">{title}</h2>
+                )}
+                {/* ml-auto, а не justify-between на родителе — иначе при
+                    отсутствующем title единственный ребёнок (headerAction)
+                    уезжал к левому краю: justify-between нечего распределять
+                    между одним элементом. */}
+                {headerAction && <div className="ml-auto">{headerAction}</div>}
+              </div>
             )}
             {children}
             {/* Хром игнорирует padding-bottom на конце скролл-контейнера —

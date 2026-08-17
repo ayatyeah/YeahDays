@@ -9,8 +9,8 @@
 
 /* ────────────────────────  Характеристики персонажа  ──────────────────────── */
 
-/** 4 стата персонажа. Каждая категория действия качает свой стат. */
-export type StatKey = "strength" | "intelligence" | "wealth" | "stability";
+/** 5 статов персонажа. Каждая категория действия качает свой стат. */
+export type StatKey = "strength" | "intelligence" | "wealth" | "stability" | "health";
 
 export interface StatConfig {
   key: StatKey;
@@ -60,6 +60,15 @@ export const STATS: Record<StatKey, StatConfig> = {
     hex: "#3fbf9a",
     icon: "●",
   },
+  health: {
+    key: "health",
+    label: "Здоровье",
+    short: "HP",
+    hint: "Сон, питание, восстановление, самочувствие",
+    color: "var(--color-health)",
+    hex: "#ef6b8b",
+    icon: "❤️",
+  },
 };
 
 export const STAT_LIST = Object.values(STATS);
@@ -87,7 +96,7 @@ export interface CategoryConfig {
 
 export const CATEGORIES: Record<CategoryKey, CategoryConfig> = {
   fitness: { key: "fitness", label: "Спорт", stat: "strength", icon: "🏃" },
-  health: { key: "health", label: "Здоровье", stat: "strength", icon: "🌿" },
+  health: { key: "health", label: "Здоровье", stat: "health", icon: "🌿" },
   learning: { key: "learning", label: "Учёба", stat: "intelligence", icon: "📚" },
   creativity: { key: "creativity", label: "Творчество", stat: "intelligence", icon: "🎨" },
   money: { key: "money", label: "Финансы", stat: "wealth", icon: "💰" },
@@ -187,6 +196,7 @@ export const DEFAULT_GOALS: GoalWeights = {
   intelligence: 0.7,
   wealth: 0.5,
   stability: 0.5,
+  health: 0.6,
 };
 
 /* ────────────────────────  Экономика XP  ──────────────────────── */

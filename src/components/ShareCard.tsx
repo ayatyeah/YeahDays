@@ -45,6 +45,7 @@ export default function ShareCard() {
       intelligence: String(stats.intelligence),
       wealth: String(stats.wealth),
       stability: String(stats.stability),
+      health: String(stats.health),
     });
     return `/api/share?${p.toString()}`;
   }, [name, level, streak, done, xp, stats]);

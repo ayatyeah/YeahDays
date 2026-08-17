@@ -138,7 +138,7 @@ describe("подбор под состояние", () => {
   it("уважает приоритеты пользователя", () => {
     const deck = recommend(
       ctx({
-        goals: { strength: 1, intelligence: 0, wealth: 0, stability: 0 },
+        goals: { strength: 1, intelligence: 0, wealth: 0, stability: 0, health: 0 },
       }),
       10,
     );

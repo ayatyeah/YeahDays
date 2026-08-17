@@ -9,6 +9,7 @@
  */
 
 import { ImageResponse } from "next/og";
+import { STATS, type StatKey } from "@/lib/domain";
 
 export const runtime = "nodejs";
 
@@ -16,19 +17,7 @@ const BG = "#0e0f13";
 const FG = "#f4f4f5";
 const DIM = "#8b8d98";
 
-const STAT_COLORS: Record<string, string> = {
-  strength: "#f97362",
-  intelligence: "#8b7cf6",
-  wealth: "#f0b23f",
-  stability: "#3fbf9a",
-};
-
-const STAT_LABELS: Record<string, string> = {
-  strength: "Сила",
-  intelligence: "Интеллект",
-  wealth: "Капитал",
-  stability: "Стабильность",
-};
+const STAT_KEYS = Object.keys(STATS) as StatKey[];
 
 function clampInt(v: string | null, min: number, max: number, dflt: number) {
   const n = Number(v);
@@ -45,13 +34,11 @@ export async function GET(req: Request) {
   const done = clampInt(searchParams.get("done"), 0, 99999, 0);
   const xp = clampInt(searchParams.get("xp"), 0, 9_999_999, 0);
 
-  const stats = (["strength", "intelligence", "wealth", "stability"] as const).map(
-    (key) => ({
-      key,
-      value: clampInt(searchParams.get(key), 0, 9_999_999, 0),
-      color: STAT_COLORS[key],
-    }),
-  );
+  const stats = STAT_KEYS.map((key) => ({
+    key,
+    value: clampInt(searchParams.get(key), 0, 9_999_999, 0),
+    color: STATS[key].hex,
+  }));
   const maxStat = Math.max(...stats.map((s) => s.value), 1);
 
   return new ImageResponse(
@@ -160,7 +147,7 @@ export async function GET(req: Request) {
                   color: DIM,
                 }}
               >
-                {STAT_LABELS[s.key]}
+                {STATS[s.key].label}
               </div>
               <div
                 style={{

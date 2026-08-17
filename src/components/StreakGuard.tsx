@@ -22,6 +22,7 @@ import { track } from "@/lib/analytics";
 export default function StreakGuard() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const freezes = useUserStore((s) => s.freezes);
   const refillFreezes = useUserStore((s) => s.refillFreezes);
   const spendFreeze = useUserStore((s) => s.spendFreeze);
@@ -40,7 +41,7 @@ export default function StreakGuard() {
     const yKey = dateKey(yesterday);
     const bKey = dateKey(dayBefore);
 
-    const active = selectActiveDays(plan);
+    const active = selectActiveDays(plan, todos);
     const frozen = new Set(freezes.days);
     const covered = (k: string) => active.has(k) || frozen.has(k);
 
@@ -50,7 +51,7 @@ export default function StreakGuard() {
 
     spendFreeze(yKey);
     track("streak_saved_by_freeze");
-  }, [hydrated, plan, freezes, refillFreezes, spendFreeze]);
+  }, [hydrated, plan, todos, freezes, refillFreezes, spendFreeze]);
 
   return null;
 }

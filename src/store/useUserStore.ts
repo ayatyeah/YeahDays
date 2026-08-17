@@ -18,6 +18,7 @@ import {
 } from "@/lib/domain";
 import { emptyHistory, type HistorySignals } from "@/lib/recommendation";
 import { levelForXp } from "@/lib/leveling";
+import { categorizeTodo } from "@/lib/todoCategory";
 import { addSample } from "@/lib/durations";
 import { ALL_FEATURE_IDS } from "@/lib/features";
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "@/lib/notifyPlan";
@@ -1160,15 +1161,17 @@ export const useUserStore = create<UserState>()(
  */
 export function useStreak(): number {
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const frozen = useUserStore((s) => s.freezes.days);
-  return useMemo(() => selectStreak(plan, frozen), [plan, frozen]);
+  return useMemo(() => selectStreak(plan, frozen, todos), [plan, frozen, todos]);
 }
 
 /** Лучший стрик за всё время, тоже с учётом заморозок. */
 export function useBestStreak(): number {
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const frozen = useUserStore((s) => s.freezes.days);
-  return useMemo(() => selectBestStreak(plan, frozen), [plan, frozen]);
+  return useMemo(() => selectBestStreak(plan, frozen, todos), [plan, frozen, todos]);
 }
 
 /** Надёжное определение конца гидратации из localStorage. */
@@ -1223,14 +1226,6 @@ export const TODO_PRIORITY_XP: Record<TodoPriority, number> = {
   high: 22,
 };
 
-/** Час → стат, которому идёт XP — то же деление дня, что и у режима (routine.ts): утро/день/вечер/ночь. */
-function statForHour(h: number): StatKey {
-  if (h >= 5 && h < 11) return "strength";
-  if (h >= 11 && h < 16) return "intelligence";
-  if (h >= 16 && h < 21) return "wealth";
-  return "stability";
-}
-
 /** Сколько раз задача засчитана выполненной: разовая — 0/1, повторяющаяся — по числу дней в doneDays. */
 function todoCompletions(t: Todo): number {
   return t.repeat ? t.doneDays.length : t.done ? 1 : 0;
@@ -1241,12 +1236,14 @@ export function selectTodoXp(todos: Todo[]): number {
 }
 
 export function selectTodoStats(todos: Todo[]): Stats {
-  const stats: Stats = { strength: 0, intelligence: 0, wealth: 0, stability: 0 };
+  const stats: Stats = { strength: 0, intelligence: 0, wealth: 0, stability: 0, health: 0 };
   for (const t of todos) {
     const n = todoCompletions(t);
     if (!n) continue;
-    // без часа — час выполнения не хранится, берём текущий на момент подсчёта
-    const stat = statForHour(t.hour ?? new Date().getHours());
+    // тот же алгоритм, что решает, какой стат/иконку показать на карточке
+    // (см. lib/todoCategory.ts) — без этого стат на экране и начисленный
+    // XP могли бы разойтись между собой.
+    const stat = categorizeTodo(t.title).stat;
     stats[stat] += n * TODO_PRIORITY_XP[t.priority];
   }
   return stats;
@@ -1262,6 +1259,7 @@ export function selectStats(plan: PlannedTask[], todos: Todo[] = []): Stats {
     intelligence: 0,
     wealth: 0,
     stability: 0,
+    health: 0,
   };
   for (const t of plan) {
     if (!t.completed) continue;
@@ -1276,15 +1274,28 @@ export function selectLevel(plan: PlannedTask[], todos: Todo[] = []) {
   return levelForXp(selectTotalXp(plan, todos));
 }
 
-export function selectActiveDays(plan: PlannedTask[]): Set<string> {
+/**
+ * Дни, в которые что-то реально закрыто — действие из колоды ИЛИ задача
+ * календаря. Раньше стрик видел только план (действия), задачи календаря
+ * на него не влияли вообще, хотя они точно так же дают XP — экран
+ * просмотра задачи обещает "поможет стрику", и теперь это правда.
+ */
+export function selectActiveDays(plan: PlannedTask[], todos: Todo[] = []): Set<string> {
   const days = new Set<string>();
   for (const t of plan) if (t.completed) days.add(t.date);
+  for (const t of todos) {
+    if (t.repeat) {
+      for (const d of t.doneDays) days.add(d);
+    } else if (t.done) {
+      days.add(t.date);
+    }
+  }
   return days;
 }
 
 /** Дни, засчитанные в стрик: реально закрытые + спасённые заморозкой. */
-function streakDays(plan: PlannedTask[], frozen: string[] = []): Set<string> {
-  const days = selectActiveDays(plan);
+function streakDays(plan: PlannedTask[], frozen: string[] = [], todos: Todo[] = []): Set<string> {
+  const days = selectActiveDays(plan, todos);
   for (const d of frozen) days.add(d);
   return days;
 }
@@ -1297,8 +1308,9 @@ function streakDays(plan: PlannedTask[], frozen: string[] = []): Set<string> {
 export function selectStreak(
   plan: PlannedTask[],
   frozen: string[] = [],
+  todos: Todo[] = [],
 ): number {
-  const days = streakDays(plan, frozen);
+  const days = streakDays(plan, frozen, todos);
   if (days.size === 0) return 0;
   const cursor = new Date();
   if (!days.has(dateKey(cursor))) cursor.setDate(cursor.getDate() - 1);
@@ -1313,8 +1325,9 @@ export function selectStreak(
 export function selectBestStreak(
   plan: PlannedTask[],
   frozen: string[] = [],
+  todos: Todo[] = [],
 ): number {
-  const days = [...streakDays(plan, frozen)].sort();
+  const days = [...streakDays(plan, frozen, todos)].sort();
   let best = 0;
   let run = 0;
   let prev: Date | null = null;

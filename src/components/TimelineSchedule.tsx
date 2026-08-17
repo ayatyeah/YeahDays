@@ -13,9 +13,61 @@ import {
 } from "@/store/useUserStore";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
-import { dateKey } from "@/lib/domain";
+import { dateKey, STATS } from "@/lib/domain";
 import { routineLabelAt } from "@/lib/routine";
 import { cn } from "@/lib/cn";
+
+interface TodoCategory {
+  icon: string;
+  color: string;
+  statLabel: string;
+  subLabel?: string;
+}
+
+/**
+ * Иконка/подпись категории по заголовку задачи. У Todo нет отдельного поля
+ * категории (это не Action из движка рекомендаций, а свободный пункт
+ * плана) — угадываем по ключевым словам в названии, как уже делает
+ * anchorIcon() в HomeSection для якорей маршрута. Нераспознанные заголовки
+ * получают нейтральный фолбэк без подписи, а не падают или пустуют.
+ */
+function categorizeTodo(title: string): TodoCategory {
+  const t = title.toLowerCase();
+
+  // \b (граница слова) в JS регэкспах считает словом только [A-Za-z0-9_] —
+  // кириллица для \b невидима, и "\bбег\b" тихо НЕ матчит "бег" вообще
+  // (с обеих сторон "не-\w"). Поэтому у кириллических ключевых слов ниже —
+  // просто вхождение подстроки, без \b; \b оставлен только там, где слово
+  // латиницей (sleep/node/npm/git/ts/js).
+  if (/медитац/.test(t)) return { icon: "🧘", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/^sleep\b|сон/.test(t)) return { icon: "😴", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/душ/.test(t)) return { icon: "🚿", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/дыхательн/.test(t)) return { icon: "🌬️", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/подъём|подъем/.test(t)) return { icon: "⏰", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/обед|завтрак|перекус|ужин/.test(t)) return { icon: "🍽️", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/буфер|перерыв|пауза/.test(t)) return { icon: "⏸️", color: STATS.stability.color, statLabel: STATS.stability.label };
+  if (/растяжк|mobility/.test(t)) return { icon: "🤸", color: STATS.stability.color, statLabel: STATS.stability.label };
+
+  if (/interview|интервью|собеседован/.test(t)) {
+    return { icon: "🗣️", color: STATS.intelligence.color, statLabel: STATS.intelligence.label, subLabel: "Собеседования" };
+  }
+  if (/english|английск/.test(t)) {
+    return { icon: "📖", color: STATS.intelligence.color, statLabel: STATS.intelligence.label, subLabel: "Английский" };
+  }
+  if (/^ts:|typescript|\bnode\b|\bnpm\b|\bgit\b|react|массив|строки|базовые типы|^js:|javascript|алгоритм/.test(t)) {
+    return { icon: "💻", color: STATS.intelligence.color, statLabel: STATS.intelligence.label, subLabel: "Код" };
+  }
+
+  if (/push:|pull:|legs:|тренировк|бег|running|гантел|фитнес/.test(t)) {
+    return { icon: "💪", color: STATS.strength.color, statLabel: STATS.strength.label, subLabel: "Спорт" };
+  }
+
+  if (/yeahgrind|репо|проект|tiktok|съёмка|монтаж|didi/.test(t)) {
+    return { icon: "🛠️", color: STATS.wealth.color, statLabel: STATS.wealth.label, subLabel: "Проект" };
+  }
+
+  return { icon: "•", color: "var(--color-muted)", statLabel: "" };
+}
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
@@ -166,12 +218,6 @@ export default function TimelineSchedule({
         .filter((t) => t.hour! > nowHour && !isTodoDone(t, day))
         .sort((a, b) => a.hour! - b.hour!)[0]
     : undefined;
-
-  function cyclePriority(t: Todo) {
-    const next =
-      PRIORITY_ORDER[(PRIORITY_ORDER.indexOf(t.priority) + 1) % PRIORITY_ORDER.length]!;
-    updateTodo(t.id, { priority: next });
-  }
 
   function handleDragEnd(t: Todo, offset: { x: number; y: number }) {
     // Горизонтально дальше, чем вертикально — свайп "выполнено", не сдвиг часа.
@@ -371,14 +417,13 @@ export default function TimelineSchedule({
                       </button>
                     ) : (
                       rows.map((cluster, i) => (
-                        <div key={i} className="flex flex-wrap gap-1.5">
+                        <div key={i} className="flex gap-1.5">
                           {cluster.map((t) => (
                             <TimelineChip
                               key={t.id}
                               todo={t}
                               done={isTodoDone(t, day)}
-                              onCyclePriority={() => cyclePriority(t)}
-                              onDelete={() => removeTodo(t.id)}
+                              onToggleDone={() => toggleTodo(t.id, day)}
                               onOpen={() => openSheet(t)}
                               dragConstraints={containerRef}
                               onDragged={(offset) => handleDragEnd(t, offset)}
@@ -619,30 +664,31 @@ export default function TimelineSchedule({
 }
 
 /**
- * Плашка задачи в сетке часов. Ширина — по содержимому (не на всю строку):
- * плотный план читается как список коротких меток, а не как ряд длинных
- * прямоугольников с пустотой справа. Высота тоже по содержимому — раньше
- * она считалась от длительности задачи в пикселях, и на плотном плане с
- * задачами впритык друг к другу это неизбежно приводило к наложениям (см.
- * комментарий у hourRows в TimelineSchedule).
+ * Карточка задачи в сетке часов: цветной бейдж-иконка по угаданной
+ * категории, заголовок + подпись стата, чекбокс выполнения. Приоритет
+ * (тап по карточке → шторка) тут больше не редактируется в один тап —
+ * бейдж занят категорией, а быстрый свайп/чекбокс делают более частое
+ * действие (отметить сделанным) доступным без открытия шторки вообще.
+ * На всю ширину строки — не пилюля впритык к тексту: с бейджем и
+ * подписью карточка перестаёт быть "пустым прямоугольником", контент
+ * уже заполняет доступное место сам.
  */
 function TimelineChip({
   todo,
   done,
-  onCyclePriority,
-  onDelete,
+  onToggleDone,
   onOpen,
   dragConstraints,
   onDragged,
 }: {
   todo: Todo;
   done: boolean;
-  onCyclePriority: () => void;
-  onDelete: () => void;
+  onToggleDone: () => void;
   onOpen: () => void;
   dragConstraints: React.RefObject<HTMLDivElement | null>;
   onDragged: (offset: { x: number; y: number }) => void;
 }) {
+  const cat = categorizeTodo(todo.title);
   // onTap стреляет по времени нажатия, а не по расстоянию — быстрый перенос
   // чипа укладывается в то же окно и открыл бы шторку сразу вслед за
   // переносом без этого флага (тот же приём, что и у TrayChip ниже).
@@ -670,48 +716,58 @@ function TimelineChip({
       layout
       transition={{ type: "spring", stiffness: 500, damping: 40 }}
       className={cn(
-        "glass-chip group relative flex max-w-full shrink-0 cursor-grab items-center gap-2 overflow-hidden rounded-full py-1.5 pl-2.5 pr-2 active:cursor-grabbing",
+        "glass-chip group relative flex flex-1 cursor-grab items-center gap-3 overflow-hidden rounded-2xl p-2.5 active:cursor-grabbing",
         done && "opacity-55",
       )}
       style={{
         // @ts-expect-error -- кастомное свойство для CSS ниже
-        "--chip-color": PRIORITY_COLOR[todo.priority],
+        "--chip-color": cat.color,
       }}
     >
+      <div
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[16px]"
+        style={{
+          background: `color-mix(in srgb, ${cat.color} 18%, var(--color-surface-2) 90%)`,
+        }}
+        aria-hidden
+      >
+        {cat.icon}
+      </div>
+      <div className="min-w-0 flex-1 text-left">
+        <p
+          className={cn(
+            "line-clamp-2 text-[13px] font-semibold leading-tight text-[var(--color-fg)]",
+            done && "text-[var(--color-muted)] line-through",
+          )}
+        >
+          {todo.title}
+        </p>
+        {cat.statLabel && (
+          <p
+            className="mt-0.5 truncate text-[10px] font-bold uppercase tracking-wide"
+            style={{ color: cat.color }}
+          >
+            {cat.statLabel}
+            {cat.subLabel ? ` · ${cat.subLabel}` : ""}
+          </p>
+        )}
+      </div>
       <button
         type="button"
         onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation();
-          onCyclePriority();
+          onToggleDone();
         }}
-        className="h-2.5 w-2.5 shrink-0 rounded-full ring-4"
-        style={{
-          background: PRIORITY_COLOR[todo.priority],
-          // @ts-expect-error -- tailwind ring читает currentColor, а не наш кастомный цвет
-          "--tw-ring-color": `color-mix(in srgb, ${PRIORITY_COLOR[todo.priority]} 18%, transparent)`,
-        }}
-        aria-label="Сменить приоритет"
-      />
-      <span
+        aria-label={done ? "Снять отметку о выполнении" : "Отметить выполненным"}
         className={cn(
-          "min-w-0 truncate text-left text-[12.5px] font-semibold leading-tight text-[var(--color-fg)]",
-          done && "text-[var(--color-muted)] line-through",
+          "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[12px] font-bold transition",
+          done
+            ? "border-[var(--color-stability)] bg-[var(--color-stability)] text-white"
+            : "border-[var(--color-border-strong)] text-transparent",
         )}
       >
-        {todo.title}
-      </span>
-      <button
-        type="button"
-        onPointerDown={(e) => e.stopPropagation()}
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        className="shrink-0 text-[11px] text-[var(--color-muted)] opacity-0 transition hover:text-[var(--color-strength)] group-hover:opacity-100"
-        aria-label="Удалить задачу"
-      >
-        ✕
+        ✓
       </button>
     </motion.div>
   );

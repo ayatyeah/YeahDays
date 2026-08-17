@@ -20,17 +20,8 @@ import { cn } from "@/lib/cn";
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
 const DEFAULT_TO = 23;
-/** px на час — задаёт и высоту строки, и масштаб длительности задачи. */
+/** px на час — минимальная высота пустой строки сетки. */
 const ROW_HEIGHT = 76;
-const MIN_BLOCK_HEIGHT = 36;
-/** Потолок высоты плашки — длинные задачи (2+ часа) не растягиваются в
- *  длинный столбик, а остаются компактным прямоугольником с тем же видом,
- *  что и короткие. Сетка часов (ROW_HEIGHT) при этом не трогается. */
-const MAX_BLOCK_HEIGHT = 58;
-/** Гарантированный видимый зазор между соседними плашками, идущими впритык
- *  по времени — раньше он был жёстко зашит как "-4"/"-2" в разных местах и
- *  на практике съедался почти до нуля, из-за чего задачи выглядели слипшимися. */
-const BLOCK_GAP = 6;
 const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -73,14 +64,6 @@ export default function TimelineSchedule({
   const [expanded, setExpanded] = useState(!compact);
   const [showNight, setShowNight] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  /**
-   * onTap у framer-motion срабатывает по ВРЕМЕНИ между нажатием и отпусканием,
-   * а не по пройденному расстоянию — быстрый перенос задачи на другой час
-   * укладывается в это окно, и onTap стреляет ВМЕСТЕ с onDragEnd. Без этого
-   * флага перетаскивание тут же открывало шторку редактирования сразу после
-   * переноса — человек ничего не касался, а карточка "Задача" уже открыта.
-   */
-  const justDraggedRef = useRef(false);
 
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -128,16 +111,19 @@ export default function TimelineSchedule({
   );
 
   /**
-   * Раскладка плашек по реальному пересечению времени, а не по общему часу.
-   * Раньше "делим ширину пополам" срабатывало для ЛЮБЫХ двух задач в одном
-   * часе — даже если одна кончается ровно там, где начинается другая (10
-   * минут подъёма и следом полтора часа тренировки не пересекаются вообще,
-   * но обе попадали в час "06" и жались в узкие половинки). Теперь колонка
-   * нужна только тем задачам, что реально идут одновременно — как в
-   * обычном календаре (алгоритм "meeting rooms": каждой задаче — первая
-   * освободившаяся к её началу колонка).
+   * Раскладка по реальному пересечению времени, а не по пикселям на минуту.
+   * Абсолютное позиционирование "высота = длительность" не работает на
+   * плотном плане, где короткие буферы/душ/медитация идут впритык друг за
+   * другом (гэп 10-15 минут): при разумной высоте строки часа этим 10-15
+   * минутам физически не хватает пикселей на читаемую карточку — любая
+   * минимальная высота неизбежно заезжает на соседа. Вместо пиксельной
+   * математики — обычный поток: задачи в пределах часа просто стоят
+   * друг под другом по порядку, без наложений в принципе (гарантия
+   * браузерного layout, а не подогнанных констант). Колонка (бок о бок)
+   * нужна только тем немногим задачам, что реально идут ОДНОВРЕМЕННО —
+   * "meeting rooms": первая освободившаяся к её началу колонка.
    */
-  const layout = useMemo(() => {
+  const hourRows = useMemo(() => {
     const visible = scheduled.filter((t) => !overdueIds.has(t.id));
     const withRange = visible
       .map((t) => {
@@ -146,57 +132,29 @@ export default function TimelineSchedule({
       })
       .sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
 
-    const result: { todo: Todo; startMin: number; column: number; columns: number; capEndMin?: number }[] = [];
+    const clusters: (typeof withRange)[] = [];
     let cluster: typeof withRange = [];
     let clusterMaxEnd = -Infinity;
-
-    const flushCluster = () => {
-      if (cluster.length === 0) return;
-      const columnEnds: number[] = [];
-      const startIdx = result.length;
-      for (const item of cluster) {
-        let col = columnEnds.findIndex((end) => end <= item.startMin);
-        if (col === -1) {
-          col = columnEnds.length;
-          columnEnds.push(item.endMin);
-        } else {
-          columnEnds[col] = item.endMin;
-        }
-        result.push({ todo: item.todo, startMin: item.startMin, column: col, columns: 0 });
-      }
-      const columns = columnEnds.length;
-      for (let i = startIdx; i < result.length; i++) result[i]!.columns = columns;
-      cluster = [];
-      clusterMaxEnd = -Infinity;
-    };
-
     for (const item of withRange) {
-      if (cluster.length > 0 && item.startMin >= clusterMaxEnd) flushCluster();
+      if (cluster.length > 0 && item.startMin >= clusterMaxEnd) {
+        clusters.push(cluster);
+        cluster = [];
+        clusterMaxEnd = -Infinity;
+      }
       cluster.push(item);
       clusterMaxEnd = Math.max(clusterMaxEnd, item.endMin);
     }
-    flushCluster();
+    if (cluster.length > 0) clusters.push(cluster);
 
-    /**
-     * У короткой задачи (10-15 минут) есть минимальная высота карточки —
-     * иначе такую задачу саму по себе, без соседей, было бы не видно и не
-     * нажать. Но когда короткие задачи идут впритык одна за другой (весь
-     * этот план — сплошь буферы/душ/дыхательная между длинными блоками),
-     * эта минимальная высота у ПЕРВОЙ заезжает поверх начала ВТОРОЙ — они
-     * визуально накладываются, хотя по времени не пересекаются вообще.
-     * Обрезаем рендер-высоту по старту следующей задачи (по времени, не по
-     * колонке — так безопаснее и для будущих реально одновременных задач).
-     */
-    const byStart = [...result].sort((a, b) => a.startMin - b.startMin);
-    const capMinByTodoId = new Map<string, number>();
-    for (let i = 0; i < byStart.length - 1; i++) {
-      capMinByTodoId.set(byStart[i]!.todo.id, byStart[i + 1]!.startMin);
+    const map = new Map<number, Todo[][]>();
+    for (const c of clusters) {
+      const hour = c[0]!.todo.hour!;
+      const arr = map.get(hour) ?? [];
+      arr.push(c.map((item) => item.todo));
+      map.set(hour, arr);
     }
-
-    return result.map((r) => ({ ...r, capEndMin: capMinByTodoId.get(r.todo.id) ?? Infinity }));
+    return map;
   }, [scheduled, overdueIds]);
-
-  const hoursWithBlocks = useMemo(() => new Set(layout.map((l) => l.todo.hour!)), [layout]);
 
   const filled = scheduled.length - overdue.length;
 
@@ -374,141 +332,65 @@ export default function TimelineSchedule({
             </div>
           )}
 
-          <div className="flex">
-            {/* Подписи часов — своя колонка, чтобы не мешать расчёту позиции плашек. */}
-            <div className="w-14 shrink-0">
-              {hours.map((h) => {
-                const isNow = isToday && h === nowHour;
-                return (
+          {/* Сетка часов: подпись + стопка задач в одной строке flex — задачи
+              просто стоят друг под другом в потоке, без пиксельной математики
+              и без риска наложения (см. комментарий у hourRows выше). */}
+          <div ref={containerRef} className="flex flex-col">
+            {hours.map((h) => {
+              const isNow = isToday && h === nowHour;
+              const routine = routineLabelAt(weekday, h);
+              const rows = hourRows.get(h) ?? [];
+              return (
+                <div
+                  key={h}
+                  className={cn(
+                    "flex border-b border-[var(--color-border)] last:border-b-0",
+                    isNow && "bg-[var(--color-surface-2)]",
+                  )}
+                >
                   <div
-                    key={h}
-                    style={{ height: ROW_HEIGHT }}
+                    style={{ minHeight: ROW_HEIGHT }}
                     className={cn(
-                      "flex items-center justify-center border-b border-[var(--color-border)] text-[12px] tabular-nums last:border-b-0",
+                      "flex w-14 shrink-0 items-center justify-center text-[12px] tabular-nums",
                       isNow ? "font-bold text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                     )}
                   >
                     {String(h).padStart(2, "0")}:00
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Сетка часов + плашки задач поверх (absolute, координаты — только относительно этого контейнера). */}
-            <div ref={containerRef} className="relative min-w-0 flex-1">
-              {hours.map((h) => {
-                const isNow = isToday && h === nowHour;
-                const routine = routineLabelAt(weekday, h);
-                const hasBlocks = hoursWithBlocks.has(h);
-                return (
                   <div
-                    key={h}
-                    style={{ height: ROW_HEIGHT }}
-                    className={cn(
-                      "border-b border-[var(--color-border)] px-2 last:border-b-0",
-                      isNow && "bg-[var(--color-surface-2)]",
-                    )}
+                    style={{ minHeight: ROW_HEIGHT }}
+                    className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-2 py-2"
                   >
-                    {!hasBlocks && (
+                    {rows.length === 0 ? (
                       <button
                         type="button"
-                        onClick={() => (compact ? openSheet(null, h) : openSheet(null, h))}
+                        onClick={() => openSheet(null, h)}
                         className="flex h-full w-full items-center text-left text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
                       >
                         {routine ?? "Добавить задачу"}
                       </button>
+                    ) : (
+                      rows.map((cluster, i) => (
+                        <div key={i} className="flex flex-wrap gap-1.5">
+                          {cluster.map((t) => (
+                            <TimelineChip
+                              key={t.id}
+                              todo={t}
+                              done={isTodoDone(t, day)}
+                              onCyclePriority={() => cyclePriority(t)}
+                              onDelete={() => removeTodo(t.id)}
+                              onOpen={() => openSheet(t)}
+                              dragConstraints={containerRef}
+                              onDragged={(offset) => handleDragEnd(t, offset)}
+                            />
+                          ))}
+                        </div>
+                      ))
                     )}
                   </div>
-                );
-              })}
-
-              {layout.map(({ todo: t, startMin, column, columns, capEndMin }) => {
-                  const top = (startMin / 60 - startHour) * ROW_HEIGHT + 2;
-                  const desiredHeight = Math.min(
-                    MAX_BLOCK_HEIGHT,
-                    Math.max(MIN_BLOCK_HEIGHT, ((t.duration ?? 60) / 60) * ROW_HEIGHT - BLOCK_GAP),
-                  );
-                  // Не даём плашке заехать поверх начала следующей — обрезаем
-                  // по фактическому старту соседа, оставляя видимый зазор.
-                  const availableHeight =
-                    ((capEndMin ?? Infinity) / 60 - startHour) * ROW_HEIGHT + 2 - BLOCK_GAP - top;
-                  const height = Math.max(22, Math.min(desiredHeight, availableHeight));
-                  const compact = height < 34;
-                  const widthPct = 100 / columns;
-                  const done = isTodoDone(t, day);
-                  return (
-                    <motion.div
-                      key={t.id}
-                      drag
-                      dragConstraints={containerRef}
-                      dragElastic={0.1}
-                      dragMomentum={false}
-                      dragSnapToOrigin
-                      onDragStart={() => {
-                        justDraggedRef.current = true;
-                      }}
-                      onDragEnd={(_, info) => {
-                        handleDragEnd(t, info.offset);
-                        // сбрасываем на следующий кадр — framer успевает
-                        // выстрелить onTap сразу вслед за onDragEnd
-                        requestAnimationFrame(() => {
-                          justDraggedRef.current = false;
-                        });
-                      }}
-                      onTap={() => {
-                        if (justDraggedRef.current) return;
-                        openSheet(t);
-                      }}
-                      layout
-                      transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                      className="glass-chip group absolute cursor-grab overflow-hidden rounded-xl px-2 py-1 active:cursor-grabbing"
-                      style={{
-                        top,
-                        height,
-                        left: `calc(${column * widthPct}% + ${column > 0 ? 3 : 0}px)`,
-                        width: `calc(${widthPct}% - 3px)`,
-                        // @ts-expect-error -- кастомное свойство для CSS ниже
-                        "--chip-color": PRIORITY_COLOR[t.priority],
-                      }}
-                    >
-                      <div className="flex h-full items-center gap-1.5">
-                        <button
-                          type="button"
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            cyclePriority(t);
-                          }}
-                          className="h-2 w-2 shrink-0 rounded-full"
-                          style={{ background: PRIORITY_COLOR[t.priority] }}
-                          aria-label="Сменить приоритет"
-                        />
-                        <span
-                          className={cn(
-                            "min-w-0 flex-1 text-left text-[12px] font-medium leading-tight",
-                            compact ? "line-clamp-1" : "line-clamp-2",
-                            done && "text-[var(--color-muted)] line-through",
-                          )}
-                        >
-                          {t.title}
-                        </span>
-                        <button
-                          type="button"
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeTodo(t.id);
-                          }}
-                          className="shrink-0 text-[11px] text-[var(--color-muted)] opacity-0 transition hover:text-[var(--color-strength)] group-hover:opacity-100"
-                          aria-label="Удалить задачу"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-            </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -708,24 +590,130 @@ export default function TimelineSchedule({
            матчится вообще: ни фона, ни рамки, ни тени — просто голый текст
            поверх сетки. */
         /*
-         * Раньше — полупрозрачный фон + диагональный блик (глянец). На
-         * плотном плане, где карточки часто идут почти впритык друг к
-         * другу, полупрозрачность и блики соседних карточек просвечивали
-         * друг сквозь друга и мешали читать — особенно на границах. Теперь
-         * — плоский, непрозрачный матовый фон, без градиента-блика.
+         * Раньше плашка заливалась цветом приоритета целиком — на плотном
+         * плане, где почти все задачи "normal", это давало один и тот же
+         * блёклый оттенок сплошь по всему расписанию: цвет переставал
+         * что-либо различать. Теперь фон нейтральный (та же поверхность,
+         * что у карточек по всему приложению), а цвет приоритета остаётся
+         * только в точке и тонкой рамке — акцент вместо заливки, и высокий
+         * приоритет реально выделяется на фоне остальных, а не тонет в них.
          */
         :global(.glass-chip) {
-          background: color-mix(in srgb, var(--chip-color) 20%, var(--color-surface-2) 96%);
-          border: 1px solid color-mix(in srgb, var(--chip-color) 50%, transparent);
+          background: var(--color-surface);
+          border: 1px solid color-mix(in srgb, var(--chip-color) 42%, var(--color-border-strong) 62%);
+          box-shadow: var(--shadow-1);
           transition:
             box-shadow 0.15s,
+            border-color 0.15s,
             transform 0.15s;
         }
+        :global(.glass-chip:hover) {
+          border-color: color-mix(in srgb, var(--chip-color) 62%, var(--color-border-strong) 38%);
+        }
         :global(.glass-chip:active) {
-          box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--chip-color) 60%, transparent);
+          box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--chip-color) 55%, transparent);
         }
       `}</style>
     </section>
+  );
+}
+
+/**
+ * Плашка задачи в сетке часов. Ширина — по содержимому (не на всю строку):
+ * плотный план читается как список коротких меток, а не как ряд длинных
+ * прямоугольников с пустотой справа. Высота тоже по содержимому — раньше
+ * она считалась от длительности задачи в пикселях, и на плотном плане с
+ * задачами впритык друг к другу это неизбежно приводило к наложениям (см.
+ * комментарий у hourRows в TimelineSchedule).
+ */
+function TimelineChip({
+  todo,
+  done,
+  onCyclePriority,
+  onDelete,
+  onOpen,
+  dragConstraints,
+  onDragged,
+}: {
+  todo: Todo;
+  done: boolean;
+  onCyclePriority: () => void;
+  onDelete: () => void;
+  onOpen: () => void;
+  dragConstraints: React.RefObject<HTMLDivElement | null>;
+  onDragged: (offset: { x: number; y: number }) => void;
+}) {
+  // onTap стреляет по времени нажатия, а не по расстоянию — быстрый перенос
+  // чипа укладывается в то же окно и открыл бы шторку сразу вслед за
+  // переносом без этого флага (тот же приём, что и у TrayChip ниже).
+  const justDraggedRef = useRef(false);
+  return (
+    <motion.div
+      drag
+      dragConstraints={dragConstraints}
+      dragElastic={0.1}
+      dragMomentum={false}
+      dragSnapToOrigin
+      onDragStart={() => {
+        justDraggedRef.current = true;
+      }}
+      onDragEnd={(_, info) => {
+        onDragged(info.offset);
+        requestAnimationFrame(() => {
+          justDraggedRef.current = false;
+        });
+      }}
+      onTap={() => {
+        if (justDraggedRef.current) return;
+        onOpen();
+      }}
+      layout
+      transition={{ type: "spring", stiffness: 500, damping: 40 }}
+      className={cn(
+        "glass-chip group relative flex max-w-full shrink-0 cursor-grab items-center gap-2 overflow-hidden rounded-full py-1.5 pl-2.5 pr-2 active:cursor-grabbing",
+        done && "opacity-55",
+      )}
+      style={{
+        // @ts-expect-error -- кастомное свойство для CSS ниже
+        "--chip-color": PRIORITY_COLOR[todo.priority],
+      }}
+    >
+      <button
+        type="button"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          onCyclePriority();
+        }}
+        className="h-2.5 w-2.5 shrink-0 rounded-full ring-4"
+        style={{
+          background: PRIORITY_COLOR[todo.priority],
+          // @ts-expect-error -- tailwind ring читает currentColor, а не наш кастомный цвет
+          "--tw-ring-color": `color-mix(in srgb, ${PRIORITY_COLOR[todo.priority]} 18%, transparent)`,
+        }}
+        aria-label="Сменить приоритет"
+      />
+      <span
+        className={cn(
+          "min-w-0 truncate text-left text-[12.5px] font-semibold leading-tight text-[var(--color-fg)]",
+          done && "text-[var(--color-muted)] line-through",
+        )}
+      >
+        {todo.title}
+      </span>
+      <button
+        type="button"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="shrink-0 text-[11px] text-[var(--color-muted)] opacity-0 transition hover:text-[var(--color-strength)] group-hover:opacity-100"
+        aria-label="Удалить задачу"
+      >
+        ✕
+      </button>
+    </motion.div>
   );
 }
 

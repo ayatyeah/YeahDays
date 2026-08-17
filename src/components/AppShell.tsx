@@ -5,6 +5,7 @@ import {
   useEffect,
   useLayoutEffect,
   useRef,
+  useState,
 } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
@@ -81,6 +82,9 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
 
   const stageRef = useRef<HTMLDivElement>(null);
   const prevTab = useRef<TabKey>(initialTab);
+  const exitFromRef = useRef<TabKey>(initialTab);
+  /** Раздел, доигрывающий fade-out после переключения — см. эффект ниже и .section-pane-exiting в globals.css. */
+  const [exitingTab, setExitingTab] = useState<TabKey | null>(null);
 
   /*
    * Раздел, с которого открылось приложение. Ставится ДО первой отрисовки:
@@ -124,6 +128,45 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     );
     return () => cancelAnimationFrame(raf);
   }, [tab, setScroll]);
+
+  /**
+   * ── Уход раздела: старый доигрывает fade-out, а не пропадает мгновенно.
+   *
+   * Раньше [hidden] у старого и нового раздела переключались в ОДНОМ
+   * React-рендере — высота .app-stage скачком менялась на высоту нового
+   * раздела ДО того, как анимация въезда успевала это сгладить, и это
+   * читалось как рывок/наложение разных по размеру страниц. Теперь старый
+   * раздел ещё кадр-другой остаётся в DOM (не [hidden]), но CSS уводит его
+   * в position: absolute (.section-pane-exiting) — высоту .app-stage сразу
+   * и только определяет новый раздел, а старый просто гаснет поверх, не
+   * растягивая контейнер.
+   */
+  useEffect(() => {
+    const from = exitFromRef.current;
+    exitFromRef.current = tab;
+    if (from === tab) return;
+    setExitingTab(from);
+    const timer = window.setTimeout(() => setExitingTab(null), 200);
+    return () => window.clearTimeout(timer);
+  }, [tab]);
+
+  useEffect(() => {
+    if (!exitingTab || prefersReducedMotion()) return;
+    const stage = stageRef.current;
+    const el = stage?.querySelector<HTMLElement>(`[data-section="${exitingTab}"]`);
+    if (!el) return;
+    try {
+      el.animate(
+        [
+          { opacity: 1, transform: "translate3d(0, 0, 0)" },
+          { opacity: 0, transform: `translate3d(${dir * -20}px, 0, 0)` },
+        ],
+        { duration: 190, easing: "cubic-bezier(0.4, 0, 1, 1)" },
+      );
+    } catch {
+      // Web Animations нет — раздел просто исчезнет без анимации
+    }
+  }, [exitingTab, dir]);
 
   /* ── Появление раздела: направленное, на GPU, без перерисовки страницы ── */
   useEffect(() => {
@@ -269,7 +312,9 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   return (
     <div
       ref={stageRef}
-      className="app-stage flex flex-1 flex-col"
+      // relative — точка отсчёта для .section-pane-exiting (position:absolute,
+      // inset:0): уходящий раздел оверлеит ровно ту же область, что и .app-stage.
+      className="app-stage relative flex flex-1 flex-col"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -278,21 +323,27 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       {TABS.filter((t) => mounted.includes(t)).map((t) => {
         const Section = SECTIONS[t];
         const active = t === tab;
+        const exiting = t === exitingTab;
         return (
           <div
             key={t}
             data-section={t}
             {...(active ? { "data-section-active": "" } : {})}
             // скрытый раздел остаётся в дереве, но полностью выключен:
-            // ни отрисовки, ни фокуса, ни озвучки скринридером
-            hidden={!active}
+            // ни отрисовки, ни фокуса, ни озвучки скринридером. Уходящий
+            // (exiting) — ещё видим и доигрывает fade-out, см. эффект ниже.
+            hidden={!active && !exiting}
             aria-hidden={!active}
             inert={!active}
             // "today" один занимает всю ширину под свою сетку колонок
             // (см. TodaySection); остальным на широких экранах даём
             // читаемую колонку по центру, а не растягиваем во всю ширину —
             // их внутренняя вёрстка не рассчитана на 1100px в одну колонку.
-            className={cn("section-pane", t !== "today" && "lg:mx-auto lg:max-w-2xl lg:w-full")}
+            className={cn(
+              "section-pane",
+              exiting && "section-pane-exiting",
+              t !== "today" && "lg:mx-auto lg:max-w-2xl lg:w-full",
+            )}
           >
             <Section />
           </div>

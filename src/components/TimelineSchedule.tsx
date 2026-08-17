@@ -163,47 +163,29 @@ export default function TimelineSchedule({
   );
 
   /**
-   * Раскладка по реальному пересечению времени, а не по пикселям на минуту.
-   * Абсолютное позиционирование "высота = длительность" не работает на
-   * плотном плане, где короткие буферы/душ/медитация идут впритык друг за
-   * другом (гэп 10-15 минут): при разумной высоте строки часа этим 10-15
-   * минутам физически не хватает пикселей на читаемую карточку — любая
-   * минимальная высота неизбежно заезжает на соседа. Вместо пиксельной
-   * математики — обычный поток: задачи в пределах часа просто стоят
-   * друг под другом по порядку, без наложений в принципе (гарантия
-   * браузерного layout, а не подогнанных констант). Колонка (бок о бок)
-   * нужна только тем немногим задачам, что реально идут ОДНОВРЕМЕННО —
-   * "meeting rooms": первая освободившаяся к её началу колонка.
+   * Раскладка по часу задачи, без попытки визуализировать пересечения по
+   * времени колонками. Было три захода на "честном" пересечении (абсолютные
+   * пиксели → кластеры + колонки), и каждый ломался заново: пиксельная
+   * математика не помещала короткие задачи впритык друг к другу в читаемую
+   * высоту, а кластеризация по реальному overlap корректно, но неюзабельно
+   * схлопывала 3+ карточки в один ряд поровну — когда перетащенная длинная
+   * задача начинала "перекрывать" пару соседних, всё превращалось в ряд
+   * нечитаемых иконок без подписей. Для личного ежедневника это не рабочий
+   * стол диспетчера встреч: настоящее одновременное пересечение — почти
+   * всегда случайность (перетащил не в тот час), а не сценарий, который
+   * стоит поддерживать колонками. Теперь просто: у каждой задачи есть свой
+   * час — она стоит в его строке, друг под другом, всегда во всю ширину.
+   * Наложиться в принципе не может (гарантия браузерного потока), а редкое
+   * реальное двойное бронирование просто видно как две карточки подряд.
    */
   const hourRows = useMemo(() => {
     const visible = scheduled.filter((t) => !overdueIds.has(t.id));
-    const withRange = visible
-      .map((t) => {
-        const startMin = t.hour! * 60 + (t.minute ?? 0);
-        return { todo: t, startMin, endMin: startMin + (t.duration ?? 60) };
-      })
-      .sort((a, b) => a.startMin - b.startMin || a.endMin - b.endMin);
-
-    const clusters: (typeof withRange)[] = [];
-    let cluster: typeof withRange = [];
-    let clusterMaxEnd = -Infinity;
-    for (const item of withRange) {
-      if (cluster.length > 0 && item.startMin >= clusterMaxEnd) {
-        clusters.push(cluster);
-        cluster = [];
-        clusterMaxEnd = -Infinity;
-      }
-      cluster.push(item);
-      clusterMaxEnd = Math.max(clusterMaxEnd, item.endMin);
-    }
-    if (cluster.length > 0) clusters.push(cluster);
-
-    const map = new Map<number, Todo[][]>();
-    for (const c of clusters) {
-      const hour = c[0]!.todo.hour!;
-      const arr = map.get(hour) ?? [];
-      arr.push(c.map((item) => item.todo));
-      map.set(hour, arr);
+    const sorted = [...visible].sort((a, b) => (a.minute ?? 0) - (b.minute ?? 0));
+    const map = new Map<number, Todo[]>();
+    for (const t of sorted) {
+      const arr = map.get(t.hour!) ?? [];
+      arr.push(t);
+      map.set(t.hour!, arr);
     }
     return map;
   }, [scheduled, overdueIds]);
@@ -219,32 +201,45 @@ export default function TimelineSchedule({
         .sort((a, b) => a.hour! - b.hour!)[0]
     : undefined;
 
-  function handleDragEnd(t: Todo, offset: { x: number; y: number }) {
+  /**
+   * Час назначения при вертикальном перетаскивании — по РЕАЛЬНОМУ DOM-
+   * элементу под точкой отпускания (у него есть data-hour), а не по формуле
+   * "пиксели / ROW_HEIGHT". Формула предполагала, что каждый час занимает
+   * ровно ROW_HEIGHT — верно, только пока час пуст; строка с несколькими
+   * задачами внутри выше, и формула на такой сетке промахивалась мимо
+   * соседних часов (в т.ч. не давала попасть ровно на нужный час) и после
+   * переноса выглядела как рандомный скачок. document.elementFromPoint
+   * не ошибается, какая бы ни была высота строк.
+   */
+  function handleDragEnd(t: Todo, offset: { x: number; y: number }, targetHour: number | null) {
     // Горизонтально дальше, чем вертикально — свайп "выполнено", не сдвиг часа.
     if (Math.abs(offset.x) > Math.abs(offset.y) && Math.abs(offset.x) > 56) {
       toggleTodo(t.id, day);
       return;
     }
-    const deltaHours = Math.round(offset.y / ROW_HEIGHT);
-    if (!deltaHours) return;
-    const next = Math.min(endHour, Math.max(startHour, t.hour! + deltaHours));
-    if (next !== t.hour) updateTodo(t.id, { hour: next });
+    if (targetHour == null || targetHour === t.hour) return;
+    // minute: 0 — иначе задача с ненулевой минутой (скажем, 14:30) при
+    // переносе на 15:00 садится на 15:30, её длительность реально наезжает
+    // на соседние задачи по времени, и кластеризация (справедливо) начинает
+    // считать их одновременными — несколько НЕ связанных с переносом задач
+    // визуально сжимаются в один ряд. Перенос часом всегда даёт чистое :00,
+    // точную минуту можно выставить потом через шторку.
+    updateTodo(t.id, { hour: targetHour, minute: 0 });
   }
 
   /**
    * Перетаскивание задачи из лотка "Без часа" прямо на сетку часов —
-   * альтернатива открытию шторки ради одного тапа на "Час". Лоток и сетка
-   * не связаны родитель/потомок (лоток выше сетки, отдельный блок), поэтому
-   * offset (дельта от старта) тут бесполезен — берём абсолютную точку
-   * указателя (info.point, координаты вьюпорта) и сверяем с реальным
-   * прямоугольником сетки, а не с тем, где чип начал путь.
+   * альтернатива открытию шторки ради одного тапа на "Час". Тот же приём:
+   * час берём из data-hour реального элемента под точкой отпускания.
    */
   function handleTrayDrop(t: Todo, info: PanInfo) {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect || info.point.y < rect.top || info.point.y > rect.bottom) return; // отпустили не над сеткой — чип просто вернётся на место
-    const hour = startHour + Math.floor((info.point.y - rect.top) / ROW_HEIGHT);
-    const clamped = Math.min(endHour, Math.max(startHour, hour));
-    updateTodo(t.id, { hour: clamped, minute: 0 });
+    const hourEl = document
+      .elementFromPoint(info.point.x, info.point.y)
+      ?.closest<HTMLElement>("[data-hour]");
+    if (!hourEl) return; // отпустили не над сеткой — чип просто вернётся на место
+    const hour = Number(hourEl.dataset.hour);
+    if (!Number.isFinite(hour)) return;
+    updateTodo(t.id, { hour, minute: 0 });
   }
 
   function openSheet(t: Todo | null, presetHour?: number) {
@@ -389,6 +384,7 @@ export default function TimelineSchedule({
               return (
                 <div
                   key={h}
+                  data-hour={h}
                   className={cn(
                     "flex border-b border-[var(--color-border)] last:border-b-0",
                     isNow && "bg-[var(--color-surface-2)]",
@@ -416,20 +412,16 @@ export default function TimelineSchedule({
                         {routine ?? "Добавить задачу"}
                       </button>
                     ) : (
-                      rows.map((cluster, i) => (
-                        <div key={i} className="flex gap-1.5">
-                          {cluster.map((t) => (
-                            <TimelineChip
-                              key={t.id}
-                              todo={t}
-                              done={isTodoDone(t, day)}
-                              onToggleDone={() => toggleTodo(t.id, day)}
-                              onOpen={() => openSheet(t)}
-                              dragConstraints={containerRef}
-                              onDragged={(offset) => handleDragEnd(t, offset)}
-                            />
-                          ))}
-                        </div>
+                      rows.map((t) => (
+                        <TimelineChip
+                          key={t.id}
+                          todo={t}
+                          done={isTodoDone(t, day)}
+                          onToggleDone={() => toggleTodo(t.id, day)}
+                          onOpen={() => openSheet(t)}
+                          dragConstraints={containerRef}
+                          onDragged={(offset, targetHour) => handleDragEnd(t, offset, targetHour)}
+                        />
                       ))
                     )}
                   </div>
@@ -686,15 +678,17 @@ function TimelineChip({
   onToggleDone: () => void;
   onOpen: () => void;
   dragConstraints: React.RefObject<HTMLDivElement | null>;
-  onDragged: (offset: { x: number; y: number }) => void;
+  onDragged: (offset: { x: number; y: number }, targetHour: number | null) => void;
 }) {
   const cat = categorizeTodo(todo.title);
   // onTap стреляет по времени нажатия, а не по расстоянию — быстрый перенос
   // чипа укладывается в то же окно и открыл бы шторку сразу вслед за
   // переносом без этого флага (тот же приём, что и у TrayChip ниже).
   const justDraggedRef = useRef(false);
+  const chipRef = useRef<HTMLDivElement>(null);
   return (
     <motion.div
+      ref={chipRef}
       drag
       dragConstraints={dragConstraints}
       dragElastic={0.1}
@@ -702,9 +696,19 @@ function TimelineChip({
       dragSnapToOrigin
       onDragStart={() => {
         justDraggedRef.current = true;
+        // На момент onDragEnd карточка ещё визуально стоит в точке
+        // отпускания (dragSnapToOrigin отъезжает НАЗАД уже ПОСЛЕ) — без
+        // этого elementFromPoint ниже находил бы саму карточку, а не
+        // строку часа под ней.
+        if (chipRef.current) chipRef.current.style.pointerEvents = "none";
       }}
       onDragEnd={(_, info) => {
-        onDragged(info.offset);
+        const hourEl = document
+          .elementFromPoint(info.point.x, info.point.y)
+          ?.closest<HTMLElement>("[data-hour]");
+        if (chipRef.current) chipRef.current.style.pointerEvents = "";
+        const targetHour = hourEl ? Number(hourEl.dataset.hour) : null;
+        onDragged(info.offset, targetHour !== null && Number.isFinite(targetHour) ? targetHour : null);
         requestAnimationFrame(() => {
           justDraggedRef.current = false;
         });
@@ -716,7 +720,7 @@ function TimelineChip({
       layout
       transition={{ type: "spring", stiffness: 500, damping: 40 }}
       className={cn(
-        "glass-chip group relative flex flex-1 cursor-grab items-center gap-3 overflow-hidden rounded-2xl p-2.5 active:cursor-grabbing",
+        "glass-chip group relative flex w-full cursor-grab items-center gap-3 overflow-hidden rounded-2xl p-2.5 active:cursor-grabbing",
         done && "opacity-55",
       )}
       style={{
@@ -788,8 +792,10 @@ function TrayChip({
   // onTap стреляет вслед за onDragEnd, тут же открывая шторку редактирования
   // сразу после переноса (см. тот же флаг на карточках в сетке выше).
   const justDraggedRef = useRef(false);
+  const chipRef = useRef<HTMLButtonElement>(null);
   return (
     <motion.button
+      ref={chipRef}
       onTap={() => {
         if (justDraggedRef.current) return;
         onClick();
@@ -801,8 +807,12 @@ function TrayChip({
       whileDrag={{ scale: 1.06, zIndex: 40 }}
       onDragStart={() => {
         justDraggedRef.current = true;
+        // Иначе handleTrayDrop's elementFromPoint на отпускании нашёл бы
+        // саму кнопку (она физически ещё там, snap-back — уже после).
+        if (chipRef.current) chipRef.current.style.pointerEvents = "none";
       }}
       onDragEnd={(_, info) => {
+        if (chipRef.current) chipRef.current.style.pointerEvents = "";
         onDragEnd?.(info);
         requestAnimationFrame(() => {
           justDraggedRef.current = false;

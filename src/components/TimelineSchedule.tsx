@@ -717,7 +717,13 @@ function TimelineChip({
         if (justDraggedRef.current) return;
         onOpen();
       }}
-      layout
+      // Раньше был layout (плавный переезд карточки при смене часа) — но
+      // framer пересчитывает эту FLIP-анимацию на КАЖДЫЙ ре-рендер сетки,
+      // не только на перенос: открыл и закрыл шторку редактирования — и
+      // карточка уже «залипала» между старой и новой позицией, наезжая на
+      // соседей (воспроизвелось и без единого drag). Без layout смена часа
+      // — просто мгновенный скачок на новое место, менее красиво, зато
+      // никогда не зависает в промежуточном кадре.
       transition={{ type: "spring", stiffness: 500, damping: 40 }}
       className={cn(
         "glass-chip group relative flex w-full cursor-grab items-center gap-3 overflow-hidden rounded-2xl p-2.5 active:cursor-grabbing",

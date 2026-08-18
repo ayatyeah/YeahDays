@@ -26,6 +26,13 @@ interface NavState {
   mounted: TabKey[];
   /** позиция скролла по разделам, чтобы возврат был точно туда, где ушёл */
   scroll: Partial<Record<TabKey, number>>;
+  /**
+   * Счётчик "промотать активный раздел наверх" — стор не имеет доступа к
+   * DOM конкретного раздела (тот скроллится сам, не окно), поэтому вместо
+   * window.scrollTo() здесь просто тикает счётчик; AppShell слушает его и
+   * сам скроллит [data-section-active].
+   */
+  scrollTopTick: number;
   /** переключить раздел (обновляет адрес через History API) */
   go: (tab: TabKey) => void;
   /** синхронизация из адреса: назад/вперёд, deep-link, обычная навигация */
@@ -65,14 +72,14 @@ export const useNavStore = create<NavState>((set, get) => ({
   dir: 1,
   mounted: ["today"],
   scroll: {},
+  scrollTopTick: 0,
 
   go: (tab) => {
     const state = get();
     if (state.tab === tab) {
-      // повторный тап по активной вкладке — «наверх», как в нативных приложениях
-      if (typeof window !== "undefined") {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
+      // повторный тап по активной вкладке — «наверх», как в нативных
+      // приложениях. Сам скролл делает AppShell (см. scrollTopTick выше).
+      set({ scrollTopTick: state.scrollTopTick + 1 });
       return;
     }
     pushPath(TAB_PATH[tab]);

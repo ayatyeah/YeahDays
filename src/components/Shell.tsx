@@ -9,6 +9,7 @@ import WhatsNew from "./WhatsNew";
 import AppGuide from "./AppGuide";
 import NotificationCenter from "./NotificationCenter";
 import { tabFromPath } from "@/lib/nav";
+import { cn } from "@/lib/cn";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
 const MARKETING = [
@@ -71,7 +72,17 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           впритык к системной строке состояния — подняли пол с 1.5rem до
           2.75rem специально под этот случай; max() всё равно берёт вырез,
           если он больше. */}
-      <div className="mx-auto flex min-h-dvh max-w-md flex-col px-4 pt-[max(2.75rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]">
+      {/* app-shell-frame (только у разделов-вкладок) — ровно высота экрана,
+          никогда не выше: .section-pane внутри скроллится сам, поэтому
+          переключение вкладок не может менять размер этой рамки (см.
+          globals.css). Остальным страницам (маркетинг/PageTransition)
+          скролл окна ничем не мешает — им оставляем обычный min-h-dvh. */}
+      <div
+        className={cn(
+          "mx-auto flex max-w-md flex-col px-4 pt-[max(2.75rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
+          isSection ? "app-shell-frame" : "min-h-dvh",
+        )}
+      >
         {isSection ? children : <PageTransition>{children}</PageTransition>}
       </div>
       <BottomNav />

@@ -112,22 +112,38 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     syncFromPath(pathname);
   }, [pathname, syncFromPath]);
 
-  /* ── Скролл: у каждого раздела свой ── */
+  /**
+   * ── Скролл: у каждого раздела свой ──
+   *
+   * Раньше скроллилось окно (window.scrollY/scrollTo) — теперь каждый
+   * .section-pane скроллится сам (см. globals.css), окно вообще не
+   * двигается, поэтому читаем/пишем scrollTop конкретного элемента раздела.
+   */
   useLayoutEffect(() => {
     const from = prevTab.current;
     if (from === tab) return;
 
-    setScroll(from, window.scrollY);
+    const fromEl = stageRef.current?.querySelector<HTMLElement>(`[data-section="${from}"]`);
+    if (fromEl) setScroll(from, fromEl.scrollTop);
     prevTab.current = tab;
 
     const saved = useNavStore.getState().scroll[tab] ?? 0;
-    window.scrollTo({ top: saved, behavior: "auto" });
+    const toEl = () => stageRef.current?.querySelector<HTMLElement>(`[data-section="${tab}"]`);
+    toEl()?.scrollTo({ top: saved, behavior: "auto" });
     // контент раздела может домонтироваться кадром позже — повторяем
-    const raf = requestAnimationFrame(() =>
-      window.scrollTo({ top: saved, behavior: "auto" }),
-    );
+    const raf = requestAnimationFrame(() => {
+      toEl()?.scrollTo({ top: saved, behavior: "auto" });
+    });
     return () => cancelAnimationFrame(raf);
   }, [tab, setScroll]);
+
+  /* Повторный тап по активной вкладке в навигации — раздел наверх (см. scrollTopTick в useNavStore). */
+  const scrollTopTick = useNavStore((s) => s.scrollTopTick);
+  useEffect(() => {
+    if (scrollTopTick === 0) return; // 0 — стартовое значение, не реальный тап
+    const active = stageRef.current?.querySelector<HTMLElement>("[data-section-active]");
+    active?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [scrollTopTick]);
 
   /**
    * ── Уход раздела: старый доигрывает fade-out, а не пропадает мгновенно.
@@ -314,7 +330,9 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       ref={stageRef}
       // relative — точка отсчёта для .section-pane-exiting (position:absolute,
       // inset:0): уходящий раздел оверлеит ровно ту же область, что и .app-stage.
-      className="app-stage relative flex flex-1 flex-col"
+      // min-h-0 — без него flex-ребёнок не сжимается внутри app-shell-frame
+      // и просто её распирает (та же ловушка, что и у .section-pane).
+      className="app-stage relative min-h-0 flex flex-1 flex-col"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}

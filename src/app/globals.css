@@ -588,7 +588,15 @@ select {
 .section-pane {
   display: flex;
   flex: 1 1 auto;
+  /* min-height: 0 — иначе flex-ребёнок не сжимается внутри фиксированной
+     .app-shell-frame, а распирает её под свою длину контента (та самая
+     причина, по которой рамка раньше "меняла размер" между вкладками). */
+  min-height: 0;
   flex-direction: column;
+  /* Раздел скроллится сам — рамка (.app-shell-frame/.app-stage) всегда
+     ровно высотой с экран, независимо от того, какой раздел открыт. */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   /* свой слой: появление раздела идёт на GPU и не перерисовывает фон */
   transform: translateZ(0);
 }
@@ -596,6 +604,12 @@ select {
 .section-pane[hidden] {
   display: none;
   content-visibility: hidden;
+}
+
+/* Пока открыта шторка (Modal.tsx ставит этот атрибут на body) — раздел за
+   ней не должен уезжать скроллом колеса/свайпа фона. */
+body[data-modal-open="1"] .section-pane {
+  overflow: hidden;
 }
 
 /**
@@ -626,6 +640,23 @@ select {
 @supports (height: 100dvh) {
   .min-h-dvh {
     min-height: 100dvh;
+  }
+}
+
+/**
+ * Рамка приложения (Shell.tsx, только для разделов-вкладок) — РОВНО высота
+ * экрана, никогда не выше. Внутри неё уже .section-pane скроллится сам:
+ * так переключение вкладок не может менять размер рамки в принципе, а не
+ * просто "менее заметно" его сглаживает (см. .section-pane-exiting выше —
+ * тот фикс остаётся и работает поверх этого, крестфейд никуда не делся).
+ */
+.app-shell-frame {
+  height: 100vh;
+  overflow: hidden;
+}
+@supports (height: 100dvh) {
+  .app-shell-frame {
+    height: 100dvh;
   }
 }
 

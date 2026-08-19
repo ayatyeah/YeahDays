@@ -18,7 +18,7 @@ import {
 } from "@/lib/domain";
 import { emptyHistory, type HistorySignals } from "@/lib/recommendation";
 import { levelForXp } from "@/lib/leveling";
-import { categorizeTodo } from "@/lib/todoCategory";
+import { categorizeTodo, TODO_PRIORITY_XP } from "@/lib/todoCategory";
 import { addSample } from "@/lib/durations";
 import { ALL_FEATURE_IDS } from "@/lib/features";
 import { DEFAULT_NOTIFY, type NotifyPrefs } from "@/lib/notifyPlan";
@@ -1213,18 +1213,9 @@ export function hasProgress(s: Partial<SyncData>): boolean {
   return false;
 }
 
-/**
- * XP за выполненную почасовую задачу — тот же общий пул и уровень, что и
- * у колоды (карточек), не отдельная параллельная валюта. Величины ниже
- * шкалы xpForAction() (~17-62): задача заводится в два клика, без ввода
- * сложности/impact/длительности как у полноценного действия, поэтому
- * не должна перевешивать основной цикл колоды.
- */
-export const TODO_PRIORITY_XP: Record<TodoPriority, number> = {
-  low: 8,
-  normal: 14,
-  high: 22,
-};
+// TODO_PRIORITY_XP переехал в @/lib/todoCategory — тот файл не клиентский
+// ("use client" здесь мешает серверным роутам его импортировать), а этот
+// стор и так уже импортирует categorizeTodo оттуда же.
 
 /** Сколько раз задача засчитана выполненной: разовая — 0/1, повторяющаяся — по числу дней в doneDays. */
 function todoCompletions(t: Todo): number {

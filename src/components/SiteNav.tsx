@@ -79,7 +79,7 @@ export default function SiteNav() {
                   {isActive && (
                     <motion.span
                       layoutId="site-nav-active"
-                      className="absolute inset-0 -z-10 rounded-xl border border-[rgba(255,255,255,0.12)] bg-[rgba(255,255,255,0.07)] shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]"
+                      className="absolute inset-0 -z-10 rounded-xl border border-[var(--color-highlight-border)] bg-[var(--color-highlight-bg)] shadow-[inset_0_1px_0_var(--color-highlight-shine)]"
                       transition={spring}
                     />
                   )}

@@ -204,7 +204,7 @@ export default function LandingPage() {
         {/* ─────────────  Первый экран  ───────────── */}
         <section
           id="top"
-          className="grid scroll-mt-24 items-start gap-12 py-10 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-16"
+          className="grid scroll-mt-24 items-start gap-12 pb-16 pt-10 sm:pb-20 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:pt-16"
         >
           <Reveal>
             <Eyebrow>Трекер, который не давит</Eyebrow>

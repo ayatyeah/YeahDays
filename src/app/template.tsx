@@ -15,7 +15,13 @@ export default function Template({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   if (tabFromPath(pathname)) {
-    return <div className="flex flex-1 flex-col">{children}</div>;
+    // min-h-0 обязателен: без него у этой обёртки min-height остаётся
+    // "auto" (дефолт flex-элемента) и она растягивается под полную высоту
+    // контента раздела вместо того, чтобы сжаться внутри .app-shell-frame
+    // (globals.css) — тогда .section-pane внутри никогда не переполняется
+    // и не скроллится сам, а всё, что не влезло, просто обрезается рамкой
+    // (overflow: hidden) и становится недостижимым свайпом вниз.
+    return <div className="flex min-h-0 flex-1 flex-col">{children}</div>;
   }
 
   return (

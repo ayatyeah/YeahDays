@@ -9,7 +9,6 @@ import {
   selectActiveDays,
   PRIORITY_COLOR,
   PRIORITY_LABEL,
-  TODO_PRIORITY_XP,
   type Todo,
   type TodoPriority,
 } from "@/store/useUserStore";
@@ -17,7 +16,7 @@ import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { dateKey, STATS } from "@/lib/domain";
 import { routineLabelAt } from "@/lib/routine";
-import { categorizeTodo, fmtDuration } from "@/lib/todoCategory";
+import { categorizeTodo, fmtDuration, TODO_PRIORITY_XP } from "@/lib/todoCategory";
 import { cn } from "@/lib/cn";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */

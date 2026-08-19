@@ -119,13 +119,22 @@ export async function sendPushToUser(
 
 /* ────────────────────────  Когда слать  ──────────────────────── */
 
-/** Локальный час пользователя по сдвигу часового пояса (в минутах). */
-export function localHour(tzOffsetMinutes: number, now = new Date()): number {
+/**
+ * Момент "сейчас" в виде Date, читаемый как локальное время пользователя
+ * (по сдвигу часового пояса устройства в минутах, той же подписи, что
+ * возвращает JS Date.getTimezoneOffset()).
+ */
+export function localNow(tzOffsetMinutes: number, now = new Date()): Date {
   // getTimezoneOffset() возвращает минуты, которые надо ПРИБАВИТЬ к локали,
   // чтобы получить UTC, поэтому знак инвертирован.
   const utcMs = now.getTime() + now.getTimezoneOffset() * 60_000;
   const localMs = utcMs - tzOffsetMinutes * 60_000;
-  return new Date(localMs).getHours();
+  return new Date(localMs);
+}
+
+/** Локальный час пользователя по сдвигу часового пояса (в минутах). */
+export function localHour(tzOffsetMinutes: number, now = new Date()): number {
+  return localNow(tzOffsetMinutes, now).getHours();
 }
 
 /** Локальная дата пользователя в формате YYYY-MM-DD. */

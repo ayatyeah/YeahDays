@@ -204,11 +204,11 @@ export default function LandingPage() {
         {/* ─────────────  Первый экран  ───────────── */}
         <section
           id="top"
-          className="grid scroll-mt-24 items-center gap-12 py-16 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16"
+          className="grid scroll-mt-24 items-start gap-12 py-10 sm:py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-16"
         >
           <Reveal>
             <Eyebrow>Трекер, который не давит</Eyebrow>
-            <h1 className="mt-5 text-[52px] font-black leading-[0.98] tracking-[-0.03em] sm:text-[72px] lg:text-[84px]">
+            <h1 className="mt-4 text-[52px] font-black leading-[0.98] tracking-[-0.03em] sm:text-[72px] lg:text-[84px]">
               Одно
               <br />
               действие
@@ -217,12 +217,12 @@ export default function LandingPage() {
                 в день
               </span>
             </h1>
-            <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-[var(--color-fg-dim)] sm:text-[19px]">
+            <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-[var(--color-fg-dim)] sm:text-[19px]">
               Списки задач копят вину: чем длиннее, тем меньше хочется их
               открывать. YeahGrind каждый день предлагает колоду действий под
               твоё состояние. Свайпнул — сделал — день засчитан.
             </p>
-            <div className="mt-9 flex flex-wrap items-center gap-4">
+            <div className="mt-7 flex flex-wrap items-center gap-4">
               <Cta>Попробовать</Cta>
               <span className="text-[13px] text-[var(--color-muted)]">
                 Бесплатно · аккаунт за минуту

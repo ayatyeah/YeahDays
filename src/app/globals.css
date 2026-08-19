@@ -549,6 +549,16 @@ select {
   background-blend-mode: normal, normal, overlay;
 }
 
+[data-theme="light"] .marble {
+  background-color: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(20, 18, 40, 0.1);
+  box-shadow:
+    var(--shadow-3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(20, 18, 40, 0.04),
+    inset 1px 0 0 rgba(20, 18, 40, 0.04);
+}
+
 /** Мраморная панель во всю ширину — для шапки сайта. */
 .marble-bar {
   background-color: rgba(12, 12, 18, 0.7);

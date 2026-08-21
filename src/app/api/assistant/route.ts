@@ -23,103 +23,23 @@
  */
 
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { upsertUserStateIfNewer } from "@/lib/userState";
+import {
+  type Todo,
+  makeId,
+  isTodoOnDay,
+  isTodoDone,
+  loadState,
+  saveState,
+} from "@/lib/externalState";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-interface Todo {
-  id: string;
-  title: string;
-  note?: string;
-  date: string;
-  hour?: number;
-  duration?: number;
-  priority: "low" | "normal" | "high";
-  subtasks: { id: string; title: string; done: boolean }[];
-  repeat?: { kind: string; weekday?: number };
-  done: boolean;
-  doneDays: string[];
-  createdAt: number;
-  completedAt: number | null;
-}
-
-interface PlannedTask {
-  id: string;
-  actionId: string;
-  snapshot: { title?: string; category?: string };
-  xp: number;
-  date: string;
-  completed: boolean;
-  acceptedAt: number;
-  completedAt: number | null;
-}
-
-interface DailyMood {
-  energy: "low" | "medium" | "high";
-  minutes: number;
-}
-
-interface StateShape {
-  todos?: Todo[];
-  plan?: PlannedTask[];
-  moods?: Record<string, DailyMood>;
-  updatedAt?: number;
-  [key: string]: unknown;
-}
 
 function authorized(req: Request): boolean {
   const secret = process.env.ASSISTANT_SECRET;
   if (!secret) return false;
   const header = req.headers.get("authorization") ?? "";
   return header === `Bearer ${secret}`;
-}
-
-function makeId() {
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-}
-
-function isTodoOnDay(t: Todo, day: string): boolean {
-  if (!t.repeat) return t.date === day;
-  if (day < t.date) return false;
-  const wd = new Date(`${day}T00:00:00`).getDay();
-  switch (t.repeat.kind) {
-    case "daily":
-      return true;
-    case "weekdays":
-      return wd >= 1 && wd <= 5;
-    case "weekends":
-      return wd === 0 || wd === 6;
-    case "weekly":
-      return wd === (t.repeat.weekday ?? new Date(`${t.date}T00:00:00`).getDay());
-    default:
-      return false;
-  }
-}
-
-function isTodoDone(t: Todo, day: string): boolean {
-  return t.repeat ? t.doneDays.includes(day) : t.done;
-}
-
-/** Читаем строку состояния (или пустую заготовку, если пользователь ещё не синхронизировался). */
-async function loadState(userId: string): Promise<StateShape> {
-  const row = await prisma.userState.findUnique({ where: { userId } });
-  const data = (row?.data as StateShape) ?? {};
-  return {
-    ...data,
-    todos: Array.isArray(data.todos) ? data.todos : [],
-    plan: Array.isArray(data.plan) ? data.plan : [],
-    moods: data.moods && typeof data.moods === "object" ? data.moods : {},
-  };
-}
-
-/** Пишем обратно с бампом updatedAt — эквивалент touch() в сторе. */
-async function saveState(userId: string, data: StateShape) {
-  const updatedAt = Date.now();
-  const next = { ...data, updatedAt };
-  await upsertUserStateIfNewer(userId, next, updatedAt);
-  return next;
 }
 
 export async function GET(req: Request) {

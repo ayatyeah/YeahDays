@@ -12,6 +12,7 @@ import DidiSyncId from "@/components/DidiSyncId";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
 import DataControls from "@/components/DataControls";
+import PairingCodeCard from "@/components/PairingCodeCard";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -111,9 +112,21 @@ export default function AccountSection() {
         <Stat value={level} label="Уровень" />
       </section>
 
-      {/* Напоминания */}
-      <div className="mt-3">
-        <PushOptIn />
+      {/*
+        lg:+: два столбца, как на других страницах — широкий слева
+        (уведомления, устройства, СалемАй, заморозки, шаринг), узкий справа
+        (цели, приоритеты, состояние, пояснительный текст, редкие/опасные
+        действия — экспорт данных, сброс). Порядок внутри каждого столбца —
+        тот же, что раньше был одним потоком, разбит цельным куском, поэтому
+        на мобильном (без lg:) всё складывается ровно как было. Граница
+        между столбцами подобрана так, чтобы столбцы получились примерно
+        одной высоты — см. живую проверку в Playwright, а не на глаз.
+      */}
+      <div className="lg:flex lg:items-start lg:gap-6">
+        <div className="lg:flex-1">
+          {/* Напоминания */}
+          <div className="mt-3">
+            <PushOptIn />
       </div>
 
       {/* Список устройств с включёнными уведомлениями */}
@@ -154,7 +167,9 @@ export default function AccountSection() {
       <div className="mt-3">
         <ShareCard />
       </div>
+        </div>
 
+        <div className="lg:w-[320px] lg:shrink-0">
       {/* Цели с горизонтом — подкручивают колоду под срок */}
       <Quests />
 
@@ -233,42 +248,46 @@ export default function AccountSection() {
         </div>
       </section>
 
-      {/* Как подбираются действия — человеческим языком, без формул движка */}
-      <section className="mt-6 rounded-3xl surface p-4">
-        <h2 className="text-[13px] font-semibold">Как я подбираю действия</h2>
-        <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
-          Смотрю на твои приоритеты, время суток и сколько у тебя сейчас сил,
-          и не предлагаю то, что не влезает в бюджет минут. Каждый свайп
-          немного меняет подборку на завтра: чем чаще берёшь — тем больше
-          похожего, отклоняешь — тем реже.
-        </p>
-      </section>
+          {/* Как подбираются действия — человеческим языком, без формул движка */}
+          <section className="mt-6 rounded-3xl surface p-4">
+            <h2 className="text-[13px] font-semibold">Как я подбираю действия</h2>
+            <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
+              Смотрю на твои приоритеты, время суток и сколько у тебя сейчас сил,
+              и не предлагаю то, что не влезает в бюджет минут. Каждый свайп
+              немного меняет подборку на завтра: чем чаще берёшь — тем больше
+              похожего, отклоняешь — тем реже.
+            </p>
+          </section>
 
-      <section className="mt-6">
-        <Link
-          href="/manage"
-          className="flex items-center justify-between rounded-3xl surface px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
-        >
-          <span>
-            <span className="block text-[13px] font-semibold">Управление</span>
-            <span className="mt-0.5 block text-[11.5px] text-[var(--color-muted)]">
-              Действия, дни задним числом, челленджи, расписание
-            </span>
-          </span>
-          <span className="text-[var(--color-muted)]">→</span>
-        </Link>
-      </section>
+          <section className="mt-6">
+            <Link
+              href="/manage"
+              className="flex items-center justify-between rounded-3xl surface px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
+            >
+              <span>
+                <span className="block text-[13px] font-semibold">Управление</span>
+                <span className="mt-0.5 block text-[11.5px] text-[var(--color-muted)]">
+                  Действия, дни задним числом, челленджи, расписание
+                </span>
+              </span>
+              <span className="text-[var(--color-muted)]">→</span>
+            </Link>
+          </section>
 
-      <DataControls />
+          <PairingCodeCard />
 
-      <div className="mt-6">
-        <Button
-          variant="danger"
-          className="w-full"
-          onClick={() => setConfirmReset(true)}
-        >
-          Сбросить весь прогресс
-        </Button>
+          <DataControls />
+
+          <div className="mt-6">
+            <Button
+              variant="danger"
+              className="w-full"
+              onClick={() => setConfirmReset(true)}
+            >
+              Сбросить весь прогресс
+            </Button>
+          </div>
+        </div>
       </div>
 
       {/* Бренд */}

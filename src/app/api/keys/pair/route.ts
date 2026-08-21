@@ -12,10 +12,10 @@
  */
 
 import { NextResponse } from "next/server";
-import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { generatePairingCode } from "@/lib/apiKey";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,10 +26,6 @@ async function resolveUserId(fallback?: unknown): Promise<string> {
   const session = await auth();
   if (session?.user?.id) return session.user.id;
   return typeof fallback === "string" ? fallback.slice(0, 64) : "";
-}
-
-function generateCode(): string {
-  return randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
 export async function POST(req: Request) {
@@ -55,18 +51,20 @@ export async function POST(req: Request) {
     // FK, без апсерта первая же генерация кода упала бы.
     await prisma.user.upsert({ where: { id: userId }, create: { id: userId }, update: {} });
 
-    // Непогашенный старый код того же пользователя больше не нужен —
-    // один активный код за раз проще для UI и не даёт копиться мусору.
-    await prisma.pairingCode.deleteMany({ where: { userId, consumedAt: null } });
+    // Непогашенный старый самостоятельный код того же пользователя больше не
+    // нужен — один активный код за раз проще для UI и не даёт копиться
+    // мусору. apiKeyId: null — не трогаем код, если он сейчас ждёт обмена
+    // в отдельном OAuth-флоу (/oauth/authorize) для конкретного сервиса.
+    await prisma.pairingCode.deleteMany({ where: { userId, apiKeyId: null, consumedAt: null } });
 
     const expiresAt = new Date(Date.now() + TTL_MS);
-    let code = generateCode();
+    let code = generatePairingCode();
     for (let attempt = 0; attempt < 5; attempt++) {
       try {
         await prisma.pairingCode.create({ data: { code, userId, expiresAt } });
         return NextResponse.json({ code, expiresAt: expiresAt.getTime() });
       } catch {
-        code = generateCode(); // коллизия по code (крайне маловероятно) — пробуем другой
+        code = generatePairingCode(); // коллизия по code (крайне маловероятно) — пробуем другой
       }
     }
     return NextResponse.json({ error: "Could not generate code" }, { status: 500 });

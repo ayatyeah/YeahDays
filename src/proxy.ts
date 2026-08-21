@@ -24,7 +24,10 @@ export default auth((req) => {
   if (req.auth || PUBLIC_PATHS.has(pathname)) return;
 
   const url = new URL("/login", req.nextUrl.origin);
-  url.searchParams.set("callbackUrl", pathname);
+  // pathname один без search — раньше терял query (?client_id=...&redirect_uri=...
+  // у /oauth/authorize), после логина человек попадал на страницу без единого
+  // параметра.
+  url.searchParams.set("callbackUrl", pathname + req.nextUrl.search);
   return NextResponse.redirect(url);
 });
 

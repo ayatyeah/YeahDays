@@ -6,6 +6,12 @@
  * один раз, сразу после того как пользователь ввёл код на стороне
  * внешнего сервиса — тот дальше хранит userId у себя и переиспользует его
  * во всех /api/integrations/* вызовах тем же ключом.
+ *
+ * Код может быть привязан к конкретному ApiKey заранее (PairingCode.apiKeyId
+ * — так делает /oauth/authorize после согласия пользователя): тогда обменять
+ * его может ТОЛЬКО тот сервис, для которого он выпущен, иначе 403. Код без
+ * привязки (сгенерирован самим пользователем в профиле, PairingCodeCard) —
+ * как раньше, обменять может любой валидный ключ.
  */
 
 import { NextResponse } from "next/server";
@@ -36,6 +42,9 @@ export async function POST(req: Request) {
   const row = await prisma.pairingCode.findUnique({ where: { code } });
   if (!row || row.consumedAt || row.expiresAt.getTime() < Date.now()) {
     return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
+  }
+  if (row.apiKeyId && row.apiKeyId !== key.id) {
+    return NextResponse.json({ error: "Code issued for a different service" }, { status: 403 });
   }
 
   await prisma.$transaction([

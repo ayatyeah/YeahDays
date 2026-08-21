@@ -20,6 +20,9 @@ const MARKETING = [
   "/register",
   "/download",
   "/forgot-password",
+  // экран согласия OAuth — тот же голый layout, что и /login, без нижней
+  // навигации и сайдбара приложения
+  "/oauth/authorize",
 ];
 
 /**

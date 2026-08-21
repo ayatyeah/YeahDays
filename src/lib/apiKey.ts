@@ -8,6 +8,7 @@
  */
 
 import bcrypt from "bcryptjs";
+import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/db";
 
 export interface AuthorizedKey {
@@ -42,4 +43,9 @@ export async function userAllowedForKey(apiKeyId: string, userId: string): Promi
     where: { apiKeyId_userId: { apiKeyId, userId } },
   });
   return !!row;
+}
+
+/** 8 символов, читаемые вслух/для копирования — тот же формат что и в /api/keys/pair. */
+export function generatePairingCode(): string {
+  return randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
 }

@@ -291,10 +291,15 @@ model ApiKey {
   service    String
   /// bcrypt-хэш сырого ключа — сырой ключ нигде не хранится
   hash       String       @unique
+  /// allowlist для /oauth/authorize — редирект принимается, только если
+  /// redirect_uri совпадает буквально с одной из этих строк (защита от
+  /// open redirect / перехвата кода авторизации)
+  redirectUris String[]     @default([])
   revokedAt  DateTime?
   createdAt  DateTime     @default(now())
   lastUsedAt DateTime?
   users      ApiKeyUser[]
+  pairingCodes PairingCode[]
 }
 
 model ApiKeyUser {
@@ -307,18 +312,25 @@ model ApiKeyUser {
   @@id([apiKeyId, userId])
 }
 
-// Одноразовый короткий код: пользователь генерирует его в своём профиле
-// (залогинен в YeahGrind), вводит в настройках стороннего сервиса — тот
-// сразу обменивает код на userId через свой ApiKey. Не SSO — нет ни
-// редиректа, ни общего логина, только доказательство владения аккаунтом в
-// моменте. Живёт 10 минут, гасится после первого обмена.
+// Одноразовый короткий код — два способа появиться:
+//  1) пользователь генерирует его сам в профиле (PairingCodeCard) и вставляет
+//     в настройки стороннего сервиса вручную — apiKeyId пуст, обменять может
+//     любой валидный ApiKey (сервис в этот момент ещё не известен).
+//  2) экран /oauth/authorize после согласия — apiKeyId проставлен сразу,
+//     обменять может ТОЛЬКО тот сервис, для которого код выпущен (см.
+//     проверку в /api/keys/redeem).
+// В обоих случаях финальный обмен — один и тот же POST /api/keys/redeem.
+// Живёт 10 минут, гасится после первого обмена.
 model PairingCode {
   code       String    @id
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
+  apiKey     ApiKey?   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  apiKeyId   String?
   expiresAt  DateTime
   consumedAt DateTime?
   createdAt  DateTime  @default(now())
 
   @@index([userId])
+  @@index([apiKeyId])
 }

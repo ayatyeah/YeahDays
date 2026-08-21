@@ -43,6 +43,8 @@ model User {
   assistantEvents AssistantEvent[]
   assistantChat   AssistantChat[]
   assistantFacts  AssistantFact[]
+  apiKeyLinks     ApiKeyUser[]
+  pairingCodes    PairingCode[]
 }
 
 // Живой статус фонового процесса ДиДи: раз в ~15с шлёт heartbeat сюда,
@@ -272,4 +274,51 @@ model Event {
   @@index([userId, at])
   @@index([userId, actionId])
   @@index([userId, type])
+}
+
+// ── Внешние интеграции (сторонние сервисы, напр. StudyLoop) ──
+//
+// Один расшаренный ASSISTANT_SECRET на всех больше не годится, когда
+// клиентов несколько: нельзя отозвать одного, нельзя ограничить его
+// конкретными пользователями. ApiKey — ключ на сервис (bcrypt-хэш, тот же
+// приём, что и для паролей). ApiKeyUser — фактический allowlist: сервис
+// действует только от имени тех userId, что реально прошли обмен кода (см.
+// PairingCode) — просто валидного ключа для доступа к произвольному userId
+// недостаточно, в отличие от ASSISTANT_SECRET.
+model ApiKey {
+  id         String       @id @default(cuid())
+  /// человекочитаемая метка, "studyloop"
+  service    String
+  /// bcrypt-хэш сырого ключа — сырой ключ нигде не хранится
+  hash       String       @unique
+  revokedAt  DateTime?
+  createdAt  DateTime     @default(now())
+  lastUsedAt DateTime?
+  users      ApiKeyUser[]
+}
+
+model ApiKeyUser {
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+  apiKeyId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@id([apiKeyId, userId])
+}
+
+// Одноразовый короткий код: пользователь генерирует его в своём профиле
+// (залогинен в YeahGrind), вводит в настройках стороннего сервиса — тот
+// сразу обменивает код на userId через свой ApiKey. Не SSO — нет ни
+// редиректа, ни общего логина, только доказательство владения аккаунтом в
+// моменте. Живёт 10 минут, гасится после первого обмена.
+model PairingCode {
+  code       String    @id
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
 }

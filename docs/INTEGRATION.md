@@ -372,6 +372,28 @@ createdAt }` — "N действий по стату до даты", прогр�
   Ответ `{ stat, xp, level, streak }` — сводка по одному стату, для
   отображения прогресса внутри стороннего сервиса.
 
+### Крон (`CRON_SECRET`)
+
+- **`POST /api/cron/lms-sync`** — тянет дедлайны из ical-экспорта календаря
+  Moodle (AITU LMS) и заводит их задачами. Дёргается по расписанию из
+  `.github/workflows/lms-sync.yml`, три раза в день. `?dry=1` — показать,
+  что было бы создано, ничего не записывая.
+
+  Почему файл, а не API Moodle: веб-сервисы в AITU закрыты на nginx
+  (`/login/token.php` и `/webservice/rest/server.php` отдают 403, тогда как
+  `/login/index.php` с того же адреса — 200, то есть закрыты намеренно).
+  Живым остался штатный ical-экспорт, его и тянем по постоянной ссылке
+  с `authtoken` (`LMS_ICAL_URL`).
+
+  Синхронизация ОДНОСТОРОННЯЯ и только на добавление: чужие задачи синк не
+  правит и не удаляет. Дедупликация по паре «заголовок + дата», а не по
+  `UID` события — хранить `UID` негде, `UserState.data` браузер
+  переписывает целиком при своей синхронизации. Плата: перенесённый
+  преподавателем дедлайн создаст вторую задачу, старая останется.
+
+  `ApiKey`/пейринг-код здесь не используются — это не внешний сервис, а
+  собственный крон, он пишет через `externalState` напрямую.
+
 ### Прочее
 
 - **`GET /api/share`** — без auth — рендерит PNG-карточку прогресса для
@@ -413,7 +435,10 @@ createdAt }` — "N действий по стату до даты", прогр�
 |---|---|
 | `DATABASE_URL` | Postgres (Prisma) |
 | `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_URL` | Auth.js, читаются по конвенции |
-| `CRON_SECRET` | Bearer для `/api/push/send` и `/api/push/dispatch` |
+| `CRON_SECRET` | Bearer для `/api/push/send`, `/api/push/dispatch` и `/api/cron/lms-sync` |
+| `LMS_ICAL_URL` | постоянная ссылка на ical-экспорт календаря Moodle — **содержит authtoken, обращаться как с паролем** |
+| `LMS_SYNC_USER_ID` | чей аккаунт наполняет `/api/cron/lms-sync` |
+| `LMS_TIMEZONE` | зона для расчёта дня дедлайна, по умолчанию `Asia/Almaty` |
 | `OWNER_EMAIL` | единственный email с доступом к `/api/owner/*` |
 | `VAPID_PRIVATE_KEY`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_CONTACT` | Web Push подпись |
 | `NEXT_PUBLIC_ENGINE` | `local` (движок в браузере) vs `remote` (через API) |

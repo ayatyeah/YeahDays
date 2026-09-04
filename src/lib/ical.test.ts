@@ -7,7 +7,7 @@ import {
   zonedWallToUtc,
   partsInZone,
   parseEvents,
-} from "./ical.mjs";
+} from "@/lib/ical";
 
 describe("unfold", () => {
   it("склеивает строки, перенесённые по правилу RFC 5545", () => {
@@ -34,35 +34,35 @@ describe("unescapeText", () => {
 describe("parseLine", () => {
   it("разбирает имя, параметры и значение", () => {
     const p = parseLine("DTSTART;VALUE=DATE:20260915");
-    expect(p.name).toBe("DTSTART");
-    expect(p.params.VALUE).toBe("DATE");
-    expect(p.value).toBe("20260915");
+    expect(p?.name).toBe("DTSTART");
+    expect(p?.params.VALUE).toBe("DATE");
+    expect(p?.value).toBe("20260915");
   });
 
   it("не режет значение по двоеточию внутри кавычек параметра", () => {
     const p = parseLine('DTSTART;TZID="GMT+05:00":20260915T235900');
-    expect(p.params.TZID).toBe("GMT+05:00");
-    expect(p.value).toBe("20260915T235900");
+    expect(p?.params.TZID).toBe("GMT+05:00");
+    expect(p?.value).toBe("20260915T235900");
   });
 });
 
 describe("parseDateValue", () => {
   it("VALUE=DATE — событие на весь день", () => {
     const d = parseDateValue("20260915", { VALUE: "DATE" }, "Asia/Almaty");
-    expect(d.allDay).toBe(true);
-    expect(d.utcMs).toBe(Date.UTC(2026, 8, 15));
+    expect(d?.allDay).toBe(true);
+    expect(d?.utcMs).toBe(Date.UTC(2026, 8, 15));
   });
 
   it("суффикс Z читается как UTC", () => {
     const d = parseDateValue("20260915T185900Z", {}, "Asia/Almaty");
-    expect(d.allDay).toBe(false);
-    expect(d.utcMs).toBe(Date.UTC(2026, 8, 15, 18, 59, 0));
+    expect(d?.allDay).toBe(false);
+    expect(d?.utcMs).toBe(Date.UTC(2026, 8, 15, 18, 59, 0));
   });
 
   it("время с TZID переводится в UTC по указанной зоне", () => {
     const d = parseDateValue("20260915T235900", { TZID: "Asia/Almaty" }, "UTC");
     // Алматы UTC+5 → 23:59 местного это 18:59 UTC того же дня.
-    expect(d.utcMs).toBe(Date.UTC(2026, 8, 15, 18, 59, 0));
+    expect(d?.utcMs).toBe(Date.UTC(2026, 8, 15, 18, 59, 0));
   });
 
   it("мусорное значение не роняет разбор", () => {
@@ -121,7 +121,7 @@ describe("parseEvents", () => {
       description: "Сдать отчёт, приложить код",
       categories: ["Computer Vision | Kaiyrkhan Nurym"],
     });
-    expect(events[0].start.utcMs).toBe(Date.UTC(2026, 8, 15, 18, 59, 0));
+    expect(events[0].start?.utcMs).toBe(Date.UTC(2026, 8, 15, 18, 59, 0));
   });
 
   it("пустой календарь Moodle даёт ноль событий, а не падение", () => {

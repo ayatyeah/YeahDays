@@ -74,13 +74,13 @@ function SyncRow() {
         )}
         aria-hidden
       />
-      <p className="min-w-0 flex-1 truncate text-[12px] text-[var(--color-muted)]">
+      <p className="min-w-0 flex-1 truncate text-[13px] text-[var(--color-muted)]">
         {label}
       </p>
       <button
         onClick={() => void syncNow?.()}
         disabled={busy || !syncNow}
-        className="shrink-0 rounded-lg px-2 py-1 text-[11.5px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
+        className="shrink-0 rounded-lg px-2 py-1 text-[12.5px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
       >
         {failed ? "Повторить" : "Обновить"}
       </button>
@@ -114,7 +114,7 @@ function LinkGoogleRow() {
         setBusy(true);
         void signIn("google", { callbackUrl: "/account" });
       }}
-      className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)] disabled:opacity-60"
+      className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)] disabled:opacity-60"
     >
       <GoogleIcon className="h-4 w-4" />
       Привязать Google — входить можно будет и так
@@ -143,7 +143,7 @@ function ChangePasswordRow() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+        className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
       >
         {hasPassword ? "Сменить пароль" : "Задать пароль — входить можно будет и так"}
       </button>
@@ -208,7 +208,7 @@ function ChangePasswordModal({
     <Modal open={open} onClose={onClose} title={hasPassword ? "Сменить пароль" : "Задать пароль"}>
       {done ? (
         <div className="space-y-3">
-          <p className="text-[13.5px] text-[var(--color-fg-dim)]">Пароль обновлён.</p>
+          <p className="text-[14.5px] text-[var(--color-fg-dim)]">Пароль обновлён.</p>
           <Button variant="primary" className="w-full" onClick={onClose}>
             Готово
           </Button>
@@ -240,7 +240,7 @@ function ChangePasswordModal({
             placeholder="Повтори новый пароль"
             className={passwordInputClass}
           />
-          {error && <p className="text-[12.5px] text-[var(--color-strength)]">{error}</p>}
+          {error && <p className="text-[13.5px] text-[var(--color-strength)]">{error}</p>}
           <div className="flex gap-2.5">
             <Button className="flex-1" onClick={onClose}>
               Отмена
@@ -300,13 +300,13 @@ export default function AuthCard() {
             <p className="truncate text-[14px] font-semibold">
               {u.name ?? "Аккаунт"}
             </p>
-            <p className="truncate text-[12px] text-[var(--color-muted)]">
+            <p className="truncate text-[13px] text-[var(--color-muted)]">
               {u.email}
             </p>
           </div>
           <button
             onClick={() => signOut()}
-            className="shrink-0 rounded-xl px-3 py-2 text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+            className="shrink-0 rounded-xl px-3 py-2 text-[13.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
           >
             Выйти
           </button>
@@ -318,14 +318,14 @@ export default function AuthCard() {
 
         {/* Разовые подтверждения, что вход реально что-то сделал */}
         {movedEvents ? (
-          <p className="mt-2 text-[11.5px] leading-snug text-[var(--color-fg-dim)]">
+          <p className="mt-2 text-[12.5px] leading-snug text-[var(--color-fg-dim)]">
             ✓ Перенесли {movedEvents}{" "}
             {plural(movedEvents, "действие", "действия", "действий")} с этого
             устройства в аккаунт
           </p>
         ) : null}
         {pulledRemote ? (
-          <p className="mt-2 text-[11.5px] leading-snug text-[var(--color-fg-dim)]">
+          <p className="mt-2 text-[12.5px] leading-snug text-[var(--color-fg-dim)]">
             ✓ Загрузили прогресс с другого устройства
           </p>
         ) : null}
@@ -338,10 +338,10 @@ export default function AuthCard() {
 
   return (
     <section className="press rounded-3xl surface p-4">
-      <p className="text-[13px] font-semibold">
+      <p className="text-[14px] font-semibold">
         {hasProgress ? "Прогресс только в этом браузере" : "Сохрани прогресс"}
       </p>
-      <p className="mt-1 text-[12px] leading-snug text-[var(--color-muted)]">
+      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
         {hasProgress ? (
           <>
             {done} {plural(done, "выполненное", "выполненных", "выполненных")}{" "}

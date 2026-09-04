@@ -83,11 +83,11 @@ export default function WhatsNew() {
               className="marble safe-b max-h-[85dvh] overflow-y-auto rounded-t-[28px] px-5 pb-6 pt-3"
             >
               <div
-                className="mx-auto mb-5 h-1 w-10 rounded-full bg-[rgba(255,255,255,0.22)]"
+                className="mx-auto mb-5 h-1 w-10 rounded-full bg-[var(--color-border-strong)]"
                 aria-hidden
               />
 
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+              <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
                 Пока тебя не было
               </p>
               <h2 className="mt-1.5 text-[23px] font-bold leading-tight">
@@ -104,21 +104,21 @@ export default function WhatsNew() {
                     className="surface flex gap-3.5 rounded-2xl p-3.5"
                   >
                     <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[rgba(255,255,255,0.07)] text-[16px]"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[16px]"
                       aria-hidden
                     >
                       {f.icon}
                     </span>
                     <div className="min-w-0">
                       <p className="text-[14.5px] font-semibold">{f.title}</p>
-                      <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-fg-dim)]">
+                      <p className="mt-1 text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
                         {f.text}
                       </p>
                       {f.href && (
                         <Link
                           href={f.href}
                           onClick={close}
-                          className="mt-2 inline-block text-[12px] font-semibold text-[var(--color-stability)] underline underline-offset-4"
+                          className="mt-2 inline-block text-[13px] font-semibold text-[var(--color-stability)] underline underline-offset-4"
                         >
                           Открыть
                         </Link>

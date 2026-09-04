@@ -112,10 +112,10 @@ export default function SwipeDeck({
           </DeckButton>
 
           <div className="text-center">
-            <p className="text-[11px] font-medium text-[var(--color-muted)]">
+            <p className="text-[12px] font-medium text-[var(--color-muted)]">
               Свайпни карточку
             </p>
-            <p className="mt-0.5 text-[10px] text-[var(--color-muted)]/60">
+            <p className="mt-0.5 text-[11.5px] text-[var(--color-muted)]/60">
               ← мимо · беру →
             </p>
           </div>

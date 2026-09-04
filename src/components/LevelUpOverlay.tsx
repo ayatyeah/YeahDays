@@ -95,7 +95,7 @@ export default function LevelUpOverlay() {
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
             className="relative flex flex-col items-center px-8 text-center"
           >
-            <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
+            <p className="text-[13px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
               Новый уровень
             </p>
             <p className="mt-1 text-[68px] font-black leading-none tabular-nums">

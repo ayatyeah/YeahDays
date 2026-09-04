@@ -136,7 +136,7 @@ export default function DayCompleteOverlay() {
               <p className="mt-2 text-[19px] font-black tracking-tight">
                 День закрыт!
               </p>
-              <p className="mt-1 text-[13.5px] text-[var(--color-fg-dim)]">
+              <p className="mt-1 text-[14.5px] text-[var(--color-fg-dim)]">
                 {streak > 1
                   ? `${streak} дней подряд — так и растут`
                   : "Отличное начало серии"}

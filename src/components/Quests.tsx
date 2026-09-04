@@ -43,19 +43,19 @@ export default function Quests() {
   return (
     <section className="mt-6">
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Цели
         </h2>
         <button
           onClick={() => setOpen(true)}
-          className="text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          className="text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
         >
           + Добавить
         </button>
       </div>
 
       {quests.length === 0 ? (
-        <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-5 text-center text-[12px] leading-snug text-[var(--color-muted)]">
+        <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-5 text-center text-[13px] leading-snug text-[var(--color-muted)]">
           Поставь цель с датой — например, 20 действий на силу за месяц.
           Колода начнёт подстраиваться под неё.
         </p>
@@ -74,7 +74,7 @@ export default function Quests() {
       )}
 
       <Modal open={open} onClose={() => setOpen(false)} title="Новая цель">
-        <p className="text-[12px] leading-snug text-[var(--color-muted)]">
+        <p className="text-[13px] leading-snug text-[var(--color-muted)]">
           Сколько действий и к какому сроку. Засчитываются любые выполненные
           действия выбранного направления.
         </p>
@@ -85,7 +85,7 @@ export default function Quests() {
               key={s.key}
               onClick={() => setStat(s.key)}
               className={cn(
-                "press rounded-2xl border py-2.5 text-[12.5px] font-medium",
+                "press rounded-2xl border py-2.5 text-[13.5px] font-medium",
                 stat === s.key
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border-strong)]",
@@ -97,7 +97,7 @@ export default function Quests() {
         </div>
 
         <div className="mt-4">
-          <p className="mb-1.5 text-[12px] text-[var(--color-muted)]">
+          <p className="mb-1.5 text-[13px] text-[var(--color-muted)]">
             Сколько действий: <span className="font-semibold">{target}</span>
           </p>
           <input
@@ -113,7 +113,7 @@ export default function Quests() {
         </div>
 
         <div className="mt-4">
-          <p className="mb-1.5 text-[12px] text-[var(--color-muted)]">
+          <p className="mb-1.5 text-[13px] text-[var(--color-muted)]">
             За сколько дней: <span className="font-semibold">{horizon}</span>
           </p>
           <div className="grid grid-cols-4 gap-2">
@@ -122,7 +122,7 @@ export default function Quests() {
                 key={d}
                 onClick={() => setHorizon(d)}
                 className={cn(
-                  "press rounded-2xl border py-2 text-[12px] tabular-nums",
+                  "press rounded-2xl border py-2 text-[13px] tabular-nums",
                   horizon === d
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border-strong)]",
@@ -134,7 +134,7 @@ export default function Quests() {
           </div>
         </div>
 
-        <p className="mt-3 text-[11.5px] text-[var(--color-muted)]">
+        <p className="mt-3 text-[12.5px] text-[var(--color-muted)]">
           Это {(target / horizon).toFixed(1)} действия в день.
         </p>
 
@@ -198,8 +198,8 @@ function QuestRow({
           {stat.icon}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13.5px] font-semibold">{quest.title}</p>
-          <p className="mt-0.5 text-[11.5px] text-[var(--color-muted)]">
+          <p className="truncate text-[14.5px] font-semibold">{quest.title}</p>
+          <p className="mt-0.5 text-[12.5px] text-[var(--color-muted)]">
             {complete
               ? "Цель закрыта 🎉"
               : overdue
@@ -210,7 +210,7 @@ function QuestRow({
         <button
           onClick={onRemove}
           aria-label="Убрать цель"
-          className="shrink-0 rounded-lg px-2 py-1 text-[12px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+          className="shrink-0 rounded-lg px-2 py-1 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
         >
           ✕
         </button>
@@ -227,7 +227,7 @@ function QuestRow({
       </div>
 
       {pace && (
-        <p className="mt-2 text-[11px] text-[var(--color-muted)]">
+        <p className="mt-2 text-[12px] text-[var(--color-muted)]">
           Нужно {pace} в день, чтобы успеть
         </p>
       )}

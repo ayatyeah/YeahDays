@@ -321,7 +321,7 @@ export default function HomeSection() {
 
       {/* Шапка: прогресс дня */}
       <header className="mb-4">
-        <p className="text-[13px] font-medium text-[var(--color-muted)]">
+        <p className="text-[14px] font-medium text-[var(--color-muted)]">
           {/* Показываем слот: подборка привязана ко времени суток, и без
               подписи это невидимая механика — человек не понимает,
               почему вечером карточки другие, чем утром. */}
@@ -348,7 +348,7 @@ export default function HomeSection() {
             />
           </motion.div>
         ))}
-        <span className="ml-1 text-[11px] font-medium tabular-nums text-[var(--color-muted)]">
+        <span className="ml-1 text-[12px] font-medium tabular-nums text-[var(--color-muted)]">
           {Math.min(takenToday, dailyGoal)}/{dailyGoal}
         </span>
       </div>
@@ -365,10 +365,10 @@ export default function HomeSection() {
             transition={{ duration: 0.22 }}
             className="mb-5 -mt-2 flex items-center gap-2"
           >
-            <span className="text-[13px]" aria-hidden>
+            <span className="text-[14px]" aria-hidden>
               {GOAL_ICON[goal.kind]}
             </span>
-            <span className="text-[12.5px] font-medium text-[var(--color-fg-dim)]">
+            <span className="text-[13.5px] font-medium text-[var(--color-fg-dim)]">
               {goal.text}
             </span>
           </motion.div>
@@ -451,10 +451,10 @@ export default function HomeSection() {
               className="press flex w-full items-center justify-between rounded-2xl surface px-4 py-3.5 text-left transition hover:bg-[var(--color-surface-2)]"
             >
               <div className="min-w-0">
-                <p className="text-[13px] font-semibold">
+                <p className="text-[14px] font-semibold">
                   В плане на сегодня: {takenToday}
                 </p>
-                <p className="mt-0.5 truncate text-[11.5px] text-[var(--color-muted)]">
+                <p className="mt-0.5 truncate text-[12.5px] text-[var(--color-muted)]">
                   {today
                     .slice(0, 2)
                     .map((t) => t.snapshot.title)
@@ -474,7 +474,7 @@ export default function HomeSection() {
       {!(useOwnActionsOnly && customActions.length === 0) && (
         <button
           onClick={() => openCreate()}
-          className="mt-2.5 text-center text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+          className="mt-2.5 text-center text-[13.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
         >
           + Добавить своё действие
         </button>
@@ -518,10 +518,10 @@ function RoutineHint({
         {anchor ? anchorIcon(anchor.label) : "🗒"}
       </span>
       <div className="min-w-0">
-        <p className="text-[13px] font-semibold">
+        <p className="text-[14px] font-semibold">
           {anchor ? `Сейчас по плану — ${anchor.label.toLowerCase()}` : "Пауза в плане"}
         </p>
-        <p className="mt-0.5 text-[11.5px] leading-snug text-[var(--color-muted)]">
+        <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--color-muted)]">
           {next && nextTime
             ? `Дальше в ${nextTime} · ${next.main!.title}`
             : "На сегодня по плану всё — а колода ниже всегда открыта"}

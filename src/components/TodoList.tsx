@@ -90,7 +90,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
   return (
     <section className="mt-5">
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Мои задачи{activeCount > 0 ? ` · ${activeCount}` : ""}
         </h2>
         <div className="flex gap-2">
@@ -105,7 +105,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
               key={k}
               onClick={() => setFilter(k)}
               className={cn(
-                "text-[11.5px] transition",
+                "text-[12.5px] transition",
                 filter === k
                   ? "font-semibold text-[var(--color-fg)]"
                   : "text-[var(--color-muted)]",
@@ -133,19 +133,19 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Что нужно сделать?"
           maxLength={120}
-          className="h-11 min-w-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[13.5px] outline-none focus:border-[var(--color-fg-dim)]"
+          className="h-11 min-w-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[14.5px] outline-none focus:border-[var(--color-fg-dim)]"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          className="h-11 shrink-0 rounded-2xl bg-[var(--color-fg)] px-4 text-[13.5px] font-semibold text-[var(--color-bg)] transition active:scale-[0.98] disabled:opacity-40"
+          className="h-11 shrink-0 rounded-2xl bg-[var(--color-fg)] px-4 text-[14.5px] font-semibold text-[var(--color-bg)] transition active:scale-[0.98] disabled:opacity-40"
         >
           +
         </button>
       </form>
 
       {list.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[12px] text-[var(--color-muted)]">
+        <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[13px] text-[var(--color-muted)]">
           {filter === "done" ? "Пока ничего не закрыто" : "Задач нет"}
         </p>
       ) : (
@@ -181,7 +181,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
             exit={{ opacity: 0, y: 8 }}
             className="mt-2 flex items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2.5"
           >
-            <span className="min-w-0 truncate text-[12px] text-[var(--color-muted)]">
+            <span className="min-w-0 truncate text-[13px] text-[var(--color-muted)]">
               Удалено: {undo.title}
             </span>
             <button
@@ -189,7 +189,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
                 restoreTodo(undo);
                 setUndo(null);
               }}
-              className="shrink-0 text-[12px] font-semibold"
+              className="shrink-0 text-[13px] font-semibold"
             >
               Вернуть
             </button>
@@ -242,7 +242,7 @@ function TodoRow({
           onClick={onToggle}
           aria-label={done ? "снять отметку" : "выполнить"}
           className={cn(
-            "h-6 w-6 shrink-0 rounded-lg border text-[12px] transition",
+            "tap h-6 w-6 shrink-0 rounded-lg border text-[13px] transition",
             done
               ? "border-transparent bg-[var(--color-stability)] text-[var(--color-bg)]"
               : "border-[var(--color-border)]",
@@ -257,13 +257,13 @@ function TodoRow({
         <button onClick={onOpen} className="min-w-0 flex-1 text-left">
           <span
             className={cn(
-              "block truncate text-[13.5px]",
+              "block truncate text-[14.5px]",
               done && "text-[var(--color-muted)] line-through",
             )}
           >
             {t.title}
           </span>
-          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[11px] text-[var(--color-muted)]">
+          <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12px] text-[var(--color-muted)]">
             {overdue && (
               <span className="text-[var(--color-strength)]">просрочено</span>
             )}
@@ -285,7 +285,7 @@ function TodoRow({
         <button
           onClick={onOpen}
           aria-label="подробнее"
-          className="press shrink-0 px-1 text-[12px] text-[var(--color-muted)]"
+          className="press shrink-0 px-1 text-[13px] text-[var(--color-muted)]"
         >
           {open ? "▴" : "▾"}
         </button>
@@ -300,7 +300,7 @@ function TodoRow({
                 key={p}
                 onClick={() => updateTodo(t.id, { priority: p })}
                 className={cn(
-                  "rounded-xl border py-1.5 text-[11.5px] transition",
+                  "rounded-xl border py-1.5 text-[12.5px] transition",
                   t.priority === p
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -320,7 +320,7 @@ function TodoRow({
                   hour: e.target.value === "" ? undefined : Number(e.target.value),
                 })
               }
-              className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[12px] outline-none"
+              className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[13px] outline-none"
               aria-label="Час"
             >
               <option value="">без времени</option>
@@ -338,7 +338,7 @@ function TodoRow({
                     e.target.value === "" ? undefined : Number(e.target.value),
                 })
               }
-              className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[12px] outline-none"
+              className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[13px] outline-none"
               aria-label="Длительность"
             >
               <option value="">без длительности</option>
@@ -355,7 +355,7 @@ function TodoRow({
             <button
               onClick={() => updateTodo(t.id, { repeat: undefined })}
               className={cn(
-                "rounded-xl border px-2.5 py-1.5 text-[11px] transition",
+                "rounded-xl border px-2.5 py-1.5 text-[12px] transition",
                 !t.repeat
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -370,7 +370,7 @@ function TodoRow({
                 key={k}
                 onClick={() => updateTodo(t.id, { repeat: { kind: k } })}
                 className={cn(
-                  "rounded-xl border px-2.5 py-1.5 text-[11px] transition",
+                  "rounded-xl border px-2.5 py-1.5 text-[12px] transition",
                   t.repeat?.kind === k
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -387,7 +387,7 @@ function TodoRow({
             onChange={(e) => updateTodo(t.id, { note: e.target.value })}
             placeholder="Заметка…"
             rows={2}
-            className="mb-2 w-full resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-[12.5px] outline-none"
+            className="mb-2 w-full resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-[13.5px] outline-none"
           />
 
           {/* Подзадачи */}
@@ -398,7 +398,7 @@ function TodoRow({
                   <button
                     onClick={() => toggleSubtask(t.id, x.id)}
                     className={cn(
-                      "h-5 w-5 shrink-0 rounded border text-[10px]",
+                      "tap h-6 w-6 shrink-0 rounded border text-[11.5px]",
                       x.done
                         ? "border-transparent bg-[var(--color-stability)] text-[var(--color-bg)]"
                         : "border-[var(--color-border)]",
@@ -409,7 +409,7 @@ function TodoRow({
                   </button>
                   <span
                     className={cn(
-                      "min-w-0 flex-1 truncate text-[12.5px]",
+                      "min-w-0 flex-1 truncate text-[13.5px]",
                       x.done && "text-[var(--color-muted)] line-through",
                     )}
                   >
@@ -417,7 +417,7 @@ function TodoRow({
                   </span>
                   <button
                     onClick={() => removeSubtask(t.id, x.id)}
-                    className="press shrink-0 px-1 text-[11px] text-[var(--color-muted)]"
+                    className="press shrink-0 px-1 text-[12px] text-[var(--color-muted)]"
                     aria-label="удалить подзадачу"
                   >
                     ✕
@@ -440,7 +440,7 @@ function TodoRow({
               value={sub}
               onChange={(e) => setSub(e.target.value)}
               placeholder="+ подзадача"
-              className="h-9 min-w-0 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[12.5px] outline-none"
+              className="h-9 min-w-0 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[13.5px] outline-none"
             />
           </form>
 
@@ -448,13 +448,13 @@ function TodoRow({
             <button
               onClick={onTomorrow}
               disabled={Boolean(t.repeat)}
-              className="press flex-1 rounded-xl border border-[var(--color-border)] py-2 text-[11.5px] text-[var(--color-muted)] disabled:opacity-40"
+              className="press flex-1 rounded-xl border border-[var(--color-border)] py-2 text-[12.5px] text-[var(--color-muted)] disabled:opacity-40"
             >
               на завтра →
             </button>
             <button
               onClick={onRemove}
-              className="press rounded-xl border border-[var(--color-border)] px-3 py-2 text-[11.5px] text-[var(--color-strength)]"
+              className="press rounded-xl border border-[var(--color-border)] px-3 py-2 text-[12.5px] text-[var(--color-strength)]"
             >
               удалить
             </button>

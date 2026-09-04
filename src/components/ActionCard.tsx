@@ -1,10 +1,10 @@
 "use client";
 
 import {
+  animate,
   motion,
   useMotionValue,
   useTransform,
-  useMotionTemplate,
   type PanInfo,
 } from "framer-motion";
 import { useEffect } from "react";
@@ -32,8 +32,16 @@ interface ActionCardProps {
   forced?: SwipeDir | null;
 }
 
-const SWIPE_DISTANCE = 110;
-const SWIPE_VELOCITY = 480;
+/*
+ * Пороги свайпа. Были 110px/480 — при ограниченном drag это ощущалось
+ * неподъёмно: карточка упиралась в dragConstraints и шла заметно медленнее
+ * пальца, так что «110 пикселей» на деле требовали куда большего жеста.
+ * Теперь карточка следует за пальцем один в один, и порога в 80px хватает.
+ */
+const SWIPE_DISTANCE = 80;
+const SWIPE_VELOCITY = 380;
+/** Куда улетает карточка после засчитанного свайпа. */
+const FLY_OUT = 640;
 
 export default function ActionCard({
   scored,
@@ -85,23 +93,23 @@ export default function ActionCard({
   const stackScale = 1 - index * 0.05;
   const stackY = index * 14;
 
-  /* программный свайп (кнопки под колодой) */
+  /**
+   * Улёт карточки после засчитанного свайпа. Раньше карточка просто
+   * исчезала в точке отпускания — жест выглядел так, будто его не
+   * приняли. Теперь она доезжает до края, и только потом снимается.
+   */
+  function flyOut(dir: SwipeDir) {
+    animate(x, dir === "right" ? FLY_OUT : -FLY_OUT, {
+      duration: 0.22,
+      ease: [0.32, 0, 0.67, 0],
+      onComplete: () => onSwipe(dir, action),
+    });
+  }
+
+  /* Программный свайп кнопками под колодой — тот же полёт, что и пальцем. */
   useEffect(() => {
     if (!forced || !isTop) return;
-    const dir = forced === "right" ? 1 : -1;
-    const start = x.get();
-    const target = dir * 640;
-    const t0 = performance.now();
-    let raf = 0;
-    const step = (now: number) => {
-      const k = Math.min(1, (now - t0) / 320);
-      const eased = 1 - Math.pow(1 - k, 3);
-      x.set(start + (target - start) * eased);
-      if (k < 1) raf = requestAnimationFrame(step);
-      else onSwipe(forced, action);
-    };
-    raf = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(raf);
+    flyOut(forced);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [forced, isTop]);
 
@@ -111,10 +119,9 @@ export default function ActionCard({
     const passed =
       Math.abs(dx) > SWIPE_DISTANCE || Math.abs(vx) > SWIPE_VELOCITY;
 
-    if (!passed) return; // spring вернёт карту на место
+    if (!passed) return; // dragSnapToOrigin вернёт карту на место
 
-    const dir: SwipeDir = dx > 0 || vx > 0 ? "right" : "left";
-    onSwipe(dir, action);
+    flyOut(dx > 0 || vx > 0 ? "right" : "left");
   }
 
   return (
@@ -143,8 +150,12 @@ export default function ActionCard({
           pointerEvents: isTop ? "auto" : "none",
         }}
         drag={isTop ? "x" : false}
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.62}
+        /* Без dragConstraints: с ограничением в ноль и эластичностью 0.62
+           карточка шла медленнее пальца и пружинила — жест ощущался
+           вязким и «неотзывчивым». Теперь она следует один в один, а
+           возврат при недостаточном свайпе делает dragSnapToOrigin. */
+        dragSnapToOrigin
+        dragMomentum={false}
         onDragEnd={handleDragEnd}
         whileTap={isTop ? { cursor: "grabbing" } : undefined}
       >
@@ -219,9 +230,9 @@ export default function ActionCard({
                 {cat.icon}
               </div>
               <div className="leading-tight">
-                <p className="text-[13px] font-semibold">{cat.label}</p>
+                <p className="text-[14px] font-semibold">{cat.label}</p>
                 <p
-                  className="text-[11px] font-medium"
+                  className="text-[12px] font-medium"
                   style={{ color: stat.hex }}
                 >
                   {stat.icon} {stat.label}
@@ -235,7 +246,7 @@ export default function ActionCard({
               >
                 +{xp}
               </p>
-              <p className="mt-0.5 text-[10px] font-medium tracking-wider text-[var(--color-muted)]">
+              <p className="mt-0.5 text-[11.5px] font-medium tracking-wider text-[var(--color-muted)]">
                 XP
               </p>
             </div>
@@ -264,7 +275,7 @@ export default function ActionCard({
                 strokeLinecap="round"
               />
             </svg>
-            <p className="text-[12.5px] font-medium" style={{ color: stat.hex }}>
+            <p className="text-[13.5px] font-medium" style={{ color: stat.hex }}>
               {reason}
             </p>
           </div>
@@ -280,7 +291,7 @@ export default function ActionCard({
             <Meta label="Энергия" value={ENERGY_LABEL[action.energy]} />
           </div>
 
-          <div className="mt-2 flex items-center justify-between text-[11px] text-[var(--color-muted)]">
+          <div className="mt-2 flex items-center justify-between text-[12px] text-[var(--color-muted)]">
             <span>{TIME_LABEL[action.timePreference]}</span>
             <span className="flex items-center gap-1">
               Влияние
@@ -315,7 +326,7 @@ function Meta({
 }) {
   return (
     <div className="rounded-2xl bg-[var(--color-surface-2)]/70 px-2.5 py-2 text-center">
-      <p className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">
+      <p className="text-[11.5px] uppercase tracking-wider text-[var(--color-muted)]">
         {hint ? (
           // помечаем цифру, которую посчитали по замерам самого человека,
           // иначе изменившееся время выглядит как ошибка в контенте
@@ -324,7 +335,7 @@ function Meta({
           label
         )}
       </p>
-      <p className="mt-0.5 truncate text-[12px] font-semibold">{value}</p>
+      <p className="mt-0.5 truncate text-[13px] font-semibold">{value}</p>
     </div>
   );
 }

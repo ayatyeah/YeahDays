@@ -116,8 +116,8 @@ export default function LandingDemo() {
               YeahGrind
             </span>
             <span className="flex items-center gap-1.5 rounded-full bg-[rgba(255,255,255,0.06)] px-2.5 py-1">
-              <span className="text-[11px]">🔥</span>
-              <span className="num text-[12px] font-bold">9</span>
+              <span className="text-[12px]">🔥</span>
+              <span className="num text-[13px] font-bold">9</span>
             </span>
           </div>
 
@@ -137,7 +137,7 @@ export default function LandingDemo() {
                 />
               </div>
             ))}
-            <span className="num ml-1 text-[11px] font-medium text-[var(--color-muted)]">
+            <span className="num ml-1 text-[12px] font-medium text-[var(--color-muted)]">
               {Math.min(taken.length, 2)}/2
             </span>
           </div>
@@ -167,14 +167,14 @@ export default function LandingDemo() {
                   <p className="text-[17px] font-bold">
                     {taken.length > 0 ? "План собран" : "Колода закончилась"}
                   </p>
-                  <p className="mt-1.5 max-w-[240px] text-[12.5px] leading-snug text-[var(--color-fg-dim)]">
+                  <p className="mt-1.5 max-w-[240px] text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
                     {taken.length > 0
                       ? `Взято действий: ${taken.length}. В приложении дальше — таймер и «Сделал».`
                       : "В приложении колода обновляется каждый день."}
                   </p>
                   <button
                     onClick={reset}
-                    className="press mt-4 rounded-xl border border-[var(--color-border-strong)] px-4 py-2 text-[12.5px] font-semibold"
+                    className="press mt-4 rounded-xl border border-[var(--color-border-strong)] px-4 py-2 text-[13.5px] font-semibold"
                   >
                     Ещё раз
                   </button>
@@ -188,14 +188,14 @@ export default function LandingDemo() {
             <button
               onClick={() => swipe(false)}
               disabled={done}
-              className="press liquid h-12 flex-1 rounded-2xl text-[13.5px] font-semibold text-[var(--color-fg-dim)] disabled:opacity-30"
+              className="press liquid h-12 flex-1 rounded-2xl text-[14.5px] font-semibold text-[var(--color-fg-dim)] disabled:opacity-30"
             >
               Не сейчас
             </button>
             <button
               onClick={() => swipe(true)}
               disabled={done}
-              className="press h-12 flex-1 rounded-2xl bg-[var(--color-fg)] text-[13.5px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)] disabled:opacity-30"
+              className="press h-12 flex-1 rounded-2xl bg-[var(--color-fg)] text-[14.5px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)] disabled:opacity-30"
             >
               Беру
             </button>
@@ -203,7 +203,7 @@ export default function LandingDemo() {
         </div>
       </div>
 
-      <p className="mt-4 text-center text-[12.5px] text-[var(--color-muted)]">
+      <p className="mt-4 text-center text-[13.5px] text-[var(--color-muted)]">
         Живое демо — тащи карточку пальцем или жми кнопки.{" "}
         <Link href="/app" className="text-[var(--color-fg)] underline underline-offset-4">
           Открыть приложение
@@ -271,25 +271,25 @@ function DemoCard({
           {/* Подсказки решения */}
           <motion.span
             style={{ opacity: takeOpacity }}
-            className="absolute right-4 top-4 rounded-lg border-2 border-[var(--color-stability)] px-2.5 py-1 text-[12px] font-extrabold text-[var(--color-stability)]"
+            className="absolute right-4 top-4 rounded-lg border-2 border-[var(--color-stability)] px-2.5 py-1 text-[13px] font-extrabold text-[var(--color-stability)]"
           >
             БЕРУ
           </motion.span>
           <motion.span
             style={{ opacity: skipOpacity }}
-            className="absolute left-4 top-4 rounded-lg border-2 border-[var(--color-muted)] px-2.5 py-1 text-[12px] font-extrabold text-[var(--color-muted)]"
+            className="absolute left-4 top-4 rounded-lg border-2 border-[var(--color-muted)] px-2.5 py-1 text-[13px] font-extrabold text-[var(--color-muted)]"
           >
             НЕ СЕЙЧАС
           </motion.span>
 
           <div className="mt-9 flex items-center gap-2">
             <span
-              className="rounded-lg border px-2 py-0.5 text-[10.5px] font-semibold"
+              className="rounded-lg border px-2 py-0.5 text-[12px] font-semibold"
               style={badge}
             >
               {action.icon} {action.cat}
             </span>
-            <span className="text-[10.5px] text-[var(--color-muted)]">
+            <span className="text-[12px] text-[var(--color-muted)]">
               {action.min} мин · +{action.xp} XP
             </span>
           </div>
@@ -297,7 +297,7 @@ function DemoCard({
           <h3 className="mt-3 text-[21px] font-bold leading-tight">
             {action.title}
           </h3>
-          <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+          <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
             {action.why}
           </p>
 
@@ -309,7 +309,7 @@ function DemoCard({
               )}
               aria-hidden
             />
-            <span className="text-[11.5px] text-[var(--color-muted)]">
+            <span className="text-[12.5px] text-[var(--color-muted)]">
               {action.reason}
             </span>
           </div>

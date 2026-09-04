@@ -56,13 +56,13 @@ export default function ForgotPasswordPage() {
         {sent ? (
           <div className="surface rounded-2xl p-4 text-center">
             <p className="text-[14px] font-medium">Заявка отправлена</p>
-            <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
               Я свяжусь с тобой в Telegram и помогу восстановить доступ.
             </p>
           </div>
         ) : (
           <>
-            <p className="mb-5 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="mb-5 text-[14px] leading-snug text-[var(--color-fg-dim)]">
               Автоматического сброса пароля нет — оставь контакты, и я поменяю
               пароль вручную и напишу тебе в Telegram.
             </p>
@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
               />
 
               {error && (
-                <p className="text-[13px] text-[var(--color-strength)]">{error}</p>
+                <p className="text-[14px] text-[var(--color-strength)]">{error}</p>
               )}
 
               <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
           </>
         )}
 
-        <p className="mt-6 text-center text-[13px] text-[var(--color-muted)]">
+        <p className="mt-6 text-center text-[14px] text-[var(--color-muted)]">
           Вспомнил пароль?{" "}
           <Link href="/login" className="font-semibold text-[var(--color-fg)]">
             Войти

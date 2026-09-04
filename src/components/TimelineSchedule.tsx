@@ -1,7 +1,13 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence, type PanInfo } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useMotionValue,
+  useTransform,
+  type PanInfo,
+} from "framer-motion";
 import {
   useUserStore,
   isTodoOnDay,
@@ -18,6 +24,7 @@ import { dateKey, STATS } from "@/lib/domain";
 import { routineLabelAt } from "@/lib/routine";
 import { categorizeTodo, fmtDuration, TODO_PRIORITY_XP } from "@/lib/todoCategory";
 import { cn } from "@/lib/cn";
+import { haptic } from "@/lib/motion";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
@@ -28,6 +35,8 @@ const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTE_OPTIONS = [0, 10, 20, 30, 40, 50];
+/** Сколько нужно увести плашку вбок, чтобы это засчиталось за «выполнено». */
+const SWIPE_DONE = 64;
 
 /**
  * Почасовой план дня — стеклянные плашки задач поверх сетки часов.
@@ -149,32 +158,6 @@ export default function TimelineSchedule({
     : undefined;
 
   /**
-   * Час назначения при вертикальном перетаскивании — по РЕАЛЬНОМУ DOM-
-   * элементу под точкой отпускания (у него есть data-hour), а не по формуле
-   * "пиксели / ROW_HEIGHT". Формула предполагала, что каждый час занимает
-   * ровно ROW_HEIGHT — верно, только пока час пуст; строка с несколькими
-   * задачами внутри выше, и формула на такой сетке промахивалась мимо
-   * соседних часов (в т.ч. не давала попасть ровно на нужный час) и после
-   * переноса выглядела как рандомный скачок. document.elementFromPoint
-   * не ошибается, какая бы ни была высота строк.
-   */
-  function handleDragEnd(t: Todo, offset: { x: number; y: number }, targetHour: number | null) {
-    // Горизонтально дальше, чем вертикально — свайп "выполнено", не сдвиг часа.
-    if (Math.abs(offset.x) > Math.abs(offset.y) && Math.abs(offset.x) > 56) {
-      toggleTodo(t.id, day);
-      return;
-    }
-    if (targetHour == null || targetHour === t.hour) return;
-    // minute: 0 — иначе задача с ненулевой минутой (скажем, 14:30) при
-    // переносе на 15:00 садится на 15:30, её длительность реально наезжает
-    // на соседние задачи по времени, и кластеризация (справедливо) начинает
-    // считать их одновременными — несколько НЕ связанных с переносом задач
-    // визуально сжимаются в один ряд. Перенос часом всегда даёт чистое :00,
-    // точную минуту можно выставить потом через шторку.
-    updateTodo(t.id, { hour: targetHour, minute: 0 });
-  }
-
-  /**
    * Перетаскивание задачи из лотка "Без часа" прямо на сетку часов —
    * альтернатива открытию шторки ради одного тапа на "Час". Тот же приём:
    * час берём из data-hour реального элемента под точкой отпускания.
@@ -248,13 +231,13 @@ export default function TimelineSchedule({
   return (
     <section className="mt-5">
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Расписание дня
         </h2>
         {compact && (
           <button
             onClick={() => setExpanded((v) => !v)}
-            className="text-[12px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+            className="text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
           >
             {expanded ? "свернуть" : `${filled || "—"} записей`}
           </button>
@@ -263,7 +246,7 @@ export default function TimelineSchedule({
 
       {!compact && overdue.length > 0 && (
         <div className="mb-3">
-          <p className="mb-1.5 flex items-center gap-1.5 text-[12px] font-semibold text-[var(--color-strength)]">
+          <p className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-strength)]">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
             Просрочено
           </p>
@@ -277,11 +260,11 @@ export default function TimelineSchedule({
 
       {!compact && (
         <div className="mb-3">
-          <p className="mb-1.5 text-[12px] font-semibold text-[var(--color-fg-dim)]">Без часа</p>
+          <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">Без часа</p>
           {unscheduled.length === 0 ? (
             <button
               onClick={() => openSheet(null)}
-              className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-left text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+              className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-left text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
             >
               Добавь задачу — время можно назначить позже
             </button>
@@ -312,8 +295,8 @@ export default function TimelineSchedule({
         >
           {!compact && isToday && (
             <div className="sticky top-2 z-10 mb-1 flex justify-center px-2">
-              <div className="now-island flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[12px] font-semibold text-white">
-                <span className="shrink-0 rounded-full bg-white/15 px-2 py-1 font-mono text-[11.5px] tabular-nums">
+              <div className="now-island flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-semibold text-white">
+                <span className="shrink-0 rounded-full bg-white/15 px-2 py-1 font-mono text-[12.5px] tabular-nums">
                   {String(new Date().getHours()).padStart(2, "0")}:
                   {String(new Date().getMinutes()).padStart(2, "0")}
                 </span>
@@ -363,7 +346,7 @@ export default function TimelineSchedule({
                   <div
                     style={{ minHeight: ROW_HEIGHT }}
                     className={cn(
-                      "flex w-14 shrink-0 items-center justify-center text-[12px] tabular-nums",
+                      "flex w-14 shrink-0 items-center justify-center text-[13px] tabular-nums",
                       isNow ? "font-bold text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                     )}
                   >
@@ -377,7 +360,7 @@ export default function TimelineSchedule({
                       <button
                         type="button"
                         onClick={() => openSheet(null, h)}
-                        className="flex h-full w-full items-center text-left text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+                        className="flex h-full w-full items-center text-left text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
                       >
                         {routine ?? "Добавить задачу"}
                       </button>
@@ -389,8 +372,6 @@ export default function TimelineSchedule({
                           done={isTodoDone(t, day)}
                           onToggleDone={() => toggleTodo(t.id, day)}
                           onOpen={() => openSheet(t)}
-                          dragConstraints={containerRef}
-                          onDragged={(offset, targetHour) => handleDragEnd(t, offset, targetHour)}
                         />
                       ))
                     )}
@@ -405,7 +386,7 @@ export default function TimelineSchedule({
       {expanded && (
         <button
           onClick={() => setShowNight((v) => !v)}
-          className="mt-2 w-full text-center text-[11.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+          className="mt-2 w-full text-center text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
         >
           {showNight ? "скрыть ночные часы" : "показать все 24 часа"}
         </button>
@@ -431,7 +412,7 @@ export default function TimelineSchedule({
             <button
               type="button"
               onClick={() => setMode("edit")}
-              className="press shrink-0 rounded-xl bg-[var(--color-surface-2)] px-3.5 py-2 text-[13px] font-semibold transition hover:bg-[var(--color-border)]"
+              className="press shrink-0 rounded-xl bg-[var(--color-surface-2)] px-3.5 py-2 text-[14px] font-semibold transition hover:bg-[var(--color-border)]"
             >
               Изменить
             </button>
@@ -460,7 +441,7 @@ export default function TimelineSchedule({
                   {viewingTodo.title}
                 </h3>
                 <p
-                  className="mt-0.5 text-[11px] font-bold uppercase tracking-wide"
+                  className="mt-0.5 text-[12px] font-bold uppercase tracking-wide"
                   style={{ color: STATS[viewCategory.stat].color }}
                 >
                   {STATS[viewCategory.stat].label}
@@ -470,7 +451,7 @@ export default function TimelineSchedule({
             </div>
 
             {viewingTodo.note && (
-              <p className="rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
+              <p className="rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-[14.5px] leading-snug text-[var(--color-fg-dim)]">
                 {viewingTodo.note}
               </p>
             )}
@@ -501,7 +482,7 @@ export default function TimelineSchedule({
                 <p className="text-[15px] font-bold" style={{ color: STATS[viewCategory.stat].color }}>
                   +{viewXp} XP
                 </p>
-                <p className="text-[12px] text-[var(--color-fg-dim)]">
+                <p className="text-[13px] text-[var(--color-fg-dim)]">
                   в {STATS[viewCategory.stat].label.toLowerCase()}
                 </p>
               </div>
@@ -511,17 +492,17 @@ export default function TimelineSchedule({
               <span className="text-[16px]" aria-hidden>
                 🔥
               </span>
-              <p className="text-[12.5px] font-medium text-[var(--color-fg-dim)]">
+              <p className="text-[13.5px] font-medium text-[var(--color-fg-dim)]">
                 {dayActive ? "Этот день уже в серии" : "Выполнение закроет этот день в серию"}
               </p>
             </div>
 
             <div>
               <div className="mb-1.5 flex items-baseline justify-between">
-                <span className="text-[12px] font-semibold text-[var(--color-fg-dim)]">
+                <span className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
                   Покрытие дня
                 </span>
-                <span className="text-[12px] font-bold tabular-nums">{viewPercent}%</span>
+                <span className="text-[13px] font-bold tabular-nums">{viewPercent}%</span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
                 <div
@@ -529,7 +510,7 @@ export default function TimelineSchedule({
                   style={{ width: `${viewPercent}%`, background: STATS[viewCategory.stat].color }}
                 />
               </div>
-              <p className="mt-1.5 text-[11px] leading-snug text-[var(--color-muted)]">
+              <p className="mt-1.5 text-[12px] leading-snug text-[var(--color-muted)]">
                 Чем важнее задача, тем больше её вклад в закрытие дня.
               </p>
             </div>
@@ -573,7 +554,7 @@ export default function TimelineSchedule({
                   key={p}
                   onClick={() => setFPriority(p)}
                   className={cn(
-                    "flex flex-col items-center gap-1.5 rounded-xl border py-2.5 text-[12px] font-semibold transition",
+                    "flex flex-col items-center gap-1.5 rounded-xl border py-2.5 text-[13px] font-semibold transition",
                     fPriority === p
                       ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                       : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -595,7 +576,7 @@ export default function TimelineSchedule({
               <button
                 onClick={() => setFHour(undefined)}
                 className={cn(
-                  "shrink-0 rounded-xl border px-3.5 py-2.5 text-[12.5px] font-semibold transition",
+                  "shrink-0 rounded-xl border px-3.5 py-2.5 text-[13.5px] font-semibold transition",
                   fHour === undefined
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -608,7 +589,7 @@ export default function TimelineSchedule({
                   key={h}
                   onClick={() => setFHour(h)}
                   className={cn(
-                    "shrink-0 rounded-xl border px-3.5 py-2.5 text-[12.5px] font-semibold tabular-nums transition",
+                    "shrink-0 rounded-xl border px-3.5 py-2.5 text-[13.5px] font-semibold tabular-nums transition",
                     fHour === h
                       ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                       : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -629,7 +610,7 @@ export default function TimelineSchedule({
                     key={m}
                     onClick={() => setFMinute(m)}
                     className={cn(
-                      "rounded-xl border py-2.5 text-[12.5px] font-semibold tabular-nums transition",
+                      "rounded-xl border py-2.5 text-[13.5px] font-semibold tabular-nums transition",
                       fMinute === m
                         ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                         : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -650,7 +631,7 @@ export default function TimelineSchedule({
                   key={d}
                   onClick={() => setFDuration(d)}
                   className={cn(
-                    "rounded-xl border py-2 text-[12px] font-semibold tabular-nums transition",
+                    "rounded-xl border py-2 text-[13px] font-semibold tabular-nums transition",
                     fDuration === d
                       ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                       : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -669,7 +650,7 @@ export default function TimelineSchedule({
               onChange={(e) => setFDone(e.target.checked)}
               className="h-4 w-4 rounded accent-[var(--color-fg)]"
             />
-            <span className="text-[13px] text-[var(--color-fg-dim)]">Выполнено</span>
+            <span className="text-[14px] text-[var(--color-fg-dim)]">Выполнено</span>
           </label>
 
           <div className="flex gap-2.5 pt-1">
@@ -695,22 +676,18 @@ export default function TimelineSchedule({
       </Modal>
 
       <style jsx>{`
+        /* Матовая панель: сплошной цвет темы вместо размытия. Классы
+           сохранили имена (glass-panel/glass-chip) — переименовывать их
+           значило бы трогать десяток мест ради косметики. */
         .glass-panel {
-          background: rgba(255, 255, 255, 0.035);
-          backdrop-filter: blur(20px) saturate(140%);
-          -webkit-backdrop-filter: blur(20px) saturate(140%);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow:
-            inset 0 1px 0 rgba(255, 255, 255, 0.06),
-            0 20px 44px -28px rgba(0, 0, 0, 0.7);
+          background: var(--color-surface);
+          border: 1px solid var(--color-border);
+          box-shadow: var(--shadow-1);
         }
         .now-island {
-          background: rgba(10, 10, 14, 0.72);
-          backdrop-filter: blur(18px) saturate(150%);
-          -webkit-backdrop-filter: blur(18px) saturate(150%);
-          box-shadow:
-            0 8px 24px -8px rgba(0, 0, 0, 0.5),
-            inset 0 1px 1px rgba(255, 255, 255, 0.12);
+          background: var(--color-bg-soft);
+          border: 1px solid var(--color-border-strong);
+          box-shadow: var(--shadow-2);
         }
         /* :global — styled-jsx только помечает свои JSX-теги скоуп-классом
            автоматически, а на motion.div (member-expression тег, не обычный
@@ -761,46 +738,52 @@ function TimelineChip({
   done,
   onToggleDone,
   onOpen,
-  dragConstraints,
-  onDragged,
 }: {
   todo: Todo;
   done: boolean;
   onToggleDone: () => void;
   onOpen: () => void;
-  dragConstraints: React.RefObject<HTMLDivElement | null>;
-  onDragged: (offset: { x: number; y: number }, targetHour: number | null) => void;
 }) {
   const cat = categorizeTodo(todo.title);
   const statColor = STATS[cat.stat].color;
-  // onTap стреляет по времени нажатия, а не по расстоянию — быстрый перенос
-  // чипа укладывается в то же окно и открыл бы шторку сразу вслед за
-  // переносом без этого флага (тот же приём, что и у TrayChip ниже).
+  // onTap стреляет по времени нажатия, а не по расстоянию — быстрый свайп
+  // укладывается в то же окно и открыл бы шторку сразу вслед за жестом.
   const justDraggedRef = useRef(false);
-  const chipRef = useRef<HTMLDivElement>(null);
+
+  /*
+   * drag="x", а НЕ свободный 2D-drag, как было раньше.
+   *
+   * Свободный drag заставляет framer поставить элементу touch-action: none.
+   * Плашки занимают почти всю сетку часов, поэтому расписание переставало
+   * скроллиться вообще: любое касание задачи забирал жест переноса, а
+   * лёгкое смещение пальца при попытке прокрутки то отмечало задачу
+   * выполненной, то роняло её в чужой час.
+   *
+   * С осью x браузер получает touch-action: pan-y и скроллит по вертикали
+   * сам, а нам достаётся только горизонталь — то есть ровно свайп
+   * «выполнено». Перенос задачи в другой час теперь живёт в шторке
+   * (тап по плашке → «Час») и в перетаскивании из лотка на сетку.
+   */
+  const x = useMotionValue(0);
+  // Подсветка намерения: пока плашка не уехала на SWIPE_DONE, свайп ничего
+  // не сделает — без этого жест ощущается сломанным, а не незавершённым.
+  const hint = useTransform(x, [-SWIPE_DONE, -18, 0, 18, SWIPE_DONE], [1, 0, 0, 0, 1]);
+
   return (
     <motion.div
-      ref={chipRef}
-      drag
-      dragConstraints={dragConstraints}
-      dragElastic={0.1}
-      dragMomentum={false}
+      drag="x"
       dragSnapToOrigin
+      dragElastic={0.08}
+      dragMomentum={false}
+      style={{ x, ["--chip-color" as string]: statColor }}
       onDragStart={() => {
         justDraggedRef.current = true;
-        // На момент onDragEnd карточка ещё визуально стоит в точке
-        // отпускания (dragSnapToOrigin отъезжает НАЗАД уже ПОСЛЕ) — без
-        // этого elementFromPoint ниже находил бы саму карточку, а не
-        // строку часа под ней.
-        if (chipRef.current) chipRef.current.style.pointerEvents = "none";
       }}
       onDragEnd={(_, info) => {
-        const hourEl = document
-          .elementFromPoint(info.point.x, info.point.y)
-          ?.closest<HTMLElement>("[data-hour]");
-        if (chipRef.current) chipRef.current.style.pointerEvents = "";
-        const targetHour = hourEl ? Number(hourEl.dataset.hour) : null;
-        onDragged(info.offset, targetHour !== null && Number.isFinite(targetHour) ? targetHour : null);
+        if (Math.abs(info.offset.x) > SWIPE_DONE) {
+          haptic("medium");
+          onToggleDone();
+        }
         requestAnimationFrame(() => {
           justDraggedRef.current = false;
         });
@@ -809,49 +792,47 @@ function TimelineChip({
         if (justDraggedRef.current) return;
         onOpen();
       }}
-      // Раньше был layout (плавный переезд карточки при смене часа) — но
-      // framer пересчитывает эту FLIP-анимацию на КАЖДЫЙ ре-рендер сетки,
-      // не только на перенос: открыл и закрыл шторку редактирования — и
-      // карточка уже «залипала» между старой и новой позицией, наезжая на
-      // соседей (воспроизвелось и без единого drag). Без layout смена часа
-      // — просто мгновенный скачок на новое место, менее красиво, зато
-      // никогда не зависает в промежуточном кадре.
       transition={{ type: "spring", stiffness: 500, damping: 40 }}
       className={cn(
-        "glass-chip group relative flex w-full cursor-grab items-center gap-3 overflow-hidden rounded-2xl p-2.5 active:cursor-grabbing",
+        "glass-chip group relative flex w-full cursor-grab items-center gap-3 overflow-hidden rounded-2xl p-3 active:cursor-grabbing",
         done && "opacity-55",
       )}
-      style={{
-        // @ts-expect-error -- кастомное свойство для CSS ниже
-        "--chip-color": statColor,
-      }}
     >
-      <div
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[16px]"
+      {/* Заливка «отпустишь — засчитается». Только opacity, композитится на GPU. */}
+      <motion.div
+        className="pointer-events-none absolute inset-0 rounded-2xl"
         style={{
-          background: `color-mix(in srgb, ${statColor} 18%, var(--color-surface-2) 90%)`,
+          opacity: hint,
+          background: done
+            ? "color-mix(in srgb, var(--color-muted) 26%, transparent)"
+            : "color-mix(in srgb, var(--color-stability) 26%, transparent)",
         }}
+      />
+      <div
+        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[17px]"
+        style={{ background: `color-mix(in srgb, ${statColor} 16%, transparent)` }}
         aria-hidden
       >
         {cat.icon}
       </div>
-      <div className="min-w-0 flex-1 text-left">
+      <div className="relative min-w-0 flex-1 text-left">
         <p
           className={cn(
-            "line-clamp-2 text-[13px] font-semibold leading-tight text-[var(--color-fg)]",
+            "line-clamp-2 text-[14.5px] font-semibold leading-tight text-[var(--color-fg)]",
             done && "text-[var(--color-muted)] line-through",
           )}
         >
           {todo.title}
         </p>
         <p
-          className="mt-0.5 truncate text-[10px] font-bold uppercase tracking-wide"
+          className="mt-0.5 truncate text-[12.5px] font-bold uppercase tracking-wide"
           style={{ color: statColor }}
         >
           {STATS[cat.stat].label}
           {cat.subLabel ? ` · ${cat.subLabel}` : ""}
         </p>
       </div>
+      {/* Зона нажатия 44px — палец не обязан попадать в саму окружность. */}
       <button
         type="button"
         onPointerDown={(e) => e.stopPropagation()}
@@ -860,14 +841,18 @@ function TimelineChip({
           onToggleDone();
         }}
         aria-label={done ? "Снять отметку о выполнении" : "Отметить выполненным"}
-        className={cn(
-          "flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[12px] font-bold transition",
-          done
-            ? "border-[var(--color-stability)] bg-[var(--color-stability)] text-white"
-            : "border-[var(--color-border-strong)] text-transparent",
-        )}
+        className="relative -m-2 flex h-11 w-11 shrink-0 items-center justify-center"
       >
-        ✓
+        <span
+          className={cn(
+            "flex h-7 w-7 items-center justify-center rounded-full border-2 text-[14px] font-bold transition",
+            done
+              ? "border-[var(--color-stability)] bg-[var(--color-stability)] text-white"
+              : "border-[var(--color-border-strong)] text-transparent",
+          )}
+        >
+          ✓
+        </span>
       </button>
     </motion.div>
   );
@@ -914,7 +899,7 @@ function TrayChip({
           justDraggedRef.current = false;
         });
       }}
-      className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[12.5px] font-medium active:cursor-grabbing"
+      className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[13.5px] font-medium active:cursor-grabbing"
       style={{
         // @ts-expect-error -- кастомное свойство для CSS в родителе
         "--chip-color": PRIORITY_COLOR[todo.priority],
@@ -929,7 +914,7 @@ function TrayChip({
 
 function SheetLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2 text-[12px] font-semibold text-[var(--color-fg-dim)]">{children}</p>
+    <p className="mb-2 text-[13px] font-semibold text-[var(--color-fg-dim)]">{children}</p>
   );
 }
 
@@ -937,8 +922,8 @@ function SheetLabel({ children }: { children: React.ReactNode }) {
 function ViewMeta({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl bg-[var(--color-surface-2)] px-2.5 py-2.5 text-center">
-      <p className="text-[10px] uppercase tracking-wider text-[var(--color-muted)]">{label}</p>
-      <p className="mt-0.5 truncate text-[12.5px] font-semibold">{value}</p>
+      <p className="text-[11.5px] uppercase tracking-wider text-[var(--color-muted)]">{label}</p>
+      <p className="mt-0.5 truncate text-[13.5px] font-semibold">{value}</p>
     </div>
   );
 }

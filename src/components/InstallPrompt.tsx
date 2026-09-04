@@ -103,8 +103,8 @@ export default function InstallPrompt() {
               📲
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold">Установи YeahGrind</p>
-              <p className="truncate text-[11.5px] text-[var(--color-muted)]">
+              <p className="text-[14px] font-semibold">Установи YeahGrind</p>
+              <p className="truncate text-[12.5px] text-[var(--color-muted)]">
                 {ios && !evt
                   ? "Поделиться → «На экран «Домой»"
                   : "Запускай как приложение, работает офлайн"}
@@ -113,7 +113,7 @@ export default function InstallPrompt() {
             {evt ? (
               <button
                 onClick={install}
-                className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[13px] font-semibold text-[var(--color-bg)]"
+                className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[14px] font-semibold text-[var(--color-bg)]"
               >
                 Установить
               </button>
@@ -121,7 +121,7 @@ export default function InstallPrompt() {
             <button
               onClick={dismiss}
               aria-label="Закрыть"
-              className="press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
+              className="tap press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
             >
               ✕
             </button>

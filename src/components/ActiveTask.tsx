@@ -71,7 +71,7 @@ export default function ActiveTask({
           <span className="text-[15px]" aria-hidden>
             {cat.icon}
           </span>
-          <span className="text-[11.5px] font-medium text-[var(--color-muted)]">
+          <span className="text-[12.5px] font-medium text-[var(--color-muted)]">
             {cat.label} · {DIFFICULTY_LABEL[task.snapshot.difficulty]} ·{" "}
             {task.snapshot.duration} мин
           </span>
@@ -80,7 +80,7 @@ export default function ActiveTask({
         <h2 className="mt-3 text-[22px] font-bold leading-tight tracking-tight">
           {task.snapshot.title}
         </h2>
-        <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+        <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
           {task.snapshot.why}
         </p>
 
@@ -92,7 +92,7 @@ export default function ActiveTask({
           >
             {formatDuration(elapsed)}
           </span>
-          <span className="text-[11.5px] text-[var(--color-muted)]">
+          <span className="text-[12.5px] text-[var(--color-muted)]">
             {over ? "дольше плана" : "идёт"}
           </span>
         </div>
@@ -124,7 +124,7 @@ export default function ActiveTask({
         </button>
       </div>
 
-      <p className="mt-4 text-center text-[11.5px] leading-snug text-[var(--color-muted)]">
+      <p className="mt-4 text-center text-[12.5px] leading-snug text-[var(--color-muted)]">
         Пока это действие не закрыто, новых карточек не будет.
         <br />
         Взял — сделай.

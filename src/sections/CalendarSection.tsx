@@ -127,7 +127,7 @@ export default function CalendarSection() {
         className={cn(
           // active:scale вместо framer-motion: 42 ячейки × подписка
           // на motion-значения заметно тормозили открытие календаря
-          "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[13px] transition-transform duration-100 active:scale-[0.92]",
+          "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[14px] transition-transform duration-100 active:scale-[0.92]",
           isSel
             ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
             : "border-transparent hover:bg-[var(--color-surface)]",
@@ -181,7 +181,7 @@ export default function CalendarSection() {
           <h1 className="truncate text-[22px] font-bold tracking-tight">
             {dayLabel(selected, todayKey)}
           </h1>
-          <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
+          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
             🔥 {streak} подряд · рекорд {best}
           </p>
         </div>
@@ -190,7 +190,7 @@ export default function CalendarSection() {
           {selected !== todayKey && (
             <button
               onClick={() => setSelected(todayKey)}
-              className="press flex h-9 items-center rounded-xl surface px-3 text-[12.5px] font-medium text-[var(--color-fg-dim)]"
+              className="press flex h-9 items-center rounded-xl surface px-3 text-[13.5px] font-medium text-[var(--color-fg-dim)]"
             >
               Сегодня
             </button>
@@ -234,7 +234,7 @@ export default function CalendarSection() {
               </div>
             </div>
 
-            <div className="mb-1.5 grid grid-cols-7 gap-1 text-center text-[10.5px] text-[var(--color-muted)]">
+            <div className="mb-1.5 grid grid-cols-7 gap-1 text-center text-[12px] text-[var(--color-muted)]">
               {WEEKDAYS.map((w) => (
                 <div key={w}>{w}</div>
               ))}
@@ -242,7 +242,7 @@ export default function CalendarSection() {
 
             <div className="grid grid-cols-7 gap-1">{cells.map((d, i) => renderDayCell(d, i))}</div>
 
-            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10.5px] text-[var(--color-muted)]">
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[12px] text-[var(--color-muted)]">
               <Legend color="var(--color-stability)" label="день закрыт" />
               <Legend color="var(--color-wealth)" label="частично" />
               <Legend color="var(--color-border)" label="не начат" />
@@ -250,9 +250,9 @@ export default function CalendarSection() {
           </section>
 
           <section className="mt-5 rounded-3xl surface p-4 text-center">
-            <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">Стрик</p>
+            <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">Стрик</p>
             <p className="mt-1 text-3xl font-black leading-none tabular-nums">🔥 {streak}</p>
-            <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
+            <p className="mt-1.5 text-[12px] text-[var(--color-muted)]">
               Рекорд: {best} {best === 1 ? "день" : "дн."}
             </p>
           </section>
@@ -270,7 +270,7 @@ export default function CalendarSection() {
           </div>
         </div>
 
-        <div className="mb-1.5 grid grid-cols-7 gap-1 text-center text-[10.5px] text-[var(--color-muted)]">
+        <div className="mb-1.5 grid grid-cols-7 gap-1 text-center text-[12px] text-[var(--color-muted)]">
           {WEEKDAYS.map((w) => (
             <div key={w}>{w}</div>
           ))}
@@ -278,19 +278,19 @@ export default function CalendarSection() {
 
         <div className="grid grid-cols-7 gap-1">{cells.map((d, i) => renderDayCell(d, i))}</div>
 
-        <div className="mt-3 flex items-center justify-center gap-4 text-[10.5px] text-[var(--color-muted)]">
+        <div className="mt-3 flex items-center justify-center gap-4 text-[12px] text-[var(--color-muted)]">
           <Legend color="var(--color-stability)" label="день закрыт" />
           <Legend color="var(--color-wealth)" label="частично" />
           <Legend color="var(--color-border)" label="не начат" />
         </div>
 
         <section className="mt-5">
-          <h2 className="mb-2.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+          <h2 className="mb-2.5 text-[14px] font-semibold text-[var(--color-fg-dim)]">
             {selected === todayKey ? "Сегодня" : selected}
           </h2>
 
           {selectedTasks.length === 0 ? (
-            <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-7 text-center text-[13px] text-[var(--color-muted)]">
+            <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-7 text-center text-[14px] text-[var(--color-muted)]">
               В этот день действий не было.
             </p>
           ) : (

@@ -63,7 +63,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           </button>
           <button
             onClick={this.reset}
-            className="h-11 rounded-2xl text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+            className="h-11 rounded-2xl text-[14px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
           >
             Сбросить данные и начать заново
           </button>

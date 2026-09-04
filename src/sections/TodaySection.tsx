@@ -82,7 +82,7 @@ export default function TodaySection() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="mb-1">
-        <p className="text-[13px] font-medium text-[var(--color-muted)]">
+        <p className="text-[14px] font-medium text-[var(--color-muted)]">
           {GREETING[currentSlot()]}, {name}
         </p>
         <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
@@ -109,7 +109,7 @@ export default function TodaySection() {
           <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
             <div className="mb-2.5 flex items-end justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                   Выполнено
                 </p>
                 <p className="mt-0.5 text-2xl font-bold leading-none tabular-nums">
@@ -118,10 +118,10 @@ export default function TodaySection() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                   Уровень {progress.level}
                 </p>
-                <p className="mt-0.5 text-[13px] font-semibold tabular-nums">
+                <p className="mt-0.5 text-[14px] font-semibold tabular-nums">
                   <AnimatedNumber value={totalXp} /> XP
                 </p>
               </div>
@@ -183,10 +183,10 @@ export default function TodaySection() {
                     onClick={() => setShowDone((v) => !v)}
                     className="flex w-full items-center justify-between rounded-2xl surface px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
                   >
-                    <span className="text-[12.5px] font-semibold text-[var(--color-muted)]">
+                    <span className="text-[13.5px] font-semibold text-[var(--color-muted)]">
                       Выполнено: {done.length}
                     </span>
-                    <span className="text-[12px] text-[var(--color-muted)]">
+                    <span className="text-[13px] text-[var(--color-muted)]">
                       {showDone ? "скрыть" : "показать"}
                     </span>
                   </button>
@@ -233,7 +233,7 @@ export default function TodaySection() {
                 animate={{ opacity: 1, y: 0 }}
                 className="pointer-events-none absolute inset-x-0 bottom-0 text-center"
               >
-                <span className="rounded-full bg-[var(--color-stability)]/15 px-3 py-1.5 text-[12px] font-semibold text-[var(--color-stability)]">
+                <span className="rounded-full bg-[var(--color-stability)]/15 px-3 py-1.5 text-[13px] font-semibold text-[var(--color-stability)]">
                   День закрыт 🔥 стрик {streak}
                 </span>
               </motion.div>

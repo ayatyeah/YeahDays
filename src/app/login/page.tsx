@@ -75,7 +75,7 @@ function LoginForm() {
         </div>
 
         {googleFirst && (
-          <p className="mb-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-center text-[13px] leading-snug text-[var(--color-fg-dim)]">
+          <p className="mb-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-center text-[14px] leading-snug text-[var(--color-fg-dim)]">
             Для этого email ещё нет аккаунта — сначала зарегистрируйся, а
             Google привяжешь после в профиле.
           </p>
@@ -100,7 +100,7 @@ function LoginForm() {
           />
 
           {error && (
-            <p className="text-[13px] text-[var(--color-strength)]">{error}</p>
+            <p className="text-[14px] text-[var(--color-strength)]">{error}</p>
           )}
 
           <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
@@ -109,13 +109,13 @@ function LoginForm() {
 
           <Link
             href="/forgot-password"
-            className="text-center text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+            className="text-center text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
           >
             Забыли пароль?
           </Link>
         </form>
 
-        <div className="my-5 flex items-center gap-3 text-[12px] text-[var(--color-muted)]">
+        <div className="my-5 flex items-center gap-3 text-[13px] text-[var(--color-muted)]">
           <span className="h-px flex-1 bg-[var(--color-border)]" />
           или
           <span className="h-px flex-1 bg-[var(--color-border)]" />
@@ -133,7 +133,7 @@ function LoginForm() {
           Продолжить с Google
         </button>
 
-        <p className="mt-6 text-center text-[13px] text-[var(--color-muted)]">
+        <p className="mt-6 text-center text-[14px] text-[var(--color-muted)]">
           Ещё нет аккаунта?{" "}
           <Link href="/register" className="font-semibold text-[var(--color-fg)]">
             Зарегистрироваться

@@ -64,7 +64,7 @@ export default function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 className={cn(
-                  "press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-1.5 text-[9.5px] font-medium",
+                  "press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-1.5 text-[11px] font-medium",
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
@@ -88,7 +88,7 @@ export default function BottomNav() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={springSnappy}
-                      className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[9px] font-bold text-white shadow-[0_2px_8px_rgba(255,122,104,0.5)]"
+                      className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(255,122,104,0.5)]"
                     >
                       {badge}
                     </motion.span>

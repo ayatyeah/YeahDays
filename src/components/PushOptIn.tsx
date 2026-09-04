@@ -113,10 +113,10 @@ export default function PushOptIn() {
           🔔
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-semibold">
+          <p className="text-[14px] font-semibold">
             {on ? "Напоминания включены" : "Напоминания"}
           </p>
-          <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+          <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
             {state === "denied" ? (
               <>
                 Уведомления заблокированы в браузере. Включить можно в его
@@ -143,7 +143,7 @@ export default function PushOptIn() {
           {/* Час утреннего напоминания. Вечерний подбирается автоматически
               по тому, когда человек реально закрывает действия. */}
           <div className="mt-4">
-            <p className="mb-2 text-[11.5px] text-[var(--color-muted)]">
+            <p className="mb-2 text-[12.5px] text-[var(--color-muted)]">
               Утром в{" "}
               <span className="font-semibold text-[var(--color-fg)]">
                 {String(reminderHour).padStart(2, "0")}:00
@@ -160,7 +160,7 @@ export default function PushOptIn() {
                     if (on) void subscribeToPush(h);
                   }}
                   className={cn(
-                    "rounded-xl border py-2 text-[12px] tabular-nums transition",
+                    "rounded-xl border py-2 text-[13px] tabular-nums transition",
                     reminderHour === h
                       ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                       : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -196,8 +196,8 @@ export default function PushOptIn() {
 
           {/* Тихие часы */}
           <div className="mt-4 rounded-2xl bg-[var(--color-surface-2)] p-3">
-            <p className="text-[12px] font-semibold">Не беспокоить</p>
-            <p className="mt-0.5 text-[11px] leading-snug text-[var(--color-muted)]">
+            <p className="text-[13px] font-semibold">Не беспокоить</p>
+            <p className="mt-0.5 text-[12px] leading-snug text-[var(--color-muted)]">
               Ночные напоминания о задачах отменяются, дела со временем
               переносятся на утро.
             </p>
@@ -237,7 +237,7 @@ export default function PushOptIn() {
               <button
                 type="button"
                 onClick={test}
-                className="h-11 shrink-0 rounded-2xl border border-[var(--color-border)] px-4 text-[13px] font-medium text-[var(--color-fg-dim)] transition active:scale-[0.99]"
+                className="h-11 shrink-0 rounded-2xl border border-[var(--color-border)] px-4 text-[14px] font-medium text-[var(--color-fg-dim)] transition active:scale-[0.99]"
               >
                 {tested ? "Отправлено" : "Проверить"}
               </button>
@@ -245,7 +245,7 @@ export default function PushOptIn() {
           </div>
 
           {on && !triggersSupported() && (
-            <p className="mt-2.5 text-[10.5px] leading-snug text-[var(--color-muted)]">
+            <p className="mt-2.5 text-[12px] leading-snug text-[var(--color-muted)]">
               На этом устройстве напоминания приходят через сервер: если
               приложение установлено на домашний экран, они работают и когда
               оно закрыто.
@@ -281,8 +281,8 @@ function Toggle({
       className="flex items-center gap-3 rounded-2xl px-1 py-2 text-left transition active:scale-[0.99]"
     >
       <span className="min-w-0 flex-1">
-        <span className="block text-[12.5px] font-medium">{label}</span>
-        <span className="mt-0.5 block text-[11px] leading-snug text-[var(--color-muted)]">
+        <span className="block text-[13.5px] font-medium">{label}</span>
+        <span className="mt-0.5 block text-[12px] leading-snug text-[var(--color-muted)]">
           {hint}
         </span>
       </span>
@@ -315,12 +315,12 @@ function HourSelect({
   onChange: (v: number) => void;
 }) {
   return (
-    <label className="flex flex-1 items-center gap-2 text-[11.5px] text-[var(--color-muted)]">
+    <label className="flex flex-1 items-center gap-2 text-[12.5px] text-[var(--color-muted)]">
       {label}
       <select
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[12.5px] tabular-nums text-[var(--color-fg)]"
+        className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[13.5px] tabular-nums text-[var(--color-fg)]"
       >
         {Array.from({ length: 24 }, (_, h) => (
           <option key={h} value={h}>

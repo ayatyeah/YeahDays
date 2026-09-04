@@ -60,10 +60,10 @@ export default function DataControls() {
 
   return (
     <section className="mt-6">
-      <h2 className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
+      <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
         Твои данные
       </h2>
-      <p className="mb-3 mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+      <p className="mb-3 mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
         Всё, что хранится в аккаунте, можно забрать или стереть.
       </p>
 
@@ -71,21 +71,21 @@ export default function DataControls() {
         <button
           onClick={exportData}
           disabled={busy}
-          className="h-11 w-full rounded-2xl surface text-[13.5px] font-medium transition active:scale-[0.99] disabled:opacity-60"
+          className="h-11 w-full rounded-2xl surface text-[14.5px] font-medium transition active:scale-[0.99] disabled:opacity-60"
         >
           Выгрузить мои данные (JSON)
         </button>
         <button
           onClick={() => setConfirming(true)}
           disabled={busy}
-          className="h-11 w-full rounded-2xl border border-[var(--color-border)] text-[13.5px] font-medium text-[var(--color-strength)] transition active:scale-[0.99] disabled:opacity-60"
+          className="h-11 w-full rounded-2xl border border-[var(--color-border)] text-[14.5px] font-medium text-[var(--color-strength)] transition active:scale-[0.99] disabled:opacity-60"
         >
           Удалить аккаунт
         </button>
       </div>
 
       {error && (
-        <p className="mt-2 text-center text-[11.5px] text-[var(--color-strength)]">
+        <p className="mt-2 text-center text-[12.5px] text-[var(--color-strength)]">
           {error}
         </p>
       )}
@@ -99,7 +99,7 @@ export default function DataControls() {
           Будут стёрты профиль, весь прогресс, история действий и подписки на
           уведомления — на сервере и на этом устройстве. Это нельзя отменить.
         </p>
-        <p className="mt-2 text-[12.5px] leading-snug text-[var(--color-muted)]">
+        <p className="mt-2 text-[13.5px] leading-snug text-[var(--color-muted)]">
           Хочешь сохранить копию — сначала выгрузи данные.
         </p>
         <div className="mt-5 flex gap-2.5">

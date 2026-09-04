@@ -79,7 +79,7 @@ export default function Sidebar() {
         })}
       </div>
 
-      <div className="mt-auto px-2 text-[11px] text-[var(--color-muted)]">
+      <div className="mt-auto px-2 text-[12px] text-[var(--color-muted)]">
         Одно действие в день
       </div>
     </nav>

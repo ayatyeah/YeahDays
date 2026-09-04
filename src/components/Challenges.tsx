@@ -38,7 +38,7 @@ export default function Challenges() {
 
   return (
     <section className="mt-5">
-      <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+      <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
         Челленджи
       </h2>
       <div className="space-y-2.5">
@@ -90,8 +90,8 @@ function ChallengeRow({
           {stat.icon}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[13.5px] font-semibold">{c.title}</p>
-          <p className="mt-0.5 text-[11.5px] text-[var(--color-muted)]">
+          <p className="truncate text-[14.5px] font-semibold">{c.title}</p>
+          <p className="mt-0.5 text-[12.5px] text-[var(--color-muted)]">
             {done} из {c.green} {c.unit}
             {level === "green"
               ? " · день зелёный 🟢"
@@ -100,7 +100,7 @@ function ChallengeRow({
                 : ` · до жёлтого ${Math.max(0, c.yellow - done)}`}
           </p>
         </div>
-        <span className="shrink-0 text-[11px] tabular-nums text-[var(--color-muted)]">
+        <span className="shrink-0 text-[12px] tabular-nums text-[var(--color-muted)]">
           {left >= 0 ? `${left} дн` : "финиш"}
         </span>
       </div>
@@ -128,7 +128,7 @@ function ChallengeRow({
               <div
                 key={`${s.slot}-${i}`}
                 className={cn(
-                  "flex-1 rounded-xl border px-2 py-1.5 text-center text-[10.5px] transition",
+                  "flex-1 rounded-xl border px-2 py-1.5 text-center text-[12px] transition",
                   filled
                     ? "border-transparent bg-[var(--color-surface-2)] text-[var(--color-fg)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -148,7 +148,7 @@ function ChallengeRow({
           <button
             key={n}
             onClick={() => onLog(n)}
-            className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] py-2 text-[12.5px] font-semibold transition active:scale-[0.98]"
+            className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] py-2 text-[13.5px] font-semibold transition active:scale-[0.98]"
           >
             +{n}
           </button>
@@ -157,7 +157,7 @@ function ChallengeRow({
           onClick={() => onLog(-(steps[0] ?? 1))}
           disabled={done === 0}
           aria-label="Убрать"
-          className="rounded-xl border border-[var(--color-border)] px-3 py-2 text-[12.5px] text-[var(--color-muted)] transition disabled:opacity-40"
+          className="rounded-xl border border-[var(--color-border)] px-3 py-2 text-[13.5px] text-[var(--color-muted)] transition disabled:opacity-40"
         >
           −
         </button>

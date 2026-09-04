@@ -85,10 +85,10 @@ export default function AccountSection() {
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate text-lg font-bold">{name}</p>
-          <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
+          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
             Уровень {level} · {totalXp} XP
           </p>
-          <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
+          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
             {days} {days === 1 ? "день" : "дн."} в YeahGrind
           </p>
         </div>
@@ -138,10 +138,10 @@ export default function AccountSection() {
           🧊
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-semibold">
+          <p className="text-[14px] font-semibold">
             Заморозки стрика: {freezes.left} из {FREEZES_PER_MONTH}
           </p>
-          <p className="mt-0.5 text-[11.5px] leading-snug text-[var(--color-muted)]">
+          <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--color-muted)]">
             {freezes.left > 0
               ? "Пропустишь день — серия сохранится автоматически. Обновляются каждый месяц."
               : "На этот месяц закончились. Новые придут первого числа."}
@@ -161,10 +161,10 @@ export default function AccountSection() {
 
       {/* Приоритеты — напрямую кормят движок */}
       <section className="mt-6">
-        <h2 className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Приоритеты
         </h2>
-        <p className="mb-3.5 mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+        <p className="mb-3.5 mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
           Чем выше приоритет — тем чаще такие действия будут появляться
           в подборке.
         </p>
@@ -172,11 +172,11 @@ export default function AccountSection() {
           {STAT_LIST.map((s) => (
             <div key={s.key}>
               <div className="mb-1.5 flex items-center justify-between">
-                <span className="flex items-center gap-2 text-[13px] font-medium">
+                <span className="flex items-center gap-2 text-[14px] font-medium">
                   <span style={{ color: s.hex }}>{s.icon}</span>
                   {s.label}
                 </span>
-                <span className="text-[11px] tabular-nums text-[var(--color-muted)]">
+                <span className="text-[12px] tabular-nums text-[var(--color-muted)]">
                   {Math.round(goals[s.key] * 100)}%
                 </span>
               </div>
@@ -197,7 +197,7 @@ export default function AccountSection() {
 
       {/* Настройки дня */}
       <section className="mt-6">
-        <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Состояние на сегодня
         </h2>
         <div className="grid grid-cols-3 gap-2">
@@ -206,7 +206,7 @@ export default function AccountSection() {
               key={e}
               onClick={() => setMood({ energy: e })}
               className={cn(
-                "rounded-2xl border py-2.5 text-[12px] font-medium transition",
+                "rounded-2xl border py-2.5 text-[13px] font-medium transition",
                 todayMood.energy === e
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)]",
@@ -222,7 +222,7 @@ export default function AccountSection() {
               key={m}
               onClick={() => setMood({ minutes: m })}
               className={cn(
-                "rounded-2xl border py-2.5 text-[12px] font-medium tabular-nums transition",
+                "rounded-2xl border py-2.5 text-[13px] font-medium tabular-nums transition",
                 todayMood.minutes === m
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)]",
@@ -236,8 +236,8 @@ export default function AccountSection() {
 
           {/* Как подбираются действия — человеческим языком, без формул движка */}
           <section className="mt-6 rounded-3xl surface p-4">
-            <h2 className="text-[13px] font-semibold">Как я подбираю действия</h2>
-            <p className="mt-1.5 text-[11.5px] leading-relaxed text-[var(--color-muted)]">
+            <h2 className="text-[14px] font-semibold">Как я подбираю действия</h2>
+            <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--color-muted)]">
               Смотрю на твои приоритеты, время суток и сколько у тебя сейчас сил,
               и не предлагаю то, что не влезает в бюджет минут. Каждый свайп
               немного меняет подборку на завтра: чем чаще берёшь — тем больше
@@ -251,8 +251,8 @@ export default function AccountSection() {
               className="flex items-center justify-between rounded-3xl surface px-4 py-3.5 transition hover:bg-[var(--color-surface-2)]"
             >
               <span>
-                <span className="block text-[13px] font-semibold">Управление</span>
-                <span className="mt-0.5 block text-[11.5px] text-[var(--color-muted)]">
+                <span className="block text-[14px] font-semibold">Управление</span>
+                <span className="mt-0.5 block text-[12.5px] text-[var(--color-muted)]">
                   Действия, дни задним числом, челленджи, расписание
                 </span>
               </span>
@@ -279,7 +279,7 @@ export default function AccountSection() {
       {/* Бренд */}
       <div className="mt-8 mb-1 flex flex-col items-center gap-1.5 opacity-55">
         <Logo variant="white" className="h-4 w-auto" />
-        <p className="text-[11px] text-[var(--color-muted)]">
+        <p className="text-[12px] text-[var(--color-muted)]">
           Одно действие в день
         </p>
       </div>
@@ -347,7 +347,7 @@ function Stat({ value, label }: { value: number; label: string }) {
       className="press rounded-3xl surface px-3 py-4 text-center"
     >
       <p className="text-2xl font-bold tabular-nums">{value}</p>
-      <p className="mt-0.5 text-[10.5px] text-[var(--color-muted)]">{label}</p>
+      <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">{label}</p>
     </motion.div>
   );
 }

@@ -56,15 +56,15 @@ export default function EveningRetro() {
           className="press rounded-3xl surface p-4"
         >
           {saved ? (
-            <p className="py-2 text-center text-[13px] font-medium">
+            <p className="py-2 text-center text-[14px] font-medium">
               Записал. До завтра 👋
             </p>
           ) : (
             <>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-[13px] font-semibold">Как прошёл день?</p>
-                  <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+                  <p className="text-[14px] font-semibold">Как прошёл день?</p>
+                  <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
                     {doneToday > 0
                       ? `Закрыто сегодня: ${doneToday}. Одно касание — и день записан.`
                       : "Даже если ничего не вышло — отметить честно полезнее, чем пропустить."}
@@ -73,7 +73,7 @@ export default function EveningRetro() {
                 <button
                   onClick={() => setDismissed(true)}
                   aria-label="Закрыть"
-                  className="shrink-0 rounded-lg px-2 py-1 text-[12px] text-[var(--color-muted)]"
+                  className="shrink-0 rounded-lg px-2 py-1 text-[13px] text-[var(--color-muted)]"
                 >
                   ✕
                 </button>
@@ -97,7 +97,7 @@ export default function EveningRetro() {
                     <span className="text-lg" aria-hidden>
                       {s.icon}
                     </span>
-                    <span className="text-[10px] text-[var(--color-muted)]">
+                    <span className="text-[11.5px] text-[var(--color-muted)]">
                       {s.label}
                     </span>
                   </button>

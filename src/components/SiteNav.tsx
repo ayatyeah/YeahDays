@@ -70,7 +70,7 @@ export default function SiteNav() {
                   key={s.id}
                   href={onLanding ? `#${s.id}` : `/#${s.id}`}
                   className={cn(
-                    "press relative shrink-0 rounded-xl px-3 py-2 text-[13.5px] font-medium",
+                    "press relative shrink-0 rounded-xl px-3 py-2 text-[14.5px] font-medium",
                     isActive
                       ? "text-[var(--color-fg)]"
                       : "text-[var(--color-muted)] hover:text-[var(--color-fg-dim)]",
@@ -90,7 +90,7 @@ export default function SiteNav() {
             <Link
               href="/privacy"
               className={cn(
-                "press shrink-0 rounded-xl px-3 py-2 text-[13.5px] font-medium",
+                "press shrink-0 rounded-xl px-3 py-2 text-[14.5px] font-medium",
                 pathname === "/privacy"
                   ? "text-[var(--color-fg)]"
                   : "text-[var(--color-muted)] hover:text-[var(--color-fg-dim)]",
@@ -102,7 +102,7 @@ export default function SiteNav() {
 
           <Link
             href="/app"
-            className="press ml-1 hidden h-10 shrink-0 items-center rounded-xl bg-[var(--color-fg)] px-4 text-[13.5px] font-bold text-[var(--color-bg)] sm:inline-flex"
+            className="press ml-1 hidden h-10 shrink-0 items-center rounded-xl bg-[var(--color-fg)] px-4 text-[14.5px] font-bold text-[var(--color-bg)] sm:inline-flex"
           >
             Попробовать
           </Link>

@@ -73,10 +73,10 @@ export default function DeviceList() {
 
   return (
     <section className="rounded-3xl surface p-4">
-      <p className="text-[13px] font-semibold">
+      <p className="text-[14px] font-semibold">
         Ваши устройства ({devices.length})
       </p>
-      <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+      <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
         Уведомления приходят на все включённые ниже.
       </p>
       <div className="mt-3 flex flex-col gap-1.5">
@@ -86,8 +86,8 @@ export default function DeviceList() {
             className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface-2)] px-3 py-2.5"
           >
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[12.5px] font-medium">{d.label}</p>
-              <p className="mt-0.5 text-[10.5px] text-[var(--color-muted)]">
+              <p className="truncate text-[13.5px] font-medium">{d.label}</p>
+              <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
                 {d.enabled ? "включено" : "выключено"} · {timeAgo(d.updatedAt)}
               </p>
             </div>
@@ -96,14 +96,14 @@ export default function DeviceList() {
                 <button
                   type="button"
                   onClick={() => void remove(d.id)}
-                  className="rounded-xl bg-[var(--color-strength)] px-2.5 py-1.5 text-[11px] font-semibold text-white"
+                  className="rounded-xl bg-[var(--color-strength)] px-2.5 py-1.5 text-[12px] font-semibold text-white"
                 >
                   Удалить
                 </button>
                 <button
                   type="button"
                   onClick={() => setConfirmId(null)}
-                  className="rounded-xl px-2.5 py-1.5 text-[11px] text-[var(--color-muted)]"
+                  className="rounded-xl px-2.5 py-1.5 text-[12px] text-[var(--color-muted)]"
                 >
                   Отмена
                 </button>

@@ -17,8 +17,9 @@
 
 import { NextResponse } from "next/server";
 import { parseEvents } from "@/lib/ical";
-import { planSync, DEFAULT_ZONE } from "@/lib/lmsCalendar";
+import { planSync, newDeadlineNotice, DEFAULT_ZONE } from "@/lib/lmsCalendar";
 import { loadState, saveState, makeId, type Todo } from "@/lib/externalState";
+import { sendPushToUser, pushConfigured } from "@/lib/push";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -118,6 +119,29 @@ export async function POST(req: Request) {
   state.todos = [...todos, ...(state.todos ?? [])];
   await saveState(userId, state);
 
+  // Пуш строго ПОСЛЕ успешной записи: уведомление про дедлайн, которого
+  // не оказалось в задачах, хуже, чем отсутствие уведомления.
+  //
+  // Тихие часы уважает сам sendPushToUser — по локальному времени каждого
+  // устройства отдельно. Если в этот момент тихо на всех, уведомление
+  // теряется: повторно оно не придёт, потому что следующий прогон уже
+  // ничего не создаст. Задачи при этом на месте, человек увидит их в
+  // приложении. Крон ходит в 08/16/22 по Алматы, а тихие часы по
+  // умолчанию 23–7, так что попасть в них можно только вручную сдвинув
+  // настройки.
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const notice = newDeadlineNotice(plan.create, todayKey);
+  let push = { sent: 0, skipped: 0, expired: 0 };
+  if (notice && pushConfigured) {
+    try {
+      push = await sendPushToUser(userId, notice);
+    } catch (e) {
+      // Задачи уже записаны — падать из-за недоставленного пуша нельзя,
+      // иначе крон отчитается ошибкой о прогоне, который на деле удался.
+      console.error("lms-sync: push failed:", e);
+    }
+  }
+
   return NextResponse.json({
     ok: true,
     dry: false,
@@ -125,5 +149,6 @@ export async function POST(req: Request) {
     created: todos.length,
     alreadyPresent: plan.alreadyPresent,
     unusable: plan.unusable,
+    push,
   });
 }

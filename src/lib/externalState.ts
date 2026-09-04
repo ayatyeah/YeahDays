@@ -18,6 +18,8 @@ export interface Todo {
   note?: string;
   date: string;
   hour?: number;
+  /** минута начала внутри часа — в клиентском типе есть, здесь её не хватало */
+  minute?: number;
   duration?: number;
   priority: "low" | "normal" | "high";
   subtasks: { id: string; title: string; done: boolean }[];

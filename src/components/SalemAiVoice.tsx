@@ -39,6 +39,22 @@ function speak(text: string, onDone: () => void) {
 }
 
 /**
+ * iOS Safari (в том числе PWA с домашнего экрана) требует, чтобы
+ * speechSynthesis.speak() был вызван СИНХРОННО внутри обработчика жеста
+ * пользователя — иначе просто молчит, без единой ошибки в консоли. Настоящий
+ * ответ приходит через несколько секунд, пройдя запись → распознавание →
+ * GPT — то есть далеко вне того же тика клика. "Разблокируем" движок сразу
+ * на тапе по кнопке микрофона (пустая беззвучная утторанс) — после этого
+ * тот же движок соглашается озвучить и более поздний, уже асинхронный speak().
+ */
+function unlockSpeechSynthesis() {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const unlock = new SpeechSynthesisUtterance(" ");
+  unlock.volume = 0;
+  window.speechSynthesis.speak(unlock);
+}
+
+/**
  * Голосовая команда СалемАй прямо в PWA — независимо от десктоп-приложения
  * (то может быть выключено). Тап — запись, тап — стоп: без детекции тишины
  * ради простоты и предсказуемости на телефоне, где фоновый шум непредсказуем.
@@ -70,6 +86,8 @@ export default function SalemAiVoice() {
 
   const startRecording = useCallback(async () => {
     setError(null);
+    // Синхронно, ДО первого await — см. unlockSpeechSynthesis().
+    unlockSpeechSynthesis();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;

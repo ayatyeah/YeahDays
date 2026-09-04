@@ -7,8 +7,10 @@
  * Набор расширяется по мере того, какие конкретные команды реально
  * повторяются, а не гадаем заранее.
  */
-import { rememberFact, getTodayStatus, addTodo, listDevices } from "./yeahgrind.js";
-import { openApp, clickYandexWaveButton } from "./osControl.js";
+import { rememberFact, getTodayStatus, addTodo, setMood, listDevices } from "./yeahgrind.js";
+import { openApp, clickYandexWaveButton, mediaControl } from "./osControl.js";
+import { playSuitUpTheme } from "./audio.js";
+import { suitUpMusicPath } from "./config.js";
 
 interface QuickResult {
   handled: boolean;
@@ -126,17 +128,19 @@ function extractRememberContent(text: string): string | null {
  * "Протокол <имя>" — именованный набор действий, выполняется целиком без
  * GPT (см. PROTOCOLS ниже). Первое слово сверяется нечётко, как и у
  * "запомни" — Whisper не всегда точен на редком слове.
+ *
+ * Имя — ровно ОДНО слово сразу после "протокол", не весь остаток фразы:
+ * живой случай — сказали "Протокол утро. Протокол утро." (повторили на
+ * всякий случай, не были уверены, что услышали) — со старой версией (брала
+ * всё до конца строки) имя протокола получилось "утро. протокол утро",
+ * которое не совпало ни с одним ключом в PROTOCOLS.
  */
 function extractProtocolName(text: string): string | null {
-  const trimmed = text.trim();
-  const firstWord = (trimmed.split(/\s+/)[0] ?? "").toLowerCase().replace(/[.,!?]+$/, "");
+  const words = text.trim().split(/\s+/);
+  const firstWord = (words[0] ?? "").toLowerCase().replace(/[.,!?]+$/, "");
   if (levenshtein(firstWord, "протокол") > 2) return null;
-  const rest = trimmed
-    .slice(firstWord.length)
-    .trim()
-    .toLowerCase()
-    .replace(/[.,!?]+$/, "");
-  return rest.length > 0 ? rest : null;
+  const second = (words[1] ?? "").toLowerCase().replace(/[.,!?]+$/, "");
+  return second.length > 0 ? second : null;
 }
 
 /**
@@ -147,6 +151,15 @@ function extractProtocolName(text: string): string | null {
  */
 const PROTOCOLS: Record<string, () => Promise<string>> = {
   пятница: runFridayProtocol,
+  утро: runMorningProtocol,
+  фокус: runFocusProtocol,
+  тренировка: runWorkoutProtocol,
+  отбой: runWindDownProtocol,
+  обед: runLunchProtocol,
+  встреча: runMeetingProtocol,
+  отдых: runRelaxProtocol,
+  спринт: runSprintProtocol,
+  финиш: runFinishProtocol,
 };
 
 function matchProtocol(name: string): (() => Promise<string>) | null {
@@ -177,6 +190,157 @@ async function runFridayProtocol(): Promise<string> {
 
   const tasks = await todayTasksSummary();
   return `Протокол «Пятница». ${vscode}. ${music}. ${workNote} ${tasks}`;
+}
+
+/** Начало дня без привязки к рабочим инструментам — в отличие от «Пятницы», не трогает VS Code/музыку. */
+async function runMorningProtocol(): Promise<string> {
+  let moodNote: string;
+  try {
+    await setMood("medium", 30);
+    moodNote = "Отметила бодрое утро.";
+  } catch (e) {
+    console.warn("[quickCommands] setMood (протокол утро) не прошёл:", e instanceof Error ? e.message : e);
+    moodNote = "Настроение отметить не получилось.";
+  }
+  let workNote: string;
+  try {
+    await addTodo({ title: "Начало дня", hour: new Date().getHours() });
+    workNote = "Отметила начало дня.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол утро) не прошёл:", e instanceof Error ? e.message : e);
+    workNote = "Не получилось отметить начало дня.";
+  }
+  const tasks = await todayTasksSummary();
+  return `Протокол «Утро». ${moodNote} ${workNote} ${tasks}`;
+}
+
+/** Глубокая работа: глушим звук, поднимаем редактор, ставим таймированную сессию. */
+async function runFocusProtocol(): Promise<string> {
+  const muteNote = await mediaControl("mute").catch(() => "Не получилось приглушить звук.");
+  const vscode = await openApp("Code");
+  let taskNote: string;
+  try {
+    await addTodo({ title: "Фокус-сессия", hour: new Date().getHours(), duration: 50 });
+    taskNote = "Поставила фокус-сессию на 50 минут.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол фокус) не прошёл:", e instanceof Error ? e.message : e);
+    taskNote = "Не получилось поставить фокус-сессию.";
+  }
+  return `Протокол «Фокус». ${muteNote}. ${vscode}. ${taskNote}`;
+}
+
+/** Энергичная музыка + высокий приоритет — тренировка не должна теряться среди обычных задач. */
+async function runWorkoutProtocol(): Promise<string> {
+  const music = await runMyWave();
+  let moodNote: string;
+  try {
+    await setMood("high", 30);
+    moodNote = "Настроение — на максимум.";
+  } catch (e) {
+    console.warn("[quickCommands] setMood (протокол тренировка) не прошёл:", e instanceof Error ? e.message : e);
+    moodNote = "Настроение отметить не получилось.";
+  }
+  let taskNote: string;
+  try {
+    await addTodo({ title: "Тренировка", hour: new Date().getHours(), duration: 45, priority: "high" });
+    taskNote = "Записала тренировку.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол тренировка) не прошёл:", e instanceof Error ? e.message : e);
+    taskNote = "Не получилось записать тренировку.";
+  }
+  return `Протокол «Тренировка». ${music}. ${moodNote} ${taskNote}`;
+}
+
+/** Конец дня: тише звук, итог по задачам, настроение на низкий тонус — для сна, не для бодрости. */
+async function runWindDownProtocol(): Promise<string> {
+  await mediaControl("volume_down", 6).catch(() => undefined);
+  const tasks = await todayTasksSummary();
+  let moodNote: string;
+  try {
+    await setMood("low", 0);
+    moodNote = "Отметила спокойный вечер.";
+  } catch (e) {
+    console.warn("[quickCommands] setMood (протокол отбой) не прошёл:", e instanceof Error ? e.message : e);
+    moodNote = "";
+  }
+  return `Протокол «Отбой». Убавила громкость. ${tasks} ${moodNote} Спокойной ночи.`;
+}
+
+/** Перерыв на обед — отмечает паузу и сразу говорит, что ждёт после неё. */
+async function runLunchProtocol(): Promise<string> {
+  let taskNote: string;
+  try {
+    await addTodo({ title: "Обед", hour: new Date().getHours(), duration: 30 });
+    taskNote = "Отметила обеденный перерыв.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол обед) не прошёл:", e instanceof Error ? e.message : e);
+    taskNote = "Не получилось отметить перерыв.";
+  }
+  const tasks = await todayTasksSummary();
+  return `Протокол «Обед». ${taskNote} Приятного аппетита. После перерыва: ${tasks}`;
+}
+
+/** Перед созвоном — глушим звук и отмечаем встречу в плане. */
+async function runMeetingProtocol(): Promise<string> {
+  const muteNote = await mediaControl("mute").catch(() => "Не получилось приглушить звук.");
+  let taskNote: string;
+  try {
+    await addTodo({ title: "Встреча", hour: new Date().getHours(), duration: 30 });
+    taskNote = "Отметила встречу.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол встреча) не прошёл:", e instanceof Error ? e.message : e);
+    taskNote = "Не получилось отметить встречу.";
+  }
+  return `Протокол «Встреча». ${muteNote}. ${taskNote} Удачи.`;
+}
+
+/** Игра/отдых — никаких рабочих напоминаний вслух, только отметка в план. */
+async function runRelaxProtocol(): Promise<string> {
+  const steam = await openApp("steam://open/main");
+  let taskNote: string;
+  try {
+    await addTodo({ title: "Отдых", hour: new Date().getHours() });
+    taskNote = "Отметила время отдыха.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол отдых) не прошёл:", e instanceof Error ? e.message : e);
+    taskNote = "";
+  }
+  return `Протокол «Отдых». ${steam}. ${taskNote} Отдыхай на здоровье.`;
+}
+
+/** Долгая сессия под высоким приоритетом — тяжелее «Фокуса»: длиннее и с приглушённым звуком сразу. */
+async function runSprintProtocol(): Promise<string> {
+  const vscode = await openApp("Code");
+  await mediaControl("mute").catch(() => undefined);
+  let taskNote: string;
+  try {
+    await addTodo({ title: "Спринт", hour: new Date().getHours(), duration: 90, priority: "high" });
+    taskNote = "Поставила спринт на полтора часа.";
+  } catch (e) {
+    console.warn("[quickCommands] addTodo (протокол спринт) не прошёл:", e instanceof Error ? e.message : e);
+    taskNote = "Не получилось поставить спринт.";
+  }
+  return `Протокол «Спринт». ${vscode}. Звук приглушила. ${taskNote} Погнали.`;
+}
+
+/** Итог дня — без новых действий, только честная сводка по закрытым задачам. */
+async function runFinishProtocol(): Promise<string> {
+  try {
+    const status = await getTodayStatus();
+    const items = [...status.todos.map((t) => t.done), ...status.plan.map((p) => p.completed)];
+    const total = items.length;
+    const done = items.filter(Boolean).length;
+    const closing =
+      total === 0
+        ? "Сегодня без задач — тоже нормально."
+        : done === total
+          ? `Все ${total} закрыты. Чистый день.`
+          : `Закрыто ${done} из ${total}.`;
+    return `Протокол «Финиш». ${closing} До завтра.`;
+  } catch (e) {
+    console.warn("[quickCommands] getTodayStatus (протокол финиш) не прошёл:", e instanceof Error ? e.message : e);
+    return "Протокол «Финиш». Не получилось подвести итог дня, но день всё равно закончен. До завтра.";
+  }
 }
 
 export async function tryQuickCommand(text: string): Promise<QuickResult> {
@@ -222,6 +386,9 @@ export async function tryQuickCommand(text: string): Promise<QuickResult> {
   if (protocolName !== null) {
     const protocol = matchProtocol(protocolName);
     if (protocol) {
+      // Iron Man vibe: музыка стартует сразу и играет фоном, пока протокол
+      // выполняет свои шаги и отвечает голосом — не блокирует и не ждёт.
+      playSuitUpTheme(suitUpMusicPath);
       try {
         return { handled: true, reply: await protocol() };
       } catch (e) {

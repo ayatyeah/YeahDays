@@ -1,0 +1,14 @@
+# Окончания строк в репозитории — всегда LF, независимо от ОС автора.
+# Без этого редактор под Windows разово переводит файлы в CRLF, и в diff
+# попадает весь файл целиком вместо трёх изменённых строк.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.zip binary
+*.exe binary
+*.woff binary
+*.woff2 binary

@@ -29,9 +29,10 @@ export const dynamic = "force-dynamic";
 
 const apiKey = process.env.OPENAI_API_KEY ?? "";
 const client = apiKey ? new OpenAI({ apiKey }) : null;
-// gpt-4.1-mini, не gpt-5-mini: web_search живёт в Responses API, её список
-// моделей gpt-5-mini не включает — см. assistant/config.ts за тем же выбором.
-const MODEL = "gpt-4.1-mini";
+// gpt-5-mini: сильнее gpt-4.1-mini на reasoning-бенчмарках, empirически
+// подтверждён рабочим с web_search в Responses API — см. assistant/config.ts
+// за тем же выбором и объяснением, почему прежний gpt-4.1-mini был ошибкой.
+const MODEL = "gpt-5-mini";
 const MAX_ROUNDS = 4;
 
 const SYSTEM_PROMPT = `Тебя зовут СалемАй. Ты голосовой помощник внутри приложения YeahGrind —

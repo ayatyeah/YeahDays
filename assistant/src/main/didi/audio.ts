@@ -1,11 +1,14 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { createInterface } from "node:readline";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { PvRecorder } from "@picovoice/pvrecorder-node";
 import { config } from "./config.js";
 import { log } from "./logger.js";
+
+const isWindows = process.platform === "win32";
 
 /** Стандарт для распознавания речи 16-бит моно — то же, чем раньше пользовался Porcupine. */
 const FRAME_LENGTH = 512;
@@ -115,7 +118,7 @@ function ensurePlayer(): ChildProcessWithoutNullStreams {
   return proc;
 }
 
-/** Останавливает постоянный процесс-плеер — звать при выключении голосового цикла, чтобы не плодить висящие powershell.exe. */
+/** Останавливает постоянный процесс-плеер — звать при выключении голосового цикла, чтобы не плодить висящие powershell.exe. Только Windows, см. isWindows ниже. */
 export function stopPlayer(): void {
   playerOut?.close();
   playerOut = null;
@@ -123,6 +126,34 @@ export function stopPlayer(): void {
   player?.kill();
   player = null;
   while (pending.length) pending.shift()!(new Error("плеер остановлен"));
+}
+
+/**
+ * Linux-эквивалент ensurePlayer(): persistent-процесс тут не нужен —
+ * paplay/aplay нативные бинарники, а не .NET-рантайм, старт стоит
+ * единицы миллисекунд, а не 150-400мс, так что каждый playWav просто
+ * спавнит новый процесс. paplay (PulseAudio/PipeWire-pulse) первым —
+ * играет через дефолтный sink независимо от desktop-окружения; если
+ * его нет (голый ALSA без pulse-совместимости) — падаем на aplay.
+ */
+function playFileLinux(file: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const tryPlayer = (bin: string, fallback?: string) => {
+      const proc = spawn(bin, [file], { stdio: "ignore" });
+      proc.on("error", (e: NodeJS.ErrnoException) => {
+        if (fallback && e.code === "ENOENT") {
+          tryPlayer(fallback);
+        } else {
+          reject(e);
+        }
+      });
+      proc.on("exit", (code) => {
+        if (code === 0) resolve();
+        else reject(new Error(`${bin} завершился с кодом ${code}`));
+      });
+    };
+    tryPlayer("paplay", "aplay");
+  });
 }
 
 export async function playWav(wav: Buffer): Promise<void> {
@@ -133,14 +164,94 @@ export async function playWav(wav: Buffer): Promise<void> {
   const file = path.join(dir, "out.wav");
   await writeFile(file, wav);
   try {
-    const proc = ensurePlayer();
-    await new Promise<void>((resolve, reject) => {
-      pending.push((err) => (err ? reject(err) : resolve()));
-      proc.stdin.write(file + "\n");
-    });
+    if (isWindows) {
+      const proc = ensurePlayer();
+      await new Promise<void>((resolve, reject) => {
+        pending.push((err) => (err ? reject(err) : resolve()));
+        proc.stdin.write(file + "\n");
+      });
+    } else {
+      await playFileLinux(file);
+    }
   } finally {
     await rm(dir, { recursive: true, force: true }).catch(() => {});
   }
+}
+
+const SUIT_UP_START_SECONDS = 5;
+const SUIT_UP_DURATION_SECONDS = 14;
+const SUIT_UP_VOLUME = 0.55;
+
+/**
+ * Музыка протокола (см. quickCommands.ts::PROTOCOLS) — играет фоном, пока
+ * протокол выполняется и отвечает голосом, не блокируя ничего. Через WPF
+ * MediaPlayer (PresentationCore), не Media.SoundPlayer (как playWav выше):
+ * SoundPlayer умеет только WAV, тут — mp3. Сам процесс останавливает себя
+ * по таймеру изнутри PowerShell-скрипта — не нужно ничего синхронизировать
+ * с длиной ответа GPT или дожидаться этого вызова. Файл не тащим в git и
+ * не пакуем в инсталлятор (см. config.ts::suitUpMusicPath) — если его нет
+ * на диске, просто тихо пропускаем музыку, протокол всё равно отработает.
+ */
+export function playSuitUpTheme(filePath: string): void {
+  if (!existsSync(filePath)) {
+    log(`[audio] suit-up.mp3 не найден (${filePath}) — играю протокол без музыки`);
+    return;
+  }
+  if (isWindows) {
+    playSuitUpThemeWindows(filePath);
+  } else {
+    playSuitUpThemeLinux(filePath);
+  }
+}
+
+function playSuitUpThemeWindows(filePath: string): void {
+  const psPath = filePath.replace(/'/g, "''");
+  const script = [
+    "Add-Type -AssemblyName PresentationCore",
+    "$player = New-Object System.Windows.Media.MediaPlayer",
+    `$player.Open([Uri]::new('${psPath}'))`,
+    `$player.Volume = ${SUIT_UP_VOLUME}`,
+    // Position нельзя выставить, пока не подгрузились метаданные (до этого
+    // NaturalDuration.HasTimeSpan = false) — недолгий опрос вместо фиксной
+    // паузы, чтобы не терять время на файлах, которые грузятся быстрее.
+    "$deadline = (Get-Date).AddSeconds(3)",
+    "while (-not $player.NaturalDuration.HasTimeSpan -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 50 }",
+    `$player.Position = [TimeSpan]::FromSeconds(${SUIT_UP_START_SECONDS})`,
+    "$player.Play()",
+    `Start-Sleep -Seconds ${SUIT_UP_DURATION_SECONDS}`,
+    "$player.Stop()",
+    "$player.Close()",
+  ].join("; ");
+  const proc = spawn("powershell.exe", ["-NoProfile", "-NonInteractive", "-Command", script], {
+    stdio: "ignore",
+    windowsHide: true,
+  });
+  proc.on("error", (e) => log(`[audio] suit-up.mp3 не заиграл: ${e.message}`, "warn"));
+  proc.unref();
+}
+
+/** ffplay (часть ffmpeg) — единственный из ходовых Linux CLI-плееров, который сам умеет декодировать mp3, сдвиг по времени (-ss) и громкость без отдельной обвязки. */
+function playSuitUpThemeLinux(filePath: string): void {
+  const volumePercent = Math.round(SUIT_UP_VOLUME * 100);
+  const proc = spawn(
+    "ffplay",
+    [
+      "-nodisp",
+      "-autoexit",
+      "-loglevel",
+      "quiet",
+      "-ss",
+      String(SUIT_UP_START_SECONDS),
+      "-t",
+      String(SUIT_UP_DURATION_SECONDS),
+      "-volume",
+      String(volumePercent),
+      filePath,
+    ],
+    { stdio: "ignore" },
+  );
+  proc.on("error", (e) => log(`[audio] suit-up.mp3 не заиграл (нужен ffplay из ffmpeg): ${e.message}`, "warn"));
+  proc.unref();
 }
 
 /** Порог тишины — калибруется под комнату при старте, см. calibrateSilenceThreshold(). */

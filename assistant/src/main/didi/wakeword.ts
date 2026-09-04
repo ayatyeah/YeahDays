@@ -46,7 +46,9 @@ export interface WakewordDetector {
  */
 export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> {
   const script = scriptPath();
-  log(`[wakeword] пробую поднять локальный детектор: py -3.13 "${script}"`);
+  const isWindows = process.platform === "win32";
+  const [cmd, args] = isWindows ? ["py", ["-3.13", script]] : ["python3", [script]];
+  log(`[wakeword] пробую поднять локальный детектор: ${cmd} ${args.join(" ")}`);
 
   // "python" в PATH на Windows нередко резолвится в 0-байтовый alias-стаб
   // Microsoft Store (AppData\Local\Microsoft\WindowsApps\python.exe) — он
@@ -54,8 +56,9 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
   // GUI-процесс без консоли (ровно наш случай: Electron main). Настоящий
   // py-лаунчер (C:\Windows\py.exe, обычный exe, не Store-алиас) с явной
   // версией эту проблему обходит; -3.13 — конкретно та установка, где
-  // стоят vosk/onnxruntime (см. `py -0`). Если лаунчера или этой версии
-  // нет, ниже сработает штатный child.on("error") с ENOENT и тихим
+  // стоят vosk/onnxruntime (см. `py -0`). На Linux/macOS такого алиас-стаба
+  // нет — обычный "python3" из PATH достаточен. Если ни лаунчера, ни этой
+  // версии нет, ниже сработает штатный child.on("error") с ENOENT и тихим
   // откатом на Whisper — как и раньше для машин без Python вовсе.
   //
   // PYTHONIOENCODING=utf-8 — без этого Python на Windows пишет в pipe
@@ -63,7 +66,7 @@ export async function tryStartLocalWakeword(): Promise<WakewordDetector | null> 
   // превращается в мусор на стороне Node.
   let child: ChildProcessWithoutNullStreams;
   try {
-    child = spawn("py", ["-3.13", script], {
+    child = spawn(cmd, args, {
       stdio: ["pipe", "pipe", "pipe"],
       env: { ...process.env, PYTHONIOENCODING: "utf-8" },
     });

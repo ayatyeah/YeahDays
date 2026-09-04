@@ -6,5 +6,10 @@ release/
 *.log
 keywords/
 heard-log/
+# Аудио для протоколов (напр. suit-up.mp3) — авторские треки, не наши,
+# не тащим в git и НЕ пакуем в публичный инсталлятор (electron-builder.yml
+# extraResources). Живёт локально: assets/ в dev, userData в собранном
+# приложении — см. config.ts::suitUpMusicPath.
+assets/
 # ~46МБ, скачивается один раз — см. "Локальный детектор" в README
 wakeword/vosk-model-ru/

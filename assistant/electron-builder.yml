@@ -27,3 +27,8 @@ nsis:
   createDesktopShortcut: always
   installerIcon: build/icon.ico
   uninstallerIcon: build/icon.ico
+linux:
+  target: AppImage
+  icon: build/icon.png
+  category: Utility
+  executableName: SalemAI

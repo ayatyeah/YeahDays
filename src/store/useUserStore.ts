@@ -130,12 +130,19 @@ export function challengeDaysLeft(c: Challenge, today = dateKey()): number {
  */
 export type TodoPriority = "low" | "normal" | "high";
 
-export type RepeatKind = "daily" | "weekdays" | "weekends" | "weekly";
+export type RepeatKind = "daily" | "weekdays" | "weekends" | "weekly" | "everyOther";
 
 export interface TodoRepeat {
   kind: RepeatKind;
   /** для weekly: день недели 0..6 (0 — воскресенье) */
   weekday?: number;
+}
+
+/** Сколько суток между `day` и якорной датой задачи. */
+function daysFromAnchor(anchor: string, day: string): number {
+  const a = Date.parse(`${anchor}T00:00:00Z`);
+  const d = Date.parse(`${day}T00:00:00Z`);
+  return Math.round((d - a) / 86_400_000);
 }
 
 export interface Subtask {
@@ -183,6 +190,13 @@ export function isTodoOnDay(t: Todo, day: string): boolean {
       return (
         wd === (t.repeat.weekday ?? new Date(`${t.date}T00:00:00`).getDay())
       );
+    // Через день. Считается от date задачи как от якоря, а НЕ по чётности
+    // числа: чётность ломается на стыке 31-дневных месяцев (31 октября и
+    // 1 ноября оба нечётные — вышло бы два дня подряд). Разбор дат в UTC
+    // по той же причине — переход на летнее время делает сутки 23- или
+    // 25-часовыми, и деление на 86400000 в локальной зоне сбоило бы.
+    case "everyOther":
+      return daysFromAnchor(t.date, day) % 2 === 0;
   }
 }
 
@@ -215,6 +229,7 @@ export const REPEAT_LABEL: Record<RepeatKind, string> = {
   weekdays: "по будням",
   weekends: "по выходным",
   weekly: "раз в неделю",
+  everyOther: "через день",
 };
 
 /* ────────────────────────  Заморозка стрика  ──────────────────────── */

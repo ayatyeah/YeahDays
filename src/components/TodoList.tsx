@@ -364,7 +364,7 @@ function TodoRow({
               разово
             </button>
             {(
-              ["daily", "weekdays", "weekends", "weekly"] as RepeatKind[]
+              ["daily", "weekdays", "weekends", "weekly", "everyOther"] as RepeatKind[]
             ).map((k) => (
               <button
                 key={k}

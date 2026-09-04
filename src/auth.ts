@@ -4,6 +4,17 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
+
+/**
+ * Валидный bcrypt-хэш несуществующего пароля — сравниваем с ним, когда
+ * юзера нет или у него google-only аккаунт (passwordHash: null), чтобы
+ * bcrypt.compare() выполнялся ВСЕГДА одинаковое время. Без этого время
+ * ответа выдаёт, существует ли email/логин: "юзера нет" отвечает мгновенно,
+ * а "неверный пароль" — с задержкой bcrypt (~100мс) — оракул для перебора
+ * зарегистрированных аккаунтов.
+ */
+const DUMMY_HASH = "$2b$12$JW9b/fVt38j4JgP3ZnU0eeDaYTXRInFqz7peFp62M49J2i7TCOD0O";
 
 /**
  * Auth.js (v5). Два способа входа — Google и логин/пароль; хранилище —
@@ -35,19 +46,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         identifier: { label: "Email или логин" },
         password: { label: "Пароль", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, request) {
         const identifier = String(credentials?.identifier ?? "").trim();
         const password = String(credentials?.password ?? "");
         if (!identifier || !password) return null;
 
+        // По IP (любой аккаунт с одного адреса) и по identifier (один
+        // аккаунт с разных адресов) отдельно — иначе распределённый перебор
+        // одного логина с ботнета обходит IP-лимит.
+        const ip = clientIp(request);
+        const okByIp = rateLimit(`login:ip:${ip}`, 20, 15 * 60 * 1000);
+        const okByIdentifier = rateLimit(`login:id:${identifier.toLowerCase()}`, 8, 15 * 60 * 1000);
+        if (!okByIp || !okByIdentifier) return null;
+
         const user = await prisma.user.findFirst({
           where: { OR: [{ email: identifier }, { username: identifier }] },
         });
-        if (!user?.passwordHash) return null; // google-only аккаунт — пароля нет вовсе
-        if (user.banned) return null; // забанен — тот же ответ, что "неверный пароль"
-
-        const valid = await bcrypt.compare(password, user.passwordHash);
-        if (!valid) return null;
+        const valid = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
+        if (!valid || !user?.passwordHash || user.banned) return null;
 
         return { id: user.id, name: user.name, email: user.email, image: user.image };
       },

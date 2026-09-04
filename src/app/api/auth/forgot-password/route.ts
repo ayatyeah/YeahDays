@@ -7,6 +7,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,6 +16,10 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CURRENT_YEAR = new Date().getFullYear();
 
 export async function POST(req: Request) {
+  if (!rateLimit(`forgot-password:ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Слишком много попыток, попробуй позже" }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();

@@ -64,6 +64,15 @@ export function makeId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+/** Сколько суток между `day` и якорной датой задачи. Разбор в UTC: при
+ *  переходе на летнее время сутки бывают 23- или 25-часовыми, и деление
+ *  на 86400000 в локальной зоне давало бы сдвиг. */
+function daysFromAnchor(anchor: string, day: string): number {
+  const a = Date.parse(`${anchor}T00:00:00Z`);
+  const d = Date.parse(`${day}T00:00:00Z`);
+  return Math.round((d - a) / 86_400_000);
+}
+
 export function isTodoOnDay(t: Todo, day: string): boolean {
   if (!t.repeat) return t.date === day;
   if (day < t.date) return false;
@@ -77,6 +86,10 @@ export function isTodoOnDay(t: Todo, day: string): boolean {
       return wd === 0 || wd === 6;
     case "weekly":
       return wd === (t.repeat.weekday ?? new Date(`${t.date}T00:00:00`).getDay());
+    // Через день — от date как от якоря, а не по чётности числа: чётность
+    // ломается на стыке 31-дневных месяцев.
+    case "everyOther":
+      return daysFromAnchor(t.date, day) % 2 === 0;
     default:
       return false;
   }

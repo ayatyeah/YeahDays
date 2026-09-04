@@ -6,8 +6,8 @@
  *
  * POST { userId, title, date, hour?, duration?, priority? } → { ok, id }
  *
- * Форма тела намеренно совпадает с action:"add_todo" из /api/assistant —
- * та же операция, только другая авторизация.
+ * Тело намеренно плоское и совпадает по форме с остальными
+ * /api/integrations/* — одна операция, одна авторизация по ключу.
  */
 
 import { NextResponse } from "next/server";

@@ -41,23 +41,13 @@ handlers (`src/app/api/**`).
    строка (cuid). Бан пользователя (`User.banned`) проверяется в
    `jwt()`-колбэке на КАЖДЫЙ вызов `auth()` — уже выданный JWT теряет силу
    сразу после бана, без ожидания истечения токена.
-3. **Служебный канал ассистента** — все `/api/assistant/*` (кроме `panel`
-   и `chat`, которые браузер-фейсинг) и `/api/voice/chat` защищены общим
-   секретом `ASSISTANT_SECRET` в заголовке `Authorization: Bearer <secret>`.
-   Это канал, которым сейчас пользуется десктопный голосовой ассистент
-   ДиДи (папка `assistant/` в этом репозитории) — он ДЕЙСТВУЕТ ОТ ИМЕНИ
-   произвольного `userId`, переданного в теле запроса, без дополнительной
-   проверки владения. Один секрет = полный доступ ко всем пользователям.
-   Годится для одного доверенного internal-клиента (ДиДи); для стороннего
-   сервиса — см. пункт 4.
-4. **Scoped-ключ внешнего сервиса** — `POST /api/integrations/*` и
+3. **Scoped-ключ внешнего сервиса** — `POST /api/integrations/*` и
    `POST /api/keys/redeem` защищены отдельным ключом на сервис (таблица
-   `ApiKey`, `Authorization: Bearer <key>`), а не общим `ASSISTANT_SECRET`.
-   В отличие от пункта 3, валидного ключа НЕДОСТАТОЧНО, чтобы действовать
-   от имени произвольного `userId` — сервис может писать только тем
-   пользователям, что явно прошли обмен одноразового пейринг-кода
-   (`ApiKeyUser`, см. раздел 6). Ключ можно отозвать (`revokedAt`)
-   независимо от остальных интеграций и от `ASSISTANT_SECRET`. Код для
+   `ApiKey`, `Authorization: Bearer <key>`). Валидного ключа
+   НЕДОСТАТОЧНО, чтобы действовать от имени произвольного `userId` —
+   сервис может писать только тем пользователям, что явно прошли обмен
+   одноразового пейринг-кода (`ApiKeyUser`, см. раздел 6). Ключ можно
+   отозвать (`revokedAt`) независимо от остальных интеграций. Код для
    обмена появляется двумя путями: пользователь генерирует его сам в
    профиле (`PairingCodeCard`) и вставляет вручную — или сервис ведёт
    браузер пользователя через `GET /oauth/authorize` (реальный вход в
@@ -245,9 +235,7 @@ createdAt }` — "N действий по стату до даты", прогр�
 | `Event` | сырые события для движка рекомендаций | `userId, actionId, type: accept\|reject\|complete\|skip, category?, xp?, at` |
 | `PushSubscription` | Web Push подписка устройства | `userId, endpoint (unique), p256dh, auth, tzOffset, enabled` |
 | `ScheduledNotification` | очередь точечных пушей | `userId, key (unique per user), fireAt, title, body, kind, sentAt?` |
-| `AssistantStatus` | heartbeat десктопного ассистента | `userId (PK), lastSeenAt, enabled` |
-| `AssistantChat` | сообщения браузер↔десктоп-ассистент | `userId, role: user\|assistant, content, pulledAt?` |
-| `AssistantFact` | долгая память ассистента ("запомни, что...") | `userId, content` |
+| `Assistant*` | **не используются** — остались от удалённого голосового ассистента; таблицы не дропнуты, чтобы не терять данные | — |
 | `ApiKey` | ключ стороннего сервиса | `service, hash (bcrypt, unique), redirectUris (для /oauth/authorize), revokedAt?, lastUsedAt?` |
 | `ApiKeyUser` | allowlist ключа — реально привязанные userId | `apiKeyId, userId (composite PK)` |
 | `PairingCode` | одноразовый код привязки, TTL 10 мин | `code (PK), userId, apiKeyId? (кем выпущен через /oauth/authorize; null — самостоятельный), expiresAt, consumedAt?` |
@@ -330,8 +318,8 @@ createdAt }` — "N действий по стату до даты", прогр�
 
 ### Внешние интеграции (scoped `ApiKey`, раздел 9)
 
-Для стороннего сервиса, работающего от лица нескольких пользователей —
-предпочтительный путь вместо общего `ASSISTANT_SECRET`. Ключ выдаётся
+Единственный путь для стороннего сервиса, работающего от лица
+нескольких пользователей. Ключ выдаётся
 скриптом `scripts/create-api-key.mjs <service> [redirect_uri...]` (сырой
 ключ печатается один раз, дальше хранится только bcrypt-хэш; `client_id`
 для OAuth-варианта ниже — это просто `ApiKey.id`, печатается тем же
@@ -369,8 +357,7 @@ createdAt }` — "N действий по стату до даты", прогр�
   чужим ключом (не тем, для которого выпущен) → 403.
 - **`POST /api/integrations/add-todo`** — сервисный `ApiKey` +
   `userId` должен быть в `ApiKeyUser` этого ключа (иначе 403). Тело
-  `{ userId, title, date, hour?, duration?, priority? }` → `{ ok, id }` —
-  та же операция, что `add_todo` в `/api/assistant`, другая авторизация.
+  `{ userId, title, date, hour?, duration?, priority? }` → `{ ok, id }`.
 - **`POST /api/integrations/complete-action`** — та же авторизация. Тело
   `{ userId, source, activityType: "reading"|"writing"|"quiz"|"notes",
   title, minutes, date? }` → `{ ok, xp, totalXp, level }`. В отличие от
@@ -384,39 +371,6 @@ createdAt }` — "N действий по стату до даты", прогр�
 - **`GET /api/integrations/stats?userId=&stat=`** — та же авторизация.
   Ответ `{ stat, xp, level, streak }` — сводка по одному стату, для
   отображения прогресса внутри стороннего сервиса.
-
-### Канал ассистента (`ASSISTANT_SECRET`)
-
-Общий секрет для ОДНОГО доверенного internal-клиента (сейчас — ДиДи).
-Для стороннего сервиса вместо него используются scoped-ключи выше —
-см. раздел 9.
-
-- **`GET /api/assistant?userId=&date=`** — сводка дня: todos на дату
-  (с `done`), незакрытые пункты плана, настроение дня.
-- **`POST /api/assistant`** — действия: `{action:"add_todo", userId, title,
-  date, hour?, duration?, priority?}`, `{action:"complete_todo", userId, id,
-  day, done}`, `{action:"set_mood", userId, date, energy, minutes}`.
-- **`POST /api/assistant/login`** — логин по паролю для десктоп-клиента
-  (не браузерный NextAuth-флоу): `{identifier, password}` → `{userId, name, email}`.
-- **`GET/POST /api/assistant/chat/pull` и `/reply`** — очередь
-  сообщений между браузерным чатом и десктоп-процессом (последовательная
-  обработка, по одному сообщению за раз).
-- **`GET/POST/DELETE /api/assistant/memory`** — долгая память
-  ("запомни, что...").
-- **`POST /api/assistant/notify`** — немедленный push мимо очереди
-  расписания: `{userId, title?, text}`.
-- **`POST /api/assistant/heartbeat`**, **`POST /api/assistant/event`**,
-  **`GET /api/assistant/devices`** — служебные для статуса/логов
-  десктопного процесса.
-- **`GET/POST /api/assistant/panel`**, **`GET/POST /api/assistant/chat`** —
-  ЭТИ ДВА браузер-фейсинг (сессия/`userId`, не секрет) — UI-панель статуса
-  ассистента и чат в `/didi`.
-
-### Голосовой ассистент в PWA
-
-- **`POST /api/voice/chat`** — только сессия — GPT tool-calling поверх
-  тех же операций (внутри сам дёргает `/api/assistant` с секретом).
-- **`POST /api/voice/transcribe`** — только сессия — аудио → текст (Whisper).
 
 ### Прочее
 
@@ -459,11 +413,9 @@ createdAt }` — "N действий по стату до даты", прогр�
 |---|---|
 | `DATABASE_URL` | Postgres (Prisma) |
 | `AUTH_SECRET`, `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_URL` | Auth.js, читаются по конвенции |
-| `ASSISTANT_SECRET` | Bearer для `/api/assistant/*` (кроме panel/chat) и внутренних вызовов из `/api/voice/chat` |
 | `CRON_SECRET` | Bearer для `/api/push/send` и `/api/push/dispatch` |
 | `OWNER_EMAIL` | единственный email с доступом к `/api/owner/*` |
 | `VAPID_PRIVATE_KEY`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_CONTACT` | Web Push подпись |
-| `OPENAI_API_KEY` | голосовой ассистент в PWA (`/api/voice/*`) |
 | `NEXT_PUBLIC_ENGINE` | `local` (движок в браузере) vs `remote` (через API) |
 | `NEXT_PUBLIC_BUILD_ID` | версия сборки, кэш service worker |
 | `NEXT_PUBLIC_POSTHOG_*`, `NEXT_PUBLIC_SENTRY_DSN` | опциональная аналитика/мониторинг |
@@ -495,18 +447,13 @@ createdAt }` — "N действий по стату до даты", прогр�
    независимо от остальных интеграций — просто `revokedAt` в `ApiKey`.
    Валидного ключа НЕ достаточно для доступа к произвольному пользователю —
    только к тем, кто реально прошёл обмен кода (`ApiKeyUser`).
-2. **Один доверенный internal-клиент** (например, собственный десктопный
-   процесс, как ДиДи) может продолжать использовать общий
-   `ASSISTANT_SECRET` — он даёт доступ ко ВСЕМ пользователям сразу и не
-   отзывается точечно, поэтому подходит только для кода, которому вы
-   доверяете целиком, не для стороннего сервиса.
-3. **`/api/state`, `/api/events`, `/api/push/*` без сессии доверяют `userId`
+2. **`/api/state`, `/api/events`, `/api/push/*` без сессии доверяют `userId`
    из тела/query как есть** — никакой подписи, только сама строка id.
    Это не проблема для scoped-интеграций из пункта 1 (там доступ уже
    ограничен по `ApiKeyUser`), но если что-то ДРУГОЕ вызывает эти
    эндпоинты без сессии напрямую — `userId` там нельзя передавать
    стороннему коду как "ключ доступа".
-4. **Чего этот механизм намеренно не делает**: не ограничивает набор
+3. **Чего этот механизм намеренно не делает**: не ограничивает набор
    ДЕЙСТВИЙ ключа операциями (`add-todo`/`complete-action`/`stats` — всё,
    что есть под `/api/integrations/*`), не даёт самому пользователю в
    профиле посмотреть/отозвать список сервисов, к которым он привязан

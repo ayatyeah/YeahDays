@@ -7,8 +7,6 @@ import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import PushOptIn from "@/components/PushOptIn";
 import DeviceList from "@/components/DeviceList";
-import DidiPanel from "@/components/DidiPanel";
-import DidiSyncId from "@/components/DidiSyncId";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
 import DataControls from "@/components/DataControls";
@@ -133,18 +131,6 @@ export default function AccountSection() {
       <div className="mt-3">
         <DeviceList />
       </div>
-
-      {/* Голосовой помощник СалемАй — статус фонового процесса на ноуте */}
-      <div className="mt-3">
-        <DidiPanel linkToFull />
-      </div>
-      <DidiSyncId />
-      <Link
-        href="/download"
-        className="press mt-2 flex items-center justify-center rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-[12.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
-      >
-        Скачать приложение для Windows →
-      </Link>
 
       {/* Заморозки — страховка стрика */}
       <section className="mt-3 flex items-center gap-3 rounded-3xl surface p-4">

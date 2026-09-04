@@ -59,9 +59,9 @@ export async function POST(req: Request) {
   const activityType = body.activityType as ActivityType;
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 120) : "";
   const minutes = typeof body.minutes === "number" && body.minutes > 0 ? Math.round(body.minutes) : 0;
-  // Локальный день пользователя сервер не угадывает (тот же принцип, что и
-  // у /api/assistant) — если вызывающий его не прислал, берём серверную
-  // UTC-дату как разумный фолбэк, а не точный расчёт.
+  // Локальный день пользователя сервер не угадывает — если вызывающий его
+  // не прислал, берём серверную UTC-дату как разумный фолбэк, а не точный
+  // расчёт.
   const date =
     typeof body.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.date)
       ? body.date

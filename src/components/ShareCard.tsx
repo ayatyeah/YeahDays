@@ -93,8 +93,8 @@ export default function ShareCard() {
           ✨
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[13px] font-semibold">Поделиться прогрессом</p>
-          <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+          <p className="text-[14px] font-semibold">Поделиться прогрессом</p>
+          <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
             Картинка со стриком, уровнем и статами — для сторис или чата.
           </p>
         </div>
@@ -107,7 +107,7 @@ export default function ShareCard() {
         {busy ? "Готовлю…" : "Создать картинку"}
       </button>
       {note && (
-        <p className="mt-2 text-center text-[11.5px] text-[var(--color-muted)]">
+        <p className="mt-2 text-center text-[12.5px] text-[var(--color-muted)]">
           {note}
         </p>
       )}

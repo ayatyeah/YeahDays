@@ -130,7 +130,7 @@ export default function OwnerConsole() {
         <h1 className="text-[26px] font-bold tracking-tight">Владелец</h1>
         <Link
           href="/today"
-          className="text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          className="text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
         >
           в приложение →
         </Link>
@@ -148,7 +148,7 @@ export default function OwnerConsole() {
             key={key}
             onClick={() => setTab(key)}
             className={cn(
-              "rounded-2xl border py-2.5 text-[12.5px] font-medium transition",
+              "rounded-2xl border py-2.5 text-[13.5px] font-medium transition",
               tab === key
                 ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                 : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -162,22 +162,22 @@ export default function OwnerConsole() {
       {tab === "users" && (
         <div className="space-y-1.5">
           {users === null ? (
-            <p className="text-[13px] text-[var(--color-muted)]">Загрузка…</p>
+            <p className="text-[14px] text-[var(--color-muted)]">Загрузка…</p>
           ) : users.length === 0 ? (
-            <p className="text-[13px] text-[var(--color-muted)]">Пока нет пользователей.</p>
+            <p className="text-[14px] text-[var(--color-muted)]">Пока нет пользователей.</p>
           ) : (
             users.map((u) => (
               <div key={u.id} className="rounded-2xl surface px-3 py-2.5">
                 <div className={cn("min-w-0", u.banned && "opacity-50")}>
-                  <p className="truncate text-[13px] font-medium">
+                  <p className="truncate text-[14px] font-medium">
                     {u.name || u.username || u.email || u.id}
                     {u.banned && (
-                      <span className="ml-1.5 text-[10px] font-bold uppercase text-[var(--color-strength)]">
+                      <span className="ml-1.5 text-[11.5px] font-bold uppercase text-[var(--color-strength)]">
                         забанен
                       </span>
                     )}
                   </p>
-                  <p className="truncate text-[11px] text-[var(--color-muted)]">
+                  <p className="truncate text-[12px] text-[var(--color-muted)]">
                     {[u.email, u.username && `@${u.username}`, u.birthYear]
                       .filter(Boolean)
                       .join(" · ")}
@@ -212,9 +212,9 @@ export default function OwnerConsole() {
       {tab === "requests" && (
         <div className="space-y-1.5">
           {requests === null ? (
-            <p className="text-[13px] text-[var(--color-muted)]">Загрузка…</p>
+            <p className="text-[14px] text-[var(--color-muted)]">Загрузка…</p>
           ) : requests.length === 0 ? (
-            <p className="text-[13px] text-[var(--color-muted)]">Заявок пока нет.</p>
+            <p className="text-[14px] text-[var(--color-muted)]">Заявок пока нет.</p>
           ) : (
             requests.map((r) => (
               <div
@@ -225,8 +225,8 @@ export default function OwnerConsole() {
                 )}
               >
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[13px] font-medium">{r.email}</p>
-                  <p className="truncate text-[11px] text-[var(--color-muted)]">
+                  <p className="truncate text-[14px] font-medium">{r.email}</p>
+                  <p className="truncate text-[12px] text-[var(--color-muted)]">
                     {r.phone} · {r.birthYear} · telegram {r.telegram} · {fmtDate(r.createdAt)}
                   </p>
                 </div>
@@ -242,9 +242,9 @@ export default function OwnerConsole() {
       {tab === "devices" && (
         <div className="space-y-1.5">
           {devices === null ? (
-            <p className="text-[13px] text-[var(--color-muted)]">Загрузка…</p>
+            <p className="text-[14px] text-[var(--color-muted)]">Загрузка…</p>
           ) : devices.length === 0 ? (
-            <p className="text-[13px] text-[var(--color-muted)]">
+            <p className="text-[14px] text-[var(--color-muted)]">
               Ни одно устройство ещё не подписалось на уведомления.
             </p>
           ) : (
@@ -253,18 +253,18 @@ export default function OwnerConsole() {
                 key={d.id}
                 className={cn("rounded-2xl surface px-3 py-2.5", !d.enabled && "opacity-50")}
               >
-                <p className="truncate text-[13px] font-medium">
+                <p className="truncate text-[14px] font-medium">
                   {d.label}
                   <span
                     className={cn(
-                      "ml-1.5 text-[10px] font-bold uppercase",
+                      "ml-1.5 text-[11.5px] font-bold uppercase",
                       d.enabled ? "text-[var(--color-stability)]" : "text-[var(--color-muted)]",
                     )}
                   >
                     {d.enabled ? "активно" : "выключено"}
                   </span>
                 </p>
-                <p className="truncate text-[11px] text-[var(--color-muted)]">
+                <p className="truncate text-[12px] text-[var(--color-muted)]">
                   {d.userLabel} · с {fmtDate(d.createdAt)} · обновлено {fmtDateTime(d.updatedAt)}
                   {d.lastSentAt && ` · последняя отправка ${fmtDateTime(d.lastSentAt)}`}
                 </p>
@@ -319,7 +319,7 @@ function DeleteModal({
   return (
     <Modal open={!!user} onClose={onClose} title="Удалить пользователя?">
       <div className="space-y-3">
-        <p className="text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
+        <p className="text-[14.5px] leading-snug text-[var(--color-fg-dim)]">
           {user?.email ?? user?.id} и все его данные (план, задачи, история,
           push-подписки) удалятся без возможности восстановить.
         </p>
@@ -391,7 +391,7 @@ function PasswordModal({
           autoFocus
           className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
         />
-        {error && <p className="text-[12.5px] text-[var(--color-strength)]">{error}</p>}
+        {error && <p className="text-[13.5px] text-[var(--color-strength)]">{error}</p>}
         <div className="flex gap-2.5">
           <Button className="flex-1" onClick={onClose}>
             Отмена

@@ -67,7 +67,7 @@ export default function ProgressSection() {
           <div className="canvas-slot mt-1 h-[320px] lg:mt-0">
             <Avatar3D stats={stats} level={level} className="h-full w-full" />
           </div>
-          <p className="mb-4 mt-1 text-center text-[11px] text-[var(--color-muted)] lg:mb-0 lg:mt-0">
+          <p className="mb-4 mt-1 text-center text-[12px] text-[var(--color-muted)] lg:mb-0 lg:mt-0">
             Тело меняется с уровнем — от новичка до легенды
           </p>
 
@@ -75,12 +75,12 @@ export default function ProgressSection() {
           <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+                <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                   Уровень
                 </p>
                 <p className="text-4xl font-black leading-none tabular-nums">{level}</p>
               </div>
-              <p className="text-[13px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
+              <p className="text-[14px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
                 {totalXp} XP
               </p>
             </div>
@@ -92,7 +92,7 @@ export default function ProgressSection() {
                 transition={{ type: "spring", stiffness: 130, damping: 22 }}
               />
             </div>
-            <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
+            <p className="mt-1.5 text-[12px] text-[var(--color-muted)]">
               {progress.currentInLevel} / {progress.neededForNext} до уровня {level + 1}
             </p>
           </section>
@@ -108,13 +108,13 @@ export default function ProgressSection() {
         <div className="flex flex-col lg:w-[320px] lg:shrink-0 lg:gap-5">
           {/* Характеристики */}
           <section className="mb-6 lg:mb-0">
-            <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+            <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
               Характеристики
             </h2>
             <div className="space-y-3.5">
               {STAT_LIST.map((s) => (
                 <div key={s.key}>
-                  <div className="mb-1.5 flex items-center justify-between text-[12.5px]">
+                  <div className="mb-1.5 flex items-center justify-between text-[13.5px]">
                     <span className="flex items-center gap-2 font-medium">
                       <span style={{ color: s.hex }}>{s.icon}</span>
                       {s.label}
@@ -132,7 +132,7 @@ export default function ProgressSection() {
                       transition={{ type: "spring", stiffness: 120, damping: 20 }}
                     />
                   </div>
-                  <p className="mt-1 text-[10.5px] text-[var(--color-muted)]">{s.hint}</p>
+                  <p className="mt-1 text-[12px] text-[var(--color-muted)]">{s.hint}</p>
                 </div>
               ))}
             </div>
@@ -141,7 +141,7 @@ export default function ProgressSection() {
           {/* Категории */}
           {topCats.length > 0 && (
             <section className="mb-6 lg:mb-0">
-              <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+              <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
                 Где ты растёшь
               </h2>
               <div className="space-y-2">
@@ -153,14 +153,14 @@ export default function ProgressSection() {
                       className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-3.5 py-2.5"
                     >
                       <span className="text-base">{c.icon}</span>
-                      <span className="flex-1 text-[13px] font-medium">{c.label}</span>
+                      <span className="flex-1 text-[14px] font-medium">{c.label}</span>
                       <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
                         <div
                           className="h-full rounded-full bg-[var(--color-fg-dim)]"
                           style={{ width: `${(value / maxCat) * 100}%` }}
                         />
                       </div>
-                      <span className="w-10 text-right text-[11.5px] tabular-nums text-[var(--color-muted)]">
+                      <span className="w-10 text-right text-[12.5px] tabular-nums text-[var(--color-muted)]">
                         {value}
                       </span>
                     </div>
@@ -172,7 +172,7 @@ export default function ProgressSection() {
 
           {/* Эволюция */}
           <section className="mb-2 lg:mb-0">
-            <h2 className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+            <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
               Эволюция
             </h2>
             <div className="space-y-2">
@@ -191,7 +191,7 @@ export default function ProgressSection() {
                   >
                     <div
                       className={cn(
-                        "flex h-8 w-8 items-center justify-center rounded-full text-[11px] font-bold",
+                        "flex h-8 w-8 items-center justify-center rounded-full text-[12px] font-bold",
                         reached
                           ? "bg-[var(--color-fg)] text-[var(--color-bg)]"
                           : "bg-[var(--color-surface-2)] text-[var(--color-muted)]",
@@ -200,13 +200,13 @@ export default function ProgressSection() {
                       {reached ? "✓" : m.level}
                     </div>
                     <div className="flex-1">
-                      <p className="text-[13.5px] font-semibold">{m.label}</p>
-                      <p className="text-[11px] text-[var(--color-muted)]">
+                      <p className="text-[14.5px] font-semibold">{m.label}</p>
+                      <p className="text-[12px] text-[var(--color-muted)]">
                         с {m.level} уровня
                       </p>
                     </div>
                     {current && (
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
+                      <span className="text-[11.5px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
                         сейчас
                       </span>
                     )}
@@ -214,7 +214,7 @@ export default function ProgressSection() {
                 );
               })}
             </div>
-            <p className="mt-3 text-center text-[11px] text-[var(--color-muted)]">
+            <p className="mt-3 text-center text-[12px] text-[var(--color-muted)]">
               Лучшая серия: {best} {best === 1 ? "день" : "дн."}
             </p>
           </section>
@@ -239,7 +239,7 @@ function Metric({
         {accent && <span className="mr-0.5 text-lg">{accent}</span>}
         {value}
       </p>
-      <p className="mt-0.5 text-[10.5px] text-[var(--color-muted)]">{label}</p>
+      <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">{label}</p>
     </div>
   );
 }

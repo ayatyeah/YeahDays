@@ -168,33 +168,49 @@ button {
  * Карточка. Верхняя грань светлее — имитация света сверху; из-за неё
  * поверхность кажется объёмной, хотя это всего один градиент.
  */
+/* Матовая карточка: ровный цвет без верхнего блика. Градиент сверху
+   имитировал отражение света — ровно то, чего в матовом не бывает. */
 .surface {
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.045) 0%,
-    rgba(255, 255, 255, 0) 42%
-  );
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-1);
 }
 
 .surface-raised {
-  background-image: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    rgba(255, 255, 255, 0) 46%
-  );
   background-color: var(--color-surface);
   border: 1px solid var(--color-border-strong);
   box-shadow: var(--shadow-2);
 }
 
-/** Стекло — для навигации и оверлеев поверх контента. */
+/** Плотная подложка для оверлеев поверх контента. Была стеклом. */
 .glass {
-  background-color: rgba(14, 14, 19, 0.72);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
-  backdrop-filter: blur(20px) saturate(160%);
+  background-color: var(--color-bg-soft);
+}
+
+/**
+ * Расширение зоны нажатия до пальца, БЕЗ изменения внешнего вида.
+ *
+ * Часть управляющих элементов визуально маленькая по делу — чекбокс на
+ * 20-24px рядом с текстом задачи не должен быть кнопкой во весь ряд. Но
+ * попасть в него пальцем тяжело: рекомендованный минимум цели — около
+ * 44px. Невидимый прямоугольник по центру элемента добирает недостающее;
+ * клик по нему считается кликом по самой кнопке, потому что это её
+ * собственный псевдоэлемент.
+ *
+ * 40px, а не 44: в плотных рядах (чекбокс + заголовок) цель в 44px
+ * начинает перекрывать соседний элемент и воровать его нажатия.
+ */
+.tap {
+  position: relative;
+}
+.tap::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
 }
 
 /**
@@ -361,230 +377,57 @@ select {
 }
 
 /* ────────────────────────────────────────────────
-   Liquid glass
+   Матовые поверхности
    ────────────────────────────────────────────────
 
-   Настоящее «жидкое стекло» — это не просто blur. Ощущение стекла даёт
-   сочетание трёх вещей, и без любой из них поверхность выглядит просто
-   мутной плёнкой:
+   Здесь раньше жило «жидкое стекло»: backdrop-filter с blur/saturate,
+   бликовые псевдоэлементы, мраморные прожилки и зерно. Убрано целиком.
 
-   1) преломление — размытие + подъём насыщенности, будто свет прошёл
-      через толщу материала;
-   2) блик по верхней грани — узкая светлая полоса, ловящая источник
-      света сверху;
-   3) внутренняя фаска — тонкая светлая линия по контуру изнутри,
-      которая читается как торец стекла.
+   Почему не жалко. Помимо того, что визуально это шумело, backdrop-filter
+   — самое дорогое, что можно повесить на мобильный браузер: каждый кадр
+   скролла заставляет пересчитывать размытие всего, что под панелью. На
+   телефоне это читается как «приложение тормозит».
+
+   Матовая поверхность = сплошной цвет + тонкая граница + тень. Все три
+   берутся из токенов темы, поэтому светлая тема подхватывается сама и
+   отдельные [data-theme="light"] правила больше не нужны.
 */
 
 .liquid {
-  position: relative;
-  isolation: isolate;
-  background-color: rgba(19, 19, 25, 0.55);
-  -webkit-backdrop-filter: blur(24px) saturate(180%) brightness(1.06);
-  backdrop-filter: blur(24px) saturate(180%) brightness(1.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  /* внешняя тень + внутренняя фаска сверху и снизу */
-  box-shadow:
-    var(--shadow-2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-2);
 }
 
-/* Блик: узкая диагональная полоса света поверх поверхности. */
-.liquid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(255, 255, 255, 0.04) 22%,
-    transparent 46%
-  );
-  pointer-events: none;
-}
-
-/* Тёплое свечение по нижней грани — «стекло лежит на цветном фоне». */
-.liquid::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: radial-gradient(
-    120% 80% at 50% 120%,
-    rgba(149, 132, 255, 0.14) 0%,
-    transparent 62%
-  );
-  pointer-events: none;
-}
-
-/* Вариант для панелей во всю ширину (навигация, шапка). */
+/* Панель во всю ширину (нижняя навигация). Обязана быть НЕПРОЗРАЧНОЙ:
+   раньше читаемость поверх контента держалась на размытии, теперь —
+   на плотном фоне. */
 .liquid-bar {
-  background-color: rgba(11, 11, 16, 0.62);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
-  backdrop-filter: blur(28px) saturate(190%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 -8px 32px rgba(0, 0, 0, 0.45);
+  background-color: var(--color-bg-soft);
+  border-top: 1px solid var(--color-border);
 }
 
-[data-theme="light"] .liquid-bar {
-  background-color: rgba(255, 255, 255, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 -8px 28px rgba(30, 20, 60, 0.08);
+.marble {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  box-shadow: var(--shadow-3);
 }
 
-[data-theme="light"] .glass {
-  background-color: rgba(255, 255, 255, 0.78);
+/* Шапка сайта — та же логика, что и у .liquid-bar. */
+.marble-bar {
+  background-color: var(--color-bg-soft);
 }
 
-/*
-  Fallback: где backdrop-filter не поддерживается, стекло превращается
-  в непрозрачную поверхность — иначе текст ляжет на контент и станет
-  нечитаемым.
-*/
-@supports not (backdrop-filter: blur(1px)) {
-  .liquid,
-  .liquid-bar,
-  .glass {
-    background-color: rgba(16, 16, 22, 0.97);
-  }
-}
-
-/* Мягкое цветное пятно под секцией — добавляет «дороговизны» фону. */
+/* Мягкое цветное пятно под секцией. Это фон, а не поверхность, — матовость
+   его не касается, но яркость приглушена: рядом с плоскими карточками
+   прежнее свечение выглядело чужеродно. */
 .glow-spot {
   position: absolute;
   z-index: -1;
   border-radius: 9999px;
   filter: blur(72px);
-  opacity: 0.5;
+  opacity: 0.32;
   pointer-events: none;
-}
-
-/* ────────────────────────────────────────────────
-   Мрамор
-   ────────────────────────────────────────────────
-
-   Дорогой материал отличается от дешёвого не блеском, а НЕОДНОРОДНОСТЬЮ.
-   Идеально ровная поверхность читается как пластик; камень же имеет
-   прожилки, перепады плотности и зерно. Поэтому к стеклу добавляются:
-
-   — мягкие «прожилки» из повёрнутых линейных градиентов;
-   — зеркальный блик в углу, как отражение источника света;
-   — едва заметное зерно, которое убирает ощущение цифровой плоскости.
-*/
-
-.marble {
-  position: relative;
-  isolation: isolate;
-  background-color: rgba(20, 20, 27, 0.62);
-  -webkit-backdrop-filter: blur(28px) saturate(190%) brightness(1.08);
-  backdrop-filter: blur(28px) saturate(190%) brightness(1.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    var(--shadow-3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.05),
-    inset 1px 0 0 rgba(255, 255, 255, 0.05);
-}
-
-/* Прожилки: несколько тонких светлых полос под разными углами. */
-.marble::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  opacity: 0.55;
-  pointer-events: none;
-  background-image:
-    linear-gradient(
-      118deg,
-      transparent 18%,
-      rgba(255, 255, 255, 0.07) 30%,
-      transparent 34%,
-      transparent 52%,
-      rgba(255, 255, 255, 0.045) 60%,
-      transparent 64%
-    ),
-    linear-gradient(
-      62deg,
-      transparent 40%,
-      rgba(149, 132, 255, 0.09) 52%,
-      transparent 58%
-    ),
-    linear-gradient(
-      200deg,
-      transparent 62%,
-      rgba(70, 203, 164, 0.06) 74%,
-      transparent 80%
-    );
-}
-
-/* Зеркальный блик + зерно. */
-.marble::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  pointer-events: none;
-  background-image:
-    radial-gradient(
-      70% 45% at 12% 0%,
-      rgba(255, 255, 255, 0.16) 0%,
-      transparent 58%
-    ),
-    radial-gradient(
-      100% 70% at 50% 118%,
-      rgba(149, 132, 255, 0.13) 0%,
-      transparent 60%
-    ),
-    /* зерно: полупрозрачный шум мелким SVG, без картинки-файла */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.32'/%3E%3C/svg%3E");
-  background-blend-mode: normal, normal, overlay;
-}
-
-[data-theme="light"] .marble {
-  background-color: rgba(255, 255, 255, 0.78);
-  border: 1px solid rgba(20, 18, 40, 0.1);
-  box-shadow:
-    var(--shadow-3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(20, 18, 40, 0.04),
-    inset 1px 0 0 rgba(20, 18, 40, 0.04);
-}
-
-/** Мраморная панель во всю ширину — для шапки сайта. */
-.marble-bar {
-  background-color: rgba(12, 12, 18, 0.7);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  backdrop-filter: blur(30px) saturate(200%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 10px 40px rgba(0, 0, 0, 0.5);
-}
-
-[data-theme="light"] .marble-bar {
-  background-color: rgba(255, 255, 255, 0.72);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 10px 32px rgba(30, 20, 60, 0.08);
-}
-
-@supports not (backdrop-filter: blur(1px)) {
-  .marble,
-  .marble-bar {
-    background-color: rgba(18, 18, 24, 0.97);
-  }
-  [data-theme="light"] .marble,
-  [data-theme="light"] .marble-bar {
-    background-color: rgba(255, 255, 255, 0.97);
-  }
 }
 
 /* ────────────────────────────────────────────────

@@ -46,7 +46,7 @@ export default function AdminPage() {
         <h1 className="text-[26px] font-bold tracking-tight">Управление</h1>
         <Link
           href="/account"
-          className="text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          className="text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
         >
           в профиль →
         </Link>
@@ -64,7 +64,7 @@ export default function AdminPage() {
             key={key}
             onClick={() => setTab(key)}
             className={cn(
-              "rounded-2xl border py-2.5 text-[12.5px] font-medium transition",
+              "rounded-2xl border py-2.5 text-[13.5px] font-medium transition",
               tab === key
                 ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                 : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -123,10 +123,10 @@ function ActionsTab() {
           )}
         >
           <span>
-            <span className="block text-[13px] font-medium">
+            <span className="block text-[14px] font-medium">
               Только свои действия
             </span>
-            <span className="block text-[11px] text-[var(--color-muted)]">
+            <span className="block text-[12px] text-[var(--color-muted)]">
               {useOwnActionsOnly
                 ? "Встроенный набор из 159 действий выключен"
                 : "Колода включает встроенный набор вместе со своими действиями"}
@@ -151,7 +151,7 @@ function ActionsTab() {
       {/* Направления целиком */}
       {!useOwnActionsOnly && (
         <section className="mb-4">
-          <h2 className="mb-2 text-[12.5px] font-semibold text-[var(--color-fg-dim)]">
+          <h2 className="mb-2 text-[13.5px] font-semibold text-[var(--color-fg-dim)]">
             Направления
           </h2>
           <div className="grid grid-cols-3 gap-1.5">
@@ -162,7 +162,7 @@ function ActionsTab() {
                   key={c.key}
                   onClick={() => toggleExcluded(c.key)}
                   className={cn(
-                    "rounded-xl border px-2 py-2 text-[11px] transition",
+                    "rounded-xl border px-2 py-2 text-[12px] transition",
                     off
                       ? "border-[var(--color-border)] text-[var(--color-muted)] line-through opacity-60"
                       : "border-[var(--color-fg-dim)]",
@@ -173,7 +173,7 @@ function ActionsTab() {
               );
             })}
           </div>
-          <p className="mt-2 text-[11px] leading-snug text-[var(--color-muted)]">
+          <p className="mt-2 text-[12px] leading-snug text-[var(--color-muted)]">
             Зачёркнутые направления не попадают в колоду вообще.
           </p>
         </section>
@@ -184,7 +184,7 @@ function ActionsTab() {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Поиск по названию"
-        className="mb-2 h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[13.5px] outline-none focus:border-[var(--color-fg-dim)]"
+        className="mb-2 h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[14.5px] outline-none focus:border-[var(--color-fg-dim)]"
       />
       <div className="mb-3 flex gap-1.5 overflow-x-auto pb-1">
         <FilterChip active={cat === "all"} onClick={() => setCat("all")}>
@@ -201,7 +201,7 @@ function ActionsTab() {
         ))}
       </div>
 
-      <p className="mb-2 text-[11.5px] text-[var(--color-muted)]">
+      <p className="mb-2 text-[12.5px] text-[var(--color-muted)]">
         Показано {list.length} · скрыто вручную {disabled.length}
       </p>
 
@@ -223,19 +223,19 @@ function ActionsTab() {
               <span className="min-w-0 flex-1">
                 <span
                   className={cn(
-                    "block truncate text-[13px] font-medium",
+                    "block truncate text-[14px] font-medium",
                     off && "line-through",
                   )}
                 >
                   {a.title}
                 </span>
-                <span className="block truncate text-[11px] text-[var(--color-muted)]">
+                <span className="block truncate text-[12px] text-[var(--color-muted)]">
                   {a.duration} мин · сложность {a.difficulty}
                   {a.progression ? ` · ступень ${a.progression.step}` : ""}
                   {a.custom ? " · своё" : ""}
                 </span>
               </span>
-              <span className="shrink-0 text-[11px] text-[var(--color-muted)]">
+              <span className="shrink-0 text-[12px] text-[var(--color-muted)]">
                 {off ? "скрыто" : "вкл"}
               </span>
             </button>
@@ -259,7 +259,7 @@ function FilterChip({
     <button
       onClick={onClick}
       className={cn(
-        "shrink-0 rounded-xl border px-2.5 py-1.5 text-[11.5px] transition",
+        "shrink-0 rounded-xl border px-2.5 py-1.5 text-[12.5px] transition",
         active
           ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
           : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -293,7 +293,7 @@ function DayTab() {
           type="date"
           value={day}
           onChange={(e) => setDay(e.target.value || dateKey())}
-          className="h-11 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[13.5px] outline-none"
+          className="h-11 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[14.5px] outline-none"
         />
         <span
           className="h-11 w-11 shrink-0 rounded-2xl border border-[var(--color-border)]"
@@ -310,11 +310,11 @@ function DayTab() {
       </div>
 
       {/* Задачи дня */}
-      <h2 className="mb-2 text-[12.5px] font-semibold text-[var(--color-fg-dim)]">
+      <h2 className="mb-2 text-[13.5px] font-semibold text-[var(--color-fg-dim)]">
         Действия ({tasks.length})
       </h2>
       {tasks.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[12px] text-[var(--color-muted)]">
+        <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[13px] text-[var(--color-muted)]">
           В этот день ничего не было
         </p>
       ) : (
@@ -337,7 +337,7 @@ function DayTab() {
 
       <button
         onClick={() => setAdding((v) => !v)}
-        className="mt-2 w-full rounded-2xl border border-dashed border-[var(--color-border)] py-2.5 text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+        className="mt-2 w-full rounded-2xl border border-dashed border-[var(--color-border)] py-2.5 text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
       >
         {adding ? "закрыть" : "+ добавить действие в этот день"}
       </button>
@@ -352,12 +352,12 @@ function DayTab() {
       )}
 
       {/* Челленджи этого дня */}
-      <h2 className="mb-2 mt-6 text-[12.5px] font-semibold text-[var(--color-fg-dim)]">
+      <h2 className="mb-2 mt-6 text-[13.5px] font-semibold text-[var(--color-fg-dim)]">
         Челленджи в этот день
       </h2>
       <div className="space-y-1.5">
         {challenges.filter((c) => isChallengeActive(c, day)).length === 0 && (
-          <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[12px] text-[var(--color-muted)]">
+          <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[13px] text-[var(--color-muted)]">
             В этот день челленджей не было
           </p>
         )}
@@ -368,22 +368,22 @@ function DayTab() {
               key={c.id}
               className="flex items-center gap-2 rounded-2xl surface px-3 py-2.5"
             >
-              <span className="min-w-0 flex-1 truncate text-[12.5px]">
+              <span className="min-w-0 flex-1 truncate text-[13.5px]">
                 {c.title}
               </span>
               <button
                 onClick={() => logChallenge(c.id, -1, day)}
-                className="h-8 w-8 rounded-lg border border-[var(--color-border)] text-[13px]"
+                className="h-8 w-8 rounded-lg border border-[var(--color-border)] text-[14px]"
                 aria-label="минус"
               >
                 −
               </button>
-              <span className="w-12 text-center text-[12.5px] font-semibold tabular-nums">
+              <span className="w-12 text-center text-[13.5px] font-semibold tabular-nums">
                 {c.log[day] ?? 0}
               </span>
               <button
                 onClick={() => logChallenge(c.id, 1, day)}
-                className="h-8 w-8 rounded-lg border border-[var(--color-border)] text-[13px]"
+                className="h-8 w-8 rounded-lg border border-[var(--color-border)] text-[14px]"
                 aria-label="плюс"
               >
                 +
@@ -413,7 +413,7 @@ function TaskRow({
       <button
         onClick={onToggle}
         className={cn(
-          "h-6 w-6 shrink-0 rounded-lg border text-[12px] transition",
+          "h-6 w-6 shrink-0 rounded-lg border text-[13px] transition",
           task.completed
             ? "border-transparent bg-[var(--color-stability)] text-[var(--color-bg)]"
             : "border-[var(--color-border)]",
@@ -425,20 +425,20 @@ function TaskRow({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            "block truncate text-[13px]",
+            "block truncate text-[14px]",
             task.completed && "text-[var(--color-muted)] line-through",
           )}
         >
           {task.snapshot.title}
         </span>
-        <span className="block text-[11px] text-[var(--color-muted)]">
+        <span className="block text-[12px] text-[var(--color-muted)]">
           {task.xp} XP
           {task.durationMs ? ` · заняло ${formatDuration(task.durationMs)}` : ""}
         </span>
       </span>
       <button
         onClick={onRemove}
-        className="shrink-0 px-1 text-[12px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+        className="shrink-0 px-1 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
         aria-label="удалить"
       >
         ✕
@@ -468,23 +468,23 @@ function AddActionPicker({
         onChange={(e) => setQ(e.target.value)}
         placeholder="Найти действие"
         autoFocus
-        className="mb-2 h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[13px] outline-none"
+        className="mb-2 h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[14px] outline-none"
       />
       <div className="max-h-64 space-y-1 overflow-y-auto">
         {list.map((a) => (
           <div key={a.id} className="flex items-center gap-1.5">
-            <span className="min-w-0 flex-1 truncate text-[12.5px]">
+            <span className="min-w-0 flex-1 truncate text-[13.5px]">
               {CATEGORIES[a.category].icon} {a.title}
             </span>
             <button
               onClick={() => onPick(a, false)}
-              className="shrink-0 rounded-lg border border-[var(--color-border)] px-2 py-1 text-[11px]"
+              className="shrink-0 rounded-lg border border-[var(--color-border)] px-2 py-1 text-[12px]"
             >
               в план
             </button>
             <button
               onClick={() => onPick(a, true)}
-              className="shrink-0 rounded-lg border border-[var(--color-border)] px-2 py-1 text-[11px] font-semibold"
+              className="shrink-0 rounded-lg border border-[var(--color-border)] px-2 py-1 text-[12px] font-semibold"
             >
               выполнено
             </button>
@@ -522,14 +522,14 @@ function ChallengesTab() {
             >
               <div className="flex items-start gap-2">
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-semibold">
+                  <span className="block truncate text-[14px] font-semibold">
                     {c.title}
                   </span>
-                  <span className="block text-[11px] text-[var(--color-muted)]">
+                  <span className="block text-[12px] text-[var(--color-muted)]">
                     жёлтый {c.yellow} · зелёный {c.green} {c.unit} · {c.days} дн
                     · с {c.startDate}
                   </span>
-                  <span className="block text-[11px] text-[var(--color-muted)]">
+                  <span className="block text-[12px] text-[var(--color-muted)]">
                     зелёных дней: {doneDays}
                     {c.sets
                       ? ` · подходы ${c.sets.map((s) => s.reps).join("/")}`
@@ -538,7 +538,7 @@ function ChallengesTab() {
                 </span>
                 <button
                   onClick={() => removeChallenge(c.id)}
-                  className="shrink-0 px-1 text-[12px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+                  className="shrink-0 px-1 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
                   aria-label="удалить челлендж"
                 >
                   ✕
@@ -549,7 +549,7 @@ function ChallengesTab() {
         })}
       </div>
 
-      <h2 className="mb-2 mt-5 text-[12.5px] font-semibold text-[var(--color-fg-dim)]">
+      <h2 className="mb-2 mt-5 text-[13.5px] font-semibold text-[var(--color-fg-dim)]">
         Новый челлендж
       </h2>
       <div className="space-y-2 rounded-2xl surface p-3">
@@ -557,13 +557,13 @@ function ChallengesTab() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Название"
-          className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[13px] outline-none"
+          className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[14px] outline-none"
         />
         <input
           value={unit}
           onChange={(e) => setUnit(e.target.value)}
           placeholder="Единица (задач, отжиманий)"
-          className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[13px] outline-none"
+          className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[14px] outline-none"
         />
         <div className="grid grid-cols-3 gap-2">
           <NumField label="жёлтый" value={yellow} onChange={setYellow} />
@@ -584,7 +584,7 @@ function ChallengesTab() {
             });
             setTitle("");
           }}
-          className="h-11 w-full rounded-2xl bg-[var(--color-fg)] text-[13.5px] font-semibold text-[var(--color-bg)] disabled:opacity-40"
+          className="h-11 w-full rounded-2xl bg-[var(--color-fg)] text-[14.5px] font-semibold text-[var(--color-bg)] disabled:opacity-40"
         >
           Создать
         </button>
@@ -604,7 +604,7 @@ function NumField({
 }) {
   return (
     <label className="block">
-      <span className="mb-1 block text-[10.5px] text-[var(--color-muted)]">
+      <span className="mb-1 block text-[12px] text-[var(--color-muted)]">
         {label}
       </span>
       <input
@@ -612,7 +612,7 @@ function NumField({
         min={1}
         value={value}
         onChange={(e) => onChange(Math.max(1, Number(e.target.value) || 1))}
-        className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[13px] tabular-nums outline-none"
+        className="h-10 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[14px] tabular-nums outline-none"
       />
     </label>
   );

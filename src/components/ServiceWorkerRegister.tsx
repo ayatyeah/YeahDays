@@ -117,21 +117,21 @@ export default function ServiceWorkerRegister() {
               ✨
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-semibold">Новая версия готова</p>
-              <p className="truncate text-[11.5px] text-[var(--color-muted)]">
+              <p className="text-[14px] font-semibold">Новая версия готова</p>
+              <p className="truncate text-[12.5px] text-[var(--color-muted)]">
                 Обнови, чтобы применить
               </p>
             </div>
             <button
               onClick={apply}
-              className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[13px] font-semibold text-[var(--color-bg)]"
+              className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[14px] font-semibold text-[var(--color-bg)]"
             >
               Обновить
             </button>
             <button
               onClick={() => setDismissed(true)}
               aria-label="Позже"
-              className="press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
+              className="tap press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
             >
               ✕
             </button>

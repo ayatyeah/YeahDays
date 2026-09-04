@@ -50,7 +50,7 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
 
       {/* Энергия */}
       <section className="mb-7">
-        <p className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <p className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Сколько сил?
         </p>
         <div className="grid grid-cols-3 gap-2.5">
@@ -71,7 +71,7 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
                 <span className="text-2xl">{o.icon}</span>
                 <span
                   className={cn(
-                    "text-[12px] font-semibold",
+                    "text-[13px] font-semibold",
                     active
                       ? "text-[var(--color-fg)]"
                       : "text-[var(--color-muted)]",
@@ -87,7 +87,7 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
 
       {/* Время */}
       <section className="mb-9">
-        <p className="mb-3 text-[13px] font-semibold text-[var(--color-fg-dim)]">
+        <p className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
           Сколько минут готов вложить?
         </p>
         <div className="grid grid-cols-4 gap-2.5">
@@ -106,7 +106,7 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
                 )}
               >
                 <span className="block text-lg font-bold tabular-nums">{m}</span>
-                <span className="text-[10px] text-[var(--color-muted)]">мин</span>
+                <span className="text-[11.5px] text-[var(--color-muted)]">мин</span>
               </motion.button>
             );
           })}

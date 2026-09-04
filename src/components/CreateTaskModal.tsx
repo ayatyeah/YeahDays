@@ -97,7 +97,7 @@ export default function CreateTaskModal() {
                 key={c.key}
                 onClick={() => setCategory(c.key)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition",
+                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[13px] font-medium transition",
                   category === c.key
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -119,7 +119,7 @@ export default function CreateTaskModal() {
                 key={d}
                 onClick={() => setDifficulty(d)}
                 className={cn(
-                  "rounded-xl border py-2 text-[13px] font-bold tabular-nums transition",
+                  "rounded-xl border py-2 text-[14px] font-bold tabular-nums transition",
                   difficulty === d
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -140,7 +140,7 @@ export default function CreateTaskModal() {
                 key={m}
                 onClick={() => setDuration(m)}
                 className={cn(
-                  "rounded-xl border py-2 text-[12px] font-semibold tabular-nums transition",
+                  "rounded-xl border py-2 text-[13px] font-semibold tabular-nums transition",
                   duration === m
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -161,7 +161,7 @@ export default function CreateTaskModal() {
                 key={e}
                 onClick={() => setEnergy(e)}
                 className={cn(
-                  "rounded-xl border py-2 text-[12px] font-medium transition",
+                  "rounded-xl border py-2 text-[13px] font-medium transition",
                   energy === e
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -178,7 +178,7 @@ export default function CreateTaskModal() {
           className="flex items-center justify-between rounded-2xl px-4 py-3"
           style={{ background: `${stat.hex}14` }}
         >
-          <span className="text-[12.5px] font-medium" style={{ color: stat.hex }}>
+          <span className="text-[13.5px] font-medium" style={{ color: stat.hex }}>
             {stat.icon} {stat.label}
           </span>
           <span className="text-[15px] font-bold tabular-nums" style={{ color: stat.hex }}>
@@ -193,7 +193,7 @@ export default function CreateTaskModal() {
             onChange={(e) => setAddToToday(e.target.checked)}
             className="h-4 w-4 rounded accent-[var(--color-fg)]"
           />
-          <span className="text-[13px] text-[var(--color-fg-dim)]">
+          <span className="text-[14px] text-[var(--color-fg-dim)]">
             Сразу добавить в план на сегодня
           </span>
         </label>
@@ -218,7 +218,7 @@ export default function CreateTaskModal() {
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2 text-[12px] font-semibold text-[var(--color-fg-dim)]">
+    <p className="mb-2 text-[13px] font-semibold text-[var(--color-fg-dim)]">
       {children}
     </p>
   );

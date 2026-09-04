@@ -42,7 +42,7 @@ function Table({
             {["Что собираем", "Зачем", "Основание"].map((h) => (
               <th
                 key={h}
-                className="py-2.5 pr-4 text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]"
+                className="py-2.5 pr-4 text-[13px] font-semibold uppercase tracking-wider text-[var(--color-muted)]"
               >
                 {h}
               </th>
@@ -52,13 +52,13 @@ function Table({
         <tbody>
           {rows.map((r) => (
             <tr key={r.what} className="border-b border-[var(--color-border)]">
-              <td className="py-3 pr-4 align-top text-[13.5px] font-medium">
+              <td className="py-3 pr-4 align-top text-[14.5px] font-medium">
                 {r.what}
               </td>
-              <td className="py-3 pr-4 align-top text-[13px] text-[var(--color-fg-dim)]">
+              <td className="py-3 pr-4 align-top text-[14px] text-[var(--color-fg-dim)]">
                 {r.why}
               </td>
-              <td className="py-3 align-top text-[13px] text-[var(--color-fg-dim)]">
+              <td className="py-3 align-top text-[14px] text-[var(--color-fg-dim)]">
                 {r.basis}
               </td>
             </tr>
@@ -76,7 +76,7 @@ export default function PrivacyPage() {
     <article className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
       <Link
         href="/"
-        className="mb-6 inline-block text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+        className="mb-6 inline-block text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
       >
         ← на главную
       </Link>
@@ -84,7 +84,7 @@ export default function PrivacyPage() {
       <h1 className="text-[32px] font-extrabold leading-tight sm:text-[40px]">
         Политика конфиденциальности
       </h1>
-      <p className="mt-3 text-[12.5px] text-[var(--color-muted)]">
+      <p className="mt-3 text-[13.5px] text-[var(--color-muted)]">
         Дата последнего обновления: {UPDATED}
       </p>
 
@@ -282,7 +282,7 @@ export default function PrivacyPage() {
       </Section>
 
       <div className="surface mt-10 rounded-2xl p-4">
-        <p className="text-[12px] leading-relaxed text-[var(--color-muted)]">
+        <p className="text-[13px] leading-relaxed text-[var(--color-muted)]">
           Документ написан понятным языком и добросовестно описывает реальную
           работу сервиса, но не является юридической консультацией. Перед
           публичным запуском рекомендуется проверка юристом с учётом
@@ -290,7 +290,7 @@ export default function PrivacyPage() {
         </p>
       </div>
 
-      <div className="mt-6 flex gap-5 text-[13px]">
+      <div className="mt-6 flex gap-5 text-[14px]">
         <Link href="/terms" className="underline underline-offset-4">
           Условия использования
         </Link>

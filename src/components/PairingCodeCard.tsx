@@ -69,8 +69,8 @@ export default function PairingCodeCard() {
 
   return (
     <section className="mt-6 rounded-3xl surface p-4">
-      <p className="text-[13px] font-semibold">Код для внешнего сервиса</p>
-      <p className="mt-1 text-[11.5px] leading-snug text-[var(--color-muted)]">
+      <p className="text-[14px] font-semibold">Код для внешнего сервиса</p>
+      <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
         Разово привяжи аккаунт к стороннему сервису (например, StudyLoop):
         получи код и введи его в настройках этого сервиса. Действует 10 минут,
         одноразовый.
@@ -94,12 +94,12 @@ export default function PairingCodeCard() {
       )}
 
       {pair && !expired && (
-        <p className="mt-2 text-[11px] tabular-nums text-[var(--color-muted)]">
+        <p className="mt-2 text-[12px] tabular-nums text-[var(--color-muted)]">
           Истекает через {mm}:{String(ss).padStart(2, "0")}
         </p>
       )}
       {error && (
-        <p className="mt-2 text-[11px] text-[var(--color-strength)]">{error}</p>
+        <p className="mt-2 text-[12px] text-[var(--color-strength)]">{error}</p>
       )}
     </section>
   );

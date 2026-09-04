@@ -46,7 +46,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
         style={{ background: `${stat.hex}22`, opacity: bgOpacity }}
       >
         <span
-          className="text-[13px] font-bold"
+          className="text-[14px] font-bold"
           style={{ color: stat.hex }}
         >
           Выполнено ✓
@@ -76,7 +76,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
             whileTap={{ scale: 0.85 }}
             aria-label={task.completed ? "Отменить" : "Выполнить"}
             className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-full border-2 transition",
+              "tap flex h-8 w-8 items-center justify-center rounded-full border-2 transition",
               task.completed
                 ? "border-transparent"
                 : "border-[var(--color-border)] hover:border-[var(--color-fg-dim)]",
@@ -111,7 +111,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
             {floats.map((id) => (
               <motion.span
                 key={`x-${id}`}
-                className="pointer-events-none absolute -top-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[13px] font-bold"
+                className="pointer-events-none absolute -top-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[14px] font-bold"
                 style={{ color: stat.hex }}
                 initial={{ opacity: 0, y: 0 }}
                 animate={{ opacity: 1, y: -26 }}
@@ -134,7 +134,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
           >
             {task.snapshot.title}
           </p>
-          <p className="mt-0.5 flex items-center gap-1.5 text-[11.5px] text-[var(--color-muted)]">
+          <p className="mt-0.5 flex items-center gap-1.5 text-[12.5px] text-[var(--color-muted)]">
             <span>{cat.icon}</span>
             <span>{cat.label}</span>
             <span>·</span>

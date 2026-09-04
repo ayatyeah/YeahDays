@@ -186,7 +186,7 @@ function Cta({ children }: { children: React.ReactNode }) {
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
+    <p className="text-[13.5px] font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]">
       {children}
     </p>
   );
@@ -224,7 +224,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-4">
               <Cta>Попробовать</Cta>
-              <span className="text-[13px] text-[var(--color-muted)]">
+              <span className="text-[14px] text-[var(--color-muted)]">
                 Бесплатно · аккаунт за минуту
               </span>
             </div>
@@ -251,7 +251,7 @@ export default function LandingPage() {
                 {n.k}
               </p>
               <p className="mt-3 text-[14.5px] font-bold">{n.t}</p>
-              <p className="mt-1.5 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+              <p className="mt-1.5 text-[14px] leading-snug text-[var(--color-fg-dim)]">
                 {n.d}
               </p>
             </RevealItem>
@@ -283,7 +283,7 @@ export default function LandingPage() {
           <RevealGroup className="mt-12 grid gap-5 sm:grid-cols-3">
             {STEPS.map((s) => (
               <RevealItem key={s.n} className="surface rounded-3xl p-6">
-                <p className="num text-[13px] font-bold text-[var(--color-muted)]">
+                <p className="num text-[14px] font-bold text-[var(--color-muted)]">
                   {s.n}
                 </p>
                 <p className="mt-3 text-[19px] font-bold leading-snug">
@@ -317,7 +317,7 @@ export default function LandingPage() {
                     sizes="(min-width: 640px) 300px, 90vw"
                   />
                 </div>
-                <p className="mt-3 text-[13px] text-[var(--color-muted)]">
+                <p className="mt-3 text-[14px] text-[var(--color-muted)]">
                   {s.cap}
                 </p>
               </RevealItem>
@@ -346,7 +346,7 @@ export default function LandingPage() {
                 <p className="mt-4 text-[15.5px] font-bold leading-snug">
                   {f.title}
                 </p>
-                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">
+                <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--color-fg-dim)]">
                   {f.text}
                 </p>
               </RevealItem>
@@ -413,7 +413,7 @@ export default function LandingPage() {
               {BELIEFS.map((b) => (
                 <RevealItem key={b.t} className="surface rounded-3xl p-5">
                   <p className="text-[15.5px] font-bold leading-snug">{b.t}</p>
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">
+                  <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--color-fg-dim)]">
                     {b.d}
                   </p>
                 </RevealItem>
@@ -434,7 +434,7 @@ export default function LandingPage() {
             {FAQ.map((f) => (
               <RevealItem key={f.q} className="surface rounded-3xl p-5">
                 <p className="text-[15.5px] font-bold">{f.q}</p>
-                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-fg-dim)]">
+                <p className="mt-2 text-[14.5px] leading-relaxed text-[var(--color-fg-dim)]">
                   {f.a}
                 </p>
               </RevealItem>
@@ -456,7 +456,7 @@ export default function LandingPage() {
               </p>
               <Link
                 href="/privacy"
-                className="press mt-6 inline-flex h-11 items-center rounded-xl border border-[var(--color-border-strong)] px-5 text-[13.5px] font-semibold"
+                className="press mt-6 inline-flex h-11 items-center rounded-xl border border-[var(--color-border-strong)] px-5 text-[14.5px] font-semibold"
               >
                 Политика конфиденциальности
               </Link>
@@ -514,11 +514,11 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl flex-col gap-5 px-5 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div className="flex items-center gap-2.5 opacity-70">
             <Logo variant="white" className="h-5 w-auto" />
-            <span className="text-[13px] text-[var(--color-muted)]">
+            <span className="text-[14px] text-[var(--color-muted)]">
               Одно действие в день
             </span>
           </div>
-          <nav className="flex flex-wrap gap-6 text-[13.5px] text-[var(--color-muted)]">
+          <nav className="flex flex-wrap gap-6 text-[14.5px] text-[var(--color-muted)]">
             <Link href="/today" className="transition hover:text-[var(--color-fg)]">
               Приложение
             </Link>

@@ -136,7 +136,7 @@ function RegisterForm() {
           />
 
           {error && (
-            <p className="text-[13px] text-[var(--color-strength)]">{error}</p>
+            <p className="text-[14px] text-[var(--color-strength)]">{error}</p>
           )}
 
           <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
@@ -144,12 +144,12 @@ function RegisterForm() {
           </Button>
         </form>
 
-        <p className="mt-5 text-center text-[12.5px] leading-snug text-[var(--color-muted)]">
+        <p className="mt-5 text-center text-[13.5px] leading-snug text-[var(--color-muted)]">
           Google можно привязать после — в профиле, для быстрого входа с
           других устройств.
         </p>
 
-        <p className="mt-4 text-center text-[13px] text-[var(--color-muted)]">
+        <p className="mt-4 text-center text-[14px] text-[var(--color-muted)]">
           Уже есть аккаунт?{" "}
           <Link href="/login" className="font-semibold text-[var(--color-fg)]">
             Войти

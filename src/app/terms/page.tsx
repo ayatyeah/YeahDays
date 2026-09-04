@@ -25,7 +25,7 @@ export default function TermsPage() {
     <article className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
       <Link
         href="/"
-        className="mb-6 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+        className="mb-6 text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
       >
         ← на главную
       </Link>
@@ -33,7 +33,7 @@ export default function TermsPage() {
       <h1 className="text-[28px] font-extrabold leading-tight">
         Условия использования
       </h1>
-      <p className="mt-2 text-[12.5px] text-[var(--color-muted)]">
+      <p className="mt-2 text-[13.5px] text-[var(--color-muted)]">
         Обновлено: {UPDATED}
       </p>
 
@@ -107,7 +107,7 @@ export default function TermsPage() {
         Вопросы и претензии: <Mail />
       </Section>
 
-      <p className="mt-10 text-[11.5px] leading-snug text-[var(--color-muted)]">
+      <p className="mt-10 text-[12.5px] leading-snug text-[var(--color-muted)]">
         Документ написан понятным языком и не является юридической
         консультацией.
       </p>
@@ -115,7 +115,7 @@ export default function TermsPage() {
       <div className="mt-6">
         <Link
           href="/privacy"
-          className="text-[13px] underline underline-offset-4"
+          className="text-[14px] underline underline-offset-4"
         >
           Политика конфиденциальности →
         </Link>

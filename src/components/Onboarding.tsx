@@ -134,8 +134,8 @@ export default function Onboarding() {
                   >
                     <span className="text-2xl">{v.icon}</span>
                     <div className="min-w-0">
-                      <p className="text-[13.5px] font-semibold">{v.title}</p>
-                      <p className="text-[12px] leading-snug text-[var(--color-muted)]">
+                      <p className="text-[14.5px] font-semibold">{v.title}</p>
+                      <p className="text-[13px] leading-snug text-[var(--color-muted)]">
                         {v.text}
                       </p>
                     </div>
@@ -202,7 +202,7 @@ export default function Onboarding() {
                         <span className="mt-1 text-[14px] font-semibold">
                           {s.label}
                         </span>
-                        <span className="text-[11px] leading-tight text-[var(--color-muted)]">
+                        <span className="text-[12px] leading-tight text-[var(--color-muted)]">
                           {s.hint}
                         </span>
                       </motion.button>
@@ -261,7 +261,7 @@ export default function Onboarding() {
                         </span>
                         <button
                           onClick={() => removeTask(i)}
-                          className="shrink-0 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+                          className="shrink-0 text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
                           aria-label="Убрать"
                         >
                           ✕

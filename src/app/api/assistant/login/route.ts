@@ -20,9 +20,16 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Тот же приём, что в src/auth.ts: сравниваем с валидным bcrypt-хэшем
+// несуществующего пароля, когда юзера нет / он google-only, чтобы
+// bcrypt.compare() отрабатывал одинаковое время во всех ветках — иначе
+// разница во времени ответа выдаёт, есть ли такой аккаунт.
+const DUMMY_HASH = "$2b$12$JW9b/fVt38j4JgP3ZnU0eeDaYTXRInFqz7peFp62M49J2i7TCOD0O";
 
 function authorized(req: Request): boolean {
   const secret = process.env.ASSISTANT_SECRET;
@@ -33,6 +40,12 @@ function authorized(req: Request): boolean {
 export async function POST(req: Request) {
   if (!authorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  // ASSISTANT_SECRET — общий на все инсталляции десктоп-приложения, а не
+  // per-user; если он утечёт, этот эндпоинт превращается в оракул для
+  // перебора паролей ЛЮБОГО аккаунта — лимит по IP как минимум ограничивает скорость.
+  if (!rateLimit(`assistant-login:ip:${clientIp(req)}`, 20, 15 * 60 * 1000)) {
+    return NextResponse.json({ error: "Слишком много попыток, попробуй позже" }, { status: 429 });
   }
 
   let body: unknown;
@@ -55,11 +68,8 @@ export async function POST(req: Request) {
   });
   // google-only аккаунт (без пароля) и бан — тем же сообщением, что и неверный
   // пароль, чтобы не палить наружу, какие аккаунты существуют или забанены
-  if (
-    !user?.passwordHash ||
-    user.banned ||
-    !(await bcrypt.compare(passwordStr, user.passwordHash))
-  ) {
+  const valid = await bcrypt.compare(passwordStr, user?.passwordHash ?? DUMMY_HASH);
+  if (!valid || !user?.passwordHash || user.banned) {
     return NextResponse.json({ error: "Неверный логин или пароль" }, { status: 401 });
   }
 

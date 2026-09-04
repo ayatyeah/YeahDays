@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
+import { rateLimit, clientIp } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,6 +17,10 @@ const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 const CURRENT_YEAR = new Date().getFullYear();
 
 export async function POST(req: Request) {
+  if (!rateLimit(`register:ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+    return NextResponse.json({ error: "Слишком много попыток, попробуй позже" }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();

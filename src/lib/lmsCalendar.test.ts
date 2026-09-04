@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { courseName, todoTitle, eventToDraft, planSync } from "@/lib/lmsCalendar";
+import {
+  courseName,
+  todoTitle,
+  eventToDraft,
+  planSync,
+  formatDeadline,
+  newDeadlineNotice,
+} from "@/lib/lmsCalendar";
+import type { TodoDraft } from "@/lib/lmsCalendar";
 import type { IcalEvent } from "@/lib/ical";
 import type { Todo } from "@/lib/externalState";
 
@@ -156,5 +164,65 @@ describe("planSync", () => {
     const plan = planSync([event({ start: null }), event()], []);
     expect(plan.unusable).toBe(1);
     expect(plan.create).toHaveLength(1);
+  });
+});
+
+/** Заготовка задачи в том виде, в каком её отдаёт planSync. */
+function draft(title: string, date: string, hour?: number, minute?: number): TodoDraft {
+  return { title, date, hour, minute, priority: "high" };
+}
+
+describe("formatDeadline", () => {
+  it("день, месяц в родительном падеже и время", () => {
+    expect(formatDeadline(draft("x", "2026-09-15", 23, 59))).toBe("15 сентября, 23:59");
+  });
+
+  it("час без минут показывает :00", () => {
+    expect(formatDeadline(draft("x", "2026-10-01", 9))).toBe("1 октября, 09:00");
+  });
+
+  it("событие на весь день — без времени", () => {
+    expect(formatDeadline(draft("x", "2026-12-31"))).toBe("31 декабря");
+  });
+});
+
+describe("newDeadlineNotice", () => {
+  it("без новых задач уведомления нет", () => {
+    expect(newDeadlineNotice([], "2026-09-04")).toBeNull();
+  });
+
+  it("один дедлайн — название и когда", () => {
+    const n = newDeadlineNotice([draft("Computer Vision: Lab 3", "2026-09-15", 23, 59)], "2026-09-04");
+    expect(n?.title).toBe("Новый дедлайн");
+    expect(n?.body).toBe("Computer Vision: Lab 3 — 15 сентября, 23:59");
+  });
+
+  it("несколько — счётчик в заголовке, первые два в теле", () => {
+    const n = newDeadlineNotice(
+      [
+        draft("A", "2026-09-15", 23, 59),
+        draft("B", "2026-09-16", 12, 0),
+        draft("C", "2026-09-17", 12, 0),
+        draft("D", "2026-09-18", 12, 0),
+      ],
+      "2026-09-04",
+    );
+    expect(n?.title).toBe("Новых дедлайнов: 4");
+    expect(n?.body).toBe("A, B и ещё 2");
+  });
+
+  it("ровно два перечисляются без хвоста", () => {
+    const n = newDeadlineNotice([draft("A", "2026-09-15"), draft("B", "2026-09-16")], "2026-09-04");
+    expect(n?.body).toBe("A, B");
+  });
+
+  it("kind не todo — иначе sw повесит бесполезную кнопку «+10 мин»", () => {
+    expect(newDeadlineNotice([draft("A", "2026-09-15")], "2026-09-04")?.kind).toBe("day");
+  });
+
+  it("тег привязан к дню — разные дни не схлопываются в одно уведомление", () => {
+    const a = newDeadlineNotice([draft("A", "2026-09-15")], "2026-09-04");
+    const b = newDeadlineNotice([draft("B", "2026-09-16")], "2026-09-05");
+    expect(a?.tag).not.toBe(b?.tag);
   });
 });

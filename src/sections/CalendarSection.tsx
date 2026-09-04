@@ -107,6 +107,65 @@ export default function CalendarSection() {
     setMonthOpen(true);
   }
 
+  /** Одна ячейка дня в месячной сетке — общая и для мобильной модалки, и для десктоп-панели справа, чтобы не дублировать разметку и логику цвета/точки. */
+  function renderDayCell(d: number | null, i: number) {
+    if (d === null) return <div key={i} />;
+    const k = keyOf(view.y, view.m, d);
+    const e = byDate.get(k);
+    const isToday = k === todayKey;
+    const isSel = k === selected;
+    const full = e && e.done > 0 && e.done === e.taken;
+    const partial = e && e.done > 0 && e.done < e.taken;
+    // уровень дня по челленджам: зелёный — все нормы взяты,
+    // жёлтый — взята хотя бы минимальная планка
+    const level = dayLevel(challenges, k);
+
+    return (
+      <button
+        key={i}
+        onClick={() => setSelected(k)}
+        className={cn(
+          // active:scale вместо framer-motion: 42 ячейки × подписка
+          // на motion-значения заметно тормозили открытие календаря
+          "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[13px] transition-transform duration-100 active:scale-[0.92]",
+          isSel
+            ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+            : "border-transparent hover:bg-[var(--color-surface)]",
+          isToday && !isSel && "text-[var(--color-stability)]",
+        )}
+        style={
+          !isSel && (level !== "none" || full)
+            ? {
+                background: `color-mix(in srgb, ${
+                  level === "green"
+                    ? "var(--color-stability)"
+                    : level === "yellow"
+                      ? "var(--color-wealth)"
+                      : "var(--color-stability)"
+                } ${level === "none" ? 14 : 24}%, transparent)`,
+              }
+            : undefined
+        }
+      >
+        <span className={cn(isSel && "font-bold")}>{d}</span>
+        {e && (
+          <span className="absolute bottom-1.5 flex gap-0.5">
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{
+                background: full
+                  ? "var(--color-stability)"
+                  : partial
+                    ? "var(--color-wealth)"
+                    : "var(--color-border)",
+              }}
+            />
+          </span>
+        )}
+      </button>
+    );
+  }
+
   if (!hydrated) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -137,21 +196,68 @@ export default function CalendarSection() {
             </button>
           )}
           <NavBtn onClick={() => setSelected((k) => shiftDay(k, 1))}>›</NavBtn>
-          {/* Спец-кнопка — вход в месячный вид, цвета дней и стрик по календарю */}
+          {/* Спец-кнопка — вход в месячный вид через модалку. На lg:+ месяц
+              уже виден постоянно в правой колонке, кнопка там не нужна. */}
           <button
             onClick={openMonth}
             aria-label="Посмотреть месяц"
-            className="press flex h-9 w-9 items-center justify-center rounded-xl surface text-[15px]"
+            className="press flex h-9 w-9 items-center justify-center rounded-xl surface text-[15px] lg:hidden"
           >
             🗓️
           </button>
         </div>
       </header>
 
-      {/* Почасовой план дня — теперь главное содержимое раздела, не блок
-          внизу. key={selected} — чистый локальный стейт (свёрнуто/ночные
-          часы) при переключении дня, а не протечка с прошлого. */}
-      <TimelineSchedule key={selected} day={selected} />
+      {/*
+        lg:+: почасовой план дня слева (основное), постоянно видимый месяц
+        справа — на мобильном тот же месяц прячется за кнопкой 🗓️ в
+        модалке (см. выше), тут смысла его дублировать нет — узкий экран,
+        а план дня и так требует прокрутки.
+      */}
+      <div className="lg:flex lg:items-start lg:gap-6">
+        <div className="lg:flex-1">
+          {/* Почасовой план дня — теперь главное содержимое раздела, не блок
+              внизу. key={selected} — чистый локальный стейт (свёрнуто/ночные
+              часы) при переключении дня, а не протечка с прошлого. */}
+          <TimelineSchedule key={selected} day={selected} />
+        </div>
+
+        <div className="mt-5 hidden lg:mt-0 lg:block lg:w-[320px] lg:shrink-0">
+          <section className="rounded-3xl surface p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-[15px] font-semibold">
+                {MONTHS[view.m]} <span className="text-[var(--color-muted)]">{view.y}</span>
+              </p>
+              <div className="flex gap-1.5">
+                <NavBtn onClick={() => shiftMonth(-1)}>‹</NavBtn>
+                <NavBtn onClick={() => shiftMonth(1)}>›</NavBtn>
+              </div>
+            </div>
+
+            <div className="mb-1.5 grid grid-cols-7 gap-1 text-center text-[10.5px] text-[var(--color-muted)]">
+              {WEEKDAYS.map((w) => (
+                <div key={w}>{w}</div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-1">{cells.map((d, i) => renderDayCell(d, i))}</div>
+
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10.5px] text-[var(--color-muted)]">
+              <Legend color="var(--color-stability)" label="день закрыт" />
+              <Legend color="var(--color-wealth)" label="частично" />
+              <Legend color="var(--color-border)" label="не начат" />
+            </div>
+          </section>
+
+          <section className="mt-5 rounded-3xl surface p-4 text-center">
+            <p className="text-[11px] uppercase tracking-wider text-[var(--color-muted)]">Стрик</p>
+            <p className="mt-1 text-3xl font-black leading-none tabular-nums">🔥 {streak}</p>
+            <p className="mt-1.5 text-[11px] text-[var(--color-muted)]">
+              Рекорд: {best} {best === 1 ? "день" : "дн."}
+            </p>
+          </section>
+        </div>
+      </div>
 
       <Modal open={monthOpen} onClose={() => setMonthOpen(false)} title="Как идёт месяц">
         <div className="mb-3 flex items-center justify-between">
@@ -170,65 +276,7 @@ export default function CalendarSection() {
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-1">
-          {cells.map((d, i) => {
-            if (d === null) return <div key={i} />;
-            const k = keyOf(view.y, view.m, d);
-            const e = byDate.get(k);
-            const isToday = k === todayKey;
-            const isSel = k === selected;
-            const full = e && e.done > 0 && e.done === e.taken;
-            const partial = e && e.done > 0 && e.done < e.taken;
-            // уровень дня по челленджам: зелёный — все нормы взяты,
-            // жёлтый — взята хотя бы минимальная планка
-            const level = dayLevel(challenges, k);
-
-            return (
-              <button
-                key={i}
-                onClick={() => setSelected(k)}
-                className={cn(
-                  // active:scale вместо framer-motion: 42 ячейки × подписка
-                  // на motion-значения заметно тормозили открытие календаря
-                  "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[13px] transition-transform duration-100 active:scale-[0.92]",
-                  isSel
-                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
-                    : "border-transparent hover:bg-[var(--color-surface)]",
-                  isToday && !isSel && "text-[var(--color-stability)]",
-                )}
-                style={
-                  !isSel && (level !== "none" || full)
-                    ? {
-                        background: `color-mix(in srgb, ${
-                          level === "green"
-                            ? "var(--color-stability)"
-                            : level === "yellow"
-                              ? "var(--color-wealth)"
-                              : "var(--color-stability)"
-                        } ${level === "none" ? 14 : 24}%, transparent)`,
-                      }
-                    : undefined
-                }
-              >
-                <span className={cn(isSel && "font-bold")}>{d}</span>
-                {e && (
-                  <span className="absolute bottom-1.5 flex gap-0.5">
-                    <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{
-                        background: full
-                          ? "var(--color-stability)"
-                          : partial
-                            ? "var(--color-wealth)"
-                            : "var(--color-border)",
-                      }}
-                    />
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
+        <div className="grid grid-cols-7 gap-1">{cells.map((d, i) => renderDayCell(d, i))}</div>
 
         <div className="mt-3 flex items-center justify-center gap-4 text-[10.5px] text-[var(--color-muted)]">
           <Legend color="var(--color-stability)" label="день закрыт" />

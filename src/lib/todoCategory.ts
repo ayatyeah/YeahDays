@@ -77,7 +77,7 @@ export function categorizeTodo(title: string): TodoCategory {
     return { stat: "strength", icon: "💪", subLabel: "Спорт" };
   }
 
-  if (/yeahgrind|репо|проект|tiktok|съёмка|монтаж|didi/.test(t)) {
+  if (/yeahgrind|репо|проект|tiktok|съёмка|монтаж/.test(t)) {
     return { stat: "wealth", icon: "🛠️", subLabel: "Проект" };
   }
 

@@ -159,22 +159,10 @@ export default function ActionCard({
         onDragEnd={handleDragEnd}
         whileTap={isTop ? { cursor: "grabbing" } : undefined}
       >
-        {/* фоновый градиент под категорию */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.16]"
-          style={{
-            background: `radial-gradient(120% 80% at 50% 0%, ${stat.hex} 0%, transparent 62%)`,
-          }}
-        />
-        {/* тонкая сетка для «продуктового» ощущения */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.035]"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+        {/* Декоративные слои (радиальный градиент под категорию и сетка
+            28px) убраны: в строгой схеме карточка — ровная матовая
+            поверхность, а различает категории бейдж и цвет подписи, а не
+            подсветка фона. */}
 
         {/* ── Свечение решения: только opacity, композитится на GPU ── */}
         <motion.div

@@ -138,7 +138,7 @@ export default function ActionCard({
       transition={{ type: "spring", stiffness: 300, damping: 32 }}
     >
       <motion.article
-        className="gpu-layer relative h-full w-full cursor-grab overflow-hidden rounded-[28px] bg-[var(--color-surface)] active:cursor-grabbing"
+        className="gpu-layer relative h-full w-full cursor-grab overflow-hidden rounded-[19px] bg-[var(--color-surface)] active:cursor-grabbing"
         style={{
           x: isTop ? x : 0,
           y: isTop ? y : 0,
@@ -178,7 +178,7 @@ export default function ActionCard({
 
         {/* ── Свечение решения: только opacity, композитится на GPU ── */}
         <motion.div
-          className="pointer-events-none absolute inset-0 z-10 rounded-[28px]"
+          className="pointer-events-none absolute inset-0 z-10 rounded-[19px]"
           style={{
             opacity: isTop ? acceptGlow : 0,
             boxShadow:
@@ -186,7 +186,7 @@ export default function ActionCard({
           }}
         />
         <motion.div
-          className="pointer-events-none absolute inset-0 z-10 rounded-[28px]"
+          className="pointer-events-none absolute inset-0 z-10 rounded-[19px]"
           style={{
             opacity: isTop ? rejectGlow : 0,
             boxShadow:

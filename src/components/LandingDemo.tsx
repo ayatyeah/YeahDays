@@ -108,8 +108,8 @@ export default function LandingDemo() {
   return (
     <div className="mx-auto w-full max-w-[380px]">
       {/* Рамка «телефона» */}
-      <div className="liquid rounded-[38px] p-2.5">
-        <div className="relative overflow-hidden rounded-[30px] bg-[var(--color-bg)] px-4 pb-4 pt-5">
+      <div className="liquid rounded-[26px] p-2.5">
+        <div className="relative overflow-hidden rounded-[20px] bg-[var(--color-bg)] px-4 pb-4 pt-5">
           {/* Шапка «приложения» */}
           <div className="mb-4 flex items-center justify-between">
             <span className="text-[15px] font-extrabold tracking-tight">
@@ -242,7 +242,7 @@ function DemoCard({
       {next && (
         <motion.div
           style={{ scale: nextScale }}
-          className="surface absolute inset-x-3 top-[14px] h-[252px] rounded-[26px] opacity-70"
+          className="surface absolute inset-x-3 top-[14px] h-[252px] rounded-[18px] opacity-70"
           aria-hidden
         />
       )}
@@ -267,7 +267,7 @@ function DemoCard({
         }}
         transition={spring}
       >
-        <div className="surface-raised relative flex h-full flex-col rounded-[26px] bg-[var(--color-surface)] p-5">
+        <div className="surface-raised relative flex h-full flex-col rounded-[18px] bg-[var(--color-surface)] p-5">
           {/* Подсказки решения */}
           <motion.span
             style={{ opacity: takeOpacity }}

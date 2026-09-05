@@ -307,13 +307,13 @@ export default function LandingPage() {
           <RevealGroup className="mt-8 grid gap-8 sm:grid-cols-3">
             {SHOTS.map((s) => (
               <RevealItem key={s.src}>
-                <div className="surface overflow-hidden rounded-[28px] p-1.5 transition duration-300 hover:-translate-y-1.5">
+                <div className="surface overflow-hidden rounded-[19px] p-1.5 transition duration-300 hover:-translate-y-1.5">
                   <Image
                     src={s.src}
                     alt={s.cap}
                     width={560}
                     height={1212}
-                    className="h-auto w-full rounded-[22px]"
+                    className="h-auto w-full rounded-[15px]"
                     sizes="(min-width: 640px) 300px, 90vw"
                   />
                 </div>

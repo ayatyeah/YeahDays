@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Ambient from "@/components/Ambient";
 import Shell from "@/components/Shell";
 import CreateTaskModal from "@/components/CreateTaskModal";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
@@ -80,7 +79,6 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <ThemeApplier />
         <AuthProvider>
-          <Ambient />
           <ErrorBoundary>
             <Shell>{children}</Shell>
           </ErrorBoundary>

@@ -100,7 +100,7 @@ export default function SwipeDeck({
         <div className="mt-5 flex items-center justify-center gap-5">
           <DeckButton
             label="Не сейчас"
-            color="#f97362"
+            color="#cf8578"
             onClick={() => setForced("left")}
           >
             <path
@@ -122,7 +122,7 @@ export default function SwipeDeck({
 
           <DeckButton
             label="Беру"
-            color="#3fbf9a"
+            color="#6fb39c"
             onClick={() => setForced("right")}
           >
             <path

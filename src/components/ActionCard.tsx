@@ -188,8 +188,8 @@ export default function ActionCard({
           style={{
             opacity: isTop ? yesOpacity : 0,
             scale: isTop ? yesScale : 0.8,
-            borderColor: "#3fbf9a",
-            color: "#3fbf9a",
+            borderColor: "#6fb39c",
+            color: "#6fb39c",
           }}
         >
           <span className="text-xl font-black tracking-tight">БЕРУ</span>
@@ -199,8 +199,8 @@ export default function ActionCard({
           style={{
             opacity: isTop ? noOpacity : 0,
             scale: isTop ? noScale : 0.8,
-            borderColor: "#f97362",
-            color: "#f97362",
+            borderColor: "#cf8578",
+            color: "#cf8578",
           }}
         >
           <span className="text-xl font-black tracking-tight">НЕ СЕЙЧАС</span>

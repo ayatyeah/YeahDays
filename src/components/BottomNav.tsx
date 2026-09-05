@@ -43,10 +43,10 @@ export default function BottomNav() {
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 lg:hidden">
       <div className="pointer-events-auto mx-auto max-w-md">
         <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--color-border-strong)] to-transparent" />
-        {/* Стекло, а не сплошная плашка: контент, уезжающий под навбар,
-            должен просвечивать — иначе панель выглядит наклейкой.
-            Блюр здесь дешёвый: панель низкая и в своём слое (gpu-layer),
-            поэтому пересчитывается только её полоса, а не весь экран. */}
+        {/* Сплошная панель. Раньше здесь было матовое стекло с блюром —
+            убрано вместе с остальным: на телефоне backdrop-filter
+            пересчитывался на каждый кадр скролла. Читаемость держит
+            плотный фон, отделение от контента — тонкая линия выше. */}
         <div className="liquid-bar gpu-layer safe-b flex items-stretch px-1.5 pb-0.5 pt-2">
           {NAV.map(({ tab: key, label, Icon }) => {
             const active = tab === key;
@@ -68,12 +68,14 @@ export default function BottomNav() {
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
-                {/* Подсветка «переезжает» между вкладками одним объектом,
-                    а не гаснет и загорается — глаз читает это как движение. */}
+                {/* Черта над активной вкладкой вместо залитой плашки —
+                    см. тот же приём в Sidebar. «Переезжает» между вкладками
+                    одним объектом (layoutId), а не гаснет и загорается:
+                    глаз читает это как движение. */}
                 {active && (
                   <motion.span
                     layoutId="nav-active"
-                    className="absolute inset-0 -z-10 rounded-2xl border border-[var(--color-highlight-border)] bg-[var(--color-highlight-bg)] shadow-[inset_0_1px_0_var(--color-highlight-shine)]"
+                    className="absolute -top-1 left-1/2 h-[3px] w-7 -translate-x-1/2 rounded-full bg-[var(--color-fg)]"
                     transition={spring}
                   />
                 )}
@@ -88,7 +90,7 @@ export default function BottomNav() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={springSnappy}
-                      className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[11px] font-bold text-white shadow-[0_2px_8px_rgba(255,122,104,0.5)]"
+                      className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[11px] font-bold text-white shadow-[var(--shadow-1)]"
                     >
                       {badge}
                     </motion.span>

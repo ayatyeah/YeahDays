@@ -1,10 +1,12 @@
 /**
  * Цвета статов и выбор доминирующего.
  *
- * Вынесено отдельно от avatar3d.ts намеренно: этим пользуется Ambient,
- * который живёт в корневом layout. Пока хелперы лежали рядом с
- * `import * as THREE`, вся библиотека three (26 МБ исходников)
- * попадала в общий бандл и грузилась даже на календаре.
+ * Вынесено отдельно от avatar3d.ts намеренно: пока хелперы лежали рядом с
+ * `import * as THREE`, вся библиотека three (26 МБ исходников) попадала в
+ * общий бандл и грузилась даже на календаре.
+ *
+ * Значения дублируют --color-* из globals.css: сюда их читать неоткуда,
+ * цвет нужен как строка для canvas/градиентов. Держать в согласии руками.
  */
 
 import type { StatKey } from "./domain";
@@ -12,11 +14,11 @@ import type { StatKey } from "./domain";
 export type AvatarStats = Record<StatKey, number>;
 
 export const STAT_HEX: Record<StatKey, string> = {
-  strength: "#f97362",
-  intelligence: "#8b7cf6",
-  wealth: "#f0b23f",
-  stability: "#3fbf9a",
-  health: "#ef6b8b",
+  strength: "#cf8578",
+  intelligence: "#9a93cc",
+  wealth: "#c9ad6f",
+  stability: "#6fb39c",
+  health: "#c2818f",
 };
 
 export function dominantStat(stats: AvatarStats): StatKey {

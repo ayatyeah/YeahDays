@@ -81,7 +81,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           скролл окна ничем не мешает — им оставляем обычный min-h-dvh. */}
       <div
         className={cn(
-          "mx-auto flex max-w-md flex-col px-4 pt-[max(2.75rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:max-w-6xl lg:pl-68 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
+          "mx-auto flex max-w-md flex-col px-4 pt-[max(2.75rem,env(safe-area-inset-top))] pb-[calc(6rem+var(--install-offset,0px))] lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
           isSection ? "app-shell-frame" : "min-h-dvh",
         )}
       >

@@ -14,6 +14,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { upsertUserStateIfNewer } from "@/lib/userState";
+import { mergeServerTodos } from "@/lib/mergeServerTodos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -89,7 +90,20 @@ export async function PUT(req: Request) {
   }
 
   try {
-    const result = await upsertUserStateIfNewer(userId, data, clientAt);
+    // Возвращаем в снимок серверные задачи, которых клиент не мог видеть
+    // (созданы позже его updatedAt) — иначе дедлайны из /api/cron/lms-sync
+    // и импортированное скриптами исчезают при первом же push из браузера.
+    // См. src/lib/mergeServerTodos.ts.
+    const existing = await prisma.userState.findUnique({
+      where: { userId },
+      select: { data: true },
+    });
+    const merged = mergeServerTodos(data, existing?.data, clientAt);
+    if (merged.restored > 0) {
+      console.log(`state PUT: вернули ${merged.restored} серверных задач для ${userId}`);
+    }
+
+    const result = await upsertUserStateIfNewer(userId, merged.data, clientAt);
     if (!result.applied) {
       // На сервере уже не старше — не затираем, отдаём серверный снимок.
       return NextResponse.json({

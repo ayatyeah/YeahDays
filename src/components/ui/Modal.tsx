@@ -52,7 +52,7 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
           <motion.div
-            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/78"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

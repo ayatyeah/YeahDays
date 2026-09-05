@@ -58,7 +58,7 @@ export default function AppGuide() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={close}
-            className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-40 bg-black/70"
           />
           <motion.div
             initial={{ y: "100%" }}
@@ -77,7 +77,7 @@ export default function AppGuide() {
               role="dialog"
               aria-modal="true"
               aria-label="Как это устроено"
-              className="marble safe-b max-h-[85dvh] overflow-y-auto rounded-t-[28px] px-5 pb-6 pt-3"
+              className="marble safe-b max-h-[85dvh] overflow-y-auto rounded-t-[19px] px-5 pb-6 pt-3"
             >
               <div
                 className="mx-auto mb-5 h-1 w-10 rounded-full bg-[var(--color-border-strong)]"

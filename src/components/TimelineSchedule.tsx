@@ -29,8 +29,9 @@ import { haptic } from "@/lib/motion";
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
 const DEFAULT_TO = 23;
-/** px на час — минимальная высота пустой строки сетки. */
-const ROW_HEIGHT = 76;
+/* Высота строки часа задана переменной --hour-row в globals.css: на
+   десктопе она вдвое меньше, чтобы день был виден целиком. Инлайновым
+   стилем это было не выразить — брейкпоинтом его не переопределить. */
 const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -339,28 +340,34 @@ export default function TimelineSchedule({
                   key={h}
                   data-hour={h}
                   className={cn(
-                    "flex border-b border-[var(--color-border)] last:border-b-0",
+                    "group flex border-b border-[var(--color-border)] last:border-b-0",
                     isNow && "bg-[var(--color-surface-2)]",
                   )}
                 >
                   <div
-                    style={{ minHeight: ROW_HEIGHT }}
                     className={cn(
-                      "flex w-14 shrink-0 items-center justify-center text-[13px] tabular-nums",
+                      "flex min-h-[var(--hour-row)] w-14 shrink-0 items-center justify-center text-[13px] tabular-nums",
                       isNow ? "font-bold text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                     )}
                   >
                     {String(h).padStart(2, "0")}:00
                   </div>
                   <div
-                    style={{ minHeight: ROW_HEIGHT }}
-                    className="flex min-w-0 flex-1 flex-col justify-center gap-1.5 px-2 py-2"
+                    className="flex min-h-[var(--hour-row)] min-w-0 flex-1 flex-col justify-center gap-1.5 px-2 py-2"
                   >
                     {rows.length === 0 ? (
                       <button
                         type="button"
                         onClick={() => openSheet(null, h)}
-                        className="flex h-full w-full items-center text-left text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+                        className={cn(
+                          "flex h-full w-full items-center text-left text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]",
+                          // Пустых часов в дне большинство, и одинаковая
+                          // серая надпись в каждом — основной источник шума
+                          // на этом экране. На десктопе она появляется под
+                          // курсором; на телефоне остаётся видимой, там
+                          // наведения нет и подсказка нужна.
+                          !routine && "lg:opacity-0 lg:group-hover:opacity-100",
+                        )}
                       >
                         {routine ?? "Добавить задачу"}
                       </button>

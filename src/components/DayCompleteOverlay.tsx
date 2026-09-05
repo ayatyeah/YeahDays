@@ -13,7 +13,7 @@ import {
 import { getLevelProgress } from "@/lib/leveling";
 import { dateKey } from "@/lib/domain";
 
-const CONFETTI_COLORS = ["#f97362", "#8b7cf6", "#f0b23f", "#3fbf9a", "#ededf0"];
+const CONFETTI_COLORS = ["#cf8578", "#9a93cc", "#c9ad6f", "#6fb39c", "#ededf0"];
 
 /** Стабильные (не Math.random в рендере) частицы конфетти. */
 const PIECES = Array.from({ length: 34 }).map((_, i) => ({

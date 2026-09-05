@@ -30,7 +30,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     short: "STR",
     hint: "Спорт, сон, питание, тело",
     color: "var(--color-strength)",
-    hex: "#f97362",
+    hex: "#cf8578",
     icon: "⚡",
   },
   intelligence: {
@@ -39,7 +39,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     short: "INT",
     hint: "Учёба, чтение, навыки",
     color: "var(--color-intelligence)",
-    hex: "#8b7cf6",
+    hex: "#9a93cc",
     icon: "◈",
   },
   wealth: {
@@ -48,7 +48,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     short: "WLT",
     hint: "Деньги, карьера, проекты",
     color: "var(--color-wealth)",
-    hex: "#f0b23f",
+    hex: "#c9ad6f",
     icon: "◆",
   },
   stability: {
@@ -57,7 +57,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     short: "STB",
     hint: "Рутина, порядок, спокойствие",
     color: "var(--color-stability)",
-    hex: "#3fbf9a",
+    hex: "#6fb39c",
     icon: "●",
   },
   health: {
@@ -66,7 +66,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     short: "HP",
     hint: "Сон, питание, восстановление, самочувствие",
     color: "var(--color-health)",
-    hex: "#ef6b8b",
+    hex: "#c2818f",
     icon: "❤️",
   },
 };

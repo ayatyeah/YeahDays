@@ -65,10 +65,17 @@ export default function Sidebar() {
                 active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)] hover:text-[var(--color-fg)]",
               )}
             >
+              {/* Активный пункт помечен чертой у левого края, а не залитой
+                  плашкой с рамкой и бликом. Плашка была самым «материальным»
+                  элементом интерфейса и спорила со строгой схемой; черта
+                  делает ту же работу — показывает, где ты, — но не строит
+                  вокруг пункта отдельную поверхность. layoutId оставлен:
+                  индикатор по-прежнему ПЕРЕЕЗЖАЕТ между пунктами, и глаз
+                  читает это как движение, а не как погасло/загорелось. */}
               {active && (
                 <motion.span
                   layoutId="sidebar-active"
-                  className="absolute inset-0 -z-10 rounded-2xl border border-[var(--color-highlight-border)] bg-[var(--color-highlight-bg)] shadow-[inset_0_1px_0_var(--color-highlight-shine)]"
+                  className="absolute left-0 top-1/2 h-[18px] w-[3px] -translate-y-1/2 rounded-full bg-[var(--color-fg)]"
                   transition={spring}
                 />
               )}

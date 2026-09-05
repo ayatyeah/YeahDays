@@ -24,12 +24,6 @@
   --color-stability: #6fb39c;
   --color-health: #c2818f;
 
-  /* Подсветка активной вкладки в навигации — на тёмном фоне это белое
-     полупрозрачное «стекло», на светлом (см. [data-theme="light"] ниже)
-     он же становится тёмным полупрозрачным, иначе был бы невидим. */
-  --color-highlight-bg: rgba(255, 255, 255, 0.08);
-  --color-highlight-border: rgba(255, 255, 255, 0.1);
-  --color-highlight-shine: rgba(255, 255, 255, 0.16);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -67,9 +61,6 @@
   --color-fg: #17151f;
   --color-fg-dim: #4c4959;
 
-  --color-highlight-bg: rgba(20, 18, 40, 0.055);
-  --color-highlight-border: rgba(20, 18, 40, 0.08);
-  --color-highlight-shine: rgba(255, 255, 255, 0.7);
 
   /* Тени на белом фоне не могут быть тёмным полупрозрачным чёрным в тех
      же альфах, что и на чёрном фоне — иначе карточки выглядят грязными

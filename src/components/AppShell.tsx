@@ -57,9 +57,11 @@ const SECTIONS: Record<TabKey, React.ComponentType> = {
 };
 
 /** Насколько далеко нужно увести палец, чтобы это считалось сменой раздела. */
-const SWIPE_DISTANCE = 64;
-/** Горизонталь должна явно преобладать — иначе это скролл, а не свайп. */
-const SWIPE_RATIO = 1.6;
+const SWIPE_DISTANCE = 72;
+/** Горизонталь должна явно преобладать — иначе это скролл, а не свайп.
+    2.2, а не 1.6: диагональные движения при вертикальном листании
+    цепляли раздел и чуть сдвигали экран — «всё ёрзает». */
+const SWIPE_RATIO = 2.2;
 /** Край экрана оставляем системе (свайп «назад» в браузере). */
 const EDGE_GUARD = 20;
 
@@ -286,7 +288,8 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       const dy = t.clientY - d.y;
 
       if (!d.locked) {
-        if (Math.abs(dx) < 12) return;
+        // 20px, а не 12: до этого порога жест ещё может оказаться скроллом
+        if (Math.abs(dx) < 20) return;
         // вертикаль победила — это скролл, жест больше не наш
         if (Math.abs(dx) < Math.abs(dy) * SWIPE_RATIO) {
           d.active = false;

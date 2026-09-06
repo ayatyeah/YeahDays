@@ -1,42 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { routineNow, type RoutineNow } from "./routine";
+import { useEffect, useMemo, useState } from "react";
+import type { RoutineNow } from "./routine";
+import { planNow } from "./planNow";
+import type { Todo } from "@/store/useUserStore";
 
 /**
- * Контекст маршрута «сейчас», который сам обновляется при смене часа.
+ * Контекст «что по плану сейчас», который сам обновляется со временем.
  *
- * Границы блоков — почасовые (08–12, 13–17…), а не по слотам, поэтому
- * useTimeSlot тут не подходит: он меняется только на границах утро/день/вечер.
- * Проверяем раз в минуту и при возврате на вкладку; состояние трогаем, только
- * когда контекст реально стал другим, — иначе лишние перерисовки колоды.
+ * Источник — задачи с часом (planNow), а не встроенный маршрут: он пуст.
+ * Границы задач — поминутные (06:30, 11:00…), поэтому useTimeSlot не
+ * подходит: он меняется только на границах утро/день/вечер.
  *
- * Пока вкладка ВИДНА, интервал молчит: смена маршрутного блока переставляет
- * карточки в колоде местами (HomeSection::fullDeck ставит "по плану" первыми)
- * — на границе часа это выглядело как "карточки сами по себе скачут" прямо
- * посреди просмотра. Обновляем только в фоне или в момент возврата на
- * вкладку — там смена контента уже ожидаема, как у любого приложения.
+ * Пока вкладка ВИДНА, таймер молчит: смена текущей задачи переставляет
+ * карточки в колоде (HomeSection::fullDeck ставит «по плану» первой) — на
+ * границе часа это выглядело как «карточки сами по себе скачут» прямо посреди
+ * просмотра. Пересчитываем в фоне и в момент возврата на вкладку — там смена
+ * контента ожидаема, как у любого приложения. Изменение самих задач
+ * (поставил галочку, добавил) пересчитывает сразу — это действие человека.
  */
-export function useRoutineNow(): RoutineNow {
-  const [now, setNow] = useState<RoutineNow>(() => routineNow());
+export function useRoutineNow(todos: Todo[]): RoutineNow {
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    const sync = () => {
-      const next = routineNow();
-      setNow((prev) =>
-        prev.work?.id === next.work?.id &&
-        prev.anchor?.id === next.anchor?.id &&
-        prev.next?.id === next.next?.id
-          ? prev
-          : next,
-      );
-    };
-    const tick = () => {
-      if (document.visibilityState !== "visible") sync();
-    };
-    const id = setInterval(tick, 60_000);
+    const bump = () => setTick((n) => n + 1);
+    const id = setInterval(() => {
+      if (document.visibilityState !== "visible") bump();
+    }, 60_000);
     const onVisible = () => {
-      if (document.visibilityState === "visible") sync();
+      if (document.visibilityState === "visible") bump();
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
@@ -45,5 +37,7 @@ export function useRoutineNow(): RoutineNow {
     };
   }, []);
 
-  return now;
+  // tick в зависимостях намеренно: он и есть сигнал «время прошло».
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => planNow(todos), [todos, tick]);
 }

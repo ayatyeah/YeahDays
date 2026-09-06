@@ -29,37 +29,42 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
 // difficulty/impact 1..5, energy low|medium|high, time morning|afternoon|evening|any
-const A = (id, title, why, category, duration, { d = 2, i = 3, e = "medium", t = "any" } = {}) => ({
+// w — дни недели (0 воскресенье … 6 суббота); без w — любой день.
+// Дни выбраны ПОД РАСПИСАНИЕ: подготовка к паре ставится накануне, длинные
+// заходы — в окна, воскресное — только в воскресенье.
+const A = (id, title, why, category, duration, { d = 2, i = 3, e = "medium", t = "any", w } = {}) => ({
   id: `custom-${id}`, title, why, category, duration,
   difficulty: d, impact: i, energy: e, timePreference: t, custom: true,
+  ...(w ? { weekdays: w } : {}),
 });
+const SUN = 0, MON = 1, TUE = 2, WED = 3, THU = 4, FRI = 5, SAT = 6;
 
 const POOL = [
   // ── Flutter / Dart — единственный фокус по программированию на 2–3 месяца ──
   A("flutter-feature", "Flutter: закрыть одну фичу приложения",
-    "Понедельник 12:50–16:00 и выходные — единственные окна на глубокую работу", "learning", 90, { d: 4, i: 5, e: "high", t: "afternoon" }),
+    "Понедельник 12:50–16:00 и выходные — единственные окна на глубокую работу", "learning", 90, { d: 4, i: 5, e: "high", t: "afternoon", w: [MON, SAT, SUN] }),
   A("flutter-45", "Flutter: 45 минут над реальной задачей",
-    "Вечером сил на большее нет, но 45 минут держат проект живым", "learning", 45, { d: 3, i: 4, e: "medium", t: "evening" }),
+    "Вечером сил на большее нет, но 45 минут держат проект живым", "learning", 45, { d: 3, i: 4, e: "medium", t: "evening", w: [MON, TUE, WED, THU] }),
   A("flutter-2h", "Flutter: два часа над приложением",
-    "Выходные — единственное место, где помещается длинный заход", "learning", 120, { d: 4, i: 5, e: "high", t: "any" }),
+    "Выходные — единственное место, где помещается длинный заход", "learning", 120, { d: 4, i: 5, e: "high", t: "any", w: [SAT, SUN] }),
   A("flutter-bug", "Flutter: разобрать один баг из списка",
     "Маленький, закрытый, с видимым результатом", "learning", 30, { d: 2, i: 3, e: "medium", t: "any" }),
 
   // ── Учёба по пяти курсам — под пары, а не вместо них ──
   A("cv-lecture", "Computer Vision: разобрать последнюю лекцию",
-    "Практика по CV во вторник и четверг — без разбора лекции она проходит впустую", "learning", 45, { d: 3, i: 4, e: "medium", t: "afternoon" }),
+    "Практика по CV во вторник и четверг — без разбора лекции она проходит впустую", "learning", 45, { d: 3, i: 4, e: "medium", t: "any", w: [MON, WED] }),
   A("networks-notes", "Computer Networks: конспект к практике",
-    "Три практики подряд во вторник — идти на них без конспекта дорого", "learning", 40, { d: 3, i: 4, e: "medium", t: "evening" }),
+    "Три практики подряд во вторник — идти на них без конспекта дорого", "learning", 40, { d: 3, i: 4, e: "medium", t: "evening", w: [MON, THU] }),
   A("cloud-chapter", "Cloud Computing: прочитать главу",
-    "Лекция в среду онлайн — легко прослушать мимо, чтение это страхует", "learning", 40, { d: 2, i: 3, e: "medium", t: "any" }),
+    "Лекция в среду онлайн — легко прослушать мимо, чтение это страхует", "learning", 40, { d: 2, i: 3, e: "medium", t: "any", w: [SUN, TUE] }),
   A("philosophy-text", "Философия: текст к семинару",
-    "Практика в пятницу с утра — читать надо до, а не в пятничном вечере после восьми часов пар", "learning", 40, { d: 2, i: 3, e: "low", t: "evening" }),
+    "Практика в пятницу с утра — читать надо до, а не в пятничном вечере после восьми часов пар", "learning", 40, { d: 2, i: 3, e: "low", t: "evening", w: [SUN, WED] }),
   A("pm-prep", "Project Management: материал к практике",
-    "Практика в среду на IEC — с переездом; готовиться заранее", "learning", 35, { d: 2, i: 3, e: "medium", t: "any" }),
+    "Практика в среду на IEC — с переездом; готовиться заранее", "learning", 35, { d: 2, i: 3, e: "medium", t: "any", w: [TUE] }),
   A("rmt-draft", "Research Methods: набросок раздела работы",
-    "Пишется кусками, иначе перед сдачей будет одна ночь", "learning", 45, { d: 3, i: 4, e: "medium", t: "evening" }),
+    "Пишется кусками, иначе перед сдачей будет одна ночь", "learning", 45, { d: 3, i: 4, e: "medium", t: "evening", w: [SUN, THU] }),
   A("review-next", "Повторить материал к ближайшей паре",
-    "20 минут перед парой дают больше, чем час после", "learning", 20, { d: 1, i: 3, e: "low", t: "any" }),
+    "20 минут перед парой дают больше, чем час после", "learning", 20, { d: 1, i: 3, e: "low", t: "any", w: [SUN, MON, TUE, WED, THU] }),
 
   // ── Английский — сверх вторника и среды ──
   A("english-words", "Английский: 20 слов и повтор старых",
@@ -73,9 +78,9 @@ const POOL = [
   A("stretch-10", "Растяжка 10 минут",
     "После турника и бега без растяжки к среде забиты плечи и икры", "fitness", 10, { d: 1, i: 2, e: "low", t: "morning" }),
   A("walk-campus", "Прогулка 30 минут между парами",
-    "Понедельник 17:50–19:00 — мёртвый час на кампусе, лучше ходить, чем сидеть", "fitness", 30, { d: 1, i: 2, e: "low", t: "afternoon" }),
+    "Понедельник 17:50–19:00 — мёртвый час на кампусе, лучше ходить, чем сидеть", "fitness", 30, { d: 1, i: 2, e: "low", t: "afternoon", w: [MON] }),
   A("long-workout", "Длинная тренировка 60 минут",
-    "В будни на неё нет окна — выходные", "fitness", 60, { d: 4, i: 4, e: "high", t: "any" }),
+    "В будни на неё нет окна — выходные", "fitness", 60, { d: 4, i: 4, e: "high", t: "any", w: [SAT, SUN] }),
   A("extra-set", "Дополнительный подход на турнике",
     "Один подход сверх плана — дёшево, а сила растёт от объёма", "fitness", 10, { d: 2, i: 2, e: "medium", t: "any" }),
 
@@ -89,9 +94,9 @@ const POOL = [
 
   // ── Дисциплина — под переезды между кампусами ──
   A("pack-tomorrow", "Собрать рюкзак и одежду на завтра",
-    "Korkem, Main и IEC — три кампуса, утром на сборы времени нет", "discipline", 10, { d: 1, i: 3, e: "low", t: "evening" }),
+    "Korkem, Main и IEC — три кампуса, утром на сборы времени нет", "discipline", 10, { d: 1, i: 3, e: "low", t: "evening", w: [SUN, MON, TUE, WED, THU] }),
   A("plan-tomorrow", "Расписать завтрашний день по часам",
-    "15 минут вечером экономят час утром", "discipline", 15, { d: 1, i: 4, e: "low", t: "evening" }),
+    "15 минут вечером экономят час утром", "discipline", 15, { d: 1, i: 4, e: "low", t: "evening", w: [SUN, MON, TUE, WED, THU] }),
   A("check-moodle", "Проверить Moodle: новые задания",
     "Дедлайны приедут сами через синк, но открытые задания в LMS видно только руками", "career", 10, { d: 1, i: 3, e: "low", t: "any" }),
 
@@ -99,11 +104,19 @@ const POOL = [
   A("day-review", "5 минут: что сделано за день",
     "Без этого неделя сливается в одно пятно", "mindfulness", 5, { d: 1, i: 3, e: "low", t: "evening" }),
   A("own-hour", "Час на что-то своё вне учёбы",
-    "Иначе всё расписание — про чужие требования", "creativity", 60, { d: 2, i: 3, e: "medium", t: "any" }),
+    "Иначе всё расписание — про чужие требования", "creativity", 60, { d: 2, i: 3, e: "medium", t: "any", w: [THU, SAT, SUN] }),
   A("groupmates", "Написать одногруппникам про задания",
-    "Дешевле узнать заранее, чем выяснять на паре", "social", 10, { d: 1, i: 2, e: "low", t: "any" }),
+    "Дешевле узнать заранее, чем выяснять на паре", "social", 10, { d: 1, i: 2, e: "low", t: "any", w: [SUN, MON, TUE, WED, THU] }),
+  // ── Воскресенье — свои дела, которых в будни негде делать ──
+  A("week-review", "Разобрать неделю: пары, дедлайны, окна",
+    "Пятница — 7.4 часа пар; неделю надо видеть целиком до понедельника, а не внутри неё", "discipline", 20, { d: 1, i: 5, e: "low", t: "any", w: [SUN] }),
+  A("meal-prep", "Закупиться и приготовить на неделю",
+    "Четыре дня из пяти дома после 19:50 — готовить в будни не из чего и некогда", "health", 60, { d: 2, i: 4, e: "medium", t: "afternoon", w: [SUN] }),
+  A("call-family", "Позвонить семье",
+    "В будни на это не остаётся ни времени, ни сил", "social", 20, { d: 1, i: 3, e: "low", t: "any", w: [SUN] }),
+
   A("spending", "Разобрать расходы за неделю",
-    "Раз в неделю, на выходных — чтобы не всплыло в конце месяца", "money", 15, { d: 1, i: 2, e: "low", t: "any" }),
+    "Раз в неделю, на выходных — чтобы не всплыло в конце месяца", "money", 15, { d: 1, i: 2, e: "low", t: "any", w: [SUN] }),
 ];
 
 const [userId, ...flags] = process.argv.slice(2);
@@ -123,8 +136,22 @@ try {
   const now = Date.now();
   const fresh = POOL.filter((a) => !have.has(a.id)).map((a) => ({ ...a, createdAt: now }));
 
+  // Уже залитые действия ОБНОВЛЯЕМ полями из пула (дни недели, тексты),
+  // но createdAt оставляем прежний: по нему серверная защита понимает,
+  // что клиент запись видел. Действия не из пула (созданные руками в
+  // приложении) не трогаем вовсе.
+  const byId = new Map(POOL.map((a) => [a.id, a]));
+  let updated = 0;
+  const merged = existing.map((cur) => {
+    const src = byId.get(cur.id);
+    if (!src) return cur;
+    const next = { ...cur, ...src, createdAt: cur.createdAt ?? now };
+    if (JSON.stringify(next) !== JSON.stringify(cur)) updated++;
+    return next;
+  });
+
   console.log(`Своих действий сейчас: ${existing.length}`);
-  console.log(`В пуле: ${POOL.length}, из них новых: ${fresh.length}`);
+  console.log(`В пуле: ${POOL.length} — новых: ${fresh.length}, обновить: ${updated}`);
   console.log(`useOwnActionsOnly: ${data.useOwnActionsOnly}\n`);
 
   const byTime = { morning: [], afternoon: [], evening: [], any: [] };
@@ -132,15 +159,19 @@ try {
   for (const [t, list] of Object.entries(byTime)) {
     if (!list.length) continue;
     console.log(`${t}:`);
-    for (const a of list) console.log(`  ${String(a.duration).padStart(3)}м  ${a.category.padEnd(11)} ${a.title}`);
+    for (const a of list) {
+      const DN = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+      const days = a.weekdays ? a.weekdays.map((d) => DN[d]).join(" ") : "любой";
+      console.log(`  ${String(a.duration).padStart(3)}м  ${a.category.padEnd(11)} ${days.padEnd(14)} ${a.title}`);
+    }
   }
 
-  if (fresh.length === 0) {
+  if (fresh.length === 0 && updated === 0) {
     console.log("\nВсё уже на месте — писать нечего.");
   } else if (!apply) {
     console.log("\nЭто предпросмотр. Чтобы записать — добавь --apply.");
   } else {
-    const next = { ...data, customActions: [...fresh, ...existing], updatedAt: now };
+    const next = { ...data, customActions: [...fresh, ...merged], updatedAt: now };
     // Тот же атомарный upsert с проверкой clientAt, что и в
     // src/lib/userState.ts — более свежая чужая запись не будет затёрта.
     const affected = await prisma.$executeRaw`
@@ -152,7 +183,7 @@ try {
     `;
     console.log(
       affected > 0
-        ? `\nЗаписано. Добавлено ${fresh.length}, всего своих действий ${next.customActions.length}.`
+        ? `\nЗаписано. Добавлено ${fresh.length}, обновлено ${updated}, всего своих действий ${next.customActions.length}.`
         : "\nОТКЛОНЕНО: на сервере состояние новее нашего. Закрой приложение и повтори.",
     );
   }

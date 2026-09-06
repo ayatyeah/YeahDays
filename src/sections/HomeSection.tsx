@@ -201,6 +201,8 @@ export default function HomeSection() {
       disabledActions,
       useOwnActionsOnly,
       limit: 12,
+      // свой день недели — сервер в UTC и сам его не угадает
+      weekday: new Date().getDay(),
     }).then((res) => {
       if (cancelled) return;
       setDeck(res.deck);

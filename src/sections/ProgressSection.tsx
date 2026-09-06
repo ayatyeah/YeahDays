@@ -61,8 +61,8 @@ export default function ProgressSection() {
         раньше был одним потоком, разбит цельным куском (не вперемешку),
         поэтому на мобильном (без lg:) всё складывается в исходном порядке.
       */}
-      <div className="lg:flex lg:items-start lg:gap-6">
-        <div className="flex flex-col lg:min-w-0 lg:flex-1 lg:gap-5">
+      <div className="desk">
+        <div className="flex flex-col desk-main lg:gap-5">
           {/* Персонаж крупно */}
           <div className="canvas-slot mt-1 h-[320px] lg:mt-0">
             <Avatar3D stats={stats} level={level} className="h-full w-full" />
@@ -105,7 +105,7 @@ export default function ProgressSection() {
           </section>
         </div>
 
-        <div className="flex flex-col lg:w-[320px] lg:shrink-0 lg:gap-5">
+        <div className="flex flex-col desk-aside lg:gap-5">
           {/* Характеристики */}
           <section className="mb-6 lg:mb-0">
             <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">

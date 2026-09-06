@@ -214,21 +214,15 @@ export default function CalendarSection() {
         модалке (см. выше), тут смысла его дублировать нет — узкий экран,
         а план дня и так требует прокрутки.
       */}
-      <div className="lg:flex lg:items-start lg:gap-6">
-        {/* lg:min-w-0 обязателен. У флекс-элемента min-width по умолчанию
-            auto — колонка отказывается сжиматься уже своего содержимого, а
-            содержимое тут широкое (лента «Просрочено» из чипов shrink-0).
-            Без этого расписание распирало строку, месяц справа уезжал за
-            границу и обрезался родителем с overflow: hidden — при том, что
-            страница формально никуда не переполнялась. */}
-        <div className="lg:min-w-0 lg:flex-1">
+      <div className="desk">
+        <div className="desk-main">
           {/* Почасовой план дня — теперь главное содержимое раздела, не блок
               внизу. key={selected} — чистый локальный стейт (свёрнуто/ночные
               часы) при переключении дня, а не протечка с прошлого. */}
           <TimelineSchedule key={selected} day={selected} />
         </div>
 
-        <div className="mt-5 hidden lg:mt-0 lg:block lg:w-[320px] lg:shrink-0">
+        <div className="mt-5 hidden lg:mt-0 lg:block desk-aside">
           <section className="rounded-3xl surface p-4">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-[15px] font-semibold">

@@ -93,8 +93,11 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
       const dx = t.clientX - startX;
 
       if (mode === "undecided") {
-        if (Math.abs(dy) < 6 && Math.abs(dx) < 6) return;
-        const downward = dy > 0 && Math.abs(dy) > Math.abs(dx);
+        // Решаем на ПЕРВОМ же движении. iOS отдаёт жест нативной прокрутке,
+        // если первый touchmove не отменён, и дальше preventDefault уже не
+        // действует — ждать 6px значило проиграть жест «резинке» списка.
+        if (dy === 0 && dx === 0) return;
+        const downward = dy > 0 && Math.abs(dy) >= Math.abs(dx);
         mode = downward && (fromGrab || el.scrollTop <= 0) ? "drag" : "scroll";
       }
       if (mode !== "drag") return;
@@ -111,10 +114,12 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
     const onEnd = () => {
       if (mode !== "drag") return;
       mode = "undecided";
-      if (y.get() > DISMISS_DISTANCE || velocity > DISMISS_VELOCITY) {
+      // порог — либо треть высоты листа, либо быстрый рывок
+      const limit = Math.min(DISMISS_DISTANCE, el.offsetHeight / 3);
+      if (y.get() > limit || velocity > DISMISS_VELOCITY) {
         onCloseRef.current();
       } else {
-        animate(y, 0, { type: "spring", stiffness: 420, damping: 36 });
+        animate(y, 0, { type: "spring", stiffness: 520, damping: 40 });
       }
     };
 

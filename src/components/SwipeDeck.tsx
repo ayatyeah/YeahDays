@@ -68,7 +68,7 @@ export default function SwipeDeck({
     // «беру / не беру» одновременно листало бы разделы приложения.
     <div className="flex flex-1 flex-col" data-no-swipe>
       {/* Колода */}
-      <div className="relative flex-1" style={{ minHeight: 380 }}>
+      <div className="relative flex-1" style={{ minHeight: 440 }}>
         <AnimatePresence mode="popLayout">
           {exhausted ? (
             <motion.div

@@ -258,11 +258,13 @@ export default function ActionCard({
           </div>
 
           {/* заголовок */}
-          <div className="flex flex-1 flex-col justify-center py-6">
-            <h2 className="text-[34px] font-bold leading-[1.15] tracking-tight">
+          {/* 26px, а не 34: 34 — размер большого заголовка экрана, внутри
+              карточки трёхстрочное название вытесняло плитки за нижний край. */}
+          <div className="flex min-h-0 flex-1 flex-col justify-center py-3">
+            <h2 className="text-[26px] font-bold leading-[1.15] tracking-tight">
               {action.title}
             </h2>
-            <p className="mt-3 text-[16px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="mt-2.5 text-[15px] leading-snug text-[var(--color-fg-dim)]">
               {action.why}
             </p>
           </div>

@@ -10,6 +10,7 @@ import ShareCard from "@/components/ShareCard";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import SettingsContent from "@/components/SettingsContent";
 import {
   useUserStore,
   useHydrated,
@@ -48,6 +49,7 @@ export default function AccountSection() {
 
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const days = Math.max(
     1,
@@ -65,13 +67,25 @@ export default function AccountSection() {
           и интеграций он перестал читаться как свалка. */}
       <header className="flex items-center justify-between">
         <h1 className="ios-title text-[28px] font-bold tracking-tight">Профиль</h1>
-        <Link
-          href="/settings"
+        {/* Настройки открываются панелью поверх профиля, а не отдельной
+            страницей: настроил — и ты там же, где был. Шестерёнка
+            проворачивается на пол-оборота при открытии. */}
+        <motion.button
+          type="button"
+          onClick={() => setSettingsOpen(true)}
           aria-label="Настройки"
+          aria-expanded={settingsOpen}
+          whileTap={{ scale: 0.92 }}
           className="press flex h-10 w-10 items-center justify-center rounded-xl surface text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
         >
-          <GearIcon className="h-5 w-5" />
-        </Link>
+          <motion.span
+            className="flex"
+            animate={{ rotate: settingsOpen ? 180 : 0 }}
+            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+          >
+            <GearIcon className="h-5 w-5" />
+          </motion.span>
+        </motion.button>
       </header>
 
       {/* Вход / аккаунт */}
@@ -243,6 +257,10 @@ export default function AccountSection() {
       </div>
 
       {/* Модалка имени */}
+      <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)} title="Настройки">
+        <SettingsContent compact />
+      </Modal>
+
       <Modal open={editing} onClose={() => setEditing(false)} title="Как тебя звать?">
         <input
           value={draft}

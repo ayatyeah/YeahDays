@@ -8,6 +8,7 @@ import PageTransition from "./PageTransition";
 import WhatsNew from "./WhatsNew";
 import AppGuide from "./AppGuide";
 import NotificationCenter from "./NotificationCenter";
+import StandaloneViewportFix from "./StandaloneViewportFix";
 import { tabFromPath } from "@/lib/nav";
 import { cn } from "@/lib/cn";
 
@@ -88,6 +89,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         {isSection ? children : <PageTransition>{children}</PageTransition>}
       </div>
       <BottomNav />
+      <StandaloneViewportFix />
       <InstallPrompt />
       <AppGuide />
       <WhatsNew />

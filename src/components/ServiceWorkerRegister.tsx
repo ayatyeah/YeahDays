@@ -116,7 +116,7 @@ export default function ServiceWorkerRegister() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -70, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed inset-x-0 top-3 z-[70] px-4"
+          className="fixed inset-x-0 top-[max(0.75rem,env(safe-area-inset-top))] z-[70] px-4"
         >
           <div className="marble mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[20px]">

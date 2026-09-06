@@ -23,6 +23,9 @@ import { useUserStore } from "@/store/useUserStore";
 
 export type SwipeDir = "left" | "right";
 
+/** Короткие подписи дней, индекс как у Date.getDay (0 — воскресенье). */
+const WEEKDAY_SHORT = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
+
 interface ActionCardProps {
   scored: ScoredAction;
   /** 0 — верхняя карта, 1 — следующая, ... */
@@ -280,7 +283,16 @@ export default function ActionCard({
           </div>
 
           <div className="mt-2 flex items-center justify-between text-[12px] text-[var(--color-muted)]">
-            <span>{TIME_LABEL[action.timePreference]}</span>
+            <span>
+              {TIME_LABEL[action.timePreference]}
+              {/* Дни, к которым привязано действие — иначе непонятно,
+                  почему «конспект к практике» появился именно сегодня. */}
+              {action.weekdays && action.weekdays.length > 0 && (
+                <span className="ml-1.5 text-[var(--color-fg-dim)]">
+                  · {action.weekdays.map((d) => WEEKDAY_SHORT[d]).join(" ")}
+                </span>
+              )}
+            </span>
             <span className="flex items-center gap-1">
               Влияние
               <span className="flex gap-0.5">

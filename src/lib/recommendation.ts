@@ -76,6 +76,12 @@ export interface RecommendationContext {
   /** для детерминизма в тестах */
   now?: number;
   slot?: TimePreference;
+  /**
+   * День недели ПОЛЬЗОВАТЕЛЯ (0 — воскресенье). Клиент обязан присылать
+   * его явно: сервер живёт в UTC, а в Алматы UTC+5 — понедельник 02:00
+   * там ещё воскресенье здесь. Если не передан, считаем из now.
+   */
+  weekday?: number;
   /** состояние лестниц; если не передано — считается на месте */
   progressions?: Map<string, ProgressionState>;
   /** категории, которые пользователь не хочет видеть вообще */
@@ -407,11 +413,14 @@ export function recommend(
   const states = ctx.progressions ?? progressionStates(ctx.pool, ctx.history);
   const skipCats = new Set(ctx.excludeCategories ?? []);
   const skipIds = new Set(ctx.disabledActions ?? []);
+  const weekday = ctx.weekday ?? new Date(now).getDay();
   const scored = { ...ctx, progressions: states };
 
   return ctx.pool
     .filter((a) => {
       if (exclude.has(a.id)) return false;
+      // действие привязано к дням недели — вне их не показываем вовсе
+      if (a.weekdays && a.weekdays.length > 0 && !a.weekdays.includes(weekday)) return false;
       // осознанно отключённые направления не показываем совсем
       if (skipCats.has(a.category)) return false;
       if (skipIds.has(a.id)) return false;

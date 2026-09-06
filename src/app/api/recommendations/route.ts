@@ -95,7 +95,12 @@ export async function POST(req: Request) {
   }
 
   const deck = recommend(
-    { pool, goals, mood, history, excludeIds, excludeCategories, disabledActions },
+    {
+      pool, goals, mood, history, excludeIds, excludeCategories, disabledActions,
+      // день недели берём у клиента, не у сервера: Railway в UTC, а
+      // пользователь в UTC+5 — на стыке суток дни расходятся
+      weekday: typeof body.weekday === "number" ? body.weekday : undefined,
+    },
     Math.min(body.limit ?? 12, 40),
   );
 

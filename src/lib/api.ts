@@ -43,6 +43,8 @@ export interface RecommendRequest {
   /** true — встроенный пул из 159 действий не участвует, колода только из customActions */
   useOwnActionsOnly?: boolean;
   limit?: number;
+  /** день недели клиента, 0 — воскресенье; см. RecommendationContext.weekday */
+  weekday?: number;
 }
 
 export interface RecommendResponse {
@@ -84,6 +86,7 @@ function localRecommend(req: RecommendRequest): RecommendResponse {
       excludeIds: req.excludeIds,
       excludeCategories: req.excludeCategories,
       disabledActions: req.disabledActions,
+      weekday: req.weekday,
     },
     req.limit ?? 12,
   );

@@ -121,7 +121,7 @@ export default function AccountSection() {
         одной высоты — см. живую проверку в Playwright, а не на глаз.
       */}
       <div className="lg:flex lg:items-start lg:gap-6">
-        <div className="lg:flex-1">
+        <div className="lg:min-w-0 lg:flex-1">
           {/* Напоминания */}
           <div className="mt-3">
             <PushOptIn />

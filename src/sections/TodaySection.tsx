@@ -104,7 +104,7 @@ export default function TodaySection() {
         персонаж и всё остальное.
       */}
       <div className="lg:flex lg:items-start lg:gap-6">
-        <div className="flex flex-col lg:flex-1 lg:gap-5">
+        <div className="flex flex-col lg:min-w-0 lg:flex-1 lg:gap-5">
           {/* Прогресс дня */}
           <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
             <div className="mb-2.5 flex items-end justify-between">

@@ -24,11 +24,11 @@ const PRECACHE = [
   "/manifest.webmanifest",
   "/favicon.png",
   "/icon-192.png",
-  "/logo.png",
-  "/logo-white.png",
-  "/characters/slim.png",
-  "/characters/fit.png",
-  "/characters/jacked.png",
+  "/logo.webp",
+  "/logo-white.webp",
+  "/characters/slim.webp",
+  "/characters/fit.webp",
+  "/characters/jacked.webp",
 ];
 
 /** Сколько записей держим в рантайм-кэшах, чтобы не съесть квоту устройства. */

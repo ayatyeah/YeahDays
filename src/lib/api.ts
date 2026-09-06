@@ -22,12 +22,15 @@ import { enqueue, flushQueue } from "./eventQueue";
 export type EngineMode = "local" | "remote";
 
 /**
- * По умолчанию remote (рекомендации и события идут через /api + Postgres).
- * Можно переопределить: NEXT_PUBLIC_ENGINE=local — весь скоринг в браузере.
- * При недоступной сети remote сам откатывается на локальный расчёт.
+ * По умолчанию local: тот же движок, что и на сервере, считает колоду в
+ * браузере за миллисекунды и работает офлайн. Remote (POST
+ * /api/recommendations) стоил около секунды на каждый чек-ин — весь этот
+ * путь был походом в базу ради того же результата. События (accept/
+ * reject/complete) по-прежнему уезжают на сервер через очередь.
+ * Переопределить: NEXT_PUBLIC_ENGINE=remote.
  */
 export const ENGINE_MODE: EngineMode =
-  (process.env.NEXT_PUBLIC_ENGINE as EngineMode) ?? "remote";
+  (process.env.NEXT_PUBLIC_ENGINE as EngineMode) ?? "local";
 
 export interface RecommendRequest {
   goals: GoalWeights;

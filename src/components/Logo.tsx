@@ -29,7 +29,7 @@ export default function Logo({ variant = "color", glow, className }: LogoProps) 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={effective === "white" ? "/logo-white.png" : "/logo.png"}
+      src={effective === "white" ? "/logo-white.webp" : "/logo.webp"}
       alt="YeahGrind"
       draggable={false}
       className={cn("select-none object-contain", glow && GLOW, className)}
@@ -42,7 +42,7 @@ export function LogoLoader() {
   return (
     <div className="flex flex-1 items-center justify-center">
       <motion.img
-        src="/logo.png"
+        src="/logo.webp"
         alt="YeahGrind"
         draggable={false}
         className={cn("h-14 w-auto select-none object-contain", GLOW)}

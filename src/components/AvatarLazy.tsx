@@ -13,9 +13,9 @@ import { STAT_HEX, dominantStat, type AvatarStats } from "@/lib/statVisuals";
  */
 
 const STAGE_SRC = {
-  slim: "/characters/slim.png",
-  fit: "/characters/fit.png",
-  jacked: "/characters/jacked.png",
+  slim: "/characters/slim.webp",
+  fit: "/characters/fit.webp",
+  jacked: "/characters/jacked.webp",
 } as const;
 
 function stageForLevel(level: number): keyof typeof STAGE_SRC {

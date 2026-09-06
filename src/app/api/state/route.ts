@@ -2,6 +2,9 @@
  * /api/state — кросс-девайс синхронизация клиентского состояния.
  *
  * GET  ?userId=…   → { data, updatedAt } — снимок пользователя (или null).
+ *      &since=<ms> → если на сервере не свежее since, отвечаем
+ *                  { unchanged: true } одним лёгким запросом без блоба —
+ *                  так фоновый опрос почти ничего не стоит ни базе, ни сети.
  * PUT  { userId, data } → сохранить снимок. Разрешение конфликтов —
  *                  last-write-wins по data.updatedAt (время изменения
  *                  на клиенте). Если на сервере уже свежее — не затираем,
@@ -49,7 +52,21 @@ export async function GET(req: Request) {
   }
   if (!userId) return NextResponse.json({ data: null, updatedAt: null });
 
+  const since = Number(url.searchParams.get("since") ?? 0);
+
   try {
+    if (Number.isFinite(since) && since > 0) {
+      // Условие прямо в SQL: при «ничего нового» база не читает и не
+      // отдаёт 30-килобайтный jsonb, а мы не гоняем его по сети.
+      const rows = await prisma.$queryRaw<{ data: unknown; clientAt: Date }[]>`
+        SELECT "data", "clientAt" FROM "UserState"
+        WHERE "userId" = ${userId} AND "clientAt" > ${new Date(since)}
+        LIMIT 1
+      `;
+      if (rows.length === 0) return NextResponse.json({ unchanged: true, updatedAt: since });
+      return NextResponse.json({ data: rows[0].data, updatedAt: rows[0].clientAt.getTime() });
+    }
+
     const row = await prisma.userState.findUnique({ where: { userId } });
     if (!row) return NextResponse.json({ data: null, updatedAt: null });
     return NextResponse.json({
@@ -96,8 +113,18 @@ export async function PUT(req: Request) {
     // См. src/lib/mergeServerTodos.ts.
     const existing = await prisma.userState.findUnique({
       where: { userId },
-      select: { data: true },
+      select: { data: true, clientAt: true },
     });
+    // Сервер уже свежее — отвечаем его снимком сразу, без записи и без
+    // слияния: экономит поход в базу в самом частом случае гонки.
+    if (existing && existing.clientAt.getTime() > clientAt) {
+      return NextResponse.json({
+        ok: true,
+        applied: false,
+        data: existing.data,
+        updatedAt: existing.clientAt.getTime(),
+      });
+    }
     const merged = mergeServerTodos(data, existing?.data, clientAt);
     if (merged.restored > 0) {
       console.log(`state PUT: вернули ${merged.restored} серверных задач для ${userId}`);

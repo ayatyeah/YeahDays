@@ -28,8 +28,13 @@ import { useSyncStatus } from "@/store/useSyncStatus";
  * прогресс уезжает в аккаунт, на другом устройстве — приезжает обратно.
  */
 const DEBOUNCE_MS = 1500;
-/** Компромисс между "почти мгновенно" и лишними запросами на пустом месте. */
-const POLL_MS = 5000;
+/**
+ * Раз в 45 секунд, а не раз в 5: изменения с другого устройства — редкость,
+ * а каждый тик стоил похода в базу и будил радио телефона. Мгновенность
+ * даёт не интервал, а pull() при возврате на вкладку и при появлении сети.
+ * Сам запрос с since= дешёвый: сервер отвечает «без изменений» без блоба.
+ */
+const POLL_MS = 45_000;
 /** чей аккаунт сейчас лежит в локальном сторе этого браузера (см. эффект ниже) */
 const ACTIVE_ACCOUNT_KEY = "yd-active-account";
 
@@ -93,12 +98,20 @@ export default function StateSync() {
     const status = useSyncStatus.getState();
     status.begin();
     try {
+      const localNow = useUserStore.getState();
+      // Пустой стор (свежее устройство) просит полный снимок: правило
+      // adoptAccount ниже должно увидеть серверные данные целиком.
+      const since = hasProgress(localNow) ? localNow.updatedAt : 0;
       const res = await fetch(
-        `/api/state?userId=${encodeURIComponent(userId)}`,
+        `/api/state?userId=${encodeURIComponent(userId)}&since=${since}`,
         { method: "GET", cache: "no-store" },
       );
       if (!res.ok) return status.fail();
-      const json = (await res.json()) as { data?: SyncData | null };
+      const json = (await res.json()) as { data?: SyncData | null; unchanged?: boolean };
+      if (json.unchanged) {
+        status.markSynced();
+        return;
+      }
       const remote = json.data ?? null;
       const local = useUserStore.getState();
 
@@ -195,11 +208,16 @@ export default function StateSync() {
       }
     };
 
+    // вернулась сеть — сразу сверяемся, не дожидаясь тика
+    const handleOnline = () => void pull();
+
     if (document.visibilityState === "visible") startPolling();
     document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("online", handleOnline);
     return () => {
       stopPolling();
       document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("online", handleOnline);
     };
   }, [hydrated, status, pull]);
 

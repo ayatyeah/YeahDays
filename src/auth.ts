@@ -26,6 +26,10 @@ const DUMMY_HASH = "$2b$12$JW9b/fVt38j4JgP3ZnU0eeDaYTXRInFqz7peFp62M49J2i7TCOD0O
  *
  * AUTH_SECRET, AUTH_GOOGLE_ID, AUTH_GOOGLE_SECRET — из env.
  */
+/** Сколько держим «не забанен» в памяти, прежде чем снова спросить базу. */
+const BAN_CHECK_MS = 5 * 60 * 1000;
+const banCheckedAt = new Map<string, number>();
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -114,11 +118,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user?.id) token.id = user.id;
       if (token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { banned: true },
-        });
-        if (!dbUser || dbUser.banned) return null;
+        const id = token.id as string;
+        // Проверка бана — поход в базу на КАЖДЫЙ запрос к API (см. выше).
+        // Держим результат в памяти процесса на BAN_CHECK_MS: бан начнёт
+        // действовать с задержкой до пяти минут, зато сессия и /api/state
+        // перестают платить за лишний запрос. В токен отметку класть
+        // бесполезно: Auth.js переписывает куку раз в сутки (updateAge).
+        // При входе (user есть) проверяем всегда.
+        const checkedAt = user ? 0 : (banCheckedAt.get(id) ?? 0);
+        if (Date.now() - checkedAt > BAN_CHECK_MS) {
+          const dbUser = await prisma.user.findUnique({
+            where: { id },
+            select: { banned: true },
+          });
+          if (!dbUser || dbUser.banned) {
+            banCheckedAt.delete(id);
+            return null;
+          }
+          banCheckedAt.set(id, Date.now());
+        }
       }
       return token;
     },

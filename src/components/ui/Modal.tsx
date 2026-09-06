@@ -16,6 +16,8 @@ interface ModalProps {
 /** Сколько тянуть вниз, чтобы лист закрылся (px) — либо быстрый рывок. */
 const DISMISS_DISTANCE = 96;
 const DISMISS_VELOCITY = 0.9; // px/ms
+/** Мышь дрожит при клике — до этого сдвига жест не начинаем. */
+const MOUSE_SLOP = 4;
 
 /**
  * Модальное окно.
@@ -30,12 +32,15 @@ const DISMISS_VELOCITY = 0.9; // px/ms
  * На мобильном — лист снизу (items-end, под большой палец), на десктопе —
  * по центру.
  *
- * Лист закрывается свайпом вниз. Жест живёт на touch-событиях, а не на
- * drag framer-motion: внутри листа прокручиваемый контент, и drag отбирал бы
- * у него палец. Направление решаем по первому движению: вниз при прокрутке
- * в самом верху — тянем лист (и глушим нативный скролл preventDefault),
- * всё остальное — отдаём прокрутке. За ручку и шапку лист тянется всегда,
- * даже если контент прокручен.
+ * Лист закрывается жестом вниз — пальцем и мышью одинаково. Жест живёт на
+ * touch/mouse-событиях, а не на drag framer-motion: внутри листа
+ * прокручиваемый контент, и drag отбирал бы у него палец. Направление
+ * решаем на первом же движении: вниз при прокрутке в самом верху — тянем
+ * лист (и глушим нативный скролл preventDefault: iOS отдаёт жест
+ * прокрутке, если первый touchmove не отменён), всё остальное — отдаём
+ * прокрутке. За ручку и шапку лист тянется всегда, даже если контент
+ * прокручен. Для мыши на время жеста выключаем выделение текста — иначе
+ * протяжка выделяла слова вместо того, чтобы тянуть лист.
  */
 export default function Modal({ open, onClose, title, headerAction, children }: ModalProps) {
   const [mounted, setMounted] = useState(false);
@@ -62,7 +67,7 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
     };
   }, [open, onClose]);
 
-  /* ── свайп вниз ── */
+  /* ── жест вниз: палец и мышь ── */
   useEffect(() => {
     const el = panelRef.current;
     if (!open || !el) return;
@@ -74,46 +79,42 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
     let lastT = 0;
     let velocity = 0;
     let fromGrab = false;
-    let mode: "undecided" | "drag" | "scroll" = "undecided";
+    let mode: "idle" | "undecided" | "drag" | "scroll" = "idle";
 
-    const onStart = (e: TouchEvent) => {
-      const t = e.touches[0];
-      startX = t.clientX;
-      startY = t.clientY;
-      lastY = t.clientY;
-      lastT = e.timeStamp;
+    const begin = (x: number, yy: number, target: EventTarget | null, t: number) => {
+      startX = x;
+      startY = yy;
+      lastY = yy;
+      lastT = t;
       velocity = 0;
       mode = "undecided";
-      fromGrab = !!grabRef.current && grabRef.current.contains(e.target as Node);
+      fromGrab = !!grabRef.current && grabRef.current.contains(target as Node);
     };
 
-    const onMove = (e: TouchEvent) => {
-      const t = e.touches[0];
-      const dy = t.clientY - startY;
-      const dx = t.clientX - startX;
-
+    /** true — жест наш, событие нужно отменить. */
+    const move = (x: number, yy: number, t: number, slop: number): boolean => {
+      if (mode === "idle") return false;
+      const dy = yy - startY;
+      const dx = x - startX;
       if (mode === "undecided") {
-        // Решаем на ПЕРВОМ же движении. iOS отдаёт жест нативной прокрутке,
-        // если первый touchmove не отменён, и дальше preventDefault уже не
-        // действует — ждать 6px значило проиграть жест «резинке» списка.
-        if (dy === 0 && dx === 0) return;
+        if (Math.abs(dy) < slop && Math.abs(dx) < slop) return false;
         const downward = dy > 0 && Math.abs(dy) >= Math.abs(dx);
         mode = downward && (fromGrab || el.scrollTop <= 0) ? "drag" : "scroll";
       }
-      if (mode !== "drag") return;
-
-      e.preventDefault(); // иначе браузер начнёт прокрутку/резинку
-      const dt = Math.max(1, e.timeStamp - lastT);
-      velocity = (t.clientY - lastY) / dt;
-      lastY = t.clientY;
-      lastT = e.timeStamp;
+      if (mode !== "drag") return false;
+      const dt = Math.max(1, t - lastT);
+      velocity = (yy - lastY) / dt;
+      lastY = yy;
+      lastT = t;
       // вверх — не пускаем: лист и так на месте, тянуть выше некуда
       y.set(Math.max(0, dy));
+      return true;
     };
 
-    const onEnd = () => {
-      if (mode !== "drag") return;
-      mode = "undecided";
+    const end = () => {
+      const wasDrag = mode === "drag";
+      mode = "idle";
+      if (!wasDrag) return;
       // порог — либо треть высоты листа, либо быстрый рывок
       const limit = Math.min(DISMISS_DISTANCE, el.offsetHeight / 3);
       if (y.get() > limit || velocity > DISMISS_VELOCITY) {
@@ -123,15 +124,56 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
       }
     };
 
-    el.addEventListener("touchstart", onStart, { passive: true });
-    el.addEventListener("touchmove", onMove, { passive: false });
-    el.addEventListener("touchend", onEnd);
-    el.addEventListener("touchcancel", onEnd);
+    /* палец */
+    const onTouchStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      begin(t.clientX, t.clientY, e.target, e.timeStamp);
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      // решаем на первом же движении — см. комментарий к компоненту
+      if (move(t.clientX, t.clientY, e.timeStamp, 0)) e.preventDefault();
+    };
+    const onTouchEnd = () => end();
+
+    /* мышь */
+    let mouseDown = false;
+    const onMouseDown = (e: MouseEvent) => {
+      if (e.button !== 0) return;
+      mouseDown = true;
+      begin(e.clientX, e.clientY, e.target, e.timeStamp);
+    };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!mouseDown) return;
+      if (move(e.clientX, e.clientY, e.timeStamp, MOUSE_SLOP)) {
+        e.preventDefault();
+        el.style.userSelect = "none";
+        el.style.cursor = "grabbing";
+      }
+    };
+    const onMouseUp = () => {
+      if (!mouseDown) return;
+      mouseDown = false;
+      el.style.userSelect = "";
+      el.style.cursor = "";
+      end();
+    };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd);
+    el.addEventListener("touchcancel", onTouchEnd);
+    el.addEventListener("mousedown", onMouseDown);
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
     return () => {
-      el.removeEventListener("touchstart", onStart);
-      el.removeEventListener("touchmove", onMove);
-      el.removeEventListener("touchend", onEnd);
-      el.removeEventListener("touchcancel", onEnd);
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+      el.removeEventListener("mousedown", onMouseDown);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
     };
   }, [open, y]);
 
@@ -160,8 +202,8 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
             {/* Зона захвата: ручка + шапка. Отрицательные поля возвращают
                 отступ листа, чтобы тянуть можно было и за пустое место
                 рядом с ручкой, а не только за саму полоску в 40px. */}
-            <div ref={grabRef} className="-mx-5 -mt-5 px-5 pt-5">
-              <div className="mx-auto mb-3 h-[5px] w-9 rounded-full bg-[var(--color-border-strong)] sm:hidden" />
+            <div ref={grabRef} className="-mx-5 -mt-5 cursor-grab px-5 pt-5">
+              <div className="mx-auto mb-3 h-[5px] w-9 rounded-full bg-[var(--color-border-strong)]" />
               {(title || headerAction) && (
                 <div className="mb-4 flex items-center gap-3">
                   {title && (

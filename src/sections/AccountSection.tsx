@@ -120,8 +120,8 @@ export default function AccountSection() {
         между столбцами подобрана так, чтобы столбцы получились примерно
         одной высоты — см. живую проверку в Playwright, а не на глаз.
       */}
-      <div className="lg:flex lg:items-start lg:gap-6">
-        <div className="lg:min-w-0 lg:flex-1">
+      <div className="desk">
+        <div className="desk-main">
           {/* Напоминания */}
           <div className="mt-3">
             <PushOptIn />
@@ -155,7 +155,7 @@ export default function AccountSection() {
       </div>
         </div>
 
-        <div className="lg:w-[320px] lg:shrink-0">
+        <div className="desk-aside">
       {/* Цели с горизонтом — подкручивают колоду под срок */}
       <Quests />
 

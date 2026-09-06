@@ -365,7 +365,12 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
             className={cn(
               "section-pane",
               exiting && "section-pane-exiting",
-              t !== "today" && "lg:w-full lg:max-w-[1600px]",
+              // Один потолок на все разделы. 1600 было слишком много:
+              // полоса уровня растягивалась на 1250px и переставала
+              // читаться. 1360 заполняет 1440-й экран целиком, а на 1920
+              // оставляет поле только справа — так и должно быть у
+              // интерфейса с боковой навигацией.
+              "lg:w-full lg:max-w-[1360px]",
             )}
           >
             <Section />

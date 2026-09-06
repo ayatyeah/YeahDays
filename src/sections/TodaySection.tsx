@@ -103,8 +103,8 @@ export default function TodaySection() {
         колонки просто складываются друг под друга — сначала задачи, потом
         персонаж и всё остальное.
       */}
-      <div className="lg:flex lg:items-start lg:gap-6">
-        <div className="flex flex-col lg:min-w-0 lg:flex-1 lg:gap-5">
+      <div className="desk">
+        <div className="flex flex-col desk-main lg:gap-5">
           {/* Прогресс дня */}
           <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
             <div className="mb-2.5 flex items-end justify-between">
@@ -218,7 +218,7 @@ export default function TodaySection() {
           <TodoList />
         </div>
 
-        <div className="mt-5 flex flex-col gap-5 lg:mt-0 lg:w-[320px] lg:shrink-0">
+        <div className="mt-5 flex flex-col gap-5 lg:mt-0 desk-aside">
           {/* Персонаж реагирует на выполнение */}
           <div className="canvas-slot relative h-[240px]">
             <Avatar3D

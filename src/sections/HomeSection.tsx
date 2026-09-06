@@ -288,10 +288,13 @@ export default function HomeSection() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
-      {/* Бренд-лого + название + стрик */}
+    <div className="flex flex-1 flex-col lg:max-w-[760px]">
+      {/* Бренд-лого + название + стрик. На lg бренд прячем: он уже стоит в
+          сайдбаре, а остальные разделы начинаются с обычного заголовка —
+          главная не должна выглядеть иначе. Стрик и переключатель темы
+          справа остаются, они здесь единственные. */}
       <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 lg:hidden">
           <Logo variant="white" className="h-7 w-auto" />
           <span className="text-[19px] font-extrabold tracking-tight">
             YeahGrind

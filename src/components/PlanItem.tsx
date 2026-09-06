@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { CATEGORIES, STATS } from "@/lib/domain";
 import type { PlannedTask } from "@/store/useUserStore";
 import { cn } from "@/lib/cn";
+import { YgIcon } from "@/components/yg-icons";
 
 interface PlanItemProps {
   task: PlannedTask;
@@ -46,10 +47,11 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
         style={{ background: `${stat.hex}22`, opacity: bgOpacity }}
       >
         <span
-          className="text-[14px] font-bold"
+          className="inline-flex items-center gap-1 text-[15px] font-bold"
           style={{ color: stat.hex }}
         >
-          Выполнено ✓
+          <YgIcon name="check" className="h-4 w-4" strokeWidth={2.4} />
+          Выполнено
         </span>
       </motion.div>
 
@@ -111,7 +113,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
             {floats.map((id) => (
               <motion.span
                 key={`x-${id}`}
-                className="pointer-events-none absolute -top-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[14px] font-bold"
+                className="pointer-events-none absolute -top-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[15px] font-bold"
                 style={{ color: stat.hex }}
                 initial={{ opacity: 0, y: 0 }}
                 animate={{ opacity: 1, y: -26 }}
@@ -128,14 +130,14 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
         <div className="min-w-0 flex-1">
           <p
             className={cn(
-              "truncate text-[15px] font-semibold",
+              "truncate text-[16px] font-semibold",
               task.completed && "text-[var(--color-muted)] line-through",
             )}
           >
             {task.snapshot.title}
           </p>
-          <p className="mt-0.5 flex items-center gap-1.5 text-[12.5px] text-[var(--color-muted)]">
-            <span>{cat.icon}</span>
+          <p className="mt-0.5 flex items-center gap-1.5 text-[13px] text-[var(--color-muted)]">
+            <YgIcon name={task.snapshot.icon ?? cat.icon} className="h-3.5 w-3.5" />
             <span>{cat.label}</span>
             <span>·</span>
             <span>{task.snapshot.duration} мин</span>

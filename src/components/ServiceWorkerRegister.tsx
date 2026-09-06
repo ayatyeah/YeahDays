@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { YgIcon } from "@/components/yg-icons";
 
 /** Id сборки: подставляется в next.config, меняется на каждый билд. */
 const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || "dev";
@@ -113,18 +114,18 @@ export default function ServiceWorkerRegister() {
           className="fixed inset-x-0 top-3 z-[70] px-4"
         >
           <div className="marble mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-lg">
-              ✨
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[20px]">
+              <YgIcon name="sparkle" className="h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-semibold">Новая версия готова</p>
-              <p className="truncate text-[12.5px] text-[var(--color-muted)]">
+              <p className="text-[15px] font-semibold">Новая версия готова</p>
+              <p className="truncate text-[13px] text-[var(--color-muted)]">
                 Обнови, чтобы применить
               </p>
             </div>
             <button
               onClick={apply}
-              className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[14px] font-semibold text-[var(--color-bg)]"
+              className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[15px] font-semibold text-[var(--color-bg)]"
             >
               Обновить
             </button>
@@ -133,7 +134,7 @@ export default function ServiceWorkerRegister() {
               aria-label="Позже"
               className="tap press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
             >
-              ✕
+              <YgIcon name="close" className="h-4 w-4" />
             </button>
           </div>
         </motion.div>

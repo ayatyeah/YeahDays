@@ -12,6 +12,7 @@ import {
 } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
 import { dateKey } from "@/lib/domain";
+import { YgIcon } from "@/components/yg-icons";
 
 const CONFETTI_COLORS = ["#cf8578", "#9a93cc", "#c9ad6f", "#6fb39c", "#ededf0"];
 
@@ -131,12 +132,16 @@ export default function DayCompleteOverlay() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ type: "spring", stiffness: 260, damping: 20 }}
           >
-            <div className="flex flex-col items-center rounded-3xl surface/95 px-7 py-5 text-center shadow-2xl shadow-black/50">
-              <span className="text-4xl">🔥</span>
-              <p className="mt-2 text-[19px] font-black tracking-tight">
+            {/* surface, а не surface/95: surface — наш CSS-класс, не токен Tailwind,
+                и модификатор прозрачности к нему неприменим — класс просто не
+                генерировался, и у плашки не было фона вовсе. На тёмной теме это
+                прикрывала тень, на светлой сквозь «День закрыт!» читался заголовок. */}
+            <div className="flex flex-col items-center rounded-3xl surface px-7 py-5 text-center shadow-[var(--shadow-3)]">
+              <YgIcon name="flame" className="h-12 w-12 text-[var(--color-strength)]" />
+              <p className="mt-2 text-[20px] font-black tracking-tight">
                 День закрыт!
               </p>
-              <p className="mt-1 text-[14.5px] text-[var(--color-fg-dim)]">
+              <p className="mt-1 text-[16px] text-[var(--color-fg-dim)]">
                 {streak > 1
                   ? `${streak} дней подряд — так и растут`
                   : "Отличное начало серии"}

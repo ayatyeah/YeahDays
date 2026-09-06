@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-mo
 import Link from "next/link";
 import { spring, springSnappy } from "@/lib/motion";
 import { cn } from "@/lib/cn";
+import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
 /**
  * Интерактивное демо на лендинге.
@@ -24,7 +25,7 @@ interface DemoAction {
   title: string;
   why: string;
   cat: string;
-  icon: string;
+  icon: YgIconName;
   color: string;
   min: number;
   xp: number;
@@ -37,7 +38,7 @@ const DECK: DemoAction[] = [
     title: "Пробежка 3 км",
     why: "Кардио, которое реально меняет выносливость",
     cat: "Спорт",
-    icon: "🏃",
+    icon: "run",
     color: "var(--color-strength)",
     min: 25,
     xp: 42,
@@ -48,7 +49,7 @@ const DECK: DemoAction[] = [
     title: "Прочитать 10 страниц",
     why: "Десять страниц в день — это 12 книг в год",
     cat: "Учёба",
-    icon: "📚",
+    icon: "book",
     color: "var(--color-intelligence)",
     min: 15,
     xp: 28,
@@ -59,7 +60,7 @@ const DECK: DemoAction[] = [
     title: "Записать расходы за день",
     why: "Видишь цифры — контролируешь их",
     cat: "Финансы",
-    icon: "💰",
+    icon: "coin",
     color: "var(--color-wealth)",
     min: 5,
     xp: 24,
@@ -70,7 +71,7 @@ const DECK: DemoAction[] = [
     title: "10 минут медитации",
     why: "Пауза, которая возвращает контроль",
     cat: "Осознанность",
-    icon: "🧘",
+    icon: "lotus",
     color: "var(--color-stability)",
     min: 10,
     xp: 30,
@@ -116,7 +117,7 @@ export default function LandingDemo() {
               YeahGrind
             </span>
             <span className="flex items-center gap-1.5 rounded-full bg-[rgba(255,255,255,0.06)] px-2.5 py-1">
-              <span className="text-[12px]">🔥</span>
+              <YgIcon name="flame" className="h-3.5 w-3.5 text-[var(--color-strength)]" />
               <span className="num text-[13px] font-bold">9</span>
             </span>
           </div>
@@ -162,7 +163,7 @@ export default function LandingDemo() {
                   className="absolute inset-0 flex flex-col items-center justify-center text-center"
                 >
                   <div className="liquid mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl">
-                    ✦
+                    <YgIcon name="sparkle" className="h-7 w-7" />
                   </div>
                   <p className="text-[17px] font-bold">
                     {taken.length > 0 ? "План собран" : "Колода закончилась"}
@@ -284,10 +285,10 @@ function DemoCard({
 
           <div className="mt-9 flex items-center gap-2">
             <span
-              className="rounded-lg border px-2 py-0.5 text-[12px] font-semibold"
+              className="inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[12px] font-semibold"
               style={badge}
             >
-              {action.icon} {action.cat}
+              <YgIcon name={action.icon} className="h-3.5 w-3.5" /> {action.cat}
             </span>
             <span className="text-[12px] text-[var(--color-muted)]">
               {action.min} мин · +{action.xp} XP

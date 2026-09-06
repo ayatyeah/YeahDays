@@ -17,6 +17,7 @@ import {
   unsubscribeFromPush,
 } from "@/lib/notify";
 import { TODO_LEAD_MIN } from "@/lib/notifyPlan";
+import { YgIcon } from "@/components/yg-icons";
 
 type State =
   | "unsupported" // браузер не умеет (или ключей нет)
@@ -109,23 +110,21 @@ export default function PushOptIn() {
   return (
     <section className="rounded-3xl surface p-4">
       <div className="flex items-start gap-3">
-        <span className="text-xl" aria-hidden>
-          🔔
+        <span className="text-[22px]" aria-hidden>
+          <YgIcon name="bell" className="h-6 w-6" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-semibold">
+          <p className="text-[15px] font-semibold">
             {on ? "Напоминания включены" : "Напоминания"}
           </p>
-          <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
+          <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
             {state === "denied" ? (
               <>
-                Уведомления заблокированы в браузере. Включить можно в его
-                настройках для этого сайта.
+                Заблокированы в браузере
               </>
             ) : on ? (
               <>
-                Приходят по делу: пока идёт задача, по плану дня и за{" "}
-                {TODO_LEAD_MIN} минут до дел со временем.
+                По плану дня и за {TODO_LEAD_MIN} минут до дел
               </>
             ) : (
               <>
@@ -143,7 +142,7 @@ export default function PushOptIn() {
           {/* Час утреннего напоминания. Вечерний подбирается автоматически
               по тому, когда человек реально закрывает действия. */}
           <div className="mt-4">
-            <p className="mb-2 text-[12.5px] text-[var(--color-muted)]">
+            <p className="mb-2 text-[13px] text-[var(--color-muted)]">
               Утром в{" "}
               <span className="font-semibold text-[var(--color-fg)]">
                 {String(reminderHour).padStart(2, "0")}:00
@@ -221,7 +220,7 @@ export default function PushOptIn() {
               onClick={on ? disable : enable}
               disabled={state === "busy"}
               className={cn(
-                "h-11 flex-1 rounded-2xl text-[14px] font-semibold transition active:scale-[0.99] disabled:opacity-60",
+                "h-11 flex-1 rounded-2xl text-[15px] font-semibold transition active:scale-[0.99] disabled:opacity-60",
                 on
                   ? "border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[var(--color-muted)]"
                   : "bg-[var(--color-fg)] text-[var(--color-bg)]",
@@ -237,7 +236,7 @@ export default function PushOptIn() {
               <button
                 type="button"
                 onClick={test}
-                className="h-11 shrink-0 rounded-2xl border border-[var(--color-border)] px-4 text-[14px] font-medium text-[var(--color-fg-dim)] transition active:scale-[0.99]"
+                className="h-11 shrink-0 rounded-2xl border border-[var(--color-border)] px-4 text-[15px] font-medium text-[var(--color-fg-dim)] transition active:scale-[0.99]"
               >
                 {tested ? "Отправлено" : "Проверить"}
               </button>
@@ -281,7 +280,7 @@ function Toggle({
       className="flex items-center gap-3 rounded-2xl px-1 py-2 text-left transition active:scale-[0.99]"
     >
       <span className="min-w-0 flex-1">
-        <span className="block text-[13.5px] font-medium">{label}</span>
+        <span className="block text-[15px] font-medium">{label}</span>
         <span className="mt-0.5 block text-[12px] leading-snug text-[var(--color-muted)]">
           {hint}
         </span>
@@ -315,12 +314,12 @@ function HourSelect({
   onChange: (v: number) => void;
 }) {
   return (
-    <label className="flex flex-1 items-center gap-2 text-[12.5px] text-[var(--color-muted)]">
+    <label className="flex flex-1 items-center gap-2 text-[13px] text-[var(--color-muted)]">
       {label}
       <select
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[13.5px] tabular-nums text-[var(--color-fg)]"
+        className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-[15px] tabular-nums text-[var(--color-fg)]"
       >
         {Array.from({ length: 24 }, (_, h) => (
           <option key={h} value={h}>

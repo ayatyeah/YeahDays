@@ -10,6 +10,7 @@ import {
 } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
 import { track } from "@/lib/analytics";
+import { YgIcon } from "@/components/yg-icons";
 
 /**
  * Карточка прогресса для шеринга.
@@ -89,25 +90,25 @@ export default function ShareCard() {
   return (
     <section className="press rounded-3xl surface p-4">
       <div className="flex items-start gap-3">
-        <span className="text-xl" aria-hidden>
-          ✨
+        <span className="text-[22px]" aria-hidden>
+          <YgIcon name="sparkle" className="h-6 w-6" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[14px] font-semibold">Поделиться прогрессом</p>
-          <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
-            Картинка со стриком, уровнем и статами — для сторис или чата.
+          <p className="text-[15px] font-semibold">Поделиться прогрессом</p>
+          <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
+            Картинка для сторис или чата
           </p>
         </div>
       </div>
       <button
         onClick={share}
         disabled={busy}
-        className="mt-3 h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[14px] font-semibold transition active:scale-[0.99] disabled:opacity-60"
+        className="mt-3 h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] text-[15px] font-semibold transition active:scale-[0.99] disabled:opacity-60"
       >
         {busy ? "Готовлю…" : "Создать картинку"}
       </button>
       {note && (
-        <p className="mt-2 text-center text-[12.5px] text-[var(--color-muted)]">
+        <p className="mt-2 text-center text-[13px] text-[var(--color-muted)]">
           {note}
         </p>
       )}

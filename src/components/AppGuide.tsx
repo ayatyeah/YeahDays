@@ -5,13 +5,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { spring } from "@/lib/motion";
 import { useUserStore } from "@/store/useUserStore";
 import { TABS, TAB_LABEL } from "@/lib/nav";
+import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
-const TAB_ICON: Record<(typeof TABS)[number], string> = {
-  home: "🃏",
-  today: "☀️",
-  calendar: "🗓️",
-  progress: "📈",
-  account: "👤",
+const TAB_ICON: Record<(typeof TABS)[number], YgIconName> = {
+  home: "cards",
+  today: "sun",
+  calendar: "calendar",
+  progress: "chart",
+  account: "person",
 };
 
 const TAB_TEXT: Record<(typeof TABS)[number], string> = {
@@ -87,7 +88,7 @@ export default function AppGuide() {
               <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
                 Коротко
               </p>
-              <h2 className="mt-1.5 text-[23px] font-bold leading-tight">
+              <h2 className="mt-1.5 text-[28px] font-bold leading-tight">
                 Как это устроено
               </h2>
 
@@ -101,14 +102,14 @@ export default function AppGuide() {
                     className="surface flex gap-3.5 rounded-2xl p-3.5"
                   >
                     <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[16px]"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[17px]"
                       aria-hidden
                     >
-                      {TAB_ICON[tab]}
+                      <YgIcon name={TAB_ICON[tab]} className="h-5 w-5" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-[14.5px] font-semibold">{TAB_LABEL[tab]}</p>
-                      <p className="mt-1 text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
+                      <p className="text-[16px] font-semibold">{TAB_LABEL[tab]}</p>
+                      <p className="mt-1 text-[15px] leading-snug text-[var(--color-fg-dim)]">
                         {TAB_TEXT[tab]}
                       </p>
                     </div>
@@ -118,7 +119,7 @@ export default function AppGuide() {
 
               <button
                 onClick={close}
-                className="press mt-5 h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[14px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
+                className="press mt-5 h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[15px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
               >
                 Понятно
               </button>

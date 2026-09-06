@@ -12,6 +12,7 @@ import Modal from "./ui/Modal";
 import Button from "./ui/Button";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
+import { YgIcon } from "@/components/yg-icons";
 
 /** Дата через N дней в формате YYYY-MM-DD. */
 function inDays(n: number): string {
@@ -43,7 +44,7 @@ export default function Quests() {
   return (
     <section className="mt-6">
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
+        <h2 className="text-[15px] font-semibold text-[var(--color-fg-dim)]">
           Цели
         </h2>
         <button
@@ -56,8 +57,7 @@ export default function Quests() {
 
       {quests.length === 0 ? (
         <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-5 text-center text-[13px] leading-snug text-[var(--color-muted)]">
-          Поставь цель с датой — например, 20 действий на силу за месяц.
-          Колода начнёт подстраиваться под неё.
+          Цель с датой — колода подстроится под неё
         </p>
       ) : (
         <div className="space-y-2.5">
@@ -85,13 +85,14 @@ export default function Quests() {
               key={s.key}
               onClick={() => setStat(s.key)}
               className={cn(
-                "press rounded-2xl border py-2.5 text-[13.5px] font-medium",
+                "press rounded-2xl border py-2.5 text-[15px] font-medium",
                 stat === s.key
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-border-strong)]",
               )}
             >
-              <span style={{ color: s.hex }}>{s.icon}</span> {s.label}
+              <span className="flex" style={{ color: s.hex }}><YgIcon name={s.icon} className="h-4 w-4" /></span>
+        {s.label}
             </button>
           ))}
         </div>
@@ -134,7 +135,7 @@ export default function Quests() {
           </div>
         </div>
 
-        <p className="mt-3 text-[12.5px] text-[var(--color-muted)]">
+        <p className="mt-3 text-[13px] text-[var(--color-muted)]">
           Это {(target / horizon).toFixed(1)} действия в день.
         </p>
 
@@ -194,14 +195,14 @@ function QuestRow({
   return (
     <div className="press rounded-3xl surface p-4">
       <div className="flex items-start gap-2">
-        <span className="text-[15px]" style={{ color: stat.hex }} aria-hidden>
-          {stat.icon}
+        <span className="text-[16px]" style={{ color: stat.hex }} aria-hidden>
+          <YgIcon name={stat.icon} className="h-[18px] w-[18px]" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[14.5px] font-semibold">{quest.title}</p>
-          <p className="mt-0.5 text-[12.5px] text-[var(--color-muted)]">
+          <p className="truncate text-[16px] font-semibold">{quest.title}</p>
+          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
             {complete
-              ? "Цель закрыта 🎉"
+              ? "Цель закрыта"
               : overdue
                 ? `Срок вышел · ${done} из ${quest.target}`
                 : `${done} из ${quest.target} · ${left === 0 ? "последний день" : `${left} дн осталось`}`}
@@ -212,7 +213,7 @@ function QuestRow({
           aria-label="Убрать цель"
           className="shrink-0 rounded-lg px-2 py-1 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
         >
-          ✕
+          <YgIcon name="close" className="h-4 w-4" />
         </button>
       </div>
 

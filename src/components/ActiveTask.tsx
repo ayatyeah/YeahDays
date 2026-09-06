@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import type { PlannedTask } from "@/store/useUserStore";
 import { CATEGORIES, DIFFICULTY_LABEL, STATS } from "@/lib/domain";
 import { springBouncy } from "@/lib/motion";
+import { YgIcon } from "@/components/yg-icons";
 
 /** мс → «7 мин 12 с» */
 export function formatDuration(ms: number): string {
@@ -68,10 +69,10 @@ export default function ActiveTask({
           }}
         />
         <div className="flex items-center gap-2">
-          <span className="text-[15px]" aria-hidden>
-            {cat.icon}
+          <span className="text-[16px]" aria-hidden>
+            <YgIcon name={task.snapshot.icon ?? cat.icon} className="h-4 w-4" />
           </span>
-          <span className="text-[12.5px] font-medium text-[var(--color-muted)]">
+          <span className="text-[13px] font-medium text-[var(--color-muted)]">
             {cat.label} · {DIFFICULTY_LABEL[task.snapshot.difficulty]} ·{" "}
             {task.snapshot.duration} мин
           </span>
@@ -80,7 +81,7 @@ export default function ActiveTask({
         <h2 className="mt-3 text-[22px] font-bold leading-tight tracking-tight">
           {task.snapshot.title}
         </h2>
-        <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
+        <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
           {task.snapshot.why}
         </p>
 
@@ -92,7 +93,7 @@ export default function ActiveTask({
           >
             {formatDuration(elapsed)}
           </span>
-          <span className="text-[12.5px] text-[var(--color-muted)]">
+          <span className="text-[13px] text-[var(--color-muted)]">
             {over ? "дольше плана" : "идёт"}
           </span>
         </div>
@@ -118,13 +119,13 @@ export default function ActiveTask({
 
         <button
           onClick={onDone}
-          className="mt-5 h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[15px] font-semibold text-[var(--color-bg)] transition active:scale-[0.99]"
+          className="mt-5 h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[16px] font-semibold text-[var(--color-bg)] transition active:scale-[0.99]"
         >
           Сделал · +{task.xp} XP
         </button>
       </div>
 
-      <p className="mt-4 text-center text-[12.5px] leading-snug text-[var(--color-muted)]">
+      <p className="mt-4 text-center text-[13px] leading-snug text-[var(--color-muted)]">
         Пока это действие не закрыто, новых карточек не будет.
         <br />
         Взял — сделай.

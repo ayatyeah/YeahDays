@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
+import { YgIcon } from "@/components/yg-icons";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -99,12 +100,12 @@ export default function InstallPrompt() {
           className="fixed inset-x-0 bottom-[86px] z-40 px-4"
         >
           <div className="marble mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-xl">
-              📲
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[22px]">
+              <YgIcon name="install" className="h-6 w-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[14px] font-semibold">Установи YeahGrind</p>
-              <p className="truncate text-[12.5px] text-[var(--color-muted)]">
+              <p className="text-[15px] font-semibold">Установи YeahGrind</p>
+              <p className="truncate text-[13px] text-[var(--color-muted)]">
                 {ios && !evt
                   ? "Поделиться → «На экран «Домой»"
                   : "Запускай как приложение, работает офлайн"}
@@ -113,7 +114,7 @@ export default function InstallPrompt() {
             {evt ? (
               <button
                 onClick={install}
-                className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[14px] font-semibold text-[var(--color-bg)]"
+                className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[15px] font-semibold text-[var(--color-bg)]"
               >
                 Установить
               </button>
@@ -123,7 +124,7 @@ export default function InstallPrompt() {
               aria-label="Закрыть"
               className="tap press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
             >
-              ✕
+              <YgIcon name="close" className="h-4 w-4" />
             </button>
           </div>
         </motion.div>

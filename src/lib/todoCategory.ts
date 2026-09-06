@@ -1,9 +1,10 @@
 import type { StatKey } from "./domain";
 import type { Todo, TodoPriority } from "@/store/useUserStore";
+import type { YgIconName } from "@/components/yg-icons";
 
 export interface TodoCategory {
   stat: StatKey;
-  icon: string;
+  icon: YgIconName;
   subLabel?: string;
 }
 
@@ -50,38 +51,71 @@ export const TODO_PRIORITY_XP: Record<TodoPriority, number> = {
 export function categorizeTodo(title: string): TodoCategory {
   const t = title.toLowerCase();
 
+  // Университет — пары из расписания и события LMS. Идут первыми: в
+  // названиях пар («Cloud Computing — практика, 307K») нет слов из остальных
+  // правил, а вот «Attendance» и «Assignment» из LMS иначе падали бы в «•».
+  // Порядок внутри: экзамен и дедлайны важнее формы занятия.
+  if (/экзамен|\bexam|midterm|final\b|зачёт|зачет/.test(t)) {
+    return { stat: "intelligence", icon: "exam", subLabel: "Экзамен" };
+  }
+  if (/attendance|посещаем/.test(t)) {
+    return { stat: "intelligence", icon: "attendance", subLabel: "Посещаемость" };
+  }
+  if (/assignment|quiz|дедлайн|deadline|\bdue\b|homework|домашк|\bдз\b|сдать/.test(t)) {
+    return { stat: "intelligence", icon: "assignment", subLabel: "Дедлайн" };
+  }
+  if (/лекци|lecture/.test(t)) {
+    return /онлайн|online/.test(t)
+      ? { stat: "intelligence", icon: "online", subLabel: "Лекция онлайн" }
+      : { stat: "intelligence", icon: "lecture", subLabel: "Лекция" };
+  }
+  if (/практик|practice|семинар|seminar|\bлаб|\blab\b/.test(t)) {
+    return /онлайн|online/.test(t)
+      ? { stat: "intelligence", icon: "online", subLabel: "Практика онлайн" }
+      : { stat: "intelligence", icon: "practice", subLabel: "Практика" };
+  }
+  if (/\bпара\b|универ|\bуник\b|кампус|campus|\bвуз\b/.test(t)) {
+    return { stat: "intelligence", icon: "campus", subLabel: "Пара" };
+  }
+
   // Здоровье — восстановление и самочувствие: сон, питание, дыхание, растяжка.
-  if (/медитац/.test(t)) return { stat: "health", icon: "🧘" };
-  if (/^sleep\b|сон/.test(t)) return { stat: "health", icon: "😴" };
-  if (/дыхательн/.test(t)) return { stat: "health", icon: "🌬️" };
-  if (/обед|завтрак|перекус|ужин/.test(t)) return { stat: "health", icon: "🍽️" };
-  if (/растяжк|mobility/.test(t)) return { stat: "health", icon: "🤸" };
+  if (/медитац/.test(t)) return { stat: "health", icon: "lotus" };
+  if (/^sleep\b|сон/.test(t)) return { stat: "health", icon: "moon" };
+  if (/дыхательн/.test(t)) return { stat: "health", icon: "wind" };
+  if (/обед|завтрак|перекус|ужин/.test(t)) return { stat: "health", icon: "meal" };
+  if (/растяжк|mobility/.test(t)) return { stat: "health", icon: "stretch" };
 
   // Стабильность — рутина и организация дня, не про здоровье как таковое.
-  if (/душ/.test(t)) return { stat: "stability", icon: "🚿" };
-  if (/подъём|подъем/.test(t)) return { stat: "stability", icon: "⏰" };
-  if (/буфер|перерыв|пауза/.test(t)) return { stat: "stability", icon: "⏸️" };
+  if (/душ/.test(t)) return { stat: "stability", icon: "drop" };
+  if (/подъём|подъем/.test(t)) return { stat: "stability", icon: "alarm" };
+  if (/буфер|перерыв|пауза/.test(t)) return { stat: "stability", icon: "pause" };
 
   if (/interview|интервью|собеседован/.test(t)) {
-    return { stat: "intelligence", icon: "🗣️", subLabel: "Собеседования" };
+    return { stat: "intelligence", icon: "mic", subLabel: "Собеседования" };
   }
   if (/english|английск/.test(t)) {
-    return { stat: "intelligence", icon: "📖", subLabel: "Английский" };
+    return { stat: "intelligence", icon: "book", subLabel: "Английский" };
   }
-  if (/^ts:|typescript|\bnode\b|\bnpm\b|\bgit\b|react|массив|строки|базовые типы|^js:|javascript|алгоритм/.test(t)) {
-    return { stat: "intelligence", icon: "💻", subLabel: "Код" };
+  if (/^ts:|typescript|\bnode\b|\bnpm\b|\bgit\b|react|flutter|\bdart\b|массив|строки|базовые типы|^js:|javascript|алгоритм/.test(t)) {
+    return { stat: "intelligence", icon: "code", subLabel: "Код" };
   }
 
   // Сила — активная физическая нагрузка, отдельно от восстановления (health).
-  if (/push:|pull:|legs:|тренировк|бег|running|гантел|фитнес/.test(t)) {
-    return { stat: "strength", icon: "💪", subLabel: "Спорт" };
+  // «турник, отжимания, брусья, зарядка» — то, чем план и заполнен; без
+  // них зарядка уходила в «дисциплину» и карточка из плана шла не в «Спорт».
+  if (
+    /push:|pull:|legs:|тренировк|бег|running|гантел|фитнес|турник|брусья|отжиман|подтягива|зарядк|разминк|пробежк|качалк|спортзал|\bзал\b/.test(
+      t,
+    )
+  ) {
+    return { stat: "strength", icon: "dumbbell", subLabel: "Спорт" };
   }
 
   if (/yeahgrind|репо|проект|tiktok|съёмка|монтаж/.test(t)) {
-    return { stat: "wealth", icon: "🛠️", subLabel: "Проект" };
+    return { stat: "wealth", icon: "wrench", subLabel: "Проект" };
   }
 
-  return { stat: "stability", icon: "•" };
+  return { stat: "stability", icon: "dot" };
 }
 
 export function fmtDuration(mins: number): string {

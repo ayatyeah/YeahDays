@@ -1,3 +1,4 @@
+import type { YgIconName } from "@/components/yg-icons";
 /**
  * Что нового — список возможностей, появившихся после онбординга.
  *
@@ -16,7 +17,7 @@
 
 export interface Feature {
   id: string;
-  icon: string;
+  icon: YgIconName;
   title: string;
   text: string;
   /** куда ведёт кнопка «Посмотреть» */
@@ -26,41 +27,41 @@ export interface Feature {
 export const FEATURES: Feature[] = [
   {
     id: "challenges",
-    icon: "🔥",
+    icon: "flame",
     title: "Челленджи",
     text: "Обязательство на несколько недель со своими порогами: дотянул до жёлтого дня или до зелёного. Видно в календаре.",
     href: "/progress",
   },
   {
     id: "todos",
-    icon: "✓",
+    icon: "check",
     title: "Свои задачи",
     text: "Полноценный список дел: приоритеты, подзадачи, заметки, повторы по дням недели. Отдельно от колоды.",
     href: "/plan",
   },
   {
     id: "schedule",
-    icon: "🕘",
+    icon: "clock",
     title: "План дня по часам",
     text: "Расписать день по часам и видеть, куда он на самом деле уходит.",
     href: "/plan",
   },
   {
     id: "timeslots",
-    icon: "🌅",
+    icon: "sunrise",
     title: "Задачи по времени суток",
     text: "Колода знает, что утром сил меньше, чем вечером, и подбирает под текущий момент дня.",
   },
   {
     id: "push",
-    icon: "🔔",
+    icon: "bell",
     title: "Напоминания",
     text: "Утром — что взять, вечером — что осталось. Приходят в удобный час, а не когда попало.",
     href: "/settings",
   },
   {
     id: "personal-duration",
-    icon: "⏱",
+    icon: "alarm",
     title: "Твоё время вместо усреднённого",
     text: "Приложение засекает, сколько у тебя реально занимают действия, и дальше считает бюджет твоими минутами, а не оценкой из справочника.",
   },

@@ -20,6 +20,7 @@ import {
 import type { ScoredAction } from "@/lib/recommendation";
 import { durationInsight } from "@/lib/durations";
 import { useUserStore } from "@/store/useUserStore";
+import { YgIcon } from "@/components/yg-icons";
 
 export type SwipeDir = "left" | "right";
 
@@ -92,9 +93,12 @@ export default function ActionCard({
 
   const isTop = index === 0;
 
-  // стек: карты позади уменьшены и сдвинуты вниз
+  // Стопка: карты позади уменьшены и чуть сдвинуты вниз. 8px, а не 14:
+  // при 14 из-под верхней карты выглядывала строка метрик следующей —
+  // обрезанные «20 мин | Очень л…» читались как глюк, а не как глубина.
+  // Содержимое карт позади скрыто (см. ниже) — наружу торчит только кромка.
   const stackScale = 1 - index * 0.05;
-  const stackY = index * 14;
+  const stackY = index * 8;
 
   /**
    * Улёт карточки после засчитанного свайпа. Раньше карточка просто
@@ -147,9 +151,10 @@ export default function ActionCard({
           y: isTop ? y : 0,
           rotate: isTop ? rotate : 0,
           scale: isTop ? lift : 1,
-          boxShadow: isTop
-            ? "0 0 0 1px rgba(255,255,255,0.07), 0 20px 50px -14px rgba(0,0,0,0.7)"
-            : "0 0 0 1px rgba(255,255,255,0.05), 0 12px 30px -12px rgba(0,0,0,0.6)",
+          // Тень только у верхней карты и из токена темы. Раньше каждая
+          // карта стопки несла чёрную тень 0.6–0.7: три тени складывались
+          // в тёмную полосу под колодой, особенно в светлой теме.
+          boxShadow: isTop ? "var(--shadow-2)" : "none",
           pointerEvents: isTop ? "auto" : "none",
         }}
         drag={isTop ? "x" : false}
@@ -195,7 +200,7 @@ export default function ActionCard({
             color: "#6fb39c",
           }}
         >
-          <span className="text-xl font-black tracking-tight">БЕРУ</span>
+          <span className="text-[22px] font-black tracking-tight">БЕРУ</span>
         </motion.div>
         <motion.div
           className="pointer-events-none absolute left-5 top-6 z-20 -rotate-[14deg] rounded-xl border-[3px] px-4 py-1.5"
@@ -206,38 +211,47 @@ export default function ActionCard({
             color: "#cf8578",
           }}
         >
-          <span className="text-xl font-black tracking-tight">НЕ СЕЙЧАС</span>
+          <span className="text-[22px] font-black tracking-tight">НЕ СЕЙЧАС</span>
         </motion.div>
 
         {/* ── Контент ── */}
-        <div className="relative flex h-full flex-col p-6">
+        {/* У карт позади содержимое невидимо: из-под верхней карты должна
+            выглядывать чистая кромка, а не обрезанный текст. Разметка
+            остаётся — карта сохраняет высоту, и стопка не «дышит» при
+            смене верхней. */}
+        <div className={`relative flex h-full flex-col p-6 ${isTop ? "" : "opacity-0"}`}>
           {/* категория */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div
-                className="flex h-10 w-10 items-center justify-center rounded-2xl text-lg"
-                style={{ background: `${stat.hex}1f` }}
+                className="flex h-10 w-10 items-center justify-center rounded-2xl text-[20px]"
+                style={{ background: `${stat.hex}1f`, color: stat.hex }}
               >
-                {cat.icon}
+                <YgIcon name={action.icon ?? cat.icon} className="h-5 w-5" />
               </div>
               <div className="leading-tight">
-                <p className="text-[14px] font-semibold">{cat.label}</p>
-                <p
-                  className="text-[12px] font-medium"
-                  style={{ color: stat.hex }}
-                >
-                  {stat.icon} {stat.label}
-                </p>
+                <p className="text-[15px] font-semibold">{cat.label}</p>
+                {/* «Здоровье / Здоровье» — у категории и стата одно имя,
+                    вторая строка тогда только повторяет первую. */}
+                {stat.label !== cat.label && (
+                  <p
+                    className="flex items-center gap-1 text-[12px] font-medium"
+                    style={{ color: stat.hex }}
+                  >
+                    <YgIcon name={stat.icon} className="h-3.5 w-3.5" />
+                    {stat.label}
+                  </p>
+                )}
               </div>
             </div>
             <div className="text-right leading-none">
               <p
-                className="text-2xl font-black tabular-nums"
+                className="text-[28px] font-black tabular-nums"
                 style={{ color: stat.hex }}
               >
                 +{xp}
               </p>
-              <p className="mt-0.5 text-[11.5px] font-medium tracking-wider text-[var(--color-muted)]">
+              <p className="mt-0.5 text-[12px] font-medium tracking-wider text-[var(--color-muted)]">
                 XP
               </p>
             </div>
@@ -245,10 +259,10 @@ export default function ActionCard({
 
           {/* заголовок */}
           <div className="flex flex-1 flex-col justify-center py-6">
-            <h2 className="text-[27px] font-bold leading-[1.15] tracking-tight">
+            <h2 className="text-[34px] font-bold leading-[1.15] tracking-tight">
               {action.title}
             </h2>
-            <p className="mt-3 text-[15px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="mt-3 text-[16px] leading-snug text-[var(--color-fg-dim)]">
               {action.why}
             </p>
           </div>
@@ -266,7 +280,7 @@ export default function ActionCard({
                 strokeLinecap="round"
               />
             </svg>
-            <p className="text-[13.5px] font-medium" style={{ color: stat.hex }}>
+            <p className="text-[15px] font-medium" style={{ color: stat.hex }}>
               {reason}
             </p>
           </div>
@@ -326,7 +340,7 @@ function Meta({
 }) {
   return (
     <div className="rounded-2xl bg-[var(--color-surface-2)]/70 px-2.5 py-2 text-center">
-      <p className="text-[11.5px] uppercase tracking-wider text-[var(--color-muted)]">
+      <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
         {hint ? (
           // помечаем цифру, которую посчитали по замерам самого человека,
           // иначе изменившееся время выглядит как ошибка в контенте

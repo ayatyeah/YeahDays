@@ -1,3 +1,4 @@
+import type { YgIconName } from "@/components/yg-icons";
 /**
  * YeahGrind — доменная модель.
  *
@@ -20,7 +21,7 @@ export interface StatConfig {
   color: string;
   /** hex-дубль для canvas/WebGL, где CSS-переменные недоступны */
   hex: string;
-  icon: string;
+  icon: YgIconName;
 }
 
 export const STATS: Record<StatKey, StatConfig> = {
@@ -31,7 +32,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     hint: "Спорт, сон, питание, тело",
     color: "var(--color-strength)",
     hex: "#cf8578",
-    icon: "⚡",
+    icon: "bolt",
   },
   intelligence: {
     key: "intelligence",
@@ -40,7 +41,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     hint: "Учёба, чтение, навыки",
     color: "var(--color-intelligence)",
     hex: "#9a93cc",
-    icon: "◈",
+    icon: "bulb",
   },
   wealth: {
     key: "wealth",
@@ -49,7 +50,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     hint: "Деньги, карьера, проекты",
     color: "var(--color-wealth)",
     hex: "#c9ad6f",
-    icon: "◆",
+    icon: "coin",
   },
   stability: {
     key: "stability",
@@ -58,7 +59,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     hint: "Рутина, порядок, спокойствие",
     color: "var(--color-stability)",
     hex: "#6fb39c",
-    icon: "●",
+    icon: "shield",
   },
   health: {
     key: "health",
@@ -67,7 +68,7 @@ export const STATS: Record<StatKey, StatConfig> = {
     hint: "Сон, питание, восстановление, самочувствие",
     color: "var(--color-health)",
     hex: "#c2818f",
-    icon: "❤️",
+    icon: "heart",
   },
 };
 
@@ -91,19 +92,19 @@ export interface CategoryConfig {
   label: string;
   /** какой стат качает категория */
   stat: StatKey;
-  icon: string;
+  icon: YgIconName;
 }
 
 export const CATEGORIES: Record<CategoryKey, CategoryConfig> = {
-  fitness: { key: "fitness", label: "Спорт", stat: "strength", icon: "🏃" },
-  health: { key: "health", label: "Здоровье", stat: "health", icon: "🌿" },
-  learning: { key: "learning", label: "Учёба", stat: "intelligence", icon: "📚" },
-  creativity: { key: "creativity", label: "Творчество", stat: "intelligence", icon: "🎨" },
-  money: { key: "money", label: "Финансы", stat: "wealth", icon: "💰" },
-  career: { key: "career", label: "Карьера", stat: "wealth", icon: "🚀" },
-  discipline: { key: "discipline", label: "Дисциплина", stat: "stability", icon: "🎯" },
-  mindfulness: { key: "mindfulness", label: "Осознанность", stat: "stability", icon: "🧘" },
-  social: { key: "social", label: "Общение", stat: "stability", icon: "💬" },
+  fitness: { key: "fitness", label: "Спорт", stat: "strength", icon: "run" },
+  health: { key: "health", label: "Здоровье", stat: "health", icon: "leaf" },
+  learning: { key: "learning", label: "Учёба", stat: "intelligence", icon: "book" },
+  creativity: { key: "creativity", label: "Творчество", stat: "intelligence", icon: "palette" },
+  money: { key: "money", label: "Финансы", stat: "wealth", icon: "coin" },
+  career: { key: "career", label: "Карьера", stat: "wealth", icon: "rocket" },
+  discipline: { key: "discipline", label: "Дисциплина", stat: "stability", icon: "target" },
+  mindfulness: { key: "mindfulness", label: "Осознанность", stat: "stability", icon: "lotus" },
+  social: { key: "social", label: "Общение", stat: "stability", icon: "chat" },
 };
 
 export const CATEGORY_LIST = Object.values(CATEGORIES);
@@ -174,6 +175,11 @@ export interface Action {
   progression?: Progression;
   /** создана пользователем вручную (не из общего пула) */
   custom?: boolean;
+  /**
+   * Свой значок вместо значка категории — у действий из почасового плана
+   * (planNow): лекция показывает доску, а не общую книгу «Учёбы».
+   */
+  icon?: YgIconName;
   /**
    * Дни недели, в которые действие вообще имеет смысл (0 — воскресенье,
    * как у Date.getDay). Не задано или пусто — любой день. Это жёсткий

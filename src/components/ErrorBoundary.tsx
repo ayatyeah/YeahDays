@@ -1,6 +1,7 @@
 "use client";
 
 import { Component, type ReactNode } from "react";
+import { YgIcon } from "@/components/yg-icons";
 
 interface Props {
   children: ReactNode;
@@ -44,26 +45,26 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center px-8 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-3xl">
-          🌫️
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-[34px]">
+          <YgIcon name="haze" className="h-8 w-8 text-[var(--color-muted)]" />
         </div>
-        <h1 className="mt-5 text-xl font-bold tracking-tight">
+        <h1 className="mt-5 text-[22px] font-bold tracking-tight">
           Что-то сломалось
         </h1>
-        <p className="mt-2 max-w-[300px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+        <p className="mt-2 max-w-[300px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
           Приложение споткнулось. Обычно помогает перезагрузка — твой прогресс
           сохранён.
         </p>
         <div className="mt-6 flex w-full max-w-[280px] flex-col gap-2.5">
           <button
             onClick={this.reload}
-            className="h-12 rounded-2xl bg-[var(--color-fg)] text-[14px] font-semibold text-[var(--color-bg)] transition hover:opacity-90"
+            className="h-12 rounded-2xl bg-[var(--color-fg)] text-[15px] font-semibold text-[var(--color-bg)] transition hover:opacity-90"
           >
             Перезагрузить
           </button>
           <button
             onClick={this.reset}
-            className="h-11 rounded-2xl text-[14px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+            className="h-11 rounded-2xl text-[15px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
           >
             Сбросить данные и начать заново
           </button>

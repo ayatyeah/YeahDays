@@ -10,6 +10,7 @@ import {
 } from "@/store/useUserStore";
 import { dateKey, currentSlot, STATS } from "@/lib/domain";
 import { cn } from "@/lib/cn";
+import { YgIcon } from "@/components/yg-icons";
 
 const SLOT_LABEL: Record<string, string> = {
   morning: "утро",
@@ -38,7 +39,7 @@ export default function Challenges() {
 
   return (
     <section className="mt-5">
-      <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
+      <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
         Челленджи
       </h2>
       <div className="space-y-2.5">
@@ -86,17 +87,17 @@ function ChallengeRow({
   return (
     <div className="press rounded-3xl surface p-4">
       <div className="flex items-start gap-2">
-        <span className="text-[15px]" style={{ color: stat.hex }} aria-hidden>
-          {stat.icon}
+        <span className="text-[16px]" style={{ color: stat.hex }} aria-hidden>
+          <YgIcon name={stat.icon} className="h-[18px] w-[18px]" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[14.5px] font-semibold">{c.title}</p>
-          <p className="mt-0.5 text-[12.5px] text-[var(--color-muted)]">
+          <p className="truncate text-[16px] font-semibold">{c.title}</p>
+          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
             {done} из {c.green} {c.unit}
             {level === "green"
-              ? " · день зелёный 🟢"
+              ? " · день зелёный"
               : level === "yellow"
-                ? ` · жёлтый 🟡, до зелёного ${c.green - done}`
+                ? ` · жёлтый, до зелёного ${c.green - done}`
                 : ` · до жёлтого ${Math.max(0, c.yellow - done)}`}
           </p>
         </div>
@@ -135,7 +136,7 @@ function ChallengeRow({
                   isNow && !filled && "border-[var(--color-fg-dim)]",
                 )}
               >
-                {filled ? "✓" : s.reps} · {SLOT_LABEL[s.slot]}
+                {filled ? <YgIcon name="check" className="h-3.5 w-3.5" strokeWidth={2.4} /> : s.reps} · {SLOT_LABEL[s.slot]}
               </div>
             );
           })}
@@ -148,7 +149,7 @@ function ChallengeRow({
           <button
             key={n}
             onClick={() => onLog(n)}
-            className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] py-2 text-[13.5px] font-semibold transition active:scale-[0.98]"
+            className="flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] py-2 text-[15px] font-semibold transition active:scale-[0.98]"
           >
             +{n}
           </button>
@@ -157,7 +158,7 @@ function ChallengeRow({
           onClick={() => onLog(-(steps[0] ?? 1))}
           disabled={done === 0}
           aria-label="Убрать"
-          className="rounded-xl border border-[var(--color-border)] px-3 py-2 text-[13.5px] text-[var(--color-muted)] transition disabled:opacity-40"
+          className="rounded-xl border border-[var(--color-border)] px-3 py-2 text-[15px] text-[var(--color-muted)] transition disabled:opacity-40"
         >
           −
         </button>

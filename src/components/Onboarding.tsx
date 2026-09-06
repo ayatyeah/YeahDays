@@ -88,7 +88,11 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    // Онбординг живёт внутри рамки .app-shell-frame с overflow: hidden. На
+    // низких экранах (встроенный браузер Telegram, iPhone SE) контент выше
+    // окна и кнопка «Начать» просто обрезалась — экран без выхода. Поэтому
+    // онбординг прокручивается сам, а ряд кнопок прилипает к низу.
+    <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       {/* Прогресс */}
       <div className="mb-8 mt-2 flex items-center gap-2">
         {Array.from({ length: STEPS }).map((_, i) => (
@@ -277,8 +281,8 @@ export default function Onboarding() {
         </AnimatePresence>
       </div>
 
-      {/* Навигация */}
-      <div className="flex items-center gap-3 pt-4">
+      {/* Навигация — прилипает к низу поверх контента, с фоном и safe-area */}
+      <div className="sticky bottom-0 -mx-4 mt-auto flex items-center gap-3 bg-[var(--color-bg)] px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4">
         {step > 0 && (
           <motion.button
             whileTap={{ scale: 0.95 }}

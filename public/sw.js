@@ -20,6 +20,7 @@ const PRECACHE = [
   "/calendar",
   "/progress",
   "/account",
+  "/settings",
   "/offline",
   "/manifest.webmanifest",
   "/favicon.png",

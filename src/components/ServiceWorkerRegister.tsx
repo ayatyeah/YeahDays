@@ -74,6 +74,11 @@ export default function ServiceWorkerRegister() {
             () => r.update().catch(() => {}),
             60 * 60 * 1000,
           );
+          // и при каждом возврате в приложение: PWA на телефоне живёт в
+          // фоне сутками, и «раз в час» без этого почти никогда не наступал
+          document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") r.update().catch(() => {});
+          });
         })
         .catch(() => {
           /* офлайн-режим необязателен */

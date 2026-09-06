@@ -6,7 +6,11 @@
   "start_url": "/app?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui", "browser"],
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
   "orientation": "portrait",
   "background_color": "#08080b",
   "theme_color": "#08080b",
@@ -14,10 +18,17 @@
   "dir": "ltr",
   "prefer_related_applications": false,
   "launch_handler": {
-    "client_mode": ["navigate-existing", "auto"]
+    "client_mode": [
+      "navigate-existing",
+      "auto"
+    ]
   },
   "handle_links": "preferred",
-  "categories": ["productivity", "lifestyle", "health"],
+  "categories": [
+    "productivity",
+    "lifestyle",
+    "health"
+  ],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -67,21 +78,39 @@
       "short_name": "Сегодня",
       "description": "Что взято на день и что осталось закрыть",
       "url": "/today?source=shortcut",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/shortcut-today.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Колода действий",
       "short_name": "Колода",
       "description": "Подобрать, что сделать прямо сейчас",
       "url": "/app?source=shortcut",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/shortcut-deck.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Прогресс",
       "short_name": "Прогресс",
       "description": "Уровень, стрик и характеристики",
       "url": "/progress?source=shortcut",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/shortcut-chart.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }

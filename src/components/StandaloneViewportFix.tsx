@@ -5,59 +5,85 @@ import { useEffect } from "react";
 /**
  * Лечит известную ошибку WebKit в установленном PWA (display: standalone).
  *
- * При запуске с домашнего экрана iOS иногда считает вьюпорт по высоте
- * окна Safari — с несуществующей нижней панелью — и не пересчитывает
- * position: fixed до первого скролла или resize. В итоге нижняя навигация
- * висит на ~80pt выше края экрана, пока пользователь не свайпнет.
+ * При запуске с домашнего экрана iOS считает вьюпорт по высоте окна Safari
+ * — с несуществующей нижней панелью — и не пересчитывает его до первого
+ * скролла. В итоге нижняя навигация (position: fixed; bottom: 0) висит на
+ * ~80pt выше края экрана, пока пользователь не свайпнет.
  *
- * Принудительный пересчёт: на кадр меняем высоту корня и возвращаем
- * обратно — WebKit заново снимает размеры вьюпорта и прикладывает
- * fixed-элементы к настоящему низу. Делаем это после первой отрисовки,
- * при возврате из фона (pageshow / visibilitychange) и при смене размера
- * visualViewport. Вне standalone-режима компонент ничего не делает.
+ * Уговаривать WebKit пересчитать вьюпорт (менять высоту корня) не помогло.
+ * Поэтому меряем сами: в standalone на iPhone настоящая высота — это
+ * screen.height (статус-бар прозрачный, приложение занимает экран целиком).
+ * Если innerHeight меньше на высоту панели Safari, выставляем рамке
+ * приложения высоту экрана в пикселях (--app-h) и сдвигаем таб-бар вниз на
+ * разницу (--nav-offset, отрицательный bottom). Как только WebKit сам
+ * пересчитает вьюпорт, разница станет нулём и переменные снимутся.
+ *
+ * Дополнительно повторяем то, что помогает руками: крошечный скролл
+ * активного раздела — часто именно он и заставляет WebKit проснуться.
+ *
+ * Только iOS (у Safari есть navigator.standalone) и только standalone:
+ * на Android innerHeight законно меньше экрана из-за системной панели.
  */
 export default function StandaloneViewportFix() {
   useEffect(() => {
+    const nav = window.navigator as Navigator & { standalone?: boolean };
+    const isIos = "standalone" in nav;
     const standalone =
-      window.matchMedia?.("(display-mode: standalone)").matches ||
-      (window.navigator as { standalone?: boolean }).standalone === true;
-    if (!standalone) return;
+      window.matchMedia?.("(display-mode: standalone)").matches || nav.standalone === true;
+    if (!isIos || !standalone) return;
 
-    let raf = 0;
-    const reflow = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const root = document.documentElement;
-        root.style.height = "100.001%";
-        // дочитать высоту — иначе браузер объединит два присваивания в одно
-        void root.offsetHeight;
-        raf = requestAnimationFrame(() => {
-          root.style.height = "";
-        });
-      });
+    const root = document.documentElement.style;
+
+    const apply = () => {
+      const portrait = window.matchMedia("(orientation: portrait)").matches;
+      const full = portrait ? window.screen.height : window.screen.width;
+      const diff = full - window.innerHeight;
+      // 40–200: высота панели Safari (~80pt), а не клавиатура и не ошибка замера
+      if (diff > 40 && diff < 200) {
+        root.setProperty("--app-h", `${full}px`);
+        root.setProperty("--nav-offset", `${-diff}px`);
+      } else {
+        root.removeProperty("--app-h");
+        root.removeProperty("--nav-offset");
+      }
     };
 
-    // после первой отрисовки и ещё раз чуть позже — вьюпорт при запуске
-    // может «доехать» не сразу
-    reflow();
-    const late = window.setTimeout(reflow, 350);
+    const nudge = () => {
+      const pane = document.querySelector<HTMLElement>("[data-section-active]");
+      if (!pane) return;
+      const top = pane.scrollTop;
+      pane.scrollTop = top + 1;
+      pane.scrollTop = top;
+    };
 
-    const onShow = () => reflow();
+    const tick = () => {
+      apply();
+      nudge();
+    };
+
+    tick();
+    const t1 = window.setTimeout(tick, 250);
+    const t2 = window.setTimeout(tick, 900);
+
     const onVisible = () => {
-      if (document.visibilityState === "visible") reflow();
+      if (document.visibilityState === "visible") tick();
     };
-    window.addEventListener("pageshow", onShow);
+    window.addEventListener("resize", apply);
+    window.visualViewport?.addEventListener("resize", apply);
+    window.addEventListener("orientationchange", tick);
+    window.addEventListener("pageshow", tick);
     document.addEventListener("visibilitychange", onVisible);
-    window.visualViewport?.addEventListener("resize", reflow);
-    window.addEventListener("orientationchange", reflow);
 
     return () => {
-      cancelAnimationFrame(raf);
-      window.clearTimeout(late);
-      window.removeEventListener("pageshow", onShow);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+      window.removeEventListener("resize", apply);
+      window.visualViewport?.removeEventListener("resize", apply);
+      window.removeEventListener("orientationchange", tick);
+      window.removeEventListener("pageshow", tick);
       document.removeEventListener("visibilitychange", onVisible);
-      window.visualViewport?.removeEventListener("resize", reflow);
-      window.removeEventListener("orientationchange", reflow);
+      root.removeProperty("--app-h");
+      root.removeProperty("--nav-offset");
     };
   }, []);
 

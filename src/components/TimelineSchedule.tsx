@@ -25,6 +25,7 @@ import { routineLabelAt } from "@/lib/routine";
 import { categorizeTodo, fmtDuration, TODO_PRIORITY_XP } from "@/lib/todoCategory";
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/motion";
+import { todoStartMin, todoEndMin, hoursCoveredAfterStart, fmtMin } from "@/lib/todoSpan";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
@@ -97,6 +98,9 @@ export default function TimelineSchedule({
   const todayKey = dateKey();
   const isToday = day === todayKey;
   const nowHour = new Date().getHours();
+  // Минуты, а не только час: двухчасовая лекция в 11:00 в 12:30 ещё идёт,
+  // а сравнение по номеру часа считало бы её и не текущей, и просроченной.
+  const nowMin = nowHour * 60 + new Date().getMinutes();
   const weekday = useMemo(() => new Date(`${day}T00:00:00`).getDay(), [day]);
 
   const onDay = useMemo(() => todos.filter((t) => isTodoOnDay(t, day)), [todos, day]);
@@ -109,9 +113,12 @@ export default function TimelineSchedule({
   const overdue = useMemo(
     () =>
       isToday
-        ? onDay.filter((t) => t.hour != null && t.hour < nowHour && !isTodoDone(t, day))
+        ? onDay.filter((t) => {
+            const end = todoEndMin(t);
+            return end !== null && end <= nowMin && !isTodoDone(t, day);
+          })
         : [],
-    [onDay, isToday, nowHour, day],
+    [onDay, isToday, nowMin, day],
   );
   const overdueIds = useMemo(() => new Set(overdue.map((t) => t.id)), [overdue]);
   const unscheduled = useMemo(
@@ -147,15 +154,39 @@ export default function TimelineSchedule({
     return map;
   }, [scheduled, overdueIds]);
 
+  /**
+   * Часы, которые задача НАКРЫВАЕТ после часа старта. В строке такого часа
+   * вместо «Добавить задачу» — приглушённое продолжение: иначе второй час
+   * двухчасовой пары выглядит свободным. Карта отдельная от hourRows, чтобы
+   * раскладка по часу старта осталась нетронутой.
+   */
+  const continuations = useMemo(() => {
+    const map = new Map<number, Todo[]>();
+    for (const t of scheduled) {
+      if (overdueIds.has(t.id)) continue;
+      for (const h of hoursCoveredAfterStart(t, endHour)) {
+        const arr = map.get(h) ?? [];
+        arr.push(t);
+        map.set(h, arr);
+      }
+    }
+    return map;
+  }, [scheduled, overdueIds, endHour]);
+
   const filled = scheduled.length - overdue.length;
 
   const ongoing = isToday
-    ? scheduled.find((t) => t.hour === nowHour && !isTodoDone(t, day) && !overdueIds.has(t.id))
+    ? scheduled.find((t) => {
+        const start = todoStartMin(t);
+        const end = todoEndMin(t);
+        return start !== null && end !== null && start <= nowMin && nowMin < end
+          && !isTodoDone(t, day) && !overdueIds.has(t.id);
+      })
     : undefined;
   const upcoming = isToday
     ? scheduled
-        .filter((t) => t.hour! > nowHour && !isTodoDone(t, day))
-        .sort((a, b) => a.hour! - b.hour!)[0]
+        .filter((t) => (todoStartMin(t) ?? -1) > nowMin && !isTodoDone(t, day))
+        .sort((a, b) => (todoStartMin(a) ?? 0) - (todoStartMin(b) ?? 0))[0]
     : undefined;
 
   /**
@@ -335,6 +366,7 @@ export default function TimelineSchedule({
               const isNow = isToday && h === nowHour;
               const routine = routineLabelAt(weekday, h);
               const rows = hourRows.get(h) ?? [];
+              const cont = continuations.get(h) ?? [];
               return (
                 <div
                   key={h}
@@ -355,7 +387,12 @@ export default function TimelineSchedule({
                   <div
                     className="flex min-h-[var(--hour-row)] min-w-0 flex-1 flex-col justify-center gap-1.5 px-2 py-2"
                   >
-                    {rows.length === 0 ? (
+                    {/* Продолжения задач, начавшихся раньше, — первыми и
+                        приглушённо: час занят, но карточка стоит выше. */}
+                    {cont.map((t) => (
+                      <ContinuationChip key={`cont-${t.id}`} todo={t} onOpen={() => openSheet(t)} />
+                    ))}
+                    {rows.length === 0 && cont.length === 0 ? (
                       <button
                         type="button"
                         onClick={() => openSheet(null, h)}
@@ -740,6 +777,28 @@ export default function TimelineSchedule({
  * подписью карточка перестаёт быть "пустым прямоугольником", контент
  * уже заполняет доступное место сам.
  */
+/**
+ * Продолжение задачи в часе, который она накрывает, но в котором не
+ * начиналась. Намеренно тише карточки: это не вторая задача, а хвост той,
+ * что стоит выше, — поэтому без чекбокса и без бейджа, только «до когда».
+ */
+function ContinuationChip({ todo, onOpen }: { todo: Todo; onOpen: () => void }) {
+  const end = todoEndMin(todo);
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="flex w-full items-center gap-2 rounded-xl border border-dashed border-[var(--color-border)] px-3 py-1.5 text-left text-[13px] text-[var(--color-fg-dim)] transition hover:border-[var(--color-border-strong)] hover:text-[var(--color-fg)]"
+    >
+      <span aria-hidden className="text-[var(--color-muted)]">↳</span>
+      <span className="min-w-0 flex-1 truncate">{todo.title}</span>
+      {end !== null && (
+        <span className="shrink-0 text-[12px] tabular-nums text-[var(--color-muted)]">до {fmtMin(end)}</span>
+      )}
+    </button>
+  );
+}
+
 function TimelineChip({
   todo,
   done,

@@ -691,7 +691,33 @@ export const useUserStore = create<UserState>()(
               }
             : s.history.durations;
 
+          // Карточка из почасового плана (actionId «todo:<id>», см.
+          // lib/planNow): «Сделал» ставит галочку в календаре, снятие —
+          // убирает. Иначе план и колода расходились бы: в колоде сделано,
+          // в календаре — нет. Префикс продублирован, а не импортирован:
+          // planNow сам импортирует стор, вышел бы цикл.
+          const todoId = task.actionId.startsWith("todo:")
+            ? task.actionId.slice("todo:".length)
+            : null;
+          const todos = todoId
+            ? s.todos.map((t) => {
+                if (t.id !== todoId) return t;
+                if (t.repeat) {
+                  if (t.doneDays.includes(task.date) === willComplete) return t;
+                  return {
+                    ...t,
+                    doneDays: willComplete
+                      ? [...t.doneDays, task.date]
+                      : t.doneDays.filter((d) => d !== task.date),
+                  };
+                }
+                if (t.done === willComplete) return t;
+                return { ...t, done: willComplete, completedAt: willComplete ? Date.now() : null };
+              })
+            : s.todos;
+
           return {
+            todos,
             plan: s.plan.map((t) =>
               t.id === id
                 ? {

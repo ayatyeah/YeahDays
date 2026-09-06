@@ -288,7 +288,7 @@ export default function HomeSection() {
   }
 
   return (
-    <div className="flex flex-1 flex-col lg:max-w-[760px]">
+    <div className="flex flex-1 flex-col">
       {/* Бренд-лого + название + стрик. На lg бренд прячем: он уже стоит в
           сайдбаре, а остальные разделы начинаются с обычного заголовка —
           главная не должна выглядеть иначе. Стрик и переключатель темы
@@ -334,6 +334,15 @@ export default function HomeSection() {
           {takenToday >= dailyGoal ? "План собран" : "Что сделаешь сегодня?"}
         </h1>
       </header>
+
+      {/* Тот же каркас .desk, что и у остальных разделов. Боковая колонка —
+          статус дня: полоски набора, ближайшая цель, подсказка маршрута,
+          сводка взятого. В DOM она стоит ПЕРВОЙ, потому что на телефоне
+          (где сетки нет) полоски и цель должны читаться до колоды. На lg
+          колонки меняются местами через order — колода слева, статус
+          справа, как в календаре и профиле. */}
+      <div className="desk">
+      <div className="desk-aside lg:order-2">
 
       {/* Индикатор набора плана */}
       <div className="mb-5 flex items-center gap-2">
@@ -384,6 +393,15 @@ export default function HomeSection() {
       {!activeTask && !routineBlock && (routine.anchor || routine.next) && (
         <RoutineHint anchor={routine.anchor} next={routine.next} />
       )}
+      </div>
+
+      {/* Основная колонка: колода или активная задача. Карточка колоды
+          растягивается на всю ширину контейнера (absolute inset-0), а
+          свайп-карточка шириной в метр не читается — поэтому потолок
+          880px здесь, а не на всём разделе. На 1440 основная колонка и так
+          уже 880, потолок не срабатывает; на 1920 остаётся небольшое поле
+          справа от карточки — цена за то, что карточка остаётся карточкой. */}
+      <div className="desk-main lg:order-1 lg:max-w-[880px]">
 
       {/* Колода — но только если нет незакрытого действия.
           Смысл гейта: взял — сделай. Иначе набирается список из десяти
@@ -419,7 +437,7 @@ export default function HomeSection() {
         ) : (
           <motion.div
             key="deck"
-            className="flex flex-1 flex-col"
+            className="flex flex-1 flex-col lg:flex-none"
             exit={{ opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.18 } }}
           >
             <SwipeDeck
@@ -482,6 +500,8 @@ export default function HomeSection() {
           + Добавить своё действие
         </button>
       )}
+      </div>
+      </div>
     </div>
   );
 }

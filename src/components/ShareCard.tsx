@@ -88,7 +88,7 @@ export default function ShareCard() {
   if (done === 0) return null; // делиться пока нечем
 
   return (
-    <section className="press rounded-3xl surface p-4">
+    <section className="press rounded-3xl surface p-5">
       <div className="flex items-start gap-3">
         <span className="text-[22px]" aria-hidden>
           <YgIcon name="sparkle" className="h-6 w-6" />

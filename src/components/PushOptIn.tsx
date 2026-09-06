@@ -108,7 +108,7 @@ export default function PushOptIn() {
   const on = state === "on";
 
   return (
-    <section className="rounded-3xl surface p-4">
+    <section className="rounded-3xl surface p-5">
       <div className="flex items-start gap-3">
         <span className="text-[22px]" aria-hidden>
           <YgIcon name="bell" className="h-6 w-6" />

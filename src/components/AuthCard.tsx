@@ -61,8 +61,8 @@ function SyncRow() {
     : failed
       ? "Нет связи с сервером"
       : lastSyncedAt
-        ? `Прогресс в аккаунте · ${timeAgo(lastSyncedAt)}`
-        : "Прогресс в аккаунте";
+        ? `Синхронизировано · ${timeAgo(lastSyncedAt)}`
+        : "Синхронизировано";
 
   return (
     <div className="mt-3 flex items-center gap-2.5 border-t border-[var(--color-border)] pt-3">
@@ -282,7 +282,7 @@ export default function AuthCard() {
   if (session?.user) {
     const u = session.user;
     return (
-      <section className="press rounded-3xl surface p-4">
+      <section className="press rounded-3xl surface p-5">
         <div className="flex items-center gap-3">
           {u.image ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -340,7 +340,7 @@ export default function AuthCard() {
   const hasProgress = hydrated && (done > 0 || streak > 0);
 
   return (
-    <section className="press rounded-3xl surface p-4">
+    <section className="press rounded-3xl surface p-5">
       <p className="text-[15px] font-semibold">
         {hasProgress ? "Прогресс только в этом браузере" : "Сохрани прогресс"}
       </p>

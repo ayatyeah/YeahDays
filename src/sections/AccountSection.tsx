@@ -80,7 +80,7 @@ export default function AccountSection() {
       </div>
 
       {/* Карточка пользователя */}
-      <section className="mt-3 flex items-center gap-4 rounded-3xl surface p-4">
+      <section className="mt-3 flex items-center gap-4 rounded-3xl surface p-5">
         <div className="canvas-slot h-28 w-24 shrink-0">
           <Avatar3D
             stats={stats}
@@ -136,7 +136,7 @@ export default function AccountSection() {
       </div>
 
       {/* Заморозки — страховка стрика */}
-      <section className="mt-3 flex items-center gap-3 rounded-3xl surface p-4">
+      <section className="mt-3 flex items-center gap-3 rounded-3xl surface p-5">
         <span className="text-[22px]" aria-hidden>
           <YgIcon name="snowflake" className="h-6 w-6 text-[var(--color-muted)]" />
         </span>

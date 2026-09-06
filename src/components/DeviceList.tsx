@@ -73,7 +73,7 @@ export default function DeviceList() {
   if (!devices || devices.length === 0) return null;
 
   return (
-    <section className="rounded-3xl surface p-4">
+    <section className="rounded-3xl surface p-5">
       <p className="text-[15px] font-semibold">
         Ваши устройства ({devices.length})
       </p>

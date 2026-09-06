@@ -9,8 +9,8 @@
   /* Граница — не серая линия, а «подсвеченный край»: полупрозрачный белый
      читается как отражение света, а не как нарисованный контур. Именно
      сплошные серые рамки делали интерфейс похожим на вайрфрейм. */
-  --color-border: rgba(255, 255, 255, 0.075);
-  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
   --color-muted: #71717f;
   --color-fg: #f2f2f5;
   --color-fg-dim: #a3a3b2;
@@ -39,9 +39,9 @@
   /* Шкала под iOS: 10 у ячеек вставных списков, 12 у кнопок и плиток,
      16 у карточек — те же меры, что у системных Настроек и Напоминаний. */
   --radius-lg: 0.5rem;     /* 8px  */
-  --radius-xl: 0.625rem;   /* 10px */
-  --radius-2xl: 0.75rem;   /* 12px */
-  --radius-3xl: 1rem;      /* 16px */
+  --radius-xl: 0.75rem;    /* 12px */
+  --radius-2xl: 0.875rem;  /* 14px */
+  --radius-3xl: 1.25rem;   /* 20px — воздушнее: карточка, а не плитка */
 }
 
 /**
@@ -59,8 +59,10 @@
   --color-bg-soft: #efeef5;
   --color-surface: #ffffff;
   --color-surface-2: #f1f0f7;
-  --color-border: rgba(20, 18, 40, 0.07);
-  --color-border-strong: rgba(20, 18, 40, 0.13);
+  /* Рамки почти невидимы: карточку держит тень, а не контур — так
+     поверхность «дышит», а не стоит в обводке. */
+  --color-border: rgba(20, 18, 40, 0.045);
+  --color-border-strong: rgba(20, 18, 40, 0.1);
   --color-muted: #83808f;
   --color-fg: #17151f;
   --color-fg-dim: #4c4959;
@@ -69,12 +71,14 @@
   /* Тени на белом фоне не могут быть тёмным полупрозрачным чёрным в тех
      же альфах, что и на чёрном фоне — иначе карточки выглядят грязными
      пятнами, а не лёгким подъёмом над поверхностью. */
-  --shadow-1: 0 1px 2px rgba(30, 20, 60, 0.045), 0 2px 8px rgba(30, 20, 60, 0.06);
-  --shadow-2: 0 2px 6px rgba(30, 20, 60, 0.05), 0 14px 32px rgba(30, 20, 60, 0.09);
+  --shadow-1: 0 1px 2px rgba(30, 20, 60, 0.03), 0 6px 20px rgba(30, 20, 60, 0.05);
+  --shadow-2: 0 2px 6px rgba(30, 20, 60, 0.04), 0 16px 40px rgba(30, 20, 60, 0.08);
   --shadow-3: 0 8px 22px rgba(30, 20, 60, 0.06), 0 26px 60px rgba(30, 20, 60, 0.12);
   /* тень вверх — для панели снизу (таб-бар): мягкий подъём вместо линии */
-  --shadow-up: 0 -1px 2px rgba(30, 20, 60, 0.04), 0 -10px 28px rgba(30, 20, 60, 0.1);
-  --shadow-down: 0 1px 2px rgba(30, 20, 60, 0.04), 0 10px 28px rgba(30, 20, 60, 0.08);
+  /* на светлом фоне тень едва угадывается — панель приподнята, а не
+     подчёркнута серой полосой */
+  --shadow-up: 0 -1px 1px rgba(30, 20, 60, 0.025), 0 -8px 24px rgba(30, 20, 60, 0.05);
+  --shadow-down: 0 1px 1px rgba(30, 20, 60, 0.025), 0 8px 24px rgba(30, 20, 60, 0.05);
 }
 
 /* Глубина: слоистые тени вместо одной размытой — так поверхность
@@ -214,6 +218,20 @@ h2 {
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
+}
+
+/* На телефонной ширине полос прокрутки нет вовсе, как в iOS: раздел и
+   вложенные списки (сетка часов, ленты) скроллятся без видимых дорожек —
+   две серые полосы рядом друг с другом читались как ошибка вёрстки. */
+@media (max-width: 1023px) {
+  .section-pane,
+  .section-pane * {
+    scrollbar-width: none;
+  }
+  .section-pane::-webkit-scrollbar,
+  .section-pane *::-webkit-scrollbar {
+    display: none;
+  }
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-border-strong);
@@ -497,7 +515,7 @@ select {
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .liquid-bar,
   .ios-bar {
-    background-color: color-mix(in srgb, var(--color-bg-soft) 82%, transparent);
+    background-color: color-mix(in srgb, var(--color-bg-soft) 76%, transparent);
     -webkit-backdrop-filter: saturate(180%) blur(18px);
     backdrop-filter: saturate(180%) blur(18px);
   }

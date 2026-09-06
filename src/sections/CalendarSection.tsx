@@ -227,7 +227,7 @@ export default function CalendarSection() {
         </div>
 
         <div className="mt-5 hidden lg:mt-0 lg:block desk-aside">
-          <section className="rounded-3xl surface p-4">
+          <section className="rounded-3xl surface p-5">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-[16px] font-semibold">
                 {MONTHS[view.m]} <span className="text-[var(--color-muted)]">{view.y}</span>
@@ -253,7 +253,7 @@ export default function CalendarSection() {
             </div>
           </section>
 
-          <section className="mt-5 rounded-3xl surface p-4 text-center">
+          <section className="mt-5 rounded-3xl surface p-5 text-center">
             <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">Стрик</p>
             <p className="mt-1 text-[34px] font-black leading-none tabular-nums"><YgIcon name="flame" className="inline h-7 w-7 align-[-3px] text-[var(--color-strength)]" /> {streak}</p>
             <p className="mt-1.5 text-[12px] text-[var(--color-muted)]">

@@ -70,7 +70,7 @@ export default function ProgressSection() {
           </div>
 
           {/* Уровень */}
-          <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
+          <section className="mb-5 rounded-3xl surface p-5 lg:mb-0">
             <div className="flex items-end justify-between">
               <div>
                 <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">

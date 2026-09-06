@@ -54,7 +54,7 @@ export default function EveningRetro() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 12 }}
-          className="press rounded-3xl surface p-4"
+          className="press rounded-3xl surface p-5"
         >
           {saved ? (
             <p className="py-2 text-center text-[15px] font-medium">

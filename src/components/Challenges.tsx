@@ -85,7 +85,7 @@ function ChallengeRow({
   const steps = setSize ? [10, setSize] : [1, 5];
 
   return (
-    <div className="press rounded-3xl surface p-4">
+    <div className="press rounded-3xl surface p-5">
       <div className="flex items-start gap-2">
         <span className="text-[16px]" style={{ color: stat.hex }} aria-hidden>
           <YgIcon name={stat.icon} className="h-[18px] w-[18px]" />

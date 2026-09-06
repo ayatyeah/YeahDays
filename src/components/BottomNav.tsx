@@ -43,9 +43,10 @@ export default function BottomNav() {
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 lg:hidden">
       <div className="pointer-events-auto mx-auto max-w-md">
         {/* Таб-бар по канону iOS: полупрозрачная панель (см. .liquid-bar),
-            иконка 25pt над подписью 10pt, активная вкладка отличается
-            только цветом — без черты и плашки. Высота 49pt + safe-area. */}
-        <div className="liquid-bar gpu-layer safe-b flex h-[calc(49px+env(safe-area-inset-bottom))] items-stretch px-1">
+            иконка над подписью, активная вкладка отличается только цветом —
+            без черты и плашки. Выше системных 49pt (58 + safe-area) и с
+            просветом между иконкой и подписью: панели нужен воздух. */}
+        <div className="liquid-bar gpu-layer safe-b flex h-[calc(58px+env(safe-area-inset-bottom))] items-stretch px-2">
           {NAV.map(({ tab: key, label, Icon }) => {
             const active = tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
@@ -62,12 +63,12 @@ export default function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 className={cn(
-                  "relative flex flex-1 flex-col items-center justify-center gap-[3px] pt-1.5 pb-0.5 text-[10px] font-medium transition-colors",
+                  "relative flex flex-1 flex-col items-center justify-center gap-1.5 pt-2 pb-1 text-[11px] font-medium transition-colors",
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
                 <span className="relative">
-                  <Icon className="h-[25px] w-[25px]" />
+                  <Icon className="h-6 w-6" />
                   {badge > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}

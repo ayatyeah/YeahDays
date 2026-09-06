@@ -303,7 +303,7 @@ export default function TimelineSchedule({
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
             Просрочено
           </p>
-          <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+          <div className="flex flex-wrap gap-2">
             {overdue.map((t) => (
               <TrayChip key={t.id} todo={t} onClick={() => openSheet(t)} />
             ))}
@@ -324,7 +324,7 @@ export default function TimelineSchedule({
               Добавь задачу — время можно назначить позже
             </button>
           ) : (
-            <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none", overflowY: "visible" }}>
+            <div className="flex flex-wrap gap-2">
               {unscheduled.map((t) => (
                 <TrayChip
                   key={t.id}
@@ -487,10 +487,14 @@ export default function TimelineSchedule({
         <button
           onClick={() => openSheet(null)}
           aria-label="Добавить задачу"
-          className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-[28px] font-semibold text-white shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5)] lg:bottom-8"
+          className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full font-semibold text-white shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5)] lg:bottom-8"
           style={{ background: "linear-gradient(155deg, var(--color-intelligence), color-mix(in srgb, var(--color-intelligence) 70%, black))" }}
         >
-          +
+          {/* SVG, а не символ «+»: у глифа своя высота строки, и он сидел
+              заметно ниже центра круга */}
+          <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden>
+            <path d="M12 5v14M5 12h14" />
+          </svg>
         </button>,
         document.body,
       )}
@@ -992,7 +996,7 @@ function TrayChip({
           justDraggedRef.current = false;
         });
       }}
-      className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[15px] font-medium active:cursor-grabbing"
+      className="glass-chip relative flex max-w-full shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[15px] font-medium active:cursor-grabbing"
       style={{
         // @ts-expect-error -- кастомное свойство для CSS в родителе
         "--chip-color": PRIORITY_COLOR[todo.priority],
@@ -1000,7 +1004,7 @@ function TrayChip({
       }}
     >
       <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: PRIORITY_COLOR[todo.priority] }} />
-      <span className="max-w-[140px] truncate">{todo.title}</span>
+      <span className="min-w-0 truncate">{todo.title}</span>
     </motion.button>
   );
 }

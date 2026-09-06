@@ -68,7 +68,7 @@ export default function PairingCodeCard() {
   const ss = Math.max(0, Math.floor((remainingMs % 60_000) / 1000));
 
   return (
-    <section className="mt-6 rounded-3xl surface p-4">
+    <section className="mt-6 rounded-3xl surface p-5">
       <p className="text-[15px] font-semibold">Код для внешнего сервиса</p>
       <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">Код на 10 минут для привязки стороннего сервиса</p>
 

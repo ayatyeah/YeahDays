@@ -62,7 +62,7 @@ export default function ProgressSection() {
         поэтому на мобильном (без lg:) всё складывается в исходном порядке.
       */}
       <div className="lg:flex lg:items-start lg:gap-6">
-        <div className="flex flex-col lg:flex-1 lg:gap-5">
+        <div className="flex flex-col lg:min-w-0 lg:flex-1 lg:gap-5">
           {/* Персонаж крупно */}
           <div className="canvas-slot mt-1 h-[320px] lg:mt-0">
             <Avatar3D stats={stats} level={level} className="h-full w-full" />

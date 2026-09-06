@@ -55,7 +55,12 @@ export default function BottomNav() {
   if (hydrated && !onboarded) return null;
 
   return (
-    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 lg:hidden">
+    <nav
+      className="pointer-events-none fixed inset-x-0 z-40 lg:hidden"
+      // bottom через переменную: StandaloneViewportFix сдвигает панель к
+      // настоящему низу экрана, когда iOS в PWA занизил вьюпорт (см. там)
+      style={{ bottom: "var(--nav-offset, 0px)" }}
+    >
       <div className="pointer-events-auto mx-auto max-w-md">
         {/* Таб-бар по канону iOS: полупрозрачная панель (см. .liquid-bar),
             иконка над подписью, активная вкладка отличается только цветом —

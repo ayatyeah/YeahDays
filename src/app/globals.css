@@ -177,6 +177,20 @@ body {
   height: 100%;
 }
 
+/* В установленном приложении долгое нажатие на кнопку, значок или
+   картинку не должно открывать системное меню «Скопировать / Сохранить
+   изображение» и выделять текст — это выдаёт веб-страницу с головой.
+   Поля ввода и обычный текст карточек остаются выделяемыми. */
+button,
+nav,
+img,
+[role="button"],
+.tap {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 body {
   background-color: var(--color-bg);
   -webkit-overflow-scrolling: touch;

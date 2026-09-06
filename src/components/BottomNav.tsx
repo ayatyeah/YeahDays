@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
 import type { TabKey } from "@/lib/nav";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   HomeIcon,
   TodayIcon,
@@ -34,6 +34,21 @@ export default function BottomNav() {
     () => selectToday(plan).filter((t) => !t.completed).length,
     [plan],
   );
+
+  /*
+   * Бейдж на иконке приложения: сколько взятых дел ещё не закрыто. На
+   * Android, десктопе и iOS 16.4+ установленное PWA умеет показывать число
+   * на иконке — тот же крючок возврата, что и у нативных приложений. В
+   * браузере API нет — тихо пропускаем.
+   */
+  useEffect(() => {
+    const n = navigator as Navigator & {
+      setAppBadge?: (n?: number) => Promise<void>;
+      clearAppBadge?: () => Promise<void>;
+    };
+    if (!n.setAppBadge) return;
+    void (pending > 0 ? n.setAppBadge(pending) : n.clearAppBadge?.()).catch(() => {});
+  }, [pending]);
 
   // Во время онбординга навигация скрыта — экран полноэкранный.
   // Прячем только когда точно знаем, что онбординг не пройден.

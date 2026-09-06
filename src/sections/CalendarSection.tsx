@@ -14,6 +14,7 @@ import {
 } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
+import { YgIcon } from "@/components/yg-icons";
 
 const MONTHS = [
   "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
@@ -127,7 +128,7 @@ export default function CalendarSection() {
         className={cn(
           // active:scale вместо framer-motion: 42 ячейки × подписка
           // на motion-значения заметно тормозили открытие календаря
-          "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[14px] transition-transform duration-100 active:scale-[0.92]",
+          "relative flex aspect-square flex-col items-center justify-center rounded-2xl border text-[15px] transition-transform duration-100 active:scale-[0.92]",
           isSel
             ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
             : "border-transparent hover:bg-[var(--color-surface)]",
@@ -176,21 +177,24 @@ export default function CalendarSection() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mb-4 flex items-center justify-between gap-2">
-        <div className="min-w-0">
-          <h1 className="truncate text-[22px] font-bold tracking-tight">
-            {dayLabel(selected, todayKey)}
-          </h1>
-          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
-            🔥 {streak} подряд · рекорд {best}
-          </p>
+      {/* Заголовок — большой, на своей строке (Large Title); кнопки дня
+          ушли на строку ниже. Раньше всё стояло в одну строку, и на 390px
+          дата обрезалась до «8 сентябр…», а стрик — до половины. */}
+      <header className="mb-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="ios-title truncate">{dayLabel(selected, todayKey)}</h1>
+            <p className="mt-1 text-[13px] text-[var(--color-muted)]">
+              <YgIcon name="flame" className="inline h-3.5 w-3.5 align-[-2px] text-[var(--color-strength)]" /> {streak} подряд · рекорд {best}
+            </p>
+          </div>
         </div>
-        <div className="flex shrink-0 gap-1.5">
+        <div className="mt-3 flex gap-1.5">
           <NavBtn onClick={() => setSelected((k) => shiftDay(k, -1))}>‹</NavBtn>
           {selected !== todayKey && (
             <button
               onClick={() => setSelected(todayKey)}
-              className="press flex h-9 items-center rounded-xl surface px-3 text-[13.5px] font-medium text-[var(--color-fg-dim)]"
+              className="press flex h-9 items-center rounded-xl surface px-3 text-[15px] font-medium text-[var(--color-fg-dim)]"
             >
               Сегодня
             </button>
@@ -201,16 +205,16 @@ export default function CalendarSection() {
           <button
             onClick={openMonth}
             aria-label="Посмотреть месяц"
-            className="press flex h-9 w-9 items-center justify-center rounded-xl surface text-[15px] lg:hidden"
+            className="press flex h-9 w-9 items-center justify-center rounded-xl surface text-[16px] lg:hidden"
           >
-            🗓️
+            <YgIcon name="calendar" className="h-[18px] w-[18px]" />
           </button>
         </div>
       </header>
 
       {/*
         lg:+: почасовой план дня слева (основное), постоянно видимый месяц
-        справа — на мобильном тот же месяц прячется за кнопкой 🗓️ в
+        справа — на мобильном тот же месяц прячется за кнопкой-календарём в
         модалке (см. выше), тут смысла его дублировать нет — узкий экран,
         а план дня и так требует прокрутки.
       */}
@@ -225,7 +229,7 @@ export default function CalendarSection() {
         <div className="mt-5 hidden lg:mt-0 lg:block desk-aside">
           <section className="rounded-3xl surface p-4">
             <div className="mb-3 flex items-center justify-between">
-              <p className="text-[15px] font-semibold">
+              <p className="text-[16px] font-semibold">
                 {MONTHS[view.m]} <span className="text-[var(--color-muted)]">{view.y}</span>
               </p>
               <div className="flex gap-1.5">
@@ -251,7 +255,7 @@ export default function CalendarSection() {
 
           <section className="mt-5 rounded-3xl surface p-4 text-center">
             <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">Стрик</p>
-            <p className="mt-1 text-3xl font-black leading-none tabular-nums">🔥 {streak}</p>
+            <p className="mt-1 text-[34px] font-black leading-none tabular-nums"><YgIcon name="flame" className="inline h-7 w-7 align-[-3px] text-[var(--color-strength)]" /> {streak}</p>
             <p className="mt-1.5 text-[12px] text-[var(--color-muted)]">
               Рекорд: {best} {best === 1 ? "день" : "дн."}
             </p>
@@ -261,7 +265,7 @@ export default function CalendarSection() {
 
       <Modal open={monthOpen} onClose={() => setMonthOpen(false)} title="Как идёт месяц">
         <div className="mb-3 flex items-center justify-between">
-          <p className="text-[15px] font-semibold">
+          <p className="text-[16px] font-semibold">
             {MONTHS[view.m]} <span className="text-[var(--color-muted)]">{view.y}</span>
           </p>
           <div className="flex gap-1.5">
@@ -285,12 +289,12 @@ export default function CalendarSection() {
         </div>
 
         <section className="mt-5">
-          <h2 className="mb-2.5 text-[14px] font-semibold text-[var(--color-fg-dim)]">
+          <h2 className="mb-2.5 text-[15px] font-semibold text-[var(--color-fg-dim)]">
             {selected === todayKey ? "Сегодня" : selected}
           </h2>
 
           {selectedTasks.length === 0 ? (
-            <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-7 text-center text-[14px] text-[var(--color-muted)]">
+            <p className="rounded-3xl border border-dashed border-[var(--color-border)] px-4 py-7 text-center text-[15px] text-[var(--color-muted)]">
               В этот день действий не было.
             </p>
           ) : (
@@ -324,7 +328,7 @@ function NavBtn({
     <motion.button
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
-      className="flex h-9 w-9 items-center justify-center rounded-xl surface text-lg text-[var(--color-fg-dim)]"
+      className="flex h-9 w-9 items-center justify-center rounded-xl surface text-[20px] text-[var(--color-fg-dim)]"
     >
       {children}
     </motion.button>

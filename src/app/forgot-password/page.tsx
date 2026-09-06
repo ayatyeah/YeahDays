@@ -6,7 +6,7 @@ import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
 
 const inputClass =
-  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
+  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
 
 /**
  * Публичная форма «забыли пароль». Сайт не шлёт email/SMS, поэтому это не
@@ -50,19 +50,19 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-[380px]">
         <div className="mb-8 flex flex-col items-center gap-3">
           <Logo glow className="h-10 w-auto" />
-          <h1 className="text-[20px] font-bold tracking-tight">Забыли пароль?</h1>
+          <h1 className="text-[22px] font-bold tracking-tight">Забыли пароль?</h1>
         </div>
 
         {sent ? (
           <div className="surface rounded-2xl p-4 text-center">
-            <p className="text-[14px] font-medium">Заявка отправлена</p>
-            <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="text-[15px] font-medium">Заявка отправлена</p>
+            <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
               Я свяжусь с тобой в Telegram и помогу восстановить доступ.
             </p>
           </div>
         ) : (
           <>
-            <p className="mb-5 text-[14px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="mb-5 text-[15px] leading-snug text-[var(--color-fg-dim)]">
               Автоматического сброса пароля нет — оставь контакты, и я поменяю
               пароль вручную и напишу тебе в Telegram.
             </p>
@@ -102,7 +102,7 @@ export default function ForgotPasswordPage() {
               />
 
               {error && (
-                <p className="text-[14px] text-[var(--color-strength)]">{error}</p>
+                <p className="text-[15px] text-[var(--color-strength)]">{error}</p>
               )}
 
               <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
           </>
         )}
 
-        <p className="mt-6 text-center text-[14px] text-[var(--color-muted)]">
+        <p className="mt-6 text-center text-[15px] text-[var(--color-muted)]">
           Вспомнил пароль?{" "}
           <Link href="/login" className="font-semibold text-[var(--color-fg)]">
             Войти

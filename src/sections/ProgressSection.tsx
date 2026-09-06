@@ -17,6 +17,7 @@ import {
 import { STAT_LIST, CATEGORIES, type CategoryKey } from "@/lib/domain";
 import { getLevelProgress, TIER_MILESTONES, tierForLevel } from "@/lib/leveling";
 import { cn } from "@/lib/cn";
+import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
 export default function ProgressSection() {
   const hydrated = useHydrated();
@@ -51,7 +52,7 @@ export default function ProgressSection() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="text-[26px] font-bold tracking-tight">Прогресс</h1>
+      <h1 className="ios-title text-[28px] font-bold tracking-tight">Прогресс</h1>
 
       {/*
         lg:+: два столбца, как на Today — широкий слева (персонаж, уровень,
@@ -67,9 +68,6 @@ export default function ProgressSection() {
           <div className="canvas-slot mt-1 h-[320px] lg:mt-0">
             <Avatar3D stats={stats} level={level} className="h-full w-full" />
           </div>
-          <p className="mb-4 mt-1 text-center text-[12px] text-[var(--color-muted)] lg:mb-0 lg:mt-0">
-            Тело меняется с уровнем — от новичка до легенды
-          </p>
 
           {/* Уровень */}
           <section className="mb-5 rounded-3xl surface p-4 lg:mb-0">
@@ -80,7 +78,7 @@ export default function ProgressSection() {
                 </p>
                 <p className="text-4xl font-black leading-none tabular-nums">{level}</p>
               </div>
-              <p className="text-[14px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
+              <p className="text-[15px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
                 {totalXp} XP
               </p>
             </div>
@@ -100,7 +98,7 @@ export default function ProgressSection() {
           {/* Ключевые метрики */}
           <section className="mb-6 grid grid-cols-3 gap-2.5 lg:mb-0">
             <Metric value={completed.length} label="Выполнено" />
-            <Metric value={streak} label="Стрик" accent="🔥" />
+            <Metric value={streak} label="Стрик" accent="flame" />
             <Metric value={activeDays.size} label="Активных дней" />
           </section>
         </div>
@@ -108,15 +106,15 @@ export default function ProgressSection() {
         <div className="flex flex-col desk-aside lg:gap-5">
           {/* Характеристики */}
           <section className="mb-6 lg:mb-0">
-            <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
+            <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
               Характеристики
             </h2>
             <div className="space-y-3.5">
               {STAT_LIST.map((s) => (
                 <div key={s.key}>
-                  <div className="mb-1.5 flex items-center justify-between text-[13.5px]">
+                  <div className="mb-1.5 flex items-center justify-between text-[15px]">
                     <span className="flex items-center gap-2 font-medium">
-                      <span style={{ color: s.hex }}>{s.icon}</span>
+                      <span className="flex" style={{ color: s.hex }}><YgIcon name={s.icon} className="h-4 w-4" /></span>
                       {s.label}
                     </span>
                     <span className="tabular-nums text-[var(--color-muted)]">
@@ -141,7 +139,7 @@ export default function ProgressSection() {
           {/* Категории */}
           {topCats.length > 0 && (
             <section className="mb-6 lg:mb-0">
-              <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
+              <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
                 Где ты растёшь
               </h2>
               <div className="space-y-2">
@@ -152,15 +150,15 @@ export default function ProgressSection() {
                       key={key}
                       className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-3.5 py-2.5"
                     >
-                      <span className="text-base">{c.icon}</span>
-                      <span className="flex-1 text-[14px] font-medium">{c.label}</span>
+                      <YgIcon name={c.icon} className="h-[18px] w-[18px]" />
+                      <span className="flex-1 text-[15px] font-medium">{c.label}</span>
                       <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
                         <div
                           className="h-full rounded-full bg-[var(--color-fg-dim)]"
                           style={{ width: `${(value / maxCat) * 100}%` }}
                         />
                       </div>
-                      <span className="w-10 text-right text-[12.5px] tabular-nums text-[var(--color-muted)]">
+                      <span className="w-10 text-right text-[13px] tabular-nums text-[var(--color-muted)]">
                         {value}
                       </span>
                     </div>
@@ -172,7 +170,7 @@ export default function ProgressSection() {
 
           {/* Эволюция */}
           <section className="mb-2 lg:mb-0">
-            <h2 className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
+            <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
               Эволюция
             </h2>
             <div className="space-y-2">
@@ -197,16 +195,16 @@ export default function ProgressSection() {
                           : "bg-[var(--color-surface-2)] text-[var(--color-muted)]",
                       )}
                     >
-                      {reached ? "✓" : m.level}
+                      {reached ? <YgIcon name="check" className="h-3.5 w-3.5" strokeWidth={2.4} /> : m.level}
                     </div>
                     <div className="flex-1">
-                      <p className="text-[14.5px] font-semibold">{m.label}</p>
+                      <p className="text-[16px] font-semibold">{m.label}</p>
                       <p className="text-[12px] text-[var(--color-muted)]">
                         с {m.level} уровня
                       </p>
                     </div>
                     {current && (
-                      <span className="text-[11.5px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
+                      <span className="text-[12px] font-semibold uppercase tracking-wide text-[var(--color-stability)]">
                         сейчас
                       </span>
                     )}
@@ -231,12 +229,12 @@ function Metric({
 }: {
   value: number;
   label: string;
-  accent?: string;
+  accent?: YgIconName;
 }) {
   return (
     <div className="press rounded-3xl surface px-3 py-4 text-center">
-      <p className="text-2xl font-bold tabular-nums">
-        {accent && <span className="mr-0.5 text-lg">{accent}</span>}
+      <p className="text-[28px] font-bold tabular-nums">
+        {accent && <YgIcon name={accent} className="mr-1 inline h-5 w-5 align-[-3px] text-[var(--color-strength)]" />}
         {value}
       </p>
       <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">{label}</p>

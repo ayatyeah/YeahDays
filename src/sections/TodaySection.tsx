@@ -26,12 +26,7 @@ import { currentSlot } from "@/lib/domain";
 import { trackEvent } from "@/lib/api";
 import { track } from "@/lib/analytics";
 import { useNavStore } from "@/store/useNavStore";
-
-const GREETING: Record<string, string> = {
-  morning: "Доброе утро",
-  afternoon: "Добрый день",
-  evening: "Добрый вечер",
-};
+import { YgIcon } from "@/components/yg-icons";
 
 export default function TodaySection() {
   const hydrated = useHydrated();
@@ -82,12 +77,7 @@ export default function TodaySection() {
   return (
     <div className="flex flex-1 flex-col">
       <header className="mb-1">
-        <p className="text-[14px] font-medium text-[var(--color-muted)]">
-          {GREETING[currentSlot()]}, {name}
-        </p>
-        <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
-          План на сегодня
-        </h1>
+        <h1 className="ios-title">План на сегодня</h1>
       </header>
 
       {/*
@@ -112,7 +102,7 @@ export default function TodaySection() {
                 <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                   Выполнено
                 </p>
-                <p className="mt-0.5 text-2xl font-bold leading-none tabular-nums">
+                <p className="mt-0.5 text-[28px] font-bold leading-none tabular-nums">
                   {done.length}
                   <span className="text-[var(--color-muted)]">/{today.length || DAILY_GOAL}</span>
                 </p>
@@ -121,7 +111,7 @@ export default function TodaySection() {
                 <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                   Уровень {progress.level}
                 </p>
-                <p className="mt-0.5 text-[14px] font-semibold tabular-nums">
+                <p className="mt-0.5 text-[15px] font-semibold tabular-nums">
                   <AnimatedNumber value={totalXp} /> XP
                 </p>
               </div>
@@ -146,18 +136,18 @@ export default function TodaySection() {
           {/* Список */}
           {today.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-2xl">
-                ✦
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-[28px]">
+                <YgIcon name="sparkle" className="h-7 w-7 text-[var(--color-muted)]" />
               </div>
-              <h2 className="text-lg font-bold tracking-tight">План пока пуст</h2>
-              <p className="mt-2 max-w-[270px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+              <h2 className="text-[20px] font-bold tracking-tight">План пока пуст</h2>
+              <p className="mt-2 max-w-[270px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
                 Впиши свои задачи ниже, или открой «Главную» и свайпни вправо
                 действия, которые берёшь на сегодня.
               </p>
               <button
                 type="button"
                 onClick={() => go("home")}
-                className="press mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)]"
+                className="press mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[15px] font-semibold text-[var(--color-bg)]"
               >
                 Открыть Главную
               </button>
@@ -183,7 +173,7 @@ export default function TodaySection() {
                     onClick={() => setShowDone((v) => !v)}
                     className="flex w-full items-center justify-between rounded-2xl surface px-4 py-3 text-left transition hover:bg-[var(--color-surface-2)]"
                   >
-                    <span className="text-[13.5px] font-semibold text-[var(--color-muted)]">
+                    <span className="text-[15px] font-semibold text-[var(--color-muted)]">
                       Выполнено: {done.length}
                     </span>
                     <span className="text-[13px] text-[var(--color-muted)]">
@@ -234,7 +224,7 @@ export default function TodaySection() {
                 className="pointer-events-none absolute inset-x-0 bottom-0 text-center"
               >
                 <span className="rounded-full bg-[var(--color-stability)]/15 px-3 py-1.5 text-[13px] font-semibold text-[var(--color-stability)]">
-                  День закрыт 🔥 стрик {streak}
+                  День закрыт <YgIcon name="flame" className="inline h-3.5 w-3.5 align-[-2px]" /> стрик {streak}
                 </span>
               </motion.div>
             )}

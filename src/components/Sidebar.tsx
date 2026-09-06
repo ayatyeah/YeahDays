@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { haptic, spring } from "@/lib/motion";
+import { haptic, indicatorTween } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
@@ -45,7 +45,7 @@ export default function Sidebar() {
     <nav className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">
       <Link href="/today" className="flex items-center gap-2.5 px-2">
         <Logo variant="white" className="h-7 w-auto" />
-        <span className="text-[15px] font-bold tracking-tight">YeahGrind</span>
+        <span className="text-[16px] font-bold tracking-tight">YeahGrind</span>
       </Link>
 
       <div className="mt-8 flex flex-col gap-1">
@@ -61,7 +61,7 @@ export default function Sidebar() {
               }}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "press relative flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-left text-[14px] font-medium transition",
+                "press relative flex items-center gap-3 rounded-2xl px-3.5 py-2.5 text-left text-[15px] font-medium transition",
                 active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)] hover:text-[var(--color-fg)]",
               )}
             >
@@ -76,7 +76,7 @@ export default function Sidebar() {
                 <motion.span
                   layoutId="sidebar-active"
                   className="absolute left-0 top-1/2 h-[18px] w-[3px] -translate-y-1/2 rounded-full bg-[var(--color-fg)]"
-                  transition={spring}
+                  transition={indicatorTween}
                 />
               )}
               <Icon className="h-[19px] w-[19px] shrink-0" />

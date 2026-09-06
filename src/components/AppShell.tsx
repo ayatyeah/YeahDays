@@ -15,7 +15,7 @@ import { useNavStore } from "@/store/useNavStore";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { haptic } from "@/lib/motion";
 import { cn } from "@/lib/cn";
-import { TABS, neighbourTab, type TabKey } from "@/lib/nav";
+import { TABS, TAB_LABEL, neighbourTab, type TabKey } from "@/lib/nav";
 
 /**
  * Оболочка приложения: пять разделов в одном экране.
@@ -85,6 +85,22 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   const exitFromRef = useRef<TabKey>(initialTab);
   /** Раздел, доигрывающий fade-out после переключения — см. эффект ниже и .section-pane-exiting в globals.css. */
   const [exitingTab, setExitingTab] = useState<TabKey | null>(null);
+
+  /**
+   * Компактная шапка, как navigation bar в iOS: пока раздел в самом верху,
+   * работает большой заголовок в контенте; прокрутил — сверху проявляется
+   * полупрозрачная полоса с названием раздела. Слушаем скролл активного
+   * раздела (каждый .section-pane скроллится сам), пассивно.
+   */
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const el = stageRef.current?.querySelector<HTMLElement>("[data-section-active]");
+    if (!el) return;
+    const read = () => setScrolled(el.scrollTop > 44);
+    read();
+    el.addEventListener("scroll", read, { passive: true });
+    return () => el.removeEventListener("scroll", read);
+  }, [tab]);
 
   /*
    * Раздел, с которого открылось приложение. Ставится ДО первой отрисовки:
@@ -162,7 +178,9 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     exitFromRef.current = tab;
     if (from === tab) return;
     setExitingTab(from);
-    const timer = window.setTimeout(() => setExitingTab(null), 200);
+    // 110 мс: старый раздел живёт ровно столько, сколько гаснет (100 мс),
+    // с запасом на кадр — чтобы прикрыть смену высоты рамки.
+    const timer = window.setTimeout(() => setExitingTab(null), 110);
     return () => window.clearTimeout(timer);
   }, [tab]);
 
@@ -174,10 +192,14 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     try {
       el.animate(
         [
-          { opacity: 1, transform: "translate3d(0, 0, 0)" },
-          { opacity: 0, transform: `translate3d(${dir * -20}px, 0, 0)` },
+          { opacity: 1 },
+          { opacity: 0 },
         ],
-        { duration: 190, easing: "cubic-bezier(0.4, 0, 1, 1)" },
+        // Чистый кроссфейд, без сдвига. Первая попытка ускорить — 70 мс с
+        // разъездом в противоположные стороны — читалась как вспышка:
+        // два движения навстречу за долю секунды глаз не успевает собрать в
+        // «переход». Гаснем 100 мс, ничего не двигаем.
+        { duration: 100, easing: "ease-out" },
       );
     } catch {
       // Web Animations нет — раздел просто исчезнет без анимации
@@ -192,10 +214,13 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     try {
       active.animate(
         [
-          { opacity: 0, transform: `translate3d(${dir * 26}px, 0, 0)` },
-          { opacity: 1, transform: "translate3d(0, 0, 0)" },
+          { opacity: 0 },
+          { opacity: 1 },
         ],
-        { duration: 190, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+        // Проявление 140 мс, без сдвига — см. уход выше. Быстрее 190,
+        // но уже не рывок: глазу хватает, чтобы прочитать это как смену
+        // экрана, а не как моргание.
+        { duration: 140, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
       );
     } catch {
       // Web Animations нет — раздел просто появится без анимации
@@ -326,6 +351,18 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   }
 
   return (
+    <>
+    <div
+      aria-hidden
+      className={cn(
+        "ios-bar pointer-events-none fixed inset-x-0 top-0 z-30 lg:hidden",
+        !scrolled && "ios-bar-off",
+      )}
+    >
+      <div className="mx-auto flex h-11 max-w-md items-center justify-center pt-[env(safe-area-inset-top)] box-content">
+        <span className="text-[17px] font-semibold tracking-[-0.01em]">{TAB_LABEL[tab]}</span>
+      </div>
+    </div>
     <div
       ref={stageRef}
       // relative — точка отсчёта для .section-pane-exiting (position:absolute,
@@ -378,5 +415,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
         );
       })}
     </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   motion,
   AnimatePresence,
@@ -26,6 +27,7 @@ import { categorizeTodo, fmtDuration, TODO_PRIORITY_XP } from "@/lib/todoCategor
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/motion";
 import { todoStartMin, todoEndMin, hoursCoveredAfterStart } from "@/lib/todoSpan";
+import { YgIcon } from "@/components/yg-icons";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
@@ -103,6 +105,19 @@ export default function TimelineSchedule({
   // Минуты, а не только час: двухчасовая лекция в 11:00 в 12:30 ещё идёт,
   // а сравнение по номеру часа считало бы её и не текущей, и просроченной.
   const nowMin = nowHour * 60 + new Date().getMinutes();
+
+  // Видна ли панель, в которой мы живём (см. комментарий у кнопки «+»).
+  // Пересчитываем на каждом рендере: смена вкладки в AppShell перерисовывает
+  // раздел, а offsetParent — самый дешёвый способ спросить у DOM «display:
+  // none у предка?» без подписки на navStore, которого на /manage нет.
+  const fabAnchorRef = useRef<HTMLSpanElement>(null);
+  const [fabVisible, setFabVisible] = useState(false);
+  useEffect(() => {
+    const el = fabAnchorRef.current;
+    // hidden у самого сторожка — display:none, поэтому смотрим на родителя
+    const visible = !!el?.parentElement && el.parentElement.offsetParent !== null;
+    if (visible !== fabVisible) setFabVisible(visible);
+  });
   const weekday = useMemo(() => new Date(`${day}T00:00:00`).getDay(), [day]);
 
   const onDay = useMemo(() => todos.filter((t) => isTodoOnDay(t, day)), [todos, day]);
@@ -266,17 +281,19 @@ export default function TimelineSchedule({
 
   return (
     <section className="mt-5">
-      <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[14px] font-semibold text-[var(--color-fg-dim)]">
-          Расписание дня
-        </h2>
+      <div className={`flex items-baseline justify-between ${expanded ? "mb-3" : ""}`}>
+        {/* В календаре заголовок не нужен: раздел и есть расписание.
+            В компактном виде («Сегодня») — короткая строка-переключатель. */}
         {compact && (
-          <button
-            onClick={() => setExpanded((v) => !v)}
-            className="text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
-          >
-            {expanded ? "свернуть" : `${filled || "—"} записей`}
-          </button>
+          <>
+            <h2 className="text-[15px] font-semibold text-[var(--color-fg-dim)]">Расписание</h2>
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+            >
+              {expanded ? "свернуть" : "показать"}
+            </button>
+          </>
         )}
       </div>
 
@@ -294,13 +311,15 @@ export default function TimelineSchedule({
         </div>
       )}
 
-      {!compact && (
+      {/* Лоток «Без часа» показываем, только когда в нём что-то есть:
+          пустая пунктирная плашка с подсказкой была шумом на каждом дне. */}
+      {!compact && unscheduled.length > 0 && (
         <div className="mb-3">
           <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">Без часа</p>
           {unscheduled.length === 0 ? (
             <button
               onClick={() => openSheet(null)}
-              className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-left text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+              className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-left text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
             >
               Добавь задачу — время можно назначить позже
             </button>
@@ -332,7 +351,7 @@ export default function TimelineSchedule({
           {!compact && isToday && (
             <div className="sticky top-2 z-10 mb-1 flex justify-center px-2">
               <div className="now-island flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-semibold text-white">
-                <span className="shrink-0 rounded-full bg-white/15 px-2 py-1 font-mono text-[12.5px] tabular-nums">
+                <span className="shrink-0 rounded-full bg-white/15 px-2 py-1 font-mono text-[13px] tabular-nums">
                   {String(new Date().getHours()).padStart(2, "0")}:
                   {String(new Date().getMinutes()).padStart(2, "0")}
                 </span>
@@ -342,7 +361,7 @@ export default function TimelineSchedule({
                       className="h-1.5 w-1.5 shrink-0 rounded-full"
                       style={{ background: PRIORITY_COLOR[ongoing.priority] }}
                     />
-                    <span className="truncate">Сейчас: {ongoing.title}</span>
+                    <span className="truncate">{ongoing.title}</span>
                   </>
                 ) : upcoming ? (
                   <>
@@ -351,12 +370,12 @@ export default function TimelineSchedule({
                       style={{ background: PRIORITY_COLOR[upcoming.priority] }}
                     />
                     <span className="truncate">
-                      Далее в {String(upcoming.hour).padStart(2, "0")}:
-                      {String(upcoming.minute ?? 0).padStart(2, "0")}: {upcoming.title}
+                      {String(upcoming.hour).padStart(2, "0")}:
+                      {String(upcoming.minute ?? 0).padStart(2, "0")} · {upcoming.title}
                     </span>
                   </>
                 ) : (
-                  <span className="truncate opacity-70">Свободно до конца дня</span>
+                  <span className="truncate opacity-70">Свободно</span>
                 )}
               </div>
             </div>
@@ -408,7 +427,7 @@ export default function TimelineSchedule({
                         type="button"
                         onClick={() => openSheet(null, h)}
                         className={cn(
-                          "flex h-full w-full items-center text-left text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]",
+                          "flex h-full w-full items-center text-left text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]",
                           // Пустых часов в дне большинство, и одинаковая
                           // серая надпись в каждом — основной источник шума
                           // на этом экране. На десктопе она появляется под
@@ -417,7 +436,10 @@ export default function TimelineSchedule({
                           !routine && "lg:opacity-0 lg:group-hover:opacity-100",
                         )}
                       >
-                        {routine ?? "Добавить задачу"}
+                        {/* На телефоне пустой час молчит: тап по строке и так
+                            добавляет задачу, а серая надпись в каждом часу
+                            была главным шумом экрана. На десктопе — под курсором. */}
+                        {routine ?? <span className="hidden lg:inline">Добавить задачу</span>}
                       </button>
                     ) : (
                       rows.map((t) => (
@@ -441,21 +463,36 @@ export default function TimelineSchedule({
       {expanded && (
         <button
           onClick={() => setShowNight((v) => !v)}
-          className="mt-2 w-full text-center text-[12.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+          className="mt-2 w-full text-center text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
         >
           {showNight ? "скрыть ночные часы" : "показать все 24 часа"}
         </button>
       )}
 
-      {!compact && (
+      {/*
+        Кнопка «+» — через портал в body, как Modal, и вот почему. У
+        .section-pane стоит transform, а transform на предке делает его
+        точкой отсчёта для position: fixed. Кнопка считала «низ» от низа
+        панели раздела, а панель уже поднята над нижней навигацией отступом
+        рамки — bottom прибавлялся второй раз, и на телефоне кнопка висела
+        посреди расписания.
+
+        Но разделы не размонтируются, а прячутся (display: none у панели), и
+        портал из такого раздела торчал бы на всех вкладках. Отсюда сторожок:
+        у элемента внутри скрытой панели offsetParent === null — тогда кнопку
+        не рисуем. На /manage панели нет — кнопка честно встаёт над навигацией.
+      */}
+      {!compact && <span ref={fabAnchorRef} className="hidden" aria-hidden />}
+      {!compact && fabVisible && createPortal(
         <button
           onClick={() => openSheet(null)}
           aria-label="Добавить задачу"
-          className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-[26px] font-semibold text-white shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5)] lg:bottom-8"
+          className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full text-[28px] font-semibold text-white shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5)] lg:bottom-8"
           style={{ background: "linear-gradient(155deg, var(--color-intelligence), color-mix(in srgb, var(--color-intelligence) 70%, black))" }}
         >
           +
-        </button>
+        </button>,
+        document.body,
       )}
 
       <Modal
@@ -467,7 +504,7 @@ export default function TimelineSchedule({
             <button
               type="button"
               onClick={() => setMode("edit")}
-              className="press shrink-0 rounded-xl bg-[var(--color-surface-2)] px-3.5 py-2 text-[14px] font-semibold transition hover:bg-[var(--color-border)]"
+              className="press shrink-0 rounded-xl bg-[var(--color-surface-2)] px-3.5 py-2 text-[15px] font-semibold transition hover:bg-[var(--color-border)]"
             >
               Изменить
             </button>
@@ -478,13 +515,13 @@ export default function TimelineSchedule({
           <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[19px]"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-[20px]"
                 style={{
                   background: `color-mix(in srgb, ${STATS[viewCategory.stat].color} 18%, var(--color-surface-2) 90%)`,
                 }}
                 aria-hidden
               >
-                {viewCategory.icon}
+                <YgIcon name={viewCategory.icon} className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1 pt-0.5">
                 <h3
@@ -506,7 +543,7 @@ export default function TimelineSchedule({
             </div>
 
             {viewingTodo.note && (
-              <p className="rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-[14.5px] leading-snug text-[var(--color-fg-dim)]">
+              <p className="rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-[16px] leading-snug text-[var(--color-fg-dim)]">
                 {viewingTodo.note}
               </p>
             )}
@@ -520,7 +557,8 @@ export default function TimelineSchedule({
                     : "—"
                 }
               />
-              <ViewMeta label="Длительность" value={fmtDuration(viewingTodo.duration ?? 60)} />
+              {/* «Длится», а не «Длительность»: длинная подпись вылезала из плитки на 390px. */}
+              <ViewMeta label="Длится" value={fmtDuration(viewingTodo.duration ?? 60)} />
               <ViewMeta label="Важность" value={PRIORITY_LABEL[viewingTodo.priority]} />
             </div>
 
@@ -530,11 +568,11 @@ export default function TimelineSchedule({
                 background: `color-mix(in srgb, ${STATS[viewCategory.stat].color} 12%, var(--color-surface-2) 92%)`,
               }}
             >
-              <span className="text-[22px]" aria-hidden>
-                {STATS[viewCategory.stat].icon}
-              </span>
+              <span className="flex" style={{ color: STATS[viewCategory.stat].color }} aria-hidden>
+          <YgIcon name={STATS[viewCategory.stat].icon} className="h-6 w-6" />
+        </span>
               <div>
-                <p className="text-[15px] font-bold" style={{ color: STATS[viewCategory.stat].color }}>
+                <p className="text-[16px] font-bold" style={{ color: STATS[viewCategory.stat].color }}>
                   +{viewXp} XP
                 </p>
                 <p className="text-[13px] text-[var(--color-fg-dim)]">
@@ -544,10 +582,10 @@ export default function TimelineSchedule({
             </div>
 
             <div className="flex items-center gap-2.5 rounded-2xl bg-[var(--color-surface-2)] px-4 py-3">
-              <span className="text-[16px]" aria-hidden>
-                🔥
+              <span className="text-[17px]" aria-hidden>
+                <YgIcon name="flame" className="h-4 w-4 text-[var(--color-strength)]" />
               </span>
-              <p className="text-[13.5px] font-medium text-[var(--color-fg-dim)]">
+              <p className="text-[15px] font-medium text-[var(--color-fg-dim)]">
                 {dayActive ? "Этот день уже в серии" : "Выполнение закроет этот день в серию"}
               </p>
             </div>
@@ -586,7 +624,7 @@ export default function TimelineSchedule({
             placeholder="Например: созвон с командой"
             maxLength={80}
             autoFocus
-            className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+            className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
           />
 
           <div>
@@ -597,7 +635,7 @@ export default function TimelineSchedule({
               placeholder="Подробности, которые не влезли в название"
               maxLength={1000}
               rows={3}
-              className="w-full resize-none rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-[14px] leading-snug outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+              className="w-full resize-none rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-[15px] leading-snug outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
             />
           </div>
 
@@ -631,7 +669,7 @@ export default function TimelineSchedule({
               <button
                 onClick={() => setFHour(undefined)}
                 className={cn(
-                  "shrink-0 rounded-xl border px-3.5 py-2.5 text-[13.5px] font-semibold transition",
+                  "shrink-0 rounded-xl border px-3.5 py-2.5 text-[15px] font-semibold transition",
                   fHour === undefined
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -644,7 +682,7 @@ export default function TimelineSchedule({
                   key={h}
                   onClick={() => setFHour(h)}
                   className={cn(
-                    "shrink-0 rounded-xl border px-3.5 py-2.5 text-[13.5px] font-semibold tabular-nums transition",
+                    "shrink-0 rounded-xl border px-3.5 py-2.5 text-[15px] font-semibold tabular-nums transition",
                     fHour === h
                       ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                       : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -665,7 +703,7 @@ export default function TimelineSchedule({
                     key={m}
                     onClick={() => setFMinute(m)}
                     className={cn(
-                      "rounded-xl border py-2.5 text-[13.5px] font-semibold tabular-nums transition",
+                      "rounded-xl border py-2.5 text-[15px] font-semibold tabular-nums transition",
                       fMinute === m
                         ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                         : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -705,7 +743,7 @@ export default function TimelineSchedule({
               onChange={(e) => setFDone(e.target.checked)}
               className="h-4 w-4 rounded accent-[var(--color-fg)]"
             />
-            <span className="text-[14px] text-[var(--color-fg-dim)]">Выполнено</span>
+            <span className="text-[15px] text-[var(--color-fg-dim)]">Выполнено</span>
           </label>
 
           <div className="flex gap-2.5 pt-1">
@@ -868,19 +906,19 @@ function TimelineChip({
         style={{ background: `color-mix(in srgb, ${statColor} 16%, transparent)` }}
         aria-hidden
       >
-        {cat.icon}
+        <YgIcon name={cat.icon} className="h-5 w-5" />
       </div>
       <div className="relative min-w-0 flex-1 text-left">
         <p
           className={cn(
-            "line-clamp-2 text-[14.5px] font-semibold leading-tight text-[var(--color-fg)]",
+            "line-clamp-2 text-[16px] font-semibold leading-tight text-[var(--color-fg)]",
             done && "text-[var(--color-muted)] line-through",
           )}
         >
           {todo.title}
         </p>
         <p
-          className="mt-0.5 truncate text-[12.5px] font-bold uppercase tracking-wide"
+          className="mt-0.5 truncate text-[13px] font-bold uppercase tracking-wide"
           style={{ color: statColor }}
         >
           {STATS[cat.stat].label}
@@ -900,13 +938,13 @@ function TimelineChip({
       >
         <span
           className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-full border-2 text-[14px] font-bold transition",
+            "flex h-7 w-7 items-center justify-center rounded-full border-2 text-[15px] font-bold transition",
             done
               ? "border-[var(--color-stability)] bg-[var(--color-stability)] text-white"
               : "border-[var(--color-border-strong)] text-transparent",
           )}
         >
-          ✓
+          <YgIcon name="check" className="h-3.5 w-3.5" strokeWidth={2.4} />
         </span>
       </button>
     </motion.div>
@@ -954,7 +992,7 @@ function TrayChip({
           justDraggedRef.current = false;
         });
       }}
-      className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[13.5px] font-medium active:cursor-grabbing"
+      className="glass-chip relative flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-[15px] font-medium active:cursor-grabbing"
       style={{
         // @ts-expect-error -- кастомное свойство для CSS в родителе
         "--chip-color": PRIORITY_COLOR[todo.priority],
@@ -977,8 +1015,8 @@ function SheetLabel({ children }: { children: React.ReactNode }) {
 function ViewMeta({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl bg-[var(--color-surface-2)] px-2.5 py-2.5 text-center">
-      <p className="text-[11.5px] uppercase tracking-wider text-[var(--color-muted)]">{label}</p>
-      <p className="mt-0.5 truncate text-[13.5px] font-semibold">{value}</p>
+      <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">{label}</p>
+      <p className="mt-0.5 truncate text-[15px] font-semibold">{value}</p>
     </div>
   );
 }

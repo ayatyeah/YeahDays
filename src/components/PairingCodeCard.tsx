@@ -69,16 +69,12 @@ export default function PairingCodeCard() {
 
   return (
     <section className="mt-6 rounded-3xl surface p-4">
-      <p className="text-[14px] font-semibold">Код для внешнего сервиса</p>
-      <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
-        Разово привяжи аккаунт к стороннему сервису (например, StudyLoop):
-        получи код и введи его в настройках этого сервиса. Действует 10 минут,
-        одноразовый.
-      </p>
+      <p className="text-[15px] font-semibold">Код для внешнего сервиса</p>
+      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">Код на 10 минут для привязки стороннего сервиса</p>
 
       {pair && !expired ? (
         <div className="mt-3 flex items-center gap-2">
-          <code className="min-w-0 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-center text-[16px] font-bold tracking-[0.2em]">
+          <code className="min-w-0 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-center text-[17px] font-bold tracking-[0.2em]">
             {pair.code}
           </code>
           <Button size="sm" onClick={() => void copy()}>

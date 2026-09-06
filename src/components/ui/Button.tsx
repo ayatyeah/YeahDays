@@ -32,9 +32,10 @@ const variants: Record<Variant, string> = {
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-10 px-4 text-[14px] rounded-xl",
-  md: "h-12 px-5 text-[14px] rounded-2xl",
-  lg: "h-14 px-6 text-[15px] rounded-2xl",
+  // высоты 36/44/50 и кегли 15/16/17 — как у системных кнопок iOS
+  sm: "h-9 px-4 text-[16px] rounded-xl",
+  md: "h-11 px-5 text-[17px] rounded-2xl",
+  lg: "h-[50px] px-6 text-[17px] rounded-2xl",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

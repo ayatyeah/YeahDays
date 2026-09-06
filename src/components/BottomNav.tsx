@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { haptic, spring, springSnappy } from "@/lib/motion";
+import { haptic, springSnappy } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
@@ -42,12 +42,10 @@ export default function BottomNav() {
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 lg:hidden">
       <div className="pointer-events-auto mx-auto max-w-md">
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-[var(--color-border-strong)] to-transparent" />
-        {/* Сплошная панель. Раньше здесь было матовое стекло с блюром —
-            убрано вместе с остальным: на телефоне backdrop-filter
-            пересчитывался на каждый кадр скролла. Читаемость держит
-            плотный фон, отделение от контента — тонкая линия выше. */}
-        <div className="liquid-bar gpu-layer safe-b flex items-stretch px-1.5 pb-0.5 pt-2">
+        {/* Таб-бар по канону iOS: полупрозрачная панель (см. .liquid-bar),
+            иконка 25pt над подписью 10pt, активная вкладка отличается
+            только цветом — без черты и плашки. Высота 49pt + safe-area. */}
+        <div className="liquid-bar gpu-layer safe-b flex h-[calc(49px+env(safe-area-inset-bottom))] items-stretch px-1">
           {NAV.map(({ tab: key, label, Icon }) => {
             const active = tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
@@ -64,27 +62,12 @@ export default function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 className={cn(
-                  "press relative flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-1.5 text-[11px] font-medium",
+                  "relative flex flex-1 flex-col items-center justify-center gap-[3px] pt-1.5 pb-0.5 text-[10px] font-medium transition-colors",
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
-                {/* Черта над активной вкладкой вместо залитой плашки —
-                    см. тот же приём в Sidebar. «Переезжает» между вкладками
-                    одним объектом (layoutId), а не гаснет и загорается:
-                    глаз читает это как движение. */}
-                {active && (
-                  <motion.span
-                    layoutId="nav-active"
-                    className="absolute -top-1 left-1/2 h-[3px] w-7 -translate-x-1/2 rounded-full bg-[var(--color-fg)]"
-                    transition={spring}
-                  />
-                )}
-                <motion.span
-                  className="relative"
-                  animate={{ scale: active ? 1.06 : 1, y: active ? -1 : 0 }}
-                  transition={springSnappy}
-                >
-                  <Icon className="h-[22px] w-[22px]" />
+                <span className="relative">
+                  <Icon className="h-[25px] w-[25px]" />
                   {badge > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
@@ -95,7 +78,7 @@ export default function BottomNav() {
                       {badge}
                     </motion.span>
                   )}
-                </motion.span>
+                </span>
                 <span>{label}</span>
               </button>
             );

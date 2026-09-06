@@ -117,20 +117,20 @@ export default function LevelUpOverlay() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="rounded-full bg-[var(--color-surface)] px-4 py-2 text-[14px] font-bold"
+                className="rounded-full bg-[var(--color-surface)] px-4 py-2 text-[15px] font-bold"
               >
                 Форма: {state.milestone}
               </motion.p>
             )}
 
-            <p className="mt-3 max-w-[260px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="mt-3 max-w-[260px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
               Твой персонаж стал сильнее. Так выглядит накопленный
               результат маленьких действий.
             </p>
 
             <button
               onClick={close}
-              className="press mt-6 h-12 rounded-2xl bg-[var(--color-fg)] px-7 text-[15px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
+              className="press mt-6 h-12 rounded-2xl bg-[var(--color-fg)] px-7 text-[16px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
             >
               Продолжить
             </button>

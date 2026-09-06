@@ -26,6 +26,14 @@ export const springSoft: Transition = {
   damping: 30,
 };
 
+/**
+ * Ровный твин для индикатора активного пункта навигации. Пружина здесь
+ * оказалась лишней: резкая (600/30) дёргалась, основная (380/32) доигрывала
+ * дольше самого перехода. 180 мс с ease-out — черта встаёт вместе с
+ * разделом и не пружинит.
+ */
+export const indicatorTween: Transition = { type: "tween", duration: 0.18, ease: [0.22, 1, 0.36, 1] };
+
 /** Резкая, для мелких откликов (галочки, счётчики). */
 export const springSnappy: Transition = {
   type: "spring",

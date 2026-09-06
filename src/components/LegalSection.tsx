@@ -17,8 +17,8 @@ export function Section({
 }) {
   return (
     <section className={accent ? "marble mt-6 rounded-3xl p-5" : "mt-7"}>
-      <h2 className="text-[16px] font-bold">{title}</h2>
-      <p className="mt-2.5 text-[14px] leading-relaxed text-[var(--color-fg-dim)]">
+      <h2 className="text-[17px] font-bold">{title}</h2>
+      <p className="mt-2.5 text-[15px] leading-relaxed text-[var(--color-fg-dim)]">
         {children}
       </p>
     </section>

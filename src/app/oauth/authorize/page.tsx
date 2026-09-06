@@ -51,8 +51,8 @@ export default async function OAuthAuthorizePage({
   if (!valid) {
     return (
       <Card>
-        <h1 className="text-[20px] font-bold tracking-tight">Ссылка недействительна</h1>
-        <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
+        <h1 className="text-[22px] font-bold tracking-tight">Ссылка недействительна</h1>
+        <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
           Сервис прислал неверный или устаревший запрос на подключение.
           Попробуй начать привязку заново со стороны сервиса.
         </p>
@@ -62,10 +62,10 @@ export default async function OAuthAuthorizePage({
 
   return (
     <Card>
-      <h1 className="text-[20px] font-bold tracking-tight">
+      <h1 className="text-[22px] font-bold tracking-tight">
         Подключить «{key.service}»?
       </h1>
-      <p className="mt-2 text-[14px] leading-snug text-[var(--color-fg-dim)]">
+      <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
         Сервис сможет добавлять задачи в твой план и засчитывать выполненные
         активности так же, как в самом YeahGrind — на аккаунт{" "}
         <strong>{session.user.email ?? session.user.name}</strong>.

@@ -17,6 +17,7 @@ import {
   type Impact,
 } from "@/lib/domain";
 import { cn } from "@/lib/cn";
+import { YgIcon } from "@/components/yg-icons";
 
 const DIFFICULTIES: Difficulty[] = [1, 2, 3, 4, 5];
 const ENERGIES: EnergyLevel[] = ["low", "medium", "high"];
@@ -85,7 +86,7 @@ export default function CreateTaskModal() {
           placeholder="Например: 30 минут гитары"
           maxLength={70}
           autoFocus
-          className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+          className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
         />
 
         {/* Категория */}
@@ -103,7 +104,7 @@ export default function CreateTaskModal() {
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                <span>{c.icon}</span>
+                <YgIcon name={c.icon} className="h-4 w-4" />
                 {c.label}
               </button>
             ))}
@@ -119,7 +120,7 @@ export default function CreateTaskModal() {
                 key={d}
                 onClick={() => setDifficulty(d)}
                 className={cn(
-                  "rounded-xl border py-2 text-[14px] font-bold tabular-nums transition",
+                  "rounded-xl border py-2 text-[15px] font-bold tabular-nums transition",
                   difficulty === d
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
@@ -178,10 +179,11 @@ export default function CreateTaskModal() {
           className="flex items-center justify-between rounded-2xl px-4 py-3"
           style={{ background: `${stat.hex}14` }}
         >
-          <span className="text-[13.5px] font-medium" style={{ color: stat.hex }}>
-            {stat.icon} {stat.label}
+          <span className="inline-flex items-center gap-1.5 text-[15px] font-medium" style={{ color: stat.hex }}>
+            <YgIcon name={stat.icon} className="h-4 w-4" />
+      {stat.label}
           </span>
-          <span className="text-[15px] font-bold tabular-nums" style={{ color: stat.hex }}>
+          <span className="text-[16px] font-bold tabular-nums" style={{ color: stat.hex }}>
             +{xp} XP
           </span>
         </div>
@@ -193,7 +195,7 @@ export default function CreateTaskModal() {
             onChange={(e) => setAddToToday(e.target.checked)}
             className="h-4 w-4 rounded accent-[var(--color-fg)]"
           />
-          <span className="text-[14px] text-[var(--color-fg-dim)]">
+          <span className="text-[15px] text-[var(--color-fg-dim)]">
             Сразу добавить в план на сегодня
           </span>
         </label>

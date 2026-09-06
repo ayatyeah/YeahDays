@@ -6,13 +6,14 @@ import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
 import { track } from "@/lib/analytics";
+import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
-const SCORES = [
-  { v: 1, icon: "😞", label: "Тяжко" },
-  { v: 2, icon: "😕", label: "Так себе" },
-  { v: 3, icon: "😐", label: "Норм" },
-  { v: 4, icon: "🙂", label: "Хорошо" },
-  { v: 5, icon: "🔥", label: "Отлично" },
+const SCORES: { v: number; icon: YgIconName; label: string }[] = [
+  { v: 1, icon: "face-sad", label: "Тяжко" },
+  { v: 2, icon: "face-meh", label: "Так себе" },
+  { v: 3, icon: "face-neutral", label: "Норм" },
+  { v: 4, icon: "face-smile", label: "Хорошо" },
+  { v: 5, icon: "flame", label: "Отлично" },
 ];
 
 /** С какого часа предлагаем подвести итоги. */
@@ -56,15 +57,15 @@ export default function EveningRetro() {
           className="press rounded-3xl surface p-4"
         >
           {saved ? (
-            <p className="py-2 text-center text-[14px] font-medium">
-              Записал. До завтра 👋
+            <p className="py-2 text-center text-[15px] font-medium">
+              Записал. До завтра
             </p>
           ) : (
             <>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-[14px] font-semibold">Как прошёл день?</p>
-                  <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
+                  <p className="text-[15px] font-semibold">Как прошёл день?</p>
+                  <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
                     {doneToday > 0
                       ? `Закрыто сегодня: ${doneToday}. Одно касание — и день записан.`
                       : "Даже если ничего не вышло — отметить честно полезнее, чем пропустить."}
@@ -75,7 +76,7 @@ export default function EveningRetro() {
                   aria-label="Закрыть"
                   className="shrink-0 rounded-lg px-2 py-1 text-[13px] text-[var(--color-muted)]"
                 >
-                  ✕
+                  <YgIcon name="close" className="h-4 w-4" />
                 </button>
               </div>
 
@@ -94,10 +95,10 @@ export default function EveningRetro() {
                       "hover:border-[var(--color-fg-dim)]",
                     )}
                   >
-                    <span className="text-lg" aria-hidden>
-                      {s.icon}
+                    <span className="text-[20px]" aria-hidden>
+                      <YgIcon name={s.icon} className="h-6 w-6" />
                     </span>
-                    <span className="text-[11.5px] text-[var(--color-muted)]">
+                    <span className="text-[12px] text-[var(--color-muted)]">
                       {s.label}
                     </span>
                   </button>

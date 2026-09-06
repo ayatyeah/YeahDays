@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/motion";
+import { YgIcon } from "@/components/yg-icons";
 
 interface Device {
   id: string;
@@ -73,20 +74,20 @@ export default function DeviceList() {
 
   return (
     <section className="rounded-3xl surface p-4">
-      <p className="text-[14px] font-semibold">
+      <p className="text-[15px] font-semibold">
         Ваши устройства ({devices.length})
       </p>
-      <p className="mt-1 text-[12.5px] leading-snug text-[var(--color-muted)]">
+      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
         Уведомления приходят на все включённые ниже.
       </p>
-      <div className="mt-3 flex flex-col gap-1.5">
+      <div className="inset-group mt-3">
         {devices.map((d) => (
           <div
             key={d.id}
-            className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface-2)] px-3 py-2.5"
+            className="inset-row py-2.5"
           >
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[13.5px] font-medium">{d.label}</p>
+              <p className="truncate text-[15px] font-medium">{d.label}</p>
               <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
                 {d.enabled ? "включено" : "выключено"} · {timeAgo(d.updatedAt)}
               </p>
@@ -114,10 +115,10 @@ export default function DeviceList() {
                 onClick={() => setConfirmId(d.id)}
                 aria-label={`Удалить устройство ${d.label}`}
                 className={cn(
-                  "shrink-0 rounded-xl px-2 py-1.5 text-[16px] text-[var(--color-muted)] transition active:scale-90",
+                  "shrink-0 rounded-xl px-2 py-1.5 text-[17px] text-[var(--color-muted)] transition active:scale-90",
                 )}
               >
-                ✕
+                <YgIcon name="close" className="h-4 w-4" />
               </button>
             )}
           </div>

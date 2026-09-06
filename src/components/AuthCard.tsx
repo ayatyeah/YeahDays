@@ -12,6 +12,7 @@ import { useSyncStatus, timeAgo } from "@/store/useSyncStatus";
 import { cn } from "@/lib/cn";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import { YgIcon } from "@/components/yg-icons";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -80,7 +81,7 @@ function SyncRow() {
       <button
         onClick={() => void syncNow?.()}
         disabled={busy || !syncNow}
-        className="shrink-0 rounded-lg px-2 py-1 text-[12.5px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
+        className="shrink-0 rounded-lg px-2 py-1 text-[13px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
       >
         {failed ? "Повторить" : "Обновить"}
       </button>
@@ -153,7 +154,7 @@ function ChangePasswordRow() {
 }
 
 const passwordInputClass =
-  "h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
+  "h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
 
 function ChangePasswordModal({
   open,
@@ -208,7 +209,7 @@ function ChangePasswordModal({
     <Modal open={open} onClose={onClose} title={hasPassword ? "Сменить пароль" : "Задать пароль"}>
       {done ? (
         <div className="space-y-3">
-          <p className="text-[14.5px] text-[var(--color-fg-dim)]">Пароль обновлён.</p>
+          <p className="text-[16px] text-[var(--color-fg-dim)]">Пароль обновлён.</p>
           <Button variant="primary" className="w-full" onClick={onClose}>
             Готово
           </Button>
@@ -240,7 +241,7 @@ function ChangePasswordModal({
             placeholder="Повтори новый пароль"
             className={passwordInputClass}
           />
-          {error && <p className="text-[13.5px] text-[var(--color-strength)]">{error}</p>}
+          {error && <p className="text-[15px] text-[var(--color-strength)]">{error}</p>}
           <div className="flex gap-2.5">
             <Button className="flex-1" onClick={onClose}>
               Отмена
@@ -292,12 +293,12 @@ export default function AuthCard() {
               referrerPolicy="no-referrer"
             />
           ) : (
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-2)] text-lg font-bold">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-2)] text-[20px] font-bold">
               {(u.name ?? u.email ?? "?").slice(0, 1).toUpperCase()}
             </div>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[14px] font-semibold">
+            <p className="truncate text-[15px] font-semibold">
               {u.name ?? "Аккаунт"}
             </p>
             <p className="truncate text-[13px] text-[var(--color-muted)]">
@@ -306,7 +307,7 @@ export default function AuthCard() {
           </div>
           <button
             onClick={() => signOut()}
-            className="shrink-0 rounded-xl px-3 py-2 text-[13.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+            className="shrink-0 rounded-xl px-3 py-2 text-[15px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
           >
             Выйти
           </button>
@@ -318,15 +319,17 @@ export default function AuthCard() {
 
         {/* Разовые подтверждения, что вход реально что-то сделал */}
         {movedEvents ? (
-          <p className="mt-2 text-[12.5px] leading-snug text-[var(--color-fg-dim)]">
-            ✓ Перенесли {movedEvents}{" "}
+          <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+            <YgIcon name="check" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" strokeWidth={2.2} />
+            Перенесли {movedEvents}{" "}
             {plural(movedEvents, "действие", "действия", "действий")} с этого
             устройства в аккаунт
           </p>
         ) : null}
         {pulledRemote ? (
-          <p className="mt-2 text-[12.5px] leading-snug text-[var(--color-fg-dim)]">
-            ✓ Загрузили прогресс с другого устройства
+          <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
+            <YgIcon name="check" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" strokeWidth={2.2} />
+            Загрузили прогресс с другого устройства
           </p>
         ) : null}
       </section>
@@ -338,7 +341,7 @@ export default function AuthCard() {
 
   return (
     <section className="press rounded-3xl surface p-4">
-      <p className="text-[14px] font-semibold">
+      <p className="text-[15px] font-semibold">
         {hasProgress ? "Прогресс только в этом браузере" : "Сохрани прогресс"}
       </p>
       <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
@@ -363,7 +366,7 @@ export default function AuthCard() {
           setBusy(true);
           signIn("google");
         }}
-        className="mt-3 flex h-11 w-full items-center justify-center gap-2.5 rounded-2xl bg-white text-[14px] font-semibold text-[#1f1f1f] transition active:scale-[0.99] disabled:opacity-60"
+        className="mt-3 flex h-11 w-full items-center justify-center gap-2.5 rounded-2xl bg-white text-[15px] font-semibold text-[#1f1f1f] transition active:scale-[0.99] disabled:opacity-60"
       >
         <GoogleIcon className="h-5 w-5" />
         Войти через Google

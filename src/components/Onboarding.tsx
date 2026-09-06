@@ -7,6 +7,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
 import { cn } from "@/lib/cn";
 import Logo from "@/components/Logo";
+import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
 /**
  * Первый запуск. Задаёт тон продукта и собирает минимум, который реально
@@ -18,10 +19,10 @@ import Logo from "@/components/Logo";
 
 const STEPS = 4;
 
-const VALUE_PROPS = [
-  { icon: "🎴", title: "Колода, а не список", text: "Свайпай действия под своё состояние — берёшь или пропускаешь." },
-  { icon: "🧠", title: "Подстраивается под тебя", text: "Чем больше свайпов, тем точнее ежедневная подборка." },
-  { icon: "🧍", title: "Персонаж растёт с тобой", text: "Каждое выполненное действие делает его сильнее." },
+const VALUE_PROPS: { icon: YgIconName; title: string; text: string }[] = [
+  { icon: "cards", title: "Колода, а не список", text: "Свайпай действия под своё состояние — берёшь или пропускаешь." },
+  { icon: "bulb", title: "Подстраивается под тебя", text: "Чем больше свайпов, тем точнее ежедневная подборка." },
+  { icon: "person", title: "Персонаж растёт с тобой", text: "Каждое выполненное действие делает его сильнее." },
 ];
 
 export default function Onboarding() {
@@ -121,7 +122,7 @@ export default function Onboarding() {
                 <h1 className="mt-5 text-[34px] font-black leading-none tracking-tight">
                   YeahGrind
                 </h1>
-                <p className="mt-3 max-w-[300px] text-[16px] leading-snug text-[var(--color-fg-dim)]">
+                <p className="mt-3 max-w-[300px] text-[17px] leading-snug text-[var(--color-fg-dim)]">
                   Одно небольшое действие в день делает тебя лучшей версией
                   себя.
                 </p>
@@ -132,9 +133,9 @@ export default function Onboarding() {
                     key={v.title}
                     className="flex items-center gap-3.5 rounded-2xl bg-[var(--color-surface)] px-4 py-3"
                   >
-                    <span className="text-2xl">{v.icon}</span>
+                    <YgIcon name={v.icon} className="h-7 w-7" />
                     <div className="min-w-0">
-                      <p className="text-[14.5px] font-semibold">{v.title}</p>
+                      <p className="text-[16px] font-semibold">{v.title}</p>
                       <p className="text-[13px] leading-snug text-[var(--color-muted)]">
                         {v.text}
                       </p>
@@ -148,10 +149,10 @@ export default function Onboarding() {
           {step === 1 && (
             <Step key="name">
               <div className="flex flex-1 flex-col justify-center">
-                <h1 className="text-[30px] font-bold leading-tight tracking-tight">
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
                   Как тебя называть?
                 </h1>
-                <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
                   Чтобы обращаться по-человечески, а не «пользователь».
                 </p>
                 <input
@@ -170,10 +171,10 @@ export default function Onboarding() {
           {step === 2 && (
             <Step key="focus">
               <div className="flex flex-1 flex-col justify-center">
-                <h1 className="text-[30px] font-bold leading-tight tracking-tight">
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
                   Что качаем в первую очередь?
                 </h1>
-                <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
                   Можно выбрать несколько — подстрою колоду. Всегда можно
                   поменять в профиле.
                 </p>
@@ -194,12 +195,12 @@ export default function Onboarding() {
                         style={active ? { borderColor: s.hex } : undefined}
                       >
                         <span
-                          className="flex h-9 w-9 items-center justify-center rounded-xl text-lg"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-[20px]"
                           style={{ background: `${s.hex}1f`, color: s.hex }}
                         >
-                          {s.icon}
+                          <YgIcon name={s.icon} className="h-5 w-5" />
                         </span>
-                        <span className="mt-1 text-[14px] font-semibold">
+                        <span className="mt-1 text-[15px] font-semibold">
                           {s.label}
                         </span>
                         <span className="text-[12px] leading-tight text-[var(--color-muted)]">
@@ -216,10 +217,10 @@ export default function Onboarding() {
           {step === 3 && (
             <Step key="tasks">
               <div className="flex flex-1 flex-col">
-                <h1 className="text-[30px] font-bold leading-tight tracking-tight">
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
                   Что нужно сделать?
                 </h1>
-                <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
                   Впиши свои задачи сам — хоть одну, хоть все на сегодня.
                   Можно и пропустить, добавишь позже.
                 </p>
@@ -235,7 +236,7 @@ export default function Onboarding() {
                     }}
                     placeholder="Например: позвонить в банк"
                     maxLength={120}
-                    className="h-14 min-w-0 flex-1 rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-5 text-[15px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
+                    className="h-14 min-w-0 flex-1 rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-5 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
                   />
                   <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -256,15 +257,15 @@ export default function Onboarding() {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-4 py-3"
                       >
-                        <span className="min-w-0 flex-1 truncate text-[14px]">
+                        <span className="min-w-0 flex-1 truncate text-[15px]">
                           {t}
                         </span>
                         <button
                           onClick={() => removeTask(i)}
-                          className="shrink-0 text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
+                          className="shrink-0 text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
                           aria-label="Убрать"
                         >
-                          ✕
+                          <YgIcon name="close" className="h-4 w-4" />
                         </button>
                       </motion.li>
                     ))}
@@ -292,9 +293,9 @@ export default function Onboarding() {
           whileTap={{ scale: 0.97 }}
           disabled={!canNext}
           onClick={next}
-          className="h-14 flex-1 rounded-2xl bg-[var(--color-fg)] text-[15px] font-semibold text-[var(--color-bg)] transition hover:opacity-90 disabled:opacity-40"
+          className="h-14 flex-1 rounded-2xl bg-[var(--color-fg)] text-[16px] font-semibold text-[var(--color-bg)] transition hover:opacity-90 disabled:opacity-40"
         >
-          {step === 0 ? "Начать" : step === STEPS - 1 ? "Погнали 🚀" : "Далее"}
+          {step === 0 ? "Начать" : step === STEPS - 1 ? "Погнали" : "Далее"}
         </motion.button>
       </div>
 

@@ -2,7 +2,8 @@
 
 import { motion } from "framer-motion";
 import { ENERGY_LABEL, type DailyMood, type EnergyLevel } from "@/lib/domain";
-import { cn } from "@/lib/cn";
+import Segmented from "@/components/ui/Segmented";
+import type { YgIconName } from "@/components/yg-icons";
 
 /**
  * Ежедневный чек-ин.
@@ -10,15 +11,20 @@ import { cn } from "@/lib/cn";
  * Это не «настройки» — это вход в продукт. Два вопроса за 3 секунды,
  * которые превращают generic-список в подборку под текущее состояние.
  * Без них персонализация была бы фикцией.
+ *
+ * Оба вопроса — сегмент-контролы, как в системных экранах iOS: один
+ * выбор из ряда, ползунок переезжает на ответ. Раньше это были три и
+ * четыре отдельные плитки с рамками — занимали пол-экрана и читались как
+ * карточки, а не как переключатель.
  */
 
-const ENERGY_OPTIONS: { key: EnergyLevel; icon: string; hint: string }[] = [
-  { key: "low", icon: "🌙", hint: "Выжат" },
-  { key: "medium", icon: "☁️", hint: "Норма" },
-  { key: "high", icon: "⚡", hint: "Заряжен" },
+const ENERGY_OPTIONS: { key: EnergyLevel; icon: YgIconName; label: string }[] = [
+  { key: "low", icon: "moon", label: ENERGY_LABEL.low },
+  { key: "medium", icon: "cloud", label: ENERGY_LABEL.medium },
+  { key: "high", icon: "bolt", label: ENERGY_LABEL.high },
 ];
 
-const MINUTES = [10, 20, 30, 60];
+const MINUTES = [10, 20, 30, 60].map((m) => ({ key: m, label: String(m), sub: "мин" }));
 
 interface CheckInProps {
   mood: DailyMood;
@@ -36,87 +42,44 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
       className="flex flex-1 flex-col justify-center"
     >
       <div className="mb-8">
-        <p className="text-sm font-medium text-[var(--color-muted)]">
+        <p className="text-[16px] font-medium text-[var(--color-muted)]">
           Привет, {name}
         </p>
-        <h1 className="mt-1.5 text-[30px] font-bold leading-tight tracking-tight">
-          Как ты сегодня?
-        </h1>
-        <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
+        <h1 className="ios-title mt-1">Как ты сегодня?</h1>
+        <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
           Два ответа — и я подберу действия под твоё состояние,
           а не абстрактный список.
         </p>
       </div>
 
       {/* Энергия */}
-      <section className="mb-7">
-        <p className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
-          Сколько сил?
-        </p>
-        <div className="grid grid-cols-3 gap-2.5">
-          {ENERGY_OPTIONS.map((o) => {
-            const active = mood.energy === o.key;
-            return (
-              <motion.button
-                key={o.key}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onChange({ energy: o.key })}
-                className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-3xl border-2 py-5 transition",
-                  active
-                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
-                    : "border-transparent bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)]",
-                )}
-              >
-                <span className="text-2xl">{o.icon}</span>
-                <span
-                  className={cn(
-                    "text-[13px] font-semibold",
-                    active
-                      ? "text-[var(--color-fg)]"
-                      : "text-[var(--color-muted)]",
-                  )}
-                >
-                  {ENERGY_LABEL[o.key]}
-                </span>
-              </motion.button>
-            );
-          })}
-        </div>
+      <section className="mb-6">
+        <p className="inset-title">Сколько сил?</p>
+        <Segmented
+          id="energy"
+          size="lg"
+          options={ENERGY_OPTIONS}
+          value={mood.energy}
+          onChange={(energy) => onChange({ energy })}
+        />
       </section>
 
       {/* Время */}
       <section className="mb-9">
-        <p className="mb-3 text-[14px] font-semibold text-[var(--color-fg-dim)]">
-          Сколько минут готов вложить?
-        </p>
-        <div className="grid grid-cols-4 gap-2.5">
-          {MINUTES.map((m) => {
-            const active = mood.minutes === m;
-            return (
-              <motion.button
-                key={m}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onChange({ minutes: m })}
-                className={cn(
-                  "rounded-2xl border-2 py-3.5 text-center transition",
-                  active
-                    ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
-                    : "border-transparent bg-[var(--color-surface)] hover:bg-[var(--color-surface-2)]",
-                )}
-              >
-                <span className="block text-lg font-bold tabular-nums">{m}</span>
-                <span className="text-[11.5px] text-[var(--color-muted)]">мин</span>
-              </motion.button>
-            );
-          })}
-        </div>
+        <p className="inset-title">Сколько минут готов вложить?</p>
+        <Segmented
+          id="minutes"
+          size="lg"
+          options={MINUTES}
+          value={mood.minutes}
+          onChange={(minutes) => onChange({ minutes })}
+        />
       </section>
 
       <motion.button
-        whileTap={{ scale: 0.97 }}
+        whileTap={{ scale: 0.98, opacity: 0.85 }}
         onClick={onDone}
-        className="h-14 rounded-2xl bg-[var(--color-fg)] text-[15px] font-semibold text-[var(--color-bg)] transition hover:opacity-90"
+        className="h-[50px] rounded-2xl bg-[var(--color-fg)] text-[17px] font-semibold text-[var(--color-bg)] transition hover:opacity-90"
       >
         Показать действия на сегодня
       </motion.button>

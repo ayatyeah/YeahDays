@@ -26,18 +26,10 @@ import { currentSlot, dateKey, xpForAction, type Action } from "@/lib/domain";
 import { useTimeSlot, SLOT_LABEL } from "@/lib/useTimeSlot";
 import { useRoutineNow } from "@/lib/useRoutineBlock";
 import { DAY_NAME, type RoutineBlock } from "@/lib/routine";
-import { nextGoal, type GoalKind } from "@/lib/milestone";
+import { fmtMin } from "@/lib/todoSpan";
 import { haptic, springSoft, springBouncy } from "@/lib/motion";
 import type { ScoredAction } from "@/lib/recommendation";
-
-/** Значок ближайшей цели по её типу. */
-const GOAL_ICON: Record<GoalKind, string> = {
-  green: "🟢",
-  day: "🎯",
-  evolution: "✨",
-  level: "⭐",
-  streak: "🔥",
-};
+import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
 /**
  * Обернуть маршрутное действие в карточку колоды. Оно не проходит через
@@ -108,27 +100,6 @@ export default function HomeSection() {
    * возврата: конкретный следующий шаг вместо абстрактного прогресса.
    * Пока день не собран — тянет закрыть день; после — к эволюции и уровню.
    */
-  const goal = useMemo(() => {
-    const day = dateKey();
-    // ближайший к зелёному из активных сегодня челленджей
-    let toGreenDay: number | null = null;
-    for (const c of challenges) {
-      if (!isChallengeActive(c, day)) continue;
-      const count = c.log[day] ?? 0;
-      if (count < c.green) {
-        const left = c.green - count;
-        toGreenDay = toGreenDay == null ? left : Math.min(toGreenDay, left);
-      }
-    }
-    return nextGoal({
-      totalXp: selectTotalXp(plan, todos),
-      takenToday,
-      dailyGoal,
-      streak,
-      toGreenDay,
-    });
-  }, [plan, todos, challenges, takenToday, dailyGoal, streak]);
-
   const [deck, setDeck] = useState<ScoredAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
@@ -158,7 +129,7 @@ export default function HomeSection() {
    * по расписанию», а «лень — вот полегче». Ниже остаётся обычная подборка,
    * если по плану ничего не откликнулось.
    */
-  const routine = useRoutineNow();
+  const routine = useRoutineNow(todos);
   const routineBlock = routine.work;
   const fullDeck = useMemo(() => {
     if (!routineBlock?.main) return visibleDeck;
@@ -166,9 +137,16 @@ export default function HomeSection() {
     const slot = SLOT_LABEL[currentSlot()];
     const dayName = DAY_NAME[new Date().getDay()];
 
+    // У задач плана границы поминутные — подпись «06:30–08:00» полезнее
+    // общего «воскресенье, утро»: видно, сколько на неё отведено.
+    const when =
+      routineBlock.startMin !== undefined && routineBlock.endMin !== undefined
+        ? `${fmtMin(routineBlock.startMin)}–${fmtMin(routineBlock.endMin)}`
+        : `${dayName}, ${slot}`;
+
     const cards: ScoredAction[] = [];
     if (!taken.has(routineBlock.main.id)) {
-      cards.push(routineScored(routineBlock.main, `По плану · ${dayName}, ${slot}`));
+      cards.push(routineScored(routineBlock.main, `По плану · ${when}`));
     }
     for (const alt of routineBlock.analogs ?? []) {
       if (!taken.has(alt.id)) {
@@ -298,7 +276,7 @@ export default function HomeSection() {
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5 lg:hidden">
           <Logo variant="white" className="h-7 w-auto" />
-          <span className="text-[19px] font-extrabold tracking-tight">
+          <span className="text-[20px] font-extrabold tracking-tight">
             YeahGrind
           </span>
         </div>
@@ -311,13 +289,13 @@ export default function HomeSection() {
             >
               {/* Огонь живой — лёгкое «дыхание» намекает, что серия горит */}
               <motion.span
-                className="text-sm"
+                className="text-[15px]"
                 animate={{ scale: [1, 1.15, 1], rotate: [0, -6, 0] }}
                 transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
               >
-                🔥
+                <YgIcon name="flame" className="h-4 w-4 text-[var(--color-strength)]" />
               </motion.span>
-              <span className="text-sm font-bold tabular-nums">{streak}</span>
+              <span className="text-[15px] font-bold tabular-nums">{streak}</span>
             </motion.div>
           )}
           <ThemeToggle />
@@ -326,13 +304,7 @@ export default function HomeSection() {
 
       {/* Шапка: прогресс дня */}
       <header className="mb-4">
-        <p className="text-[14px] font-medium text-[var(--color-muted)]">
-          {/* Показываем слот: подборка привязана ко времени суток, и без
-              подписи это невидимая механика — человек не понимает,
-              почему вечером карточки другие, чем утром. */}
-          Сегодня · {SLOT_LABEL[slot]}
-        </p>
-        <h1 className="mt-0.5 text-[26px] font-bold leading-tight tracking-tight">
+        <h1 className="ios-title">
           {takenToday >= dailyGoal ? "План собран" : "Что сделаешь сегодня?"}
         </h1>
       </header>
@@ -367,27 +339,6 @@ export default function HomeSection() {
         </span>
       </div>
 
-      {/* Ближайшая цель — «осталось чуть-чуть». Ключ по тексту, чтобы строка
-          мягко переанимировалась в момент, когда веха меняется. */}
-      <AnimatePresence mode="wait">
-        {goal && (
-          <motion.div
-            key={goal.text}
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.22 }}
-            className="mb-5 -mt-2 flex items-center gap-2"
-          >
-            <span className="text-[14px]" aria-hidden>
-              {GOAL_ICON[goal.kind]}
-            </span>
-            <span className="text-[13.5px] font-medium text-[var(--color-fg-dim)]">
-              {goal.text}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Подсказка маршрута, когда работы по плану сейчас нет: час обеда,
           сна, отдыха или пауза между блоками. Без неё колода в такой момент
@@ -474,10 +425,10 @@ export default function HomeSection() {
               className="press flex w-full items-center justify-between rounded-2xl surface px-4 py-3.5 text-left transition hover:bg-[var(--color-surface-2)]"
             >
               <div className="min-w-0">
-                <p className="text-[14px] font-semibold">
-                  В плане на сегодня: {takenToday}
+                <p className="text-[15px] font-semibold">
+                  В плане: {takenToday}
                 </p>
-                <p className="mt-0.5 truncate text-[12.5px] text-[var(--color-muted)]">
+                <p className="mt-0.5 truncate text-[13px] text-[var(--color-muted)]">
                   {today
                     .slice(0, 2)
                     .map((t) => t.snapshot.title)
@@ -497,7 +448,7 @@ export default function HomeSection() {
       {!(useOwnActionsOnly && customActions.length === 0) && (
         <button
           onClick={() => openCreate()}
-          className="mt-2.5 text-center text-[13.5px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+          className="mt-2.5 text-center text-[15px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
         >
           + Добавить своё действие
         </button>
@@ -509,12 +460,12 @@ export default function HomeSection() {
 }
 
 /** Значок якоря по его подписи — чтобы «сейчас обед» читалось с одного взгляда. */
-function anchorIcon(label: string): string {
-  if (/обед/i.test(label)) return "🍽";
-  if (/сон/i.test(label)) return "😴";
-  if (/завтрак/i.test(label)) return "🍳";
-  if (/отдых|восстановл/i.test(label)) return "☕";
-  return "🕘";
+function anchorIcon(label: string): YgIconName {
+  if (/обед/i.test(label)) return "meal";
+  if (/сон/i.test(label)) return "moon";
+  if (/завтрак/i.test(label)) return "meal";
+  if (/отдых|восстановл/i.test(label)) return "coffee";
+  return "clock";
 }
 
 /**
@@ -531,7 +482,11 @@ function RoutineHint({
   anchor: RoutineBlock | null;
   next: RoutineBlock | null;
 }) {
-  const nextTime = next ? `${String(next.start).padStart(2, "0")}:00` : null;
+  const nextTime = next
+    ? next.startMin !== undefined
+      ? fmtMin(next.startMin)
+      : `${String(next.start).padStart(2, "0")}:00`
+    : null;
   return (
     <motion.div
       initial={{ opacity: 0, y: -4 }}
@@ -539,14 +494,14 @@ function RoutineHint({
       transition={{ duration: 0.22 }}
       className="mb-4 flex items-center gap-3 rounded-2xl surface px-4 py-3"
     >
-      <span className="text-[18px]" aria-hidden>
-        {anchor ? anchorIcon(anchor.label) : "🗒"}
+      <span className="text-[20px]" aria-hidden>
+        <YgIcon name={anchor ? anchorIcon(anchor.label) : "note"} className="h-5 w-5 text-[var(--color-muted)]" />
       </span>
       <div className="min-w-0">
-        <p className="text-[14px] font-semibold">
+        <p className="text-[15px] font-semibold">
           {anchor ? `Сейчас по плану — ${anchor.label.toLowerCase()}` : "Пауза в плане"}
         </p>
-        <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--color-muted)]">
+        <p className="mt-0.5 text-[13px] leading-snug text-[var(--color-muted)]">
           {next && nextTime
             ? `Дальше в ${nextTime} · ${next.main!.title}`
             : "На сегодня по плану всё — а колода ниже всегда открыта"}
@@ -564,19 +519,19 @@ function DeckNoOwnActions({ onAdd }: { onAdd: () => void }) {
       className="flex flex-1 flex-col items-center justify-center px-6 text-center"
     >
       <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-2xl">
-          ✎
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-[28px]">
+          <YgIcon name="pencil" className="h-7 w-7 text-[var(--color-muted)]" />
         </div>
       </div>
-      <h2 className="text-lg font-bold tracking-tight">Колода пока пуста</h2>
-      <p className="mt-2 max-w-[280px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+      <h2 className="text-[20px] font-bold tracking-tight">Колода пока пуста</h2>
+      <p className="mt-2 max-w-[280px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
         Встроенный набор действий выключен — колода собирается только из
         того, что добавишь сам. Добавь первое действие, и оно появится тут.
       </p>
       <motion.button
         onClick={onAdd}
         whileTap={{ scale: 0.96 }}
-        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
+        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[15px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
       >
         + Добавить своё действие
       </motion.button>
@@ -599,19 +554,19 @@ function DeckEmpty({ onRefresh }: { onRefresh: () => void }) {
           animate={{ scale: [1, 1.35, 1], opacity: [0.5, 0, 0.5] }}
           transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-2xl">
-          ✦
+        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-[28px]">
+          <YgIcon name="sparkle" className="h-7 w-7 text-[var(--color-muted)]" />
         </div>
       </div>
-      <h2 className="text-lg font-bold tracking-tight">Ты разобрал колоду</h2>
-      <p className="mt-2 max-w-[280px] text-[14px] leading-snug text-[var(--color-fg-dim)]">
+      <h2 className="text-[20px] font-bold tracking-tight">Ты разобрал колоду</h2>
+      <p className="mt-2 max-w-[280px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
         Прошёл всю сегодняшнюю подборку. Собрать новую — движок учтёт свайпы
         и подберёт иначе.
       </p>
       <motion.button
         onClick={onRefresh}
         whileTap={{ scale: 0.96 }}
-        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[14px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
+        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[15px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
       >
         Новая подборка
       </motion.button>

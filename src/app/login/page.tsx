@@ -31,7 +31,7 @@ function GoogleIcon({ className }: { className?: string }) {
 }
 
 const inputClass =
-  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
+  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
 
 export default function LoginPage() {
   return (
@@ -71,11 +71,11 @@ function LoginForm() {
       <div className="w-full max-w-[380px]">
         <div className="mb-8 flex flex-col items-center gap-3">
           <Logo glow className="h-10 w-auto" />
-          <h1 className="text-[20px] font-bold tracking-tight">Вход</h1>
+          <h1 className="text-[22px] font-bold tracking-tight">Вход</h1>
         </div>
 
         {googleFirst && (
-          <p className="mb-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-center text-[14px] leading-snug text-[var(--color-fg-dim)]">
+          <p className="mb-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-center text-[15px] leading-snug text-[var(--color-fg-dim)]">
             Для этого email ещё нет аккаунта — сначала зарегистрируйся, а
             Google привяжешь после в профиле.
           </p>
@@ -100,7 +100,7 @@ function LoginForm() {
           />
 
           {error && (
-            <p className="text-[14px] text-[var(--color-strength)]">{error}</p>
+            <p className="text-[15px] text-[var(--color-strength)]">{error}</p>
           )}
 
           <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
@@ -109,7 +109,7 @@ function LoginForm() {
 
           <Link
             href="/forgot-password"
-            className="text-center text-[13.5px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+            className="text-center text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
           >
             Забыли пароль?
           </Link>
@@ -127,13 +127,13 @@ function LoginForm() {
             setBusy(true);
             void signIn("google", { callbackUrl });
           }}
-          className="flex h-13 w-full items-center justify-center gap-2.5 rounded-2xl bg-white text-[14px] font-semibold text-[#1f1f1f] transition active:scale-[0.99] disabled:opacity-60"
+          className="flex h-13 w-full items-center justify-center gap-2.5 rounded-2xl bg-white text-[15px] font-semibold text-[#1f1f1f] transition active:scale-[0.99] disabled:opacity-60"
         >
           <GoogleIcon className="h-5 w-5" />
           Продолжить с Google
         </button>
 
-        <p className="mt-6 text-center text-[14px] text-[var(--color-muted)]">
+        <p className="mt-6 text-center text-[15px] text-[var(--color-muted)]">
           Ещё нет аккаунта?{" "}
           <Link href="/register" className="font-semibold text-[var(--color-fg)]">
             Зарегистрироваться

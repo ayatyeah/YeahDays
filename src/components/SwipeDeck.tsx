@@ -95,9 +95,11 @@ export default function SwipeDeck({
         </AnimatePresence>
       </div>
 
-      {/* Кнопки-дублёры свайпа (доступность + desktop) */}
+      {/* Кнопки-дублёры свайпа (доступность + desktop). Подсказки
+          «свайпни / ← мимо · беру →» между ними нет: крестик и галочка
+          говорят сами, а лишняя строка под колодой отвлекала. */}
       {!exhausted && (
-        <div className="mt-5 flex items-center justify-center gap-5">
+        <div className="mt-5 flex items-center justify-center gap-16">
           <DeckButton
             label="Не сейчас"
             color="#cf8578"
@@ -111,14 +113,6 @@ export default function SwipeDeck({
             />
           </DeckButton>
 
-          <div className="text-center">
-            <p className="text-[12px] font-medium text-[var(--color-muted)]">
-              Свайпни карточку
-            </p>
-            <p className="mt-0.5 text-[11.5px] text-[var(--color-muted)]/60">
-              ← мимо · беру →
-            </p>
-          </div>
 
           <DeckButton
             label="Беру"

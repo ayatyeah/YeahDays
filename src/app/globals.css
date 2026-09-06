@@ -25,8 +25,10 @@
   --color-health: #c2818f;
 
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* На Apple-устройствах — системный SF (-apple-system): приложение
+     читается как своё для iOS. Везде остальное — Inter, как и было. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter),
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
   /* Скругления. Переопределяем шкалу Tailwind целиком, а не правим
      rounded-* в трёхстах местах: так и уже написанное становится строже, и
@@ -34,10 +36,12 @@
      от стандартных значений — форма остаётся мягкой, но перестаёт быть
      «подушечной», что вместе с матовыми поверхностями и даёт более
      собранный вид. rounded-full не трогаем: круг должен остаться кругом. */
-  --radius-lg: 0.375rem;   /* 8px → 6px  */
-  --radius-xl: 0.5rem;     /* 12px → 8px  */
-  --radius-2xl: 0.75rem;   /* 16px → 12px */
-  --radius-3xl: 1.125rem;  /* 24px → 18px */
+  /* Шкала под iOS: 10 у ячеек вставных списков, 12 у кнопок и плиток,
+     16 у карточек — те же меры, что у системных Настроек и Напоминаний. */
+  --radius-lg: 0.5rem;     /* 8px  */
+  --radius-xl: 0.625rem;   /* 10px */
+  --radius-2xl: 0.75rem;   /* 12px */
+  --radius-3xl: 1rem;      /* 16px */
 }
 
 /**
@@ -68,6 +72,9 @@
   --shadow-1: 0 1px 2px rgba(30, 20, 60, 0.045), 0 2px 8px rgba(30, 20, 60, 0.06);
   --shadow-2: 0 2px 6px rgba(30, 20, 60, 0.05), 0 14px 32px rgba(30, 20, 60, 0.09);
   --shadow-3: 0 8px 22px rgba(30, 20, 60, 0.06), 0 26px 60px rgba(30, 20, 60, 0.12);
+  /* тень вверх — для панели снизу (таб-бар): мягкий подъём вместо линии */
+  --shadow-up: 0 -1px 2px rgba(30, 20, 60, 0.04), 0 -10px 28px rgba(30, 20, 60, 0.1);
+  --shadow-down: 0 1px 2px rgba(30, 20, 60, 0.04), 0 10px 28px rgba(30, 20, 60, 0.08);
 }
 
 /* Глубина: слоистые тени вместо одной размытой — так поверхность
@@ -76,6 +83,8 @@
   --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.22);
   --shadow-2: 0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.3);
   --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.5), 0 24px 64px rgba(0, 0, 0, 0.42);
+  --shadow-up: 0 -1px 2px rgba(0, 0, 0, 0.35), 0 -12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-down: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 32px rgba(0, 0, 0, 0.4);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -134,6 +143,31 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Двойной тап Safari по умолчанию пытается распознать как зум и ради этого
+   придерживает клик. Для кнопок, ссылок и полей это только задержка:
+   кнопки колоды и чекбоксы должны отзываться сразу. Скролл и пинч-зум
+   страницы manipulation не трогает. */
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Safari на iPhone зумит страницу при фокусе на любое поле мельче 16px —
+   и на телефоне это читается как «экран прыгает при вводе». На телефонной
+   ширине поля не ниже 16px, чем бы они ни были помечены в разметке. На
+   десктопе правило не действует: там зума нет, а мелкие поля уместны. */
+@media (max-width: 1023px) {
+  input,
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
 html,
 body {
   height: 100%;
@@ -154,6 +188,16 @@ body {
 }
 
 /* Светлая тема наследует тот же плоский фон из --color-bg. */
+
+/* Текст как в iOS. На Apple-платформах шрифт — системный SF со своим
+   трекингом. Там, где SF нет, работает Inter: он заметно шире, поэтому
+   получает лёгкий отрицательный трекинг, чтобы читаться как SF Pro Text.
+   Проверка платформы — через системный шрифт, который есть только у Apple. */
+@supports not (font: -apple-system-body) {
+  body {
+    letter-spacing: -0.012em;
+  }
+}
 
 /* Заголовки: плотнее трекинг — крупный текст перестаёт выглядеть
    «растянутым», это одна из главных примет дешёвой вёрстки. */
@@ -253,8 +297,10 @@ button {
     border-color 0.2s var(--ease-out),
     background-color 0.2s var(--ease-out);
 }
+/* Как у системных кнопок iOS: нажатие — приглушение, лёгкое сжатие. */
 .press:active {
-  transform: scale(0.975);
+  transform: scale(0.98);
+  opacity: 0.8;
 }
 
 /* Крупные числа: плотнее и без прыжков ширины при изменении */
@@ -399,10 +445,13 @@ select {
   backface-visibility: hidden;
 }
 
-/* Контейнер аватара изолирован от лэйаута страницы. */
+/* Контейнер аватара изолирован от лэйаута страницы.
+   Без content-visibility: auto — внутри раздела, который при старте скрыт,
+   имеет свою прокрутку и translateZ(0), браузер считал блок «за экраном»
+   и не рисовал персонажа до первого скролла или смены вкладки. Экономить
+   там больше нечего: это одна картинка, а не WebGL. */
 .canvas-slot {
-  contain: strict;
-  content-visibility: auto;
+  contain: layout paint;
 }
 
 /* ────────────────────────────────────────────────
@@ -433,7 +482,103 @@ select {
    на плотном фоне. */
 .liquid-bar {
   background-color: var(--color-bg-soft);
-  border-top: 1px solid var(--color-border);
+}
+
+/* ────────────────────────────────────────────────
+   iOS: панели, заголовки, вставные списки
+   ──────────────────────────────────────────────── */
+
+/**
+ * Полупрозрачная панель с размытием — таб-бар и компактная шапка. Это
+ * подпись iOS: контент просвечивает сквозь бар. Размытие дорогое, поэтому
+ * оно только на двух узких полосах, а не на карточках; без поддержки
+ * backdrop-filter панель остаётся плотной (fallback выше по каскаду).
+ */
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .liquid-bar,
+  .ios-bar {
+    background-color: color-mix(in srgb, var(--color-bg-soft) 82%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+    backdrop-filter: saturate(180%) blur(18px);
+  }
+}
+.liquid-bar {
+  /* Крыша скруглена, как у шторки снизу: панель читается как лист,
+     выехавший из-под экрана. Отделяет её от контента не линия, а мягкая
+     тень вверх — ровная тёмная кромка спорила с матовыми карточками. */
+  border: 0;
+  border-radius: 18px 18px 0 0;
+  box-shadow: var(--shadow-up);
+}
+.ios-bar {
+  background-color: var(--color-bg-soft);
+  box-shadow: var(--shadow-down);
+  transition:
+    opacity 0.16s var(--ease-out),
+    transform 0.16s var(--ease-out);
+}
+.ios-bar-off {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Большой заголовок раздела — 34pt, как Large Title. При прокрутке его
+   подхватывает компактная шапка (AppShell). */
+.ios-title {
+  font-size: 34px;
+  line-height: 1.12;
+  font-weight: 700;
+  letter-spacing: -0.026em;
+}
+
+/**
+ * Вставной группированный список (inset grouped): одна скруглённая
+ * карточка, строки по 44pt, разделители — волосяные линии с отступом
+ * слева, как в Настройках iOS. Нажимаемая строка подсвечивается фоном.
+ */
+.inset-group {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+}
+.inset-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 16px;
+  width: 100%;
+  text-align: left;
+}
+.inset-row + .inset-row::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background-color: var(--color-border-strong);
+  transform: scaleY(0.5);
+  transform-origin: top;
+}
+.inset-row-press {
+  transition: background-color 0.12s var(--ease-out);
+}
+.inset-row-press:active {
+  background-color: var(--color-surface-2);
+}
+/* заголовок группы — капителью, с отступом под ячейку */
+.inset-title {
+  padding: 0 16px;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-muted);
 }
 
 .marble {

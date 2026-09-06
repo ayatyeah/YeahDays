@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "./Logo";
-import { spring } from "@/lib/motion";
+import { indicatorTween } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 
 /**
@@ -80,7 +80,7 @@ export default function SiteNav() {
                     <motion.span
                       layoutId="site-nav-active"
                       className="absolute bottom-0 left-3 right-3 h-[2px] rounded-full bg-[var(--color-fg)]"
-                      transition={spring}
+                      transition={indicatorTween}
                     />
                   )}
                   {s.label}

@@ -8,7 +8,7 @@ import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
 
 const inputClass =
-  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
+  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
 
 export default function RegisterPage() {
   return (
@@ -77,7 +77,7 @@ function RegisterForm() {
       <div className="w-full max-w-[380px]">
         <div className="mb-8 flex flex-col items-center gap-3">
           <Logo glow className="h-10 w-auto" />
-          <h1 className="text-[20px] font-bold tracking-tight">Создать аккаунт</h1>
+          <h1 className="text-[22px] font-bold tracking-tight">Создать аккаунт</h1>
         </div>
 
         <form onSubmit={submit} className="flex flex-col gap-3">
@@ -136,7 +136,7 @@ function RegisterForm() {
           />
 
           {error && (
-            <p className="text-[14px] text-[var(--color-strength)]">{error}</p>
+            <p className="text-[15px] text-[var(--color-strength)]">{error}</p>
           )}
 
           <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
@@ -144,12 +144,12 @@ function RegisterForm() {
           </Button>
         </form>
 
-        <p className="mt-5 text-center text-[13.5px] leading-snug text-[var(--color-muted)]">
+        <p className="mt-5 text-center text-[15px] leading-snug text-[var(--color-muted)]">
           Google можно привязать после — в профиле, для быстрого входа с
           других устройств.
         </p>
 
-        <p className="mt-4 text-center text-[14px] text-[var(--color-muted)]">
+        <p className="mt-4 text-center text-[15px] text-[var(--color-muted)]">
           Уже есть аккаунт?{" "}
           <Link href="/login" className="font-semibold text-[var(--color-fg)]">
             Войти

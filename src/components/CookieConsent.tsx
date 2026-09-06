@@ -54,7 +54,7 @@ export default function CookieConsent() {
           className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4"
         >
           <div className="mx-auto flex max-w-2xl flex-col gap-3 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] px-4 py-3.5 sm:flex-row sm:items-center sm:gap-4">
-            <p className="flex-1 text-[13.5px] leading-snug text-[var(--color-fg-dim)]">
+            <p className="flex-1 text-[15px] leading-snug text-[var(--color-fg-dim)]">
               Мы используем только технически необходимые cookie и обезличенную
               аналитику, чтобы приложение работало и становилось лучше. Реклама
               и слежка — нет.{" "}
@@ -67,7 +67,7 @@ export default function CookieConsent() {
             </p>
             <button
               onClick={accept}
-              className="press h-10 shrink-0 rounded-xl bg-[var(--color-fg)] px-5 text-[14.5px] font-bold text-[var(--color-bg)]"
+              className="press h-10 shrink-0 rounded-xl bg-[var(--color-fg)] px-5 text-[16px] font-bold text-[var(--color-bg)]"
             >
               Принять
             </button>

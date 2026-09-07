@@ -26,7 +26,7 @@ import { routineLabelAt } from "@/lib/routine";
 import { categorizeTodo, fmtDuration, TODO_PRIORITY_XP } from "@/lib/todoCategory";
 import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/motion";
-import { todoStartMin, todoEndMin, hoursCoveredAfterStart } from "@/lib/todoSpan";
+import { todoStartMin, todoEndMin, hoursCoveredAfterStart, fmtMin } from "@/lib/todoSpan";
 import { YgIcon } from "@/components/yg-icons";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
@@ -195,6 +195,50 @@ export default function TimelineSchedule({
   const filled = scheduled.length - overdue.length;
 
   /**
+   * Свободные окна дня — то, что раньше приходилось считать глазами по
+   * пустым строкам сетки. Берём занятые интервалы (с учётом длительности,
+   * то есть двухчасовая пара занимает оба часа), склеиваем пересечения и
+   * вычитаем из активной части дня. Окна короче 45 минут не показываем:
+   * туда всё равно ничего осмысленного не поставить.
+   */
+  const freeSlots = useMemo(() => {
+    const from = startHour * 60;
+    // Не позже 22:00: «свободно 19:50–00:00, 4 часа» — формально правда, но
+    // как предложение занять вечер это плохой совет.
+    const to = Math.min((endHour + 1) * 60, 22 * 60);
+    const busy: [number, number][] = [];
+    for (const t of scheduled) {
+      const s = todoStartMin(t);
+      const e = todoEndMin(t);
+      if (s === null || e === null) continue;
+      busy.push([Math.max(s, from), Math.min(e, to)]);
+    }
+    busy.sort((a, b) => a[0] - b[0]);
+
+    const merged: [number, number][] = [];
+    for (const [s, e] of busy) {
+      const last = merged[merged.length - 1];
+      if (last && s <= last[1]) last[1] = Math.max(last[1], e);
+      else merged.push([s, e]);
+    }
+
+    const gaps: { from: number; to: number }[] = [];
+    let cursor = from;
+    for (const [s, e] of merged) {
+      if (s - cursor >= 45) gaps.push({ from: cursor, to: s });
+      cursor = Math.max(cursor, e);
+    }
+    if (to - cursor >= 45) gaps.push({ from: cursor, to });
+    return gaps;
+  }, [scheduled, startHour, endHour]);
+
+  /** Действия, взятые на этот день, — их можно поставить на конкретный час. */
+  const takenActions = useMemo(
+    () => plan.filter((t) => t.date === day && !t.completed).map((t) => t.snapshot.title),
+    [plan, day],
+  );
+
+  /**
    * Перетаскивание задачи из лотка "Без часа" прямо на сетку часов —
    * альтернатива открытию шторки ради одного тапа на "Час". Тот же приём:
    * час берём из data-hour реального элемента под точкой отпускания.
@@ -321,6 +365,26 @@ export default function TimelineSchedule({
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {!compact && freeSlots.length > 0 && (
+        <div className="mb-3">
+          <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">Свободно</p>
+          <div className="flex flex-wrap gap-2">
+            {freeSlots.map((g) => (
+              <button
+                key={g.from}
+                onClick={() => openSheet(null, Math.floor(g.from / 60))}
+                className="press rounded-xl border border-dashed border-[var(--color-border-strong)] px-3 py-2 text-[14px] text-[var(--color-fg-dim)]"
+              >
+                {fmtMin(g.from)}–{fmtMin(g.to)}
+                <span className="ml-1.5 text-[var(--color-muted)]">
+                  {Math.round((g.to - g.from) / 60 * 10) / 10} ч
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
@@ -583,6 +647,26 @@ export default function TimelineSchedule({
             autoFocus
             className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
           />
+
+          {!editingId && takenActions.length > 0 && (
+            <div>
+              {/* Связка колоды с планом: взятое действие ставится на час
+                  одним нажатием, а не переписывается руками. */}
+              <SheetLabel>Из взятого сегодня</SheetLabel>
+              <div className="flex flex-wrap gap-2">
+                {takenActions.map((title) => (
+                  <button
+                    key={title}
+                    type="button"
+                    onClick={() => setFTitle(title)}
+                    className="press max-w-full truncate rounded-xl bg-[var(--color-surface-2)] px-3 py-2 text-[14px]"
+                  >
+                    {title}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div>
             <SheetLabel>Заметка (необязательно)</SheetLabel>

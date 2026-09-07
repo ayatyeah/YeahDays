@@ -18,11 +18,20 @@ import { STAT_LIST, CATEGORIES, type CategoryKey } from "@/lib/domain";
 import { getLevelProgress, TIER_MILESTONES, tierForLevel } from "@/lib/leveling";
 import { cn } from "@/lib/cn";
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
+import { timeSpentBySubject, fmtHours } from "@/lib/timeSpent";
+import { STATS } from "@/lib/domain";
 
 export default function ProgressSection() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
   const todos = useUserStore((s) => s.todos);
+  /** Топ предметов по часам за неделю — длинный хвост из мелочей не нужен. */
+  const spent = useMemo(() => timeSpentBySubject(todos).slice(0, 6), [todos]);
+  const spentTotal = useMemo(
+    () => timeSpentBySubject(todos).reduce((sum, b) => sum + b.minutes, 0),
+    [todos],
+  );
+  const spentMax = spent[0]?.minutes ?? 1;
 
   const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
   const totalXp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
@@ -104,6 +113,51 @@ export default function ProgressSection() {
         </div>
 
         <div className="flex flex-col desk-aside lg:gap-5">
+          {/* Куда уходит неделя — часы по предметам из расписания.
+              Характеристики говорят, что человек качает; это — куда у него
+              физически уходит время, и перекос виден сразу. */}
+          {spent.length > 0 && (
+            <section className="mb-6 lg:mb-0">
+              <h2 className="mb-1 text-[15px] font-semibold text-[var(--color-fg-dim)]">
+                Куда уходит неделя
+              </h2>
+              <p className="mb-3 text-[13px] text-[var(--color-muted)]">
+                {fmtHours(spentTotal)} в плане за 7 дней
+              </p>
+              <div className="space-y-2.5">
+                {spent.map((b) => {
+                  const hex = STATS[b.stat].hex;
+                  return (
+                    <div key={b.subject}>
+                      <div className="mb-1 flex items-center justify-between gap-3 text-[14px]">
+                        <span className="flex min-w-0 items-center gap-2">
+                          <span className="flex shrink-0" style={{ color: hex }}>
+                            <YgIcon name={b.icon} className="h-4 w-4" />
+                          </span>
+                          <span className="truncate">{b.subject}</span>
+                        </span>
+                        <span className="shrink-0 tabular-nums text-[var(--color-muted)]">
+                          {fmtHours(b.minutes)}
+                        </span>
+                      </div>
+                      {/* Заливка — доля от самого нагруженного предмета,
+                          более тёмная часть — то, что уже отмечено сделанным. */}
+                      <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${(b.minutes / spentMax) * 100}%`,
+                            background: `linear-gradient(90deg, ${hex} ${(b.doneMinutes / b.minutes) * 100}%, ${hex}55 ${(b.doneMinutes / b.minutes) * 100}%)`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           {/* Характеристики */}
           <section className="mb-6 lg:mb-0">
             <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">

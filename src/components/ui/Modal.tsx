@@ -46,6 +46,21 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  /**
+   * На телефоне лист — настоящая шторка: выезжает снизу на всю высоту и
+   * при закрытии уезжает вниз целиком, без растворения. Раньше exit был
+   * «40px вниз и прозрачность в ноль» — читалось как «чуть ушёл и растаял».
+   * На десктопе окно стоит по центру, там уместнее короткий сдвиг.
+   */
+  const [sheet, setSheet] = useState(true);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 639px)");
+    const sync = () => setSheet(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
   const panelRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef<HTMLDivElement>(null);
   const y = useMotionValue(0);
@@ -187,17 +202,22 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
             className="absolute inset-0 bg-black/78"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.26 } }}
             onClick={onClose}
           />
           <motion.div
             ref={panelRef}
             className="relative z-10 max-h-[85dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-8 shadow-2xl sm:rounded-3xl safe-b"
             style={{ y }}
-            initial={{ y: 40, opacity: 0, scale: 0.98 }}
+            initial={sheet ? { y: "100%" } : { y: 24, opacity: 0, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 40, opacity: 0, scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 260, damping: 26 }}
+            exit={
+              sheet
+                ? // уходит вниз до конца из текущей точки (после свайпа — оттуда, где отпустили)
+                  { y: "100%", transition: { duration: 0.26, ease: [0.4, 0, 1, 1] } }
+                : { y: 24, opacity: 0, scale: 0.98, transition: { duration: 0.18 } }
+            }
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           >
             {/* Зона захвата: ручка + шапка. Отрицательные поля возвращают
                 отступ листа, чтобы тянуть можно было и за пустое место

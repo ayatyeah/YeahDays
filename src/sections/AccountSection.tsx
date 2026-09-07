@@ -7,6 +7,7 @@ import Avatar3D from "@/components/AvatarLazy";
 import AuthCard from "@/components/AuthCard";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
+import FriendsCard from "@/components/FriendsCard";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -165,6 +166,11 @@ export default function AccountSection() {
           </p>
         </div>
       </section>
+
+      {/* Друзья — чей стрик длиннее */}
+      <div className="mt-3">
+        <FriendsCard />
+      </div>
 
       {/* Поделиться прогрессом */}
       <div className="mt-3">

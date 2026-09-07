@@ -45,6 +45,9 @@ model User {
   assistantFacts  AssistantFact[]
   apiKeyLinks     ApiKeyUser[]
   pairingCodes    PairingCode[]
+  friendships  Friendship[]  @relation("friendOwner")
+  friendOf     Friendship[]  @relation("friendOf")
+  publicStats  PublicStats?
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -343,4 +346,39 @@ model PairingCode {
 
   @@index([userId])
   @@index([apiKeyId])
+}
+
+/**
+ * Друзья — взаимная связь двух аккаунтов.
+ *
+ * Хранится двумя строками (A→B и B→A), а не одной с флагом: так «мои
+ * друзья» — это обычная выборка по userId без OR по двум колонкам, и
+ * удаление дружбы симметрично по построению.
+ */
+model Friendship {
+  user      User     @relation("friendOwner", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  friend    User     @relation("friendOf", fields: [friendId], references: [id], onDelete: Cascade)
+  friendId  String
+  createdAt DateTime @default(now())
+
+  @@id([userId, friendId])
+  @@index([friendId])
+}
+
+/**
+ * Публичная сводка аккаунта — то немногое, что видят друзья: имя,
+ * уровень, опыт, серия. Отдельной таблицей, а не вычислением из
+ * UserState.data: стрик считается по всей истории плана, и делать это
+ * на каждый запрос списка друзей значило бы читать и разбирать чужие
+ * блобы целиком. Клиент публикует сводку сам при синхронизации.
+ */
+model PublicStats {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   @id
+  name      String   @default("")
+  level     Int      @default(1)
+  xp        Int      @default(0)
+  streak    Int      @default(0)
+  updatedAt DateTime @updatedAt
 }

@@ -182,7 +182,7 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     setExitingTab(from);
     // 110 мс: старый раздел живёт ровно столько, сколько гаснет (100 мс),
     // с запасом на кадр — чтобы прикрыть смену высоты рамки.
-    const timer = window.setTimeout(() => setExitingTab(null), 110);
+    const timer = window.setTimeout(() => setExitingTab(null), 130);
     return () => window.clearTimeout(timer);
   }, [tab]);
 
@@ -194,14 +194,12 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     try {
       el.animate(
         [
-          { opacity: 1 },
-          { opacity: 0 },
+          { opacity: 1, transform: "scale(1)" },
+          { opacity: 0, transform: "scale(0.985)" },
         ],
-        // Чистый кроссфейд, без сдвига. Первая попытка ускорить — 70 мс с
-        // разъездом в противоположные стороны — читалась как вспышка:
-        // два движения навстречу за долю секунды глаз не успевает собрать в
-        // «переход». Гаснем 100 мс, ничего не двигаем.
-        { duration: 100, easing: "ease-out" },
+        // Старый раздел чуть отступает вглубь и гаснет. Чистый кроссфейд
+        // без движения читался как «картинка сменилась», а не «я перешёл».
+        { duration: 120, easing: "ease-out" },
       );
     } catch {
       // Web Animations нет — раздел просто исчезнет без анимации
@@ -216,13 +214,13 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     try {
       active.animate(
         [
-          { opacity: 0 },
-          { opacity: 1 },
+          { opacity: 0, transform: "translateY(12px) scale(0.985)" },
+          { opacity: 1, transform: "translateY(0) scale(1)" },
         ],
-        // Проявление 140 мс, без сдвига — см. уход выше. Быстрее 190,
-        // но уже не рывок: глазу хватает, чтобы прочитать это как смену
-        // экрана, а не как моргание.
-        { duration: 140, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+        // Новый раздел приходит снизу и «доезжает» до места. Подъём с
+        // масштабом — то, чем iOS отличает переход от простой смены
+        // содержимого: движение подтверждает, что переход состоялся.
+        { duration: 260, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
       );
     } catch {
       // Web Animations нет — раздел просто появится без анимации

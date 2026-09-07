@@ -513,7 +513,7 @@ select {
    раньше читаемость поверх контента держалась на размытии, теперь —
    на плотном фоне. */
 .liquid-bar {
-  background-color: var(--color-bg-soft);
+  background-color: var(--color-surface);
 }
 
 /* ────────────────────────────────────────────────
@@ -529,18 +529,16 @@ select {
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .liquid-bar,
   .ios-bar {
-    background-color: color-mix(in srgb, var(--color-bg-soft) 76%, transparent);
-    -webkit-backdrop-filter: saturate(180%) blur(18px);
-    backdrop-filter: saturate(180%) blur(18px);
+    background-color: color-mix(in srgb, var(--color-surface) 84%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
   }
 }
 .liquid-bar {
-  /* Крыша скруглена, как у шторки снизу: панель читается как лист,
-     выехавший из-под экрана. Отделяет её от контента не линия, а мягкая
-     тень вверх — ровная тёмная кромка спорила с матовыми карточками. */
-  border: 0;
-  border-radius: 18px 18px 0 0;
-  box-shadow: var(--shadow-up);
+  /* Остров: волосяная рамка по всему периметру и тень во все стороны —
+     панель лежит НАД контентом, а не примыкает к краю экрана. */
+  border: 0.5px solid var(--color-border-strong);
+  box-shadow: var(--shadow-2);
 }
 .ios-bar {
   background-color: var(--color-bg-soft);

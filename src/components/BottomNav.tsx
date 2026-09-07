@@ -58,15 +58,16 @@ export default function BottomNav() {
     <nav
       className="pointer-events-none fixed inset-x-0 z-40 lg:hidden"
       // bottom через переменную: StandaloneViewportFix сдвигает панель к
-      // настоящему низу экрана, когда iOS в PWA занизил вьюпорт (см. там)
-      style={{ bottom: "var(--nav-offset, 0px)" }}
+      // настоящему низу экрана, когда iOS в PWA занизил вьюпорт (см. там).
+      // Панель плавает над краем: отступ от низа — не меньше safe-area.
+      style={{ bottom: "calc(var(--nav-offset, 0px) + max(10px, env(safe-area-inset-bottom)))" }}
     >
-      <div className="pointer-events-auto mx-auto max-w-md">
-        {/* Таб-бар по канону iOS: полупрозрачная панель (см. .liquid-bar),
-            иконка над подписью, активная вкладка отличается только цветом —
-            без черты и плашки. Выше системных 49pt (58 + safe-area) и с
-            просветом между иконкой и подписью: панели нужен воздух. */}
-        <div className="liquid-bar gpu-layer safe-b flex h-[calc(58px+env(safe-area-inset-bottom))] items-stretch px-2">
+      <div className="pointer-events-auto mx-auto max-w-md px-3">
+        {/* Плавающий таб-бар, как в iOS 26: остров с отступами от краёв,
+            полное скругление, поверхность светлее фона и заметная тень —
+            панель во всю ширину сливалась с фоном, скругления не читались.
+            Активная вкладка — в капсуле, которая переезжает между пунктами. */}
+        <div className="liquid-bar gpu-layer flex h-[64px] items-stretch rounded-[26px] px-1.5">
           {NAV.map(({ tab: key, label, Icon }) => {
             const active = tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
@@ -83,10 +84,17 @@ export default function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 className={cn(
-                  "relative flex flex-1 flex-col items-center justify-center gap-1.5 pt-2 pb-1 text-[11px] font-medium transition-colors",
+                  "relative my-1.5 flex flex-1 flex-col items-center justify-center gap-1 rounded-[20px] text-[11px] font-medium transition-colors",
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
+                {active && (
+                  <motion.span
+                    layoutId="nav-pill"
+                    className="absolute inset-0 rounded-[20px] bg-[var(--color-surface-2)]"
+                    transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                  />
+                )}
                 <span className="relative">
                   <Icon className="h-6 w-6" />
                   {badge > 0 && (
@@ -100,7 +108,7 @@ export default function BottomNav() {
                     </motion.span>
                   )}
                 </span>
-                <span>{label}</span>
+                <span className="relative">{label}</span>
               </button>
             );
           })}

@@ -194,20 +194,6 @@ export default function TimelineSchedule({
 
   const filled = scheduled.length - overdue.length;
 
-  const ongoing = isToday
-    ? scheduled.find((t) => {
-        const start = todoStartMin(t);
-        const end = todoEndMin(t);
-        return start !== null && end !== null && start <= nowMin && nowMin < end
-          && !isTodoDone(t, day) && !overdueIds.has(t.id);
-      })
-    : undefined;
-  const upcoming = isToday
-    ? scheduled
-        .filter((t) => (todoStartMin(t) ?? -1) > nowMin && !isTodoDone(t, day))
-        .sort((a, b) => (todoStartMin(a) ?? 0) - (todoStartMin(b) ?? 0))[0]
-    : undefined;
-
   /**
    * Перетаскивание задачи из лотка "Без часа" прямо на сетку часов —
    * альтернатива открытию шторки ради одного тапа на "Час". Тот же приём:
@@ -348,39 +334,6 @@ export default function TimelineSchedule({
           // основной экран.
           style={{ maxHeight: compact ? "min(50vh, 360px)" : "min(70vh, 640px)", overflowY: "auto" }}
         >
-          {!compact && isToday && (
-            <div className="sticky top-2 z-10 mb-1 flex justify-center px-2">
-              <div className="now-island flex max-w-full items-center gap-2 rounded-full px-3.5 py-2 text-[13px] font-semibold text-white">
-                <span className="shrink-0 rounded-full bg-white/15 px-2 py-1 font-mono text-[13px] tabular-nums">
-                  {String(new Date().getHours()).padStart(2, "0")}:
-                  {String(new Date().getMinutes()).padStart(2, "0")}
-                </span>
-                {ongoing ? (
-                  <>
-                    <span
-                      className="h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{ background: PRIORITY_COLOR[ongoing.priority] }}
-                    />
-                    <span className="truncate">{ongoing.title}</span>
-                  </>
-                ) : upcoming ? (
-                  <>
-                    <span
-                      className="h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{ background: PRIORITY_COLOR[upcoming.priority] }}
-                    />
-                    <span className="truncate">
-                      {String(upcoming.hour).padStart(2, "0")}:
-                      {String(upcoming.minute ?? 0).padStart(2, "0")} · {upcoming.title}
-                    </span>
-                  </>
-                ) : (
-                  <span className="truncate opacity-70">Свободно</span>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* Сетка часов: подпись + стопка задач в одной строке flex — задачи
               просто стоят друг под другом в потоке, без пиксельной математики
               и без риска наложения (см. комментарий у hourRows выше). */}
@@ -780,11 +733,6 @@ export default function TimelineSchedule({
           background: var(--color-surface);
           border: 1px solid var(--color-border);
           box-shadow: var(--shadow-1);
-        }
-        .now-island {
-          background: var(--color-bg-soft);
-          border: 1px solid var(--color-border-strong);
-          box-shadow: var(--shadow-2);
         }
         /* :global — styled-jsx только помечает свои JSX-теги скоуп-классом
            автоматически, а на motion.div (member-expression тег, не обычный

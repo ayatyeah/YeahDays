@@ -8,8 +8,11 @@ import {
   useHydrated,
   pickSync,
   hasProgress,
+  selectTotalXp,
+  selectStreak,
   type SyncData,
 } from "@/store/useUserStore";
+import { getLevelProgress } from "@/lib/leveling";
 import { useSyncStatus } from "@/store/useSyncStatus";
 
 /**
@@ -86,11 +89,38 @@ export default function StateSync() {
       // сервер оказался свежее (гонка с другим устройством) — принимаем его
       if (json.applied === false && json.data) applyRemote(json.data);
       status.markSynced();
+      void publishStats();
     } catch {
       // офлайн — состояние всё равно в localStorage, синхронизируем позже
       status.fail();
     }
   }, [applyRemote]);
+
+  /**
+   * Публичная сводка для друзей: имя, уровень, опыт, серия. Считается на
+   * клиенте (стрик знает только он — там заморозки и задачи), поэтому и
+   * публикуется отсюда, следом за успешным сохранением. Молча падает:
+   * список друзей не настолько важен, чтобы мешать синхронизации.
+   */
+  const publishStats = useCallback(async () => {
+    const s = useUserStore.getState();
+    if (!s.onboarded) return;
+    const xp = selectTotalXp(s.plan, s.todos);
+    try {
+      await fetch("/api/social", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: s.name,
+          xp,
+          level: getLevelProgress(xp).level,
+          streak: selectStreak(s.plan, s.freezes.days, s.todos),
+        }),
+      });
+    } catch {
+      /* не критично */
+    }
+  }, []);
 
   const pull = useCallback(async () => {
     const userId = getUserId();

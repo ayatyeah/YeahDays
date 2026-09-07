@@ -41,6 +41,20 @@ type State =
 export default function PushOptIn() {
   const [state, setState] = useState<State>("busy");
   const [tested, setTested] = useState(false);
+  /**
+   * iPhone вне установленного приложения. На iOS пуши в вебе существуют
+   * только для страницы, добавленной на экран «Домой»: в Safari объекта
+   * PushManager нет вовсе, и раздел просто пропадал — человек не понимал,
+   * почему напоминаний нет. Показываем шаги вместо пустоты.
+   */
+  const [iosNeedsInstall, setIosNeedsInstall] = useState(false);
+  useEffect(() => {
+    const nav = window.navigator as Navigator & { standalone?: boolean };
+    const isIos = "standalone" in nav;
+    const standalone =
+      window.matchMedia?.("(display-mode: standalone)").matches || nav.standalone === true;
+    setIosNeedsInstall(isIos && !standalone);
+  }, []);
 
   const reminderHour = useUserStore((s) => s.reminderHour);
   const setReminderHour = useUserStore((s) => s.setReminderHour);
@@ -103,7 +117,29 @@ export default function PushOptIn() {
     }
   }, []);
 
-  if (state === "unsupported") return null;
+  if (state === "unsupported") {
+    if (!iosNeedsInstall) return null;
+    return (
+      <section className="rounded-3xl surface p-5">
+        <div className="flex items-start gap-3">
+          <span className="text-[22px]" aria-hidden>
+            <YgIcon name="bell" className="h-6 w-6" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] font-semibold">Напоминания на iPhone</p>
+            <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
+              Работают только в приложении с экрана «Домой» — так устроен iOS.
+            </p>
+            <ol className="mt-3 space-y-1.5 text-[13px] text-[var(--color-fg-dim)]">
+              <li>1. Открой сайт в Safari</li>
+              <li>2. «Поделиться» → «На экран Домой»</li>
+              <li>3. Запусти с домашнего экрана и включи напоминания здесь</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   const on = state === "on";
 
@@ -119,9 +155,11 @@ export default function PushOptIn() {
           </p>
           <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
             {state === "denied" ? (
-              <>
-                Заблокированы в браузере
-              </>
+              iosNeedsInstall ? (
+                <>Открой приложение с экрана «Домой» — в Safari напоминаний нет</>
+              ) : (
+                <>Запрещены. Разреши уведомления для сайта в настройках браузера</>
+              )
             ) : on ? (
               <>
                 По плану дня и за {TODO_LEAD_MIN} минут до дел

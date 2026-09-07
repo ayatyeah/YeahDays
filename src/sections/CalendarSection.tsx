@@ -11,6 +11,8 @@ import {
   useStreak,
   useBestStreak,
   dayLevel,
+  isTodoOnDay,
+  isTodoDone,
 } from "@/store/useUserStore";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
@@ -54,6 +56,7 @@ function dayLabel(key: string, todayKey: string): string {
 export default function CalendarSection() {
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
+  const todos = useUserStore((s) => s.todos);
   const challenges = useUserStore((s) => s.challenges);
   const toggleTask = useUserStore((s) => s.toggleTask);
   const removeTask = useUserStore((s) => s.removeTask);
@@ -79,6 +82,32 @@ export default function CalendarSection() {
     }
     return map;
   }, [plan]);
+
+  /**
+   * Неделя выбранного дня, пн–вс.
+   *
+   * У студента расписание живёт неделями: важно видеть, что понедельник и
+   * среда забиты пáрами, а вторник почти пустой. Месячная сетка этого не
+   * показывает — там только точки «день закрыт». Здесь по каждому дню
+   * считаем занятые минуты из задач с часом, включая повторяющиеся.
+   */
+  const week = useMemo(() => {
+    const [y, m, d] = selected.split("-").map(Number);
+    const dow = (new Date(y!, m! - 1, d!).getDay() + 6) % 7; // 0 — понедельник
+    return Array.from({ length: 7 }, (_, i) => {
+      const cur = new Date(y!, m! - 1, d! - dow + i);
+      const key = dateKey(cur);
+      let minutes = 0;
+      let count = 0;
+      for (const t of todos) {
+        if (t.hour === undefined) continue;
+        if (!isTodoOnDay(t, key) || isTodoDone(t, key)) continue;
+        count += 1;
+        minutes += t.duration ?? 60;
+      }
+      return { key, date: cur.getDate(), count, minutes };
+    });
+  }, [selected, todos]);
 
   const selectedTasks = useMemo(
     () => plan.filter((t) => t.date === selected),
@@ -211,6 +240,46 @@ export default function CalendarSection() {
           </button>
         </div>
       </header>
+
+      {/* Неделя одной полосой: где густо, где пусто — видно до открытия дня.
+          Высота столбика — занятые минуты относительно 10-часового дня. */}
+      <div className="mb-4 grid grid-cols-7 gap-1">
+        {week.map((w, i) => {
+          const isSel = w.key === selected;
+          const isToday = w.key === todayKey;
+          const load = Math.min(1, w.minutes / 600);
+          return (
+            <button
+              key={w.key}
+              onClick={() => setSelected(w.key)}
+              className={cn(
+                "press flex flex-col items-center gap-1 rounded-xl py-2 transition-colors",
+                isSel ? "bg-[var(--color-surface-2)]" : "hover:bg-[var(--color-surface)]",
+              )}
+            >
+              <span className="text-[11px] text-[var(--color-muted)]">{WEEKDAYS[i]}</span>
+              <span
+                className={cn(
+                  "text-[15px] tabular-nums",
+                  isSel && "font-bold",
+                  isToday && !isSel && "text-[var(--color-stability)]",
+                )}
+              >
+                {w.date}
+              </span>
+              {/* Столбик занятости: пустой день — тонкая серая черта, полный
+                  день — столбик во всю высоту. Так неделя читается одним
+                  взглядом, без чтения цифр. */}
+              <span className="flex h-5 w-1.5 items-end overflow-hidden rounded-full bg-[var(--color-border)]">
+                <span
+                  className="w-full rounded-full bg-[var(--color-intelligence)]"
+                  style={{ height: `${Math.max(load * 100, w.count ? 14 : 0)}%` }}
+                />
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       {/*
         lg:+: почасовой план дня слева (основное), постоянно видимый месяц

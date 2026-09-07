@@ -66,8 +66,10 @@ export default function BottomNav() {
         {/* Плавающий таб-бар, как в iOS 26: остров с отступами от краёв,
             полное скругление, поверхность светлее фона и заметная тень —
             панель во всю ширину сливалась с фоном, скругления не читались.
-            Активная вкладка — в капсуле, которая переезжает между пунктами. */}
-        <div className="liquid-bar gpu-layer flex h-[64px] items-stretch rounded-[26px] px-1.5">
+            Активная вкладка — в плашке, которая переезжает между пунктами.
+            Скругление 20, а не почти-пилюля: у Apple плавающие панели —
+            скруглённый прямоугольник, форма читается, а не тает в овал. */}
+        <div className="liquid-bar gpu-layer flex h-[64px] items-stretch rounded-[20px] px-1.5">
           {NAV.map(({ tab: key, label, Icon }) => {
             const active = tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
@@ -84,14 +86,14 @@ export default function BottomNav() {
                 aria-current={active ? "page" : undefined}
                 aria-label={label}
                 className={cn(
-                  "relative my-1.5 flex flex-1 flex-col items-center justify-center gap-1 rounded-[20px] text-[11px] font-medium transition-colors",
+                  "relative my-1.5 flex flex-1 flex-col items-center justify-center gap-1 rounded-[15px] text-[11px] font-medium transition-colors",
                   active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
                 )}
               >
                 {active && (
                   <motion.span
                     layoutId="nav-pill"
-                    className="absolute inset-0 rounded-[20px] bg-[var(--color-surface-2)]"
+                    className="absolute inset-0 rounded-[15px] bg-[var(--color-surface-2)]"
                     transition={{ type: "spring", stiffness: 520, damping: 42 }}
                   />
                 )}

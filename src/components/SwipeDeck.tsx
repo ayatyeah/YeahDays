@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ActionCard, { type SwipeDir } from "./ActionCard";
 import { haptic } from "@/lib/motion";
 import type { ScoredAction } from "@/lib/recommendation";
@@ -63,10 +63,65 @@ export default function SwipeDeck({
 
   const exhausted = visible.length === 0;
 
+  /**
+   * Разводим направления жеста на первом же движении.
+   *
+   * Раздел прокручивается вертикально, карточка тянется горизонтально — и
+   * оба жеста начинаются одинаково. iOS решает спор в свою пользу: при
+   * малейшем наклоне пальца он начинает прокрутку и шлёт pointercancel,
+   * из-за чего карточка срывалась на середине. Тиндер-свайп по диагонали
+   * был почти невозможен.
+   *
+   * Теперь: горизонталь — наша, и мы гасим прокрутку preventDefault, пока
+   * идёт жест; вертикаль — прокрутке, карточку не трогаем. Само
+   * перетаскивание по-прежнему ведёт framer-motion, мы только не даём
+   * браузеру отобрать жест.
+   */
+  const deckRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = deckRef.current;
+    if (!el) return;
+    let x0 = 0;
+    let y0 = 0;
+    let axis: "none" | "x" | "y" = "none";
+
+    const onStart = (e: TouchEvent) => {
+      const t = e.touches[0];
+      x0 = t.clientX;
+      y0 = t.clientY;
+      axis = "none";
+    };
+    const onMove = (e: TouchEvent) => {
+      const t = e.touches[0];
+      const dx = Math.abs(t.clientX - x0);
+      const dy = Math.abs(t.clientY - y0);
+      if (axis === "none") {
+        if (dx < 5 && dy < 5) return;
+        // равенство отдаём горизонтали: это зона карточки, здесь свайп важнее
+        axis = dx >= dy ? "x" : "y";
+      }
+      if (axis === "x") e.preventDefault();
+    };
+    const onEnd = () => {
+      axis = "none";
+    };
+
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onEnd);
+    };
+  }, []);
+
   return (
     // data-no-swipe: колода забирает горизонтальный жест себе. Без этого
     // «беру / не беру» одновременно листало бы разделы приложения.
-    <div className="flex flex-1 flex-col" data-no-swipe>
+    <div ref={deckRef} className="flex flex-1 flex-col" data-no-swipe>
       {/* Колода */}
       <div className="relative flex-1" style={{ minHeight: 400 }}>
         <AnimatePresence mode="popLayout">

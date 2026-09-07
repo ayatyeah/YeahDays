@@ -156,6 +156,8 @@ export default function ActionCard({
           // в тёмную полосу под колодой, особенно в светлой теме.
           boxShadow: isTop ? "var(--shadow-2)" : "none",
           pointerEvents: isTop ? "auto" : "none",
+          // прокрутка по вертикали остаётся браузеру, горизонталь — жесту
+          touchAction: "pan-y",
         }}
         drag={isTop ? "x" : false}
         /* Без dragConstraints: с ограничением в ноль и эластичностью 0.62

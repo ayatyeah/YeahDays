@@ -40,6 +40,7 @@ const PRIORITY_ORDER: TodoPriority[] = ["low", "normal", "high"];
    Восемь значений — два ровных ряда по четыре. */
 const DURATION_OPTIONS = [15, 30, 45, 60, 90, 120, 180, 240];
 const ALL_HOURS = Array.from({ length: 24 }, (_, i) => i);
+
 const MINUTE_OPTIONS = [0, 10, 20, 30, 40, 50];
 /** Сколько нужно увести плашку вбок, чтобы это засчиталось за «выполнено». */
 const SWIPE_DONE = 64;
@@ -69,6 +70,8 @@ export default function TimelineSchedule({
   const todos = useUserStore((s) => s.todos);
   const plan = useUserStore((s) => s.plan);
   const addTodo = useUserStore((s) => s.addTodo);
+  const skipTodoDay = useUserStore((s) => s.skipTodoDay);
+  const resolveOverdue = useUserStore((s) => s.resolveOverdue);
   const updateTodo = useUserStore((s) => s.updateTodo);
   const removeTodo = useUserStore((s) => s.removeTodo);
   const toggleTodo = useUserStore((s) => s.toggleTodo);
@@ -208,6 +211,9 @@ export default function TimelineSchedule({
     const to = Math.min((endHour + 1) * 60, 22 * 60);
     const busy: [number, number][] = [];
     for (const t of scheduled) {
+      // Дедлайн из LMS не занимает час: «отметиться на паре» — не занятие,
+      // и час вокруг него по-прежнему свободен.
+      if (t.source === "lms") continue;
       const s = todoStartMin(t);
       const e = todoEndMin(t);
       if (s === null || e === null) continue;
@@ -394,6 +400,19 @@ export default function TimelineSchedule({
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
             Просрочено
           </p>
+          {overdue.length > 1 && (
+            <button
+              onClick={() => {
+                // разовые уедут на завтра, пары просто уйдут с глаз за этот
+                // день — переносить повтор нельзя, он задаёт ритм
+                resolveOverdue(overdue.map((t) => t.id), day);
+                haptic("success");
+              }}
+              className="press mb-2 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+            >
+              Разобрать всё ({overdue.length})
+            </button>
+          )}
           <div className="flex flex-wrap gap-2">
             {overdue.map((t) => (
               <TrayChip key={t.id} todo={t} onClick={() => openSheet(t)} />
@@ -698,6 +717,19 @@ export default function TimelineSchedule({
             >
               {isTodoDone(viewingTodo, day) ? "Снять отметку" : "Отметить выполненным"}
             </Button>
+            {/* Отмена одного дня повтора: пару сняли на этой неделе, но
+                ритм и история выполнений должны остаться. */}
+            {viewingTodo.repeat && (
+              <Button
+                className="w-full"
+                onClick={() => {
+                  skipTodoDay(viewingTodo.id, day, true);
+                  closeSheet();
+                }}
+              >
+                Отменить в этот день
+              </Button>
+            )}
           </div>
         ) : (
         <div className="space-y-4">

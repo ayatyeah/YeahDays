@@ -46,6 +46,12 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
 
   const [draft, setDraft] = useState("");
   const [filter, setFilter] = useState<Filter>("active");
+  /**
+   * Поиск по всем задачам, а не только по этому дню: ищут обычно то, что
+   * «где-то было» — пару на другой неделе, дедлайн из LMS. Пустая строка
+   * возвращает обычный список дня.
+   */
+  const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [undo, setUndo] = useState<Todo | null>(null);
   const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -54,6 +60,19 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
 
   /** Задачи этого дня + просроченные (их нельзя терять). */
   const list = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q) {
+      // При поиске день и фильтры не действуют: важно найти, а не соблюсти
+      // контекст дня. Сортировка — по дате, ближайшее сверху.
+      return todos
+        .filter(
+          (t) =>
+            t.title.toLowerCase().includes(q) ||
+            (t.note ?? "").toLowerCase().includes(q),
+        )
+        .sort((a, b) => a.date.localeCompare(b.date) || (a.hour ?? 99) - (b.hour ?? 99))
+        .slice(0, 50);
+    }
     const onDay = todos.filter((t) => isTodoOnDay(t, day));
     const overdue = isToday
       ? todos.filter((t) => isTodoOverdue(t, day) && !isTodoOnDay(t, day))
@@ -75,7 +94,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
       if (ah !== bh) return ah - bh;
       return rank[a.priority] - rank[b.priority];
     });
-  }, [todos, day, filter, isToday]);
+  }, [todos, day, filter, isToday, query]);
 
   const activeCount = todos.filter(
     (t) => isTodoOnDay(t, day) && !isTodoDone(t, day),
@@ -94,7 +113,14 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
         <h2 className="text-[15px] font-semibold text-[var(--color-fg-dim)]">
           Мои задачи{activeCount > 0 ? ` · ${activeCount}` : ""}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Поиск"
+            className="h-8 w-24 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-[14px] outline-none focus:w-32 focus:border-[var(--color-border-strong)]"
+            style={{ transition: "width 0.18s var(--ease-out)" }}
+          />
           {(
             [
               ["active", "активные"],

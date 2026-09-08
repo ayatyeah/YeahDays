@@ -94,6 +94,31 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const session = await auth();
         if (session?.user?.id) return true; // привязка к уже вошедшему — всегда можно
 
+        /*
+         * Уже привязанный Google — это вход, а не регистрация.
+         *
+         * Проверка ниже ищет пользователя по email из Google-профиля, и для
+         * первого входа этого достаточно. Но после привязки из профиля
+         * (ветка выше) email у Google может быть СВОЙ, отличный от email
+         * аккаунта: у yeahayat в базе ayatbalmagambet@gmail.com, а привязан
+         * Google с ayatbalmagambet.ab@gmail.com. При следующем входе таким
+         * Google поиск по email ничего не находил, и человека отправляло
+         * регистрироваться — при том, что связь давно существует.
+         * Поэтому сначала спрашиваем саму связь.
+         */
+        if (account.providerAccountId) {
+          const linked = await prisma.account.findUnique({
+            where: {
+              provider_providerAccountId: {
+                provider: "google",
+                providerAccountId: account.providerAccountId,
+              },
+            },
+            select: { user: { select: { banned: true } } },
+          });
+          if (linked) return !linked.user.banned;
+        }
+
         const email = profile?.email;
         if (!email) return false;
         const existing = await prisma.user.findUnique({

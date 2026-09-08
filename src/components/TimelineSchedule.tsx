@@ -28,6 +28,7 @@ import { cn } from "@/lib/cn";
 import { haptic } from "@/lib/motion";
 import { todoStartMin, todoEndMin, hoursCoveredAfterStart, fmtMin } from "@/lib/todoSpan";
 import { YgIcon } from "@/components/yg-icons";
+import { useKeyboardInset } from "@/lib/useKeyboardInset";
 
 /** Часы, которые показываем по умолчанию (сон не расписываем). */
 const DEFAULT_FROM = 6;
@@ -115,6 +116,8 @@ export default function TimelineSchedule({
   // none у предка?» без подписки на navStore, которого на /manage нет.
   const fabAnchorRef = useRef<HTMLSpanElement>(null);
   const [fabVisible, setFabVisible] = useState(false);
+  // кнопка «+» не должна висеть поверх поля, пока печатают
+  const keyboard = useKeyboardInset();
   useEffect(() => {
     const el = fabAnchorRef.current;
     // hidden у самого сторожка — display:none, поэтому смотрим на родителя
@@ -581,7 +584,7 @@ export default function TimelineSchedule({
         не рисуем. На /manage панели нет — кнопка честно встаёт над навигацией.
       */}
       {!compact && <span ref={fabAnchorRef} className="hidden" aria-hidden />}
-      {!compact && fabVisible && createPortal(
+      {!compact && fabVisible && keyboard === 0 && createPortal(
         <button
           onClick={() => openSheet(null)}
           aria-label="Добавить задачу"

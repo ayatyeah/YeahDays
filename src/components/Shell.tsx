@@ -62,10 +62,12 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Sidebar />
-      {/* pb (моб.): место под нижнюю навигацию + под баннер установки, когда
-          он виден (--install-offset ставит InstallPrompt) — без второго
-          слагаемого баннер накрывал бы нижние кнопки экрана. На lg: нижней
-          навигации нет вообще, отступ обычный, а слева — место под сайдбар.
+      {/* Снизу отступа у рамки нет: он живёт ВНУТРИ прокручиваемого раздела
+          (.section-pane в globals.css). Иначе прокрутка заканчивалась выше
+          панели, под полупрозрачной панелью оказывался просто фон, и весь
+          смысл размытия пропадал — контент должен проезжать под ней.
+          На lg: нижней навигации нет вообще, отступ обычный, а слева —
+          место под сайдбар.
           pt: max(...) с вырезом/чёлкой — статичный pt-6 (24px) был меньше
           реального выреза на iPhone (~50-59px из-за viewportFit:"cover" +
           statusBarStyle:"black-translucent" в layout.tsx — контент рисуется
@@ -82,8 +84,13 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           скролл окна ничем не мешает — им оставляем обычный min-h-dvh. */}
       <div
         className={cn(
-          "mx-auto flex max-w-md flex-col px-[18px] pt-[calc(max(2.75rem,env(safe-area-inset-top))+1rem)] pb-[calc(6rem+var(--install-offset,0px))] lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
-          isSection ? "app-shell-frame" : "min-h-dvh",
+          "mx-auto flex max-w-md flex-col px-[18px] pt-[calc(max(2.75rem,env(safe-area-inset-top))+1rem)] pb-0 lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
+          // У разделов отступ снизу живёт внутри прокрутки (.section-pane),
+          // у обычных страниц прокрутки нет — им отступ нужен здесь, иначе
+          // низ страницы уедет под плавающую панель.
+          isSection
+            ? "app-shell-frame"
+            : "min-h-dvh pb-[calc(6rem+var(--install-offset,0px))] lg:pb-10",
         )}
       >
         {isSection ? children : <PageTransition>{children}</PageTransition>}

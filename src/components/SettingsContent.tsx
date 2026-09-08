@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import Switch from "@/components/ui/Switch";
 import { YgIcon } from "@/components/yg-icons";
 import { useUserStore } from "@/store/useUserStore";
+import { buildIcs } from "@/lib/icsExport";
 import { useThemeStore } from "@/store/useThemeStore";
 
 /**
@@ -29,6 +30,23 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
   const [confirmReset, setConfirmReset] = useState(false);
+
+  /**
+   * Расписание одним файлом для системного календаря. Пары живут внутри
+   * приложения, а на экране блокировки и в виджетах телефона их нет —
+   * этот файл закрывает разрыв, ничего никуда не отправляя: сборка идёт
+   * в браузере, файл сохраняется как обычная загрузка.
+   */
+  const exportSchedule = () => {
+    const todos = useUserStore.getState().todos;
+    const blob = new Blob([buildIcs(todos)], { type: "text/calendar;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "yeahgrind-raspisanie.ics";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -53,6 +71,24 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
                   label="Тёмная тема"
                 />
               </div>
+            </div>
+          </Group>
+
+          <Group title="Расписание">
+            <div className="inset-group">
+              <button
+                type="button"
+                onClick={exportSchedule}
+                className="inset-row inset-row-press py-2 text-left"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[16px]">Выгрузить в календарь</span>
+                  <span className="mt-0.5 block text-[13px] text-[var(--color-muted)]">
+                    Файл с парами на три недели — откроется в календаре телефона
+                  </span>
+                </span>
+                <YgIcon name="calendar" className="h-4 w-4 text-[var(--color-muted)]" />
+              </button>
             </div>
           </Group>
 

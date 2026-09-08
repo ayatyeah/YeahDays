@@ -170,14 +170,36 @@ export interface Todo {
   done: boolean;
   /** для повторяющихся: дни, в которые выполнено */
   doneDays: string[];
+  /**
+   * Откуда задача взялась. "lms" — событие из календаря университета
+   * (дедлайн, отметка посещаемости). Такие задачи не считаются
+   * запланированным временем: в 15:00 стоит не пара, а требование
+   * отметиться, и час в этот момент свободен.
+   */
+  source?: "lms";
+  /**
+   * Дни, в которые повторяющаяся задача отменена. Пару могут снять на одной
+   * неделе, и до сих пор выбора не было: либо терпеть её в плане, либо
+   * удалить весь повтор вместе с историей выполнений.
+   */
+  skipDays?: string[];
   createdAt: number;
   completedAt: number | null;
 }
 
 /** Показывать ли задачу в этот день. */
+/** Соседний день в формате YYYY-MM-DD. */
+function shiftKey(key: string, delta: number): string {
+  const [y, m, d] = key.split("-").map(Number);
+  const dt = new Date(y!, m! - 1, d! + delta);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+}
+
 export function isTodoOnDay(t: Todo, day: string): boolean {
   if (!t.repeat) return t.date === day;
   if (day < t.date) return false; // до создания повтора не показываем
+  if (t.skipDays?.includes(day)) return false; // занятие отменили именно в этот день
   const wd = new Date(`${day}T00:00:00`).getDay();
   switch (t.repeat.kind) {
     case "daily":
@@ -434,6 +456,15 @@ interface UserState {
   removeTodo: (id: string) => void;
   /** отметить/снять выполнение в конкретный день */
   toggleTodo: (id: string, day: string) => void;
+  /** отменить повторяющуюся задачу в один день (или вернуть её) */
+  skipTodoDay: (id: string, day: string, skip: boolean) => void;
+  /**
+   * Разобрать просроченное одним действием: разовые задачи уезжают на
+   * следующий день, повторяющиеся помечаются пропущенными в этот день.
+   * Повтор переносить нельзя — его дата это якорь ритма, сдвиг сломал бы
+   * весь график вперёд.
+   */
+  resolveOverdue: (ids: string[], day: string) => void;
   addSubtask: (todoId: string, title: string) => void;
   toggleSubtask: (todoId: string, subId: string) => void;
   removeSubtask: (todoId: string, subId: string) => void;
@@ -560,7 +591,7 @@ export const initial = {
 
 export const useUserStore = create<UserState>()(
   persist(
-    (set) => {
+    (set, get) => {
       /**
        * Любая мутация состояния поднимает updatedAt — это метка «последнего
        * изменения», по которой сервер разрешает конфликты между устройствами.
@@ -963,6 +994,37 @@ export const useUserStore = create<UserState>()(
             return { ...t, done: next, completedAt: next ? Date.now() : null };
           }),
         })),
+
+      skipTodoDay: (id, day, skip) =>
+        touch((s) => ({
+          todos: s.todos.map((t) => {
+            if (t.id !== id) return t;
+            const days = t.skipDays ?? [];
+            return {
+              ...t,
+              skipDays: skip
+                ? days.includes(day)
+                  ? days
+                  : [...days, day]
+                : days.filter((d) => d !== day),
+            };
+          }),
+        })),
+
+      resolveOverdue: (ids, day) => {
+        if (ids.length === 0) return;
+        const next = shiftKey(day, 1);
+        touch((s) => ({
+          todos: s.todos.map((t) => {
+            if (!ids.includes(t.id)) return t;
+            if (t.repeat) {
+              const days = t.skipDays ?? [];
+              return days.includes(day) ? t : { ...t, skipDays: [...days, day] };
+            }
+            return { ...t, date: next };
+          }),
+        }));
+      },
 
       addSubtask: (todoId, title) =>
         touch((s) => ({

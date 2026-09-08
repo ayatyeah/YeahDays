@@ -8,6 +8,7 @@ import AuthCard from "@/components/AuthCard";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
 import FriendsCard from "@/components/FriendsCard";
+import SharedChallenges from "@/components/SharedChallenges";
 import Logo, { LogoLoader } from "@/components/Logo";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -170,6 +171,11 @@ export default function AccountSection() {
       {/* Друзья — чей стрик длиннее */}
       <div className="mt-3">
         <FriendsCard />
+      </div>
+
+      {/* Общий челлендж — одна норма на всех */}
+      <div className="mt-3">
+        <SharedChallenges />
       </div>
 
       {/* Поделиться прогрессом */}

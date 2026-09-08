@@ -48,6 +48,9 @@ model User {
   friendships  Friendship[]  @relation("friendOwner")
   friendOf     Friendship[]  @relation("friendOf")
   publicStats  PublicStats?
+  ownedChallenges   SharedChallenge[]          @relation("challengeOwner")
+  challengeMembers  SharedChallengeMember[]
+  challengeProgress SharedChallengeProgress[]
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -381,4 +384,54 @@ model PublicStats {
   xp        Int      @default(0)
   streak    Int      @default(0)
   updatedAt DateTime @updatedAt
+}
+
+/**
+ * Общий челлендж — одна норма на двоих и больше.
+ *
+ * Друзья до сих пор были витриной: видно чужой стрик, и всё. Живым это
+ * делает общее обязательство: одна планка, и видно, кто сегодня закрыл.
+ *
+ * Прогресс лежит отдельной строкой на участника и на день (Progress), а не
+ * блобом в челлендже: так двое одновременно отмечающихся не затирают друг
+ * друга — каждый пишет только свою строку.
+ */
+model SharedChallenge {
+  id        String                    @id @default(cuid())
+  title     String
+  unit      String                    @default("раз")
+  /** дневная норма на каждого */
+  target    Int                       @default(1)
+  owner     User                      @relation("challengeOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String
+  createdAt DateTime                  @default(now())
+  members   SharedChallengeMember[]
+  progress  SharedChallengeProgress[]
+
+  @@index([ownerId])
+}
+
+model SharedChallengeMember {
+  challenge   SharedChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  challengeId String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  joinedAt    DateTime        @default(now())
+
+  @@id([challengeId, userId])
+  @@index([userId])
+}
+
+model SharedChallengeProgress {
+  challenge   SharedChallenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  challengeId String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  /** день в формате YYYY-MM-DD — по локальному времени участника */
+  day         String
+  count       Int             @default(0)
+  updatedAt   DateTime        @updatedAt
+
+  @@id([challengeId, userId, day])
+  @@index([challengeId, day])
 }

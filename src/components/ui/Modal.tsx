@@ -64,11 +64,33 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
 
   /**
    * Клавиатура: лист поднимается ровно на её высоту, а не прячется под ней.
-   * Отступ вешаем на внешний контейнер — панель прижата к его низу
-   * (items-end), поэтому она поедет вверх сама, не мешая жесту закрытия,
-   * который живёт на transform панели.
+   *
+   * Сдвигаем внешний контейнер трансформацией, а НЕ отступом. Отступ менял
+   * бы раскладку под сфокусированным полем, а WebKit в этот момент не
+   * пересчитывает позицию курсора: поле уезжало вверх, а мигающая каретка
+   * оставалась там, где поле было раньше — на скриншоте она висела под
+   * текстом, у кнопок. Трансформация двигает готовый слой целиком, вместе
+   * с кареткой.
    */
   const keyboard = useKeyboardInset(open);
+
+  /*
+   * Подстраховка для каретки. После сдвига просим поле переустановить
+   * выделение в те же позиции: для WebKit это сигнал перерисовать курсор,
+   * при этом фокус не теряется и клавиатура не мигает (в отличие от
+   * blur/focus, которым обычно лечат эту болезнь).
+   */
+  useEffect(() => {
+    const el = document.activeElement as HTMLInputElement | HTMLTextAreaElement | null;
+    if (!el || (el.tagName !== "INPUT" && el.tagName !== "TEXTAREA")) return;
+    if (el.type === "number" || el.type === "email") return; // не поддерживают setSelectionRange
+    try {
+      const { selectionStart: s, selectionEnd: e } = el;
+      if (s !== null && e !== null) el.setSelectionRange(s, e);
+    } catch {
+      /* поле не умеет выделение — не беда */
+    }
+  }, [keyboard]);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef<HTMLDivElement>(null);
@@ -208,7 +230,7 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
       {open && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
-          style={{ paddingBottom: keyboard || undefined }}
+          style={keyboard ? { transform: `translateY(-${keyboard}px)` } : undefined}
         >
           <motion.div
             className="absolute inset-0 bg-black/78"

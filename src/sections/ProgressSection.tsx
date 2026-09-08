@@ -27,10 +27,14 @@ export default function ProgressSection() {
   const todos = useUserStore((s) => s.todos);
   /** Топ предметов по часам за неделю — длинный хвост из мелочей не нужен. */
   const spent = useMemo(() => timeSpentBySubject(todos).slice(0, 6), [todos]);
-  const spentTotal = useMemo(
-    () => timeSpentBySubject(todos).reduce((sum, b) => sum + b.minutes, 0),
-    [todos],
-  );
+  /** Итог недели: всё запланированное время и та часть, что уже закрыта. */
+  const spentSum = useMemo(() => {
+    const all = timeSpentBySubject(todos);
+    return {
+      total: all.reduce((sum, b) => sum + b.minutes, 0),
+      done: all.reduce((sum, b) => sum + b.doneMinutes, 0),
+    };
+  }, [todos]);
   const spentMax = spent[0]?.minutes ?? 1;
 
   const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
@@ -121,9 +125,30 @@ export default function ProgressSection() {
               <h2 className="mb-1 text-[15px] font-semibold text-[var(--color-fg-dim)]">
                 Куда уходит неделя
               </h2>
-              <p className="mb-3 text-[13px] text-[var(--color-muted)]">
-                {fmtHours(spentTotal)} в плане за 7 дней
-              </p>
+              {/* Сколько часов уже закрыто — крупно и первым: это ответ на
+                  «сколько я реально сделал», а разбивка ниже отвечает на
+                  «куда именно ушло». Отмечаешь двухчасовое дело — полоса
+                  прибавляет ровно эти два часа. */}
+              <div className="mb-4">
+                <div className="flex items-baseline justify-between gap-3">
+                  <span className="text-[26px] font-bold tabular-nums leading-none">
+                    {fmtHours(spentSum.done)}
+                  </span>
+                  <span className="text-[13px] text-[var(--color-muted)]">
+                    из {fmtHours(spentSum.total)} за 7 дней
+                  </span>
+                </div>
+                <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                  <motion.div
+                    className="h-full rounded-full bg-[var(--color-stability)]"
+                    initial={{ width: 0 }}
+                    animate={{
+                      width: `${spentSum.total ? (spentSum.done / spentSum.total) * 100 : 0}%`,
+                    }}
+                    transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                  />
+                </div>
+              </div>
               <div className="space-y-2.5">
                 {spent.map((b) => {
                   const hex = STATS[b.stat].hex;

@@ -237,25 +237,60 @@ export default function TimelineSchedule({
    *
    * День почти всегда смотрят «отсюда и дальше», а прошедшие часы вверху
    * заставляли крутить руками при каждом открытии. Ставим прокрутку прямо
-   * на строку текущего часа (чуть выше, чтобы был виден предыдущий час как
+   * на строку текущего часа (чуть выше, чтобы предыдущий был виден как
    * контекст) — но только для сегодняшнего дня: у чужой даты «сейчас» нет
    * смысла. Без анимации: это стартовое положение, а не переход.
+   *
+   * Момент важнее самой прокрутки. Разделы приложения монтируются заранее
+   * и висят скрытыми (AppShell), а у скрытого элемента нулевые размеры —
+   * позиция, посчитанная тогда, уходила в никуда, и при переключении на
+   * вкладку сетка оставалась на 06:00. Поэтому ставим её, когда сетка
+   * реально появилась на экране (IntersectionObserver), и только пока
+   * человек не прокрутил сам. Ловим появление через ResizeObserver: у
+   * скрытого раздела размеры нулевые и меняются ровно в тот момент, когда
+   * он показывается, — в отличие от IntersectionObserver, который на
+   * content-visibility: hidden ничего не сообщает.
    */
   const gridRef = useRef<HTMLDivElement>(null);
+  const placedRef = useRef(false);
+  useEffect(() => {
+    placedRef.current = false;
+  }, [day]);
+
   useEffect(() => {
     if (!expanded || !isToday) return;
-    // Кадром позже: строки часов должны получить реальную высоту, иначе
-    // прокрутка считается по недорисованной сетке и остаётся нулевой.
-    const id = requestAnimationFrame(() => {
-      const box = gridRef.current;
-      const row = box?.querySelector<HTMLElement>(`[data-hour="${nowHour}"]`);
-      if (!box || !row) return;
+    const box = gridRef.current;
+    if (!box) return;
+
+    const place = () => {
+      if (placedRef.current) return;
+      // скрытый раздел: размеров нет, считать нечего
+      if (box.offsetParent === null || box.clientHeight === 0) return;
+      const row = box.querySelector<HTMLElement>(`[data-hour="${nowHour}"]`);
+      if (!row) return;
       // контейнер position: relative — offsetTop строки уже отсчитан от него
       box.scrollTop = Math.max(0, row.offsetTop - row.offsetHeight * 0.6);
-    });
-    return () => cancelAnimationFrame(id);
-    // day в зависимостях: переключение дня перерисовывает сетку, и позицию
-    // нужно поставить заново
+      placedRef.current = true;
+    };
+
+    // человек уже крутил сам — больше не вмешиваемся
+    const onScroll = () => {
+      if (box.scrollTop > 0) placedRef.current = true;
+    };
+
+    place();
+    const raf = requestAnimationFrame(place);
+    const timer = window.setTimeout(place, 300);
+    const ro = new ResizeObserver(() => place());
+    ro.observe(box);
+    box.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timer);
+      ro.disconnect();
+      box.removeEventListener("scroll", onScroll);
+    };
   }, [expanded, isToday, nowHour, day]);
 
   /** Действия, взятые на этот день, — их можно поставить на конкретный час. */

@@ -7,6 +7,7 @@ import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
 import type { TabKey } from "@/lib/nav";
 import { useEffect, useMemo } from "react";
+import { useKeyboardInset } from "@/lib/useKeyboardInset";
 import {
   HomeIcon,
   TodayIcon,
@@ -50,9 +51,18 @@ export default function BottomNav() {
     void (pending > 0 ? n.setAppBadge(pending) : n.clearAppBadge?.()).catch(() => {});
   }, [pending]);
 
+  /*
+   * Пока открыта клавиатура, навигации нет. На Android layout ужимается, и
+   * панель встаёт ровно над клавиатурой, накрывая поле, в которое человек
+   * печатает; на iOS она просто прячется под клавиатурой и всё равно
+   * бесполезна. В обоих случаях правильнее её убрать.
+   */
+  const keyboard = useKeyboardInset();
+
   // Во время онбординга навигация скрыта — экран полноэкранный.
   // Прячем только когда точно знаем, что онбординг не пройден.
   if (hydrated && !onboarded) return null;
+  if (keyboard > 0) return null;
 
   return (
     <nav

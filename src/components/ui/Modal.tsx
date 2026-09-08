@@ -3,6 +3,7 @@
 import { AnimatePresence, animate, motion, useMotionValue } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useKeyboardInset } from "@/lib/useKeyboardInset";
 
 interface ModalProps {
   open: boolean;
@@ -60,6 +61,14 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
   }, []);
+
+  /**
+   * Клавиатура: лист поднимается ровно на её высоту, а не прячется под ней.
+   * Отступ вешаем на внешний контейнер — панель прижата к его низу
+   * (items-end), поэтому она поедет вверх сама, не мешая жесту закрытия,
+   * который живёт на transform панели.
+   */
+  const keyboard = useKeyboardInset(open);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const grabRef = useRef<HTMLDivElement>(null);
@@ -197,7 +206,10 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
   return createPortal(
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center sm:items-center"
+          style={{ paddingBottom: keyboard || undefined }}
+        >
           <motion.div
             className="absolute inset-0 bg-black/78"
             initial={{ opacity: 0 }}
@@ -207,8 +219,15 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
           />
           <motion.div
             ref={panelRef}
-            className="relative z-10 max-h-[85dvh] w-full max-w-md overflow-y-auto overscroll-contain rounded-t-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-8 shadow-2xl sm:rounded-3xl safe-b"
-            style={{ y }}
+            // при открытой клавиатуре лист должен помещаться в остаток
+            // экрана, иначе его нижняя часть снова окажется недосягаемой
+            className="relative z-10 w-full max-w-md overflow-y-auto overscroll-contain rounded-t-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-8 shadow-2xl sm:rounded-3xl safe-b"
+            style={{
+              y,
+              // при открытой клавиатуре лист должен помещаться в остаток
+              // экрана, иначе его низ снова окажется недосягаемым
+              maxHeight: keyboard ? `calc(100dvh - ${keyboard}px - 12px)` : "85dvh",
+            }}
             initial={sheet ? { y: "100%" } : { y: 24, opacity: 0, scale: 0.98 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={

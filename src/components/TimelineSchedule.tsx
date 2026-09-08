@@ -232,6 +232,32 @@ export default function TimelineSchedule({
     return gaps;
   }, [scheduled, startHour, endHour]);
 
+  /**
+   * Сетка открывается на текущем часе, а не на 06:00.
+   *
+   * День почти всегда смотрят «отсюда и дальше», а прошедшие часы вверху
+   * заставляли крутить руками при каждом открытии. Ставим прокрутку прямо
+   * на строку текущего часа (чуть выше, чтобы был виден предыдущий час как
+   * контекст) — но только для сегодняшнего дня: у чужой даты «сейчас» нет
+   * смысла. Без анимации: это стартовое положение, а не переход.
+   */
+  const gridRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!expanded || !isToday) return;
+    // Кадром позже: строки часов должны получить реальную высоту, иначе
+    // прокрутка считается по недорисованной сетке и остаётся нулевой.
+    const id = requestAnimationFrame(() => {
+      const box = gridRef.current;
+      const row = box?.querySelector<HTMLElement>(`[data-hour="${nowHour}"]`);
+      if (!box || !row) return;
+      // контейнер position: relative — offsetTop строки уже отсчитан от него
+      box.scrollTop = Math.max(0, row.offsetTop - row.offsetHeight * 0.6);
+    });
+    return () => cancelAnimationFrame(id);
+    // day в зависимостях: переключение дня перерисовывает сетку, и позицию
+    // нужно поставить заново
+  }, [expanded, isToday, nowHour, day]);
+
   /** Действия, взятые на этот день, — их можно поставить на конкретный час. */
   const takenActions = useMemo(
     () => plan.filter((t) => t.date === day && !t.completed).map((t) => t.snapshot.title),
@@ -390,6 +416,7 @@ export default function TimelineSchedule({
 
       {expanded && (
         <div
+          ref={gridRef}
           className="glass-panel relative overflow-hidden rounded-3xl"
           // compact (виджет на "Сегодня") — сетка на все 24 часа без этого
           // ограничения раскрывала бы страницу на лишнюю тысячу пикселей

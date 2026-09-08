@@ -23,6 +23,11 @@ const MONTHS = [
   "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь",
 ];
 const WEEKDAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
+/** Родительный падеж: «9 сентября», а не «9 сентябрь». */
+const MONTHS_OF = [
+  "января", "февраля", "марта", "апреля", "мая", "июня",
+  "июля", "августа", "сентября", "октября", "ноября", "декабря",
+];
 const WEEKDAY_LONG = [
   "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье",
 ];
@@ -43,7 +48,7 @@ function dayLabel(key: string, todayKey: string): string {
   const [y, m, d] = key.split("-").map(Number);
   const dt = new Date(y!, m! - 1, d!);
   const dow = WEEKDAY_LONG[(dt.getDay() + 6) % 7];
-  return `${d} ${MONTHS[m! - 1]!.toLowerCase()}, ${dow!.toLowerCase()}`;
+  return `${d} ${MONTHS_OF[m! - 1]}, ${dow!.toLowerCase()}`;
 }
 
 /**

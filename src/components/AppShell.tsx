@@ -15,7 +15,7 @@ import { useNavStore } from "@/store/useNavStore";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { haptic } from "@/lib/motion";
 import { cn } from "@/lib/cn";
-import { TABS, TAB_LABEL, neighbourTab, type TabKey } from "@/lib/nav";
+import { TABS, neighbourTab, type TabKey } from "@/lib/nav";
 
 /**
  * Оболочка приложения: пять разделов в одном экране.
@@ -79,43 +79,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
 
   const stageRef = useRef<HTMLDivElement>(null);
   const prevTab = useRef<TabKey>(initialTab);
-
-  /**
-   * Компактная шапка, как navigation bar в iOS: пока раздел в самом верху,
-   * работает большой заголовок в контенте; прокрутил — сверху проявляется
-   * полупрозрачная полоса с названием раздела. Слушаем скролл активного
-   * раздела (каждый .section-pane скроллится сам), пассивно.
-   */
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const el = stageRef.current?.querySelector<HTMLElement>("[data-section-active]");
-    if (!el) return;
-    const read = () => setScrolled(el.scrollTop > 44);
-    read();
-    el.addEventListener("scroll", read, { passive: true });
-    return () => el.removeEventListener("scroll", read);
-  }, [tab]);
-
-  /*
-   * Раздел, с которого открылось приложение. Ставится ДО первой отрисовки:
-   * если человек пришёл по /today из уведомления, он не должен увидеть
-   * кадр главной. useLayoutEffect с проверкой адреса — вход по ссылке
-   * всегда сильнее, чем то, что осталось в памяти store.
-   */
-  useLayoutEffect(() => {
-    const state = useNavStore.getState();
-    if (state.tab !== initialTab) {
-      useNavStore.setState({
-        tab: initialTab,
-        dir: 1,
-        mounted: state.mounted.includes(initialTab)
-          ? state.mounted
-          : [...state.mounted, initialTab],
-      });
-    }
-    // только на монтировании: дальше разделами управляет store
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   /* Назад/вперёд в браузере и обычные навигации — источник правды адрес. */
   useEffect(() => {
@@ -290,18 +253,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   }
 
   return (
-    <>
-    <div
-      aria-hidden
-      className={cn(
-        "ios-bar pointer-events-none fixed inset-x-0 top-0 z-30 lg:hidden",
-        !scrolled && "ios-bar-off",
-      )}
-    >
-      <div className="mx-auto flex h-11 max-w-md items-center justify-center pt-[env(safe-area-inset-top)] box-content">
-        <span className="text-[17px] font-semibold tracking-[-0.01em]">{TAB_LABEL[tab]}</span>
-      </div>
-    </div>
     <div
       ref={stageRef}
       // min-h-0 — без него flex-ребёнок не сжимается внутри app-shell-frame
@@ -349,6 +300,5 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
         );
       })}
     </div>
-    </>
   );
 }

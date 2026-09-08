@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { haptic, springSnappy } from "@/lib/motion";
+import { haptic, indicatorTween, springSnappy } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
@@ -59,8 +59,12 @@ export default function BottomNav() {
       className="pointer-events-none fixed inset-x-0 z-40 lg:hidden"
       // bottom через переменную: StandaloneViewportFix сдвигает панель к
       // настоящему низу экрана, когда iOS в PWA занизил вьюпорт (см. там).
-      // Панель плавает над краем: отступ от низа — не меньше safe-area.
-      style={{ bottom: "calc(var(--nav-offset, 0px) + max(10px, env(safe-area-inset-bottom)))" }}
+      //
+      // Отступ снизу — ровно safe-area, без собственного минимума. На
+      // iPhone это высота домашней полосы, и панель честно плавает над ней;
+      // в браузере safe-area нулевая, панель прижата к краю — раньше там
+      // оставалась пустая полоса в 10px, которая читалась как недоделка.
+      style={{ bottom: "calc(var(--nav-offset, 0px) + env(safe-area-inset-bottom))" }}
     >
       <div className="pointer-events-auto mx-auto max-w-md px-3">
         {/* Плавающий таб-бар, как в iOS 26: остров с отступами от краёв,
@@ -69,7 +73,10 @@ export default function BottomNav() {
             Активная вкладка — в плашке, которая переезжает между пунктами.
             Скругление 20, а не почти-пилюля: у Apple плавающие панели —
             скруглённый прямоугольник, форма читается, а не тает в овал. */}
-        <div className="liquid-bar gpu-layer flex h-[64px] items-stretch rounded-[20px] px-1.5">
+        {/* Нижние углы скругляем только когда панель действительно висит
+            над краем: у прижатой к низу «таблетки» скруглённый низ показывал
+            бы фон в углах. */}
+        <div className="liquid-bar gpu-layer flex h-[64px] items-stretch rounded-t-[20px] rounded-b-[min(20px,env(safe-area-inset-bottom))] px-1.5">
           {NAV.map(({ tab: key, label, Icon }) => {
             const active = tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
@@ -94,7 +101,7 @@ export default function BottomNav() {
                   <motion.span
                     layoutId="nav-pill"
                     className="absolute inset-0 rounded-[15px] bg-[var(--color-surface-2)]"
-                    transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                    transition={indicatorTween}
                   />
                 )}
                 <span className="relative">

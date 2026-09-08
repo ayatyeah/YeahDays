@@ -154,7 +154,7 @@ export default function SwipeDeck({
           «свайпни / ← мимо · беру →» между ними нет: крестик и галочка
           говорят сами, а лишняя строка под колодой отвлекала. */}
       {!exhausted && (
-        <div className="mt-5 flex items-center justify-center gap-16">
+        <div className="mt-4 mb-1 flex items-center justify-center gap-16">
           <DeckButton
             label="Не сейчас"
             color="#cf8578"

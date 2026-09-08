@@ -134,24 +134,26 @@ export default function TodaySection() {
           </div>
 
           {/* Список */}
+          {/* «Взято из колоды» — это НЕ то же, что «Мои задачи» ниже, и
+              раньше экран противоречил сам себе: писал «План пока пуст» над
+              списком из девяти задач. Название теперь говорит, чего именно
+              нет, а пустое состояние занимает одну строку вместо полэкрана:
+              внизу уже есть чем заняться. */}
+          <h2 className="mb-2 text-[15px] font-semibold text-[var(--color-fg-dim)]">
+            Взято из колоды{today.length > 0 ? ` · ${today.length}` : ""}
+          </h2>
           {today.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-[var(--color-surface)] text-[28px]">
-                <YgIcon name="sparkle" className="h-7 w-7 text-[var(--color-muted)]" />
-              </div>
-              <h2 className="text-[20px] font-bold tracking-tight">План пока пуст</h2>
-              <p className="mt-2 max-w-[270px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
-                Впиши свои задачи ниже, или открой «Главную» и свайпни вправо
-                действия, которые берёшь на сегодня.
-              </p>
-              <button
-                type="button"
-                onClick={() => go("home")}
-                className="press mt-5 flex h-11 items-center rounded-2xl bg-[var(--color-fg)] px-5 text-[15px] font-semibold text-[var(--color-bg)]"
-              >
-                Открыть Главную
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => go("home")}
+              className="press flex w-full items-center gap-3 rounded-3xl border border-dashed border-[var(--color-border-strong)] px-4 py-3.5 text-left"
+            >
+              <YgIcon name="cards" className="h-5 w-5 shrink-0 text-[var(--color-muted)]" />
+              <span className="min-w-0 flex-1 text-[14px] text-[var(--color-muted)]">
+                Ничего не взято — открой колоду и свайпни вправо
+              </span>
+              <YgIcon name="chevron" className="h-4 w-4 shrink-0 text-[var(--color-muted)]" strokeWidth={2} />
+            </button>
           ) : (
             <div className="flex flex-col gap-2.5">
               <AnimatePresence initial={false}>

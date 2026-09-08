@@ -448,7 +448,9 @@ export default function HomeSection() {
       {!(useOwnActionsOnly && customActions.length === 0) && (
         <button
           onClick={() => openCreate()}
-          className="mt-2.5 text-center text-[15px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
+          // pb: колода занимает всю высоту, и кнопка оказывалась ровно в
+          // зоне плавающего таб-бара — читалась как обрезанная
+          className="mt-3 pb-2 text-center text-[15px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
         >
           + Добавить своё действие
         </button>

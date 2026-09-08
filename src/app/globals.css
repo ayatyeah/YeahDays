@@ -532,9 +532,12 @@ select {
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
   .liquid-bar,
   .ios-bar {
-    background-color: color-mix(in srgb, var(--color-surface) 84%, transparent);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
+    /* 92%, а не 84: на светлой теме сквозь панель читался текст под ней и
+       низ экрана выглядел грязным. Стекло осталось, но контент за ним
+       теперь угадывается, а не мешает. */
+    background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    backdrop-filter: saturate(180%) blur(24px);
   }
 }
 .liquid-bar {
@@ -558,7 +561,10 @@ select {
 /* Большой заголовок раздела — 34pt, как Large Title. При прокрутке его
    подхватывает компактная шапка (AppShell). */
 .ios-title {
-  font-size: 34px;
+  /* 28, а не 34: на 390px «Что сделаешь сегодня?» в две строки занимало
+     треть первого экрана. Заголовок всё ещё крупный, но не вытесняет то,
+     ради чего экран открыли. */
+  font-size: 28px;
   line-height: 1.12;
   font-weight: 700;
   letter-spacing: -0.026em;

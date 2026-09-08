@@ -56,12 +56,14 @@ function SyncRow() {
   const busy = state === "syncing";
   const failed = state === "error";
 
+  // Коротко: «Синхронизировано · 13 сек назад» рядом с кнопкой «Обновить»
+  // не помещалось и обрезалось многоточием на середине слова.
   const label = busy
     ? "Синхронизация…"
     : failed
-      ? "Нет связи с сервером"
+      ? "Нет связи"
       : lastSyncedAt
-        ? `Синхронизировано · ${timeAgo(lastSyncedAt)}`
+        ? `Обновлено ${timeAgo(lastSyncedAt)}`
         : "Синхронизировано";
 
   return (

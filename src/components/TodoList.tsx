@@ -109,18 +109,13 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
 
   return (
     <section className="mt-5">
-      <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-[15px] font-semibold text-[var(--color-fg-dim)]">
+      {/* Заголовок и фильтры в одной строке, поиск — отдельной. Втиснутый
+          между ними, он ломал «Мои задачи · 9» на две строки. */}
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <h2 className="shrink-0 text-[15px] font-semibold text-[var(--color-fg-dim)]">
           Мои задачи{activeCount > 0 ? ` · ${activeCount}` : ""}
         </h2>
         <div className="flex items-center gap-2">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Поиск"
-            className="h-8 w-24 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2.5 text-[14px] outline-none focus:w-32 focus:border-[var(--color-border-strong)]"
-            style={{ transition: "width 0.18s var(--ease-out)" }}
-          />
           {(
             [
               ["active", "активные"],
@@ -145,6 +140,13 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
       </div>
 
       {/* Быстрый ввод */}
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Поиск по всем задачам"
+        className="mb-2.5 h-9 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[15px] outline-none focus:border-[var(--color-border-strong)]"
+      />
+
       <form
         onSubmit={(e) => {
           e.preventDefault();

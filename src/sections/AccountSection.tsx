@@ -106,6 +106,8 @@ export default function AccountSection() {
             className="h-full w-full"
           />
         </div>
+        {/* Кнопка «Изменить» переехала под текст: в одной строке она съедала
+            ширину, и «Уровень 4 · 745 XP» ломалось на четыре строки. */}
         <div className="min-w-0 flex-1">
           <p className="truncate text-[20px] font-bold">{name}</p>
           <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
@@ -114,16 +116,17 @@ export default function AccountSection() {
           <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
             {days} {days === 1 ? "день" : "дн."} в YeahGrind
           </p>
+          <button
+            type="button"
+            onClick={() => {
+              setDraft(name);
+              setEditing(true);
+            }}
+            className="press mt-2 text-[14px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
+          >
+            Изменить имя
+          </button>
         </div>
-        <Button
-          size="sm"
-          onClick={() => {
-            setDraft(name);
-            setEditing(true);
-          }}
-        >
-          Изменить
-        </Button>
       </section>
 
       {/* Метрики */}

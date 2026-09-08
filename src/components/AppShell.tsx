@@ -65,17 +65,12 @@ const SWIPE_RATIO = 2.2;
 /** Край экрана оставляем системе (свайп «назад» в браузере). */
 const EDGE_GUARD = 20;
 
-function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-}
 
 export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   const pathname = usePathname();
   const hydrated = useHydrated();
   const onboarded = useUserStore((s) => s.onboarded);
   const tab = useNavStore((s) => s.tab);
-  const dir = useNavStore((s) => s.dir);
   const mounted = useNavStore((s) => s.mounted);
   const go = useNavStore((s) => s.go);
   const warm = useNavStore((s) => s.warm);
@@ -84,9 +79,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
 
   const stageRef = useRef<HTMLDivElement>(null);
   const prevTab = useRef<TabKey>(initialTab);
-  const exitFromRef = useRef<TabKey>(initialTab);
-  /** Раздел, доигрывающий fade-out после переключения — см. эффект ниже и .section-pane-exiting в globals.css. */
-  const [exitingTab, setExitingTab] = useState<TabKey | null>(null);
 
   /**
    * Компактная шапка, как navigation bar в iOS: пока раздел в самом верху,
@@ -163,69 +155,15 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     active?.scrollTo({ top: 0, behavior: "smooth" });
   }, [scrollTopTick]);
 
-  /**
-   * ── Уход раздела: старый доигрывает fade-out, а не пропадает мгновенно.
+  /*
+   * Переключение раздела — мгновенное, без анимации.
    *
-   * Раньше [hidden] у старого и нового раздела переключались в ОДНОМ
-   * React-рендере — высота .app-stage скачком менялась на высоту нового
-   * раздела ДО того, как анимация въезда успевала это сгладить, и это
-   * читалось как рывок/наложение разных по размеру страниц. Теперь старый
-   * раздел ещё кадр-другой остаётся в DOM (не [hidden]), но CSS уводит его
-   * в position: absolute (.section-pane-exiting) — высоту .app-stage сразу
-   * и только определяет новый раздел, а старый просто гаснет поверх, не
-   * растягивая контейнер.
+   * Здесь были кроссфейд и подъём нового раздела: старый ещё кадр держался
+   * в дереве и гас, новый приезжал снизу за 260 мс. Задумано это было как
+   * «переход ощущается переходом», а на практике мешало: между нажатием и
+   * готовым экраном стояла заметная пауза. Резкая смена честнее — палец
+   * нажал, экран уже другой.
    */
-  useEffect(() => {
-    const from = exitFromRef.current;
-    exitFromRef.current = tab;
-    if (from === tab) return;
-    setExitingTab(from);
-    // 110 мс: старый раздел живёт ровно столько, сколько гаснет (100 мс),
-    // с запасом на кадр — чтобы прикрыть смену высоты рамки.
-    const timer = window.setTimeout(() => setExitingTab(null), 130);
-    return () => window.clearTimeout(timer);
-  }, [tab]);
-
-  useEffect(() => {
-    if (!exitingTab || prefersReducedMotion()) return;
-    const stage = stageRef.current;
-    const el = stage?.querySelector<HTMLElement>(`[data-section="${exitingTab}"]`);
-    if (!el) return;
-    try {
-      el.animate(
-        [
-          { opacity: 1, transform: "scale(1)" },
-          { opacity: 0, transform: "scale(0.985)" },
-        ],
-        // Старый раздел чуть отступает вглубь и гаснет. Чистый кроссфейд
-        // без движения читался как «картинка сменилась», а не «я перешёл».
-        { duration: 120, easing: "ease-out" },
-      );
-    } catch {
-      // Web Animations нет — раздел просто исчезнет без анимации
-    }
-  }, [exitingTab, dir]);
-
-  /* ── Появление раздела: направленное, на GPU, без перерисовки страницы ── */
-  useEffect(() => {
-    const stage = stageRef.current;
-    const active = stage?.querySelector<HTMLElement>("[data-section-active]");
-    if (!active || prefersReducedMotion()) return;
-    try {
-      active.animate(
-        [
-          { opacity: 0, transform: "translateY(12px) scale(0.985)" },
-          { opacity: 1, transform: "translateY(0) scale(1)" },
-        ],
-        // Новый раздел приходит снизу и «доезжает» до места. Подъём с
-        // масштабом — то, чем iOS отличает переход от простой смены
-        // содержимого: движение подтверждает, что переход состоялся.
-        { duration: 260, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-      );
-    } catch {
-      // Web Animations нет — раздел просто появится без анимации
-    }
-  }, [tab, dir]);
 
   /* ── Прогрев остальных разделов в простое ── */
   useEffect(() => {
@@ -366,11 +304,9 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     </div>
     <div
       ref={stageRef}
-      // relative — точка отсчёта для .section-pane-exiting (position:absolute,
-      // inset:0): уходящий раздел оверлеит ровно ту же область, что и .app-stage.
       // min-h-0 — без него flex-ребёнок не сжимается внутри app-shell-frame
       // и просто её распирает (та же ловушка, что и у .section-pane).
-      className="app-stage relative min-h-0 flex flex-1 flex-col"
+      className="app-stage min-h-0 flex flex-1 flex-col"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -379,16 +315,14 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       {TABS.filter((t) => mounted.includes(t)).map((t) => {
         const Section = SECTIONS[t];
         const active = t === tab;
-        const exiting = t === exitingTab;
         return (
           <div
             key={t}
             data-section={t}
             {...(active ? { "data-section-active": "" } : {})}
             // скрытый раздел остаётся в дереве, но полностью выключен:
-            // ни отрисовки, ни фокуса, ни озвучки скринридером. Уходящий
-            // (exiting) — ещё видим и доигрывает fade-out, см. эффект ниже.
-            hidden={!active && !exiting}
+            // ни отрисовки, ни фокуса, ни озвучки скринридером.
+            hidden={!active}
             aria-hidden={!active}
             inert={!active}
             // Раздел занимает область справа от сайдбара целиком, без
@@ -402,7 +336,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
             // до полутора метров; на обычных мониторах он не срабатывает.
             className={cn(
               "section-pane",
-              exiting && "section-pane-exiting",
               // Потолка ширины нет: раздел заполняет всё справа от
               // сайдбара. Потолок в 1360 оставлял на 1920 пустую полосу
               // справа. Читаемость при этом держит не потолок, а сетка

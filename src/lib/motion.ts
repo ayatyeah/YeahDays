@@ -32,7 +32,12 @@ export const springSoft: Transition = {
  * дольше самого перехода. 180 мс с ease-out — черта встаёт вместе с
  * разделом и не пружинит.
  */
-export const indicatorTween: Transition = { type: "tween", duration: 0.18, ease: [0.22, 1, 0.36, 1] };
+/**
+ * Индикатор активного пункта навигации. duration: 0 — переключение раздела
+ * мгновенное (см. AppShell), и ползущая следом капсула выглядела бы как
+ * отставание интерфейса от нажатия.
+ */
+export const indicatorTween: Transition = { duration: 0 };
 
 /** Резкая, для мелких откликов (галочки, счётчики). */
 export const springSnappy: Transition = {

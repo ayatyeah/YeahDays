@@ -19,6 +19,7 @@ import { getLevelProgress, TIER_MILESTONES, tierForLevel } from "@/lib/leveling"
 import { cn } from "@/lib/cn";
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
 import { timeSpentBySubject, fmtHours } from "@/lib/timeSpent";
+import { activityByHour, hourWindow } from "@/lib/activityHours";
 import { STATS } from "@/lib/domain";
 
 export default function ProgressSection() {
@@ -36,6 +37,13 @@ export default function ProgressSection() {
     };
   }, [todos]);
   const spentMax = spent[0]?.minutes ?? 1;
+
+  /** Часы, в которые дела реально закрываются, за последний месяц. */
+  const activity = useMemo(() => activityByHour([plan, todos]), [plan, todos]);
+  const activityMax = useMemo(
+    () => Math.max(1, ...activity.hours.map((h) => h.count)),
+    [activity],
+  );
 
   const stats = useMemo(() => selectStats(plan, todos), [plan, todos]);
   const totalXp = useMemo(() => selectTotalXp(plan, todos), [plan, todos]);
@@ -179,6 +187,45 @@ export default function ProgressSection() {
                     </div>
                   );
                 })}
+              </div>
+            </section>
+          )}
+
+          {/* Когда дела реально закрываются. Ответ, который нельзя достать
+              из головы: кажется, что продуктивен утром, а закрываешь всё
+              вечером — и сложное стоит ставить туда. */}
+          {activity.total > 0 && activity.peak !== null && (
+            <section className="mb-6 lg:mb-0">
+              <h2 className="mb-1 text-[15px] font-semibold text-[var(--color-fg-dim)]">
+                Когда ты закрываешь дела
+              </h2>
+              <p className="mb-3 text-[13px] text-[var(--color-muted)]">
+                Чаще всего — {hourWindow(activity.peak)} · {activity.total} за месяц
+              </p>
+              <div className="flex h-16 items-end gap-[3px]">
+                {activity.hours.map((h) => (
+                  <span
+                    key={h.hour}
+                    title={`${hourWindow(h.hour)} — ${h.count}`}
+                    className="flex-1 rounded-t-[3px]"
+                    style={{
+                      height: `${Math.max((h.count / activityMax) * 100, 4)}%`,
+                      background:
+                        h.hour === activity.peak
+                          ? "var(--color-intelligence)"
+                          : h.count > 0
+                            ? "color-mix(in srgb, var(--color-intelligence) 45%, transparent)"
+                            : "var(--color-surface-2)",
+                    }}
+                  />
+                ))}
+              </div>
+              <div className="mt-1.5 flex justify-between text-[11px] text-[var(--color-muted)]">
+                <span>00</span>
+                <span>06</span>
+                <span>12</span>
+                <span>18</span>
+                <span>24</span>
               </div>
             </section>
           )}

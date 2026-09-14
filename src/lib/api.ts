@@ -77,9 +77,14 @@ export async function fetchRecommendations(
 }
 
 function localRecommend(req: RecommendRequest): RecommendResponse {
-  const pool = req.useOwnActionsOnly
-    ? req.customActions
-    : [...ACTION_POOL, ...req.customActions];
+  // «Только свои действия» имеет смысл, когда свои действия есть. Пока их
+  // нет, отдаём встроенный набор: иначе новый человек после регистрации,
+  // онбординга и чек-ина упирался в пустую колоду — флаг включён у всех
+  // аккаунтов по умолчанию.
+  const pool =
+    req.useOwnActionsOnly && req.customActions.length > 0
+      ? req.customActions
+      : [...ACTION_POOL, ...req.customActions];
   const deck = recommend(
     {
       pool,

@@ -398,13 +398,9 @@ export default function HomeSection() {
               resetKey={deckVersion}
               onAccept={handleAccept}
               onReject={handleReject}
-              emptyState={
-                useOwnActionsOnly && customActions.length === 0 ? (
-                  <DeckNoOwnActions onAdd={() => openCreate()} />
-                ) : (
-                  <DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />
-                )
-              }
+              // пустой из-за «только свои действия» колода больше не бывает:
+              // без своих действий движок берёт встроенный набор (lib/api.ts)
+              emptyState={<DeckEmpty onRefresh={() => setReloadKey((k) => k + 1)} />}
             />
           </motion.div>
         )}
@@ -442,11 +438,8 @@ export default function HomeSection() {
         )}
       </AnimatePresence>
 
-      {/* Своё действие — не дублируем, когда пустая колода уже показывает
-          собственную крупную кнопку с тем же действием (DeckNoOwnActions
-          выше): та же надпись дважды на экране выглядела как баг вёрстки. */}
-      {!(useOwnActionsOnly && customActions.length === 0) && (
-        <button
+      {/* Своё действие */}
+      <button
           onClick={() => openCreate()}
           // pb: колода занимает всю высоту, и кнопка оказывалась ровно в
           // зоне плавающего таб-бара — читалась как обрезанная
@@ -454,7 +447,6 @@ export default function HomeSection() {
         >
           + Добавить своё действие
         </button>
-      )}
       </div>
       </div>
     </div>
@@ -509,34 +501,6 @@ function RoutineHint({
             : "На сегодня по плану всё — а колода ниже всегда открыта"}
         </p>
       </div>
-    </motion.div>
-  );
-}
-
-function DeckNoOwnActions({ onAdd }: { onAdd: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0, transition: springSoft }}
-      className="flex flex-1 flex-col items-center justify-center px-6 text-center"
-    >
-      <div className="relative mb-5 flex h-20 w-20 items-center justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-3xl surface text-[28px]">
-          <YgIcon name="pencil" className="h-7 w-7 text-[var(--color-muted)]" />
-        </div>
-      </div>
-      <h2 className="text-[20px] font-bold tracking-tight">Колода пока пуста</h2>
-      <p className="mt-2 max-w-[280px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
-        Встроенный набор действий выключен — колода собирается только из
-        того, что добавишь сам. Добавь первое действие, и оно появится тут.
-      </p>
-      <motion.button
-        onClick={onAdd}
-        whileTap={{ scale: 0.96 }}
-        className="press mt-5 h-11 rounded-2xl bg-[var(--color-fg)] px-5 text-[15px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
-      >
-        + Добавить своё действие
-      </motion.button>
     </motion.div>
   );
 }

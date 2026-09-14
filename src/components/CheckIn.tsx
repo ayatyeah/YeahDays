@@ -39,8 +39,14 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-1 flex-col justify-center"
+      // Не justify-center: когда содержимое выше экрана (iPhone SE),
+      // центрирование раздаёт переполнение поровну вверх и вниз, и кнопка
+      // «Показать действия» уезжала под нижнюю навигацию. my-auto на
+      // обёртке центрирует, пока место есть, а при нехватке прижимает к
+      // верху и даёт обычную прокрутку.
+      className="flex flex-1 flex-col"
     >
+      <div className="my-auto">
       <div className="mb-8">
         <p className="text-[16px] font-medium text-[var(--color-muted)]">
           Привет, {name}
@@ -65,7 +71,7 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
       </section>
 
       {/* Время */}
-      <section className="mb-9">
+      <section>
         <p className="inset-title">Сколько минут готов вложить?</p>
         <Segmented
           id="minutes"
@@ -76,13 +82,23 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
         />
       </section>
 
-      <motion.button
-        whileTap={{ scale: 0.98, opacity: 0.85 }}
-        onClick={onDone}
-        className="h-[50px] rounded-2xl bg-[var(--color-fg)] text-[17px] font-semibold text-[var(--color-bg)] transition hover:opacity-90"
-      >
-        Показать действия на сегодня
-      </motion.button>
+      </div>
+
+      {/* Прилипает к низу видимой части раздела — над нижней навигацией и
+          баннером установки. Раньше кнопка стояла в потоке, и на iPhone SE
+          в начальном положении оказывалась ровно под навигацией: касание по
+          видимой кнопке уходило в панель, и казалось, что кнопка «не
+          нажимается». sticky bottom-0 отсчитывается от края прокрутки за
+          вычетом нижнего отступа раздела, то есть ровно над панелями. */}
+      <div className="sticky bottom-0 -mx-[18px] mt-6 bg-[var(--color-bg)] px-[18px] pb-3 pt-3">
+        <motion.button
+          whileTap={{ scale: 0.98, opacity: 0.85 }}
+          onClick={onDone}
+          className="h-[50px] w-full rounded-2xl bg-[var(--color-fg)] text-[17px] font-semibold text-[var(--color-bg)] transition hover:opacity-90"
+        >
+          Показать действия на сегодня
+        </motion.button>
+      </div>
     </motion.div>
   );
 }

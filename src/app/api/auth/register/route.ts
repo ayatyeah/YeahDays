@@ -17,7 +17,10 @@ const USERNAME_RE = /^[a-zA-Z0-9_]{3,20}$/;
 const CURRENT_YEAR = new Date().getFullYear();
 
 export async function POST(req: Request) {
-  if (!rateLimit(`register:ip:${clientIp(req)}`, 5, 60 * 60 * 1000)) {
+  // 30 в час, а не 5: студенты в общежитии и на кампусе выходят в сеть через
+  // один общий адрес, и шестой однокурсник за час получал отказ. От массовых
+  // регистраций по-прежнему защищает уникальность почты и логина.
+  if (!rateLimit(`register:ip:${clientIp(req)}`, 30, 60 * 60 * 1000)) {
     return NextResponse.json({ error: "Слишком много попыток, попробуй позже" }, { status: 429 });
   }
 

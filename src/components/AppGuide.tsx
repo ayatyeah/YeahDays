@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { spring } from "@/lib/motion";
+import Modal from "@/components/ui/Modal";
 import { useUserStore } from "@/store/useUserStore";
 import { TABS, TAB_LABEL } from "@/lib/nav";
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
@@ -31,6 +30,14 @@ const TAB_TEXT: Record<(typeof TABS)[number], string> = {
  *
  * Существующим аккаунтам с реальным прогрессом флаг seenGuide бэкфилится
  * в true при миграции/гидратации (см. useUserStore.ts) — их этим не грузим.
+ *
+ * Построен на общей шторке (ui/Modal), а не на собственном drag="y". Свой
+ * вариант на iPhone был тупиком для нового пользователя: библиотека
+ * анимации ставит на перетаскиваемый лист touch-action: pan-x, и iOS
+ * запрещает вертикальную прокрутку списка внутри. Кнопка «Понятно» при
+ * этом стояла за нижним краем экрана — ни увидеть, ни докрутить. Общая
+ * шторка решает направление жеста сама (вниз в верхней точке — закрыть,
+ * иначе — прокрутка), а кнопка теперь прилипает к низу листа.
  */
 export default function AppGuide() {
   const onboarded = useUserStore((s) => s.onboarded);
@@ -45,88 +52,55 @@ export default function AppGuide() {
     return () => clearTimeout(t);
   }, [onboarded, seenGuide]);
 
+  // закрытие любым способом — свайп, фон, кнопка — считается просмотром
   const close = () => {
     completeGuide();
     setOpen(false);
   };
 
   return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={close}
-            className="fixed inset-0 z-40 bg-black/70"
-          />
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={spring}
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={{ top: 0, bottom: 0.4 }}
-            onDragEnd={(_, i) => {
-              if (i.offset.y > 110 || i.velocity.y > 600) close();
-            }}
-            className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md"
-          >
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-label="Как это устроено"
-              className="marble safe-b max-h-[85dvh] overflow-y-auto rounded-t-[19px] px-5 pb-6 pt-3"
-            >
-              <div
-                className="mx-auto mb-5 h-1 w-10 rounded-full bg-[var(--color-border-strong)]"
+    <Modal open={open} onClose={close}>
+      <div role="dialog" aria-label="Как это устроено">
+        <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
+          Коротко
+        </p>
+        <h2 className="mt-1.5 text-[28px] font-bold leading-tight">Как это устроено</h2>
+
+        <ul className="mt-5 flex flex-col gap-3">
+          {TABS.map((tab) => (
+            <li key={tab} className="surface flex gap-3.5 rounded-2xl p-3.5">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)]"
                 aria-hidden
-              />
-
-              <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-                Коротко
-              </p>
-              <h2 className="mt-1.5 text-[28px] font-bold leading-tight">
-                Как это устроено
-              </h2>
-
-              <ul className="mt-5 flex flex-col gap-3">
-                {TABS.map((tab, i) => (
-                  <motion.li
-                    key={tab}
-                    initial={{ opacity: 0, y: 14 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ ...spring, delay: 0.05 + i * 0.05 }}
-                    className="surface flex gap-3.5 rounded-2xl p-3.5"
-                  >
-                    <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[17px]"
-                      aria-hidden
-                    >
-                      <YgIcon name={TAB_ICON[tab]} className="h-5 w-5" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-[16px] font-semibold">{TAB_LABEL[tab]}</p>
-                      <p className="mt-1 text-[15px] leading-snug text-[var(--color-fg-dim)]">
-                        {TAB_TEXT[tab]}
-                      </p>
-                    </div>
-                  </motion.li>
-                ))}
-              </ul>
-
-              <button
-                onClick={close}
-                className="press mt-5 h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[15px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
               >
-                Понятно
-              </button>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+                <YgIcon name={TAB_ICON[tab]} className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[16px] font-semibold">{TAB_LABEL[tab]}</p>
+                <p className="mt-1 text-[15px] leading-snug text-[var(--color-fg-dim)]">
+                  {TAB_TEXT[tab]}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* Прилипает к низу видимой части листа: видна сразу, без
+            прокрутки, на любом экране. bottom-0 отсчитывается от края
+            области прокрутки за вычетом её нижнего отступа — отрицательное
+            значение утапливало кнопку за край. -mx/px возвращают фон под
+            кнопкой на всю ширину, чтобы проезжающий под ней список не
+            просвечивал. */}
+        <div className="sticky bottom-0 -mx-5 mt-4 bg-[var(--color-surface)] px-5 pb-3 pt-3">
+          <button
+            type="button"
+            onClick={close}
+            className="press h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[16px] font-bold text-[var(--color-bg)]"
+          >
+            Понятно
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { STAT_LIST, dateKey, type StatKey } from "@/lib/domain";
 import { useUserStore } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
@@ -82,9 +82,34 @@ export default function Onboarding() {
     go("home");
   }
 
+  /**
+   * Одно нажатие — ровно один шаг.
+   *
+   * Раньше несколько быстрых касаний «Далее» приходили до перерисовки и
+   * все видели один и тот же step: проверка «последний ли шаг» не
+   * срабатывала, а каждое касание прибавляло единицу. Шаг уходил за
+   * последний, ни один экран не рендерился — оставалась пустая страница с
+   * кнопкой. Теперь после нажатия кнопки заперты до тех пор, пока новый шаг
+   * не отрисован (эффект ниже), лишние касания просто отбрасываются.
+   */
+  const busyRef = useRef(false);
+  useEffect(() => {
+    busyRef.current = false;
+  }, [step]);
+
   function next() {
-    if (step < STEPS - 1) setStep((s) => s + 1);
-    else finish();
+    if (busyRef.current) return;
+    busyRef.current = true;
+    // finish уводит на главную: замок оставляем закрытым, чтобы повторное
+    // касание не записало задачи онбординга второй раз
+    if (step >= STEPS - 1) finish();
+    else setStep(step + 1);
+  }
+
+  function back() {
+    if (busyRef.current || step === 0) return;
+    busyRef.current = true;
+    setStep(step - 1);
   }
 
   return (
@@ -105,24 +130,22 @@ export default function Onboarding() {
               initial={false}
               animate={{ scaleX: i <= step ? 1 : 0 }}
               style={{ originX: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 28 }}
+              // мгновенно: пружина при частых нажатиях догоняла шаг с запаздыванием
+              transition={{ duration: 0 }}
             />
           </div>
         ))}
       </div>
 
       <div className="relative flex flex-1 flex-col">
-        <AnimatePresence mode="wait">
+        {/* Шаги сменяются мгновенно. Здесь был режим «дождаться ухода
+            старого»: новый экран ждал 280 мс выхода предыдущего, и частые
+            нажатия выстраивали очередь анимаций — экран отставал от пальца. */}
+        <>
           {step === 0 && (
             <Step key="welcome">
               <div className="flex flex-1 flex-col items-center justify-center text-center">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <Logo glow className="h-28 w-auto" />
-                </motion.div>
+                <Logo glow className="h-28 w-auto" />
                 <h1 className="mt-5 text-[34px] font-black leading-none tracking-tight">
                   YeahGrind
                 </h1>
@@ -278,7 +301,7 @@ export default function Onboarding() {
               </div>
             </Step>
           )}
-        </AnimatePresence>
+        </>
       </div>
 
       {/* Навигация — прилипает к низу поверх контента, с фоном и safe-area */}
@@ -286,7 +309,7 @@ export default function Onboarding() {
         {step > 0 && (
           <motion.button
             whileTap={{ scale: 0.95 }}
-            onClick={() => setStep((s) => s - 1)}
+            onClick={back}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
             aria-label="Назад"
           >
@@ -308,15 +331,5 @@ export default function Onboarding() {
 }
 
 function Step({ children }: { children: React.ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 24 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -24 }}
-      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute inset-0 flex flex-col"
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className="absolute inset-0 flex flex-col">{children}</div>;
 }

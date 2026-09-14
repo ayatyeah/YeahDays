@@ -45,7 +45,9 @@ export async function POST(req: Request) {
   const disabledActions = Array.isArray(body.disabledActions)
     ? body.disabledActions
     : undefined;
-  const pool = body.useOwnActionsOnly ? custom : [...ACTION_POOL, ...custom];
+  // своих действий нет — отдаём встроенный набор (см. localRecommend в lib/api.ts)
+  const pool =
+    body.useOwnActionsOnly && custom.length > 0 ? custom : [...ACTION_POOL, ...custom];
   const session = await auth();
   const userId =
     session?.user?.id ?? (typeof body.userId === "string" ? body.userId : "");

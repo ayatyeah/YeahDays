@@ -52,7 +52,7 @@ const MARKETING = [
  */
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isMarketing = MARKETING.includes(pathname);
+  const isMarketing = MARKETING.includes(pathname) || pathname.startsWith("/invite/");
   const isSection = tabFromPath(pathname) !== null;
 
   if (isMarketing) {

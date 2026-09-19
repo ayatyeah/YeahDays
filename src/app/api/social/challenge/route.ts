@@ -159,16 +159,17 @@ export async function PUT(req: Request) {
     });
     if (!member) return NextResponse.json({ error: "Ты не участник" }, { status: 403 });
 
-    const existing = await prisma.sharedChallengeProgress.findUnique({
-      where: { challengeId_userId_day: { challengeId: id, userId, day } },
-    });
-    // ниже нуля не опускаемся: «минус один подход» — это не событие
-    const count = Math.max(0, (existing?.count ?? 0) + delta);
-    await prisma.sharedChallengeProgress.upsert({
-      where: { challengeId_userId_day: { challengeId: id, userId, day } },
-      create: { challengeId: id, userId, day, count },
-      update: { count },
-    });
+    // Одним запросом, а не «прочитать → прибавить → записать»: два быстрых
+    // нажатия «+» шли параллельно, оба читали 3 и оба писали 4 — один подход
+    // терялся. Ниже нуля не опускаемся: «минус один подход» — не событие.
+    const rows = await prisma.$queryRaw<{ count: number }[]>`
+      INSERT INTO "SharedChallengeProgress" ("challengeId", "userId", "day", "count", "updatedAt")
+      VALUES (${id}, ${userId}, ${day}, GREATEST(0, ${delta}::int), now())
+      ON CONFLICT ("challengeId", "userId", "day")
+      DO UPDATE SET "count" = GREATEST(0, "SharedChallengeProgress"."count" + ${delta}::int),
+                    "updatedAt" = now()
+      RETURNING "count"`;
+    const count = rows[0]?.count ?? 0;
 
     return NextResponse.json({ ok: true, count });
   } catch (e) {

@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { YgIcon } from "@/components/yg-icons";
 import { haptic } from "@/lib/motion";
 import { dateKey } from "@/lib/domain";
 import { cn } from "@/lib/cn";
+import { useLiveRefresh } from "@/lib/useLiveRefresh";
 
 interface Member {
   userId: string;
@@ -35,13 +36,26 @@ export default function SharedChallenges() {
   const [items, setItems] = useState<SharedChallenge[] | null>(null);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-  const [target, setTarget] = useState(1);
+  // Строкой, а не числом: при числе стёртое поле тут же превращалось
+  // обратно в «1», и набрать «50» было нельзя — выходило «150».
+  const [target, setTarget] = useState("1");
   const [unit, setUnit] = useState("раз");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const day = dateKey();
+  const [leaving, setLeaving] = useState<SharedChallenge | null>(null);
+  /**
+   * День считаем при каждой загрузке, а не один раз при рендере: раздел не
+   * размонтируется, и после полуночи карточка жила бы во вчерашнем дне.
+   */
+  const [day, setDay] = useState(dateKey);
+  /** Сколько нажатий ещё летит на сервер — пока летят, ответы не перетирают экран. */
+  const inflight = useRef(new Map<string, number>());
 
   const load = useCallback(async () => {
+    const day = dateKey();
+    setDay(day);
+    // пока свои нажатия не доехали, свежий список всё равно устарел бы
+    if ([...inflight.current.values()].some((n) => n > 0)) return;
     try {
       const res = await fetch(`/api/social/challenge?day=${day}`, { cache: "no-store" });
       if (!res.ok) return setItems([]);
@@ -50,14 +64,13 @@ export default function SharedChallenges() {
     } catch {
       setItems([]);
     }
-  }, [day]);
+  }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useLiveRefresh(load);
 
   const create = useCallback(async () => {
     const value = title.trim();
+    const norm = Math.min(999, Math.max(1, Math.round(Number(target)) || 1));
     if (!value) return;
     setBusy(true);
     setError(null);
@@ -65,7 +78,7 @@ export default function SharedChallenges() {
       const res = await fetch("/api/social/challenge", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: value, unit, target }),
+        body: JSON.stringify({ title: value, unit, target: norm }),
       });
       const json = (await res.json()) as { ok?: boolean; error?: string };
       if (!json.ok) {
@@ -74,6 +87,7 @@ export default function SharedChallenges() {
       }
       haptic("success");
       setTitle("");
+      setTarget("1");
       setOpen(false);
       await load();
     } catch {
@@ -83,19 +97,45 @@ export default function SharedChallenges() {
     }
   }, [title, unit, target, load]);
 
-  /** Плюс/минус подход. Ответ сервера — источник истины, его и показываем. */
+  /**
+   * Плюс/минус подход. Цифра меняется сразу, сервер догоняет.
+   *
+   * Раньше каждое нажатие ждало ответа и полной перезагрузки списка — на
+   * мобильной сети это полсекунды тишины после тапа, а быстрые нажатия
+   * гонялись между собой. Теперь экран верит нажатию, а ответ сервера
+   * (он атомарный и знает правду) применяем, только когда нажатий в пути
+   * не осталось — иначе он откатил бы ещё не доехавшие.
+   */
   const bump = useCallback(
     async (id: string, delta: number) => {
       haptic(delta > 0 ? "success" : "select");
+      const patch = (fn: (count: number) => number) =>
+        setItems((prev) =>
+          prev?.map((c) =>
+            c.id !== id
+              ? c
+              : { ...c, members: c.members.map((m) => (m.isMe ? { ...m, count: fn(m.count) } : m)) },
+          ) ?? prev,
+        );
+      patch((n) => Math.max(0, n + delta));
+      inflight.current.set(id, (inflight.current.get(id) ?? 0) + 1);
+      let server: number | null = null;
       try {
-        await fetch("/api/social/challenge", {
+        const res = await fetch("/api/social/challenge", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, day, delta }),
         });
-        await load();
+        const json = (await res.json()) as { count?: number };
+        if (typeof json.count === "number") server = json.count;
       } catch {
-        /* офлайн — при следующем открытии подтянется */
+        /* офлайн — сверимся при следующем обновлении */
+      }
+      const left = (inflight.current.get(id) ?? 1) - 1;
+      inflight.current.set(id, left);
+      if (left === 0) {
+        if (server !== null) patch(() => server!);
+        else void load();
       }
     },
     [day, load],
@@ -204,10 +244,10 @@ export default function SharedChallenges() {
 
               <button
                 type="button"
-                onClick={() => void leave(c.id)}
+                onClick={() => setLeaving(c)}
                 className="press mt-1.5 text-[12px] text-[var(--color-muted)]"
               >
-                {c.isOwner ? "Удалить челлендж" : "Выйти"}
+                Выйти из челленджа
               </button>
             </div>
           ))}
@@ -236,11 +276,11 @@ export default function SharedChallenges() {
             <div className="flex-1">
               <p className="inset-title">Норма в день</p>
               <input
-                type="number"
-                min={1}
-                max={999}
+                type="text"
+                inputMode="numeric"
                 value={target}
-                onChange={(e) => setTarget(Math.max(1, Number(e.target.value) || 1))}
+                onChange={(e) => setTarget(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                onBlur={() => !target && setTarget("1")}
                 className="h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] tabular-nums outline-none"
               />
             </div>
@@ -264,11 +304,36 @@ export default function SharedChallenges() {
         <Button
           variant="primary"
           className="mt-5 w-full"
-          disabled={busy || !title.trim()}
+          disabled={busy || !title.trim() || !Number(target)}
           onClick={() => void create()}
         >
           Позвать друзей
         </Button>
+      </Modal>
+
+      {/* Выход — с подтверждением: кнопка стоит прямо под счётчиком, и
+          промахнуться мимо «+» было проще простого. */}
+      <Modal open={leaving !== null} onClose={() => setLeaving(null)} title="Выйти из челленджа?">
+        <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">
+          {leaving && leaving.members.length <= 1
+            ? "Ты последний участник — челлендж удалится вместе с прогрессом."
+            : "Твой прогресс пропадёт. У остальных челлендж останется."}
+        </p>
+        <div className="mt-5 flex gap-2.5">
+          <Button className="flex-1" onClick={() => setLeaving(null)}>
+            Отмена
+          </Button>
+          <Button
+            variant="danger"
+            className="flex-1"
+            onClick={() => {
+              if (leaving) void leave(leaving.id);
+              setLeaving(null);
+            }}
+          >
+            Выйти
+          </Button>
+        </div>
       </Modal>
     </section>
   );

@@ -94,6 +94,7 @@ export default function NotificationCenter() {
         title: t.title,
         day,
         hour: t.hour as number,
+        minute: t.minute,
         duration: t.duration,
       }));
   }, [todos]);

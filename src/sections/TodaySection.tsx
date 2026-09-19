@@ -11,6 +11,8 @@ import EveningRetro from "@/components/EveningRetro";
 import Challenges from "@/components/Challenges";
 import TimelineSchedule from "@/components/TimelineSchedule";
 import TodoList from "@/components/TodoList";
+import ClassesSetup from "@/components/ClassesSetup";
+import ReminderNudge from "@/components/ReminderNudge";
 import { LogoLoader } from "@/components/Logo";
 import {
   useUserStore,
@@ -129,6 +131,11 @@ export default function TodaySection() {
           {/* Расписание дня — сразу после прогресса, а не в конце страницы:
               это самое конкретное "что и когда сегодня", раньше требовало
               долистать мимо персонажа и челленджей, чтобы увидеть. */}
+          {/* Первый день и напоминания — над расписанием, к которому
+              относятся. Каждая карточка сама решает, нужна ли она сейчас,
+              и чаще всего не рендерит ничего. */}
+          <ClassesSetup />
+          <ReminderNudge />
           <div className="mb-5 lg:mb-0">
             <TimelineSchedule compact />
           </div>

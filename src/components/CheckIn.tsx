@@ -35,10 +35,9 @@ interface CheckInProps {
 
 export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+    // Без въезда: приложение переключает экраны мгновенно, и полусекундное
+    // появление чек-ина после этого читалось как подвисание.
+    <div
       // Не justify-center: когда содержимое выше экрана (iPhone SE),
       // центрирование раздаёт переполнение поровну вверх и вниз, и кнопка
       // «Показать действия» уезжала под нижнюю навигацию. my-auto на
@@ -99,6 +98,6 @@ export default function CheckIn({ mood, onChange, onDone, name }: CheckInProps) 
           Показать действия на сегодня
         </motion.button>
       </div>
-    </motion.div>
+    </div>
   );
 }

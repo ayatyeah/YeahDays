@@ -151,7 +151,10 @@ function RegisterForm() {
 
         <p className="mt-4 text-center text-[15px] text-[var(--color-muted)]">
           Уже есть аккаунт?{" "}
-          <Link href="/login" className="font-semibold text-[var(--color-fg)]">
+          <Link
+            href={callbackUrl === "/app" ? "/login" : `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            className="font-semibold text-[var(--color-fg)]"
+          >
             Войти
           </Link>
         </p>

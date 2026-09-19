@@ -4,6 +4,7 @@
  * GET  → { me, friends[] } — своя карточка и карточки друзей.
  * PUT  { name, level, xp, streak } → обновить свою публичную сводку.
  * POST { code } → подружиться по коду (см. /api/keys/pair).
+ * POST { invite } → подружиться по ссылке-приглашению (см. /api/social/invite).
  * DELETE { friendId } → развязаться, симметрично.
  *
  * Видно ровно то, что человек и так показал бы сам: имя, уровень, опыт,
@@ -17,6 +18,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -119,6 +121,9 @@ export async function POST(req: Request) {
   } catch {
     body = {};
   }
+  const invite = String(body.invite ?? "").trim().toUpperCase().slice(0, 16);
+  if (invite) return acceptInvite(userId, invite);
+
   const code = String(body.code ?? "").trim().toUpperCase().slice(0, 16);
   if (!code) return NextResponse.json({ error: "Нужен код" }, { status: 400 });
 
@@ -131,16 +136,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Это твой собственный код" }, { status: 400 });
     }
 
-    // Две строки: «мои друзья» — выборка по userId без OR, и разрыв связи
-    // симметричен. createMany со skipDuplicates — повторный код не падает.
     await prisma.$transaction([
-      prisma.friendship.createMany({
-        data: [
-          { userId, friendId: row.userId },
-          { userId: row.userId, friendId: userId },
-        ],
-        skipDuplicates: true,
-      }),
+      befriend(userId, row.userId),
       prisma.pairingCode.update({
         where: { code },
         data: { consumedAt: new Date() },
@@ -151,6 +148,44 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, name: stats?.name || "Без имени" });
   } catch (e) {
     console.error("social POST failed:", e);
+    return NextResponse.json({ error: "DB error" }, { status: 500 });
+  }
+}
+
+/**
+ * Две строки: «мои друзья» — выборка по userId без OR, и разрыв связи
+ * симметричен. createMany со skipDuplicates — повторный код не падает.
+ */
+function befriend(a: string, b: string) {
+  return prisma.friendship.createMany({
+    data: [
+      { userId: a, friendId: b },
+      { userId: b, friendId: a },
+    ],
+    skipDuplicates: true,
+  });
+}
+
+/** Ссылка-приглашение: код постоянный, поэтому не гасим его, а ограничиваем частоту. */
+async function acceptInvite(userId: string, invite: string) {
+  if (!rateLimit(`invite:uid:${userId}`, 20, 60 * 60_000)) {
+    return NextResponse.json({ error: "Слишком часто, попробуй позже" }, { status: 429 });
+  }
+  try {
+    const owner = await prisma.publicStats.findUnique({
+      where: { inviteCode: invite },
+      select: { userId: true, name: true },
+    });
+    if (!owner) {
+      return NextResponse.json({ error: "Ссылка устарела — попроси новую" }, { status: 404 });
+    }
+    if (owner.userId === userId) {
+      return NextResponse.json({ error: "Это твоя собственная ссылка" }, { status: 400 });
+    }
+    await befriend(userId, owner.userId);
+    return NextResponse.json({ ok: true, name: owner.name || "Без имени" });
+  } catch (e) {
+    console.error("invite accept failed:", e);
     return NextResponse.json({ error: "DB error" }, { status: 500 });
   }
 }

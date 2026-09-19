@@ -20,35 +20,35 @@ datasource db {
 // google-only аккаунтов. Anonymous-данные линкуются к аккаунту при входе
 // (см. комментарий над моделью).
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  username      String?   @unique
-  passwordHash  String?
-  birthYear     Int?
+  id                String                    @id @default(cuid())
+  name              String?
+  email             String?                   @unique
+  emailVerified     DateTime?
+  image             String?
+  username          String?                   @unique
+  passwordHash      String?
+  birthYear         Int?
   /// забанен владельцем из /admin — блокирует вход и обнуляет уже
   /// открытые JWT-сессии (проверка на каждый auth(), см. callbacks.jwt)
-  banned        Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  events        Event[]
-  state         UserState?
-  pushSubs      PushSubscription[]
-  scheduled     ScheduledNotification[]
-  assistantStatus AssistantStatus?
-  assistantEvents AssistantEvent[]
-  assistantChat   AssistantChat[]
-  assistantFacts  AssistantFact[]
-  apiKeyLinks     ApiKeyUser[]
-  pairingCodes    PairingCode[]
-  friendships  Friendship[]  @relation("friendOwner")
-  friendOf     Friendship[]  @relation("friendOf")
-  publicStats  PublicStats?
-  ownedChallenges   SharedChallenge[]          @relation("challengeOwner")
+  banned            Boolean                   @default(false)
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  accounts          Account[]
+  sessions          Session[]
+  events            Event[]
+  state             UserState?
+  pushSubs          PushSubscription[]
+  scheduled         ScheduledNotification[]
+  assistantStatus   AssistantStatus?
+  assistantEvents   AssistantEvent[]
+  assistantChat     AssistantChat[]
+  assistantFacts    AssistantFact[]
+  apiKeyLinks       ApiKeyUser[]
+  pairingCodes      PairingCode[]
+  friendships       Friendship[]              @relation("friendOwner")
+  friendOf          Friendship[]              @relation("friendOf")
+  publicStats       PublicStats?
+  ownedChallenges   SharedChallenge[]         @relation("challengeOwner")
   challengeMembers  SharedChallengeMember[]
   challengeProgress SharedChallengeProgress[]
 }
@@ -132,30 +132,30 @@ model AssistantFact {
 // Подписка устройства на web-push. У одного пользователя может быть
 // несколько (телефон + ноутбук) — шлём на все живые.
 model PushSubscription {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
   /// endpoint браузера — уникальный ключ подписки
-  endpoint  String   @unique
-  p256dh    String
-  auth      String
+  endpoint    String    @unique
+  p256dh      String
+  auth        String
   /// человекочитаемое "Chrome · Windows" — разбирается из User-Agent при
   /// подписке, чтобы список устройств в профиле не показывал голый endpoint
-  label     String?
+  label       String?
   /// сдвиг часового пояса клиента в минутах (getTimezoneOffset)
-  tzOffset  Int      @default(0)
+  tzOffset    Int       @default(0)
   /// час утреннего напоминания по локальному времени пользователя
-  morningHour Int    @default(9)
+  morningHour Int       @default(9)
   /// час вечернего напоминания
-  eveningHour Int    @default(20)
+  eveningHour Int       @default(20)
   /// выключено пользователем, но подписку не удаляем
-  enabled   Boolean  @default(true)
+  enabled     Boolean   @default(true)
   /// когда последний раз успешно доставили — чтобы не слать дубли за день
-  lastSentAt DateTime?
+  lastSentAt  DateTime?
   /// какой тип последним отправляли (morning|evening)
-  lastKind  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  lastKind    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@index([userId])
   @@index([enabled])
@@ -210,7 +210,7 @@ model UserState {
 
 // ── Модели Auth.js (Prisma adapter) ──
 model Account {
-  id                String  @id @default(cuid())
+  id                String   @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -302,19 +302,19 @@ model Event {
 // PairingCode) — просто валидного ключа для доступа к произвольному userId
 // недостаточно, в отличие от ASSISTANT_SECRET.
 model ApiKey {
-  id         String       @id @default(cuid())
+  id           String        @id @default(cuid())
   /// человекочитаемая метка, "studyloop"
-  service    String
+  service      String
   /// bcrypt-хэш сырого ключа — сырой ключ нигде не хранится
-  hash       String       @unique
+  hash         String        @unique
   /// allowlist для /oauth/authorize — редирект принимается, только если
   /// redirect_uri совпадает буквально с одной из этих строк (защита от
   /// open redirect / перехвата кода авторизации)
-  redirectUris String[]     @default([])
-  revokedAt  DateTime?
-  createdAt  DateTime     @default(now())
-  lastUsedAt DateTime?
-  users      ApiKeyUser[]
+  redirectUris String[]      @default([])
+  revokedAt    DateTime?
+  createdAt    DateTime      @default(now())
+  lastUsedAt   DateTime?
+  users        ApiKeyUser[]
   pairingCodes PairingCode[]
 }
 
@@ -353,7 +353,6 @@ model PairingCode {
 
 /**
  * Друзья — взаимная связь двух аккаунтов.
- *
  * Хранится двумя строками (A→B и B→A), а не одной с флагом: так «мои
  * друзья» — это обычная выборка по userId без OR по двум колонкам, и
  * удаление дружбы симметрично по построению.
@@ -377,21 +376,23 @@ model Friendship {
  * блобы целиком. Клиент публикует сводку сам при синхронизации.
  */
 model PublicStats {
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String   @id
-  name      String   @default("")
-  level     Int      @default(1)
-  xp        Int      @default(0)
-  streak    Int      @default(0)
-  updatedAt DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @id
+  name       String   @default("")
+  level      Int      @default(1)
+  xp         Int      @default(0)
+  streak     Int      @default(0)
+  /// Постоянный код ссылки-приглашения (/invite/<code>). В отличие от
+  /// одноразового кода привязки, живёт, пока его не перевыпустят: ссылку
+  /// кидают в чат, и открыть её могут через день.
+  inviteCode String?  @unique
+  updatedAt  DateTime @updatedAt
 }
 
 /**
  * Общий челлендж — одна норма на двоих и больше.
- *
  * Друзья до сих пор были витриной: видно чужой стрик, и всё. Живым это
  * делает общее обязательство: одна планка, и видно, кто сегодня закрыл.
- *
  * Прогресс лежит отдельной строкой на участника и на день (Progress), а не
  * блобом в челлендже: так двое одновременно отмечающихся не затирают друг
  * друга — каждый пишет только свою строку.
@@ -400,7 +401,9 @@ model SharedChallenge {
   id        String                    @id @default(cuid())
   title     String
   unit      String                    @default("раз")
-  /** дневная норма на каждого */
+  /**
+   * дневная норма на каждого
+   */
   target    Int                       @default(1)
   owner     User                      @relation("challengeOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId   String
@@ -427,7 +430,9 @@ model SharedChallengeProgress {
   challengeId String
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
-  /** день в формате YYYY-MM-DD — по локальному времени участника */
+  /**
+   * день в формате YYYY-MM-DD — по локальному времени участника
+   */
   day         String
   count       Int             @default(0)
   updatedAt   DateTime        @updatedAt

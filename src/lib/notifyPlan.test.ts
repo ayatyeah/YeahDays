@@ -102,6 +102,35 @@ describe("todoNotification", () => {
     expect(at.getMinutes()).toBe(55);
   });
 
+  it("учитывает минуты: пара в 10:40 — напоминание в 10:35, а не в 9:55", () => {
+    const item = todoNotification({
+      id: "d3",
+      title: "Матанализ — лекция",
+      day: "2026-01-10",
+      hour: 10,
+      minute: 40,
+    })!;
+    const at = new Date(item.at);
+    expect(at.getHours()).toBe(10);
+    expect(at.getMinutes()).toBe(35);
+  });
+
+  it("точный момент от сервера важнее локальных полей", () => {
+    // 10:40 в UTC+5 — это 05:40Z, независимо от зоны, где идут тесты
+    const startAt = Date.UTC(2026, 0, 10, 5, 40);
+    const item = todoNotification({
+      id: "d4",
+      title: "X",
+      day: "2026-01-10",
+      hour: 10,
+      minute: 40,
+      startAt,
+    })!;
+    expect(item.at).toBe(startAt - 5 * 60_000);
+    // ключ — по дню пользователя, тот же, что строит клиент
+    expect(item.key).toBe("todo:d4:2026-01-10");
+  });
+
   it("отбивает битую дату", () => {
     expect(
       todoNotification({ id: "d2", title: "X", day: "не дата", hour: 9 }),

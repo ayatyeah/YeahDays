@@ -169,17 +169,25 @@ export interface TodoInput {
   day: string;
   /** локальный час начала */
   hour: number;
+  /** минута начала внутри часа; без неё пара в 10:40 напоминала в 9:55 */
+  minute?: number;
   /** сколько минут заложено */
   duration?: number;
+  /**
+   * Точный момент начала (мс), если его посчитал вызывающий. Нужен серверу:
+   * `new Date(y, m, d, h)` там читает поля в зоне контейнера (на Railway —
+   * UTC), а не пользователя. Клиент не передаёт — у него зона и так своя.
+   */
+  startAt?: number;
 }
 
 /** Напоминание за TODO_LEAD_MIN до начала задачи, привязанной ко времени. */
 export function todoNotification(todo: TodoInput): NotifyItem | null {
   const [y, m, d] = todo.day.split("-").map(Number);
   if (!y || !m || !d) return null;
-  const at =
-    new Date(y, m - 1, d, todo.hour, 0, 0, 0).getTime() -
-    TODO_LEAD_MIN * 60_000;
+  const start =
+    todo.startAt ?? new Date(y, m - 1, d, todo.hour, todo.minute ?? 0, 0, 0).getTime();
+  const at = start - TODO_LEAD_MIN * 60_000;
 
   return {
     key: `todo:${todo.id}:${todo.day}`,

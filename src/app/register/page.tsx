@@ -23,17 +23,19 @@ function RegisterForm() {
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") || "/app";
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthYear, setBirthYear] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  /** Поля неуправляемые — см. тот же комментарий на /login. */
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    const form = new FormData(e.currentTarget as HTMLFormElement);
+    const name = String(form.get("name") ?? "").trim();
+    const email = String(form.get("email") ?? "").trim();
+    const username = String(form.get("username") ?? "").trim();
+    const birthYear = String(form.get("birthYear") ?? "");
+    const password = String(form.get("password") ?? "");
+    const confirm = String(form.get("confirm") ?? "");
     setError(null);
 
     if (password !== confirm) {
@@ -82,8 +84,7 @@ function RegisterForm() {
 
         <form onSubmit={submit} className="flex flex-col gap-3">
           <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="name"
             placeholder="Имя"
             maxLength={40}
             required
@@ -91,16 +92,14 @@ function RegisterForm() {
           />
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
             placeholder="Email"
             required
             className={inputClass}
           />
           <div className="flex gap-3">
             <input
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              name="username"
               placeholder="Логин"
               maxLength={20}
               required
@@ -109,8 +108,7 @@ function RegisterForm() {
             <input
               type="number"
               inputMode="numeric"
-              value={birthYear}
-              onChange={(e) => setBirthYear(e.target.value)}
+              name="birthYear"
               placeholder="Год рождения"
               required
               className={inputClass}
@@ -118,8 +116,7 @@ function RegisterForm() {
           </div>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
             placeholder="Пароль (минимум 8 символов)"
             required
             minLength={8}
@@ -127,8 +124,7 @@ function RegisterForm() {
           />
           <input
             type="password"
-            value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            name="confirm"
             placeholder="Повтори пароль"
             required
             minLength={8}

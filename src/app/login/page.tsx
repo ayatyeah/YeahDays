@@ -47,13 +47,21 @@ function LoginForm() {
   const callbackUrl = params.get("callbackUrl") || "/app";
   const googleFirst = params.get("googleFirst") === "1";
 
-  const [identifier, setIdentifier] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  /**
+   * Поля неуправляемые (defaultValue + чтение при отправке), а не через
+   * useState. Управляемое поле до гидрации пустое, и первые набранные
+   * символы React стирал при монтировании: на медленном телефоне человек
+   * печатал email, а он исчезал. Значения здесь нужны только в момент
+   * отправки, поэтому берём их прямо из формы.
+   */
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    const form = new FormData(e.currentTarget as HTMLFormElement);
+    const identifier = String(form.get("identifier") ?? "");
+    const password = String(form.get("password") ?? "");
     setError(null);
     setBusy(true);
 
@@ -83,8 +91,7 @@ function LoginForm() {
 
         <form onSubmit={submit} className="flex flex-col gap-3">
           <input
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
+            name="identifier"
             placeholder="Email или логин"
             required
             autoFocus
@@ -92,8 +99,7 @@ function LoginForm() {
           />
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
             placeholder="Пароль"
             required
             className={inputClass}

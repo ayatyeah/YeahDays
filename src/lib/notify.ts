@@ -75,10 +75,33 @@ function urlBase64ToUint8Array(base64: string): Uint8Array {
   return out;
 }
 
+/**
+ * Готовый service worker — или null, если ждать нечего.
+ *
+ * `navigator.serviceWorker.ready` НИКОГДА не завершается, пока воркер не
+ * зарегистрирован (в dev он не регистрируется вовсе, а в проде может не
+ * успеть). Любой `await` на нём висел молча: кнопка «Включить напоминания»
+ * оставалась в состоянии «Включаю…» навсегда. Поэтому сначала спрашиваем,
+ * есть ли регистрация, и в любом случае не ждём дольше таймаута.
+ */
+async function swReady(timeoutMs = 8000): Promise<ServiceWorkerRegistration | null> {
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return null;
+  try {
+    if (!(await navigator.serviceWorker.getRegistration())) return null;
+    return await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), timeoutMs)),
+    ]);
+  } catch {
+    return null;
+  }
+}
+
 export async function currentSubscription(): Promise<PushSubscription | null> {
   if (!pushSupported()) return null;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await swReady();
+    if (!reg) return null;
     return await reg.pushManager.getSubscription();
   } catch {
     return null;
@@ -92,7 +115,8 @@ export async function currentSubscription(): Promise<PushSubscription | null> {
 export async function subscribeToPush(morningHour: number): Promise<boolean> {
   if (!pushSupported()) return false;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await swReady();
+    if (!reg) return false;
     const sub =
       (await reg.pushManager.getSubscription()) ??
       (await reg.pushManager.subscribe({
@@ -145,7 +169,8 @@ export async function showNow(item: {
 }): Promise<boolean> {
   if (permissionState() !== "granted") return false;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await swReady();
+    if (!reg) return false;
     await reg.showNotification(item.title, {
       body: item.body,
       icon: "/icon-192-v3.png",
@@ -191,7 +216,8 @@ type TimestampTriggerCtor = new (timestamp: number) => unknown;
 async function scheduleLocally(item: NotifyItem): Promise<boolean> {
   if (!triggersSupported()) return false;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await swReady();
+    if (!reg) return false;
     const Ctor = (window as unknown as { TimestampTrigger?: TimestampTriggerCtor })
       .TimestampTrigger;
     if (!Ctor) return false;
@@ -214,7 +240,8 @@ async function scheduleLocally(item: NotifyItem): Promise<boolean> {
 async function cancelLocally(key: string): Promise<void> {
   if (!notifySupported()) return;
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await swReady();
+    if (!reg) return;
     const list = await reg.getNotifications({
       tag: key,
       // уже запланированные, но ещё не показанные — их и надо снимать

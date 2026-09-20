@@ -64,7 +64,12 @@ function fmtDateTime(iso: string) {
  * заявки с публичной формы /forgot-password (сайт не шлёт email/SMS, так что
  * это не автосброс, а ручная обработка через telegram из заявки).
  */
-export default function OwnerConsole() {
+export default function OwnerConsole({
+  /** true — вход открыт запасными admin/admin, об этом нужно сказать прямо */
+  showCredentialsWarning = false,
+}: {
+  showCredentialsWarning?: boolean;
+}) {
   const [tab, setTab] = useState<Tab>("users");
   const [users, setUsers] = useState<OwnerUser[] | null>(null);
   const [requests, setRequests] = useState<ResetRequest[] | null>(null);
@@ -126,15 +131,37 @@ export default function OwnerConsole() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mb-4 flex items-baseline justify-between">
+      <header className="mb-4 flex items-baseline justify-between gap-3">
         <h1 className="text-[28px] font-bold tracking-tight">Владелец</h1>
-        <Link
-          href="/today"
-          className="text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
-        >
-          в приложение →
-        </Link>
+        <div className="flex shrink-0 items-baseline gap-4">
+          <button
+            onClick={async () => {
+              await fetch("/api/admin/login", { method: "DELETE" }).catch(() => {});
+              window.location.href = "/admin/login";
+            }}
+            className="text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          >
+            выйти
+          </button>
+          <Link
+            href="/today"
+            className="text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          >
+            в приложение →
+          </Link>
+        </div>
       </header>
+
+      {/* Пароль по умолчанию — это отсутствие пароля: адрес консоли рано или
+          поздно попадёт в чей-то браузерный журнал. Говорим об этом каждый
+          раз, пока переменные не заданы. */}
+      {showCredentialsWarning && (
+        <p className="mb-4 rounded-2xl border border-[var(--color-strength)] px-4 py-3 text-[14px] leading-snug text-[var(--color-fg-dim)]">
+          Вход работает по запасным <b>admin / admin</b> — их знает любой, кто
+          видел исходники. Задай на сервере переменные <b>ADMIN_USER</b> и{" "}
+          <b>ADMIN_PASSWORD</b>, и это предупреждение пропадёт.
+        </p>
+      )}
 
       <div className="mb-4 grid grid-cols-3 gap-2">
         {(

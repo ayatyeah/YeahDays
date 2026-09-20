@@ -23,7 +23,18 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   // /invite/<код> открывают из чата люди без аккаунта: страница сама
   // предложит зарегистрироваться и вернёт обратно по callbackUrl
-  if (req.auth || PUBLIC_PATHS.has(pathname) || pathname.startsWith("/invite/")) return;
+  // /admin — своя дверь: туда пускают либо владельческий аккаунт, либо
+  // логин с паролем консоли (см. lib/adminSession.ts). Проверяет сама
+  // страница, она же уводит на /admin/login; здесь пропускаем, иначе
+  // вошедшего по паролю консоли выкидывало бы на вход в приложение.
+  if (
+    req.auth ||
+    PUBLIC_PATHS.has(pathname) ||
+    pathname.startsWith("/invite/") ||
+    pathname.startsWith("/admin")
+  ) {
+    return;
+  }
 
   const url = new URL("/login", req.nextUrl.origin);
   // pathname один без search — раньше терял query (?client_id=...&redirect_uri=...

@@ -22,6 +22,26 @@ export function rateLimit(key: string, limit: number, windowMs: number): boolean
   return fresh.length <= limit;
 }
 
+/**
+ * Разделённая версия: «можно ли пробовать» и «записать неудачу» — разные
+ * шаги. Нужна там, где считать надо ПРОВАЛЫ, а не попытки: на входе по
+ * паролю успешный вход не должен приближать соседей по общему адресу
+ * (студенческий Wi-Fi — один NAT на всех) к блокировке.
+ */
+export function failureLimit(key: string, limit: number, windowMs: number) {
+  const now = Date.now();
+  const fresh = (buckets.get(key) ?? []).filter((t) => now - t < windowMs);
+  buckets.set(key, fresh);
+  return {
+    allowed: fresh.length < limit,
+    /** Вызывать только когда попытка оказалась неудачной. */
+    fail() {
+      fresh.push(now);
+      buckets.set(key, fresh);
+    },
+  };
+}
+
 /** IP клиента из заголовков прокси (Railway) — Request единый для route-хендлеров и NextAuth authorize(). */
 export function clientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");

@@ -164,10 +164,10 @@ export async function PUT(req: Request) {
     // терялся. Ниже нуля не опускаемся: «минус один подход» — не событие.
     const rows = await prisma.$queryRaw<{ count: number }[]>`
       INSERT INTO "SharedChallengeProgress" ("challengeId", "userId", "day", "count", "updatedAt")
-      VALUES (${id}, ${userId}, ${day}, GREATEST(0, ${delta}::int), now())
+      VALUES (${id}, ${userId}, ${day}, GREATEST(0, ${delta}::int), now() AT TIME ZONE 'UTC')
       ON CONFLICT ("challengeId", "userId", "day")
       DO UPDATE SET "count" = GREATEST(0, "SharedChallengeProgress"."count" + ${delta}::int),
-                    "updatedAt" = now()
+                    "updatedAt" = now() AT TIME ZONE 'UTC'
       RETURNING "count"`;
     const count = rows[0]?.count ?? 0;
 

@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
-import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { failureLimit, clientIp } from "@/lib/rateLimit";
 
 /**
  * Валидный bcrypt-хэш несуществующего пароля — сравниваем с ним, когда
@@ -55,19 +55,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password = String(credentials?.password ?? "");
         if (!identifier || !password) return null;
 
-        // По IP (любой аккаунт с одного адреса) и по identifier (один
-        // аккаунт с разных адресов) отдельно — иначе распределённый перебор
-        // одного логина с ботнета обходит IP-лимит.
+        /*
+         * Считаем ПРОВАЛЫ, а не попытки, и по двум ключам сразу: по
+         * identifier (один аккаунт с разных адресов — иначе распределённый
+         * перебор с ботнета обходит лимит по адресу) и по адресу, но с
+         * большим запасом. Раньше считалась каждая попытка, включая
+         * успешную: в университете под общим NAT два десятка человек
+         * исчерпывали лимит обычными входами, и верный пароль переставал
+         * работать у всей группы. Адрес "unknown" (локальная разработка,
+         * нет заголовков прокси) не ограничиваем вовсе — там это один
+         * общий бакет на всех и смысла в нём нет.
+         */
         const ip = clientIp(request);
-        const okByIp = rateLimit(`login:ip:${ip}`, 20, 15 * 60 * 1000);
-        const okByIdentifier = rateLimit(`login:id:${identifier.toLowerCase()}`, 8, 15 * 60 * 1000);
-        if (!okByIp || !okByIdentifier) return null;
+        const byIdentifier = failureLimit(`login:id:${identifier.toLowerCase()}`, 8, 15 * 60 * 1000);
+        const byIp =
+          ip === "unknown"
+            ? null
+            : failureLimit(`login:ip:${ip}`, 60, 15 * 60 * 1000);
+        if (!byIdentifier.allowed || (byIp && !byIp.allowed)) return null;
 
         const user = await prisma.user.findFirst({
           where: { OR: [{ email: identifier }, { username: identifier }] },
         });
         const valid = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
-        if (!valid || !user?.passwordHash || user.banned) return null;
+        if (!valid || !user?.passwordHash || user.banned) {
+          byIdentifier.fail();
+          byIp?.fail();
+          return null;
+        }
 
         return { id: user.id, name: user.name, email: user.email, image: user.image };
       },

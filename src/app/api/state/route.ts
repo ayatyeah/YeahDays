@@ -60,7 +60,7 @@ export async function GET(req: Request) {
       // отдаёт 30-килобайтный jsonb, а мы не гоняем его по сети.
       const rows = await prisma.$queryRaw<{ data: unknown; clientAt: Date }[]>`
         SELECT "data", "clientAt" FROM "UserState"
-        WHERE "userId" = ${userId} AND "clientAt" > ${new Date(since)}
+        WHERE "userId" = ${userId} AND "clientAt" > to_timestamp(${since / 1000}) AT TIME ZONE 'UTC'
         LIMIT 1
       `;
       if (rows.length === 0) return NextResponse.json({ unchanged: true, updatedAt: since });

@@ -52,15 +52,26 @@ export async function upsertUserStateIfNewer(
   data: unknown,
   clientAtMs: number,
 ): Promise<UserStateWriteResult> {
-  const clientAt = new Date(clientAtMs);
+  /*
+   * Время пишем и читаем явно в UTC.
+   *
+   * Колонка — timestamp БЕЗ зоны, а параметр-Date Prisma отправляет с
+   * зоной: Postgres приводил его к зоне СВОЕЙ сессии, а обратно Prisma
+   * читала те же цифры как UTC. На базе в зоне ≠ UTC запись уезжала вперёд
+   * на смещение (локально +5 часов), и следующий же PUT отбивался как
+   * «сервер свежее» — синхронизация замолкала до конца дня. На Railway
+   * база в UTC, поэтому вживую это не проявлялось; но зависеть от
+   * настройки чужого сервера здесь нельзя.
+   */
+  const clientAtSec = clientAtMs / 1000;
   const json = JSON.stringify(data);
 
   const write = () =>
     prisma.$queryRaw<{ clientAt: Date }[]>`
       INSERT INTO "UserState" ("userId", "data", "clientAt", "updatedAt")
-      VALUES (${userId}, ${json}::jsonb, ${clientAt}, now())
+      VALUES (${userId}, ${json}::jsonb, to_timestamp(${clientAtSec}) AT TIME ZONE 'UTC', now() AT TIME ZONE 'UTC')
       ON CONFLICT ("userId") DO UPDATE
-        SET "data" = EXCLUDED."data", "clientAt" = EXCLUDED."clientAt", "updatedAt" = now()
+        SET "data" = EXCLUDED."data", "clientAt" = EXCLUDED."clientAt", "updatedAt" = now() AT TIME ZONE 'UTC'
         WHERE "UserState"."clientAt" <= EXCLUDED."clientAt"
       RETURNING "clientAt"
     `;

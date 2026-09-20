@@ -12,6 +12,7 @@ import { useSyncStatus, timeAgo } from "@/store/useSyncStatus";
 import { cn } from "@/lib/cn";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import PasswordInput from "@/components/ui/PasswordInput";
 import { YgIcon } from "@/components/yg-icons";
 
 function GoogleIcon({ className }: { className?: string }) {
@@ -219,8 +220,7 @@ function ChangePasswordModal({
       ) : (
         <div className="space-y-3">
           {hasPassword && (
-            <input
-              type="password"
+            <PasswordInput
               value={current}
               onChange={(e) => setCurrent(e.target.value)}
               placeholder="Текущий пароль"
@@ -228,16 +228,14 @@ function ChangePasswordModal({
               className={passwordInputClass}
             />
           )}
-          <input
-            type="password"
+          <PasswordInput
             value={next}
             onChange={(e) => setNext(e.target.value)}
             placeholder="Новый пароль (минимум 8 символов)"
             autoFocus={!hasPassword}
             className={passwordInputClass}
           />
-          <input
-            type="password"
+          <PasswordInput
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             placeholder="Повтори новый пароль"

@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 const inputClass =
   "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
@@ -114,16 +115,14 @@ function RegisterForm() {
               className={inputClass}
             />
           </div>
-          <input
-            type="password"
+          <PasswordInput
             name="password"
             placeholder="Пароль (минимум 8 символов)"
             required
             minLength={8}
             className={inputClass}
           />
-          <input
-            type="password"
+          <PasswordInput
             name="confirm"
             placeholder="Повтори пароль"
             required

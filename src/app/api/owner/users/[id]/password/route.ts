@@ -8,7 +8,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
-import { requireOwner } from "@/lib/owner";
+import { requireAdmin } from "@/lib/owner";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,8 +17,8 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await requireOwner();
-  if (!session) {
+  const allowed = await requireAdmin();
+  if (!allowed) {
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   }
 

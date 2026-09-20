@@ -6,7 +6,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireOwner } from "@/lib/owner";
+import { adminSelfId, requireAdmin } from "@/lib/owner";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,13 +15,14 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await requireOwner();
-  if (!session) {
+  const allowed = await requireAdmin();
+  if (!allowed) {
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   }
 
   const { id } = await params;
-  if (id === session.user?.id) {
+  const self = await adminSelfId();
+  if (self && id === self) {
     return NextResponse.json({ error: "Нельзя удалить себя" }, { status: 400 });
   }
 

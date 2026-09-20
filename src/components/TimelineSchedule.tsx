@@ -144,6 +144,15 @@ export default function TimelineSchedule({
     [onDay, isToday, nowMin, day],
   );
   const overdueIds = useMemo(() => new Set(overdue.map((t) => t.id)), [overdue]);
+  /**
+   * Убирать просроченное из сетки можно только там, где для него есть
+   * лоток «Просрочено» — то есть в Календаре. В компактном расписании на
+   * «Сегодня» лотка нет, и дело пропадало вообще: пара на 10:00 в половине
+   * первого исчезала, а её час выглядел свободным, будто ничего и не
+   * планировалось. Здесь карточка остаётся в своём часе, а разобрать
+   * накопившееся можно строкой над сеткой.
+   */
+  const liftOverdue = !compact;
   const unscheduled = useMemo(
     () => onDay.filter((t) => t.hour == null && !overdueIds.has(t.id)),
     [onDay, overdueIds],
@@ -166,7 +175,7 @@ export default function TimelineSchedule({
    * реальное двойное бронирование просто видно как две карточки подряд.
    */
   const hourRows = useMemo(() => {
-    const visible = scheduled.filter((t) => !overdueIds.has(t.id));
+    const visible = liftOverdue ? scheduled.filter((t) => !overdueIds.has(t.id)) : scheduled;
     const sorted = [...visible].sort((a, b) => (a.minute ?? 0) - (b.minute ?? 0));
     const map = new Map<number, Todo[]>();
     for (const t of sorted) {
@@ -175,7 +184,7 @@ export default function TimelineSchedule({
       map.set(t.hour!, arr);
     }
     return map;
-  }, [scheduled, overdueIds]);
+  }, [scheduled, overdueIds, liftOverdue]);
 
   /**
    * Часы, которые задача НАКРЫВАЕТ после часа старта. В строке такого часа
@@ -188,7 +197,7 @@ export default function TimelineSchedule({
   const continuations = useMemo(() => {
     const map = new Map<number, Todo[]>();
     for (const t of scheduled) {
-      if (overdueIds.has(t.id)) continue;
+      if (liftOverdue && overdueIds.has(t.id)) continue;
       for (const h of hoursCoveredAfterStart(t, endHour)) {
         const arr = map.get(h) ?? [];
         arr.push(t);
@@ -196,7 +205,7 @@ export default function TimelineSchedule({
       }
     }
     return map;
-  }, [scheduled, overdueIds, endHour]);
+  }, [scheduled, overdueIds, endHour, liftOverdue]);
 
   const filled = scheduled.length - overdue.length;
 
@@ -396,6 +405,26 @@ export default function TimelineSchedule({
           </>
         )}
       </div>
+
+      {/* На «Сегодня» — одна строка вместо лотка: сами дела остаются в
+          своих часах, здесь только счёт и разбор в одно касание. */}
+      {compact && expanded && overdue.length > 0 && (
+        <div className="mb-2 flex items-center justify-between gap-3">
+          <p className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-strength)]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
+            Просрочено: {overdue.length}
+          </p>
+          <button
+            onClick={() => {
+              resolveOverdue(overdue.map((t) => t.id), day);
+              haptic("success");
+            }}
+            className="press shrink-0 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          >
+            Разобрать всё ({overdue.length})
+          </button>
+        </div>
+      )}
 
       {!compact && overdue.length > 0 && (
         <div className="mb-3">

@@ -18,7 +18,8 @@
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "test:e2e": "node e2e/run.mjs"
+    "test:e2e": "E2E_BASE=http://localhost:3100 node e2e/run.mjs",
+    "dev:e2e": "DATABASE_URL=\"postgresql://yeahayat@localhost/yeahdays_dev?host=/var/run/postgresql\" next dev -p 3100"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

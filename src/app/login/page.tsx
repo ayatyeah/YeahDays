@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 function GoogleIcon({ className }: { className?: string }) {
   return (
@@ -97,13 +98,7 @@ function LoginForm() {
             autoFocus
             className={inputClass}
           />
-          <input
-            type="password"
-            name="password"
-            placeholder="Пароль"
-            required
-            className={inputClass}
-          />
+          <PasswordInput name="password" placeholder="Пароль" required className={inputClass} />
 
           {error && (
             <p className="text-[15px] text-[var(--color-strength)]">{error}</p>

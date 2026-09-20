@@ -144,6 +144,7 @@ export async function POST(req: Request) {
       }),
     ]);
 
+    await ensureStats(userId);
     const stats = await prisma.publicStats.findUnique({ where: { userId: row.userId } });
     return NextResponse.json({ ok: true, name: stats?.name || "Без имени" });
   } catch (e) {
@@ -166,6 +167,27 @@ function befriend(a: string, b: string) {
   });
 }
 
+/**
+ * Завести публичную карточку, если её ещё нет.
+ *
+ * Карточка появляется при первой синхронизации из браузера, а список друзей
+ * читает имя именно из неё: тот, кто только что принял приглашение, висел у
+ * друга как «Без имени» до следующего захода в приложение. Имя берём из
+ * аккаунта, остальное останется нулевым и обновится сразу при синхронизации.
+ */
+async function ensureStats(userId: string): Promise<void> {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
+    await prisma.publicStats.upsert({
+      where: { userId },
+      create: { userId, name: user?.name?.slice(0, 40) ?? "" },
+      update: {},
+    });
+  } catch (e) {
+    console.error("ensureStats failed:", e);
+  }
+}
+
 /** Ссылка-приглашение: код постоянный, поэтому не гасим его, а ограничиваем частоту. */
 async function acceptInvite(userId: string, invite: string) {
   if (!rateLimit(`invite:uid:${userId}`, 20, 60 * 60_000)) {
@@ -183,6 +205,7 @@ async function acceptInvite(userId: string, invite: string) {
       return NextResponse.json({ error: "Это твоя собственная ссылка" }, { status: 400 });
     }
     await befriend(userId, owner.userId);
+    await ensureStats(userId);
     return NextResponse.json({ ok: true, name: owner.name || "Без имени" });
   } catch (e) {
     console.error("invite accept failed:", e);

@@ -491,3 +491,33 @@ test("Шторка: длинное содержимое прокручивает
 
   await browser.close();
 });
+
+test("Профиль: ползунок приоритета не уводит раздел вбок", async () => {
+  // Регрессия: палец по ползунку ходит влево-вправо, и жест перехватывал
+  // свайп между разделами — вместе со значением уезжал весь экран.
+  const user = await newUser();
+  const { browser, page } = await session({ user });
+  await openSection(page, "/account");
+
+  const slider = page.locator('input[type="range"]').first();
+  await slider.scrollIntoViewIfNeeded();
+  const box = await slider.boundingBox();
+  const before = await slider.inputValue();
+
+  // тянем от текущей точки к правому краю ползунка, с промежуточными шагами
+  await page.mouse.move(box.x + box.width * 0.5, box.y + box.height / 2);
+  await page.mouse.down();
+  for (let i = 5; i <= 10; i++) {
+    await page.mouse.move(box.x + (box.width * i) / 10, box.y + box.height / 2);
+    await page.waitForTimeout(16);
+  }
+  await page.mouse.up();
+  await page.waitForTimeout(400);
+
+  check(page.url().includes("/account"), `раздел остался на месте (${page.url()})`);
+  check(
+    Number(await slider.inputValue()) > Number(before),
+    `значение выросло: было ${before}, стало ${await slider.inputValue()}`,
+  );
+  await browser.close();
+});

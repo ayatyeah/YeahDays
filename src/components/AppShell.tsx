@@ -172,8 +172,13 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       return;
     }
     if (document.body.dataset.modalOpen === "1") return;
-    // колода карточек и другие горизонтальные зоны забирают жест себе
-    if ((e.target as HTMLElement).closest?.("[data-no-swipe]")) return;
+    // Колода карточек и другие горизонтальные зоны забирают жест себе.
+    // Ползунки — тоже: палец по ним ходит влево-вправо, и раздел уезжал
+    // вместе со значением. Их исключаем по типу поля, а не пометкой в
+    // каждом компоненте: следующий ползунок иначе снова принесёт этот баг.
+    if ((e.target as HTMLElement).closest?.('[data-no-swipe], input[type="range"]')) {
+      return;
+    }
 
     drag.current = { x: t.clientX, y: t.clientY, active: true, locked: false };
   }, []);

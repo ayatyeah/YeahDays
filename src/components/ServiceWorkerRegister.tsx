@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { YgIcon } from "@/components/yg-icons";
 
@@ -18,12 +19,14 @@ const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || "dev";
  *    воркер активируется сам, новая версия применяется без действий.
  */
 export default function ServiceWorkerRegister() {
+  const pathname = usePathname();
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (
       typeof window === "undefined" ||
+      pathname === "/login" || pathname.startsWith("/login/") || pathname === "/register" ||
       !("serviceWorker" in navigator) ||
       process.env.NODE_ENV !== "production"
     ) {
@@ -31,7 +34,10 @@ export default function ServiceWorkerRegister() {
     }
 
     let refreshing = false;
+    let hadController = !!navigator.serviceWorker.controller;
     const onControllerChange = () => {
+      // First installation only takes control; reloading can abort an in-flight login.
+      if (!hadController) { hadController = true; return; }
       if (refreshing) return;
       refreshing = true;
       window.location.reload();
@@ -99,7 +105,7 @@ export default function ServiceWorkerRegister() {
       );
       if (interval) window.clearInterval(interval);
     };
-  }, []);
+  }, [pathname]);
 
   function apply() {
     waiting?.postMessage({ type: "SKIP_WAITING" });

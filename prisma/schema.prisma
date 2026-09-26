@@ -30,27 +30,40 @@ model User {
   birthYear     Int?
   /// забанен владельцем из /admin — блокирует вход и обнуляет уже
   /// открытые JWT-сессии (проверка на каждый auth(), см. callbacks.jwt)
-  banned        Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  events        Event[]
-  state         UserState?
-  pushSubs      PushSubscription[]
-  scheduled     ScheduledNotification[]
-  assistantStatus AssistantStatus?
-  assistantEvents AssistantEvent[]
-  assistantChat   AssistantChat[]
-  assistantFacts  AssistantFact[]
-  apiKeyLinks     ApiKeyUser[]
-  pairingCodes    PairingCode[]
-  friendships  Friendship[]  @relation("friendOwner")
-  friendOf     Friendship[]  @relation("friendOf")
-  publicStats  PublicStats?
-  ownedChallenges   SharedChallenge[]          @relation("challengeOwner")
+  banned            Boolean                   @default(false)
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  accounts          Account[]
+  sessions          Session[]
+  events            Event[]
+  state             UserState?
+  lmsConnection     LmsConnection?
+  pushSubs          PushSubscription[]
+  scheduled         ScheduledNotification[]
+  assistantStatus   AssistantStatus?
+  assistantEvents   AssistantEvent[]
+  assistantChat     AssistantChat[]
+  assistantFacts    AssistantFact[]
+  apiKeyLinks       ApiKeyUser[]
+  pairingCodes      PairingCode[]
+  friendships       Friendship[]              @relation("friendOwner")
+  friendOf          Friendship[]              @relation("friendOf")
+  publicStats       PublicStats?
+  ownedChallenges   SharedChallenge[]         @relation("challengeOwner")
   challengeMembers  SharedChallengeMember[]
   challengeProgress SharedChallengeProgress[]
+}
+
+// Секрет календаря хранится только на сервере, зашифрованным.
+model LmsConnection {
+  userId       String    @id
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  encryptedUrl String
+  timezone     String    @default("Asia/Almaty")
+  lastSyncedAt DateTime?
+  lastError    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 // ─────────────────────────────────────────────────────────────────────────

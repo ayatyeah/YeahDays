@@ -5,6 +5,7 @@ import Link from "next/link";
 import PushOptIn from "@/components/PushOptIn";
 import DeviceList from "@/components/DeviceList";
 import PairingCodeCard from "@/components/PairingCodeCard";
+import LmsCard from "@/components/LmsCard";
 import DataControls from "@/components/DataControls";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -119,6 +120,7 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
           </Group>
 
           <Group title="Интеграции">
+            <LmsCard />
             <PairingCodeCard />
           </Group>
         </div>

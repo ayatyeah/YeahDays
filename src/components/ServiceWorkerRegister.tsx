@@ -20,13 +20,14 @@ const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || "dev";
  */
 export default function ServiceWorkerRegister() {
   const pathname = usePathname();
+  const isAuthPage = pathname === "/login" || pathname.startsWith("/login/") || pathname === "/register";
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (
       typeof window === "undefined" ||
-      pathname === "/login" || pathname.startsWith("/login/") || pathname === "/register" ||
+      isAuthPage ||
       !("serviceWorker" in navigator) ||
       process.env.NODE_ENV !== "production"
     ) {
@@ -49,6 +50,10 @@ export default function ServiceWorkerRegister() {
 
     let reg: ServiceWorkerRegistration | null = null;
     let interval = 0;
+    let disposed = false;
+    const checkWhenVisible = () => {
+      if (document.visibilityState === "visible") reg?.update().catch(() => {});
+    };
 
     const register = () => {
       navigator.serviceWorker
@@ -56,6 +61,7 @@ export default function ServiceWorkerRegister() {
         // заводит новый кэш вместо того, чтобы отдавать старый бандл
         .register(`/sw.js?v=${BUILD_ID}`)
         .then((r) => {
+          if (disposed) return;
           reg = r;
           // обновление уже дождалось нас
           if (r.waiting && navigator.serviceWorker.controller) {
@@ -82,9 +88,7 @@ export default function ServiceWorkerRegister() {
           );
           // и при каждом возврате в приложение: PWA на телефоне живёт в
           // фоне сутками, и «раз в час» без этого почти никогда не наступал
-          document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") r.update().catch(() => {});
-          });
+          document.addEventListener("visibilitychange", checkWhenVisible);
         })
         .catch(() => {
           /* офлайн-режим необязателен */
@@ -98,6 +102,8 @@ export default function ServiceWorkerRegister() {
     else window.addEventListener("load", register, { once: true });
 
     return () => {
+      disposed = true;
+      document.removeEventListener("visibilitychange", checkWhenVisible);
       window.removeEventListener("load", register);
       navigator.serviceWorker.removeEventListener(
         "controllerchange",
@@ -105,14 +111,14 @@ export default function ServiceWorkerRegister() {
       );
       if (interval) window.clearInterval(interval);
     };
-  }, [pathname]);
+  }, [isAuthPage]);
 
   function apply() {
     waiting?.postMessage({ type: "SKIP_WAITING" });
     // controllerchange перезагрузит страницу
   }
 
-  const show = !!waiting && !dismissed;
+  const show = !isAuthPage && !!waiting && !dismissed;
 
   return (
     <AnimatePresence>

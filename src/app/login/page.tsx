@@ -126,7 +126,7 @@ function LoginForm() {
           href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`}
           className="mb-3 flex h-13 w-full items-center justify-center rounded-2xl border-2 border-[var(--color-border)] text-[15px] font-semibold"
         >
-          Войти через LMS AITU
+          О входе через Microsoft AITU
         </Link>
 
         <button

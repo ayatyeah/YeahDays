@@ -7,6 +7,9 @@ import { prisma } from "@/lib/db";
 import { failureLimit, clientIp, rateLimit } from "@/lib/rateLimit";
 import { loginToLms, LmsError } from "@/lib/lmsClient";
 import { saveLmsAccount, LmsAccountConflict } from "@/lib/lmsAccount";
+import { microsoftProvider, MICROSOFT_PROVIDER, AITU_ENTRA_TENANT_ID } from "@/lib/microsoftAuth";
+
+const microsoft = microsoftProvider();
 
 class LmsSignInError extends CredentialsSignin {
   constructor(code: string) { super(); this.code = code; }
@@ -42,6 +45,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: { signIn: "/login" },
   providers: [
+    ...(microsoft ? [microsoft] : []),
     // Ordinary Moodle credentials do not authenticate AITU Microsoft/OpenID users.
     ...(process.env.LMS_PASSWORD_LOGIN_ENABLED === "true" ? [Credentials({
       id: "lms-aitu",
@@ -126,6 +130,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
      * принималась бы за попытку регистрации и отклонялась.
      */
     async signIn({ account, profile }) {
+      if (account?.provider === MICROSOFT_PROVIDER) {
+        if (profile?.tid !== AITU_ENTRA_TENANT_ID || !account.providerAccountId) return false;
+        const linked = await prisma.account.findUnique({
+          where: { provider_providerAccountId: {
+            provider: MICROSOFT_PROVIDER, providerAccountId: account.providerAccountId,
+          } },
+          select: { user: { select: { banned: true } } },
+        });
+        // Auth.js creates new accounts or links to the current authenticated session.
+        // Unlike Google, Microsoft is an explicit registration method for AITU students.
+        return !linked?.user.banned;
+      }
       if (account?.provider === "google") {
         const session = await auth();
         if (session?.user?.id) return true; // привязка к уже вошедшему — всегда можно

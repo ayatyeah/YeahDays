@@ -8,13 +8,20 @@
 зарегистрирован на `https://lms.astanait.edu.kz/auth/oidc/`.
 Форма с логином и паролем Moodle не заменяет этот способ входа.
 
-**Вход Microsoft в YeahGrind ещё не настроен.** Прежнее обещание входа
-через LMS удалено. Парольная LMS-форма убрана из UI, credentials provider
-`lms-aitu` отключён по умолчанию (`LMS_PASSWORD_LOGIN_ENABLED` не задан).
-Его код сохранён только для совместимости с обычными Moodle-аккаунтами;
-он не поддерживает Microsoft и не должен включаться для студентов AITU.
+**Вход Microsoft реализован через Auth.js / Microsoft Entra ID.** Провайдер
+появляется только при заданном `AUTH_MICROSOFT_ENTRA_ID_SECRET`.
+Учётные данные и MFA вводятся на странице Microsoft. В YeahGrind создаётся
+профиль при первом входе; последующие входы используют Microsoft subject ID.
+Для существующего профиля надо сначала войти обычным способом и нажать
+«Привязать Microsoft AITU» в настройках интеграции. Совпадение email не
+объединяет аккаунты. Храним Microsoft identity, но не access/refresh/ID tokens.
+Проверку подписи, issuer, audience, PKCE, state и nonce выполняет Auth.js;
+дополнительно профиль должен принадлежать AITU tenant.
 
-Временный вариант для дедлайнов: обычный аккаунт YeahGrind → Настройки →
+Парольная форма Moodle не используется для Microsoft. Legacy provider
+`lms-aitu` по-прежнему выключен по умолчанию.
+
+Для дедлайнов после входа (Microsoft или обычный аккаунт YeahGrind) → Настройки →
 Интеграции → LMS AITU. Войти в LMS через OpenID, открыть Calendar →
 Export calendar → All events → Custom range (либо Recent and next 60 days) →
 Get calendar URL. Вставить полученную ссылку в настройки YeahGrind.
@@ -28,13 +35,29 @@ Get calendar URL. Вставить полученную ссылку в наст
 подключение сохраняется, а интерфейс показывает ошибку для повторной попытки.
 Фоновый крон по-прежнему обновляет персональные подключения три раза в день.
 
-## Что нужно для настоящего Microsoft-входа
+## Активация Microsoft-входа
 
-Зарегистрировать **собственное** web-приложение YeahGrind в Microsoft Entra,
-добавить callback YeahGrind и настроить OIDC provider. Потребуются client ID,
-tenant/issuer и client secret, сохранённый в окружении сервера. Университет
-может требовать согласие администратора. Использовать client ID Moodle с
-подменённым redirect URI нельзя: callback принадлежит приложению университета.
+Владелец зарегистрировал YeahGrind в Entra AITU:
+
+- Application (client) ID: `552b08ec-6293-4081-9a66-5f0467a243ca`.
+- Directory (tenant) ID: `158f15f3-83e0-4906-824c-69bdc50d9d61`.
+- Web redirect URI: `https://yeahdays-production.up.railway.app/api/auth/callback/microsoft-entra-id`.
+
+Публичные ID закреплены в `src/lib/microsoftAuth.ts`; чужие tenants не
+принимаются. В Entra → Сертификаты и секреты создать секрет клиента, затем
+сохранить его **значение** в Railway → YeahDays → Variables →
+`AUTH_MICROSOFT_ENTRA_ID_SECRET`. Не использовать Secret ID. Применить
+настройки / перезапустить сервис. Секрет в Git и клиентский код не добавлять.
+
+Используем authorization code flow (response_type=code), не implicit flow.
+Достаточно scopes `openid profile email`; Graph User.Read и offline_access
+код не запрашивает. Политика университета может потребовать admin consent.
+Секрет имеет срок действия: до его истечения нужно создать новый и обновить
+переменную. Без секрета сайт честно показывает, что Microsoft ещё настраивается.
+
+После активации проверить успешный вход, повторный вход и отдельного второго
+студента; отдельно — привязку к существующему профилю. Проверка одного лишь
+редиректа на Microsoft не подтверждает успешный обмен code на токены.
 
 Microsoft-вход подтверждает учётную запись, но сам по себе не выдаёт
 Moodle cookies или календарный токен. Для автоматического получения

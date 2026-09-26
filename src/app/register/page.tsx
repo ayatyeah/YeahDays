@@ -84,7 +84,7 @@ function RegisterForm() {
         </div>
 
         <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="mb-5 flex min-h-13 items-center justify-center rounded-2xl border-2 border-[var(--color-border)] px-3 text-center font-semibold">
-          О входе через Microsoft AITU
+          Зарегистрироваться через Microsoft AITU
         </Link>
 
         <form onSubmit={submit} className="flex flex-col gap-3">

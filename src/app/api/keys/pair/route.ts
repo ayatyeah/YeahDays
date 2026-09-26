@@ -14,6 +14,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { resolveAnonymousUserId } from "@/lib/anonymousUser";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
 import { generatePairingCode } from "@/lib/apiKey";
 
@@ -25,7 +26,7 @@ const TTL_MS = 10 * 60_000;
 async function resolveUserId(fallback?: unknown): Promise<string> {
   const session = await auth();
   if (session?.user?.id) return session.user.id;
-  return typeof fallback === "string" ? fallback.slice(0, 64) : "";
+  return resolveAnonymousUserId(fallback);
 }
 
 export async function POST(req: Request) {

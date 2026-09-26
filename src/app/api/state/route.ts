@@ -16,6 +16,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { resolveAnonymousUserId } from "@/lib/anonymousUser";
 import { upsertUserStateIfNewer } from "@/lib/userState";
 import { mergeServerTodos } from "@/lib/mergeServerTodos";
 
@@ -39,7 +40,7 @@ async function resolveUserId(fallback?: unknown): Promise<string> {
     throw new Error("AUTH_UNAVAILABLE");
   }
   if (session?.user?.id) return session.user.id;
-  return typeof fallback === "string" ? fallback.slice(0, 64) : "";
+  return resolveAnonymousUserId(fallback);
 }
 
 export async function GET(req: Request) {

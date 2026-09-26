@@ -121,6 +121,13 @@ function LoginForm() {
           <span className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
+        <Link
+          href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          className="mb-3 flex h-13 w-full items-center justify-center rounded-2xl border-2 border-[var(--color-border)] text-[15px] font-semibold"
+        >
+          Войти через LMS AITU
+        </Link>
+
         <button
           disabled={busy}
           onClick={() => {

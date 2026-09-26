@@ -42,7 +42,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: { signIn: "/login" },
   providers: [
-    Credentials({
+    // Ordinary Moodle credentials do not authenticate AITU Microsoft/OpenID users.
+    ...(process.env.LMS_PASSWORD_LOGIN_ENABLED === "true" ? [Credentials({
       id: "lms-aitu",
       name: "LMS AITU",
       credentials: { username: {}, password: { type: "password" }, link: {} },
@@ -70,7 +71,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new LmsSignInError("lms_unavailable");
         }
       },
-    }),
+    })] : []),
     Google({
       // Без этого Google-вход с email, уже зарегистрированным по паролю,
       // падает с OAuthAccountNotLinked вместо входа в тот же аккаунт — а

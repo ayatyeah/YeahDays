@@ -48,3 +48,10 @@ describe("multi-user LMS cron", () => {
     expect(mocks.sync).toHaveBeenCalledTimes(2);
   });
 });
+
+it("honours a disconnected calendar marker without restoring the owner's legacy URL", async () => {
+  mocks.connections.findMany.mockResolvedValue([{ userId: "owner", encryptedUrl: "", timezone: "Asia/Almaty" }]);
+  vi.stubEnv("LMS_SYNC_USER_ID", "owner"); vi.stubEnv("LMS_ICAL_URL", "old-calendar");
+  await POST(request());
+  expect(mocks.sync).not.toHaveBeenCalled();
+});

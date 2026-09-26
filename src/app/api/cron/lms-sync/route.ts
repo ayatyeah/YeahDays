@@ -17,6 +17,7 @@ export async function POST(req: Request) {
   const connections = await prisma.lmsConnection.findMany({ where: { user: { banned: false } } });
   const results: { userId: string; ok: boolean; created?: number; error?: string }[] = [];
   for (const connection of connections) {
+    if (!connection.encryptedUrl) continue; // explicitly disconnected, including legacy owners
     try {
       const result = await syncLmsCalendar(connection.userId, decryptLmsUrl(connection.encryptedUrl), connection.timezone, dry);
       if (!dry) await prisma.lmsConnection.updateMany({ where: { userId: connection.userId, encryptedUrl: connection.encryptedUrl }, data: { lastSyncedAt: new Date(), lastError: null } });

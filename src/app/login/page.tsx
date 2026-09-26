@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Logo from "@/components/Logo";
+import { oauthErrorMessage } from "@/lib/oauthErrors";
 import Button from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
 
@@ -47,6 +48,7 @@ function LoginForm() {
   const params = useSearchParams();
   const callbackUrl = params.get("callbackUrl") || "/app";
   const googleFirst = params.get("googleFirst") === "1";
+  const providerError = oauthErrorMessage(params.get("error"));
 
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -82,6 +84,8 @@ function LoginForm() {
           <Logo glow className="h-10 w-auto" />
           <h1 className="text-[22px] font-bold tracking-tight">Вход</h1>
         </div>
+
+        {providerError && <p role="alert" className="mb-4 text-sm text-[var(--color-strength)]">{providerError}</p>}
 
         {googleFirst && (
           <p className="mb-4 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-center text-[15px] leading-snug text-[var(--color-fg-dim)]">
@@ -126,7 +130,7 @@ function LoginForm() {
           href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`}
           className="mb-3 flex h-13 w-full items-center justify-center rounded-2xl border-2 border-[var(--color-border)] text-[15px] font-semibold"
         >
-          О входе через Microsoft AITU
+          Вход через Microsoft AITU
         </Link>
 
         <button

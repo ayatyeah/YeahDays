@@ -18,6 +18,7 @@ const MARKETING = [
   "/terms",
   "/privacy",
   "/login",
+  "/login/lms",
   "/register",
   "/forgot-password",
   // экран согласия OAuth — тот же голый layout, что и /login, без нижней

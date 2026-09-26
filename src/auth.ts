@@ -1,10 +1,16 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/db";
-import { failureLimit, clientIp } from "@/lib/rateLimit";
+import { failureLimit, clientIp, rateLimit } from "@/lib/rateLimit";
+import { loginToLms, LmsError } from "@/lib/lmsClient";
+import { saveLmsAccount, LmsAccountConflict } from "@/lib/lmsAccount";
+
+class LmsSignInError extends CredentialsSignin {
+  constructor(code: string) { super(); this.code = code; }
+}
 
 /**
  * Валидный bcrypt-хэш несуществующего пароля — сравниваем с ним, когда
@@ -17,7 +23,7 @@ import { failureLimit, clientIp } from "@/lib/rateLimit";
 const DUMMY_HASH = "$2b$12$JW9b/fVt38j4JgP3ZnU0eeDaYTXRInFqz7peFp62M49J2i7TCOD0O";
 
 /**
- * Auth.js (v5). Два способа входа — Google и логин/пароль; хранилище —
+ * Auth.js (v5). Вход через LMS AITU, Google и логин/пароль; хранилище —
  * тот же Postgres через Prisma-адаптер. Сессии — JWT (без обращения к БД
  * на каждый запрос — важно и для Credentials: PrismaAdapter сам по себе
  * не хранит сессии для credentials-провайдеров, только JWT-стратегия
@@ -36,6 +42,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: { signIn: "/login" },
   providers: [
+    Credentials({
+      id: "lms-aitu",
+      name: "LMS AITU",
+      credentials: { username: {}, password: { type: "password" }, link: {} },
+      async authorize(credentials, request) {
+        const username = String(credentials?.username ?? "").trim().toLowerCase();
+        const password = String(credentials?.password ?? "");
+        if (!username || username.length > 200 || !password || password.length > 1024) return null;
+        const byLogin = failureLimit(`lms:id:${username}`, 6, 15 * 60_000);
+        const ip = clientIp(request);
+        if (!byLogin.allowed || !rateLimit(`lms:ip:${ip}`, 40, 15 * 60_000)) throw new LmsSignInError("lms_rate_limit");
+        try {
+          // Linking is explicit and always uses the current session, never a client userId.
+          const session = credentials?.link === "1" ? await auth() : null;
+          if (credentials?.link === "1" && !session?.user?.id) throw new LmsSignInError("lms_session");
+          const identity = await loginToLms(username, password);
+          const user = await saveLmsAccount(identity, username, session?.user?.id);
+          return { id: user.id, name: user.name, email: user.email, image: user.image };
+        } catch (e) {
+          if (e instanceof LmsSignInError) throw e;
+          if (e instanceof LmsAccountConflict) throw new LmsSignInError("lms_linked");
+          if (e instanceof LmsError && e.code === "credentials") {
+            byLogin.fail();
+            throw new LmsSignInError("lms_credentials");
+          }
+          throw new LmsSignInError("lms_unavailable");
+        }
+      },
+    }),
     Google({
       // Без этого Google-вход с email, уже зарегистрированным по паролю,
       // падает с OAuthAccountNotLinked вместо входа в тот же аккаунт — а

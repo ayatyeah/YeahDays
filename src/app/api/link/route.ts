@@ -76,10 +76,10 @@ export async function POST(req: Request) {
   try {
     const device = await prisma.user.findUnique({
       where: { id: deviceId },
-      select: { email: true },
+      select: { email: true, username: true, passwordHash: true, accounts: { select: { id: true }, take: 1 } },
     });
     // переносим только с анонимного пользователя (без аккаунта)
-    if (!device || device.email) {
+    if (!device || device.email || device.username || device.passwordHash || device.accounts.length) {
       return NextResponse.json({ ok: true, moved: 0 });
     }
 

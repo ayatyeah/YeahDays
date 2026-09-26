@@ -15,6 +15,7 @@ const PUBLIC_PATHS = new Set([
   "/terms",
   "/privacy",
   "/login",
+  "/login/lms",
   "/register",
   "/forgot-password",
 ]);

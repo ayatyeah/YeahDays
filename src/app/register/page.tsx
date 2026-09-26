@@ -83,6 +83,10 @@ function RegisterForm() {
           <h1 className="text-[22px] font-bold tracking-tight">Создать аккаунт</h1>
         </div>
 
+        <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="mb-5 flex min-h-13 items-center justify-center rounded-2xl border-2 border-[var(--color-border)] px-3 text-center font-semibold">
+          Зарегистрироваться через LMS AITU
+        </Link>
+
         <form onSubmit={submit} className="flex flex-col gap-3">
           <input
             name="name"

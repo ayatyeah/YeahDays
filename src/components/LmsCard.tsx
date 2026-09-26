@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { useSyncStatus } from "@/store/useSyncStatus";
+import MicrosoftSignIn from "@/components/MicrosoftSignIn";
 
 type Status = { linked: boolean; connected: boolean; lastSyncedAt?: string; lastError?: string };
 export default function LmsCard() {
@@ -60,6 +61,7 @@ export default function LmsCard() {
     <h3 className="text-[15px] font-semibold">LMS AITU</h3>
     <p className="mt-1 text-[13px] text-[var(--color-muted)]">Твои дедлайны из университета — в личном календаре. Автообновление три раза в день.</p>
     {status === "unauthenticated" ? <Link href="/login?callbackUrl=%2Fsettings" className="mt-3 block underline">Войти в YeahGrind для подключения</Link> : <>
+      {info && <div className="mt-4"><MicrosoftSignIn /></div>}
       {info && <p className="mt-3 text-sm">{info.connected ? "Календарь подключён" : "Календарь ещё не подключён"}</p>}
       {info?.lastSyncedAt && <p className="mt-1 text-xs text-[var(--color-muted)]">Обновлено: {new Date(info.lastSyncedAt).toLocaleString("ru-RU")}</p>}
       {info?.lastError && <p className="mt-2 text-sm text-[var(--color-strength)]">{info.lastError}</p>}

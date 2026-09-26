@@ -1,87 +1,23 @@
-"use client";
-
-import { Suspense, useState } from "react";
-import { signIn, useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Logo from "@/components/Logo";
-import Button from "@/components/ui/Button";
-import PasswordInput from "@/components/ui/PasswordInput";
-
-const errors: Record<string, string> = {
-  lms_credentials: "LMS не приняла логин или пароль. Проверь данные учётной записи университета.",
-  lms_rate_limit: "Слишком много попыток. Попробуй через 15 минут.",
-  lms_linked: "Этот LMS-аккаунт уже привязан к другому профилю или у профиля есть другая привязка.",
-  lms_session: "Сначала войди в свой аккаунт YeahGrind, затем подключи LMS в настройках.",
-  lms_unavailable: "LMS сейчас недоступна или требует дополнительного шага входа. Проверь вход на сайте университета и попробуй снова.",
-};
-const inputClass = "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none focus:border-[var(--color-fg-dim)]";
 
 export default function Page() {
-  return <Suspense fallback={null}><LmsForm /></Suspense>;
-}
-
-function LmsForm() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const { status } = useSession();
-  const linking = params.get("link") === "1";
-  const requested = params.get("callbackUrl") || "/app";
-  const destination = requested.startsWith("/") && !requested.startsWith("//") && !requested.includes("\\") ? requested : "/app";
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const [synced, setSynced] = useState(false);
-
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formElement = event.currentTarget;
-    const fields = new FormData(formElement);
-    setBusy(true); setError("");
-    try {
-      const result = await signIn("lms-aitu", {
-        username: fields.get("username"), password: fields.get("password"), link: linking ? "1" : "0", redirect: false,
-      });
-      if (!result || result.error) {
-        setError(errors[result?.code ?? ""] || errors.lms_unavailable);
-        return;
-      }
-      formElement.reset();
-      setSynced(true);
-      try {
-        const response = await fetch("/api/account/lms", { method: "POST" });
-        if (!response.ok) {
-          setError("Вход выполнен, но дедлайны пока не загрузились. Повтори подключение или обновление LMS в настройках.");
-          return;
-        }
-      } catch {
-        setError("Вход выполнен. Обновить дедлайны можно в настройках LMS, когда появится связь.");
-        return;
-      }
-      router.push(linking ? "/settings" : destination);
-      router.refresh();
-    } catch { setError("Нет связи с сервером. Попробуй ещё раз."); }
-    finally { setBusy(false); }
-  }
-
   return <main className="flex min-h-dvh items-center justify-center px-5 py-10">
-    <div className="w-full max-w-[380px]">
+    <div className="w-full max-w-[400px]">
       <Logo className="mx-auto mb-6 h-10 w-auto" />
-      <h1 className="text-center text-[22px] font-bold">{linking ? "Подключить LMS AITU" : "Войти через LMS AITU"}</h1>
-      <p className="my-4 text-[14px] text-[var(--color-muted)]">
-        {linking ? "Дедлайны из твоего аккаунта университета появятся в этом профиле." : "При первом входе создадим личный аккаунт и загрузим твои дедлайны из календаря LMS."}
-        {" "}Пароль передаётся LMS для проверки и не сохраняется в YeahGrind.
+      <h1 className="text-center text-[22px] font-bold">Вход через Microsoft AITU</h1>
+      <p className="mt-4 text-[15px] leading-relaxed">
+        В LMS AITU студенты входят через OpenID Connect — учётную запись Microsoft университета.
+        Этот вход в YeahGrind пока не подключён.
       </p>
-      {!synced && <form onSubmit={submit} className="flex flex-col gap-3">
-        <label className="text-sm">Логин LMS<input name="username" autoComplete="username" required maxLength={200} className={`${inputClass} mt-1`} /></label>
-        <label className="text-sm">Пароль LMS<PasswordInput name="password" autoComplete="current-password" required maxLength={1024} className={`${inputClass} mt-1`} /></label>
-        <Button type="submit" variant="primary" disabled={busy || (linking && status !== "authenticated")}>
-          {busy ? "Проверяем LMS и загружаем дедлайны…" : linking ? "Подключить" : "Войти / зарегистрироваться"}
-        </Button>
-        {linking && status === "unauthenticated" && <p role="alert">Для привязки сначала войди в YeahGrind.</p>}
-      </form>}
-      {error && <p role="alert" className="mt-4 text-sm text-[var(--color-strength)]">{error}</p>}
-      {synced && !busy && <Link href={linking ? "/settings" : destination} className="mt-4 block text-center underline">Продолжить</Link>}
-      {!synced && <Link href="/login" className="mt-6 block text-center text-sm underline">{linking ? "Войти в YeahGrind" : "Уже есть аккаунт YeahGrind? Войди и привяжи LMS в настройках"}</Link>}
+      <p className="mt-3 text-sm text-[var(--color-muted)]">
+        Пока можно войти или зарегистрироваться в YeahGrind обычным способом.
+        Личный календарь LMS подключается отдельно в настройках — после входа в LMS через Microsoft.
+      </p>
+      <Link href="/login?callbackUrl=%2Fsettings" className="mt-6 flex min-h-12 items-center justify-center rounded-2xl bg-[var(--color-fg)] px-4 font-semibold text-[var(--color-bg)]">Войти в YeahGrind</Link>
+      <Link href="/register?callbackUrl=%2Fsettings" className="mt-3 block text-center underline">Создать аккаунт YeahGrind</Link>
+      <a href="https://lms.astanait.edu.kz/auth/oidc/?source=loginpage" target="_blank" rel="noopener noreferrer" className="mt-5 block text-center text-sm underline">Открыть Microsoft-вход на сайте LMS</a>
+      <p className="mt-2 text-center text-xs text-[var(--color-muted)]">Эта ссылка открывает LMS университета и не авторизует в YeahGrind.</p>
     </div>
   </main>;
 }

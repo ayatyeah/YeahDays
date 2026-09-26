@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { resolveAnonymousUserId } from "@/lib/anonymousUser";
 import { preferredHour } from "@/lib/push";
 import { labelFromUserAgent } from "@/lib/deviceLabel";
 
@@ -20,7 +21,7 @@ export const dynamic = "force-dynamic";
 async function resolveUserId(fallback?: unknown): Promise<string> {
   const session = await auth();
   if (session?.user?.id) return session.user.id;
-  return typeof fallback === "string" ? fallback.slice(0, 64) : "";
+  return resolveAnonymousUserId(fallback);
 }
 
 export async function POST(req: Request) {

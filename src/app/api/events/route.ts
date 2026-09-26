@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { resolveAnonymousUserId } from "@/lib/anonymousUser";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
   const session = await auth();
   const userId =
     session?.user?.id ??
-    (typeof body.userId === "string" ? body.userId.slice(0, 64) : "");
+    (await resolveAnonymousUserId(body.userId));
   if (!userId) {
     return NextResponse.json({ error: "userId required" }, { status: 400 });
   }

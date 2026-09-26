@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { resolveAnonymousUserId } from "@/lib/anonymousUser";
 import { ACTION_POOL } from "@/lib/actionPool";
 import { recommend, emptyHistory } from "@/lib/recommendation";
 import { historyFromEvents, type StoredEvent } from "@/lib/serverHistory";
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
     body.useOwnActionsOnly && custom.length > 0 ? custom : [...ACTION_POOL, ...custom];
   const session = await auth();
   const userId =
-    session?.user?.id ?? (typeof body.userId === "string" ? body.userId : "");
+    session?.user?.id ?? (await resolveAnonymousUserId(body.userId));
 
   // История: из БД (авторитетно), с фолбэком на присланную клиентом.
   let history = { ...emptyHistory(), ...(body.history ?? {}) };

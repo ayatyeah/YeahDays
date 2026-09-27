@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useLearningStore } from "@/store/useLearningStore";
 import { SKINS } from "@/lib/learning";
+import { characterStageForLevel, skinImageForStage } from "@/lib/characterSkins";
 import { motion, useAnimationControls } from "framer-motion";
 import { useEffect, useMemo, useRef } from "react";
 import { STAT_HEX, dominantStat, type AvatarStats } from "@/lib/statVisuals";
@@ -14,18 +15,6 @@ import { STAT_HEX, dominantStat, type AvatarStats } from "@/lib/statVisuals";
  * по уровню, мягкое «дыхание» и подскок при выполнении — ноль WebGL,
  * ноль дорогих blur-фильтров.
  */
-
-const STAGE_SRC = {
-  slim: "/characters/slim.webp",
-  fit: "/characters/fit.webp",
-  jacked: "/characters/jacked.webp",
-} as const;
-
-function stageForLevel(level: number): keyof typeof STAGE_SRC {
-  if (level >= 20) return "jacked";
-  if (level >= 8) return "fit";
-  return "slim";
-}
 
 interface Props {
   stats: AvatarStats;
@@ -50,7 +39,7 @@ export default function AvatarLazy({
   const { data: session } = useSession();
   const skinId = useLearningStore(s => s.owner === session?.user?.id ? s.data?.equipped : undefined);
   const skin = SKINS.find(s => s.id === skinId && s.id !== "default");
-  const stage = useMemo(() => stageForLevel(level), [level]);
+  const stage = characterStageForLevel(level);
   const hex = useMemo(() => STAT_HEX[dominantStat(stats)], [stats]);
   const power = Math.min(1, Math.max(0, (level - 1) / 40));
 
@@ -112,7 +101,7 @@ export default function AvatarLazy({
       >
         {/* дыхание/парение — только transform (GPU), дёшево */}
         <motion.img
-          src={skin?.image ?? STAGE_SRC[stage]}
+          src={skinImageForStage(skinId, stage)}
           alt={skin ? `Персонаж: ${skin.name}` : "Персонаж"}
           draggable={false}
           animate={still ? undefined : { y: [0, -5, 0] }}

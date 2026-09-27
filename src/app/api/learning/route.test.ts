@@ -43,3 +43,14 @@ it("limits costly requests before any model or database work", async () => {
   mocks.rate.mockReturnValue(false); expect((await POST(req({ action: "create" }))).status).toBe(429);
   expect(mocks.create).not.toHaveBeenCalled(); expect(mocks.read).not.toHaveBeenCalled();
 });
+it("passes bounded subject context to the tutor and stores it under the session owner", async () => {
+  vi.stubEnv("OPENAI_API_KEY", "test");
+  try {
+    const subject = { name: "Computer Networks", materials: "IPv4, subnet masks, CIDR" };
+    mocks.create.mockResolvedValue({ id: "generated", title: "Subnets", goal: "Understand CIDR", minutes: 20, subject, quests: [], createdAt: "now" });
+    const response = await POST(req({ action: "create", goal: "Understand CIDR", minutes: 20, requestId: "12345678-1234-1234-1234-123456789012", subject, userId: "bob" }));
+    expect(response.status).toBe(200); expect(mocks.create).toHaveBeenCalledWith("Understand CIDR", 20, subject);
+    expect(mocks.mutate.mock.calls[0][0]).toBe("alice"); expect(state.skills[0].subject).toEqual(subject);
+    expect((await POST(req({ action: "create", goal: "Understand CIDR", minutes: 20, requestId: "12345678-1234-1234-1234-123456789013", subject: { ...subject, materials: "a".repeat(4001) } }))).status).toBe(400);
+  } finally { vi.unstubAllEnvs(); }
+});

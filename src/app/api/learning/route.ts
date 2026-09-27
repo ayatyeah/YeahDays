@@ -5,6 +5,8 @@ import { applyGrade, buySkin, equipSkin, LearningError, publicLearning } from "@
 import { readLearning, mutateLearning } from "@/lib/learningDb";
 import { createLearningSkill, gradeLearningAnswer } from "@/lib/learningAi";
 
+import { parseLearningSubject } from "@/lib/learningSubjects";
+
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const available = () => !!process.env.OPENAI_API_KEY?.trim();
@@ -39,10 +41,11 @@ export async function POST(req: Request) {
     const current = await readLearning(userId);
     if (body.action === "create") {
       if (typeof body.goal !== "string" || body.goal.trim().length < 5 || body.goal.length > 600 || ![10, 20, 30].includes(body.minutes) || typeof body.requestId !== "string" || !/^[0-9a-f-]{36}$/i.test(body.requestId)) throw new LearningError("Напиши цель от 5 до 600 символов и выбери время");
+      const subject = parseLearningSubject(body.subject);
       if (current.state.skills.some(s => s.id === body.requestId)) return NextResponse.json({ state: publicLearning(current.state, current.revision, available()) });
       if (current.state.skills.length >= 12 || current.state.skills.filter(s => s.quests.some(q => !q.completed)).length >= 3) throw new LearningError("Сначала заверши один из начатых маршрутов (максимум 3 одновременно, 12 всего).");
       if (!rateLimit(`learning:create:${userId}`, 3, 86_400_000) || !rateLimit("learning:global:create", 100, 86_400_000)) return NextResponse.json({ error: "На сегодня лимит новых маршрутов исчерпан" }, { status: 429 });
-      const skill = await createLearningSkill(body.goal.trim(), body.minutes); skill.id = body.requestId;
+      const skill = await createLearningSkill(body.goal.trim(), body.minutes, subject); skill.id = body.requestId;
       const updated = await mutateLearning(userId, state => {
         if (state.skills.some(s => s.id === skill.id)) return;
         if (state.skills.length >= 12 || state.skills.filter(s => s.quests.some(q => !q.completed)).length >= 3) throw new LearningError("Уже открыто 3 маршрута. Заверши один из них.");

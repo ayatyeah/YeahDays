@@ -63,8 +63,8 @@ describe("buildIcs", () => {
     expect(ics).not.toContain("DTSTART:20260914");
   });
 
-  it("события LMS и выполненное не выгружаются", () => {
-    const lms = todo({ id: "l", title: "Attendance", hour: 12, duration: 50, source: "lms" });
+  it("дедлайны LMS и выполненное не выгружаются", () => {
+    const lms = todo({ id: "l", title: "Assignment is due", hour: 12, duration: 50, source: "lms" });
     const done = todo({ id: "d", title: "Сделано", hour: 9, duration: 30, done: true });
     expect(buildIcs([lms, done], { from: MONDAY, days: 1 })).not.toContain("BEGIN:VEVENT");
   });
@@ -90,4 +90,10 @@ describe("buildIcs", () => {
     const summaryLine = ics.split("\r\n").find((l) => l.startsWith("SUMMARY:"))!;
     expect(summaryLine.length).toBeLessThanOrEqual(75);
   });
+});
+
+it("attendance exports as a class with its original duration", () => {
+  const ics = buildIcs([todo({ id: "attendance", title: "Math: Attendance", hour: 12, duration: 50, source: "lms" })], { from: MONDAY, days: 1 });
+  expect(ics).toContain("DTSTART:20260907T120000");
+  expect(ics).toContain("DTEND:20260907T125000");
 });

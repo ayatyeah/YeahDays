@@ -1,5 +1,6 @@
 "use client";
 
+import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -126,7 +127,9 @@ export default function TimelineSchedule({
   });
   const weekday = useMemo(() => new Date(`${day}T00:00:00`).getDay(), [day]);
 
-  const onDay = useMemo(() => todos.filter((t) => isTodoOnDay(t, day)), [todos, day]);
+  const allOnDay = useMemo(() => todos.filter((t) => isTodoOnDay(t, day)), [todos, day]);
+  const deadlines = useMemo(() => allOnDay.filter(isLmsDeadline).sort((a, b) => (a.hour ?? 24) * 60 + (a.minute ?? 0) - (b.hour ?? 24) * 60 - (b.minute ?? 0)), [allOnDay]);
+  const onDay = useMemo(() => allOnDay.filter(t => !isLmsDeadline(t)), [allOnDay]);
 
   const scheduled = useMemo(
     () => onDay.filter((t) => t.hour != null && t.hour >= startHour && t.hour <= endHour),
@@ -214,9 +217,9 @@ export default function TimelineSchedule({
     const to = Math.min((endHour + 1) * 60, 22 * 60);
     const busy: [number, number][] = [];
     for (const t of scheduled) {
-      // Дедлайн из LMS не занимает час: «отметиться на паре» — не занятие,
-      // и час вокруг него по-прежнему свободен.
-      if (t.source === "lms") continue;
+      // Дедлайн из LMS не занимает час; attendance занимает время пары.
+      // Attendance учитываем при поиске свободного окна.
+      if (isLmsDeadline(t)) continue;
       const s = todoStartMin(t);
       const e = todoEndMin(t);
       if (s === null || e === null) continue;
@@ -347,7 +350,7 @@ export default function TimelineSchedule({
     const minute = fHour !== undefined ? fMinute : undefined;
     if (editingId) {
       updateTodo(editingId, { title, note, priority: fPriority, hour: fHour, minute, duration: fDuration });
-      const wasDone = onDay.find((t) => t.id === editingId);
+      const wasDone = allOnDay.find((t) => t.id === editingId);
       if (wasDone && isTodoDone(wasDone, day) !== fDone) toggleTodo(editingId, day);
     } else {
       addTodo({ title, note, date: day, priority: fPriority, hour: fHour, minute, duration: fDuration });
@@ -361,8 +364,8 @@ export default function TimelineSchedule({
 
   /* ── Экран просмотра: данные текущей задачи ── */
   const viewingTodo = useMemo(
-    () => onDay.find((t) => t.id === editingId) ?? null,
-    [onDay, editingId],
+    () => allOnDay.find((t) => t.id === editingId) ?? null,
+    [allOnDay, editingId],
   );
   const viewCategory = viewingTodo ? categorizeTodo(viewingTodo.title) : null;
   const viewXp = viewingTodo ? TODO_PRIORITY_XP[viewingTodo.priority] : 0;
@@ -396,6 +399,15 @@ export default function TimelineSchedule({
           </>
         )}
       </div>
+
+      {deadlines.length > 0 && <section className="mb-4 rounded-2xl border border-[var(--color-border)] p-3" aria-label="Дедлайны LMS">
+        <h3 className="text-sm font-semibold">Дедлайны: задания и лабораторные</h3>
+        <p className="mb-2 mt-1 text-xs text-[var(--color-muted)]">Срок сдачи на этот день. Не занимает время в дневном плане.</p>
+        <div className="space-y-2">{deadlines.map(t => <button key={t.id} type="button" onClick={() => openSheet(t)} className="flex w-full items-start justify-between gap-3 rounded-xl bg-[var(--color-surface-2)] p-3 text-left text-sm">
+          <span className={isTodoDone(t, day) ? "line-through opacity-60" : ""}>{isTodoDone(t, day) ? "✓ " : ""}{t.title}</span>
+          <span className="shrink-0 text-xs text-[var(--color-muted)]">{t.hour == null ? "Без времени" : `до ${fmtMin(t.hour * 60 + (t.minute ?? 0))}`}</span>
+        </button>)}</div>
+      </section>}
 
       {!compact && overdue.length > 0 && (
         <div className="mb-3">

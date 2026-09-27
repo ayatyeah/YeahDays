@@ -1,3 +1,4 @@
+import { isLmsDeadline } from "./lmsEventKind";
 /**
  * Почасовой план → контекст «что по плану сейчас» для колоды.
  *
@@ -105,7 +106,7 @@ export function planNow(todos: Todo[], date = new Date(), day = localDay(date)):
   const timed: Timed[] = [];
   for (const todo of todos) {
     if (todo.hour === undefined) continue;
-    if (!isTodoOnDay(todo, day) || isTodoDone(todo, day)) continue;
+    if (isLmsDeadline(todo) || !isTodoOnDay(todo, day) || isTodoDone(todo, day)) continue;
     const start = todoStartMin(todo);
     const end = todoEndMin(todo);
     if (start === null || end === null) continue;

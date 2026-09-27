@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PlanItem from "@/components/PlanItem";
+import AiPlanner from "@/components/AiPlanner";
 import TimelineSchedule from "@/components/TimelineSchedule";
 import Modal from "@/components/ui/Modal";
 import {
@@ -297,6 +298,7 @@ export default function CalendarSection() {
           {/* Почасовой план дня — теперь главное содержимое раздела, не блок
               внизу. key={selected} — чистый локальный стейт (свёрнуто/ночные
               часы) при переключении дня, а не протечка с прошлого. */}
+          <AiPlanner day={selected} />
           <TimelineSchedule key={selected} day={selected} />
         </div>
 

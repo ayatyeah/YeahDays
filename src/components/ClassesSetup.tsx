@@ -1,5 +1,6 @@
 "use client";
 
+import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useMemo, useState } from "react";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
@@ -72,7 +73,7 @@ export default function ClassesSetup() {
   const [added, setAdded] = useState<string[]>([]);
 
   const hasSchedule = useMemo(
-    () => todos.some((t) => t.repeat && t.hour !== undefined && t.source !== "lms"),
+    () => todos.some((t) => t.repeat && t.hour !== undefined && !isLmsDeadline(t)),
     [todos],
   );
 

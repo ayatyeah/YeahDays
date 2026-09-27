@@ -24,7 +24,7 @@ export interface Todo {
   priority: "low" | "normal" | "high";
   subtasks: { id: string; title: string; done: boolean }[];
   repeat?: { kind: string; weekday?: number };
-  /** "lms" — пришло из календаря университета, не занимает время в плане */
+  /** "lms" — пришло из календаря университета; attendance занимает время пары */
   source?: "lms";
   done: boolean;
   doneDays: string[];

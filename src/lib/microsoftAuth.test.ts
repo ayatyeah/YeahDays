@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { AITU_ENTRA_CLIENT_ID, AITU_ENTRA_TENANT_ID, AITU_ENTRA_ISSUER, microsoftProvider, microsoftProfile } from "./microsoftAuth";
+import { AITU_ENTRA_CLIENT_ID, AITU_ENTRA_TENANT_ID, AITU_ENTRA_ISSUER, microsoftProvider, microsoftProfile, logMicrosoftTokenError } from "./microsoftAuth";
 
 afterEach(() => vi.unstubAllEnvs());
 describe("AITU Microsoft identity", () => {
@@ -40,4 +40,17 @@ describe("AITU Microsoft identity", () => {
     const account = await provider.options!.account!({ access_token: "private-access", refresh_token: "private-refresh", id_token: "private-id", token_type: "bearer" });
     expect(account).toEqual({});
   });
+});
+
+it("logs only numeric Microsoft error codes and preserves the response body", async () => {
+  const logger = vi.spyOn(console, "error").mockImplementation(() => {});
+  try {
+    const response = Response.json({ error: "invalid_grant", error_codes: [54005, "private"], error_description: "secret", access_token: "private-token" }, { status: 400 });
+    expect(await logMicrosoftTokenError(response)).toBeUndefined();
+    expect(logger).toHaveBeenCalledWith("[auth][microsoft]", JSON.stringify({ status: 400, aadsts: [54005] }));
+    expect((await response.json()).access_token).toBe("private-token");
+    logger.mockClear();
+    await logMicrosoftTokenError(Response.json({ access_token: "private-token" }));
+    expect(logger).not.toHaveBeenCalled();
+  } finally { logger.mockRestore(); }
 });

@@ -7,10 +7,11 @@ import Button from "@/components/ui/Button";
 import { useSyncStatus } from "@/store/useSyncStatus";
 import MicrosoftSignIn from "@/components/MicrosoftSignIn";
 
-type Status = { linked: boolean; connected: boolean; lastSyncedAt?: string; lastError?: string };
+type Status = { linked: boolean; microsoftLinked: boolean; connected: boolean; source: "personal" | "legacy" | null; lastSyncedAt?: string; lastError?: string };
 export default function LmsCard() {
   const { data: session, status } = useSession();
   const [info, setInfo] = useState<Status | null>(null);
+  const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [reload, setReload] = useState(0);
@@ -19,10 +20,13 @@ export default function LmsCard() {
   useEffect(() => {
     const controller = new AbortController();
     setInfo(null); setMessage(""); setCalendarUrl(""); setEditing(false);
+    setLoading(status !== "unauthenticated");
     if (status !== "authenticated") return;
     fetch("/api/account/lms", { cache: "no-store", signal: controller.signal })
       .then(async (r) => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(setInfo).catch(() => { if (!controller.signal.aborted) setMessage("Не удалось загрузить подключение LMS"); });
+      .then((result) => { if (!controller.signal.aborted) setInfo(result); })
+      .catch(() => { if (!controller.signal.aborted) setMessage("Не удалось проверить подключение. Статус неизвестен — попробуй ещё раз."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [status, session?.user?.id, reload]);
 
@@ -31,10 +35,10 @@ export default function LmsCard() {
     try {
       const response = await fetch("/api/account/lms", { method });
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Не удалось обновить LMS");
       const state = await fetch("/api/account/lms", { cache: "no-store" });
       if (!state.ok) throw new Error("Не удалось загрузить статус LMS");
       setInfo(await state.json());
+      if (!response.ok) throw new Error(result.error || "Не удалось обновить LMS");
       setMessage(method === "DELETE" ? "Обновление отключено. Уже загруженные задачи сохранены." : `Календарь обновлён. Новых дедлайнов: ${result.created}.`);
       if (method === "POST") await useSyncStatus.getState().syncNow?.();
     } catch (e) { setMessage(e instanceof Error ? e.message : "Нет связи с сервером"); }
@@ -51,7 +55,7 @@ export default function LmsCard() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Не удалось подключить календарь");
       setCalendarUrl(""); setEditing(false);
-      setInfo((previous) => ({ ...previous, linked: previous?.linked ?? false, connected: true, lastError: undefined, lastSyncedAt: undefined }));
+      setInfo((previous) => ({ ...previous, linked: previous?.linked ?? false, microsoftLinked: previous?.microsoftLinked ?? false, connected: true, source: "personal", lastError: undefined, lastSyncedAt: undefined }));
       await act("POST");
     } catch (e) { setMessage(e instanceof Error ? e.message : "Нет связи с сервером"); }
     finally { setBusy(false); }
@@ -61,12 +65,24 @@ export default function LmsCard() {
     <h3 className="text-[15px] font-semibold">LMS AITU</h3>
     <p className="mt-1 text-[13px] text-[var(--color-muted)]">Твои дедлайны из университета — в личном календаре. Автообновление три раза в день.</p>
     {status === "unauthenticated" ? <Link href="/login?callbackUrl=%2Fsettings" className="mt-3 block underline">Войти в YeahGrind для подключения</Link> : <>
-      {info && <div className="mt-4"><MicrosoftSignIn /></div>}
-      {info && <p className="mt-3 text-sm">{info.connected ? "Календарь подключён" : "Календарь ещё не подключён"}</p>}
+      {loading && <p role="status" className="mt-3 text-sm">Проверяем подключение LMS…</p>}
+      {info && <div className="mt-4 space-y-3">
+        <div className="rounded-xl border border-[var(--color-border)] p-3">
+          <p className="text-sm font-medium">Microsoft AITU: {info.microsoftLinked ? "привязан" : "не привязан"}</p>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">Это способ входа в YeahGrind. Дедлайны подключаются отдельно через календарь LMS.</p>
+          {!info.microsoftLinked && <div className="mt-3"><MicrosoftSignIn /></div>}
+        </div>
+        <div className="rounded-xl border border-[var(--color-border)] p-3">
+          <p className="text-sm font-medium">Календарь LMS: {info.connected ? info.lastError ? "подключён, ошибка обновления" : "подключён" : "не подключён"}</p>
+          {!info.connected && <p className="mt-1 text-xs text-[var(--color-muted)]">Добавь свою ссылку ниже, чтобы загружать дедлайны. Привязка Microsoft для этого не обязательна.</p>}
+          {info.source === "legacy" && <p className="mt-1 text-xs text-[var(--color-muted)]">Используется ранее настроенный календарь. Время последнего обновления недоступно. Добавь ссылку заново, чтобы обновлять его здесь вручную.</p>}
+          {info.source === "personal" && !info.lastSyncedAt && <p className="mt-1 text-xs text-[var(--color-muted)]">Успешного обновления ещё не было.</p>}
+        </div>
+      </div>}
       {info?.lastSyncedAt && <p className="mt-1 text-xs text-[var(--color-muted)]">Обновлено: {new Date(info.lastSyncedAt).toLocaleString("ru-RU")}</p>}
       {info?.lastError && <p className="mt-2 text-sm text-[var(--color-strength)]">{info.lastError}</p>}
       {info?.connected && <div className="mt-3 flex flex-wrap gap-2">
-        <Button size="sm" disabled={busy} onClick={() => void act("POST")}>{busy ? "Подожди…" : "Обновить дедлайны"}</Button>
+        {info.source === "personal" && <Button size="sm" disabled={busy} onClick={() => void act("POST")}>{busy ? "Подожди…" : "Обновить дедлайны"}</Button>}
         <Button size="sm" disabled={busy} onClick={() => void act("DELETE")}>Отключить календарь</Button>
       </div>}
       {info?.connected && !editing && <Button size="sm" disabled={busy} onClick={() => setEditing(true)} className="mt-3">Заменить ссылку календаря</Button>}
@@ -80,7 +96,7 @@ export default function LmsCard() {
         <Button type="submit" size="sm" disabled={busy}>{busy ? "Подключаем…" : "Подключить мои дедлайны"}</Button>
         {editing && <Button type="button" size="sm" disabled={busy} onClick={() => { setEditing(false); setCalendarUrl(""); }}>Отмена</Button>}
       </form>}
-      {!info && status === "authenticated" && <Button size="sm" onClick={() => setReload((n) => n + 1)} className="mt-3">Проверить подключение</Button>}
+      {!info && !loading && status === "authenticated" && <Button size="sm" onClick={() => setReload((n) => n + 1)} className="mt-3">Проверить подключение</Button>}
     </>}
     {message && <p role="status" className="mt-3 text-sm">{message}</p>}
   </section>;

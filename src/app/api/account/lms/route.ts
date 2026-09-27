@@ -5,6 +5,7 @@ import { decryptLmsUrl, encryptLmsUrl, validateLmsUrl, validateLmsTimezone } fro
 import { fetchLmsCalendar } from "@/lib/lmsClient";
 import { syncLmsCalendar } from "@/lib/lmsSync";
 import { rateLimit } from "@/lib/rateLimit";
+import { MICROSOFT_PROVIDER } from "@/lib/microsoftAuth";
 import { LMS_PROVIDER } from "@/lib/lmsAccount";
 
 export const runtime = "nodejs";
@@ -13,11 +14,16 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const id = (await auth())?.user?.id;
   if (!id) return NextResponse.json({ error: "Нужно войти" }, { status: 401 });
-  const [connection, account] = await Promise.all([
+  const [connection, account, microsoft] = await Promise.all([
     prisma.lmsConnection.findUnique({ where: { userId: id }, select: { encryptedUrl: true, lastSyncedAt: true, lastError: true, timezone: true } }),
     prisma.account.findFirst({ where: { userId: id, provider: LMS_PROVIDER }, select: { id: true } }),
+    prisma.account.findFirst({ where: { userId: id, provider: MICROSOFT_PROVIDER }, select: { id: true } }),
   ]);
-  return NextResponse.json({ linked: !!account, connected: !!connection?.encryptedUrl,
+  // Match the cron fallback; an empty connection explicitly disables it.
+  const legacyConnected = !connection && !account && process.env.LMS_SYNC_USER_ID === id && !!process.env.LMS_ICAL_URL;
+  return NextResponse.json({ linked: !!account, microsoftLinked: !!microsoft,
+    connected: !!connection?.encryptedUrl || legacyConnected,
+    source: connection?.encryptedUrl ? "personal" : legacyConnected ? "legacy" : null,
     lastSyncedAt: connection?.lastSyncedAt ?? null, lastError: connection?.lastError ?? null,
     timezone: connection?.timezone ?? "Asia/Almaty",
   });

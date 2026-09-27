@@ -38,3 +38,17 @@ it("does not forward provider errors, tokens or incomplete responses", async () 
   vi.mocked(fetch).mockResolvedValue(Response.json({ status: "incomplete", output: [] }));
   expect((await POST(req())).status).toBe(502);
 });
+it("accepts a screenshot and sends normalized image content to vision", async () => {
+  const { default: sharp } = await import("sharp");
+  const png = await sharp({ create: { width: 4, height: 4, channels: 3, background: "white" } }).png().toBuffer();
+  vi.mocked(fetch).mockResolvedValue(Response.json({ status: "completed", output: [{ content: [{ type: "output_text", text: JSON.stringify({ message: "Пустой скрин", warnings: [], items: [] }) }] }] }));
+  const request = new Request("https://app.test/api/ai/planner", { method: "POST", body: JSON.stringify({ ...payload, mode: "schedule", image: `data:image/png;base64,${png.toString("base64")}` }) });
+  expect((await POST(request)).status).toBe(200);
+  const body = JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body));
+  expect(body.input[0].content[1]).toMatchObject({ type: "input_image", detail: "high" });
+  expect(body.input[0].content[1].image_url).toMatch(/^data:image\/png;base64,/);
+});
+it("rejects oversized request bodies before image decoding or a paid request", async () => {
+  const response = await POST(new Request("https://app.test/api/ai/planner", { method: "POST", body: "a".repeat(7_500_001) }));
+  expect(response.status).toBe(400); expect(fetch).not.toHaveBeenCalled();
+});

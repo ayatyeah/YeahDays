@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   auth: vi.fn(), sync: vi.fn(), rate: vi.fn(), fetchCalendar: vi.fn(),
   connection: { findUnique: vi.fn(), updateMany: vi.fn(), deleteMany: vi.fn(), upsert: vi.fn() },
@@ -15,7 +15,7 @@ vi.mock("@/lib/lmsConnection", async (importOriginal) => ({
 vi.mock("@/lib/lmsClient", () => ({ fetchLmsCalendar: mocks.fetchCalendar }));
 import { GET, POST, DELETE, PUT } from "./route";
 
-beforeEach(() => { vi.clearAllMocks(); mocks.auth.mockResolvedValue({ user: { id: "alice" } }); mocks.rate.mockReturnValue(true); });
+beforeEach(() => { vi.resetAllMocks(); mocks.auth.mockResolvedValue({ user: { id: "alice" } }); mocks.rate.mockReturnValue(true); });
 describe("personal LMS API", () => {
   it("requires authentication for all methods", async () => {
     mocks.auth.mockResolvedValue(null);
@@ -84,4 +84,28 @@ it("does not expose even the encrypted calendar secret in status", async () => {
   const result = await (await GET()).json();
   expect(result.connected).toBe(true);
   expect(JSON.stringify(result)).not.toContain("never-expose-me");
+});
+
+afterEach(() => vi.unstubAllEnvs());
+it("reports Microsoft linking independently of a connected calendar", async () => {
+  mocks.connection.findUnique.mockResolvedValue(null);
+  mocks.account.findFirst.mockImplementation(async ({ where }) => where.provider === "microsoft-entra-id" ? { id: "ms-account" } : null);
+  const result = await (await GET()).json();
+  expect(result).toMatchObject({ microsoftLinked: true, connected: false, source: null });
+  expect(mocks.account.findFirst).toHaveBeenCalledWith({ where: { userId: "alice", provider: "microsoft-entra-id" }, select: { id: true } });
+});
+it("supports a personal calendar without Microsoft linking", async () => {
+  mocks.connection.findUnique.mockResolvedValue({ encryptedUrl: "private", lastError: "Sync failed" });
+  expect(await (await GET()).json()).toMatchObject({ microsoftLinked: false, connected: true, source: "personal", lastError: "Sync failed" });
+});
+it("shows the legacy calendar only to its owner and respects disconnect markers", async () => {
+  vi.stubEnv("LMS_SYNC_USER_ID", "alice");
+  vi.stubEnv("LMS_ICAL_URL", "private-calendar-url");
+  mocks.connection.findUnique.mockResolvedValue(null);
+  expect(await (await GET()).json()).toMatchObject({ connected: true, source: "legacy" });
+  mocks.auth.mockResolvedValue({ user: { id: "bob" } });
+  expect(await (await GET()).json()).toMatchObject({ connected: false, source: null });
+  mocks.auth.mockResolvedValue({ user: { id: "alice" } });
+  mocks.connection.findUnique.mockResolvedValue({ encryptedUrl: "" });
+  expect(await (await GET()).json()).toMatchObject({ connected: false, source: null });
 });

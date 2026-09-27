@@ -13,6 +13,7 @@
  * останутся собой.
  */
 
+import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { isTodoOnDay, isTodoDone, type Todo } from "@/store/useUserStore";
 import { categorizeTodo } from "./todoCategory";
 import type { YgIconName } from "@/components/yg-icons";
@@ -60,9 +61,8 @@ export function timeSpentBySubject(
 
   for (const t of todos) {
     if (t.hour === undefined) continue;
-    // События из календаря университета — это дедлайны и отметки, а не
-    // занятия: в их час никто не сидит на паре, и в учебные часы они не идут.
-    if (t.source === "lms") continue;
+    // Attendance — время занятия; сроки сдачи не добавляют учебные часы.
+    if (isLmsDeadline(t)) continue;
     const minutes = t.duration ?? 60;
     const subject = subjectOf(t.title);
     for (const key of keys) {

@@ -11,6 +11,7 @@
  * длина строк, повторы. Поэтому отдельный модуль.
  */
 
+import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { isTodoOnDay, isTodoDone, type Todo } from "@/store/useUserStore";
 import { todoStartMin, todoEndMin } from "./todoSpan";
 
@@ -66,8 +67,8 @@ export interface IcsOptions {
  * правило RFC не укладываются без EXDATE и хитрого INTERVAL. Развёрнутый
  * список на пару недель весит килобайты и всегда точен.
  *
- * Выполненные задачи и события LMS пропускаем: первые уже не нужны, вторые
- * и так лежат в календаре университета.
+ * Выполненные задачи и дедлайны LMS пропускаем. Attendance экспортируем
+ * как занятия с их исходным временем и длительностью.
  */
 export function buildIcs(todos: Todo[], { days = 21, from = new Date(), name = "YeahGrind" }: IcsOptions = {}): string {
   const lines: string[] = [
@@ -86,7 +87,7 @@ export function buildIcs(todos: Todo[], { days = 21, from = new Date(), name = "
     const key = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
     for (const t of todos) {
-      if (t.hour === undefined || t.source === "lms") continue;
+      if (t.hour === undefined || isLmsDeadline(t)) continue;
       if (!isTodoOnDay(t, key) || isTodoDone(t, key)) continue;
 
       const start = todoStartMin(t);

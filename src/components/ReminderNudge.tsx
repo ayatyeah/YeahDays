@@ -1,5 +1,6 @@
 "use client";
 
+import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useMemo, useState } from "react";
 import Button from "@/components/ui/Button";
 import { YgIcon } from "@/components/yg-icons";
@@ -60,7 +61,7 @@ export default function ReminderNudge() {
       .filter(
         (t) =>
           t.hour !== undefined &&
-          t.source !== "lms" &&
+          !isLmsDeadline(t) &&
           isTodoOnDay(t, day) &&
           !isTodoDone(t, day) &&
           t.hour * 60 + (t.minute ?? 0) > nowMin,

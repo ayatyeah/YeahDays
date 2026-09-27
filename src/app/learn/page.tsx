@@ -1,4 +1,5 @@
 "use client";
+import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
@@ -63,7 +64,7 @@ export default function LearningPage() {
     if (store.todos.some(t => t.title === title && t.date === day)) { setMessage("Этот квест уже есть в сегодняшнем плане."); return; }
     const now = new Date(); let slot: number | undefined;
     for (let start = Math.max(8 * 60, Math.ceil((now.getHours() * 60 + now.getMinutes()) / 10) * 10); start + skill.minutes <= 22 * 60; start += 10) {
-      if (!store.todos.some(t => t.source !== "lms" && t.hour !== undefined && isTodoOnDay(t, day) && start < t.hour * 60 + (t.minute ?? 0) + (t.duration ?? 60) && start + skill.minutes > t.hour * 60 + (t.minute ?? 0))) { slot = start; break; }
+      if (!store.todos.some(t => !isLmsDeadline(t) && t.hour !== undefined && isTodoOnDay(t, day) && start < t.hour * 60 + (t.minute ?? 0) + (t.duration ?? 60) && start + skill.minutes > t.hour * 60 + (t.minute ?? 0))) { slot = start; break; }
     }
     store.addTodo({ title, date: day, duration: skill.minutes, hour: slot === undefined ? undefined : Math.floor(slot / 60), minute: slot === undefined ? undefined : slot % 60, note: "Квест в разделе «Прокачать навык». Награда начисляется после проверки ответа." });
     setMessage(slot === undefined ? "Квест добавлен в список на сегодня без времени: свободного окна до 22:00 нет." : "Квест добавлен в свободное окно сегодняшнего расписания.");

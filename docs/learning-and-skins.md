@@ -41,3 +41,5 @@ Paid live smoke test (opt-in, uses the local .env):
 `RUN_LIVE_LEARNING=1 node --env-file=.env node_modules/vitest/vitest.mjs run src/lib/learningAi.live.test.ts`
 
 Sources: https://developers.openai.com/api/docs/guides/structured-outputs and https://developers.openai.com/api/docs/guides/images-vision
+
+Browser integration: `node --env-file=.env e2e/learning-shop.cjs` against a local production build on port 3120 with `AUTH_SECRET=local-learning-test-secret`, the database and OpenAI key. It creates and removes a synthetic QA account, exercises live grading, one-time reward, buying, equipping, reload persistence and avatar rendering. It makes one paid grading request.

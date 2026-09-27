@@ -37,6 +37,7 @@ model User {
   sessions          Session[]
   events            Event[]
   state             UserState?
+  learningProfile   LearningProfile?
   lmsConnection     LmsConnection?
   pushSubs          PushSubscription[]
   scheduled         ScheduledNotification[]
@@ -447,4 +448,13 @@ model SharedChallengeProgress {
 
   @@id([challengeId, userId, day])
   @@index([challengeId, day])
+}
+
+// Separate from client-synced UserState: rewards and purchases are server-authoritative.
+model LearningProfile {
+  userId    String   @id
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data      Json
+  revision  Int      @default(0)
+  updatedAt DateTime @updatedAt
 }

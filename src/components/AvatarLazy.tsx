@@ -1,5 +1,8 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { useLearningStore } from "@/store/useLearningStore";
+import { SKINS } from "@/lib/learning";
 import { motion, useAnimationControls } from "framer-motion";
 import { useEffect, useMemo, useRef } from "react";
 import { STAT_HEX, dominantStat, type AvatarStats } from "@/lib/statVisuals";
@@ -44,6 +47,9 @@ export default function AvatarLazy({
   celebrate = 0,
   still = false,
 }: Props) {
+  const { data: session } = useSession();
+  const skinId = useLearningStore(s => s.owner === session?.user?.id ? s.data?.equipped : undefined);
+  const skin = SKINS.find(s => s.id === skinId && s.id !== "default");
   const stage = useMemo(() => stageForLevel(level), [level]);
   const hex = useMemo(() => STAT_HEX[dominantStat(stats)], [stats]);
   const power = Math.min(1, Math.max(0, (level - 1) / 40));
@@ -106,8 +112,8 @@ export default function AvatarLazy({
       >
         {/* дыхание/парение — только transform (GPU), дёшево */}
         <motion.img
-          src={STAGE_SRC[stage]}
-          alt="Персонаж"
+          src={skin?.image ?? STAGE_SRC[stage]}
+          alt={skin ? `Персонаж: ${skin.name}` : "Персонаж"}
           draggable={false}
           animate={still ? undefined : { y: [0, -5, 0] }}
           transition={

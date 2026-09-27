@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { SKINS } from "@/lib/learning";
+import { CHARACTER_STAGES, skinImageForStage, type CharacterStage } from "@/lib/characterSkins";
 import { useLearningStore } from "@/store/useLearningStore";
 import { useLearningActions } from "@/components/useLearningActions";
 export default function SkinShopPage() {
@@ -10,6 +11,7 @@ export default function SkinShopPage() {
   const data = useLearningStore(s => s.owner === owner ? s.data : null);
   const loadError = useLearningStore(s => s.error);
   const [preview, setPreview] = useState<string | null>(null);
+  const [previewStage, setPreviewStage] = useState<CharacterStage>("fit");
   const [message, setMessage] = useState("");
   useEffect(() => { setPreview(null); setMessage(""); }, [owner]);
   const selected = SKINS.find(s => s.id === (preview ?? data?.equipped)) ?? SKINS[0];
@@ -21,8 +23,13 @@ export default function SkinShopPage() {
     <div className="grid gap-5 lg:grid-cols-[300px_1fr]">
       <section className="surface rounded-3xl border border-[var(--color-border)] p-5 text-center lg:sticky lg:top-6 lg:self-start" style={{ backgroundImage: `radial-gradient(ellipse at 50% 35%, ${selected.color}22, transparent 70%)` }}>
         <p className="text-xs uppercase tracking-widest text-[var(--color-muted)]">{preview ? "Примерочная" : "Твой образ"}</p>
-        <img src={selected.image} alt={`Примерка: ${selected.name}`} className="mx-auto mt-3 h-72 w-full object-contain" />
+        <img src={skinImageForStage(selected.id, previewStage)} alt={`Примерка: ${selected.name}`} className="mx-auto mt-3 h-72 w-full object-contain" />
         <h2 className="mt-3 text-xl font-bold">{selected.name}</h2><p className="mt-1 text-sm text-[var(--color-muted)]">{selected.description}</p>
+        {(selected.id === "henley" || selected.id === "default") && <fieldset className="mt-4">
+          <legend className="mb-2 w-full text-xs text-[var(--color-muted)]">Примерить на другой форме</legend>
+          <div className="flex gap-1">{CHARACTER_STAGES.map(stage => <button key={stage.id} type="button" aria-pressed={previewStage === stage.id} onClick={() => setPreviewStage(stage.id)} className={`min-w-0 flex-1 rounded-xl border px-1 py-2 text-xs ${previewStage === stage.id ? "border-[var(--color-fg)] bg-[var(--color-fg)] text-[var(--color-bg)]" : "border-[var(--color-border)]"}`}>{stage.label}<span className="mt-1 block opacity-70">Ур. {stage.levels}</span></button>)}</div>
+          <p className="mt-2 text-xs text-[var(--color-muted)]">Форма меняется с уровнем. Все три версии входят в один скин.</p>
+        </fieldset>}
         <Link href="/learn" className="mt-5 block rounded-xl bg-[var(--color-fg)] px-4 py-3 text-sm font-semibold text-[var(--color-bg)]">Заработать монеты →</Link>
       </section>
       <div className="grid grid-cols-2 gap-3">{SKINS.map(skin => {

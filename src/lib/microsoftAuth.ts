@@ -22,6 +22,20 @@ export function microsoftProfile(profile: Partial<MicrosoftEntraIDProfile>) {
   };
 }
 
+/** Only diagnostic codes; never log tokens, codes, secrets or provider descriptions. */
+export async function logMicrosoftTokenError(response: Response) {
+  try {
+    const body = await response.clone().json();
+    if (typeof body?.error === "string") {
+      const codes: number[] = Array.isArray(body.error_codes)
+        ? body.error_codes.filter((code: unknown) => typeof code === "number" && Number.isSafeInteger(code) && code > 0).slice(0, 10)
+        : [];
+      console.error("[auth][microsoft]", JSON.stringify({ status: response.status, aadsts: codes }));
+    }
+  } catch { /* Diagnostics must never change the authentication response. */ }
+  return undefined;
+}
+
 export function microsoftProvider(secret = process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET) {
   if (!secret?.trim()) return null;
   return MicrosoftEntraID({
@@ -31,6 +45,7 @@ export function microsoftProvider(secret = process.env.AUTH_MICROSOFT_ENTRA_ID_S
     name: "Microsoft AITU",
     authorization: { params: { scope: "openid profile email", prompt: "select_account" } },
     checks: ["pkce", "state", "nonce"],
+    token: { conform: logMicrosoftTokenError },
     profile: microsoftProfile,
     // No Graph API or background Microsoft access is needed for sign-in.
     account: () => ({}),

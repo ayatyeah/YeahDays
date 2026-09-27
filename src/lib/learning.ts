@@ -8,7 +8,7 @@ export const SKINS = [
 ] as const;
 export type SkinId = typeof SKINS[number]["id"];
 export type LearningQuest = { id: string; title: string; lesson: string; exercise: string; rubric: string; boss: boolean; completed: boolean; attempts: number; feedback: string; completedAt: string | null };
-export type LearningSkill = { id: string; goal: string; title: string; minutes: number; quests: LearningQuest[]; createdAt: string };
+export type LearningSkill = { subject?: { name: string; materials: string }; id: string; goal: string; title: string; minutes: number; quests: LearningQuest[]; createdAt: string };
 export type LearningState = { xp: number; coins: number; owned: SkinId[]; equipped: SkinId; skills: LearningSkill[] };
 export type PublicQuest = Omit<LearningQuest, "rubric">;
 export type PublicLearningState = Omit<LearningState, "skills"> & { skills: (Omit<LearningSkill, "quests"> & { quests: PublicQuest[] })[]; revision: number; available: boolean };

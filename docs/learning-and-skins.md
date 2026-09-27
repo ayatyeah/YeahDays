@@ -43,3 +43,11 @@ Paid live smoke test (opt-in, uses the local .env):
 Sources: https://developers.openai.com/api/docs/guides/structured-outputs and https://developers.openai.com/api/docs/guides/images-vision
 
 Browser integration: `node --env-file=.env e2e/learning-shop.cjs` against a local production build on port 3120 with `AUTH_SECRET=local-learning-test-secret`, the database and OpenAI key. It creates and removes a synthetic QA account, exercises live grading, one-time reward, buying, equipping, reload persistence and avatar rendering. It makes one paid grading request.
+
+## University subjects
+
+`/learn` supports a university-subject route alongside generic goals. `/api/learning/subjects` reads only the authenticated user's saved calendar URL (including the existing owner-scoped legacy fallback), parses iCalendar CATEGORIES and returns deduplicated course names. No calendar credentials or assignment descriptions reach the browser. Explicitly disconnected calendars do not use the legacy fallback. Endpoint limit: 5 requests/minute per account.
+
+This is a partial list of courses with events in the exported time window, not Moodle enrolments. Microsoft sign-in alone does not grant course/material access. Full enrolments require a separately authorized Moodle API integration (`core_enrol_get_users_courses`). Lectures are not fetched. Students can enter any missing subject and paste up to 4,000 characters of notes/syllabus. Subject name, goal and provided materials are sent to the tutor; the prompt distinguishes supplied material from general subject knowledge and treats pasted instructions as untrusted data.
+
+Subject context is optional and stored inside the existing LearningProfile JSON. Old routes, rewards and purchases remain compatible; no migration required. Automated tests cover extraction, validation, account scoping, disconnected/error states and subject context forwarding.

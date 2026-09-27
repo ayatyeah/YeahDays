@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import LearningSync from "./LearningSync";
 import AccountSync from "./AccountSync";
 import StateSync from "./StateSync";
 import StreakGuard from "./StreakGuard";
@@ -14,6 +15,7 @@ export default function AuthProvider({
   return (
     <SessionProvider>
       <AccountSync />
+      <LearningSync />
       <StateSync />
       <StreakGuard />
       <EventFlusher />

@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import LearningEntry from "@/components/LearningEntry";
 import Avatar3D from "@/components/AvatarLazy";
 import {
   useUserStore,
@@ -74,6 +75,7 @@ export default function ProgressSection() {
   return (
     <div className="flex flex-1 flex-col">
       <h1 className="ios-title text-[28px] font-bold tracking-tight">Прогресс</h1>
+      <LearningEntry />
 
       {/*
         lg:+: два столбца, как на Today — широкий слева (персонаж, уровень,

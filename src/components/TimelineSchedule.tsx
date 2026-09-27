@@ -227,7 +227,7 @@ export default function TimelineSchedule({
     const busy: [number, number][] = [];
     for (const t of scheduled) {
       // Дедлайн из LMS не занимает час; attendance занимает время пары.
-      // и час вокруг него по-прежнему свободен.
+      // Attendance учитываем при поиске свободного окна.
       if (isLmsDeadline(t)) continue;
       const s = todoStartMin(t);
       const e = todoEndMin(t);
@@ -359,7 +359,7 @@ export default function TimelineSchedule({
     const minute = fHour !== undefined ? fMinute : undefined;
     if (editingId) {
       updateTodo(editingId, { title, note, priority: fPriority, hour: fHour, minute, duration: fDuration });
-      const wasDone = onDay.find((t) => t.id === editingId);
+      const wasDone = allOnDay.find((t) => t.id === editingId);
       if (wasDone && isTodoDone(wasDone, day) !== fDone) toggleTodo(editingId, day);
     } else {
       addTodo({ title, note, date: day, priority: fPriority, hour: fHour, minute, duration: fDuration });
@@ -373,8 +373,8 @@ export default function TimelineSchedule({
 
   /* ── Экран просмотра: данные текущей задачи ── */
   const viewingTodo = useMemo(
-    () => onDay.find((t) => t.id === editingId) ?? null,
-    [onDay, editingId],
+    () => allOnDay.find((t) => t.id === editingId) ?? null,
+    [allOnDay, editingId],
   );
   const viewCategory = viewingTodo ? categorizeTodo(viewingTodo.title) : null;
   const viewXp = viewingTodo ? TODO_PRIORITY_XP[viewingTodo.priority] : 0;

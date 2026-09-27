@@ -164,7 +164,16 @@ self.addEventListener("fetch", (event) => {
 
   // API никогда не кэшируем: /api/state — это синк аккаунта, и ответ из
   // кэша отдавал устаревший снимок («аккаунт не обновляется» при входе).
-  if (url.pathname.startsWith("/api/")) return;
+  const authPage = url.pathname === "/login" || url.pathname.startsWith("/login/") || url.pathname === "/register";
+  if (url.pathname.startsWith("/api/") || authPage) {
+    if (request.mode === "navigate") {
+      // Preload has already sent this request. Ignoring it replays OAuth's
+      // single-use code and Microsoft rejects the second exchange (invalid_grant).
+      // Never cache auth responses or retry a failed preload automatically.
+      event.respondWith((async () => (await event.preloadResponse) || fetch(request))());
+    }
+    return;
+  }
 
   // RSC-пейлоады тоже мимо: закэшированный кусок дерева от прошлой сборки
   // ломает гидратацию куда неприятнее, чем лишний запрос.

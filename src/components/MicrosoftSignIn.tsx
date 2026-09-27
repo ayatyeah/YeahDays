@@ -24,6 +24,12 @@ export default function MicrosoftSignIn({ callbackUrl = "/settings" }: { callbac
   async function begin() {
     setBusy(true); setError("");
     try {
+      // Protect users still controlled by an older worker that ignores API preloads.
+      // Do this before leaving for Microsoft; the callback code is single-use.
+      if ("serviceWorker" in navigator) {
+        const registration = await navigator.serviceWorker.getRegistration();
+        await registration?.navigationPreload?.disable();
+      }
       const result = await signIn("microsoft-entra-id", { redirect: false, callbackUrl });
       if (!result?.url || result.error) throw new Error();
       // This is the authorization URL returned by Auth.js, with its state/PKCE cookies.

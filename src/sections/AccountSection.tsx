@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
+import LearningEntry from "@/components/LearningEntry";
 import AuthCard from "@/components/AuthCard";
 import Quests from "@/components/Quests";
 import ShareCard from "@/components/ShareCard";
@@ -92,6 +93,7 @@ export default function AccountSection() {
 
       {/* Вход / аккаунт */}
       <div className="mt-3">
+        <LearningEntry />
         <AuthCard />
       </div>
 

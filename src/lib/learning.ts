@@ -2,6 +2,7 @@
 export const SKINS = [
   { id: "default", name: "Базовый", price: 0, image: "/characters/fit.webp", description: "Твой привычный персонаж", color: "#818890" },
   { id: "scholar", name: "Учёный", price: 60, image: "/characters/skins/scholar.webp", description: "Худи, очки и любопытство", color: "#a78bfa" },
+  { id: "henley", name: "Молочный хенли", price: 60, image: "/characters/skins/henley.webp", description: "Молочный хенли, свободные серо-голубые джинсы и кеды", color: "#c9c4b7" },
   { id: "explorer", name: "Исследователь", price: 120, image: "/characters/skins/explorer.webp", description: "Для тех, кто идёт дальше основ", color: "#2dd4bf" },
   { id: "astronaut", name: "Орбита", price: 200, image: "/characters/skins/astronaut.webp", description: "Новый уровень притяжения знаний", color: "#60a5fa" },
 ] as const;

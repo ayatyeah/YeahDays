@@ -25,12 +25,14 @@ export async function GET() {
   }
 
   try {
-    const [user, events, state] = await Promise.all([
+    const [user, events, state, personalization, learning, lms, providers] = await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
         select: {
           id: true,
           name: true,
+          username: true,
+          birthYear: true,
           email: true,
           image: true,
           createdAt: true,
@@ -45,6 +47,10 @@ export async function GET() {
         where: { userId },
         select: { data: true, clientAt: true, updatedAt: true },
       }),
+      prisma.personalizationProfile.findUnique({ where: { userId }, select: { data: true, updatedAt: true } }),
+      prisma.learningProfile.findUnique({ where: { userId }, select: { data: true, updatedAt: true } }),
+      prisma.lmsConnection.findUnique({ where: { userId }, select: { lastSyncedAt: true, lastError: true, timezone: true } }),
+      prisma.account.findMany({ where: { userId }, select: { provider: true, providerAccountId: true } }),
     ]);
 
     const payload = {
@@ -52,6 +58,7 @@ export async function GET() {
       account: user,
       progress: state?.data ?? null,
       progressUpdatedAt: state?.clientAt ?? null,
+      personalization, learning, lms, providers,
       events,
       eventCount: events.length,
     };

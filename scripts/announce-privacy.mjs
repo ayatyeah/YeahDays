@@ -37,4 +37,4 @@ try {
     }, { timeout: 15000 });
   }
   console.log(JSON.stringify({ mode: send ? 'queued' : 'preview', accounts: users.length, notPreviouslyNotified: eligible.length, pushAvailable: eligible.filter(u => u.pushSubs.length).length, queued, inAppOnly }));
-} finally { await db.$disconnect(); }
+} catch (error) { console.error('Privacy announcement failed:', error.code || error.name); process.exitCode = 1; } finally { await db.$disconnect(); }

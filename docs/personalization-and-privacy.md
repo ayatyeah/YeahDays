@@ -20,3 +20,7 @@ Policy is based on the actual implementation, with consent controls informed by:
 - https://old.adilet.zan.kz/rus/docs/Z1300000094
 - https://www.edpb.europa.eu/sme/be-compliant/process-personal-data-lawfully_en
 It does not certify legal compliance or assert unverified infrastructure region/backup retention guarantees.
+
+If the normal dispatcher has not processed the queue, `node --env-file=.env scripts/deliver-privacy.mjs --send` drains only the current policy campaign with VAPID, respects device quiet hours and records push-service acceptance/expired/failure counts in the profile's campaign ledger. Atomic claiming prevents duplicate sends with a concurrently running dispatcher. A push-service acceptance is not proof that the person opened or read it. The local delivery client limits database connections and allows extra connection setup time for Railway's public proxy.
+
+Release verification: 367 release tests passed (one paid live-AI test intentionally skipped), typecheck and production build passed. `e2e/privacy-personalization.cjs` verified the real database consent/withdrawal/export lifecycle, owner scoping, mobile UI, baseline and deduplication with a disposable account; deletion cascade was checked. Campaign on 2026-09-29 covered 5 registered non-banned accounts: 3 push services accepted notifications, 2 accounts rely on the in-app policy notice. No delivery failures or expired subscriptions were reported.

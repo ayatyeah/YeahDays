@@ -23,7 +23,8 @@ const POSTHOG_HOST =
   process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://eu.i.posthog.com";
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN ?? "";
 
-export const analyticsEnabled = Boolean(POSTHOG_KEY);
+// First-party opt-in statistics replace external product analytics.
+export const analyticsEnabled = false;
 export const errorReportingEnabled = Boolean(SENTRY_DSN);
 
 /** Куда PostHog принимает одиночные события. */

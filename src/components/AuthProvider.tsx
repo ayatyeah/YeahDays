@@ -1,6 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
+import PersonalizationSync from "./PersonalizationSync";
 import LearningSync from "./LearningSync";
 import AccountSync from "./AccountSync";
 import StateSync from "./StateSync";
@@ -19,6 +20,7 @@ export default function AuthProvider({
       <StateSync />
       <StreakGuard />
       <EventFlusher />
+      <PersonalizationSync />
       {children}
     </SessionProvider>
   );

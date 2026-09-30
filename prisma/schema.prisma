@@ -43,6 +43,7 @@ model User {
   studyPosts StudyPost[]
   studyAttendance StudyAttendance[]
   communityReports CommunityReport[]
+  aiChatArchives    AiChatArchive[]
   aiChat            AiChat?
   personalization   PersonalizationProfile?
   learningProfile   LearningProfile?
@@ -589,4 +590,15 @@ model CommunityReport {
   resolved Boolean @default(false)
   createdAt DateTime @default(now())
   @@unique([postId, userId])
+}
+
+model AiChatArchive {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title String
+  messages Json
+  messageCount Int
+  savedAt DateTime @default(now())
+  @@index([userId, savedAt])
 }

@@ -37,6 +37,13 @@ model User {
   sessions          Session[]
   events            Event[]
   state             UserState?
+  communityProfile CommunityProfile?
+  studyTeams StudyTeam[]
+  studyMemberships StudyMember[]
+  studyPosts StudyPost[]
+  studyAttendance StudyAttendance[]
+  communityReports CommunityReport[]
+  aiChat            AiChat?
   personalization   PersonalizationProfile?
   learningProfile   LearningProfile?
   lmsConnection     LmsConnection?
@@ -470,4 +477,120 @@ model PersonalizationProfile {
   data      Json
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AiChat {
+  userId    String   @id
+  messages  Json
+  revision  Int      @default(0)
+  pendingId String?
+  pendingAt DateTime?
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model CommunityProfile {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  published Boolean @default(false)
+  bio String @default("")
+  subjects String[] @default([])
+  goals String[] @default([])
+  blocked String[] @default([])
+  showCharacter Boolean @default(false)
+  showAchievements Boolean @default(false)
+  updatedAt DateTime @updatedAt
+}
+
+model StudyTeam {
+  id String @id @default(cuid())
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name String
+  subject String
+  invite String @unique
+  createdAt DateTime @default(now())
+  members StudyMember[]
+  posts StudyPost[]
+  quests StudyQuest[]
+  rooms StudyRoom[]
+  reports CommunityReport[]
+}
+model StudyMember {
+  teamId String
+  userId String
+  team StudyTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
+  @@id([teamId, userId])
+  @@index([userId])
+}
+model StudyPost {
+  id String @id @default(cuid())
+  teamId String
+  team StudyTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId String?
+  parent StudyPost? @relation("replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies StudyPost[] @relation("replies")
+  roomId String?
+  room StudyRoom? @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  kind String @default("question")
+  text String
+  ai Boolean @default(false)
+  aiPendingAt DateTime?
+  createdAt DateTime @default(now())
+  reports CommunityReport[]
+  @@index([teamId, createdAt])
+}
+model StudyQuest {
+  id String @id @default(cuid())
+  teamId String
+  team StudyTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  title String
+  target Int
+  deadline DateTime
+  createdAt DateTime @default(now())
+  rooms StudyRoom[]
+}
+model StudyRoom {
+  id String @id @default(cuid())
+  teamId String
+  team StudyTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  questId String?
+  quest StudyQuest? @relation(fields: [questId], references: [id], onDelete: SetNull)
+  title String
+  startsAt DateTime
+  endsAt DateTime
+  participants StudyAttendance[]
+  posts StudyPost[]
+  @@index([teamId, startsAt])
+}
+model StudyAttendance {
+  roomId String
+  room StudyRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  seconds Int @default(0)
+  completedAt DateTime?
+  summary String @default("")
+  @@id([roomId, userId])
+  @@index([userId])
+}
+model CommunityReport {
+  id String @id @default(cuid())
+  teamId String
+  team StudyTeam @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  postId String
+  post StudyPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason String
+  resolved Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@unique([postId, userId])
 }

@@ -3,24 +3,16 @@
 import { useEffect, useState } from "react";
 import Modal from "@/components/ui/Modal";
 import { useUserStore } from "@/store/useUserStore";
-import { TABS, TAB_LABEL } from "@/lib/nav";
+
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
 
-const TAB_ICON: Record<(typeof TABS)[number], YgIconName> = {
-  home: "cards",
-  today: "sun",
-  calendar: "calendar",
-  progress: "chart",
-  account: "person",
-};
-
-const TAB_TEXT: Record<(typeof TABS)[number], string> = {
-  home: "Колода твоих собственных действий — свайпай вправо «беру», влево «мимо».",
-  today: "Всё, что запланировано на сегодня: задачи и то, что взял из колоды.",
-  calendar: "Почасовой план дня и то, как идёт месяц целиком.",
-  progress: "Уровень, статы и стрик — куда движется прогресс.",
-  account: "Аккаунт, синхронизация между устройствами, управление действиями.",
-};
+const GUIDE: { label: string; icon: YgIconName; text: string }[] = [
+  { label: "Сегодня", icon: "sun", text: "Пары и дедлайны на день. Здесь же — календарь и ИИ-помощник." },
+  { label: "Учёба", icon: "book", text: "Выбери предмет и разбирай темы через объяснения и практику." },
+  { label: "Сообщество", icon: "chat", text: "Пригласи друзей, собери команду и учитесь в общих комнатах фокуса." },
+  { label: "Прогресс", icon: "chart", text: "Следи за своим уровнем, серией и выполненными целями." },
+  { label: "Профиль", icon: "person", text: "Настрой аккаунт, персонажа, подключения и приватность." },
+];
 
 /**
  * Разовый гайд «как это устроено» — показываем сразу после онбординга, тем,
@@ -67,18 +59,18 @@ export default function AppGuide() {
         <h2 className="mt-1.5 text-[28px] font-bold leading-tight">Как это устроено</h2>
 
         <ul className="mt-5 flex flex-col gap-3">
-          {TABS.map((tab) => (
-            <li key={tab} className="surface flex gap-3.5 rounded-2xl p-3.5">
+          {GUIDE.map((item) => (
+            <li key={item.label} className="surface flex gap-3.5 rounded-2xl p-3.5">
               <span
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)]"
                 aria-hidden
               >
-                <YgIcon name={TAB_ICON[tab]} className="h-5 w-5" />
+                <YgIcon name={item.icon} className="h-5 w-5" />
               </span>
               <div className="min-w-0">
-                <p className="text-[16px] font-semibold">{TAB_LABEL[tab]}</p>
+                <p className="text-[16px] font-semibold">{item.label}</p>
                 <p className="mt-1 text-[15px] leading-snug text-[var(--color-fg-dim)]">
-                  {TAB_TEXT[tab]}
+                  {item.text}
                 </p>
               </div>
             </li>

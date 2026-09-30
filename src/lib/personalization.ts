@@ -1,5 +1,5 @@
-export const POLICY_VERSION = "2026-09-29";
-export const SECTIONS = ["today", "calendar", "account", "progress", "learn", "shop", "settings", "personalization", "other"] as const;
+export const POLICY_VERSION = "2026-09-30";
+export const SECTIONS = ["today", "calendar", "account", "progress", "learn", "shop", "settings", "community", "chat", "personalization", "other"] as const;
 export type ActivityDay = { seconds: number; visits: number; tasks: number; actions: number; quests: number; sections: Record<string, number> };
 export type Personalization = {
   revision: number; version: string; acceptedAt: string | null; enabled: boolean; since: string | null;

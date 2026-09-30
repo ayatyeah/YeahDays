@@ -186,7 +186,7 @@ export default function FriendsCard() {
                 {i + 1}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-medium">{f.name}</span>
+                <a href={`/community?profile=${encodeURIComponent(f.userId)}`} className="block truncate text-[14px] font-medium underline">{f.name}</a>
                 <span className="mt-0.5 block text-[12px] text-[var(--color-muted)]">
                   Уровень {f.level} · {f.xp} XP
                 </span>

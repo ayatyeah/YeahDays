@@ -18,6 +18,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { blockedIds } from "@/lib/communityDb";
 import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
@@ -47,7 +48,8 @@ export async function GET() {
       }),
     ]);
 
-    const ids = links.map((l) => l.friendId);
+    const blocked = await blockedIds(userId);
+    const ids = links.map((l) => l.friendId).filter(id => !blocked.includes(id));
     const stats = ids.length
       ? await prisma.publicStats.findMany({ where: { userId: { in: ids } } })
       : [];
@@ -136,6 +138,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Это твой собственный код" }, { status: 400 });
     }
 
+    if ((await blockedIds(userId)).includes(row.userId)) return NextResponse.json({ error: "Приглашение недоступно" }, { status: 403 });
     await prisma.$transaction([
       befriend(userId, row.userId),
       prisma.pairingCode.update({
@@ -204,6 +207,7 @@ async function acceptInvite(userId: string, invite: string) {
     if (owner.userId === userId) {
       return NextResponse.json({ error: "Это твоя собственная ссылка" }, { status: 400 });
     }
+    if ((await blockedIds(userId)).includes(owner.userId)) return NextResponse.json({ error: "Приглашение недоступно" }, { status: 403 });
     await befriend(userId, owner.userId);
     await ensureStats(userId);
     return NextResponse.json({ ok: true, name: owner.name || "Без имени" });

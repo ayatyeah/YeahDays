@@ -53,12 +53,22 @@ export async function GET() {
       prisma.account.findMany({ where: { userId }, select: { provider: true, providerAccountId: true } }),
     ]);
 
+    const [communityProfile, memberships, posts, attendance, reports, chat] = await Promise.all([
+      prisma.communityProfile.findUnique({ where: { userId } }),
+      prisma.studyMember.findMany({ where: { userId }, select: { teamId: true, joinedAt: true, team: { select: { name: true, subject: true } } } }),
+      prisma.studyPost.findMany({ where: { userId }, select: { id: true, teamId: true, parentId: true, roomId: true, text: true, kind: true, ai: true, createdAt: true } }),
+      prisma.studyAttendance.findMany({ where: { userId } }),
+      prisma.communityReport.findMany({ where: { userId } }),
+      prisma.aiChat.findUnique({ where: { userId }, select: { messages: true, updatedAt: true } }),
+    ]);
     const payload = {
       exportedAt: new Date().toISOString(),
       account: user,
       progress: state?.data ?? null,
       progressUpdatedAt: state?.clientAt ?? null,
       personalization, learning, lms, providers,
+      community: { profile: communityProfile, memberships, posts, attendance, reports },
+      chat,
       events,
       eventCount: events.length,
     };

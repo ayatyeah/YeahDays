@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import { YgIcon } from "@/components/yg-icons";
 import { haptic } from "@/lib/motion";
 import { cn } from "@/lib/cn";
+import { useLiveRefresh } from "@/lib/useLiveRefresh";
 
 export interface Friend {
   userId: string;
@@ -19,8 +20,10 @@ export interface Friend {
 /**
  * Друзья: чей стрик длиннее.
  *
- * Знакомство по одноразовому коду, тому же, что и для внешних сервисов
- * (/api/keys/pair): показал код — друг ввёл — связь взаимная. Ни поиска
+ * Знакомство по ссылке-приглашению (/invite/<код>, отправляется через
+ * системное «Поделиться») или по одноразовому коду, тому же, что и для
+ * внешних сервисов (/api/keys/pair) — его удобно продиктовать, когда
+ * друг рядом. Связь в обоих случаях взаимная. Ни поиска
  * по людям, ни заявок: и то и другое требует публичного каталога
  * аккаунтов, а это совсем другой продукт по части приватности.
  *
@@ -33,6 +36,10 @@ export default function FriendsCard() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [removing, setRemoving] = useState<Friend | null>(null);
+  const [shared, setShared] = useState<"copied" | null>(null);
+  /** сама ссылка — видна под кнопкой, если ни «Поделиться», ни буфер не сработали */
+  const [link, setLink] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -45,9 +52,43 @@ export default function FriendsCard() {
     }
   }, []);
 
-  useEffect(() => {
-    void load();
-  }, [load]);
+  useLiveRefresh(load);
+
+  /**
+   * Ссылка-приглашение через системное «Поделиться»: на iPhone это сразу
+   * Telegram, WhatsApp, сообщения. Там, где share нет (десктоп), — в буфер.
+   */
+  const invite = useCallback(async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/social/invite", { cache: "no-store" });
+      const json = (await res.json()) as { code?: string };
+      if (!json.code) throw new Error("no code");
+      const url = `${window.location.origin}/invite/${json.code}`;
+      const text = "Давай в YeahGrind — будем видеть серии друг друга";
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: "YeahGrind", text, url });
+        } catch {
+          /* закрыл окно «Поделиться» — это не ошибка */
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(`${text}: ${url}`);
+        setShared("copied");
+        window.setTimeout(() => setShared(null), 2500);
+      } catch {
+        // буфер запрещён (старый браузер, не https) — покажем ссылку текстом
+        setLink(url);
+      }
+    } catch {
+      setError("Не получилось сделать ссылку");
+    } finally {
+      setBusy(false);
+    }
+  }, []);
 
   /** Свой код показываем только по кнопке: он одноразовый и живёт 10 минут. */
   const getCode = useCallback(async () => {
@@ -119,7 +160,7 @@ export default function FriendsCard() {
           }}
           className="press text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
         >
-          + По коду
+          + Пригласить
         </button>
       </div>
 
@@ -127,7 +168,7 @@ export default function FriendsCard() {
         <p className="mt-2 text-[13px] text-[var(--color-muted)]">Загружаю…</p>
       ) : friends.length === 0 ? (
         <p className="mt-2 text-[13px] leading-snug text-[var(--color-muted)]">
-          Обменяйся кодом с другом — увидите серии друг друга.
+          Позови друга — будете видеть серии друг друга.
         </p>
       ) : (
         <ul className="mt-3 space-y-1.5">
@@ -145,7 +186,7 @@ export default function FriendsCard() {
                 {i + 1}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-medium">{f.name}</span>
+                <a href={`/community?profile=${encodeURIComponent(f.userId)}`} className="block truncate text-[14px] font-medium underline">{f.name}</a>
                 <span className="mt-0.5 block text-[12px] text-[var(--color-muted)]">
                   Уровень {f.level} · {f.xp} XP
                 </span>
@@ -156,7 +197,7 @@ export default function FriendsCard() {
               </span>
               <button
                 type="button"
-                onClick={() => void remove(f.userId)}
+                onClick={() => setRemoving(f)}
                 aria-label={`Убрать ${f.name}`}
                 className="press shrink-0 text-[var(--color-muted)]"
               >
@@ -169,12 +210,26 @@ export default function FriendsCard() {
 
       <Modal open={open} onClose={() => setOpen(false)} title="Друзья">
         <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">
-          Покажи свой код другу или введи его код. Видно будет только имя,
-          уровень и серию.
+          Отправь ссылку — друг откроет её и сразу окажется у тебя в друзьях.
+          Видно только имя, уровень и серию.
         </p>
 
-        <div className="mt-5">
-          <p className="inset-title">Мой код</p>
+        <Button
+          variant="primary"
+          className="mt-5 w-full"
+          disabled={busy}
+          onClick={() => void invite()}
+        >
+          {shared === "copied" ? "Ссылка скопирована" : "Пригласить по ссылке"}
+        </Button>
+        {link && (
+          <p className="mt-2 select-all break-all rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-[14px]">
+            {link}
+          </p>
+        )}
+
+        <div className="mt-6">
+          <p className="inset-title">Друг рядом? Код</p>
           {code ? (
             <p className="rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 text-center font-mono text-[22px] tracking-[0.2em]">
               {code}
@@ -210,6 +265,28 @@ export default function FriendsCard() {
         {error && (
           <p className="mt-3 text-center text-[13px] text-[var(--color-strength)]">{error}</p>
         )}
+      </Modal>
+
+      <Modal open={removing !== null} onClose={() => setRemoving(null)} title="Убрать из друзей?">
+        <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">
+          {removing?.name} пропадёт из списка, а ты — из его. Вернуть можно
+          только новым приглашением.
+        </p>
+        <div className="mt-5 flex gap-2.5">
+          <Button className="flex-1" onClick={() => setRemoving(null)}>
+            Отмена
+          </Button>
+          <Button
+            variant="danger"
+            className="flex-1"
+            onClick={() => {
+              if (removing) void remove(removing.userId);
+              setRemoving(null);
+            }}
+          >
+            Убрать
+          </Button>
+        </div>
       </Modal>
     </section>
   );

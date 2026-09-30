@@ -25,6 +25,7 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
+  { id: "community-2026-09", icon: "chat", title: "Учиться вместе", text: "Команды по предметам, общие квесты, комнаты фокуса и ИИ в обсуждениях. Новый раздел «Сообщество» в нижней панели.", href: "/community" },
   {
     id: "challenges",
     icon: "flame",

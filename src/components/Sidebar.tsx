@@ -8,22 +8,24 @@ import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
 import Logo from "@/components/Logo";
 import {
-  HomeIcon,
+  LearnIcon,
+  CommunityIcon,
   TodayIcon,
   CalendarIcon,
   ProgressIcon,
   AccountIcon,
   type IconProps,
 } from "@/components/nav-icons";
-import type { TabKey } from "@/lib/nav";
+import { TAB_PATH, tabFromPath } from "@/lib/nav";
+import { usePathname, useRouter } from "next/navigation";
 
 const NAV = [
-  { tab: "home", label: "Главная", Icon: HomeIcon },
   { tab: "today", label: "Сегодня", Icon: TodayIcon },
-  { tab: "calendar", label: "Календарь", Icon: CalendarIcon },
+  { tab: "learn", label: "Учёба", Icon: LearnIcon },
+  { tab: "community", label: "Сообщество", Icon: CommunityIcon },
   { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
   { tab: "account", label: "Профиль", Icon: AccountIcon },
-] as const satisfies readonly { tab: TabKey; label: string; Icon: React.FC<IconProps> }[];
+] as const;
 
 /**
  * Боковая навигация — версия BottomNav для широких экранов (lg: и выше).
@@ -34,6 +36,9 @@ const NAV = [
  * рендером, чтобы не было расхождения между сервером и клиентом на ресайзе.
  */
 export default function Sidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const section = tabFromPath(pathname);
   const tab = useNavStore((s) => s.tab);
   const go = useNavStore((s) => s.go);
   const hydrated = useHydrated();
@@ -50,14 +55,16 @@ export default function Sidebar() {
 
       <div className="mt-8 flex flex-col gap-1">
         {NAV.map(({ tab: key, label, Icon }) => {
-          const active = tab === key;
+          const active = key === "learn" || key === "community" ? pathname === `/${key}` : section !== null && tab === key;
           return (
             <button
               key={key}
               type="button"
               onClick={() => {
                 if (!active) haptic("select");
-                go(key);
+                if (key === "learn" || key === "community") router.push(`/${key}`);
+                else if (section === null) router.push(TAB_PATH[key]);
+                else go(key);
               }}
               aria-current={active ? "page" : undefined}
               className={cn(
@@ -86,6 +93,7 @@ export default function Sidebar() {
         })}
       </div>
 
+      <div className="mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">Календарь</Link><Link href="/chat">ИИ-помощник</Link><Link href="/app">Мой персонаж</Link></div>
       <div className="mt-auto px-2 text-[12px] text-[var(--color-muted)]">
         Одно действие в день
       </div>

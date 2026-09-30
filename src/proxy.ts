@@ -22,7 +22,7 @@ const PUBLIC_PATHS = new Set([
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  if (req.auth || PUBLIC_PATHS.has(pathname)) return;
+  if (req.auth || PUBLIC_PATHS.has(pathname) || pathname.startsWith("/invite/")) return;
 
   const url = new URL("/login", req.nextUrl.origin);
   // pathname один без search — раньше терял query (?client_id=...&redirect_uri=...

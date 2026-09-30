@@ -63,7 +63,7 @@ const { chromium, request } = require('playwright');
     browser=await chromium.launch();const page=await browser.newPage({viewport:{width:390,height:844},serviceWorkers:'block'});
     const cookies=(await a.storageState()).cookies; // API header auth is not in cookie storage.
     await page.context().addCookies([{name:'authjs.session-token',value:await encode({secret:'community-qa-secret',salt:'authjs.session-token',token:{id:ids[0],sub:ids[0],name:'QA'}}),url:base}]);
-    await page.addInitScript(()=>localStorage.setItem('yeahdays-store',JSON.stringify({state:{onboarded:true,name:'QA',plan:[],todos:[]},version:13})));
+    await page.addInitScript(()=>localStorage.setItem('yeahdays-store',JSON.stringify({state:{onboarded:false,name:'QA',plan:[],todos:[]},version:13})));
     const errors=[];page.on('pageerror',e=>errors.push(e.message));
     await page.goto(base+'/community');await page.waitForTimeout(1600);for(let i=0;i<3;i++){const dismiss=page.getByRole('button',{name:'Понятно',exact:true});if(await dismiss.count())await dismiss.first().click();await page.waitForTimeout(500);}await page.getByRole('button',{name:/Networks QA/}).click();await page.getByRole('heading',{name:'Networks QA'}).waitFor();
     await page.getByRole('button',{name:'Квесты',exact:true}).click();await page.getByText('✦ Твой значок: Командный прорыв').waitFor();

@@ -44,7 +44,7 @@ export default function Sidebar() {
   const hydrated = useHydrated();
   const onboarded = useUserStore((s) => s.onboarded);
 
-  if (hydrated && !onboarded) return null;
+  if (hydrated && !onboarded && section !== null) return null;
 
   return (
     <nav className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">

@@ -1,0 +1,55 @@
+YeahGrind Community — 2026-09-30
+
+User flows
+- /community: closed teams by revocable invitation, existing friend invitations,
+  opt-in student profiles, feed questions/resources/progress, comments,
+  subject help, author-triggered AI response.
+- Five primary destinations: Today, Learn, Community, Progress, Profile.
+  Calendar, AI chat and character remain reachable from Today; desktop sidebar too.
+- Organizers create 1–30 day quests targeting 1–100 completed participant sessions.
+  Focus rooms last 15/25/50 minutes. A server timestamp controls the shared timer.
+  Visible room sends heartbeat every 15s, server credits up to 45s, gaps >90s
+  receive zero credit. Completion requires 80% participation and a written summary.
+  One user cannot actively participate in two rooms. Row locks prevent duplicate
+  credit/completions. Browser presence is not proof of actual studying.
+- Quest cosmetic: “Командный прорыв” badge, visible to contributing members on
+  successful quest. Public profile optionally displays session count and the
+  three-session “В ритме команды” badge. No XP/coins for posting or elapsed time.
+- Owner moderates reports; authors/owner delete posts, cascading replies.
+  Blocking is bidirectional content filtering, hides public profiles and removes
+  friendship. Team roster remains shared with other members; blocking is not a kick.
+- /chat: private per-account AI history, last 40 messages; explicit per-message
+  plan checkbox defaults off. Clear invalidates in-flight responses. Last 16
+  messages within 24k characters used as model context. Server-only key/store:false.
+- Team AI only sends the caller's own root post, not peer comments/private plans.
+  Result is labeled AI and visible to the team. One retained AI response per post.
+
+Operational limits
+- Polling every 15s rather than WebSocket; room clock ticks locally from server time.
+- Team view shows latest 50 threads (up to 100 replies each), 100 room messages,
+  10 rooms and 20 quests. Database retains older records; account export includes
+  all authored records. 100 members/team; 20 teams/account; 5 open quests/team.
+- Existing in-process rate limiter applies; not shared across replicas/restarts.
+  Shared deployment should move limits to Redis/database before scaling out.
+- Profiles are private by default. Publishing is explicit; no automatic posts from LMS.
+- Owner sees reports without reporter identity. Reports against owner can be
+  escalated using existing support contact on /privacy; no global moderator console.
+- Updated privacy version 2026-09-30 invokes existing acceptance banner for all
+  accounts. No additional push campaign was sent by this change.
+
+Migration / deployment
+Apply docs/sql/2026-09-30-community.sql once, transactionally, before deployment.
+It adds only new tables/indices/foreign keys, including AiChat. Do not also apply
+2026-09-29-ai-chat.sql if using this combined migration. No existing data is reset.
+All user-owned rows cascade on account deletion. Deleting a team owner also deletes
+that owner's teams and their content; UI/privacy explain this.
+
+Verification
+- npm run test; npm run typecheck; npm run build
+- e2e/community.cjs requires an isolated local database named
+  yeahgrind_community_qa; server AUTH_SECRET=community-qa-secret, PUSH_SCHEDULER=off.
+  Tests multiple accounts, access control, invitation rotation, opt-in profile,
+  moderation, concurrent focus idempotency, blocking, export, private chat clearing,
+  mobile 320/390/768 layout, navigation, default-off plan context.
+  Optional QA_LIVE_AI=1 tests a paid real response and idempotent retry.
+- Synthetic accounts are deleted in finally; no real students/messages used.

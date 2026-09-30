@@ -146,7 +146,7 @@ function LoginForm() {
 
         <p className="mt-6 text-center text-[15px] text-[var(--color-muted)]">
           Ещё нет аккаунта?{" "}
-          <Link href="/register" className="font-semibold text-[var(--color-fg)]">
+          <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="font-semibold text-[var(--color-fg)]">
             Зарегистрироваться
           </Link>
         </p>

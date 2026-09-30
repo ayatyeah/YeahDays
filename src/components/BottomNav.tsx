@@ -1,15 +1,17 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
+import { motion, useReducedMotion } from "framer-motion";
 import { haptic, indicatorTween, springSnappy } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
-import type { TabKey } from "@/lib/nav";
+import { TAB_PATH, tabFromPath, type TabKey } from "@/lib/nav";
 import { useEffect, useMemo } from "react";
 import { useKeyboardInset } from "@/lib/useKeyboardInset";
 import {
-  HomeIcon,
+  LearnIcon,
+  CommunityIcon,
   TodayIcon,
   CalendarIcon,
   ProgressIcon,
@@ -18,14 +20,18 @@ import {
 } from "@/components/nav-icons";
 
 const NAV = [
-  { tab: "home", label: "Главная", Icon: HomeIcon },
   { tab: "today", label: "Сегодня", Icon: TodayIcon },
-  { tab: "calendar", label: "Календарь", Icon: CalendarIcon },
+  { tab: "learn", label: "Учёба", Icon: LearnIcon },
+  { tab: "community", label: "Сообщество", Icon: CommunityIcon },
   { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
   { tab: "account", label: "Профиль", Icon: AccountIcon },
-] as const satisfies readonly { tab: TabKey; label: string; Icon: React.FC<IconProps> }[];
+] as const;
 
 export default function BottomNav() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const section = tabFromPath(pathname);
+  const reducedMotion = useReducedMotion();
   const tab = useNavStore((s) => s.tab);
   const go = useNavStore((s) => s.go);
   const hydrated = useHydrated();
@@ -67,67 +73,60 @@ export default function BottomNav() {
   return (
     <nav
       className="pointer-events-none fixed inset-x-0 z-40 lg:hidden"
-      // bottom через переменную: StandaloneViewportFix сдвигает панель к
-      // настоящему низу экрана, когда iOS в PWA занизил вьюпорт (см. там).
-      // Отступа снизу нет: панель начинается от самого края, а безопасная
-      // зона добирается её собственным паддингом — иначе под островом
-      // оставалась широкая пустая полоса.
+      aria-label="Основная навигация"
       style={{ bottom: "var(--nav-offset, 0px)" }}
     >
-      {/* Панель растёт от нижнего края вверх: фон доходит до самого низа
-          экрана, а домашнюю полосу занимает её собственный отступ. Остров с
-          зазором снизу читался как «панель зависла посреди пустоты».
-          Скругление осталось только сверху — оно и отделяет панель от
-          контента, который проезжает под ней. */}
-      <div className="pointer-events-auto">
+      <div className="pointer-events-auto liquid-bar border-t border-[var(--color-border-strong)] shadow-[var(--shadow-up)]">
         <div
-          className="liquid-bar gpu-layer mx-auto flex items-stretch rounded-t-[20px] px-1.5"
+          className="mx-auto flex max-w-lg items-stretch gap-1 px-2"
           style={{
             height: "calc(64px + env(safe-area-inset-bottom))",
             paddingBottom: "env(safe-area-inset-bottom)",
           }}
         >
           {NAV.map(({ tab: key, label, Icon }) => {
-            const active = tab === key;
+            const active = key === "learn" || key === "community" ? pathname === `/${key}` : section !== null && tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
             return (
               <button
                 key={key}
                 type="button"
-                // Переключение раздела, а не переход по ссылке: никакой
-                // навигации, никакого запроса — только смена видимой секции.
+                // Внутри оболочки переключаем секцию; с отдельных
+                // страниц возвращаемся через роутер Next.
                 onClick={() => {
                   if (!active) haptic("select");
-                  go(key);
+                  if (key === "learn" || key === "community") router.push(`/${key}`);
+                  else if (section === null) router.push(TAB_PATH[key]);
+                  else go(key);
                 }}
                 aria-current={active ? "page" : undefined}
-                aria-label={label}
+                aria-label={badge ? `${label}, незавершённых дел: ${badge}` : label}
                 className={cn(
-                  "relative my-1.5 flex flex-1 flex-col items-center justify-center gap-1 rounded-[15px] text-[11px] font-medium transition-colors",
-                  active ? "text-[var(--color-fg)]" : "text-[var(--color-muted)]",
+                  "relative my-1 flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-intelligence)] motion-reduce:transition-none",
+                  active ? "text-[var(--color-fg)]" : "text-[var(--color-fg-dim)] hover:text-[var(--color-fg)]",
                 )}
               >
-                {active && (
-                  <motion.span
-                    layoutId="nav-pill"
-                    className="absolute inset-0 rounded-[15px] bg-[var(--color-surface-2)]"
-                    transition={indicatorTween}
-                  />
-                )}
-                <span className="relative">
-                  <Icon className="h-6 w-6" />
+                <span className="relative flex h-8 w-12 items-center justify-center">
+                  {active && (
+                    <motion.span
+                      layoutId="nav-pill"
+                      className="absolute inset-0 rounded-full bg-[var(--color-intelligence)]/20"
+                      transition={reducedMotion ? { duration: 0 } : indicatorTween}
+                    />
+                  )}
+                  <Icon className={cn("relative h-[22px] w-[22px]", active && "text-[var(--color-intelligence)]")} />
                   {badge > 0 && (
                     <motion.span
-                      initial={{ scale: 0 }}
+                      initial={reducedMotion ? false : { scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={springSnappy}
-                      className="absolute -right-1.5 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[11px] font-bold text-white shadow-[var(--shadow-1)]"
+                      className="absolute -right-0.5 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[9px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-1)]"
                     >
-                      {badge}
+                      {badge > 99 ? "99+" : badge}
                     </motion.span>
                   )}
                 </span>
-                <span className="relative">{label}</span>
+                <span className={cn("relative", active && "font-semibold")}>{label}</span>
               </button>
             );
           })}

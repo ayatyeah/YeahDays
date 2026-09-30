@@ -18,9 +18,22 @@ User flows
 - Owner moderates reports; authors/owner delete posts, cascading replies.
   Blocking is bidirectional content filtering, hides public profiles and removes
   friendship. Team roster remains shared with other members; blocking is not a kick.
-- /chat: private per-account AI history, last 40 messages; explicit per-message
-  plan checkbox defaults off. Clear invalidates in-flight responses. Last 16
-  messages within 24k characters used as model context. Server-only key/store:false.
+- /chat: private per-account history. Current conversation is never silently
+  truncated; at 200 messages the user is asked to start a new conversation.
+  New Chat archives the previous conversation; up to 100 archives can be viewed,
+  resumed or individually deleted. Delete All invalidates pending responses.
+  Only the last 16 messages within 24k characters are sent as model history.
+- App data is default-denied. Explicit one-message consent chooses plan, learning,
+  progress and/or own profile. User can preview the allowlisted projection before
+  confirming. /api/ai/context returns data only to the authenticated user, not AI.
+  POST chat rejects old withPlan=true; it requires a versioned accepted scope grant.
+  Access metadata is saved with both messages. Narrowing scopes excludes the first
+  restricted turn and all downstream turns from subsequent model input, including
+  legacy withPlan messages. Plain-language requests cannot grant access.
+  Grant resets on send; history navigation cannot grant access. No write tools.
+  Passwords, provider tokens, calendar URL, email, peer posts/messages, task notes,
+  lesson material/rubrics are not included. OpenAI store:false; provider retention
+  cannot be undone by clearing local history.
 - Team AI only sends the caller's own root post, not peer comments/private plans.
   Result is labeled AI and visible to the team. One retained AI response per post.
 
@@ -53,3 +66,9 @@ Verification
   mobile 320/390/768 layout, navigation, default-off plan context.
   Optional QA_LIVE_AI=1 tests a paid real response and idempotent retry.
 - Synthetic accounts are deleted in finally; no real students/messages used.
+
+AI history follow-up migration: docs/sql/2026-09-30-ai-chat-history.sql adds
+AiChatArchive only. Apply once before deploying history routes. Existing current
+chat messages stay in place; older messages discarded by the previous 40-message
+limit cannot be recovered. Consent changes require no schema migration.
+Additional checks: e2e/ai-access.cjs (optional QA_LIVE_AI=1), e2e/ai-history.cjs.

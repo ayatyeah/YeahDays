@@ -53,13 +53,14 @@ export async function GET() {
       prisma.account.findMany({ where: { userId }, select: { provider: true, providerAccountId: true } }),
     ]);
 
-    const [communityProfile, memberships, posts, attendance, reports, chat] = await Promise.all([
+    const [communityProfile, memberships, posts, attendance, reports, chat, chatHistory] = await Promise.all([
       prisma.communityProfile.findUnique({ where: { userId } }),
       prisma.studyMember.findMany({ where: { userId }, select: { teamId: true, joinedAt: true, team: { select: { name: true, subject: true } } } }),
       prisma.studyPost.findMany({ where: { userId }, select: { id: true, teamId: true, parentId: true, roomId: true, text: true, kind: true, ai: true, createdAt: true } }),
       prisma.studyAttendance.findMany({ where: { userId } }),
       prisma.communityReport.findMany({ where: { userId } }),
       prisma.aiChat.findUnique({ where: { userId }, select: { messages: true, updatedAt: true } }),
+      prisma.aiChatArchive.findMany({ where: { userId }, select: { id: true, title: true, messages: true, savedAt: true } }),
     ]);
     const payload = {
       exportedAt: new Date().toISOString(),
@@ -68,7 +69,7 @@ export async function GET() {
       progressUpdatedAt: state?.clientAt ?? null,
       personalization, learning, lms, providers,
       community: { profile: communityProfile, memberships, posts, attendance, reports },
-      chat,
+      chat, chatHistory,
       events,
       eventCount: events.length,
     };

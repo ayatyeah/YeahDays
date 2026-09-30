@@ -71,7 +71,7 @@ const { chromium, request } = require('playwright');
     await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/community-mobile.png',fullPage:true});
     await page.getByRole('button',{name:'Фокус',exact:true}).click();await page.getByRole('heading',{name:'Фокус QA'}).waitFor();
     await page.getByRole('navigation',{name:'Основная навигация'}).getByRole('button',{name:'Сегодня',exact:true}).click();await page.waitForURL('**/today');
-    await page.goto(base+'/chat');await page.getByRole('heading',{name:'ИИ-помощник'}).waitFor();await page.getByLabel('Учитывать мой план в этом сообщении').waitFor();assert.equal(await page.getByLabel('Учитывать мой план в этом сообщении').isChecked(),false);
+    await page.goto(base+'/chat');await page.getByRole('heading',{name:'ИИ-помощник'}).waitFor();await page.getByText('Доступ к данным YeahGrind выключен').waitFor();
     assert.deepEqual(errors,[]);
     await send(a,{action:'deletePost',teamId,postId:post.id});assert.equal(await db.studyPost.count({where:{parentId:post.id}}),0);
     console.log('PASS: auth, membership, invitation rotation, public projection, posts/replies, moderation, focus clock, concurrent idempotency, badges, blocks, export, 320/390/768 UI, navigation, chat privacy default.');

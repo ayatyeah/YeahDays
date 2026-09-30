@@ -181,3 +181,7 @@ ALTER TABLE "CommunityReport" ADD CONSTRAINT "CommunityReport_postId_fkey" FOREI
 -- AddForeignKey
 ALTER TABLE "CommunityReport" ADD CONSTRAINT "CommunityReport_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
+
+-- Persistent friend invitations (older releases did not expose this field).
+ALTER TABLE "PublicStats" ADD COLUMN IF NOT EXISTS "inviteCode" TEXT;
+CREATE UNIQUE INDEX IF NOT EXISTS "PublicStats_inviteCode_key" ON "PublicStats"("inviteCode");

@@ -399,6 +399,7 @@ model Friendship {
  * блобы целиком. Клиент публикует сводку сам при синхронизации.
  */
 model PublicStats {
+  inviteCode String? @unique
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @id
   name      String   @default("")

@@ -67,7 +67,7 @@ export default function BottomNav() {
 
   // Во время онбординга навигация скрыта — экран полноэкранный.
   // Прячем только когда точно знаем, что онбординг не пройден.
-  if (hydrated && !onboarded) return null;
+  if (hydrated && !onboarded && section !== null) return null;
   if (keyboard > 0) return null;
 
   return (

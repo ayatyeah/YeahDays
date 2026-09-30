@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Avatar3D from "@/components/AvatarLazy";
@@ -137,6 +138,7 @@ export default function TodaySection() {
           <ClassesSetup />
           <ReminderNudge />
           <div className="mb-5 lg:mb-0">
+            <div className="my-3 flex flex-wrap gap-2 text-sm"><Link className="rounded-xl border border-[var(--color-border-strong)] px-4 py-3" href="/calendar">Календарь</Link><Link className="rounded-xl border border-[var(--color-border-strong)] px-4 py-3" href="/chat">✦ ИИ-помощник</Link><Link className="rounded-xl border border-[var(--color-border-strong)] px-4 py-3" href="/app">Мой персонаж</Link></div>
             <TimelineSchedule compact />
           </div>
 

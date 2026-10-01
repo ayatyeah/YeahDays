@@ -41,7 +41,7 @@ Get calendar URL. Вставить полученную ссылку в наст
 
 - Application (client) ID: `552b08ec-6293-4081-9a66-5f0467a243ca`.
 - Directory (tenant) ID: `158f15f3-83e0-4906-824c-69bdc50d9d61`.
-- Web redirect URI: `https://yeahdays-production.up.railway.app/api/auth/callback/microsoft-entra-id`.
+- Web redirect URI: `https://yeahgrind.site/api/auth/callback/microsoft-entra-id`.
 
 Публичные ID закреплены в `src/lib/microsoftAuth.ts`; чужие tenants не
 принимаются. В Entra → Сертификаты и секреты создать секрет клиента, затем

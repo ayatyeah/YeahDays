@@ -1,0 +1,69 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { EVENTS } from "@/lib/events";
+import { readiness, steps } from "@/lib/events/engine";
+import { loadProgress } from "@/lib/events/storage";
+
+/**
+ * Список ивентов раздела «Учёба». Ивенты общие для всех; у каждого человека
+ * свой прогресс — он подставляется уже в браузере, поэтому до загрузки
+ * показываем карточки без процентов, а не нули.
+ */
+export default function EventsPage() {
+  const { data } = useSession();
+  const userId = data?.user?.id;
+  const [percent, setPercent] = useState<Record<string, { percent: number; done: number; total: number }>>({});
+
+  useEffect(() => {
+    if (!userId) return;
+    setPercent(Object.fromEntries(EVENTS.map((e) => [e.id, readiness(e, loadProgress(userId, e.id))])));
+  }, [userId]);
+
+  return (
+    <div className="mx-auto w-full max-w-3xl space-y-5 pb-6">
+      <header>
+        <Link href="/learn" className="text-sm underline">← Учёба</Link>
+        <h1 className="ios-title mt-3">Ивенты</h1>
+        <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности.</p>
+      </header>
+
+      {EVENTS.map((event) => {
+        const questions = event.lectures.reduce((n, l) => n + l.parts.reduce((m, p) => m + p.questions.length, 0), 0);
+        const parts = event.lectures.reduce((n, l) => n + l.parts.length, 0);
+        const mine = percent[event.id];
+        return (
+          <Link
+            key={event.id}
+            href={`/events/${event.id}`}
+            className="block rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 via-[var(--color-surface)] to-sky-500/10 p-5"
+          >
+            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{event.course}</p>
+            <h2 className="mt-3 text-2xl font-bold">{event.title}</h2>
+            <p className="mt-2 text-sm leading-relaxed">{event.description}</p>
+            <div className="mt-4 flex flex-wrap gap-2 text-sm">
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures.length} лекции</span>
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} частей</span>
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} вопросов в банке</span>
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{steps(event).length} шагов</span>
+            </div>
+            {mine && (
+              <div className="mt-4">
+                <div className="flex justify-between text-sm">
+                  <span>{mine.done ? `Пройдено шагов: ${mine.done} из ${mine.total}` : "Ещё не начато"}</span>
+                  <strong>Готовность {mine.percent}%</strong>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                  <div className="h-full rounded-full bg-violet-400" style={{ width: `${mine.percent}%` }} />
+                </div>
+              </div>
+            )}
+            <p className="mt-4 font-semibold">{mine?.done ? "Продолжить →" : "Начать →"}</p>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}

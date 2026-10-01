@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import OwnerAnalytics from "@/components/OwnerAnalytics";
 import { cn } from "@/lib/cn";
 
-type Tab = "users" | "requests" | "devices";
+type Tab = "users" | "requests" | "devices" | "analytics";
 
 interface OwnerUser {
   id: string;
@@ -63,6 +64,7 @@ function fmtDateTime(iso: string) {
  * Две задачи: видеть пользователей и вручную менять им пароль, и разбирать
  * заявки с публичной формы /forgot-password (сайт не шлёт email/SMS, так что
  * это не автосброс, а ручная обработка через telegram из заявки).
+ * Плюс вкладка «Аналитика» со сводными числами по сервису (OwnerAnalytics).
  */
 export default function OwnerConsole() {
   const [tab, setTab] = useState<Tab>("users");
@@ -136,12 +138,13 @@ export default function OwnerConsole() {
         </Link>
       </header>
 
-      <div className="mb-4 grid grid-cols-3 gap-2">
+      <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {(
           [
             ["users", "Пользователи"],
             ["requests", `Заявки${pendingCount ? ` · ${pendingCount}` : ""}`],
             ["devices", `Устройства${devices ? ` · ${devices.length}` : ""}`],
+            ["analytics", "Аналитика"],
           ] as [Tab, string][]
         ).map(([key, label]) => (
           <button
@@ -238,6 +241,10 @@ export default function OwnerConsole() {
           )}
         </div>
       )}
+
+      {/* Аналитика грузится только когда вкладку открыли: это полтора десятка
+          запросов к базе, а в консоль чаще заходят сменить кому-то пароль. */}
+      {tab === "analytics" && <OwnerAnalytics />}
 
       {tab === "devices" && (
         <div className="space-y-1.5">

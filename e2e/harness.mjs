@@ -102,7 +102,9 @@ export async function newUser({ fresh = false, state = {} } = {}) {
       name: user.name,
       onboarded: true,
       seenGuide: true,
-      seenFeatures: ["challenges", "todos", "schedule", "timeslots", "push", "personal-duration"],
+      // Список должен совпадать с src/lib/features.ts: непросмотренная
+      // новинка открывает шторку поверх экрана, и тапы тестов уходят в неё.
+      seenFeatures: ["challenge30-2026-10", "community-2026-09", "challenges", "todos", "schedule", "timeslots", "push", "personal-duration"],
       todos: [],
       plan: [],
       updatedAt: 1,

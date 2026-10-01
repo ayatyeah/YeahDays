@@ -17,9 +17,9 @@ jobs:
     steps:
       - name: Morning/evening digest (hourly-ish, cheap to call every run)
         run: |
-          curl -sf -X POST "https://yeahdays-production.up.railway.app/api/push/send" \
+          curl -sf -X POST "https://yeahgrind.site/api/push/send" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "send failed (non-fatal)"
       - name: Scheduled task/todo reminders
         run: |
-          curl -sf -X POST "https://yeahdays-production.up.railway.app/api/push/dispatch" \
+          curl -sf -X POST "https://yeahgrind.site/api/push/dispatch" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "dispatch failed (non-fatal)"

@@ -9,7 +9,7 @@ try {
   const users = await db.user.findMany({ where: { banned: false, OR: [{ username: { not: null } }, { email: { not: null } }, { accounts: { some: {} } }] }, select: { id: true, state: { select: { data: true } }, personalization: { select: { data: true } }, pushSubs: { where: { enabled: true }, select: { tzOffset: true } } } });
   const eligible = users.filter(u => u.personalization?.data?.notice?.version !== version);
   if (send) {
-    const response = await fetch('https://yeahdays-production.up.railway.app/privacy');
+    const response = await fetch('https://yeahgrind.site/privacy');
     if (!response.ok || !(await response.text()).includes(version)) throw new Error('New policy is not deployed; no messages queued');
   }
   let queued = 0, inAppOnly = 0;

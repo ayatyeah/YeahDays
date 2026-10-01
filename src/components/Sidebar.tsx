@@ -55,7 +55,7 @@ export default function Sidebar() {
 
       <div className="mt-8 flex flex-col gap-1">
         {NAV.map(({ tab: key, label, Icon }) => {
-          const active = key === "learn" || key === "community" ? pathname === `/${key}` : section !== null && tab === key;
+          const active = key === "learn" ? ["/learn", "/events", "/challenge30"].some((p) => pathname === p || pathname.startsWith(`${p}/`)) : key === "community" ? pathname === "/community" : section !== null && tab === key;
           return (
             <button
               key={key}
@@ -93,7 +93,7 @@ export default function Sidebar() {
         })}
       </div>
 
-      <div className="mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">Календарь</Link><Link href="/chat">ИИ-помощник</Link><Link href="/challenge30">Челлендж 30</Link><Link href="/app">Мой персонаж</Link></div>
+      <div className="mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">Календарь</Link><Link href="/chat">ИИ-помощник</Link><Link href="/events">Ивенты</Link><Link href="/challenge30">Челлендж 30</Link><Link href="/app">Мой персонаж</Link></div>
       <div className="mt-auto px-2 text-[12px] text-[var(--color-muted)]">
         Одно действие в день
       </div>

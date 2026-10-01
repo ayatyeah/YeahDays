@@ -25,6 +25,7 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
+  { id: "challenge30-2026-10", icon: "flame", title: "Челлендж 30", text: "Месяц на то, что важно тебе: 3, 6 или 12 часов в день. ИИ один раз составляет личный план по твоим целям, дальше — отметки и аналитика.", href: "/challenge30" },
   { id: "community-2026-09", icon: "chat", title: "Учиться вместе", text: "Команды по предметам, общие квесты, комнаты фокуса и ИИ в обсуждениях. Новый раздел «Сообщество» в нижней панели.", href: "/community" },
   {
     id: "challenges",

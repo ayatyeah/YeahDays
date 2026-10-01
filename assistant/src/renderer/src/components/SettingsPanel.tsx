@@ -127,7 +127,7 @@ export default function SettingsPanel() {
             type="text"
             value={raw.YEAHGRIND_BASE_URL ?? ""}
             onChange={(e) => set("YEAHGRIND_BASE_URL", e.target.value)}
-            placeholder="https://yeahdays-production.up.railway.app"
+            placeholder="https://yeahgrind.site"
           />
         </div>
         <div className="field">

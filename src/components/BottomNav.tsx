@@ -27,6 +27,9 @@ const NAV = [
   { tab: "account", label: "Профиль", Icon: AccountIcon },
 ] as const;
 
+/** Подразделы «Учёбы»: вкладка остаётся подсвеченной и внутри них. */
+const LEARN_PATHS = ["/learn", "/events", "/challenge30"];
+
 export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -85,7 +88,7 @@ export default function BottomNav() {
           }}
         >
           {NAV.map(({ tab: key, label, Icon }) => {
-            const active = key === "learn" || key === "community" ? pathname === `/${key}` : section !== null && tab === key;
+            const active = key === "learn" ? LEARN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) : key === "community" ? pathname === "/community" : section !== null && tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
             return (
               <button

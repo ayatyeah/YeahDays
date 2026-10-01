@@ -11,7 +11,7 @@ const quiet = (h, from, to) => from === to ? false : from < to ? h >= from && h 
 try {
   if (!process.argv.includes('--send')) throw new Error('Pass --send for the authorized policy campaign');
   if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !process.env.VAPID_PRIVATE_KEY) throw new Error('Push is not configured');
-  const response = await fetch('https://yeahdays-production.up.railway.app/privacy');
+  const response = await fetch('https://yeahgrind.site/privacy');
   if (!response.ok || !(await response.text()).includes(version)) throw new Error('Policy not live');
   webpush.setVapidDetails(process.env.VAPID_CONTACT || 'mailto:noreply@yeahgrind.app', process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
   const pending = await db.scheduledNotification.findMany({ where: { key: `privacy:${version}`, sentAt: null, fireAt: { lte: new Date() } }, include: { user: { select: { state: { select: { data: true } }, pushSubs: { where: { enabled: true } } } } } });

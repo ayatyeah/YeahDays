@@ -43,6 +43,7 @@ model User {
   studyPosts StudyPost[]
   studyAttendance StudyAttendance[]
   communityReports CommunityReport[]
+  challenge30       Challenge30?
   aiChatArchives    AiChatArchive[]
   aiChat            AiChat?
   personalization   PersonalizationProfile?
@@ -601,4 +602,17 @@ model AiChatArchive {
   messageCount Int
   savedAt DateTime @default(now())
   @@index([userId, savedAt])
+}
+
+// Personal 30-day challenge, isolated from team quests. Persistent AI budget.
+model Challenge30 {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data Json @default("null")
+  revision Int @default(0)
+  aiDay String @default("")
+  aiCount Int @default(0)
+  pendingId String?
+  pendingAt DateTime?
+  updatedAt DateTime @updatedAt
 }

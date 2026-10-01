@@ -72,6 +72,7 @@ export default function LearningPage() {
   }
   return <div className="mx-auto w-full max-w-5xl space-y-5 pb-6">
     <header className="flex flex-wrap items-center justify-between gap-3"><div><Link href="/account" className="text-sm underline">← Профиль</Link><h1 className="ios-title mt-2">Прокачать навык</h1></div><Link href="/shop" className="rounded-2xl border border-[var(--color-border)] px-4 py-3 text-sm font-semibold">◈ {data?.coins ?? "…"} · Магазин</Link></header>
+    <Link href="/challenge30" className="block rounded-3xl border border-violet-400/30 bg-violet-500/10 p-5"><strong className="text-xl">Челлендж 30 →</strong><p className="mt-2 text-sm">3, 6 или 12 часов в день на важное. Персональный план на месяц и твои достижения.</p></Link>
     <section className="rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 via-[var(--color-surface)] to-sky-500/10 p-5">
       <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">Учись · практикуйся · открывай образы</p>
       <h2 className="mt-3 text-2xl font-bold">Небольшой квест. Настоящий навык.</h2>

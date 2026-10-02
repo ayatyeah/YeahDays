@@ -54,3 +54,64 @@ describe("aiSummary", () => {
     expect(summary.find((f) => f.name === "Челлендж 30")!.month).toEqual({ calls: 0, tokens: 0 });
   });
 });
+
+describe("activitySummary", () => {
+  const day = (seconds: number, extra: object = {}) => ({ seconds, visits: 1, tasks: 0, actions: 0, quests: 0, sections: { today: seconds }, ...extra });
+  it("считает активных по дням, время по разделам и выполненное — только у тех, кто разрешил учёт", async () => {
+    const { activitySummary } = await import("./ownerAnalytics");
+    const summary = activitySummary([
+      { enabled: true, days: { "2026-10-10": day(600, { tasks: 2, sections: { today: 300, learn: 300 } }), "2026-10-09": day(300) } },
+      { enabled: true, days: { "2026-10-10": day(1200, { quests: 1, sections: { learn: 1200 } }) } },
+      { enabled: false, days: { "2026-10-10": day(9999) } },
+    ], 7, now);
+    expect(summary.tracked).toBe(2);
+    expect(summary.daily.at(-1)).toEqual({ day: "2026-10-10", active: 2, minutes: 30 });
+    expect(summary.daily.at(-2)).toEqual({ day: "2026-10-09", active: 1, minutes: 5 });
+    expect(summary.activeWeek).toBe(2);
+    expect(summary.minutesPerActiveDay).toBe(12); // 35 минут на 3 человеко-дня
+    expect(summary.done).toEqual({ tasks: 2, actions: 0, quests: 1 });
+    expect(summary.sections[0]).toEqual({ name: "Учёба", minutes: 25, percent: 71 });
+  });
+  it("удержание считает от первого активного дня и не судит тех, чьё окно ещё не закончилось", async () => {
+    const { activitySummary } = await import("./ownerAnalytics");
+    const summary = activitySummary([
+      { enabled: true, days: { "2026-09-01": day(60), "2026-09-02": day(60), "2026-09-20": day(60) } }, // вернулся и назавтра, и позже
+      { enabled: true, days: { "2026-09-01": day(60), "2026-09-05": day(60) } },                         // только в первую неделю
+      { enabled: true, days: { "2026-09-01": day(60) } },                                                // не вернулся
+      { enabled: true, days: { "2026-10-10": day(60) } },                                                // начал сегодня — в расчёт не входит
+    ], 30, now);
+    const [nextDay, week, month] = summary.retention;
+    expect(nextDay).toMatchObject({ eligible: 3, returned: 1, percent: 33 });
+    expect(week).toMatchObject({ eligible: 3, returned: 2, percent: 67 });
+    expect(month).toMatchObject({ eligible: 3, returned: 1, percent: 33 });
+  });
+});
+
+describe("funnel и посещения", () => {
+  it("воронка даёт долю от зарегистрированных и от предыдущего шага", async () => {
+    const { funnel } = await import("./ownerAnalytics");
+    expect(funnel([{ name: "Регистрация", count: 200 }, { name: "Онбординг", count: 150 }, { name: "Первое дело", count: 60 }])).toEqual([
+      { name: "Регистрация", count: 200, percent: 100, fromPrevious: null },
+      { name: "Онбординг", count: 150, percent: 75, fromPrevious: 75 },
+      { name: "Первое дело", count: 60, percent: 30, fromPrevious: 40 },
+    ]);
+  });
+  it("посещения сводятся по дням и разделам, а путь страницы — к разделу", async () => {
+    const { sectionOf, visitSummary, visitorHash } = await import("./visits");
+    expect(sectionOf("/events/research-methods-quiz-1")).toBe("/events");
+    expect(sectionOf("/community?profile=abc")).toBe("/community");
+    expect(sectionOf("/invite/xyz")).toBe("/invite");
+    expect(sectionOf("/какой-то/мусор")).toBe("other");
+    // Один и тот же человек в разные дни — разные хеши, и адрес из хеша не читается.
+    expect(visitorHash("2026-10-10", "1.2.3.4", "UA")).not.toBe(visitorHash("2026-10-11", "1.2.3.4", "UA"));
+    expect(visitorHash("2026-10-10", "1.2.3.4", "UA")).not.toContain("1.2.3.4");
+    const summary = visitSummary(
+      [{ day: "2026-10-10", path: "/today", views: 5 }, { day: "2026-10-10", path: "/", views: 3 }, { day: "2026-10-09", path: "/today", views: 2 }],
+      [{ day: "2026-10-10", authed: true }, { day: "2026-10-10", authed: false }, { day: "2026-10-09", authed: true }],
+      7, now,
+    );
+    expect(summary.today).toEqual({ day: "2026-10-10", visitors: 2, signedIn: 1, views: 8 });
+    expect(summary.week).toEqual({ visitors: 3, views: 10 });
+    expect(summary.sections[0]).toEqual({ path: "/today", name: "Сегодня", views: 7 });
+  });
+});

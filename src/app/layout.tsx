@@ -8,6 +8,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import AuthProvider from "@/components/AuthProvider";
 import ThemeApplier from "@/components/ThemeApplier";
 import DomTranslator from "@/i18n/DomTranslator";
+import VisitBeacon from "@/components/VisitBeacon";
 
 /**
  * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
@@ -161,6 +162,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT }} />
         <ThemeApplier />
         <DomTranslator />
+        <VisitBeacon />
         <AuthProvider>
           <ErrorBoundary>
             <Shell>{children}</Shell>

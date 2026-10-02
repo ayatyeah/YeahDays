@@ -92,3 +92,92 @@ export function aiSummary(rows: UsageRow[], now = new Date()) {
     };
   });
 }
+
+type ActivityProfile = { enabled?: boolean; days?: Record<string, { seconds?: number; visits?: number; tasks?: number; actions?: number; quests?: number; sections?: Record<string, number> }> };
+
+const ACTIVITY_SECTIONS: Record<string, string> = {
+  today: "Сегодня", calendar: "Календарь", account: "Профиль", progress: "Прогресс", learn: "Учёба", shop: "Магазин",
+  settings: "Настройки", community: "Сообщество", chat: "ИИ-помощник", personalization: "Мой ритм", other: "Прочее",
+};
+
+const shiftDay = (day: string, n: number) => new Date(Date.parse(`${day}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
+/**
+ * Активность и удержание — по тем, кто разрешил учёт активности.
+ *
+ * Считается только по аккаунтам с включённым учётом, поэтому это выборка, а
+ * не все пользователи: рядом всегда показывается, сколько аккаунтов в неё
+ * входит. Наружу идут суммы и доли, ни одна строка не относится к человеку.
+ *
+ * Удержание отсчитывается от первого активного дня аккаунта в этих данных,
+ * а не от регистрации: у давних пользователей учёт включился позже, и от
+ * даты регистрации они выглядели бы «потерянными».
+ */
+export function activitySummary(profiles: ActivityProfile[], days: number, now = new Date()) {
+  const tracked = profiles.filter((p) => p?.enabled && p.days && typeof p.days === "object");
+  const today = localDay(OWNER_ZONE, now);
+  const range = Array.from({ length: days }, (_, i) => shiftDay(today, i - days + 1));
+  const first = range[0];
+
+  const daily = range.map((day) => {
+    let active = 0;
+    let seconds = 0;
+    for (const p of tracked) {
+      const d = p.days![day];
+      if (d && (d.seconds ?? 0) > 0) { active++; seconds += d.seconds ?? 0; }
+    }
+    return { day, active, minutes: Math.round(seconds / 60) };
+  });
+
+  const sections = new Map<string, number>();
+  const done = { tasks: 0, actions: 0, quests: 0 };
+  let sessions = 0;
+  for (const p of tracked) {
+    for (const [day, d] of Object.entries(p.days!)) {
+      if (day < first || day > today) continue;
+      for (const [key, seconds] of Object.entries(d.sections ?? {})) sections.set(key, (sections.get(key) ?? 0) + (Number(seconds) || 0));
+      done.tasks += d.tasks ?? 0; done.actions += d.actions ?? 0; done.quests += d.quests ?? 0;
+      sessions += d.visits ?? 0;
+    }
+  }
+  const totalSeconds = [...sections.values()].reduce((a, b) => a + b, 0);
+  const userDays = daily.reduce((n, d) => n + d.active, 0);
+
+  const retention = [
+    { name: "На следующий день", from: 1, to: 1 },
+    { name: "В первую неделю", from: 1, to: 7 },
+    { name: "Со 2-й по 4-ю неделю", from: 8, to: 30 },
+  ].map(({ name, from, to }) => {
+    let eligible = 0;
+    let returned = 0;
+    for (const p of tracked) {
+      const active = Object.entries(p.days!).filter(([, d]) => (d.seconds ?? 0) > 0).map(([day]) => day).sort();
+      if (!active.length) continue;
+      const start = active[0];
+      // Окно должно целиком закончиться — иначе «не вернулся» значило бы «ещё не успел».
+      if (shiftDay(start, to) > today) continue;
+      eligible++;
+      if (active.some((day) => day >= shiftDay(start, from) && day <= shiftDay(start, to))) returned++;
+    }
+    return { name, eligible, returned, percent: eligible ? Math.round((returned / eligible) * 100) : 0 };
+  });
+
+  return {
+    tracked: tracked.length,
+    daily,
+    activeWeek: tracked.filter((p) => range.slice(-7).some((day) => (p.days![day]?.seconds ?? 0) > 0)).length,
+    activeMonth: tracked.filter((p) => range.some((day) => (p.days![day]?.seconds ?? 0) > 0)).length,
+    minutesPerActiveDay: userDays ? Math.round(daily.reduce((n, d) => n + d.minutes, 0) / userDays) : 0,
+    sessions,
+    done,
+    sections: [...sections.entries()].sort((a, b) => b[1] - a[1]).map(([key, seconds]) => ({ name: ACTIVITY_SECTIONS[key] ?? key, minutes: Math.round(seconds / 60), percent: totalSeconds ? Math.round((seconds / totalSeconds) * 100) : 0 })),
+    retention,
+  };
+}
+
+/** Воронка: сколько аккаунтов дошло до каждого шага. Доля — от числа зарегистрированных. */
+export function funnel(steps: { name: string; count: number }[]) {
+  const total = steps[0]?.count ?? 0;
+  return steps.map((s, i) => ({ ...s, percent: total ? Math.round((s.count / total) * 100) : 0, // null — сравнивать не с чем: шаг первый или на предыдущем никого не было.
+    fromPrevious: i > 0 && steps[i - 1].count > 0 ? Math.round((s.count / steps[i - 1].count) * 100) : null }));
+}

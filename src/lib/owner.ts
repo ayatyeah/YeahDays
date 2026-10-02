@@ -42,12 +42,3 @@ export async function requireOwner() {
   }
   return session;
 }
-
-/**
- * Пускать ли в консоль. На этой ветке вход один — владельческий аккаунт;
- * функция нужна, чтобы роуты /api/owner/* были одинаковыми здесь и в
- * основной ветке, где у консоли есть ещё и вход по паролю.
- */
-export async function requireAdmin(): Promise<boolean> {
-  return !!(await requireOwner());
-}

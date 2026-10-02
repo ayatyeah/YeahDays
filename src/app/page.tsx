@@ -9,6 +9,7 @@ import CookieConsent from "@/components/CookieConsent";
 import SiteNav from "@/components/SiteNav";
 import Reveal, { RevealGroup, RevealItem } from "@/components/Reveal";
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
+import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 
 export const metadata: Metadata = {
   title: "YeahGrind — одно действие в день",
@@ -525,6 +526,7 @@ export default function LandingPage() {
               Одно действие в день
             </span>
           </div>
+          <LanguageSwitcher />
           <nav className="flex flex-wrap gap-6 text-[14.5px] text-[var(--color-muted)]">
             <Link href="/today" className="transition hover:text-[var(--color-fg)]">
               Приложение

@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import { LEVELS, blocksFor, clockText, dayIndex, defaultWindows, localDay, plusDays, reviewAllowed, stats, parseBrief, windowsFromBusy, type Window, type Brief, type Level, type Plan30, type Block } from "@/lib/challenge30";
 import { isTodoOnDay, useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
+import { usePersonalizationStore } from "@/store/usePersonalizationStore";
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 const field = "mt-2 min-w-0 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3 text-base";
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
@@ -24,6 +25,8 @@ function Challenge() {
   const [brief, setBrief] = useState<Brief>({ level: "easy", goals: "", baseline: "", preferences: "", timezone: "Asia/Almaty", windows: defaultWindows("easy") });
   const [consent, setConsent] = useState(false); const [day, setDay] = useState(0); const [offset, setOffset] = useState(1);
   const [reviewNote, setReviewNote] = useState(""); const [reviewConsent, setReviewConsent] = useState(false);
+  // Общее согласие на передачу данных в ИИ (настройки приватности): с ним отдельные галочки здесь не нужны.
+  const aiAllowed = usePersonalizationStore(s => s.data?.ai === true);
   const [friends, setFriends] = useState<{ share: boolean; friendCount: number; board: { name: string; me: boolean; level: string; day: number; successes: number; hours: number }[] } | null>(null);
   async function loadFriends() {
     try { const r = await fetch("/api/challenge30/friends", { cache: "no-store" }); if (r.ok && alive.current) setFriends(await r.json()); } catch { /* доска друзей необязательна — челлендж работает и без неё */ }
@@ -47,7 +50,7 @@ function Challenge() {
     finally { operation.current = false; if (alive.current) setBusy(false); }
   }
   async function generate(e: React.FormEvent) {
-    e.preventDefault(); if (!consent) return;
+    e.preventDefault(); if (!consent && !aiAllowed) return;
     try { parseBrief(brief); } catch (e) { setError((e as Error).message); return; }
     setConsent(false);
     const result = await act({ action: "generate", brief, consent: "challenge30-v1" });
@@ -103,9 +106,9 @@ function Challenge() {
             {brief.windows.map((ws, d) => <div key={d} className="mt-4 border-b border-[var(--color-border)] pb-3"><p className="text-sm font-semibold">{weekdays[d]}</p>{ws.map((w, i) => <div key={i} className="mt-2 flex min-w-0 items-center gap-2"><input aria-label={`${weekdays[d]} начало ${i + 1}`} type="time" required className={`${field} mt-0 flex-1 p-2`} value={clockText(w.start)} onChange={e => setWindow(d, i, "start", e.target.value)} /><span>—</span><input aria-label={`${weekdays[d]} конец ${i + 1}`} type="time" required className={`${field} mt-0 flex-1 p-2`} value={clockText(w.end)} onChange={e => setWindow(d, i, "end", e.target.value)} />{ws.length > 1 && <button type="button" aria-label="Удалить окно" onClick={() => { ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map((list, di) => di === d ? list.filter((_, wi) => wi !== i) : list) })); }}>×</button>}</div>)}{ws.length < 3 && <button type="button" className="mt-2 text-xs underline" onClick={() => { ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map((list, di) => di === d ? [...list, { start: 8 * 60, end: 10 * 60 }] : list) })); }}>+ Ещё окно</button>}</div>)}
           </details>
           <label className="block text-sm">Часовой пояс<input className={field} required value={brief.timezone} onChange={e => setBrief(b => ({ ...b, timezone: e.target.value }))} maxLength={80} /></label>
-          <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-1" /><span>Разрешаю отправить цели, исходный уровень, предпочтения и выбранную сложность в OpenAI для создания этого плана. <Link href="/privacy" className="underline">Политика</Link></span></label>
+          {aiAllowed ? <p className="text-xs text-[var(--color-muted)]">Цели, исходный уровень, предпочтения и сложность уйдут в OpenAI для создания плана — по твоему общему согласию на ИИ. <Link href="/personalization" className="underline">Настройки приватности</Link></p> : <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-1" /><span>Разрешаю отправить цели, исходный уровень, предпочтения и выбранную сложность в OpenAI для создания этого плана. Чтобы не отмечать каждый раз, разреши ИИ в <Link href="/personalization" className="underline">настройках приватности</Link>.</span></label>}
           <p className="text-xs text-[var(--color-muted)]">Одна генерация — основа на весь месяц. Дни, отметки и просмотр не расходуют токены. Осталось попыток сегодня: {data.remaining}/2. Повторная генерация заменит только черновик.</p>
-          <Button type="submit" variant="primary" className="w-full" disabled={!consent || !data.available || data.remaining === 0}>{busy || data.busy ? "Составляем план…" : "Создать мой план"}</Button>
+          <Button type="submit" variant="primary" className="w-full" disabled={(!consent && !aiAllowed) || !data.available || data.remaining === 0}>{busy || data.busy ? "Составляем план…" : "Создать мой план"}</Button>
           {!data.available && <p role="status">ИИ пока не подключён на сервере.</p>}
         </fieldset>
       </form>}
@@ -135,8 +138,8 @@ function Challenge() {
           {reviewAllowed(p, elapsed) ? <>
             <p className="text-sm text-[var(--color-muted)]">Раз в неделю ИИ смотрит, сколько минут отмечено по каждому занятию, и подстраивает оставшиеся недели: меняет доли времени и задания. Прошедшие дни не трогает. Это одно короткое обращение к ИИ.</p>
             <label className="block text-sm">Что учесть? · необязательно<textarea maxLength={300} rows={2} className={field} value={reviewNote} onChange={e => setReviewNote(e.target.value)} placeholder="Например: бег даётся тяжело, а на английский хочу больше времени" /></label>
-            <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={reviewConsent} onChange={e => setReviewConsent(e.target.checked)} className="mt-1" /><span>Разрешаю отправить в OpenAI занятия плана, цели и отмеченные минуты за неделю для этого пересмотра. <Link href="/privacy" className="underline">Политика</Link></span></label>
-            <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" disabled={busy || data.busy || !reviewConsent || !data.available || data.remaining === 0} onClick={async () => { setReviewConsent(false); const result = await act({ action: "review", consent: "challenge30-v1", note: reviewNote }); if (result) { setReviewNote(""); setMessage("План на оставшиеся недели обновлён. Что изменилось — в блоке «Пересмотр недели»."); } }}>{busy || data.busy ? "Пересматриваем…" : "Пересмотреть план"}</Button>
+            {aiAllowed ? <p className="text-xs text-[var(--color-muted)]">В OpenAI уйдут занятия плана, цели и отмеченные минуты за неделю — по твоему общему согласию на ИИ.</p> : <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={reviewConsent} onChange={e => setReviewConsent(e.target.checked)} className="mt-1" /><span>Разрешаю отправить в OpenAI занятия плана, цели и отмеченные минуты за неделю для этого пересмотра. <Link href="/privacy" className="underline">Политика</Link></span></label>}
+            <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" disabled={busy || data.busy || (!reviewConsent && !aiAllowed) || !data.available || data.remaining === 0} onClick={async () => { setReviewConsent(false); const result = await act({ action: "review", consent: "challenge30-v1", note: reviewNote }); if (result) { setReviewNote(""); setMessage("План на оставшиеся недели обновлён. Что изменилось — в блоке «Пересмотр недели»."); } }}>{busy || data.busy ? "Пересматриваем…" : "Пересмотреть план"}</Button>
             {data.remaining === 0 && <p className="text-xs text-[var(--color-muted)]">На сегодня обращения к ИИ исчерпаны — попробуй завтра.</p>}
           </> : <p className="text-xs text-[var(--color-muted)]">Следующий пересмотр — через неделю после предыдущего.</p>}
         </section>}

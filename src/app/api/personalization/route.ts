@@ -28,8 +28,10 @@ export async function POST(req: Request) {
         const previousVersion = p.version;
         const enabling = body.enabled && (!p.enabled || p.version !== POLICY_VERSION);
         p.version = POLICY_VERSION; p.acceptedAt = new Date(now).toISOString(); p.timezone = timezone!;
-        if (previousVersion !== POLICY_VERSION || p.enabled !== body.enabled || enabling || !p.receipts.length) p.receipts.push({ version: POLICY_VERSION, at: p.acceptedAt, enabled: body.enabled });
-        p.enabled = body.enabled;
+        // One acceptance covers the policy, activity tracking and AI data transfer; each part can still be switched separately later.
+        const ai = typeof body.ai === "boolean" ? body.ai : previousVersion === POLICY_VERSION && p.ai === true;
+        if (previousVersion !== POLICY_VERSION || p.enabled !== body.enabled || (p.ai === true) !== ai || enabling || !p.receipts.length) p.receipts.push({ version: POLICY_VERSION, at: p.acceptedAt, enabled: body.enabled, ai });
+        p.enabled = body.enabled; p.ai = ai;
         if (!p.enabled) { p.days = {}; p.seen = []; p.since = null; p.lastTick = 0; }
         if (enabling) {
           const [state, learning] = await Promise.all([prisma.userState.findUnique({ where: { userId } }), prisma.learningProfile.findUnique({ where: { userId } })]);

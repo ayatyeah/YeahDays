@@ -1,12 +1,14 @@
-export const POLICY_VERSION = "2026-09-30";
+export const POLICY_VERSION = "2026-10-04";
 export const SECTIONS = ["today", "calendar", "account", "progress", "learn", "shop", "settings", "community", "chat", "personalization", "other"] as const;
 export type ActivityDay = { seconds: number; visits: number; tasks: number; actions: number; quests: number; sections: Record<string, number> };
 export type Personalization = {
   revision: number; version: string; acceptedAt: string | null; enabled: boolean; since: string | null;
-  receipts: { version: string; at: string; enabled: boolean }[];
+  /** One consent for every AI feature: the person allows sending what a feature needs to OpenAI. Absent in older rows — treated as false. */
+  ai?: boolean;
+  receipts: { version: string; at: string; enabled: boolean; ai?: boolean }[];
   timezone: string; days: Record<string, ActivityDay>; seen: string[]; lastTick: number;
 };
-export const emptyPersonalization = (): Personalization => ({ revision: 0, version: "", acceptedAt: null, enabled: false, since: null, receipts: [], timezone: "Asia/Almaty", days: {}, seen: [], lastTick: 0 });
+export const emptyPersonalization = (): Personalization => ({ revision: 0, version: "", acceptedAt: null, enabled: false, since: null, ai: false, receipts: [], timezone: "Asia/Almaty", days: {}, seen: [], lastTick: 0 });
 export function dayInZone(now: number, timezone: string) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 }
@@ -52,7 +54,7 @@ export function publicPersonalization(profile: Personalization) {
   const recent = days.slice(0, 7);
   const average = recent.length ? recent.reduce((sum, [, d]) => sum + d.tasks + d.actions + d.quests, 0) / recent.length : 0;
   const dailyTarget = average >= 5 ? 5 : 3;
-  return { revision: profile.revision, requiredVersion: POLICY_VERSION, version: profile.version, acceptedAt: profile.acceptedAt, enabled: profile.enabled, since: profile.since, timezone: profile.timezone,
+  return { revision: profile.revision, requiredVersion: POLICY_VERSION, version: profile.version, acceptedAt: profile.acceptedAt, enabled: profile.enabled, ai: profile.version === POLICY_VERSION && profile.ai === true, since: profile.since, timezone: profile.timezone,
     totals, activeDays: days.filter(([, d]) => d.seconds > 0).length, days: days.slice(0, 30).map(([day, data]) => ({ day, ...data })),
     dailyTarget, todayCompleted: today ? today.tasks + today.actions + today.quests : 0,
     badges: [{ name: "Первый шаг", target: 1 }, { name: "Набираю темп", target: 10 }, { name: "Держу ритм", target: 50 }, { name: "Сотня дел", target: 100 }].map(b => ({ ...b, value: Math.min(completed, b.target), unlocked: completed >= b.target })) };

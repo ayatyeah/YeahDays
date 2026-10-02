@@ -40,6 +40,6 @@ export default function PersonalizationSync() {
   if (!owner || ["/privacy", "/terms", "/personalization"].includes(path)) return null;
   if (data?.version === POLICY_VERSION) return null;
   return <aside role="status" className="relative z-40 border-b border-violet-400/40 bg-[var(--color-surface)] px-4 py-3 text-sm">
-    <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2"><p><strong>Обновлена политика конфиденциальности.</strong> Прочитай и прими новую версию. Учёт активности включается отдельно.</p><Link className="rounded-xl bg-[var(--color-fg)] px-3 py-2 font-semibold text-[var(--color-bg)]" href="/personalization">Прочитать и принять</Link></div>
+    <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2"><p><strong>Обновлена политика конфиденциальности.</strong> Теперь одно согласие вместо нескольких — прими один раз.</p><Link className="rounded-xl bg-[var(--color-fg)] px-3 py-2 font-semibold text-[var(--color-bg)]" href="/personalization">Прочитать и принять</Link></div>
   </aside>;
 }

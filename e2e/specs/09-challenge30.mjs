@@ -117,3 +117,54 @@ test("Челлендж 30: начинаю план, отмечаю день це
   );
   await browser.close();
 });
+
+/** Уже идущий челлендж: старт сегодня, показ друзьям — по флагу. */
+function seedRunning(user, share) {
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Almaty" });
+  const plan = {
+    id: `e2e-plan-${user.id}`,
+    brief: { level: "easy", goals: "Разобраться в Python", baseline: "С нуля", preferences: "", timezone: "Asia/Almaty", windows: Array.from({ length: 7 }, () => [{ start: 18 * 60, end: 22 * 60 }]) },
+    recipe: { title: "Месяц Python", summary: "Понемногу каждый день.", activities: [{ title: "Python на практике", kind: "study", weight: 2, steps }, { title: "Чтение", kind: "personal", weight: 1, steps }] },
+    createdAt: new Date().toISOString(), consentAt: new Date().toISOString(), startDate: today, logs: { "0:0": 45 }, tokens: 900, share,
+  };
+  sql(`insert into "Challenge30"("userId", data, "updatedAt") values ('${user.id}', '${JSON.stringify(plan).replace(/'/g, "''")}'::jsonb, now() at time zone 'utc')`);
+}
+
+test("Челлендж 30: друг виден только при взаимном показе, а окна подставляются из расписания", async () => {
+  const me = await newUser({
+    // Пара с 18:00 до 19:30 каждый день недели — её нужно обойти.
+    state: { todos: Array.from({ length: 7 }, (_, i) => ({ id: `e2e-class-${i}`, title: "Пара", date: new Date(Date.now() + i * 86_400_000).toLocaleDateString("en-CA"), hour: 18, minute: 0, duration: 90, priority: "normal", subtasks: [], done: false, doneDays: [], createdAt: Date.now(), completedAt: null })) },
+  });
+  const friend = await newUser();
+  for (const [x, y] of [[me, friend], [friend, me]]) {
+    sql(`insert into "Friendship"("userId", "friendId", "createdAt") values ('${x.id}', '${y.id}', now() at time zone 'utc')`);
+    sql(`insert into "PublicStats"("userId", name, "updatedAt") values ('${x.id}', '${x.name}', now() at time zone 'utc') on conflict ("userId") do nothing`);
+  }
+  seedRunning(friend, true);
+
+  const { browser, page } = await session({ user: me });
+  await openSection(page, "/challenge30");
+
+  // Анкета: окна из расписания обходят пару.
+  await page.getByText("Свободное время по дням недели").tap();
+  await page.getByRole("button", { name: "Заполнить из моего расписания" }).tap();
+  // Число занятий не проверяем точно: около полуночи «сегодня» у браузера и у теста может различаться на день.
+  await page.getByText(/Окна подставлены с учётом \d+ занятий/).waitFor({ timeout: 10_000 });
+  const starts = await page.locator('input[aria-label^="Понедельник начало"]').evaluateAll((list) => list.map((el) => el.value));
+  const ends = await page.locator('input[aria-label^="Понедельник конец"]').evaluateAll((list) => list.map((el) => el.value));
+  check(starts.every((s, i) => ends[i] <= "17:50" || s >= "19:40"), `свободные окна не накрывают пару 18:00–19:30 (увидел: ${starts.map((s, i) => `${s}–${ends[i]}`).join(", ")})`);
+
+  // Свой челлендж начат без показа — друга не видно.
+  seedRunning(me, false);
+  await openSection(page, "/challenge30");
+  await page.getByRole("heading", { name: "Челлендж вместе" }).waitFor({ timeout: 10_000 });
+  check(!(await page.locator("body").innerText()).includes(friend.name), "пока я не включил показ, прогресс друга мне не виден");
+
+  // Галочка переключается после ответа сервера, а не в момент нажатия —
+  // поэтому tap и ожидание результата, а не check().
+  await page.getByLabel(/Показывать мой прогресс друзьям и видеть их/).tap();
+  await page.getByText(friend.name).waitFor({ timeout: 10_000 });
+  check(true, "после взаимного включения друг появился на доске");
+  check(sql(`select data->>'share' from "Challenge30" where "userId" = '${me.id}'`) === "true", "мой выбор сохранён на сервере");
+  await browser.close();
+});

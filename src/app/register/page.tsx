@@ -1,9 +1,9 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { credentialsSignIn, enterApp, safeCallbackUrl, warmSignIn } from "@/lib/fastSignIn";
 import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
@@ -22,10 +22,12 @@ export default function RegisterPage() {
 function RegisterForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/app";
+  const callbackUrl = safeCallbackUrl(params.get("callbackUrl"));
 
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Токен для автовхода берём заранее, пока человек заполняет форму.
+  useEffect(() => { void warmSignIn(); }, []);
 
   /** Поля неуправляемые — см. тот же комментарий на /login. */
   async function submit(e: React.FormEvent) {
@@ -58,17 +60,12 @@ function RegisterForm() {
         return;
       }
 
-      const signInRes = await signIn("credentials", {
-        identifier: email,
-        password,
-        redirect: false,
-      });
-      if (signInRes?.error) {
+      if (!(await credentialsSignIn(email, password))) {
         // Аккаунт создан, но автовход не сработал — не тупик, просто на /login.
         router.push("/login");
         return;
       }
-      router.push(callbackUrl);
+      enterApp(callbackUrl);
     } catch {
       setError("Сеть недоступна, попробуй ещё раз");
       setBusy(false);

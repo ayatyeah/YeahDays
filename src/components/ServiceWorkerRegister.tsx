@@ -113,6 +113,14 @@ export default function ServiceWorkerRegister() {
     };
   }, [isAuthPage]);
 
+  // Раздел приложения открыт — значит человек вошёл: просим воркер доложить
+  // в кэш оболочку разделов, которую он не мог взять до входа (см. sw.js).
+  const inApp = !isAuthPage && !["/", "/terms", "/privacy", "/forgot-password", "/offline"].includes(pathname) && !pathname.startsWith("/invite/");
+  useEffect(() => {
+    if (!inApp || !("serviceWorker" in navigator) || process.env.NODE_ENV !== "production") return;
+    navigator.serviceWorker.ready.then((r) => r.active?.postMessage({ type: "PRECACHE" })).catch(() => {});
+  }, [inApp]);
+
   function apply() {
     waiting?.postMessage({ type: "SKIP_WAITING" });
     // controllerchange перезагрузит страницу

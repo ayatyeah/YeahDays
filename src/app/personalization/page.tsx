@@ -20,13 +20,14 @@ export default function PersonalizationPage() {
           <p className="text-sm">Раньше согласие спрашивалось отдельно в чате с ИИ, в челлендже и для статистики. Теперь это одно решение. Нажимая «Принять всё», ты:</p>
           <ul className="list-disc space-y-2 pl-5 text-sm">
             <li>принимаешь <Link href="/privacy" target="_blank" rel="noopener" className="underline">политику конфиденциальности</Link> версии {POLICY_VERSION};</li>
+            <li>становишься участником сообщества под своим аккаунтом: другие вошедшие пользователи видят твоё имя, персонажа, уровень и серию, могут найти тебя и подписаться. Скрыть себя можно в сообществе одним переключателем;</li>
             <li>разрешаешь ИИ-функциям (чат, планировщик, ИИ-подготовка, челлендж) передавать в OpenAI то, что нужно для ответа: твой запрос и связанные с ним данные аккаунта — план, учебный прогресс, цели;</li>
             <li>разрешаешь учёт активности: время в приложении, посещаемые разделы и выполненные дела — для твоей статистики, достижений и обезличенной аналитики сервиса.</li>
           </ul>
           <p className="text-xs text-[var(--color-muted)]">Не записываем содержимое экрана и нажатые клавиши. Любую часть можно отключить здесь же в любой момент.</p>
           <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" disabled={busy} onClick={() => void save(true, true)}>{busy ? "Сохраняем…" : "Принять всё и продолжить"}</Button>
           {!custom ? <button className="w-full text-sm underline" onClick={() => setCustom(true)}>Выбрать самому, что разрешить</button> : <div className="space-y-3 rounded-2xl border border-[var(--color-border)] p-4">
-            <p className="text-sm">Политика принимается в любом случае — без неё приложением пользоваться нельзя. Остальное по желанию:</p>
+            <p className="text-sm">Политика принимается в любом случае — без неё приложением пользоваться нельзя; вместе с ней ты появляешься в сообществе, где себя можно скрыть. Остальное по желанию:</p>
             <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" checked={aiOptIn} onChange={e => setAiOptIn(e.target.checked)} /><span>Передача данных в ИИ<span className="block text-xs text-[var(--color-muted)]">Без этого ИИ-функции будут спрашивать разрешение каждый раз.</span></span></label>
             <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" checked={optIn} onChange={e => setOptIn(e.target.checked)} /><span>Учёт активности<span className="block text-xs text-[var(--color-muted)]">Без этого не будет статистики времени и достижений «Моего ритма».</span></span></label>
             <Button className="h-auto min-h-11 w-full whitespace-normal" disabled={busy} onClick={() => void save(optIn, aiOptIn)}>Принять политику с этим выбором</Button>

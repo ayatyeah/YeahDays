@@ -48,6 +48,7 @@ model User {
   socialPosts       SocialPost[]
   socialLikes       SocialLike[]
   socialReports     SocialReport[]
+  socialMedia       SocialMedia[]
   challenge30       Challenge30?
   eventProgress     EventProgress[]
   eventReports      EventReport[]
@@ -509,6 +510,12 @@ model CommunityProfile {
   blocked String[] @default([])
   showCharacter Boolean @default(false)
   showAchievements Boolean @default(false)
+  /// true — человек скрыл себя из сообщества: его нет в поиске и ленте, сам он только читает
+  hidden Boolean @default(false)
+  /// загруженный аватар (SocialMedia.id); без него показывается персонаж аккаунта
+  avatarId String?
+  /// до какого момента просмотрена вкладка «Активность» — для отметки о новых событиях
+  noticesSeenAt DateTime?
   updatedAt DateTime @updatedAt
 }
 
@@ -691,6 +698,7 @@ model SocialPost {
   createdAt DateTime @default(now())
   likes SocialLike[]
   reports SocialReport[]
+  media SocialMedia[]
   @@index([userId, createdAt])
   @@index([parentId, createdAt])
   @@index([createdAt])
@@ -734,4 +742,25 @@ model SiteVisitor {
   hash String
   authed Boolean @default(false)
   @@id([day, hash])
+}
+
+// Photos for posts and avatars. Stored in the database: the project has no file storage,
+// and at this scale re-encoded images (≈100–200 KB each) fit comfortably.
+model SocialMedia {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// пост, к которому прикреплено фото; null — ещё не опубликовано или это аватар
+  postId String?
+  post SocialPost? @relation(fields: [postId], references: [id], onDelete: Cascade)
+  position Int @default(0)
+  kind String @default("post")
+  mime String
+  width Int
+  height Int
+  bytes Int
+  data Bytes
+  createdAt DateTime @default(now())
+  @@index([postId, position])
+  @@index([userId, createdAt])
 }

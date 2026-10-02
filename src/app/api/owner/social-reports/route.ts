@@ -1,7 +1,7 @@
 /**
  * /api/owner/social-reports — жалобы на посты сообщества для /admin.
  *
- * GET    → нерассмотренные жалобы с текстом поста и именем автора.
+ * GET    → нерассмотренные жалобы с текстом и фото поста и именем автора.
  * PATCH  { id } → отклонить жалобу (пост остаётся).
  * DELETE { postId } → удалить пост; его жалобы уходят вместе с ним.
  *
@@ -12,6 +12,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/owner";
+import { mediaUrl } from "@/lib/socialMedia";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,10 +26,10 @@ export async function GET() {
       where: { resolved: false },
       orderBy: { createdAt: "desc" },
       take: 100,
-      select: { id: true, reason: true, createdAt: true, post: { select: { id: true, text: true, parentId: true, user: { select: { name: true } } } } },
+      select: { id: true, reason: true, createdAt: true, post: { select: { id: true, text: true, parentId: true, user: { select: { name: true } }, media: { orderBy: { position: "asc" }, select: { id: true } } } } },
     });
     return NextResponse.json(
-      { reports: rows.map((r) => ({ id: r.id, reason: r.reason, createdAt: r.createdAt, postId: r.post.id, text: r.post.text, comment: !!r.post.parentId, author: r.post.user.name || "Студент" })) },
+      { reports: rows.map((r) => ({ id: r.id, reason: r.reason, createdAt: r.createdAt, postId: r.post.id, text: r.post.text, images: r.post.media.map((m) => mediaUrl(m.id)), comment: !!r.post.parentId, author: r.post.user.name || "Студент" })) },
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch {

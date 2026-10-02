@@ -1076,7 +1076,7 @@ export const useUserStore = create<UserState>()(
       // читают их без защиты — белый экран. Миграция persist прикрывает только
       // путь из localStorage; серверный путь идёт мимо неё.
       hydrateFromRemote: (data) =>
-        set(() => {
+        set((s) => {
           const d = pickSync(data);
           const arr = <T,>(v: unknown, fallback: T[]): T[] =>
             Array.isArray(v) ? (v as T[]) : fallback;
@@ -1116,6 +1116,10 @@ export const useUserStore = create<UserState>()(
             seenGuide:
               typeof d.seenGuide === "boolean" ? d.seenGuide : hasProgress(d),
             disabledActions: arr(d.disabledActions, []),
+            // Снимок без этого поля оставлял undefined, и любое сравнение с ним
+            // давало «уровень вырос» — на экране всплывало поздравление с
+            // уровнем, которого человек не получал.
+            seenLevel: typeof d.seenLevel === "number" ? d.seenLevel : s.seenLevel,
             seenFeatures: arr(d.seenFeatures, []),
             moods: obj(d.moods, {}),
             retros: obj(d.retros, {}),

@@ -9,7 +9,7 @@ import EventNotes from "@/components/EventNotes";
 import { cn } from "@/lib/cn";
 import { findEvent } from "@/lib/events";
 import { draw, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
-import { createAmbient, type Ambient } from "@/lib/events/music";
+import EventMusic from "@/components/EventMusic";
 import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@/lib/events/storage";
 import type { Lang, StudyEvent } from "@/lib/events/types";
 
@@ -46,7 +46,6 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   const [view, setView] = useState<View>({ mode: "map" });
   const [lang, setLang] = useState<Lang>("en");
   const [music, setMusic] = useState(true);
-  const ambient = useRef<Ambient | null>(null);
   const top = useRef<HTMLDivElement>(null);
   // Номер попытки: по нему экран квиза сбрасывает ответы при повторе.
   const runs = useRef(0);
@@ -58,18 +57,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
     setLang(loadPref("lang", "en") === "ru" ? "ru" : "en");
     setMusic(loadPref("music", "on") !== "off");
     setLoaded(true);
-    ambient.current = createAmbient();
-    return () => ambient.current?.stop();
   }, [userId, event.id]);
-
-  // Свернули вкладку — музыка замолкает: фон нужен только во время квиза.
-  useEffect(() => {
-    const onHide = () => {
-      if (document.hidden) ambient.current?.stop();
-    };
-    document.addEventListener("visibilitychange", onHide);
-    return () => document.removeEventListener("visibilitychange", onHide);
-  }, []);
 
   const stepKey = view.mode === "map" ? "map" : `${view.mode}:${view.step.id}`;
   useEffect(() => {
@@ -86,34 +74,27 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
     const next = !music;
     setMusic(next);
     savePref("music", next ? "on" : "off");
-    if (next && view.mode === "quiz") ambient.current?.start();
-    else ambient.current?.stop();
   }
 
-  // Вызывается из обработчика нажатия: браузер разрешает звук только по
-  // действию человека, поэтому музыка стартует здесь, а не в эффекте.
+  // Плеер монтируется вместе с экраном квиза (см. EventMusic): это
+  // происходит по нажатию кнопки, а значит браузер разрешит звук.
   function startQuiz(step: Step) {
-    if (music) ambient.current?.start();
     setView({ mode: "quiz", step, quiz: draw(event, step), run: ++runs.current });
   }
 
   function open(step: Step) {
-    if (step.kind === "part") {
-      ambient.current?.stop();
-      setView({ mode: "read", step });
-    } else startQuiz(step);
+    if (step.kind === "part") setView({ mode: "read", step });
+    else startQuiz(step);
   }
 
   function finish(step: Step, quiz: QuizQuestion[], answers: number[]) {
     const next = record(progress, step, quiz, answers);
     setProgress(next);
     saveProgress(userId, event.id, next);
-    ambient.current?.stop();
     setView({ mode: "result", step, quiz, answers });
   }
 
   function toMap() {
-    ambient.current?.stop();
     setView({ mode: "map" });
   }
 
@@ -341,6 +322,7 @@ function Quiz({
           </button>
         </div>
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{step.title.ru}</p>
+        {music && <EventMusic />}
         <div className="flex items-center gap-3">
           <div
             className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"

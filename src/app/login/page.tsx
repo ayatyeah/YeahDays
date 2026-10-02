@@ -1,10 +1,11 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Logo from "@/components/Logo";
+import { credentialsSignIn, enterApp, safeCallbackUrl, warmSignIn } from "@/lib/fastSignIn";
 import { oauthErrorMessage } from "@/lib/oauthErrors";
 import Button from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
@@ -44,14 +45,15 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
-  const callbackUrl = params.get("callbackUrl") || "/app";
+  const callbackUrl = safeCallbackUrl(params.get("callbackUrl"));
   const googleFirst = params.get("googleFirst") === "1";
   const providerError = oauthErrorMessage(params.get("error"));
 
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Служебный токен берём заранее, пока человек печатает, — вход потом идёт одним запросом.
+  useEffect(() => { void warmSignIn(); }, []);
 
   /**
    * Поля неуправляемые (defaultValue + чтение при отправке), а не через
@@ -68,13 +70,19 @@ function LoginForm() {
     setError(null);
     setBusy(true);
 
-    const res = await signIn("credentials", { identifier, password, redirect: false });
-    if (res?.error) {
-      setError("Неверный логин или пароль");
+    try {
+      if (!(await credentialsSignIn(identifier, password))) {
+        setError("Неверный логин или пароль");
+        setBusy(false);
+        return;
+      }
+    } catch {
+      setError("Сеть недоступна, попробуй ещё раз");
       setBusy(false);
       return;
     }
-    router.push(callbackUrl);
+    // Кнопка остаётся «Входим…» до самой загрузки приложения — см. fastSignIn.ts.
+    enterApp(callbackUrl);
   }
 
   return (

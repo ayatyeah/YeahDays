@@ -1,107 +1,88 @@
 /**
- * Спокойный фон для квиза — синтезируется прямо в браузере.
+ * Музыка в квизе — официальная загрузка трека на YouTube во встроенном
+ * плеере.
  *
- * Почему не аудиофайл: готовую музыку нельзя положить в репозиторий без
- * лицензии, а подходящий трек весит мегабайты, которые скачивал бы каждый
- * телефон. Здесь — четыре медленных аккорда по кругу и редкие тихие
- * «колокольчики» из пентатоники: ничего не отвлекает и не повторяется
- * дословно, а весит это пару килобайт кода.
+ * Почему не mp3 на сайте: трек коммерческий, выложить файл для всех
+ * пользователей значило бы распространять чужую музыку без лицензии.
+ * Встраивание официального видео YouTube разрешено автором через саму
+ * платформу, артист получает просмотры, а на сайте нет ни одного байта
+ * чужого аудио.
+ *
+ * Правила YouTube требуют, чтобы плеер был виден и не меньше 200×200 —
+ * поэтому это карточка с видео в шапке квиза, а не скрытый аудио-поток.
+ * Хост youtube-nocookie.com — режим без рекламных cookie.
  */
 
-// Cmaj7 → Am7 → Fmaj7 → G6, нижний регистр: мягко и без напряжения.
-const CHORDS = [
-  [130.81, 164.81, 196.0, 246.94],
-  [110.0, 130.81, 164.81, 196.0],
-  [87.31, 110.0, 130.81, 164.81],
-  [98.0, 123.47, 146.83, 164.81],
-];
-// До-мажорная пентатоника октавой выше — любая нота звучит согласно.
-const BELLS = [523.25, 587.33, 659.25, 783.99, 880.0];
-const CHORD_SECONDS = 10;
+export const TRACK = {
+  id: "achi9ONHVt4",
+  title: "Lofi girl",
+  artist: "Егор Крид",
+  url: "https://www.youtube.com/watch?v=achi9ONHVt4",
+};
 
-export interface Ambient {
-  start(): void;
-  stop(): void;
-  readonly playing: boolean;
+export interface YouTubePlayer {
+  playVideo(): void;
+  pauseVideo(): void;
+  destroy(): void;
+  getCurrentTime(): number;
+  setVolume(volume: number): void;
 }
 
-export function createAmbient(): Ambient {
-  let ctx: AudioContext | null = null;
-  let master: GainNode | null = null;
-  let timer: ReturnType<typeof setInterval> | undefined;
-  let step = 0;
+interface PlayerEvent { target: YouTubePlayer; data: number }
 
-  function voice(frequency: number, at: number, peak: number, attack: number, hold: number, release: number, type: OscillatorType = "sine") {
-    if (!ctx || !master) return;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = type;
-    osc.frequency.value = frequency;
-    gain.gain.setValueAtTime(0.0001, at);
-    gain.gain.linearRampToValueAtTime(peak, at + attack);
-    gain.gain.setValueAtTime(peak, at + attack + hold);
-    gain.gain.exponentialRampToValueAtTime(0.0001, at + attack + hold + release);
-    osc.connect(gain).connect(master);
-    osc.start(at);
-    osc.stop(at + attack + hold + release + 0.1);
-  }
-
-  function chord() {
-    if (!ctx) return;
-    const now = ctx.currentTime + 0.05;
-    for (const note of CHORDS[step % CHORDS.length]) {
-      // Вторая, чуть расстроенная копия даёт «дыхание» вместо ровного гула.
-      voice(note, now, 0.05, 4, CHORD_SECONDS - 5, 6);
-      voice(note * 1.003, now, 0.03, 4, CHORD_SECONDS - 5, 6, "triangle");
-    }
-    for (let i = 0; i < 2; i++) {
-      const bell = BELLS[Math.floor(Math.random() * BELLS.length)];
-      voice(bell, now + 1.5 + Math.random() * (CHORD_SECONDS - 3), 0.018, 0.02, 0, 3.5);
-    }
-    step++;
-  }
-
-  return {
-    get playing() {
-      return ctx !== null;
+export interface YouTubeApi {
+  Player: new (
+    element: HTMLElement,
+    options: {
+      videoId: string;
+      host?: string;
+      width?: string | number;
+      height?: string | number;
+      playerVars?: Record<string, string | number>;
+      events?: { onReady?: (e: PlayerEvent) => void; onStateChange?: (e: PlayerEvent) => void; onError?: (e: PlayerEvent) => void };
     },
-    start() {
-      if (ctx) return;
-      try {
-        const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-        if (!Ctor) return;
-        ctx = new Ctor();
-        const filter = ctx.createBiquadFilter();
-        filter.type = "lowpass";
-        filter.frequency.value = 1800;
-        master = ctx.createGain();
-        master.gain.setValueAtTime(0.0001, ctx.currentTime);
-        master.gain.linearRampToValueAtTime(0.6, ctx.currentTime + 2);
-        master.connect(filter).connect(ctx.destination);
-        void ctx.resume();
-        chord();
-        timer = setInterval(chord, CHORD_SECONDS * 1000);
-      } catch {
-        // Без звука квиз работает так же; ошибка аудио не должна его ломать.
-        ctx = null;
-      }
-    },
-    stop() {
-      if (timer) clearInterval(timer);
-      timer = undefined;
-      const closing = ctx;
-      const gain = master;
-      ctx = null;
-      master = null;
-      if (!closing) return;
-      try {
-        gain?.gain.cancelScheduledValues(closing.currentTime);
-        gain?.gain.setValueAtTime(gain.gain.value, closing.currentTime);
-        gain?.gain.linearRampToValueAtTime(0.0001, closing.currentTime + 0.5);
-        setTimeout(() => void closing.close().catch(() => {}), 600);
-      } catch {
-        void closing.close().catch(() => {});
-      }
-    },
-  };
+  ) => YouTubePlayer;
 }
+
+declare global {
+  interface Window {
+    YT?: YouTubeApi;
+    onYouTubeIframeAPIReady?: () => void;
+  }
+}
+
+let api: Promise<YouTubeApi> | null = null;
+
+/** Скрипт IFrame API грузится один раз и только когда музыка действительно нужна. */
+export function loadYouTube(): Promise<YouTubeApi> {
+  if (api) return api;
+  api = new Promise((resolve, reject) => {
+    if (window.YT?.Player) {
+      resolve(window.YT);
+      return;
+    }
+    const previous = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      previous?.();
+      if (window.YT) resolve(window.YT);
+      else reject(new Error("YouTube API missing"));
+    };
+    const script = document.createElement("script");
+    script.src = "https://www.youtube.com/iframe_api";
+    script.async = true;
+    script.onerror = () => {
+      api = null;
+      reject(new Error("YouTube API failed to load"));
+    };
+    document.head.appendChild(script);
+  });
+  return api;
+}
+
+// Позиция трека между квизами: новый квиз продолжает песню, а не начинает
+// её с первой секунды в пятый раз.
+let position = 0;
+export const rememberPosition = (seconds: number) => {
+  if (Number.isFinite(seconds) && seconds > 0) position = seconds;
+};
+export const savedPosition = () => Math.floor(position);

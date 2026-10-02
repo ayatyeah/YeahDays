@@ -8,22 +8,37 @@ import { usePersonalizationStore } from "@/store/usePersonalizationStore";
 export default function PersonalizationPage() {
   const { data: session } = useSession(); const owner = session?.user?.id;
   const store = usePersonalizationStore(); const data = store.owner === owner ? store.data : null;
-  const [optIn, setOptIn] = useState(false); const [read, setRead] = useState(false); const [busy, setBusy] = useState(false);
-  async function save(enabled: boolean) { if (!owner) return; setBusy(true); await store.request(owner, { action: "consent", version: POLICY_VERSION, enabled, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }); setBusy(false); }
+  const [custom, setCustom] = useState(false); const [optIn, setOptIn] = useState(true); const [aiOptIn, setAiOptIn] = useState(true); const [busy, setBusy] = useState(false);
+  async function save(enabled: boolean, ai: boolean) { if (!owner) return; setBusy(true); await store.request(owner, { action: "consent", version: POLICY_VERSION, enabled, ai, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone }); setBusy(false); }
   const needsAcceptance = data?.version !== POLICY_VERSION;
   return <div className="mx-auto max-w-3xl space-y-5 px-4 pb-8">
-    <Link href="/account" className="text-sm underline">← Профиль</Link><h1 className="ios-title">Мой ритм и достижения</h1>
+    <Link href="/account" className="text-sm underline">← Профиль</Link><h1 className="ios-title">{needsAcceptance ? "Одно согласие на всё" : "Мой ритм и приватность"}</h1>
     {!data ? <p role="status">{store.error || "Загружаем настройки…"}{owner && <Button onClick={() => void store.request(owner)}>Повторить</Button>}</p> : <>
-      <section className="surface space-y-3 rounded-3xl p-5">
-        <h2 className="text-lg font-semibold">{needsAcceptance ? "Новая политика конфиденциальности" : "Твои настройки приватности"}</h2>
-        <p className="text-sm">Версия от 29 сентября 2026. Мы уточнили данные аккаунта, LMS, ИИ, учебного прогресса и новый добровольный учёт активности.</p>
-        <Link href="/privacy" target="_blank" rel="noopener" className="block underline">Прочитать политику полностью ↗</Link>
-        <p className="text-sm text-[var(--color-muted)]">Для персонализации считаем активное время в приложении, посещаемые разделы, возвращения и выполнения задач, действий и квестов. Не записываем содержимое экрана или нажатые клавиши. Без согласия этот учёт не работает.</p>
+      <section className="surface space-y-4 rounded-3xl p-5">
         {needsAcceptance ? <>
-          <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" checked={read} onChange={e => setRead(e.target.checked)} />Я прочитал(а) и принимаю политику конфиденциальности версии {POLICY_VERSION}.</label>
-          <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" checked={optIn} onChange={e => setOptIn(e.target.checked)} />Разрешаю учёт активности для персональных подсказок, статистики и достижений. Необязательно; можно отключить в любой момент.</label>
-          <Button disabled={busy || !read} onClick={() => void save(optIn)}>{busy ? "Сохраняем…" : "Принять выбранные настройки"}</Button>
-        </> : <><p className="text-sm">Политика принята. Учёт активности: <strong>{data.enabled ? "включён" : "выключен"}</strong>.</p><Button disabled={busy} onClick={() => void save(!data.enabled)}>{data.enabled ? "Отключить и удалить статистику активности" : "Разрешить учёт активности"}</Button><p className="text-xs text-[var(--color-muted)]">Отключение удаляет новую статистику и достижения этого раздела. Задачи, учебные XP, монеты и купленные скины сохраняются.</p></>}
+          <h2 className="text-lg font-semibold">Прими один раз — и больше не спросим</h2>
+          <p className="text-sm">Раньше согласие спрашивалось отдельно в чате с ИИ, в челлендже и для статистики. Теперь это одно решение. Нажимая «Принять всё», ты:</p>
+          <ul className="list-disc space-y-2 pl-5 text-sm">
+            <li>принимаешь <Link href="/privacy" target="_blank" rel="noopener" className="underline">политику конфиденциальности</Link> версии {POLICY_VERSION};</li>
+            <li>разрешаешь ИИ-функциям (чат, планировщик, ИИ-подготовка, челлендж) передавать в OpenAI то, что нужно для ответа: твой запрос и связанные с ним данные аккаунта — план, учебный прогресс, цели;</li>
+            <li>разрешаешь учёт активности: время в приложении, посещаемые разделы и выполненные дела — для твоей статистики, достижений и обезличенной аналитики сервиса.</li>
+          </ul>
+          <p className="text-xs text-[var(--color-muted)]">Не записываем содержимое экрана и нажатые клавиши. Любую часть можно отключить здесь же в любой момент.</p>
+          <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" disabled={busy} onClick={() => void save(true, true)}>{busy ? "Сохраняем…" : "Принять всё и продолжить"}</Button>
+          {!custom ? <button className="w-full text-sm underline" onClick={() => setCustom(true)}>Выбрать самому, что разрешить</button> : <div className="space-y-3 rounded-2xl border border-[var(--color-border)] p-4">
+            <p className="text-sm">Политика принимается в любом случае — без неё приложением пользоваться нельзя. Остальное по желанию:</p>
+            <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" checked={aiOptIn} onChange={e => setAiOptIn(e.target.checked)} /><span>Передача данных в ИИ<span className="block text-xs text-[var(--color-muted)]">Без этого ИИ-функции будут спрашивать разрешение каждый раз.</span></span></label>
+            <label className="flex items-start gap-3 text-sm"><input className="mt-1" type="checkbox" checked={optIn} onChange={e => setOptIn(e.target.checked)} /><span>Учёт активности<span className="block text-xs text-[var(--color-muted)]">Без этого не будет статистики времени и достижений «Моего ритма».</span></span></label>
+            <Button className="h-auto min-h-11 w-full whitespace-normal" disabled={busy} onClick={() => void save(optIn, aiOptIn)}>Принять политику с этим выбором</Button>
+          </div>}
+        </> : <>
+          <h2 className="text-lg font-semibold">Твои настройки приватности</h2>
+          <p className="text-sm">Политика версии {POLICY_VERSION} принята. <Link href="/privacy" target="_blank" rel="noopener" className="underline">Прочитать ↗</Link></p>
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--color-border)] p-4"><div className="min-w-0 flex-1"><p className="font-semibold">Передача данных в ИИ: {data.ai ? "разрешена" : "выключена"}</p><p className="text-xs text-[var(--color-muted)]">{data.ai ? "ИИ-функции не спрашивают разрешение каждый раз." : "ИИ-функции будут спрашивать разрешение перед каждой отправкой."}</p></div><Button size="sm" disabled={busy} onClick={() => void save(data.enabled, !data.ai)}>{data.ai ? "Выключить" : "Разрешить"}</Button></div>
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--color-border)] p-4"><div className="min-w-0 flex-1"><p className="font-semibold">Учёт активности: {data.enabled ? "включён" : "выключен"}</p><p className="text-xs text-[var(--color-muted)]">Отключение удаляет накопленную статистику и достижения этого раздела. Задачи, XP, монеты и скины сохраняются.</p></div><Button size="sm" disabled={busy} onClick={() => void save(!data.enabled, !!data.ai)}>{data.enabled ? "Отключить и удалить" : "Включить"}</Button></div>
+          </div>
+        </>}
         <div className="flex gap-4 text-sm"><a href="/api/account" className="underline">Выгрузить данные</a><Link href="/account" className="underline">Управление аккаунтом</Link></div>
       </section>
       {!needsAcceptance && data.enabled && <>

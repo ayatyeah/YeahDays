@@ -8,6 +8,7 @@ import { loadPref, savePref } from "@/lib/events/storage";
 import type { StudyEvent } from "@/lib/events/types";
 import { useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
+import { useContentLang } from "@/i18n/locale";
 
 const field = "mt-1 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-3 text-base";
 const dayLabel = (date: string) => new Date(`${date}T12:00:00`).toLocaleDateString("ru-RU", { weekday: "short", day: "numeric", month: "short" });
@@ -24,6 +25,7 @@ const dayLabel = (date: string) => new Date(`${date}T12:00:00`).toLocaleDateStri
  * невыполненные дела этого ивента заменяются, а не дублируются.
  */
 export default function EventPlan({ event, progress }: { event: StudyEvent; progress: Progress }) {
+  const tl = useContentLang();
   const today = dateKey();
   const [exam, setExam] = useState("");
   const [time, setTime] = useState("19:00");
@@ -48,12 +50,12 @@ export default function EventPlan({ event, progress }: { event: StudyEvent; prog
     }
     for (const day of plan) {
       useUserStore.getState().addTodo({
-        title: `${event.title}: ${day.steps.length === 1 ? day.steps[0].title.ru : `${day.steps.length} шага`}`,
+        title: `${event.title}: ${day.steps.length === 1 ? day.steps[0].title[tl] : `${day.steps.length} шага`}`,
         date: day.date,
         hour,
         minute: Math.floor(minute / 10) * 10,
         duration: day.minutes,
-        note: `${day.steps.map((s) => `• ${s.title.ru}`).join("\n")}\nОткрой «Учёба → Ивенты». ${marker}${day.date}]`,
+        note: `${day.steps.map((s) => `• ${s.title[tl]}`).join("\n")}\nОткрой «Учёба → Ивенты». ${marker}${day.date}]`,
       });
     }
     savePref(`exam:${event.id}`, exam);
@@ -91,7 +93,7 @@ export default function EventPlan({ event, progress }: { event: StudyEvent; prog
                   <strong>{day.date === today ? "Сегодня" : dayLabel(day.date)}</strong>
                   <span className="shrink-0 text-[var(--color-muted)]">≈ {day.minutes} мин</span>
                 </div>
-                <p className="mt-1 break-words text-[var(--color-muted)]">{day.steps.map((s) => s.title.ru).join(" · ")}</p>
+                <p className="mt-1 break-words text-[var(--color-muted)]">{day.steps.map((s) => s.title[tl]).join(" · ")}</p>
               </li>
             ))}
           </ol>

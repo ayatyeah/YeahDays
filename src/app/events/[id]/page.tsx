@@ -18,6 +18,7 @@ import ShareResult from "@/components/events/ShareResult";
 import SpeakButton from "@/components/events/SpeakButton";
 import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@/lib/events/storage";
 import type { Lang, StudyEvent } from "@/lib/events/types";
+import { useContentLang } from "@/i18n/locale";
 
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 const percent = (value: number) => `${Math.round(value * 100)}%`;
@@ -75,6 +76,7 @@ export default function EventPage() {
 
 function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   const list = useMemo(() => steps(event), [event]);
+  const tl = useContentLang();
   const [progress, setProgress] = useState<Progress>({});
   const [loaded, setLoaded] = useState(false);
   const [view, setView] = useState<View>({ mode: "map" });
@@ -246,8 +248,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
 
           {event.lectures.map((lecture, li) => (
             <section key={lecture.id} className={panel}>
-              <h2 className="text-lg font-bold">{lecture.title.ru}</h2>
-              <p className="text-sm text-[var(--color-muted)]">{lecture.title.en}</p>
+              <h2 className="text-lg font-bold">{lecture.title[tl]}</h2>
+              {tl === "ru" && <p className="text-sm text-[var(--color-muted)]">{lecture.title.en}</p>}
               <ol className="mt-4 space-y-2">
                 {list.filter((s) => s.lecture === li).map((step) => (
                   <StepRow key={step.id} step={step} result={progress[step.id]} onOpen={() => open(step)} />
@@ -412,10 +414,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
 
 /** Совет по итогам: что именно подтянуть, а не просто цифра. */
 function Verdict({ event, progress, percent: value }: { event: StudyEvent; progress: Progress; percent: number }) {
+  const tl = useContentLang();
   const final = progress[`${event.id}-final`];
   if (!final) return null;
   const weak = Object.entries(final.byLecture ?? {})
-    .map(([li, [right, total]]) => ({ title: event.lectures[Number(li)].title.ru, share: total ? right / total : 1 }))
+    .map(([li, [right, total]]) => ({ title: event.lectures[Number(li)].title[tl], share: total ? right / total : 1 }))
     .sort((a, b) => a.share - b.share)[0];
   const text = value >= 85 ? "Ты готов к квизу." : value >= 65 ? "Почти готов — повтори слабые места." : "Пока рано: пройди оставшиеся шаги и повтори квизы.";
   return (
@@ -427,7 +430,8 @@ function Verdict({ event, progress, percent: value }: { event: StudyEvent; progr
 }
 
 function StepRow({ step, result, onOpen }: { step: Step; result?: Progress[string]; onOpen: () => void }) {
-  const label = step.kind === "part" ? `Часть ${step.part! + 1}. ${step.title.ru}` : step.title.ru;
+  const tl = useContentLang();
+  const label = step.kind === "part" ? `Часть ${step.part! + 1}. ${step.title[tl]}` : step.title[tl];
   return (
     <li>
       <button
@@ -466,6 +470,7 @@ function Quiz({
   onExit: () => void;
   onFinish: (answers: number[]) => void;
 }) {
+  const tl = useContentLang();
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const item = quiz[index];
@@ -492,7 +497,7 @@ function Quiz({
             {music ? "♪ Музыка: вкл" : "♪ Музыка: выкл"}
           </button>
         </div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{step.title.ru}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{step.title[tl]}</p>
         {music && <EventMusic />}
         <div className="flex items-center gap-3">
           <div
@@ -575,18 +580,19 @@ function Result({
   onNext?: () => void;
   onMap: () => void;
 }) {
+  const tl = useContentLang();
   const mistakes = quiz.map((item, i) => ({ item, picked: answers[i] })).filter(({ item, picked }) => picked !== item.correct);
   const right = quiz.length - mistakes.length;
   const share = quiz.length ? right / quiz.length : 0;
   const perLecture = event.lectures.map((lecture, li) => {
     const mine = quiz.map((item, i) => ({ item, ok: answers[i] === item.correct })).filter(({ item }) => item.lecture === li);
-    return { title: lecture.title.ru, right: mine.filter((x) => x.ok).length, total: mine.length };
+    return { title: lecture.title[tl], right: mine.filter((x) => x.ok).length, total: mine.length };
   }).filter((x) => x.total > 0);
 
   return (
     <>
       <section className="rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 to-sky-500/10 p-5">
-        <p className="text-xs uppercase tracking-widest">{step.title.ru}</p>
+        <p className="text-xs uppercase tracking-widest">{step.title[tl]}</p>
         <p className="mt-3 text-5xl font-bold tabular-nums">{percent(share)}</p>
         <p className="mt-2 text-sm">
           Верных ответов: {right} из {quiz.length} · лучший результат: {percent(best)}
@@ -613,7 +619,7 @@ function Result({
       <div className="grid gap-2 sm:grid-cols-2">
         {onNext && following && (
           <Button variant="primary" className="h-auto min-h-11 whitespace-normal sm:col-span-2" onClick={onNext}>
-            Дальше: {following.kind === "part" ? `часть ${following.part! + 1} — ${following.title.ru}` : following.title.ru}
+            Дальше: {following.kind === "part" ? `часть ${following.part! + 1} — ${following.title[tl]}` : following.title[tl]}
           </Button>
         )}
         <Button className="h-auto min-h-11 whitespace-normal" onClick={onRetry}>Пройти ещё раз (новые вопросы)</Button>

@@ -22,7 +22,7 @@ export default function TermsPage() {
   return (
     <>
     <SiteNav />
-    <article className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
+    <article data-no-i18n className="mx-auto max-w-2xl px-5 py-12 sm:px-8 sm:py-16">
       <Link
         href="/"
         className="mb-6 text-[14px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"

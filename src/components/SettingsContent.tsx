@@ -14,6 +14,7 @@ import { YgIcon } from "@/components/yg-icons";
 import { useUserStore } from "@/store/useUserStore";
 import { buildIcs } from "@/lib/icsExport";
 import { useThemeStore } from "@/store/useThemeStore";
+import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 
 /**
  * Содержимое настроек — одно на два места: панель поверх профиля
@@ -71,6 +72,15 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
                   onChange={() => toggleTheme()}
                   label="Тёмная тема"
                 />
+              </div>
+              {/* Переключатель под подписью, а не справа: три названия
+                  языков на телефоне сжимали подпись в столбик по слову. */}
+              <div className="inset-row py-3">
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[16px]">Язык интерфейса</span>
+                  <span className="block text-[13px] text-[var(--color-muted)]">Казахский и английский — перевод в бета-версии: часть текстов и ответы ИИ остаются на русском.</span>
+                  <LanguageSwitcher className="mt-3" />
+                </span>
               </div>
             </div>
           </Group>

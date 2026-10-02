@@ -11,6 +11,7 @@ import NotificationCenter from "./NotificationCenter";
 import StandaloneViewportFix from "./StandaloneViewportFix";
 import { tabFromPath } from "@/lib/nav";
 import { cn } from "@/lib/cn";
+import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 
 /** Маркетинговые страницы — витрина, а не приложение. */
 const MARKETING = [
@@ -51,13 +52,25 @@ const MARKETING = [
  * PageTransition для них не нужна: два перехода на один жест — это
  * заметная задержка и двойное движение.
  */
+const AUTH_PAGES = ["/login", "/login/lms", "/register", "/forgot-password"];
+
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isMarketing = MARKETING.includes(pathname) || pathname.startsWith("/invite/");
   const isSection = tabFromPath(pathname) !== null;
 
+  // На экранах входа ещё нет настроек, а язык нужен уже здесь.
+  const authSwitcher = AUTH_PAGES.includes(pathname) && (
+    <LanguageSwitcher className="fixed right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-50 bg-[var(--color-bg)]" />
+  );
+
   if (isMarketing) {
-    return <div className="min-h-dvh">{children}</div>;
+    return (
+      <div className="min-h-dvh">
+        {authSwitcher}
+        {children}
+      </div>
+    );
   }
 
   return (
@@ -96,6 +109,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       >
         {isSection ? children : <PageTransition>{children}</PageTransition>}
       </div>
+      {authSwitcher}
       <BottomNav />
       <StandaloneViewportFix />
       <InstallPrompt />

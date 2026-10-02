@@ -60,3 +60,35 @@ export function challengeSummary(rows: ChallengeRow[], now = new Date()) {
   summary.hours = Math.round(summary.hours * 10) / 10;
   return summary;
 }
+
+type UsageRow = { day: string; feature: string; calls: number; inputTokens: number; outputTokens: number };
+
+const FEATURE_NAMES: Record<string, string> = {
+  chat: "ИИ-помощник",
+  planner: "Планировщик",
+  learning: "ИИ-подготовка",
+  challenge30: "Челлендж 30",
+};
+
+/**
+ * Расход ИИ по функциям за сегодня, 7 и 30 дней.
+ *
+ * Дни здесь — по UTC, как их пишет счётчик: сдвиг на пять часов для суммы
+ * за неделю не важен, зато «сегодня» совпадает с лимитами OpenAI.
+ */
+export function aiSummary(rows: UsageRow[], now = new Date()) {
+  const day = (back: number) => new Date(now.getTime() - back * 86_400_000).toISOString().slice(0, 10);
+  const today = day(0);
+  const week = day(6);
+  const features = [...new Set([...Object.keys(FEATURE_NAMES), ...rows.map((r) => r.feature)])];
+  const sum = (list: UsageRow[]) => ({ calls: list.reduce((n, r) => n + r.calls, 0), tokens: list.reduce((n, r) => n + r.inputTokens + r.outputTokens, 0) });
+  return features.map((feature) => {
+    const mine = rows.filter((r) => r.feature === feature);
+    return {
+      name: FEATURE_NAMES[feature] ?? feature,
+      today: sum(mine.filter((r) => r.day === today)),
+      week: sum(mine.filter((r) => r.day >= week)),
+      month: sum(mine),
+    };
+  });
+}

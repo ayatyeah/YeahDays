@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { blocksFor, defaultWindows, type Plan30 } from "./challenge30";
-import { challengeSummary, dailyCounts } from "./ownerAnalytics";
+import { aiSummary, challengeSummary, dailyCounts } from "./ownerAnalytics";
 
 const steps = ["Шаг 1", "Шаг 2", "Шаг 3", "Шаг 4"];
 function plan(extra: Partial<Plan30> = {}): Plan30 {
@@ -36,5 +36,21 @@ describe("challengeSummary", () => {
   });
   it("не падает на строке в незнакомом формате", () => {
     expect(challengeSummary([{ data: { brief: null }, aiDay: "", aiCount: 0 }, { data: plan(), aiDay: "", aiCount: 0 }], now).drafts).toBe(1);
+  });
+});
+
+describe("aiSummary", () => {
+  it("складывает вызовы и токены по функциям за сегодня, неделю и месяц", () => {
+    const rows = [
+      { day: "2026-10-10", feature: "chat", calls: 2, inputTokens: 100, outputTokens: 50 },
+      { day: "2026-10-05", feature: "chat", calls: 1, inputTokens: 10, outputTokens: 5 },
+      { day: "2026-09-20", feature: "chat", calls: 4, inputTokens: 400, outputTokens: 100 },
+      { day: "2026-10-10", feature: "planner", calls: 1, inputTokens: 900, outputTokens: 300 },
+    ];
+    const summary = aiSummary(rows, now);
+    expect(summary.find((f) => f.name === "ИИ-помощник")).toEqual({ name: "ИИ-помощник", today: { calls: 2, tokens: 150 }, week: { calls: 3, tokens: 165 }, month: { calls: 7, tokens: 665 } });
+    expect(summary.find((f) => f.name === "Планировщик")!.today).toEqual({ calls: 1, tokens: 1200 });
+    // Функция без вызовов всё равно в списке — с нулями, а не пропуском.
+    expect(summary.find((f) => f.name === "Челлендж 30")!.month).toEqual({ calls: 0, tokens: 0 });
   });
 });

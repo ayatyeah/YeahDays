@@ -22,7 +22,29 @@ const inter = Inter({
   display: "swap",
 });
 
+/** Основной адрес сайта: от него строятся абсолютные ссылки в превью и sitemap. */
+const SITE = "https://yeahgrind.site";
+
 export const metadata: Metadata = {
+  // Без metadataBase относительный путь картинки превью остаётся
+  // относительным, и мессенджеры её не показывают.
+  metadataBase: new URL(SITE),
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: SITE,
+    siteName: "YeahGrind",
+    locale: "ru_RU",
+    title: "YeahGrind — одно действие в день",
+    description: "План под твоё состояние, учёба, квизы и челленджи — в одном приложении.",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "YeahGrind — одно действие в день" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "YeahGrind — одно действие в день",
+    description: "План под твоё состояние, учёба, квизы и челленджи — в одном приложении.",
+    images: ["/og.png"],
+  },
   applicationName: "YeahGrind",
   title: "YeahGrind — одно действие в день",
   description:

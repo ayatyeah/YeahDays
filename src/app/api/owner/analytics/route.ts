@@ -12,6 +12,7 @@ import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/owner";
 import { activitySummary, aiSummary, challengeSummary, dailyCounts, funnel } from "@/lib/ownerAnalytics";
 import { POLICY_VERSION } from "@/lib/personalization";
+import { MEMBER } from "@/lib/socialDb";
 import { visitSummary } from "@/lib/visits";
 
 export const runtime = "nodejs";
@@ -65,7 +66,8 @@ export async function GET() {
           count(*) FILTER (WHERE data->'plan' @> '[{"completed": true}]' OR data->'todos' @> '[{"done": true}]')::int AS completed
         FROM "UserState"`,
       Promise.all([
-        prisma.communityProfile.count({ where: { published: true } }),
+        // Участник сообщества — тот, кто принял действующую политику и не скрыл себя: профилем служит сам аккаунт.
+        prisma.user.count({ where: MEMBER }),
         prisma.socialPost.count({ where: { parentId: null } }),
         prisma.socialPost.count({ where: { parentId: null, createdAt: { gte: since(7) } } }),
         prisma.socialPost.count({ where: { parentId: { not: null } } }),
@@ -74,13 +76,15 @@ export async function GET() {
         prisma.studyTeam.count(),
         prisma.studyTeam.count({ where: { open: true } }),
         prisma.socialReport.count({ where: { resolved: false } }),
+        prisma.socialMedia.count({ where: { postId: { not: null } } }),
+        prisma.communityProfile.count({ where: { hidden: true } }),
       ]),
     ]);
 
     type Consent = { version?: string; enabled?: boolean; ai?: boolean };
     const consents = profiles.map((p) => p.data as Consent);
     const accepted = consents.filter((c) => c?.version === POLICY_VERSION);
-    const [published, posts, postsWeek, comments, likes, follows, teamCount, openTeams, socialReports] = social;
+    const [published, posts, postsWeek, comments, likes, follows, teamCount, openTeams, socialReports, photos, hidden] = social;
 
     const registrations = dailyCounts(recent.map((u) => u.createdAt), 30, now);
     return NextResponse.json(
@@ -121,7 +125,7 @@ export async function GET() {
           activity: accepted.filter((c) => c.enabled).length,
           ai: accepted.filter((c) => c.ai).length,
         },
-        community: { published, posts, postsWeek, comments, likes, follows, teams: teamCount, openTeams, reports: socialReports },
+        community: { published, posts, postsWeek, comments, likes, follows, teams: teamCount, openTeams, reports: socialReports, photos, hidden },
         ai: aiSummary(usage, now),
         events: {
           participants: eventRows.length,

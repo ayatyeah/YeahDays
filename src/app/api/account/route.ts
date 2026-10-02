@@ -64,7 +64,8 @@ export async function GET() {
       prisma.challenge30.findUnique({ where: { userId }, select: { data: true, updatedAt: true } }),
       prisma.eventProgress.findMany({ where: { userId }, select: { eventId: true, data: true, percent: true, share: true, updatedAt: true } }),
       prisma.eventReport.findMany({ where: { userId }, select: { eventId: true, questionId: true, text: true, createdAt: true } }),
-      prisma.socialPost.findMany({ where: { userId }, select: { id: true, parentId: true, text: true, createdAt: true } }),
+      // Фото — ссылками: сами снимки человек может скачать по ним, пока вошёл в аккаунт.
+      prisma.socialPost.findMany({ where: { userId }, select: { id: true, parentId: true, text: true, createdAt: true, media: { orderBy: { position: "asc" }, select: { id: true, width: true, height: true, bytes: true } } } }),
       prisma.socialLike.findMany({ where: { userId }, select: { postId: true, createdAt: true } }),
       prisma.follow.findMany({ where: { followerId: userId }, select: { followingId: true, createdAt: true } }),
       prisma.follow.findMany({ where: { followingId: userId }, select: { followerId: true, createdAt: true } }),
@@ -77,7 +78,7 @@ export async function GET() {
       personalization, learning, lms, providers,
       community: { profile: communityProfile, memberships, posts, attendance, reports },
       chat, chatHistory, challenge30, eventProgress, eventReports,
-      social: { posts: socialPosts, likes: socialLikes, following, followers },
+      social: { posts: socialPosts.map((p) => ({ ...p, media: p.media.map((m) => ({ url: `/api/media/${m.id}`, width: m.width, height: m.height, bytes: m.bytes })) })), likes: socialLikes, following, followers },
       events,
       eventCount: events.length,
     };

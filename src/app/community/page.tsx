@@ -7,7 +7,7 @@ import FriendsCard from '@/components/FriendsCard';
 import type { communityHome, teamView } from '@/lib/communityDb';
 import type { socialHome } from '@/lib/socialDb';
 import { focusRequired } from '@/lib/community';
-import { CreateProfile, Feed, People, ProfileView, TeamsDiscover } from '@/components/community/Social';
+import { Activity, Avatar, Explore, Icon, Feed, PolicyGate, PostDetail, ProfileView, TeamsDiscover, type Ctx } from '@/components/community/Social';
 import { usePersonalizationStore } from '@/store/usePersonalizationStore';
 type Home = Awaited<ReturnType<typeof communityHome>> & { social: Awaited<ReturnType<typeof socialHome>> };
 type Team = Awaited<ReturnType<typeof teamView>>;
@@ -28,35 +28,51 @@ export default function CommunityPage() {
   if(!data?.user?.id) return <Link href="/login">Войди, чтобы учиться вместе</Link>;
   return <Community key={data.user.id} />;
 }
+type Overlay = { kind: 'profile' | 'post'; id: string } | null;
+const TABS = [['feed','Лента','home'],['explore','Поиск','search'],['teams','Команды','users'],['activity','Активность','heart'],['profile','Профиль','user']] as const;
 function Community() {
   const [home,setHome]=useState<Home|null>(null); const [team,setTeam]=useState<Team|null>(null);
-  const [selected,setSelected]=useState(''); const [tab,setTab]=useState('feed'); const [error,setError]=useState(''); const [notice,setNotice]=useState(''); const [busy,setBusy]=useState(false);
-  // Чей профиль открыт поверх экрана; null — никакой.
-  const [invite,setInvite]=useState(''); const [viewing,setViewing]=useState<string|null>(null);
+  const [selected,setSelected]=useState(''); const [tab,setTab]=useState<(typeof TABS)[number][0]>('feed'); const [error,setError]=useState(''); const [notice,setNotice]=useState(''); const [busy,setBusy]=useState(false);
+  // Что открыто поверх экрана: чей-то профиль или отдельный пост.
+  const [invite,setInvite]=useState(''); const [overlay,setOverlay]=useState<Overlay>(null);
   const busyRef=useRef(false);
   const alive=useRef(true); const sequence=useRef(0);
-  // Ссылка-приглашение в команду открывает сразу вкладку команд, ссылка на профиль — профиль.
-  useEffect(()=>{alive.current=true; const q=new URLSearchParams(location.search);setInvite(q.get('join')||'');if(q.get('join')||q.get('team'))setTab('teams');if(q.get('team'))setSelected(q.get('team')!);if(q.get('profile'))setViewing(q.get('profile'));return()=>{alive.current=false;sequence.current++;};},[]);
+  // Ссылка-приглашение открывает вкладку команд, ссылка на профиль или пост — сразу его.
+  useEffect(()=>{alive.current=true; const q=new URLSearchParams(location.search);setInvite(q.get('join')||'');if(q.get('join')||q.get('team'))setTab('teams');if(q.get('team'))setSelected(q.get('team')!);if(q.get('post'))setOverlay({kind:'post',id:q.get('post')!});else if(q.get('profile'))setOverlay({kind:'profile',id:q.get('profile')!});return()=>{alive.current=false;sequence.current++;};},[]);
   const load=useCallback(async()=>{const n=++sequence.current;try{const [h,t]=await Promise.all([api(),selected?api('?team='+encodeURIComponent(selected)):null]);if(alive.current&&n===sequence.current){setHome(h);setTeam(t);setError('');}}catch(e){if(alive.current&&n===sequence.current)setError((e as Error).message);}},[selected]);
-  useEffect(()=>{void load();const timer=setInterval(()=>{if(document.visibilityState==='visible')void load();},15000);return()=>clearInterval(timer);},[load]);
+  // Команда с таймером комнаты обновляется часто; остальным вкладкам хватает редкой сверки — ради точки «новое» в активности.
+  useEffect(()=>{void load();const timer=setInterval(()=>{if(document.visibilityState==='visible')void load();},selected?15000:60000);return()=>clearInterval(timer);},[load,selected]);
   const act:Act=async data=>{if(busyRef.current)return false;busyRef.current=true;setBusy(true);setError('');setNotice('');try{const result=await api('',{teamId:selected,...data});if(!alive.current)return false;
     if(result.teamId){setSelected(result.teamId);setInvite('');history.replaceState(null,'','/community');}
     else if(data.action==='leave'||data.action==='deleteTeam'){setSelected('');setTeam(null);}
     else await load();setNotice('Готово');return true;
   }catch(e){if(alive.current)setError((e as Error).message);return false;}finally{busyRef.current=false;if(alive.current)setBusy(false);}};
-  const viewProfile=(id:string)=>setViewing(id);
-  // Нет своего профиля — действие (лайк, подписка) ведёт к предложению его создать.
-  const needProfile=()=>{setViewing(null);setTab('feed');setNotice('');setError('Чтобы подписываться, лайкать и писать, создай профиль — кнопка выше.');};
-  return <main className="mx-auto w-full max-w-3xl space-y-5 pb-4">
-    <header><p className="text-sm text-[var(--color-intelligence)]">Учиться легче вместе</p><h1 className="mt-1 text-3xl font-bold">Сообщество</h1><p className="mt-2 text-sm text-[var(--color-fg-dim)]">Лента, люди и команды — под твоим аккаунтом YeahGrind.</p></header>
-    <div className="grid grid-cols-4 gap-1" role="group" aria-label="Разделы сообщества">{[['feed','Лента'],['people','Люди'],['teams','Команды'],['profile','Профиль']].map(([id,label])=><button key={id} className={(tab===id?button:secondary)+' px-1'} onClick={()=>{setTab(id);setViewing(null);setError('');}} aria-pressed={tab===id}>{label}</button>)}</div>
-    {error&&<div role="alert" className={card+' text-[var(--color-strength)]'}>{error} <button className="underline" onClick={()=>void load()}>Повторить</button></div>}
+  const closeOverlay=()=>{setOverlay(null);if(location.search)history.replaceState(null,'','/community');};
+  const social=home?.social;
+  const ctx:Ctx={
+    canAct:!!social?.canAct,
+    onProfile:id=>setOverlay({kind:'profile',id}),
+    onPost:id=>setOverlay({kind:'post',id}),
+    // Действие недоступно — закрываем то, что открыто, и показываем причину там, где её видно.
+    onBlocked:()=>{setOverlay(null);setNotice('');setError(social?.hidden?'Ты скрыт из сообщества: можно читать, но не писать и не подписываться. Включить видимость — во вкладке «Профиль».':'Чтобы публиковать, подписываться и ставить лайки, прими политику — это одна кнопка ниже.');window.scrollTo({top:0,behavior:'smooth'});},
+  };
+  return <main className="mx-auto w-full max-w-2xl space-y-4 pb-4">
+    <header className="flex items-center justify-between gap-3"><h1 className="text-2xl font-bold">Сообщество</h1>{social&&<button className="flex items-center gap-2 text-sm" onClick={()=>setTab('profile')} aria-label="Мой профиль"><span data-no-i18n className="max-w-[9rem] truncate text-[var(--color-fg-dim)]">{social.name}</span><Avatar person={social} size={32}/></button>}</header>
+    <nav className="sticky top-[env(safe-area-inset-top)] z-20 -mx-1 grid grid-cols-5 gap-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg)] p-1" aria-label="Разделы сообщества">{TABS.map(([id,label,icon])=><button key={id} className={'relative flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl text-[11px] leading-tight '+(tab===id?'bg-[var(--color-intelligence)] font-semibold text-[var(--color-bg)]':'text-[var(--color-fg-dim)]')} onClick={()=>{setTab(id);setOverlay(null);setError('');setNotice('');}} aria-pressed={tab===id}><Icon name={icon} size={20}/>{label}{id==='activity'&&!!social?.unread&&tab!=='activity'&&<><span aria-hidden className="absolute right-2 top-1.5 h-2.5 w-2.5 rounded-full bg-[var(--color-strength)]"/><span className="sr-only"> — есть новое</span></>}</button>)}</nav>
+    {error&&<div role="alert" className={card+' text-[var(--color-strength)]'}>{error} <button className="underline" onClick={()=>{setError('');void load();}}>Повторить</button></div>}
     {notice&&<p role="status" className="text-sm text-[var(--color-stability)]">{notice}</p>}
     {!home&&!error&&<p role="status">Открываем сообщество…</p>}
-    {home&&!home.social.published&&tab!=='profile'&&<CreateProfile name={home.social.name} onCreated={()=>{setError('');setNotice('Профиль создан — теперь можно подписываться и писать посты.');void load();}}/>}
-    {home&&tab==='feed'&&<Feed key={String(home.social.published)} published={home.social.published} hasFollowing={home.social.following>0} onProfile={viewProfile} onNeedProfile={needProfile}/>}
-    {home&&tab==='people'&&<><People published={home.social.published} onProfile={viewProfile} onNeedProfile={needProfile}/><FriendsCard/><p className="text-sm text-[var(--color-fg-dim)]">Друзья — это взаимная связь по приглашению: с ними можно делить челленджи и рейтинги. Подписка — односторонняя: ты просто видишь посты человека в ленте.</p></>}
-    {home&&tab==='profile'&&<><section className={card+' space-y-3'}><h2 className="text-xl font-bold" data-no-i18n>{home.social.name}</h2><div className="grid grid-cols-3 gap-2 text-center">{([[home.social.posts,'постов'],[home.social.followers,'подписчиков'],[home.social.following,'подписок']] as const).map(([n,label])=><div key={label} className="rounded-xl bg-[var(--color-surface-2)] p-2"><p className="text-lg font-bold tabular-nums">{n}</p><p className="text-xs text-[var(--color-fg-dim)]">{label}</p></div>)}</div><p className="text-sm text-[var(--color-fg-dim)]">{home.social.published?'Профиль опубликован: тебя можно найти и на тебя можно подписаться.':'Профиль не опубликован: тебя нет в поиске, посты и подписки недоступны.'}</p><button className={secondary} onClick={()=>viewProfile(home.userId)}>Посмотреть мой профиль</button></section><ProfileEditor home={home} act={act} busy={busy}/>{!!home.profile?.blocked.length&&<section className={card}><h2 className="font-semibold">Заблокированные</h2>{home.profile.blocked.map((id,i)=><div key={id} className="mt-2 flex items-center justify-between"><span>Пользователь {i+1}</span><button className={secondary} disabled={busy} onClick={()=>void act({action:'unblock',userId:id})}>Разблокировать</button></div>)}</section>}</>}
+    {social&&!social.accepted&&<PolicyGate/>}
+    {social&&social.accepted&&social.hidden&&tab!=='profile'&&<section className={card+' space-y-2'}><p className="text-sm">Ты скрыт из сообщества: тебя нет в поиске и ленте. Читать можно, писать и подписываться — нет.</p><button className={secondary} disabled={busy} onClick={()=>void act({action:'visibility',hidden:false})}>Показать меня в сообществе</button></section>}
+    {home&&social&&tab==='feed'&&<Feed key={String(social.canAct)} me={social} hasFollowing={social.following>0} ctx={ctx}/>}
+    {home&&tab==='explore'&&<Explore ctx={ctx}/>}
+    {home&&tab==='activity'&&<Activity ctx={ctx} onSeen={()=>void load()}/>}
+    {home&&tab==='profile'&&<>
+      <ProfileView id={home.userId} ctx={ctx} onBlock={()=>{}} onChanged={()=>void load()}/>
+      <AboutEditor home={home} act={act} busy={busy}/>
+      <FriendsCard/><p className="text-sm text-[var(--color-fg-dim)]">Друзья — это взаимная связь по приглашению: с ними можно делить челленджи и рейтинги. Подписка — односторонняя: ты просто видишь посты человека в ленте.</p>
+      {!!home.profile?.blocked.length&&<section className={card}><h2 className="font-semibold">Заблокированные</h2>{home.profile.blocked.map((id,i)=><div key={id} className="mt-2 flex items-center justify-between"><span>Пользователь {i+1}</span><button className={secondary} disabled={busy} onClick={()=>void act({action:'unblock',userId:id})}>Разблокировать</button></div>)}</section>}
+    </>}
     {home&&tab==='teams'&&<>
       {invite&&<form className={card+' space-y-3'} onSubmit={e=>{e.preventDefault();void act({action:'join',invite});}}><h2 className="font-semibold">Тебя пригласили в команду</h2><p className="text-sm">После вступления участники увидят твоё имя. Твои задачи и LMS останутся приватными.</p><button className={button} disabled={busy}>Присоединиться</button><button type="button" className={secondary+' ml-2'} onClick={()=>{setInvite('');history.replaceState(null,'','/community');}}>Не сейчас</button></form>}
       <div className="flex flex-wrap gap-2">{selected&&<button className={secondary} onClick={()=>{setSelected('');setTeam(null);}}>← Все команды</button>}{home.teams.map(t=><button className={selected===t.id?button:secondary} disabled={busy} key={t.id} onClick={()=>{setSelected(t.id);setTeam(null);}}><span data-no-i18n>{t.name}</span> <span className="opacity-60">· {t._count.members}</span></button>)}</div>
@@ -64,22 +80,24 @@ function Community() {
       {!selected&&<TeamsDiscover onOpen={id=>{setSelected(id);setTeam(null);}} onJoined={id=>{setSelected(id);setTeam(null);setNotice('Ты в команде');void load();}}/>}
       <details className={card}><summary className="cursor-pointer font-semibold">Создать команду или ввести приглашение</summary><form className="mt-4 grid gap-3" onSubmit={async e=>{const f=e.currentTarget;const data=values(e);if(await act({action:'create',...data}))f.reset();}}><Field title="Название команды"><input name="name" required maxLength={80} placeholder="Готовимся к экзамену" className={field}/></Field><Field title="Предмет"><input name="subject" required maxLength={100} placeholder="Computer Networks" className={field}/></Field><p className="text-xs text-[var(--color-fg-dim)]">Команда создаётся закрытой — по приглашению. Открыть её для всех можно в настройках команды.</p><button className={button} disabled={busy}>Создать команду</button></form><form className="mt-5 grid gap-3" onSubmit={e=>{const data=values(e);let code=String(data.invite).trim();try{code=new URL(code).searchParams.get('join')||code;}catch{}void act({action:'join',invite:code});}}><Field title="Ссылка или код приглашения"><input name="invite" className={field} required/></Field><button className={secondary} disabled={busy}>Вступить</button></form></details>
       {selected&&!team&&!error&&<p role="status">Открываем команду…</p>}
-      {team&&home&&<TeamPanel key={team.id} team={team} me={home.userId} act={act} busy={busy} ai={home.available} onProfile={viewProfile}/>}
+      {team&&home&&<TeamPanel key={team.id} team={team} me={home.userId} act={act} busy={busy} ai={home.available} onProfile={ctx.onProfile}/>}
     </>}
-    <Modal open={!!viewing} onClose={()=>setViewing(null)} title="Профиль">
-    {viewing&&home&&<ProfileView key={viewing} id={viewing} canAct={home.social.published} onProfile={viewProfile} onNeedProfile={needProfile} onBlock={async id=>{if(await act({action:'block',userId:id}))setViewing(null);}}/>}
+    <Modal open={!!overlay} onClose={closeOverlay} title={overlay?.kind==='post'?'Пост':'Профиль'}>
+    {overlay&&home&&(overlay.kind==='post'
+      ?<PostDetail key={overlay.id} id={overlay.id} ctx={ctx} onRemoved={closeOverlay}/>
+      :<ProfileView key={overlay.id} id={overlay.id} ctx={ctx} onChanged={()=>void load()} onBlock={async id=>{if(await act({action:'block',userId:id}))setOverlay(null);}}/>)}
     </Modal>
   </main>;
 }
-function ProfileEditor({home,act,busy}:{home:Home;act:Act;busy:boolean}) {
+function AboutEditor({home,act,busy}:{home:Home;act:Act;busy:boolean}) {
   const p=home.profile;
-  return <form className={card+' grid gap-4'} onSubmit={e=>{const d=values(e);void act({action:'profile',bio:d.bio,subjects:String(d.subjects).split('\n').map(s=>s.trim()).filter(Boolean),goals:String(d.goals).split('\n').map(s=>s.trim()).filter(Boolean),published:d.published==='on',showCharacter:d.showCharacter==='on',showAchievements:d.showAchievements==='on'});}}>
-    <h2 className="text-lg font-semibold">Что увидят другие</h2><p className="text-sm text-[var(--color-fg-dim)]">Публичный профиль доступен вошедшим пользователям. Личный план, посещаемость и переписка с ИИ сюда не попадают.</p>
+  return <details className={card}><summary className="cursor-pointer font-semibold">О себе</summary><form className="mt-4 grid gap-4" onSubmit={e=>{const d=values(e);void act({action:'profile',bio:d.bio,subjects:String(d.subjects).split('\n').map(s=>s.trim()).filter(Boolean),goals:String(d.goals).split('\n').map(s=>s.trim()).filter(Boolean)});}}>
+    <p className="text-sm text-[var(--color-fg-dim)]">Имя, персонаж, уровень и серия берутся из твоего аккаунта YeahGrind. Здесь можно добавить пару слов о себе — это необязательно. Личный план, посещаемость и переписка с ИИ в профиль не попадают.</p>
     <Field title="О себе"><textarea className={field} name="bio" maxLength={500} defaultValue={p?.bio}/></Field>
     <Field title="Предметы — по одному на строку, до 8"><textarea className={field} name="subjects" defaultValue={p?.subjects.join('\n')} placeholder="Computer Networks"/></Field>
     <Field title="Цели, которыми хочешь поделиться — до 8"><textarea className={field} name="goals" defaultValue={p?.goals.join('\n')} placeholder="Разобраться в маршрутизации"/></Field>
-    <label className="flex gap-3"><input type="checkbox" name="showCharacter" defaultChecked={p?.showCharacter}/>Показывать мой скин</label><label className="flex gap-3"><input type="checkbox" name="showAchievements" defaultChecked={p?.showAchievements}/>Показывать совместные занятия и значок</label><label className="flex gap-3"><input type="checkbox" name="published" defaultChecked={p?.published}/>Опубликовать профиль</label><button className={button} disabled={busy}>Сохранить видимость</button>
-  </form>;
+    <button className={button} disabled={busy}>Сохранить</button>
+  </form></details>;
 }
 function TeamPanel({team,me,act,busy,ai,onProfile}:{team:Team;me:string;act:Act;busy:boolean;ai:boolean;onProfile:(id:string)=>void}) {
   const [tab,setTab]=useState('feed');const [copy,setCopy]=useState('');const owner=team.ownerId===me;

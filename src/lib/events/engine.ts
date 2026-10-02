@@ -191,3 +191,100 @@ export function readiness(event: StudyEvent, progress: Progress) {
     total: all.length,
   };
 }
+
+/**
+ * Объединить прогресс с двух устройств (или локальный с серверным).
+ *
+ * Обычное «побеждает последняя запись» стирало бы результаты: человек
+ * прошёл две части на телефоне, одну на ноутбуке — и после синхронизации
+ * остался бы только ноутбук. Поэтому по каждому шагу берём лучшее: лучший
+ * результат и большее число попыток. «Последний» результат — от стороны,
+ * где попыток больше, то есть более свежей.
+ */
+export function mergeProgress(a: Progress, b: Progress): Progress {
+  const out: Progress = { ...a };
+  for (const [id, theirs] of Object.entries(b)) {
+    const mine = out[id];
+    if (!mine) {
+      out[id] = theirs;
+      continue;
+    }
+    const newer = theirs.attempts > mine.attempts ? theirs : mine;
+    out[id] = { ...newer, best: Math.max(mine.best, theirs.best), attempts: Math.max(mine.attempts, theirs.attempts) };
+  }
+  return out;
+}
+
+/**
+ * Привести присланный клиентом прогресс к допустимому виду.
+ *
+ * Сервер не верит браузеру: чужие ключи отбрасываются, доли зажимаются в
+ * 0…1. Это не защита от накрутки (квиз проходится на клиенте, и честность
+ * результата — дело самого человека), а защита базы и рейтинга от мусора.
+ */
+export function sanitizeProgress(event: StudyEvent, raw: unknown): Progress {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  const share = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
+  const out: Progress = {};
+  for (const step of steps(event)) {
+    const item = (raw as Record<string, unknown>)[step.id];
+    if (!item || typeof item !== "object") continue;
+    const r = item as Record<string, unknown>;
+    const attempts = typeof r.attempts === "number" && Number.isInteger(r.attempts) ? Math.min(9999, Math.max(1, r.attempts)) : 1;
+    const result: StepResult = { best: share(r.best), last: share(r.last), attempts };
+    if (step.kind === "final" && r.byLecture && typeof r.byLecture === "object") {
+      const byLecture: Record<number, [number, number]> = {};
+      event.lectures.forEach((_, li) => {
+        const cell = (r.byLecture as Record<string, unknown>)[li];
+        if (Array.isArray(cell) && cell.length === 2 && cell.every((n) => Number.isInteger(n) && n >= 0 && n <= 999)) {
+          byLecture[li] = [Math.min(cell[0], cell[1]), cell[1]];
+        }
+      });
+      result.byLecture = byLecture;
+    }
+    out[step.id] = result;
+  }
+  return out;
+}
+
+/** Сколько минут примерно занимает шаг — для плана по дням. */
+export function stepMinutes(step: Step): number {
+  return step.kind === "part" ? 20 : step.kind === "lecture" ? 20 : 40;
+}
+
+export interface PlanDay {
+  /** YYYY-MM-DD */
+  date: string;
+  steps: Step[];
+  minutes: number;
+}
+
+const addDays = (day: string, n: number) => new Date(Date.parse(`${day}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+
+/**
+ * Разложить ещё не пройденные шаги по дням от сегодня до дня перед квизом.
+ *
+ * Порядок шагов сохраняется, нагрузка выравнивается по минутам, а не по
+ * числу шагов: итоговый квиз вдвое длиннее части. Последний день перед
+ * квизом достаётся итоговому квизу — чтобы «репетиция» была накануне, а не
+ * за неделю. Если квиз сегодня или уже прошёл, всё остаётся на сегодня.
+ */
+export function planDays(event: StudyEvent, progress: Progress, today: string, examDate: string): PlanDay[] {
+  const left = steps(event).filter((s) => !progress[s.id]);
+  if (!left.length) return [];
+  const span = Math.round((Date.parse(`${examDate}T12:00:00Z`) - Date.parse(`${today}T12:00:00Z`)) / 86_400_000);
+  const days = Math.max(1, Math.min(span, left.length));
+  const total = left.reduce((n, s) => n + stepMinutes(s), 0);
+  const out: PlanDay[] = Array.from({ length: days }, (_, i) => ({ date: addDays(today, i), steps: [], minutes: 0 }));
+  let day = 0;
+  let spent = 0;
+  left.forEach((step, i) => {
+    // Переходим к следующему дню, когда набрали его долю минут — но так,
+    // чтобы шагов хватило на все оставшиеся дни.
+    while (day < days - 1 && (spent >= (total / days) * (day + 1) || left.length - i <= days - 1 - day) && out[day].steps.length > 0) day++;
+    out[day].steps.push(step);
+    out[day].minutes += stepMinutes(step);
+    spent += stepMinutes(step);
+  });
+  return out.filter((d) => d.steps.length > 0);
+}

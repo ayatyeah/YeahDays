@@ -3,6 +3,7 @@ import { week1 } from "./researchMethods/week1";
 import { week2 } from "./researchMethods/week2";
 import { week3 } from "./researchMethods/week3";
 import { week4 } from "./researchMethods/week4";
+import { cheatSheet, glossary } from "./researchMethods/extras";
 
 /**
  * Все ивенты раздела «Учёба». Новый ивент — новый объект в этом списке и
@@ -17,6 +18,8 @@ export const EVENTS: StudyEvent[] = [
       "Четыре лекции по частям: читаешь конспект, проходишь короткий квиз, в конце лекции — квиз по всей лекции, а в финале — большой квиз по всему курсу и оценка готовности.",
     lectures: [week1, week2, week3, week4],
     counts: { part: 8, lecture: 18, final: 45 },
+    glossary,
+    cheatSheet,
   },
 ];
 

@@ -53,7 +53,7 @@ export async function GET() {
       prisma.account.findMany({ where: { userId }, select: { provider: true, providerAccountId: true } }),
     ]);
 
-    const [communityProfile, memberships, posts, attendance, reports, chat, chatHistory, challenge30] = await Promise.all([
+    const [communityProfile, memberships, posts, attendance, reports, chat, chatHistory, challenge30, eventProgress, eventReports] = await Promise.all([
       prisma.communityProfile.findUnique({ where: { userId } }),
       prisma.studyMember.findMany({ where: { userId }, select: { teamId: true, joinedAt: true, team: { select: { name: true, subject: true } } } }),
       prisma.studyPost.findMany({ where: { userId }, select: { id: true, teamId: true, parentId: true, roomId: true, text: true, kind: true, ai: true, createdAt: true } }),
@@ -62,6 +62,8 @@ export async function GET() {
       prisma.aiChat.findUnique({ where: { userId }, select: { messages: true, updatedAt: true } }),
       prisma.aiChatArchive.findMany({ where: { userId }, select: { id: true, title: true, messages: true, savedAt: true } }),
       prisma.challenge30.findUnique({ where: { userId }, select: { data: true, updatedAt: true } }),
+      prisma.eventProgress.findMany({ where: { userId }, select: { eventId: true, data: true, percent: true, share: true, updatedAt: true } }),
+      prisma.eventReport.findMany({ where: { userId }, select: { eventId: true, questionId: true, text: true, createdAt: true } }),
     ]);
     const payload = {
       exportedAt: new Date().toISOString(),
@@ -70,7 +72,7 @@ export async function GET() {
       progressUpdatedAt: state?.clientAt ?? null,
       personalization, learning, lms, providers,
       community: { profile: communityProfile, memberships, posts, attendance, reports },
-      chat, chatHistory, challenge30,
+      chat, chatHistory, challenge30, eventProgress, eventReports,
       events,
       eventCount: events.length,
     };

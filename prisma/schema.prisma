@@ -43,6 +43,11 @@ model User {
   studyPosts StudyPost[]
   studyAttendance StudyAttendance[]
   communityReports CommunityReport[]
+  following         Follow[]                  @relation("follower")
+  followers         Follow[]                  @relation("following")
+  socialPosts       SocialPost[]
+  socialLikes       SocialLike[]
+  socialReports     SocialReport[]
   challenge30       Challenge30?
   eventProgress     EventProgress[]
   eventReports      EventReport[]
@@ -514,6 +519,9 @@ model StudyTeam {
   name String
   subject String
   invite String @unique
+  /// открытая команда видна в поиске и принимает без приглашения; по умолчанию закрыта
+  open Boolean @default(false)
+  about String @default("")
   createdAt DateTime @default(now())
   members StudyMember[]
   posts StudyPost[]
@@ -658,4 +666,72 @@ model AiUsage {
   inputTokens Int @default(0)
   outputTokens Int @default(0)
   @@id([day, feature])
+}
+
+// Community as a social network: follows, public posts, likes. Only people with a
+// published CommunityProfile take part; everything here is visible to signed-in users.
+model Follow {
+  followerId String
+  followingId String
+  follower User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([followerId, followingId])
+  @@index([followingId])
+}
+
+model SocialPost {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId String?
+  parent SocialPost? @relation("comments", fields: [parentId], references: [id], onDelete: Cascade)
+  replies SocialPost[] @relation("comments")
+  text String
+  createdAt DateTime @default(now())
+  likes SocialLike[]
+  reports SocialReport[]
+  @@index([userId, createdAt])
+  @@index([parentId, createdAt])
+  @@index([createdAt])
+}
+
+model SocialLike {
+  postId String
+  userId String
+  post SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([postId, userId])
+  @@index([userId])
+}
+
+model SocialReport {
+  id String @id @default(cuid())
+  postId String
+  post SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason String
+  resolved Boolean @default(false)
+  createdAt DateTime @default(now())
+  @@unique([postId, userId])
+  @@index([resolved, createdAt])
+}
+
+// Anonymous visit counters for the owner: how many times a section was opened per day.
+model SiteVisit {
+  day String
+  path String
+  views Int @default(0)
+  @@id([day, path])
+}
+
+// One row per visitor per day. `hash` is a daily-salted digest of address and browser:
+// it cannot be reversed into an IP and cannot be linked across days.
+model SiteVisitor {
+  day String
+  hash String
+  authed Boolean @default(false)
+  @@id([day, hash])
 }

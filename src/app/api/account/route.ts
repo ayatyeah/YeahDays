@@ -53,7 +53,7 @@ export async function GET() {
       prisma.account.findMany({ where: { userId }, select: { provider: true, providerAccountId: true } }),
     ]);
 
-    const [communityProfile, memberships, posts, attendance, reports, chat, chatHistory, challenge30, eventProgress, eventReports] = await Promise.all([
+    const [communityProfile, memberships, posts, attendance, reports, chat, chatHistory, challenge30, eventProgress, eventReports, socialPosts, socialLikes, following, followers] = await Promise.all([
       prisma.communityProfile.findUnique({ where: { userId } }),
       prisma.studyMember.findMany({ where: { userId }, select: { teamId: true, joinedAt: true, team: { select: { name: true, subject: true } } } }),
       prisma.studyPost.findMany({ where: { userId }, select: { id: true, teamId: true, parentId: true, roomId: true, text: true, kind: true, ai: true, createdAt: true } }),
@@ -64,6 +64,10 @@ export async function GET() {
       prisma.challenge30.findUnique({ where: { userId }, select: { data: true, updatedAt: true } }),
       prisma.eventProgress.findMany({ where: { userId }, select: { eventId: true, data: true, percent: true, share: true, updatedAt: true } }),
       prisma.eventReport.findMany({ where: { userId }, select: { eventId: true, questionId: true, text: true, createdAt: true } }),
+      prisma.socialPost.findMany({ where: { userId }, select: { id: true, parentId: true, text: true, createdAt: true } }),
+      prisma.socialLike.findMany({ where: { userId }, select: { postId: true, createdAt: true } }),
+      prisma.follow.findMany({ where: { followerId: userId }, select: { followingId: true, createdAt: true } }),
+      prisma.follow.findMany({ where: { followingId: userId }, select: { followerId: true, createdAt: true } }),
     ]);
     const payload = {
       exportedAt: new Date().toISOString(),
@@ -73,6 +77,7 @@ export async function GET() {
       personalization, learning, lms, providers,
       community: { profile: communityProfile, memberships, posts, attendance, reports },
       chat, chatHistory, challenge30, eventProgress, eventReports,
+      social: { posts: socialPosts, likes: socialLikes, following, followers },
       events,
       eventCount: events.length,
     };

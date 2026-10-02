@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { rateLimit } from '@/lib/rateLimit';
 import { communityHome, communityAction, teamView } from '@/lib/communityDb';
-import { discoverTeams, feed, followList, isSocialAction, profileView, searchPeople, socialAction, socialHome, thread } from '@/lib/socialDb';
+import { discoverTeams, feed, followList, isSocialAction, notices, profileView, searchPeople, socialAction, socialHome, suggestions, thread } from '@/lib/socialDb';
 import { CommunityError } from '@/lib/community';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,12 +15,15 @@ export async function GET(req: Request) {
     if (q.has('feed')) return json(await feed(id, q.get('feed')!, q.get('before')));
     if (q.has('post')) return json(await thread(id, q.get('post')!));
     if (q.has('people')) return json(await searchPeople(id, q.get('people')!));
+    if (q.has('suggestions')) return json(await suggestions(id));
+    if (q.has('notices')) return json(await notices(id));
     if (q.has('discover')) return json(await discoverTeams(id, q.get('discover')!));
     if (q.has('followers')) return json(await followList(id, q.get('followers')!, 'followers'));
     if (q.has('following')) return json(await followList(id, q.get('following')!, 'following'));
     if (q.has('profile')) return json(await profileView(id, q.get('profile')!));
     if (q.has('team')) return json(await teamView(id, q.get('team')!));
-    return json({ ...await communityHome(id), social: await socialHome(id) });
+    const [home, social] = await Promise.all([communityHome(id), socialHome(id)]);
+    return json({ ...home, social });
   } catch(e) { return error(e); }
 }
 export async function POST(req: Request) {

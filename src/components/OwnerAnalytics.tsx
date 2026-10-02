@@ -12,6 +12,40 @@ interface Spend {
   tokens: number;
 }
 
+interface SocialReport {
+  id: string;
+  postId: string;
+  text: string;
+  author: string;
+  comment: boolean;
+  reason: string;
+  createdAt: string;
+}
+
+/** Столбики по дням: самый высокий — максимум периода, пустой день — тонкая серая черта. */
+function DayBars({ values, label, days }: { values: number[]; label: string; days: string[] }) {
+  const peak = Math.max(1, ...values);
+  return (
+    <div className="rounded-2xl surface px-3 py-3">
+      <div role="img" aria-label={label} className="flex h-24 items-end gap-0.5">
+        {values.map((value, i) => (
+          <div
+            key={days[i]}
+            title={`${days[i]}: ${value}`}
+            className={value ? "flex-1 rounded-sm bg-[var(--color-fg)]" : "flex-1 rounded-sm bg-[var(--color-surface-2)]"}
+            style={{ height: `${Math.max(4, (value / peak) * 100)}%` }}
+          />
+        ))}
+      </div>
+      <div className="mt-1.5 flex justify-between text-[12px] text-[var(--color-muted)]">
+        <span>{days[0]}</span>
+        <span>максимум за день: {values.some(Boolean) ? peak : 0}</span>
+        <span>сегодня</span>
+      </div>
+    </div>
+  );
+}
+
 interface Report {
   id: string;
   question: string;
@@ -33,6 +67,27 @@ interface Analytics {
   active: { day: number; week: number; month: number };
   signIn: Count[];
   features: Count[];
+  visits: {
+    daily: { day: string; visitors: number; signedIn: number; views: number }[];
+    today: { visitors: number; signedIn: number; views: number };
+    week: { visitors: number; views: number };
+    month: { visitors: number; views: number };
+    sections: { path: string; name: string; views: number }[];
+  };
+  activity: {
+    tracked: number;
+    daily: { day: string; active: number; minutes: number }[];
+    activeWeek: number;
+    activeMonth: number;
+    minutesPerActiveDay: number;
+    sessions: number;
+    done: { tasks: number; actions: number; quests: number };
+    sections: { name: string; minutes: number; percent: number }[];
+    retention: { name: string; eligible: number; returned: number; percent: number }[];
+  };
+  funnel: { name: string; count: number; percent: number; fromPrevious: number | null }[];
+  consent: { accepted: number; activity: number; ai: number };
+  community: { published: number; posts: number; postsWeek: number; comments: number; likes: number; follows: number; teams: number; openTeams: number; reports: number };
   ai: { name: string; today: Spend; week: Spend; month: Spend }[];
   events: { participants: number; sharing: number; averagePercent: number; ready: number; newReports: number };
   challenge30: {
@@ -106,6 +161,24 @@ export default function OwnerAnalytics() {
   const [data, setData] = useState<Analytics | null>(null);
   const [error, setError] = useState("");
   const [reports, setReports] = useState<Report[] | null>(null);
+  const [social, setSocial] = useState<SocialReport[] | null>(null);
+
+  const loadSocial = () =>
+    fetch("/api/owner/social-reports", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((json: { reports?: SocialReport[] }) => setSocial(json.reports ?? []))
+      .catch(() => setSocial([]));
+
+  /** Отклонить жалобу или удалить пост — в обоих случаях жалоба уходит из списка. */
+  async function moderate(report: SocialReport, remove: boolean) {
+    if (remove && !confirm("Удалить этот пост у всех? Отменить нельзя.")) return;
+    setSocial((list) => list?.filter((r) => (remove ? r.postId !== report.postId : r.id !== report.id)) ?? list);
+    await fetch("/api/owner/social-reports", {
+      method: remove ? "DELETE" : "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(remove ? { postId: report.postId } : { id: report.id }),
+    }).catch(() => {});
+  }
 
   const loadReports = () =>
     fetch("/api/owner/event-reports", { cache: "no-store" })
@@ -131,17 +204,39 @@ export default function OwnerAnalytics() {
       })
       .catch((e: Error) => setError(e.message));
     void loadReports();
+    void loadSocial();
   }, []);
 
   if (error) return <p className="text-[15px] text-[var(--color-strength)]">{error}</p>;
   if (!data) return <p className="text-[15px] text-[var(--color-muted)]">Загрузка…</p>;
 
-  const { users, active, challenge30: c } = data;
+  const { users, active, challenge30: c, visits, activity, community } = data;
   const peak = Math.max(1, ...users.registrations.map((d) => d.count));
   const plans = c.drafts + c.running + c.finished;
+  const guestsToday = visits.today.visitors - visits.today.signedIn;
 
   return (
     <div>
+      <Heading>Посещения</Heading>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <Tile label="Посетителей сегодня" value={visits.today.visitors} hint={`вошедших: ${visits.today.signedIn} · гостей: ${guestsToday}`} />
+        <Tile label="Просмотров сегодня" value={visits.today.views} />
+        <Tile label="За 7 дней" value={visits.week.visitors} hint={`просмотров: ${visits.week.views}`} />
+        <Tile label="За 30 дней" value={visits.month.visitors} hint={`просмотров: ${visits.month.views}`} />
+      </div>
+      <div className="mt-1.5">
+        <DayBars values={visits.daily.map((d) => d.visitors)} days={visits.daily.map((d) => d.day)} label="Посетители по дням за 30 дней" />
+      </div>
+      <p className="mt-2 text-[12px] leading-snug text-[var(--color-muted)]">
+        Посетитель — устройство за день, без cookie и без хранения IP. Сумма за неделю и месяц складывает дни: человек, заходивший три дня, посчитан трижды. Счёт идёт с момента выкатки.
+      </p>
+      {visits.sections.length > 0 && (
+        <div className="mt-1.5">
+          <Bars rows={visits.sections.slice(0, 12).map((x) => ({ name: x.name, count: x.views }))} total={visits.month.views} />
+        </div>
+      )}
+
+      <Heading>Аккаунты</Heading>
       <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
         <Tile label="Аккаунтов" value={users.total} hint={users.banned ? `заблокировано: ${users.banned}` : undefined} />
         <Tile label="Новых за 7 дней" value={users.new7} hint={`за 30 дней: ${users.new30}`} />
@@ -169,6 +264,102 @@ export default function OwnerAnalytics() {
           <span>максимум за день: {peak === 1 && users.new30 === 0 ? 0 : peak}</span>
           <span>сегодня</span>
         </div>
+      </div>
+
+      <Heading>Воронка</Heading>
+      <div className="space-y-2 rounded-2xl surface px-3 py-3">
+        {data.funnel.map((step) => (
+          <div key={step.name}>
+            <div className="flex justify-between gap-3 text-[14px]">
+              <span className="min-w-0 truncate">{step.name}</span>
+              <span className="shrink-0 text-[var(--color-muted)]">
+                {step.count} · {step.percent}%{step.fromPrevious !== null && step.fromPrevious <= 100 && ` · от прошлого шага ${step.fromPrevious}%`}
+              </span>
+            </div>
+            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+              <div className="h-full rounded-full bg-[var(--color-fg)]" style={{ width: `${step.percent}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="mt-2 text-[12px] leading-snug text-[var(--color-muted)]">
+        Где сильнее всего падает доля — там люди и уходят.
+      </p>
+
+      <Heading>Активность</Heading>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <Tile label="С учётом активности" value={activity.tracked} hint={users.total ? `${Math.round((activity.tracked / users.total) * 100)}% аккаунтов` : undefined} />
+        <Tile label="Активны за 7 дней" value={activity.activeWeek} hint={`за 30 дней: ${activity.activeMonth}`} />
+        <Tile label="Минут в активный день" value={activity.minutesPerActiveDay} hint={`заходов за 30 дней: ${activity.sessions}`} />
+        <Tile label="Выполнено за 30 дней" value={activity.done.tasks + activity.done.actions + activity.done.quests} hint={`дел ${activity.done.tasks} · действий ${activity.done.actions} · квестов ${activity.done.quests}`} />
+      </div>
+      <div className="mt-1.5">
+        <DayBars values={activity.daily.map((d) => d.active)} days={activity.daily.map((d) => d.day)} label="Активные аккаунты по дням за 30 дней" />
+      </div>
+      <p className="mt-2 text-[12px] leading-snug text-[var(--color-muted)]">
+        Только аккаунты, разрешившие учёт активности, — это выборка, а не все. Время считается по активной вкладке.
+      </p>
+      {activity.sections.length > 0 && (
+        <div className="mt-1.5 space-y-2 rounded-2xl surface px-3 py-3">
+          <p className="text-[12px] text-[var(--color-muted)]">Где проводят время (за 30 дней)</p>
+          {activity.sections.map((x) => (
+            <div key={x.name}>
+              <div className="flex justify-between gap-3 text-[14px]">
+                <span className="min-w-0 truncate">{x.name}</span>
+                <span className="shrink-0 text-[var(--color-muted)]">{x.minutes} мин · {x.percent}%</span>
+              </div>
+              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
+                <div className="h-full rounded-full bg-[var(--color-fg)]" style={{ width: `${x.percent}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <Heading>Удержание</Heading>
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-3">
+        {activity.retention.map((r) => (
+          <Tile key={r.name} label={r.name} value={r.eligible ? `${r.percent}%` : "—"} hint={r.eligible ? `вернулись ${r.returned} из ${r.eligible}` : "пока мало данных"} />
+        ))}
+      </div>
+      <p className="mt-2 text-[12px] leading-snug text-[var(--color-muted)]">
+        Доля тех, кто вернулся после своего первого активного дня. Считаются только аккаунты, у которых этот срок уже прошёл.
+      </p>
+
+      <Heading>Согласия</Heading>
+      <div className="grid grid-cols-3 gap-1.5">
+        <Tile label="Приняли политику" value={data.consent.accepted} hint={users.total ? `${Math.round((data.consent.accepted / users.total) * 100)}%` : undefined} />
+        <Tile label="Учёт активности" value={data.consent.activity} />
+        <Tile label="Данные для ИИ" value={data.consent.ai} />
+      </div>
+
+      <Heading>Сообщество</Heading>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <Tile label="Профилей" value={community.published} hint={users.total ? `${Math.round((community.published / users.total) * 100)}% аккаунтов` : undefined} />
+        <Tile label="Постов" value={community.posts} hint={`за 7 дней: ${community.postsWeek}`} />
+        <Tile label="Лайков и комментариев" value={community.likes + community.comments} hint={`подписок: ${community.follows}`} />
+        <Tile label="Команд" value={community.teams} hint={`открытых: ${community.openTeams}`} />
+      </div>
+
+      <Heading>{`Жалобы на посты${social?.length ? ` · ${social.length}` : ""}`}</Heading>
+      <div className="space-y-1.5">
+        {social === null ? (
+          <p className="text-[15px] text-[var(--color-muted)]">Загрузка…</p>
+        ) : social.length === 0 ? (
+          <p className="text-[15px] text-[var(--color-muted)]">Жалоб нет.</p>
+        ) : (
+          social.map((r) => (
+            <div key={r.id} className="rounded-2xl surface px-3 py-2.5">
+              <p className="text-[12px] text-[var(--color-muted)]">{r.comment ? "Комментарий" : "Пост"} · {r.author} · {new Date(r.createdAt).toLocaleString("ru-RU")}</p>
+              <p className="mt-1 whitespace-pre-wrap break-words text-[14px]">{r.text}</p>
+              <p className="mt-2 text-[14px]"><b>Жалоба:</b> {r.reason}</p>
+              <div className="mt-2 flex gap-4 text-[13px]">
+                <button className="underline text-[var(--color-strength)]" onClick={() => void moderate(r, true)}>удалить пост</button>
+                <button className="underline" onClick={() => void moderate(r, false)}>отклонить жалобу</button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <Heading>Чем пользуются</Heading>

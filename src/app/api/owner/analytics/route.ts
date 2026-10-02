@@ -10,7 +10,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/owner";
-import { challengeSummary, dailyCounts } from "@/lib/ownerAnalytics";
+import { aiSummary, challengeSummary, dailyCounts } from "@/lib/ownerAnalytics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -33,6 +33,7 @@ export async function GET() {
     const [
       total, banned, recent, day, week, month,
       providers, passwords, push, chat, learning, lms, teams, challenges,
+      usage, eventRows, newReports,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { banned: true } }),
@@ -46,6 +47,9 @@ export async function GET() {
       prisma.lmsConnection.count(),
       prisma.studyMember.findMany({ distinct: ["userId"], select: { userId: true } }),
       prisma.challenge30.findMany({ select: { data: true, aiDay: true, aiCount: true } }),
+      prisma.aiUsage.findMany({ where: { day: { gte: since(30).toISOString().slice(0, 10) } } }),
+      prisma.eventProgress.findMany({ select: { percent: true, share: true } }),
+      prisma.eventReport.count({ where: { status: "new" } }),
     ]);
 
     const registrations = dailyCounts(recent.map((u) => u.createdAt), 30, now);
@@ -71,7 +75,16 @@ export async function GET() {
           { name: "Календарь LMS", count: lms },
           { name: "Команды", count: teams.length },
           { name: "Челлендж 30", count: challenges.filter((c) => c.data).length },
+          { name: "Ивенты", count: eventRows.length },
         ],
+        ai: aiSummary(usage, now),
+        events: {
+          participants: eventRows.length,
+          sharing: eventRows.filter((e) => e.share).length,
+          averagePercent: eventRows.length ? Math.round(eventRows.reduce((n, e) => n + e.percent, 0) / eventRows.length) : 0,
+          ready: eventRows.filter((e) => e.percent >= 85).length,
+          newReports,
+        },
         challenge30: challengeSummary(challenges, now),
       },
       { headers: { "Cache-Control": "no-store" } },

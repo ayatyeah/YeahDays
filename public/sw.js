@@ -41,18 +41,36 @@ self.addEventListener("install", (event) => {
   // НЕ вызываем skipWaiting: новый воркер ждёт, пока пользователь сам нажмёт
   // «Обновить» или переоткроет приложение. Подмена кэша под открытой сессией
   // ломает ленивые чанки — экран падает в белое на ровном месте.
-  event.waitUntil(
-    caches.open(SHELL).then((cache) =>
-      // addAll падает целиком, если хоть один адрес отдал не 200; кладём по
-      // одному, чтобы единственная неудача не оставила приложение без кэша
-      Promise.all(
-        PRECACHE.map((url) =>
-          cache.add(new Request(url, { cache: "reload" })).catch(() => {}),
-        ),
-      ),
-    ),
-  );
+  event.waitUntil(fillShell());
 });
+
+/**
+ * Положить в кэш оболочку приложения — то, чего там ещё нет.
+ *
+ * Ответ после редиректа не берём. Воркер обычно ставится с витрины, когда
+ * человек ещё не вошёл: на /today и остальные разделы сервер отвечает
+ * переадресацией на /login, и раньше под адресом раздела в кэш ложилась
+ * страница входа. Стоило сети подтормозить после входа — воркер отдавал её
+ * вместо раздела, и человек снова видел форму входа, пока не перезагрузит.
+ * Разделы докладываются сюда позже, когда приложение открыто уже после
+ * входа (сообщение PRECACHE из ServiceWorkerRegister).
+ */
+async function fillShell() {
+  const cache = await caches.open(SHELL);
+  // addAll падает целиком, если хоть один адрес отдал не 200; кладём по
+  // одному, чтобы единственная неудача не оставила приложение без кэша
+  await Promise.all(
+    PRECACHE.map(async (url) => {
+      try {
+        if (await cache.match(url)) return;
+        const res = await fetch(new Request(url, { cache: "reload" }));
+        if (res.ok && !res.redirected) await cache.put(url, res);
+      } catch {
+        /* нет сети — докладём в следующий раз */
+      }
+    }),
+  );
+}
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
@@ -81,6 +99,9 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("message", (event) => {
   if (event.data === "SKIP_WAITING" || event.data?.type === "SKIP_WAITING") {
     self.skipWaiting();
+  }
+  if (event.data?.type === "PRECACHE") {
+    event.waitUntil(fillShell());
   }
 });
 
@@ -151,7 +172,9 @@ async function navigate(event) {
       (await cache.match(event.request)) ||
       (await cache.match(new URL(event.request.url).pathname)) ||
       (await cache.match("/app"));
-    return cached || (await cache.match("/offline")) || Response.error();
+    // Ответ «после редиректа» браузер для перехода по ссылке не примет — такой мог остаться от прежней версии воркера.
+    const usable = cached && !cached.redirected ? cached : null;
+    return usable || (await cache.match("/offline")) || Response.error();
   }
 }
 

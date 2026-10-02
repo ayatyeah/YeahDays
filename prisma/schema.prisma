@@ -44,6 +44,8 @@ model User {
   studyAttendance StudyAttendance[]
   communityReports CommunityReport[]
   challenge30       Challenge30?
+  eventProgress     EventProgress[]
+  eventReports      EventReport[]
   aiChatArchives    AiChatArchive[]
   aiChat            AiChat?
   personalization   PersonalizationProfile?
@@ -619,4 +621,41 @@ model Challenge30 {
   pendingId String?
   pendingAt DateTime?
   updatedAt DateTime @updatedAt
+}
+
+// Study-event progress, synced across devices. `share` opts the row into the
+// friends' leaderboard; without it nobody else sees the result.
+model EventProgress {
+  userId String
+  eventId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  data Json
+  percent Int @default(0)
+  share Boolean @default(false)
+  updatedAt DateTime @updatedAt
+  @@id([userId, eventId])
+  @@index([eventId, share])
+}
+
+// "This question looks wrong" reports from learners, reviewed in /admin.
+model EventReport {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  eventId String
+  questionId String
+  text String
+  status String @default("new")
+  createdAt DateTime @default(now())
+  @@index([status, createdAt])
+}
+
+// Daily OpenAI usage per feature. Counters only: no user, no prompt text.
+model AiUsage {
+  day String
+  feature String
+  calls Int @default(0)
+  inputTokens Int @default(0)
+  outputTokens Int @default(0)
+  @@id([day, feature])
 }

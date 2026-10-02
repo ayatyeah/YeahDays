@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { LearningQuest, LearningSkill } from "./learning";
 
 import type { LearningSubject } from "./learningSubjects";
+import { recordAiUsage } from "./aiUsage";
 
 const text = { type: "string" };
 const courseSchema = { type: "object", additionalProperties: false, required: ["title", "quests"], properties: {
@@ -19,6 +20,7 @@ async function ask(schema: object, instructions: string, input: object, budget: 
   });
   if (!response.ok) throw new Error(response.status === 429 ? "OpenAI: проверь баланс или попробуй позже" : "Не удалось обратиться к ИИ. Проверь ключ и доступ к модели.");
   const body = await response.json();
+  recordAiUsage("learning", body.usage);
   if (body.status !== "completed") throw new Error("Ответ ИИ не завершён. Попробуй ещё раз.");
   const output = body.output?.flatMap((v: { content?: { type: string; text?: string }[] }) => v.content ?? []).filter((v: { type: string }) => v.type === "output_text").map((v: { text: string }) => v.text).join("");
   if (!output) throw new Error("ИИ не смог обработать запрос");

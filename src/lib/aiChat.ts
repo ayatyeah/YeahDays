@@ -1,3 +1,4 @@
+import { recordAiUsage } from "./aiUsage";
 export type ChatMessage = { id: string; role: "user" | "assistant"; text: string; at: string; withPlan?: boolean; access?: { scopes: string[]; version: string; at: string } };
 export function chatInput(history: ChatMessage[], message: string) {
   // Bound context cost separately from retained history.
@@ -17,6 +18,7 @@ export async function askChat(history: ChatMessage[], message: string, plan?: un
   });
   if (!response.ok) throw new Error(response.status === 429 ? "limit" : "provider");
   const data = await response.json();
+  recordAiUsage("chat", data.usage);
   if (data.status !== "completed") throw new Error("incomplete");
   const answer = data.output?.flatMap((item: any) => item.content ?? []).map((item: any) => item.type === "output_text" ? item.text : item.type === "refusal" ? item.refusal : "").join("\n").trim();
   if (typeof answer !== "string" || !answer || answer.length > 20000) throw new Error("incomplete");

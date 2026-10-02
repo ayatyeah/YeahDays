@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
 import { aiSchema, parseAiResult, validDate } from "@/lib/aiPlanner";
 import sharp from "sharp";
+import { recordAiUsage } from "@/lib/aiUsage";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,6 +58,7 @@ export async function POST(req: Request) {
     });
     if (!response.ok) return NextResponse.json({ error: response.status === 429 ? "OpenAI: лимит запросов или баланс исчерпан. Проверь биллинг проекта." : "OpenAI не принял запрос. Проверь ключ и доступ к модели на сервере." }, { status: 502 });
     const result = await response.json();
+    recordAiUsage("planner", result.usage);
     if (result.status !== "completed") throw new Error("ИИ не успел обработать всё. Попробуй скрин меньшего размера.");
     const text = result.output?.flatMap((item: { content?: { type: string; text?: string }[] }) => item.content ?? []).filter((item: { type: string }) => item.type === "output_text").map((item: { text: string }) => item.text).join("");
     if (!text) throw new Error("ИИ не смог распознать запрос. Попробуй другой скрин или уточни текст.");

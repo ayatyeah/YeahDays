@@ -7,6 +7,20 @@ interface Count {
   count: number;
 }
 
+interface Spend {
+  calls: number;
+  tokens: number;
+}
+
+interface Report {
+  id: string;
+  question: string;
+  answer: string;
+  text: string;
+  status: string;
+  createdAt: string;
+}
+
 interface Analytics {
   generatedAt: string;
   users: {
@@ -19,6 +33,8 @@ interface Analytics {
   active: { day: number; week: number; month: number };
   signIn: Count[];
   features: Count[];
+  ai: { name: string; today: Spend; week: Spend; month: Spend }[];
+  events: { participants: number; sharing: number; averagePercent: number; ready: number; newReports: number };
   challenge30: {
     drafts: number;
     running: number;
@@ -89,6 +105,22 @@ function Heading({ children }: { children: React.ReactNode }) {
 export default function OwnerAnalytics() {
   const [data, setData] = useState<Analytics | null>(null);
   const [error, setError] = useState("");
+  const [reports, setReports] = useState<Report[] | null>(null);
+
+  const loadReports = () =>
+    fetch("/api/owner/event-reports", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((json: { reports?: Report[] }) => setReports(json.reports ?? []))
+      .catch(() => setReports([]));
+
+  async function setStatus(report: Report, status: string) {
+    setReports((list) => list?.map((r) => (r.id === report.id ? { ...r, status } : r)) ?? list);
+    await fetch("/api/owner/event-reports", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: report.id, status }),
+    }).catch(() => {});
+  }
 
   useEffect(() => {
     fetch("/api/owner/analytics", { cache: "no-store" })
@@ -98,6 +130,7 @@ export default function OwnerAnalytics() {
         setData(json as Analytics);
       })
       .catch((e: Error) => setError(e.message));
+    void loadReports();
   }, []);
 
   if (error) return <p className="text-[15px] text-[var(--color-strength)]">{error}</p>;
@@ -160,6 +193,67 @@ export default function OwnerAnalytics() {
           ]}
           total={plans}
         />
+      </div>
+
+      <Heading>Расход ИИ</Heading>
+      <div className="overflow-x-auto rounded-2xl surface px-3 py-3">
+        <table className="w-full min-w-[420px] text-left text-[14px]">
+          <thead className="text-[12px] text-[var(--color-muted)]">
+            <tr>
+              <th className="pb-2 font-normal">Функция</th>
+              <th className="pb-2 text-right font-normal">Сегодня</th>
+              <th className="pb-2 text-right font-normal">7 дней</th>
+              <th className="pb-2 text-right font-normal">30 дней</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.ai.map((f) => (
+              <tr key={f.name} className="border-t border-[var(--color-border)]">
+                <td className="py-2 pr-3">{f.name}</td>
+                {[f.today, f.week, f.month].map((v, i) => (
+                  <td key={i} className="py-2 text-right tabular-nums">
+                    {v.tokens.toLocaleString("ru-RU")}
+                    <span className="block text-[12px] text-[var(--color-muted)]">{v.calls} выз.</span>
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="mt-2 text-[12px] text-[var(--color-muted)]">
+          Числа — токены (вход + выход). Учёт ведётся с момента выкатки этой вкладки; более ранние вызовы видны только в кабинете OpenAI.
+        </p>
+      </div>
+
+      <Heading>Ивенты</Heading>
+      <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <Tile label="Проходят ивенты" value={data.events.participants} hint="аккаунтов с сохранённым прогрессом" />
+        <Tile label="Средняя готовность" value={`${data.events.averagePercent}%`} />
+        <Tile label="Готовы на 85%+" value={data.events.ready} />
+        <Tile label="В рейтинге друзей" value={data.events.sharing} hint="включили показ результата" />
+      </div>
+
+      <Heading>{`Ошибки в вопросах${data.events.newReports ? ` · новых: ${data.events.newReports}` : ""}`}</Heading>
+      <div className="space-y-1.5">
+        {reports === null ? (
+          <p className="text-[15px] text-[var(--color-muted)]">Загрузка…</p>
+        ) : reports.length === 0 ? (
+          <p className="text-[15px] text-[var(--color-muted)]">Сообщений пока нет.</p>
+        ) : (
+          reports.map((r) => (
+            <div key={r.id} className={r.status === "done" ? "rounded-2xl surface px-3 py-2.5 opacity-50" : "rounded-2xl surface px-3 py-2.5"}>
+              <p className="text-[14px] font-medium" lang="en">{r.question}</p>
+              <p className="mt-1 text-[12px] text-[var(--color-muted)]" lang="en">Верный ответ сейчас: {r.answer}</p>
+              <p className="mt-2 text-[14px]">{r.text}</p>
+              <div className="mt-2 flex items-center justify-between gap-3 text-[12px] text-[var(--color-muted)]">
+                <span>{new Date(r.createdAt).toLocaleString("ru-RU")}</span>
+                <button className="underline" onClick={() => void setStatus(r, r.status === "done" ? "new" : "done")}>
+                  {r.status === "done" ? "вернуть в новые" : "разобрано"}
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       <p className="mt-4 text-[12px] text-[var(--color-muted)]">

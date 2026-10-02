@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { LEVELS, blocksFor, clockText, dayIndex, defaultWindows, localDay, plusDays, stats, parseBrief, type Brief, type Level, type Plan30, type Block } from "@/lib/challenge30";
+import { LEVELS, blocksFor, clockText, dayIndex, defaultWindows, localDay, plusDays, reviewAllowed, stats, parseBrief, windowsFromBusy, type Window, type Brief, type Level, type Plan30, type Block } from "@/lib/challenge30";
 import { isTodoOnDay, useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
 import { isLmsDeadline } from "@/lib/lmsEventKind";
@@ -23,12 +23,18 @@ function Challenge() {
   const alive = useRef(true); const operation = useRef(false); const ownWindows = useRef(false); // hand-edited windows are never replaced by level defaults
   const [brief, setBrief] = useState<Brief>({ level: "easy", goals: "", baseline: "", preferences: "", timezone: "Asia/Almaty", windows: defaultWindows("easy") });
   const [consent, setConsent] = useState(false); const [day, setDay] = useState(0); const [offset, setOffset] = useState(1);
+  const [reviewNote, setReviewNote] = useState(""); const [reviewConsent, setReviewConsent] = useState(false);
+  const [friends, setFriends] = useState<{ share: boolean; friendCount: number; board: { name: string; me: boolean; level: string; day: number; successes: number; hours: number }[] } | null>(null);
+  async function loadFriends() {
+    try { const r = await fetch("/api/challenge30/friends", { cache: "no-store" }); if (r.ok && alive.current) setFriends(await r.json()); } catch { /* доска друзей необязательна — челлендж работает и без неё */ }
+  }
   async function load() {
     try { const r = await fetch("/api/challenge30", { cache: "no-store" }); const d = await r.json(); if (!r.ok) throw new Error(d.error); if (alive.current) setData(d); }
     catch (e) { if (alive.current) setError((e as Error).message); }
   }
   useEffect(() => { alive.current = true; setBrief(b => ({ ...b, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Almaty" })); void load(); return () => { alive.current = false; }; }, []);
   useEffect(() => { const draft = data?.plan; if (draft && !draft.startDate) { ownWindows.current = true; setBrief(draft.brief); } }, [data?.plan?.id]); // editing a draft continues from its answers, not from an empty form
+  useEffect(() => { if (data?.plan?.startDate) void loadFriends(); }, [data?.plan?.id, data?.plan?.startDate, data?.plan?.share]);
   useEffect(() => { if (data?.plan?.startDate) setDay(Math.min(29, Math.max(0, dayIndex(data.plan.startDate, data.today)))); }, [data?.plan?.id, data?.plan?.startDate]); // choose today's tab on opening/start only
   async function act(body: Record<string, unknown>) {
     if (!data || operation.current) return;
@@ -53,6 +59,19 @@ function Challenge() {
   const editable = !!p?.startDate && day <= elapsed && day >= elapsed - 1 && elapsed < 31;
   function setWindow(d: number, i: number, part: "start" | "end", value: string) {
     const [h, m] = value.split(":").map(Number); ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map((ws, di) => di === d ? ws.map((w, wi) => wi === i ? { ...w, [part]: h * 60 + m } : w) : ws) }));
+  }
+  /** Свободные окна из того, что уже стоит в плане на ближайшие семь дней: пары, дела со временем, занятия LMS. */
+  function fillFromCalendar() {
+    const todos = useUserStore.getState().todos; const today = localDay(brief.timezone);
+    const busy: Window[][] = Array.from({ length: 7 }, () => []);
+    for (let i = 0; i < 7; i++) {
+      const date = plusDays(today, i); const weekday = (new Date(date + "T12:00:00Z").getUTCDay() + 6) % 7;
+      for (const t of todos) if (!isLmsDeadline(t) && t.hour !== undefined && isTodoOnDay(t, date)) { const start = t.hour * 60 + (t.minute ?? 0); busy[weekday].push({ start, end: Math.min(1440, start + (t.duration ?? 60)) }); }
+    }
+    const count = busy.reduce((n, list) => n + list.length, 0);
+    if (!count) { setMessage("В плане на ближайшую неделю нет дел со временем — подставлять нечего. Добавь пары в расписание или укажи окна вручную."); return; }
+    ownWindows.current = true; setBrief(b => ({ ...b, windows: windowsFromBusy(busy, b.level) }));
+    setError(""); setMessage(`Окна подставлены с учётом ${count} занятий и дел ближайшей недели. Проверь их: если на какой-то день времени не хватило, там остались окна по умолчанию.`);
   }
   async function addToPlan() {
     if (!p?.startDate || day !== elapsed || operation.current) return;
@@ -80,7 +99,7 @@ function Challenge() {
           <label className="block text-sm">С чего начинаешь?<textarea required minLength={3} maxLength={300} rows={2} className={field} value={brief.baseline} onChange={e => setBrief(b => ({ ...b, baseline: e.target.value }))} placeholder="Python с нуля, английский A2, пока мало активности…" /></label>
           <label className="block text-sm">Что учитывать? · необязательно<textarea maxLength={300} rows={2} className={field} value={brief.preferences} onChange={e => setBrief(b => ({ ...b, preferences: e.target.value }))} placeholder="Люблю практику, занимаюсь дома, нужны небольшие шаги…" /></label>
           <details><summary className="cursor-pointer font-semibold">Свободное время по дням недели</summary><p className="mt-2 text-xs text-[var(--color-muted)]">Укажи окна без пар, работы, дороги и сна. Они повторяются каждую неделю. ИИ не читает твой календарь; проверь занятость сам. Занятия идут по 45 минут с перерывами по 10 минут. При смене уровня окна подстраиваются сами, пока ты не изменил их вручную.</p>
-            <Button type="button" size="sm" className="mt-3 h-auto min-h-9 whitespace-normal" onClick={() => { ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map(() => b.windows[0].map(w => ({ ...w }))) })); }}>Скопировать понедельник на все дни</Button>
+            <div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" className="h-auto min-h-9 whitespace-normal" onClick={fillFromCalendar}>Заполнить из моего расписания</Button><Button type="button" size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => { ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map(() => b.windows[0].map(w => ({ ...w }))) })); }}>Скопировать понедельник на все дни</Button></div>
             {brief.windows.map((ws, d) => <div key={d} className="mt-4 border-b border-[var(--color-border)] pb-3"><p className="text-sm font-semibold">{weekdays[d]}</p>{ws.map((w, i) => <div key={i} className="mt-2 flex min-w-0 items-center gap-2"><input aria-label={`${weekdays[d]} начало ${i + 1}`} type="time" required className={`${field} mt-0 flex-1 p-2`} value={clockText(w.start)} onChange={e => setWindow(d, i, "start", e.target.value)} /><span>—</span><input aria-label={`${weekdays[d]} конец ${i + 1}`} type="time" required className={`${field} mt-0 flex-1 p-2`} value={clockText(w.end)} onChange={e => setWindow(d, i, "end", e.target.value)} />{ws.length > 1 && <button type="button" aria-label="Удалить окно" onClick={() => { ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map((list, di) => di === d ? list.filter((_, wi) => wi !== i) : list) })); }}>×</button>}</div>)}{ws.length < 3 && <button type="button" className="mt-2 text-xs underline" onClick={() => { ownWindows.current = true; setBrief(b => ({ ...b, windows: b.windows.map((list, di) => di === d ? [...list, { start: 8 * 60, end: 10 * 60 }] : list) })); }}>+ Ещё окно</button>}</div>)}
           </details>
           <label className="block text-sm">Часовой пояс<input className={field} required value={brief.timezone} onChange={e => setBrief(b => ({ ...b, timezone: e.target.value }))} maxLength={80} /></label>
@@ -110,6 +129,23 @@ function Challenge() {
           {blocks.map(b => <BlockCard key={`${p.id}:${b.id}`} block={b} minutes={p.logs[b.id] ?? 0} disabled={busy || !editable} save={minutes => void act({ action: "log", day, blockId: b.id, minutes })} />)}
           <p className="text-xs text-[var(--color-muted)]">Перерывы остаются между блоками. Отметки в дневном плане и минуты челленджа ведутся отдельно.</p>
         </section>
+        {p.startDate && (p.review || reviewAllowed(p, elapsed)) && <section className={`${panel} space-y-3`}>
+          <h2 className="font-semibold">Пересмотр недели</h2>
+          {p.review && <p className="rounded-2xl bg-[var(--color-surface-2)] p-3 text-sm"><span className="block text-xs text-[var(--color-muted)]">Пересмотр на {p.review.day + 1}-й день</span>{p.review.summary}</p>}
+          {reviewAllowed(p, elapsed) ? <>
+            <p className="text-sm text-[var(--color-muted)]">Раз в неделю ИИ смотрит, сколько минут отмечено по каждому занятию, и подстраивает оставшиеся недели: меняет доли времени и задания. Прошедшие дни не трогает. Это одно короткое обращение к ИИ.</p>
+            <label className="block text-sm">Что учесть? · необязательно<textarea maxLength={300} rows={2} className={field} value={reviewNote} onChange={e => setReviewNote(e.target.value)} placeholder="Например: бег даётся тяжело, а на английский хочу больше времени" /></label>
+            <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={reviewConsent} onChange={e => setReviewConsent(e.target.checked)} className="mt-1" /><span>Разрешаю отправить в OpenAI занятия плана, цели и отмеченные минуты за неделю для этого пересмотра. <Link href="/privacy" className="underline">Политика</Link></span></label>
+            <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" disabled={busy || data.busy || !reviewConsent || !data.available || data.remaining === 0} onClick={async () => { setReviewConsent(false); const result = await act({ action: "review", consent: "challenge30-v1", note: reviewNote }); if (result) { setReviewNote(""); setMessage("План на оставшиеся недели обновлён. Что изменилось — в блоке «Пересмотр недели»."); } }}>{busy || data.busy ? "Пересматриваем…" : "Пересмотреть план"}</Button>
+            {data.remaining === 0 && <p className="text-xs text-[var(--color-muted)]">На сегодня обращения к ИИ исчерпаны — попробуй завтра.</p>}
+          </> : <p className="text-xs text-[var(--color-muted)]">Следующий пересмотр — через неделю после предыдущего.</p>}
+        </section>}
+        {p.startDate && <section className={`${panel} space-y-3`}>
+          <h2 className="font-semibold">Челлендж вместе</h2>
+          <label className="flex items-start gap-3 text-sm"><input type="checkbox" checked={!!p.share} disabled={busy} onChange={e => void act({ action: "share", share: e.target.checked })} className="mt-1" /><span>Показывать мой прогресс друзьям и видеть их<span className="block text-xs text-[var(--color-muted)]">Взаимно: друзья увидят день челленджа, зачтённые дни и часы — и только те, кто тоже включил показ. Цели и расписание не видны никому.</span></span></label>
+          {p.share && friends?.share && <ol className="space-y-2">{friends.board.map((f, i) => <li key={`${f.name}:${i}`} className={`flex items-center gap-3 rounded-2xl border p-3 text-sm ${f.me ? "border-violet-400 bg-violet-500/10" : "border-[var(--color-border)]"}`}><span className="min-w-0 flex-1"><span className="block truncate font-medium">{f.name}</span><span className="block text-xs text-[var(--color-muted)]">{f.level} · день {f.day} из 30</span></span><span className="shrink-0 text-right"><span className="block font-bold tabular-nums">{f.successes} дн.</span><span className="block text-xs text-[var(--color-muted)]">{f.hours} ч</span></span></li>)}</ol>}
+          {p.share && friends?.share && friends.board.length === 1 && <p className="text-xs text-[var(--color-muted)]">{friends.friendCount === 0 ? <>Друзей в приложении пока нет. <Link href="/account" className="underline">Пригласи друга</Link> и пройдите челлендж вместе.</> : "Никто из друзей пока не включил показ своего челленджа."}</p>}
+        </section>}
         <Button variant="danger" disabled={busy} className="h-auto min-h-11 whitespace-normal" onClick={() => { if (confirm("Удалить этот челлендж и все его отметки? Занятия, уже добавленные в дневной план, останутся. Это действие нельзя отменить.")) void act({ action: "delete", confirm: true }); }}>Удалить челлендж и начать заново</Button>
       </>}
     </>}

@@ -128,3 +128,61 @@ describe("прохождение", () => {
     expect(readiness(event, progress).percent).toBe(50);
   });
 });
+
+describe("синхронизация и план по дням", () => {
+  const list = steps(event);
+  const done = (best: number, attempts = 1) => ({ best, last: best, attempts });
+
+  it("при слиянии двух устройств ничего не теряется и остаётся лучший результат", async () => {
+    const { mergeProgress } = await import("./engine");
+    const phone: Progress = { [list[0].id]: done(0.5, 2), [list[1].id]: done(1) };
+    const laptop: Progress = { [list[0].id]: done(0.875, 1), [list[2].id]: done(0.25) };
+    const merged = mergeProgress(phone, laptop);
+    expect(Object.keys(merged).sort()).toEqual([list[0].id, list[1].id, list[2].id].sort());
+    expect(merged[list[0].id]).toMatchObject({ best: 0.875, attempts: 2, last: 0.5 });
+    // Порядок устройств не важен.
+    expect(mergeProgress(laptop, phone)[list[0].id].best).toBe(0.875);
+  });
+
+  it("сервер отбрасывает чужие ключи и зажимает значения", async () => {
+    const { sanitizeProgress } = await import("./engine");
+    const clean = sanitizeProgress(event, { [list[0].id]: { best: 7, last: -1, attempts: 1e9 }, hacked: { best: 1 }, [list[1].id]: "x" });
+    expect(clean).toEqual({ [list[0].id]: { best: 1, last: 0, attempts: 9999 } });
+    expect(sanitizeProgress(event, null)).toEqual({});
+    expect(sanitizeProgress(event, [1, 2])).toEqual({});
+  });
+
+  it("раскладывает оставшиеся шаги по дням до квиза, сохраняя порядок, и ставит итоговый квиз на последний день", async () => {
+    const { planDays } = await import("./engine");
+    const plan = planDays(event, {}, "2026-10-03", "2026-10-10");
+    expect(plan.length).toBe(7);
+    expect(plan[0].date).toBe("2026-10-03");
+    expect(plan.at(-1)!.date).toBe("2026-10-09");
+    expect(plan.flatMap((d) => d.steps.map((s) => s.id))).toEqual(list.map((s) => s.id));
+    expect(plan.at(-1)!.steps.at(-1)!.kind).toBe("final");
+    // Нагрузка ровная: самый тяжёлый день не больше чем вдвое тяжелее самого лёгкого.
+    const minutes = plan.map((d) => d.minutes);
+    expect(Math.max(...minutes)).toBeLessThanOrEqual(Math.min(...minutes) * 2);
+  });
+
+  it("план учитывает уже пройденное и не ломается, если квиз сегодня или шагов меньше, чем дней", async () => {
+    const { planDays } = await import("./engine");
+    const almost: Progress = Object.fromEntries(list.slice(0, -2).map((s) => [s.id, done(1)]));
+    const short = planDays(event, almost, "2026-10-03", "2026-10-20");
+    expect(short.flatMap((d) => d.steps).length).toBe(2);
+    expect(short.length).toBe(2);
+    const today = planDays(event, {}, "2026-10-03", "2026-10-03");
+    expect(today.length).toBe(1);
+    expect(today[0].steps.length).toBe(list.length);
+    const all: Progress = Object.fromEntries(list.map((s) => [s.id, done(1)]));
+    expect(planDays(event, all, "2026-10-03", "2026-10-10")).toEqual([]);
+  });
+
+  it("у ивента есть шпаргалка на двух языках и глоссарий без повторов", () => {
+    expect(event.cheatSheet!.en.length).toBeGreaterThan(800);
+    expect(event.cheatSheet!.ru.split("\n").length).toBe(event.cheatSheet!.en.split("\n").length);
+    expect(event.glossary!.length).toBeGreaterThanOrEqual(30);
+    expect(new Set(event.glossary!.map((t) => t.term)).size).toBe(event.glossary!.length);
+    for (const term of event.glossary!) expect(term.def.en && term.def.ru, term.term).toBeTruthy();
+  });
+});

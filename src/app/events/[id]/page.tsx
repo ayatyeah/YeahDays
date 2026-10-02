@@ -8,8 +8,14 @@ import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
 import { cn } from "@/lib/cn";
 import { findEvent } from "@/lib/events";
-import { draw, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
+import { draw, mergeProgress, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
 import EventMusic from "@/components/EventMusic";
+import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeaderboard";
+import EventPlan from "@/components/events/EventPlan";
+import Flashcards from "@/components/events/Flashcards";
+import ReportQuestion from "@/components/events/ReportQuestion";
+import ShareResult from "@/components/events/ShareResult";
+import SpeakButton from "@/components/events/SpeakButton";
 import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@/lib/events/storage";
 import type { Lang, StudyEvent } from "@/lib/events/types";
 
@@ -18,14 +24,41 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
 
 type View =
   | { mode: "map" }
+  | { mode: "sheet" }
+  | { mode: "cards" }
   | { mode: "read"; step: Step }
   | { mode: "quiz"; step: Step; quiz: QuizQuestion[]; run: number }
   | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] };
+
+/** Кто открывал ивент на этом устройстве в последний раз — для работы без сети. */
+const LAST_USER = "yg-event-last-user";
 
 export default function EventPage() {
   const { id } = useParams<{ id: string }>();
   const { data, status } = useSession();
   const event = findEvent(id);
+  const [offlineUser, setOfflineUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const userId = data?.user?.id;
+    try {
+      if (userId) localStorage.setItem(LAST_USER, userId);
+      // Без сети сессию не проверить. Ивент — статичный конспект и личные
+      // результаты на этом же устройстве, поэтому пускаем того, кто был
+      // здесь последним: ничего чужого он так не увидит.
+      else if (status !== "loading" && !navigator.onLine) setOfflineUser(localStorage.getItem(LAST_USER));
+    } catch {
+      /* хранилище недоступно — офлайн-режима просто не будет */
+    }
+  }, [data?.user?.id, status]);
+
+  // Прогреваем кэш воркера: переход внутри приложения не загружает страницу
+  // как документ, и без этого в метро открылась бы заглушка «нет сети».
+  useEffect(() => {
+    if (!event || !data?.user?.id || !navigator.onLine) return;
+    for (const url of ["/events", `/events/${event.id}`]) void fetch(url, { credentials: "same-origin" }).catch(() => {});
+  }, [event, data?.user?.id]);
+
   if (!event) {
     return (
       <div className="mx-auto max-w-3xl space-y-3">
@@ -35,8 +68,9 @@ export default function EventPage() {
     );
   }
   if (status === "loading") return <p>Открываем ивент…</p>;
-  if (!data?.user?.id) return <Link href="/login" className="underline">Войти в аккаунт</Link>;
-  return <Runner key={`${data.user.id}:${event.id}`} event={event} userId={data.user.id} />;
+  const userId = data?.user?.id ?? offlineUser;
+  if (!userId) return <Link href="/login" className="underline">Войти в аккаунт</Link>;
+  return <Runner key={`${userId}:${event.id}`} event={event} userId={userId} />;
 }
 
 function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
@@ -49,17 +83,77 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   const top = useRef<HTMLDivElement>(null);
   // Номер попытки: по нему экран квиза сбрасывает ответы при повторе.
   const runs = useRef(0);
+  const [online, setOnline] = useState(true);
+  const [social, setSocial] = useState<{ share: boolean; leaderboard: LeaderRow[]; friends: number }>({ share: false, leaderboard: [], friends: 0 });
+  // Самый свежий прогресс для фоновой синхронизации: ответ сервера может
+  // прийти, когда человек уже прошёл следующий квиз.
+  const latest = useRef<Progress>({});
 
   // Прогресс и настройки живут в браузере — читаем после монтирования, чтобы
   // серверная и клиентская разметка совпали.
   useEffect(() => {
-    setProgress(loadProgress(userId, event.id));
+    const local = loadProgress(userId, event.id);
+    latest.current = local;
+    setProgress(local);
     setLang(loadPref("lang", "en") === "ru" ? "ru" : "en");
     setMusic(loadPref("music", "on") !== "off");
     setLoaded(true);
+    void sync();
+    const onNetwork = () => {
+      setOnline(navigator.onLine);
+      // Сеть вернулась — отправляем то, что накопилось офлайн.
+      if (navigator.onLine) void sync();
+    };
+    onNetwork();
+    window.addEventListener("online", onNetwork);
+    window.addEventListener("offline", onNetwork);
+    return () => {
+      window.removeEventListener("online", onNetwork);
+      window.removeEventListener("offline", onNetwork);
+    };
+    // sync читает только refs и аргументы — пересоздавать подписку не нужно.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, event.id]);
 
-  const stepKey = view.mode === "map" ? "map" : `${view.mode}:${view.step.id}`;
+  /** Принять ответ сервера: слить с тем, что есть здесь, и сохранить. */
+  function adopt(body: { progress: Progress; share: boolean; leaderboard: LeaderRow[]; friends: number }) {
+    const merged = mergeProgress(latest.current, body.progress);
+    latest.current = merged;
+    setProgress(merged);
+    saveProgress(userId, event.id, merged);
+    setSocial({ share: body.share, leaderboard: body.leaderboard, friends: body.friends });
+    return merged;
+  }
+
+  /**
+   * Синхронизация с сервером. Локальная копия остаётся главной для экрана:
+   * без сети всё работает как раньше, а сервер нужен, чтобы прогресс был
+   * на втором устройстве и в рейтинге друзей.
+   */
+  async function sync(share?: boolean) {
+    try {
+      const url = `/api/study-events/${event.id}`;
+      let body;
+      if (share === undefined) {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) return;
+        body = await response.json();
+        const merged = adopt(body);
+        // На сервере меньше, чем здесь (занимались офлайн) — досылаем.
+        if (JSON.stringify(merged) === JSON.stringify(body.progress)) return;
+      }
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ progress: latest.current, ...(share === undefined ? {} : { share }) }),
+      });
+      if (response.ok) adopt(await response.json());
+    } catch {
+      /* нет сети — попробуем при следующем открытии или когда она вернётся */
+    }
+  }
+
+  const stepKey = "step" in view ? `${view.mode}:${view.step.id}` : view.mode;
   useEffect(() => {
     top.current?.scrollIntoView({ block: "start" });
   }, [stepKey]);
@@ -89,9 +183,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
 
   function finish(step: Step, quiz: QuizQuestion[], answers: number[]) {
     const next = record(progress, step, quiz, answers);
+    latest.current = next;
     setProgress(next);
     saveProgress(userId, event.id, next);
     setView({ mode: "result", step, quiz, answers });
+    void sync(social.share);
   }
 
   function toMap() {
@@ -99,7 +195,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   }
 
   const ready = readiness(event, progress);
-  const following = view.mode === "map" ? undefined : list[list.findIndex((s) => s.id === view.step.id) + 1];
+  const following = "step" in view ? list[list.findIndex((s) => s.id === view.step.id) + 1] : undefined;
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-5 pb-6">
@@ -112,6 +208,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <h1 className="ios-title mt-2">{event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>
           </header>
+          {!online && (
+            <p role="status" className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm">
+              Нет сети. Конспекты и квизы работают, результаты сохраняются на устройстве и отправятся, когда появится интернет.
+            </p>
+          )}
 
           <section className="rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 to-sky-500/10 p-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
@@ -163,14 +264,50 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             </ol>
           </section>
 
+          {(event.cheatSheet || event.glossary) && (
+            <section className={panel}>
+              <h2 className="text-lg font-bold">Перед самым квизом</h2>
+              <p className="text-sm text-[var(--color-muted)]">Короткое повторение, когда на лекции времени уже нет.</p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                {event.cheatSheet && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "sheet" })}>Шпаргалка на одну страницу</Button>}
+                {event.glossary && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cards" })}>Карточки терминов · {event.glossary.length}</Button>}
+              </div>
+            </section>
+          )}
+
+          {loaded && <EventPlan event={event} progress={progress} />}
+
+          {loaded && (
+            <EventLeaderboard
+              board={social.leaderboard.some((r) => r.me) || ready.done === 0 ? social.leaderboard : [...social.leaderboard, { name: "Ты", percent: ready.percent, me: true }].sort((a, b) => b.percent - a.percent)}
+              share={social.share}
+              friends={social.friends}
+              online={online}
+              onShare={(share) => {
+                setSocial((v) => ({ ...v, share }));
+                void sync(share);
+              }}
+            />
+          )}
+
+          {ready.done > 0 && <ShareResult event={event} percent={ready.percent} done={ready.done} total={ready.total} />}
+
           {ready.done > 0 && (
             <Button
               variant="danger"
               className="h-auto min-h-11 whitespace-normal"
+              disabled={!online}
               onClick={() => {
-                if (!confirm("Сбросить все результаты этого ивента на этом устройстве?")) return;
-                clearProgress(userId, event.id);
-                setProgress({});
+                if (!confirm("Сбросить все результаты этого ивента? Они удалятся и с других твоих устройств, и из рейтинга друзей.")) return;
+                void fetch(`/api/study-events/${event.id}`, { method: "DELETE" })
+                  .then((response) => {
+                    if (!response.ok) throw new Error("reset");
+                    clearProgress(userId, event.id);
+                    latest.current = {};
+                    setProgress({});
+                    setSocial((v) => ({ ...v, share: false, leaderboard: v.leaderboard.filter((r) => !r.me) }));
+                  })
+                  .catch(() => alert("Не удалось сбросить прогресс. Проверь сеть и попробуй ещё раз."));
               }}
             >
               Сбросить прогресс
@@ -190,9 +327,12 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               </p>
               <h1 className="mt-2 text-2xl font-bold">{part.title[lang]}</h1>
             </header>
-            <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
-              {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
+                {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
+              </Button>
+              <SpeakButton text={part.notes[lang]} lang={lang} />
+            </div>
             <article className={panel}>
               <EventNotes text={part.notes[lang]} lang={lang} />
             </article>
@@ -203,9 +343,39 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
         );
       })()}
 
+      {view.mode === "sheet" && event.cheatSheet && (
+        <>
+          <header>
+            <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
+            <h1 className="mt-3 text-2xl font-bold">Шпаргалка</h1>
+            <p className="mt-1 text-sm text-[var(--color-muted)]">Всё главное на одной странице — перечитать за пять минут до квиза.</p>
+          </header>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
+              {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
+            </Button>
+            <SpeakButton text={event.cheatSheet[lang]} lang={lang} />
+          </div>
+          <article className={panel}>
+            <EventNotes text={event.cheatSheet[lang]} lang={lang} />
+          </article>
+        </>
+      )}
+
+      {view.mode === "cards" && event.glossary && (
+        <>
+          <header>
+            <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
+            <h1 className="mt-3 text-2xl font-bold">Карточки терминов</h1>
+          </header>
+          <Flashcards glossary={event.glossary} lang={lang} onLang={switchLang} />
+        </>
+      )}
+
       {view.mode === "quiz" && (
         <Quiz
           key={view.run}
+          eventId={event.id}
           step={view.step}
           quiz={view.quiz}
           lang={lang}
@@ -284,8 +454,9 @@ function StepRow({ step, result, onOpen }: { step: Step; result?: Progress[strin
 }
 
 function Quiz({
-  step, quiz, lang, music, onLang, onMusic, onExit, onFinish,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish,
 }: {
+  eventId: string;
   step: Step;
   quiz: QuizQuestion[];
   lang: Lang;
@@ -371,6 +542,7 @@ function Quiz({
               <button className="mt-2 text-xs underline" onClick={onLang}>
                 {lang === "en" ? "Объяснение на русском" : "Explanation in English"}
               </button>
+              <ReportQuestion key={item.id} eventId={eventId} questionId={item.id} />
             </div>
             <Button
               variant="primary"
@@ -464,6 +636,7 @@ function Result({
                 {picked !== undefined && picked >= 0 && <p lang="en" className="mt-2 text-[var(--color-strength)]">✗ {item.options[picked]}</p>}
                 <p lang="en" className="mt-1 text-[var(--color-stability)]">✓ {item.options[item.correct]}</p>
                 <p lang={lang} className="mt-2 text-[var(--color-muted)]">{item.why[lang]}</p>
+                <ReportQuestion eventId={event.id} questionId={item.id} />
               </li>
             ))}
           </ol>

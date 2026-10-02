@@ -45,6 +45,15 @@ export interface StudyEvent {
   lectures: Lecture[];
   /** Сколько вопросов в квизе по части, по лекции и в итоговом. */
   counts: { part: number; lecture: number; final: number };
+  /** Термины для карточек: термин на языке квиза, определение — на двух. */
+  glossary?: Term[];
+  /** Шпаргалка на одну страницу, в той же разметке, что и конспекты. */
+  cheatSheet?: Text;
+}
+
+export interface Term {
+  term: string;
+  def: Text;
 }
 
 type Draft = Omit<Question, "id">;

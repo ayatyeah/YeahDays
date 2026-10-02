@@ -9,7 +9,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireOwner } from "@/lib/owner";
+import { requireAdmin } from "@/lib/owner";
 import { challengeSummary, dailyCounts } from "@/lib/ownerAnalytics";
 
 export const runtime = "nodejs";
@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic";
 const DAY = 86_400_000;
 
 export async function GET() {
-  const allowed = await requireOwner();
+  const allowed = await requireAdmin();
   if (!allowed) {
     return NextResponse.json({ error: "Not authorized" }, { status: 403 });
   }

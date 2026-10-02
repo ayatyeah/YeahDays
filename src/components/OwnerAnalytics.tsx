@@ -16,6 +16,7 @@ interface SocialReport {
   id: string;
   postId: string;
   text: string;
+  images: string[];
   author: string;
   comment: boolean;
   reason: string;
@@ -87,7 +88,7 @@ interface Analytics {
   };
   funnel: { name: string; count: number; percent: number; fromPrevious: number | null }[];
   consent: { accepted: number; activity: number; ai: number };
-  community: { published: number; posts: number; postsWeek: number; comments: number; likes: number; follows: number; teams: number; openTeams: number; reports: number };
+  community: { published: number; posts: number; postsWeek: number; comments: number; likes: number; follows: number; teams: number; openTeams: number; reports: number; photos: number; hidden: number };
   ai: { name: string; today: Spend; week: Spend; month: Spend }[];
   events: { participants: number; sharing: number; averagePercent: number; ready: number; newReports: number };
   challenge30: {
@@ -335,8 +336,8 @@ export default function OwnerAnalytics() {
 
       <Heading>Сообщество</Heading>
       <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
-        <Tile label="Профилей" value={community.published} hint={users.total ? `${Math.round((community.published / users.total) * 100)}% аккаунтов` : undefined} />
-        <Tile label="Постов" value={community.posts} hint={`за 7 дней: ${community.postsWeek}`} />
+        <Tile label="Участников" value={community.published} hint={`скрыли себя: ${community.hidden}`} />
+        <Tile label="Постов" value={community.posts} hint={`за 7 дней: ${community.postsWeek} · фото: ${community.photos}`} />
         <Tile label="Лайков и комментариев" value={community.likes + community.comments} hint={`подписок: ${community.follows}`} />
         <Tile label="Команд" value={community.teams} hint={`открытых: ${community.openTeams}`} />
       </div>
@@ -352,6 +353,11 @@ export default function OwnerAnalytics() {
             <div key={r.id} className="rounded-2xl surface px-3 py-2.5">
               <p className="text-[12px] text-[var(--color-muted)]">{r.comment ? "Комментарий" : "Пост"} · {r.author} · {new Date(r.createdAt).toLocaleString("ru-RU")}</p>
               <p className="mt-1 whitespace-pre-wrap break-words text-[14px]">{r.text}</p>
+              {r.images.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {r.images.map((src) => <a key={src} href={src} target="_blank" rel="noopener"><img src={src} alt="Фото из поста" className="h-24 w-24 rounded-lg object-cover" /></a>)}
+                </div>
+              )}
               <p className="mt-2 text-[14px]"><b>Жалоба:</b> {r.reason}</p>
               <div className="mt-2 flex gap-4 text-[13px]">
                 <button className="underline text-[var(--color-strength)]" onClick={() => void moderate(r, true)}>удалить пост</button>

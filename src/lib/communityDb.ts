@@ -3,7 +3,6 @@ import { prisma } from '@/lib/db';
 import { CommunityError, textField, linesField, focusCredit, focusRequired } from './community';
 import { askChat } from './aiChat';
 import { rateLimit } from './rateLimit';
-import { skinImageForStage } from './characterSkins';
 
 export async function blockedIds(userId: string) {
   const [own, others] = await Promise.all([
@@ -19,19 +18,6 @@ export async function communityHome(userId: string) {
     blockedIds(userId),
   ]);
   return { userId, profile, teams, blocked: blocks, available: !!process.env.OPENAI_API_KEY };
-}
-export async function publicProfile(viewer: string, id: string) {
-  if ((await blockedIds(viewer)).includes(id)) throw new CommunityError('Профиль недоступен', 404);
-  const p = await prisma.communityProfile.findUnique({ where: { userId: id } });
-  if (!p?.published && viewer !== id) throw new CommunityError('Студент пока не опубликовал профиль', 404);
-  const [user, learning, completed] = await Promise.all([
-    prisma.user.findUnique({ where: { id }, select: { name: true } }),
-    p?.showCharacter ? prisma.learningProfile.findUnique({ where: { userId: id } }) : null,
-    p?.showAchievements ? prisma.studyAttendance.findMany({ where: { userId: id, completedAt: { not: null } }, select: { room: { select: { questId: true } } } }) : [],
-  ]);
-  // Explicit projection: never return blocks, private plans, email, learning materials or tokens.
-  const data = learning?.data as { equipped?: string } | undefined;
-  return { userId: id, name: user?.name || 'Студент', bio: p?.bio ?? '', subjects: p?.subjects ?? [], goals: p?.goals ?? [], character: p?.showCharacter ? skinImageForStage(data?.equipped, 'fit') : null, sessions: p?.showAchievements ? completed.length : null, badge: p?.showAchievements && completed.length >= 3 ? 'В ритме команды' : null };
 }
 export async function teamView(userId: string, teamId: string) {
   const membership = await prisma.studyMember.findUnique({ where: { teamId_userId: { teamId, userId } } });
@@ -55,8 +41,8 @@ export async function teamView(userId: string, teamId: string) {
 export async function communityAction(userId: string, body: Record<string, unknown>) {
   const action = textField(body.action, 40);
   if (action === 'profile') {
-    if (typeof body.published !== 'boolean' || typeof body.showCharacter !== 'boolean' || typeof body.showAchievements !== 'boolean') throw new CommunityError('Проверь настройки видимости');
-    const data = { published: body.published, bio: textField(body.bio, 500, true), subjects: linesField(body.subjects), goals: linesField(body.goals), showCharacter: body.showCharacter, showAchievements: body.showAchievements };
+    // «О себе» — дополнение к профилю-аккаунту (см. socialDb.ts). Видимость решает переключатель «Скрыть меня», а не эти поля.
+    const data = { bio: textField(body.bio, 500, true), subjects: linesField(body.subjects), goals: linesField(body.goals) };
     await prisma.communityProfile.upsert({ where: { userId }, create: { userId, ...data }, update: data }); return;
   }
   if (action === 'block' || action === 'unblock') {

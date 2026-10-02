@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Logo from "./Logo";
 import { indicatorTween } from "@/lib/motion";
 import { cn } from "@/lib/cn";
+import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 
 /**
  * Секции лендинга. Это одностраничник, поэтому пункты — якоря, а не
@@ -99,6 +100,8 @@ export default function SiteNav() {
               Политика
             </Link>
           </nav>
+
+          <LanguageSwitcher className="ml-1 hidden shrink-0 md:inline-flex" />
 
           <Link
             href="/app"

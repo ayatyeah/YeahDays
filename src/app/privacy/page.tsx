@@ -5,7 +5,7 @@ import { POLICY_VERSION } from "@/lib/personalization";
 import type { Metadata } from "next";
 export const metadata: Metadata = { title: "Политика конфиденциальности — YeahGrind", description: "Данные аккаунта, LMS, ИИ, активности и способы управления ими." };
 export default function PrivacyPage() {
-  return <><SiteNav /><article className="mx-auto max-w-3xl space-y-5 px-5 py-12">
+  return <><SiteNav /><article data-no-i18n className="mx-auto max-w-3xl space-y-5 px-5 py-12">
     <Link href="/personalization" className="underline">← Настройки приватности и принятие политики</Link>
     <h1 className="text-3xl font-bold">Политика конфиденциальности</h1>
     <p className="text-sm text-[var(--color-muted)]">Обновлено 30 сентября 2026 · версия {POLICY_VERSION}</p>

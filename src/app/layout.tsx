@@ -7,6 +7,7 @@ import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AuthProvider from "@/components/AuthProvider";
 import ThemeApplier from "@/components/ThemeApplier";
+import DomTranslator from "@/i18n/DomTranslator";
 
 /**
  * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
@@ -15,6 +16,15 @@ import ThemeApplier from "@/components/ThemeApplier";
  * должны совпадать с persist-конфигом useThemeStore.
  */
 const THEME_INIT_SCRIPT = `(function(){try{var raw=localStorage.getItem('yeahdays-theme');if(!raw)return;var theme=JSON.parse(raw).state.theme;if(theme==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();`;
+
+/**
+ * Язык, отличный от русского, переводится на странице уже после отрисовки
+ * (см. src/i18n/DomTranslator.tsx). Чтобы человек не видел, как русский
+ * текст на глазах сменяется казахским, экран на это мгновение скрыт; через
+ * 2,5 секунды он показывается в любом случае — даже если словарь не пришёл.
+ * Ключ хранилища — LOCALE_KEY из src/i18n/locale.ts.
+ */
+const LOCALE_INIT_SCRIPT = `(function(){try{var raw=localStorage.getItem('yg-locale');if(!raw)return;var l=JSON.parse(raw).state.locale;if(l==='en'||l==='kk'){var d=document.documentElement;d.lang=l;d.setAttribute('data-i18n-pending','');setTimeout(function(){d.removeAttribute('data-i18n-pending')},2500);}}catch(e){}})();`;
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -147,7 +157,10 @@ export default function RootLayout({
       <body>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT }} />
         <ThemeApplier />
+        <DomTranslator />
         <AuthProvider>
           <ErrorBoundary>
             <Shell>{children}</Shell>

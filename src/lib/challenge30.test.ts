@@ -93,3 +93,62 @@ describe("отметки и аналитика", () => {
     expect(st.activities.reduce((n, a) => n + a.done, 0)).toBe(540);
   });
 });
+
+describe("окна из расписания", () => {
+  it("вырезает занятое время и оставляет окна, в которые помещается норма", async () => {
+    const { windowsFromBusy } = await import("./challenge30");
+    // Пары с 9:00 до 15:00 каждый день.
+    const busy = Array.from({ length: 7 }, () => [{ start: 540, end: 900 }]);
+    const windows = windowsFromBusy(busy, "easy");
+    for (const day of windows) {
+      expect(day.every((w) => w.end <= 540 - 10 || w.start >= 900 + 10)).toBe(true);
+      expect(() => timeSlots(day, LEVELS.easy.minutes)).not.toThrow();
+    }
+    expect(() => parseBrief(brief("easy", windows))).not.toThrow();
+  });
+  it("если день забит и норма не помещается, оставляет окна уровня по умолчанию", async () => {
+    const { windowsFromBusy } = await import("./challenge30");
+    const full = Array.from({ length: 7 }, () => [{ start: 7 * 60, end: 23 * 60 }]);
+    expect(windowsFromBusy(full, "medium")).toEqual(defaultWindows("medium"));
+    // Свободного времени много, но 12 часов с перерывами не влезают в остаток дня.
+    const morning = Array.from({ length: 7 }, () => [{ start: 7 * 60, end: 13 * 60 }]);
+    expect(windowsFromBusy(morning, "hard")).toEqual(defaultWindows("hard"));
+  });
+});
+
+describe("недельный пересмотр", () => {
+  it("доступен после полной недели и не чаще раза в семь дней", async () => {
+    const { reviewAllowed } = await import("./challenge30");
+    const p = plan("easy");
+    expect([0, 5, 6, 13, 27, 28].map((d) => reviewAllowed(p, d))).toEqual([false, false, true, true, true, false]);
+    p.review = { day: 6, summary: "ок" };
+    expect([7, 12, 13].map((d) => reviewAllowed(p, d))).toEqual([false, false, true]);
+    expect(reviewAllowed({ ...p, startDate: null, review: undefined }, 10)).toBe(false);
+  });
+  it("не переписывает прошлое: отмеченные блоки остаются при своих занятиях, новые доли действуют с завтра", async () => {
+    const { applyReview, weekSummary } = await import("./challenge30");
+    const p = plan("medium");
+    for (let day = 0; day <= 6; day++) for (const b of blocksFor(p, day)) p.logs[b.id] = b.minutes;
+    const before = Array.from({ length: 7 }, (_, d) => blocksFor(p, d).map((b) => b.title));
+    const tomorrow = blocksFor(p, 7).map((b) => b.title);
+    const week = weekSummary(p, 6);
+    expect(week.reduce((n, a) => n + a.done, 0)).toBe(7 * 360);
+
+    applyReview(p, 6, { summary: "Английского больше", activities: [
+      { weight: 1, steps: ["x1", "x2", "x3", "x4"] }, { weight: 3, steps: ["y1", "y2", "y3", "y4"] }, { weight: 1, steps: ["z1", "z2", "z3", "z4"] },
+    ] });
+    expect(Array.from({ length: 7 }, (_, d) => blocksFor(p, d).map((b) => b.title))).toEqual(before);
+    expect(blocksFor(p, 7).map((b) => b.title)).not.toEqual(tomorrow);
+    // Задание прошедшей первой недели прежнее, со второй — новое.
+    expect(p.recipe.activities[0].steps[0]).toBe("Шаг недели 1");
+    expect(p.recipe.activities[0].steps[1]).toBe("x2");
+    // Норма дня и аналитика по-прежнему сходятся.
+    expect(blocksFor(p, 20).reduce((n, b) => n + b.minutes, 0)).toBe(360);
+    expect(stats(p).total).toBe(7 * 360);
+    expect(p.review).toEqual({ day: 6, summary: "Английского больше" });
+  });
+  it("не принимает пересмотр с другим числом занятий", async () => {
+    const { parseReview } = await import("./challenge30");
+    expect(() => parseReview({ summary: "нормально", activities: [{ weight: 1, steps: ["a1b", "a2b", "a3b", "a4b"] }] }, 3)).toThrow(ChallengeError);
+  });
+});

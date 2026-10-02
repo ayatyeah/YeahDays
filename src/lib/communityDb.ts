@@ -35,7 +35,7 @@ export async function publicProfile(viewer: string, id: string) {
 }
 export async function teamView(userId: string, teamId: string) {
   const membership = await prisma.studyMember.findUnique({ where: { teamId_userId: { teamId, userId } } });
-  if (!membership) throw new CommunityError('Вступи в команду по приглашению', 403);
+  if (!membership) throw new CommunityError('Вступи в команду, чтобы видеть её обсуждения', 403);
   const blocked = await blockedIds(userId);
   const team = await prisma.studyTeam.findUniqueOrThrow({ where: { id: teamId }, include: {
     members: { select: { userId: true, user: { select: { name: true } } }, orderBy: { joinedAt: 'asc' } },
@@ -46,7 +46,7 @@ export async function teamView(userId: string, teamId: string) {
   const posts = await prisma.studyPost.findMany({ where: { ...postWhere, parentId: null, roomId: null }, orderBy: { createdAt: 'desc' }, take: 50, include: { user: { select: { name: true } }, replies: { where: { userId: { notIn: blocked } }, orderBy: { createdAt: 'asc' }, take: 100, include: { user: { select: { name: true } } } } } });
   const chat = await prisma.studyPost.findMany({ where: { ...postWhere, roomId: { in: team.rooms.map(r => r.id) } }, orderBy: { createdAt: 'desc' }, take: 100, include: { user: { select: { name: true } } } });
   const reports = team.ownerId === userId ? await prisma.communityReport.findMany({ where: { teamId, resolved: false }, select: { id: true, postId: true, reason: true, post: { select: { text: true } } }, take: 100 }) : [];
-  return { id: team.id, name: team.name, subject: team.subject, ownerId: team.ownerId, invite: team.ownerId === userId ? team.invite : null,
+  return { id: team.id, name: team.name, subject: team.subject, open: team.open, about: team.about, ownerId: team.ownerId, invite: team.ownerId === userId ? team.invite : null,
     members: team.members.filter(m => !blocked.includes(m.userId)), posts, chat: chat.reverse(), reports,
     quests: team.quests.map(({ rooms, ...q }) => { const contributions = rooms.flatMap(r => r.participants); return { ...q, progress: contributions.length, mine: contributions.some(p => p.userId === userId), earned: contributions.length >= q.target && contributions.some(p => p.userId === userId) }; }),
     rooms: team.rooms.map(r => ({ ...r, participants: r.participants.filter(p => !blocked.includes(p.userId)) })), serverNow: new Date().toISOString() };
@@ -68,7 +68,10 @@ export async function communityAction(userId: string, body: Record<string, unkno
       const blocked = row.blocked.filter(id => id !== target); if (action === 'block') blocked.push(target);
       if (blocked.length > 500) throw new CommunityError('Достигнут лимит блокировок');
       await tx.communityProfile.update({ where: { userId }, data: { blocked } });
-      if (action === 'block') await tx.friendship.deleteMany({ where: { OR: [{ userId, friendId: target }, { userId: target, friendId: userId }] } });
+      if (action === 'block') {
+        await tx.friendship.deleteMany({ where: { OR: [{ userId, friendId: target }, { userId: target, friendId: userId }] } });
+        await tx.follow.deleteMany({ where: { OR: [{ followerId: userId, followingId: target }, { followerId: target, followingId: userId }] } });
+      }
     }); return;
   }
   if (action === 'create') {

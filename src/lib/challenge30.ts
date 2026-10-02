@@ -9,7 +9,13 @@ export const SESSION = 45, BREAK = 10;
 export type Activity = { title: string; kind: "study" | "sport" | "project" | "personal"; weight: number; steps: string[] };
 export type Recipe = { title: string; summary: string; activities: Activity[] };
 export type Block = { id: string; start: number; minutes: number; title: string; detail: string; kind: Activity["kind"]; activity: number };
-export type Plan30 = { id: string; brief: Brief; recipe: Recipe; createdAt: string; startDate: string | null; logs: Record<string, number>; consentAt: string; tokens?: number };
+export type Plan30 = { id: string; brief: Brief; recipe: Recipe; createdAt: string; startDate: string | null; logs: Record<string, number>; consentAt: string; tokens?: number;
+  /** Weekly review results: weights that apply from a given day on. Earlier days keep their layout, so logged blocks never change activity. */
+  tweaks?: { from: number; weights: number[] }[];
+  /** Last weekly review: the challenge day it ran on and the coach's short note. */
+  review?: { day: number; summary: string };
+  /** true — friends who also share can see this challenge's day count and hours. Off by default. */
+  share?: boolean };
 export class ChallengeError extends Error {}
 export const clockText = (n: number) => `${String(Math.floor(n / 60)).padStart(2, "0")}:${String(n % 60).padStart(2, "0")}`;
 export function localDay(zone: string, now = new Date()) { return new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now); }
@@ -67,7 +73,7 @@ export function parseRecipe(v: unknown): Recipe {
   return { title: clean(r.title, 3, 100), summary: clean(r.summary, 3, 500), activities };
 }
 /** Smooth weighted rotation: a heavier activity recurs more often without filling the day in one lump. */
-function rotation(list: Activity[]) {
+function rotation<T extends { weight: number }>(list: T[]): T[] {
   const total = list.reduce((n, a) => n + a.weight, 0); const score = list.map(() => 0);
   return Array.from({ length: total }, () => {
     list.forEach((a, i) => { score[i] += a.weight; });
@@ -79,7 +85,10 @@ export function blocksFor(plan: Plan30, day: number, previewStart?: string): Blo
   const date = plusDays(plan.startDate ?? previewStart ?? localDay(plan.brief.timezone), day);
   const weekday = (new Date(date + "T12:00:00Z").getUTCDay() + 6) % 7;
   const phase = Math.min(3, Math.floor(day / 7));
-  const order = rotation(plan.recipe.activities); const calm = rotation(plan.recipe.activities.filter(a => a.kind !== "sport"));
+  const weights = plan.tweaks?.filter(t => t.from <= day).at(-1)?.weights;
+  // The activity objects themselves are kept (see `indexOf` below); only the weight the rotation sees changes.
+  const weighted = plan.recipe.activities.map((a, i) => ({ a, weight: weights?.[i] ?? a.weight }));
+  const order = rotation(weighted).map(w => w.a); const calm = rotation(weighted.filter(w => w.a.kind !== "sport")).map(w => w.a);
   const cap = plan.brief.level === "easy" ? 1 : 2; let sport = 0, moving = false;
   // The day shifts the rotation, so a short day still reaches every activity over the week.
   return timeSlots(plan.brief.windows[weekday], LEVELS[plan.brief.level].minutes).map((slot, i) => {
@@ -110,4 +119,50 @@ export function stats(p: Plan30, previewStart?: string) {
   let streak = 0, run = 0;
   for (const minutes of days) { run = minutes >= target ? run + 1 : 0; streak = Math.max(streak, run); }
   return { target, days, activities, streak, total: days.reduce((a, b) => a + b, 0), successes: days.filter(n => n >= target).length };
+}
+/**
+ * Free windows for each weekday (Monday first) from what the person already has in the calendar.
+ * Busy time is cut out of a 07:00–23:00 day with a 10 min margin; the three longest gaps of at least one session remain.
+ * A weekday that cannot hold the level even then falls back to the level default, so the form never ends up impossible.
+ */
+export function windowsFromBusy(busy: Window[][], level: Level): Window[][] {
+  const fallback = defaultWindows(level);
+  return busy.map((list, weekday) => {
+    const taken = list.map(b => ({ start: Math.max(0, b.start - BREAK), end: Math.min(1440, b.end + BREAK) })).sort((a, b) => a.start - b.start);
+    const free: Window[] = []; let pos = 7 * 60;
+    for (const b of taken) { if (b.start > pos) free.push({ start: pos, end: Math.min(b.start, 23 * 60) }); pos = Math.max(pos, b.end); }
+    if (pos < 23 * 60) free.push({ start: pos, end: 23 * 60 });
+    let best = free.filter(w => w.end - w.start >= SESSION).sort((a, b) => (b.end - b.start) - (a.end - a.start)).slice(0, 3).sort((a, b) => a.start - b.start);
+    // Sleep rule: everything must fit into 16 hours; drop the earliest window until it does.
+    while (best.length > 1 && best.at(-1)!.end - best[0].start > 16 * 60) best = best.slice(1);
+    try { if (!best.length) throw new ChallengeError(""); timeSlots(best, LEVELS[level].minutes); return best; } catch { return fallback[weekday]; }
+  });
+}
+/** What the weekly review sends to the model: planned vs logged minutes per activity over the last seven days. No free-text logs, no schedule. */
+export function weekSummary(p: Plan30, day: number) {
+  const from = Math.max(0, day - 6);
+  const rows = p.recipe.activities.map(a => ({ title: a.title, kind: a.kind, weight: a.weight, planned: 0, done: 0 }));
+  for (let d = from; d <= Math.min(day, 29); d++) for (const b of blocksFor(p, d)) { rows[b.activity].planned += b.minutes; rows[b.activity].done += p.logs[b.id] ?? 0; }
+  return rows;
+}
+export type Review = { summary: string; activities: { weight: number; steps: string[] }[] };
+export function parseReview(v: unknown, count: number): Review {
+  const r = v as Review;
+  if (!r || !Array.isArray(r.activities) || r.activities.length !== count) throw new ChallengeError("ИИ вернул неполный пересмотр. Попробуй ещё раз позже.");
+  return { summary: clean(r.summary, 3, 400), activities: r.activities.map(a => {
+    if (!a || !Array.isArray(a.steps) || a.steps.length !== 4) throw new ChallengeError("ИИ вернул неполный пересмотр. Попробуй ещё раз позже.");
+    return { weight: [1, 2, 3].includes(a.weight) ? a.weight : 1, steps: a.steps.map(s => clean(s, 3, 240)) };
+  }) };
+}
+/** Days of the challenge on which a weekly review is allowed: after a full week, and at most once per seven days. */
+export function reviewAllowed(p: Plan30, day: number) { return !!p.startDate && day >= 6 && day <= 27 && (!p.review || day - p.review.day >= 7); }
+/**
+ * Apply a weekly review from `day` on. The past is never rewritten: weeks that are already over keep their tasks,
+ * and the new weights start tomorrow, so nothing logged so far moves to another activity.
+ */
+export function applyReview(p: Plan30, day: number, review: Review) {
+  const phase = Math.min(3, Math.floor((day + 1) / 7));
+  p.recipe.activities.forEach((a, i) => { for (let ph = phase; ph < 4; ph++) a.steps[ph] = review.activities[i].steps[ph]; });
+  p.tweaks = [...(p.tweaks ?? []).filter(t => t.from <= day), { from: day + 1, weights: review.activities.map(a => a.weight) }];
+  p.review = { day, summary: review.summary };
 }

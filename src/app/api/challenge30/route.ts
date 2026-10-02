@@ -4,8 +4,8 @@ import { randomUUID } from "node:crypto";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
-import { ChallengeError, parseBrief, localDay, plusDays, logBlock, type Plan30 } from "@/lib/challenge30";
-import { createRecipe } from "@/lib/challenge30Ai";
+import { ChallengeError, applyReview, dayIndex, parseBrief, localDay, plusDays, logBlock, reviewAllowed, weekSummary, type Plan30 } from "@/lib/challenge30";
+import { createRecipe, reviewRecipe } from "@/lib/challenge30Ai";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const available = () => !!process.env.OPENAI_API_KEY?.trim();
@@ -64,6 +64,37 @@ export async function POST(req: Request) {
       });
       return NextResponse.json(publicRow(updated));
     }
+    if (b.action === "review") {
+      // Weekly review: the second and last kind of AI call. Same consent, same daily budget and the same lock as generation.
+      if (b.consent !== "challenge30-v1") throw new ChallengeError("Нужно согласие на отправку данных плана в OpenAI");
+      const note = typeof b.note === "string" ? b.note.trim().slice(0, 300) : "";
+      if (!available()) return NextResponse.json({ error: "ИИ ещё не подключён" }, { status: 503 });
+      if (!rateLimit("challenge30:global", 100, 86400000)) return NextResponse.json({ error: "Общий дневной лимит ИИ исчерпан" }, { status: 429 });
+      const token = randomUUID(); const now = new Date(); const day = now.toISOString().slice(0, 10);
+      const snapshot = await locked(userId, async (tx, row) => {
+        if (row.revision !== b.revision) throw new ChallengeError("Челлендж изменился. Обнови страницу");
+        const plan = row.data as Plan30 | null;
+        if (!plan?.startDate || b.planId !== plan.id) throw new ChallengeError("Сначала начни челлендж");
+        const elapsed = dayIndex(plan.startDate, localDay(plan.brief.timezone, now));
+        if (!reviewAllowed(plan, elapsed)) throw new ChallengeError("Пересмотр доступен после полной недели и не чаще раза в 7 дней");
+        if (row.pendingId && row.pendingAt && now.getTime() - row.pendingAt.getTime() < 90_000) throw new ChallengeError("Пересмотр уже идёт. Подожди");
+        const count = row.aiDay === day ? row.aiCount : 0;
+        if (count >= 2) throw new ChallengeError("На сегодня доступны только 2 обращения к ИИ. Лимит обновится в 00:00 UTC");
+        await tx.challenge30.update({ where: { userId }, data: { pendingId: token, pendingAt: now, aiDay: day, aiCount: count + 1 } });
+        return { plan, elapsed };
+      });
+      reservation = token;
+      const { review, tokens } = await reviewRecipe(snapshot.plan, weekSummary(snapshot.plan, snapshot.elapsed), snapshot.elapsed, note);
+      const updated = await locked(userId, async (tx, row) => {
+        if (row.pendingId !== token) throw new ChallengeError("Пересмотр отменён");
+        // Re-read the plan: minutes logged while the model was thinking must not be lost.
+        const plan = row.data as Plan30 | null;
+        if (!plan || plan.id !== snapshot.plan.id) throw new ChallengeError("План изменился. Обнови страницу");
+        applyReview(plan, snapshot.elapsed, review); plan.tokens = (plan.tokens ?? 0) + tokens;
+        return tx.challenge30.update({ where: { userId }, data: { data: json(plan), pendingId: null, pendingAt: null, revision: { increment: 1 } } });
+      });
+      return NextResponse.json(publicRow(updated));
+    }
     const updated = await locked(userId, async (tx, row) => {
       if (row.revision !== b.revision) throw new ChallengeError("Изменения уже сохранены с другого устройства. Обнови страницу");
       let plan = row.data as Plan30 | null;
@@ -79,6 +110,9 @@ export async function POST(req: Request) {
           plan.startDate = plusDays(localDay(plan.brief.timezone), b.offset);
         } else if (b.action === "log") {
           logBlock(plan, b.day, b.blockId, b.minutes);
+        } else if (b.action === "share") {
+          if (typeof b.share !== "boolean") throw new ChallengeError("Некорректный запрос");
+          plan.share = b.share;
         } else throw new ChallengeError("Неизвестное действие");
       }
       return tx.challenge30.update({ where: { userId }, data: { data: json(plan), pendingId: null, pendingAt: null, revision: { increment: 1 } } });

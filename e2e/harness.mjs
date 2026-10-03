@@ -104,7 +104,7 @@ export async function newUser({ fresh = false, state = {} } = {}) {
       seenGuide: true,
       // Список должен совпадать с src/lib/features.ts: непросмотренная
       // новинка открывает шторку поверх экрана, и тапы тестов уходят в неё.
-      seenFeatures: ["events-2026-10", "challenge30-2026-10", "community-2026-09", "challenges", "todos", "schedule", "timeslots", "push", "personal-duration"],
+      seenFeatures: ["social-2026-10", "events-2026-10", "challenge30-2026-10", "community-2026-09", "challenges", "todos", "schedule", "timeslots", "push", "personal-duration"],
       todos: [],
       plan: [],
       updatedAt: 1,
@@ -176,6 +176,11 @@ export async function session({ user, engine = "webkit", permissions, initScript
     await page.fill('input[name="password"]', user.password);
     await page.click('button[type=submit]');
     await page.waitForURL((u) => !u.pathname.startsWith("/login"), { timeout: 30_000 });
+    // После входа приложение загружается целиком и подтягивает снимок
+    // аккаунта. Человек в эту секунду никуда не уходит — и тест не должен:
+    // иначе загрузка обрывается на полпути, и первый обмен с сервером
+    // достаётся следующей странице.
+    await page.waitForLoadState("networkidle");
   }
   return { browser, context, page, errors };
 }
@@ -251,6 +256,8 @@ export async function runAll({ filter } = {}) {
       if (current.page) await saveArtifacts(t.name, current.page);
       results.push({ name: t.name, ok: false, error: String(e.message).split("\n")[0], checks: current.checks });
       console.log(`✗ ${t.name}\n    ${String(e.message).split("\n")[0]}`);
+      // Полный текст ошибки (лог ожидания Playwright) — по E2E_VERBOSE=1, обычно хватает первой строки.
+      if (process.env.E2E_VERBOSE) console.log(String(e.stack ?? e.message));
       for (const c of current.checks) console.log(`    прошло: ${c}`);
     }
   }

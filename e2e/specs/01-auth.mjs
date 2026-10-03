@@ -176,3 +176,31 @@ test("закрытые страницы просят войти и возвра�
   );
   await browser.close();
 });
+
+test("вход: один запрос вместо четырёх, раздел открывается сам, чужой адрес возврата не уводит с сайта", async () => {
+  const user = await newUser();
+  const { browser, page } = await session();
+  const auth = [];
+  page.on("request", (r) => r.url().includes("/api/auth/") && auth.push(`${r.method()} ${new URL(r.url()).pathname}`));
+
+  // Закрытый раздел до входа: сервер уводит на /login — именно такой ответ раньше застревал в памяти роутера.
+  await page.goto("/progress", { waitUntil: "networkidle" });
+  await page.fill('input[name="identifier"]', user.email);
+  await page.fill('input[name="password"]', user.password);
+  await page.tap('button[type=submit]');
+  await page.waitForURL(/\/progress/, { timeout: 30_000 });
+  await page.waitForLoadState("networkidle");
+  check((await page.locator('input[name="identifier"]').count()) === 0, "после входа открылся сам раздел, а не снова форма входа — перезагружать не нужно");
+  const before = auth.slice(0, auth.indexOf("POST /api/auth/callback/credentials") + 1);
+  check(before.filter((r) => r.startsWith("POST")).length === 1 && !auth.includes("GET /api/auth/providers"), `вход — один запрос, без лишних служебных (было: ${auth.slice(0, 6).join(", ")})`);
+
+  // Адрес возврата на чужой сайт игнорируется.
+  await page.context().clearCookies();
+  await page.goto("/login?callbackUrl=" + encodeURIComponent("https://example.com/steal"), { waitUntil: "networkidle" });
+  await page.fill('input[name="identifier"]', user.email);
+  await page.fill('input[name="password"]', user.password);
+  await page.tap('button[type=submit]');
+  await page.waitForURL((u) => !u.pathname.startsWith("/login"), { timeout: 30_000 });
+  check(page.url().startsWith(BASE + "/app"), `чужой адрес возврата не сработал — открылось приложение (сейчас ${page.url()})`);
+  await browser.close();
+});

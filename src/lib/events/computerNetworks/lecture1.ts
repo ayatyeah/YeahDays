@@ -23,6 +23,12 @@ Network **media** carry the message from source to destination:
 Key terms: **Network Interface Card (NIC)**, **physical port**, **interface** (port and interface are often used interchangeably).
 - A **physical topology** diagram shows the physical location of intermediary devices and cable installation.
 - A **logical topology** diagram shows devices, ports and the **addressing scheme**.
+## Networks of many sizes
+- **Small home networks** — connect a few computers to each other and to the internet.
+- **Small office / home office (SOHO)** — lets computers in a home or remote office connect to a corporate network.
+- **Medium to large networks** — many locations with hundreds or thousands of interconnected computers.
+- **World wide networks** — connect hundreds of millions of computers; the internet is the example.
+Network infrastructures differ in the size of the area covered, the number of users, the number and types of services, and the area of responsibility.
 ## LAN, WAN and the internet
 - A **LAN** spans a small geographical area, is administered by a single organization or individual and gives high-speed bandwidth to internal devices.
 - A **WAN** spans a wide geographical area, interconnects LANs, is typically administered by one or more **service providers** and usually has slower links.
@@ -47,6 +53,12 @@ Business: **dedicated leased line** (reserved circuits in the provider's network
 Термины: **сетевая карта (NIC)**, **физический порт**, **интерфейс** (порт и интерфейс часто означают одно и то же).
 - Схема **физической топологии** показывает физическое расположение промежуточных устройств и прокладку кабелей.
 - Схема **логической топологии** показывает устройства, порты и **схему адресации**.
+## Сети разного размера
+- **Малые домашние сети** — соединяют несколько компьютеров между собой и с интернетом.
+- **Малый офис / домашний офис (SOHO)** — позволяет компьютерам дома или в удалённом офисе подключаться к корпоративной сети.
+- **Средние и крупные сети** — много площадок с сотнями и тысячами связанных компьютеров.
+- **Всемирные сети** — соединяют сотни миллионов компьютеров; пример — интернет.
+Сетевые инфраструктуры различаются размером территории, числом пользователей, числом и видами сервисов и зоной ответственности.
 ## LAN, WAN и интернет
 - **LAN** охватывает небольшую территорию, управляется одной организацией или человеком и даёт внутренним устройствам высокую скорость.
 - **WAN** охватывает большую территорию, соединяет локальные сети, обычно управляется одним или несколькими **провайдерами** и, как правило, имеет более медленные каналы.
@@ -89,6 +101,8 @@ Before convergence an organization had separate cabling for telephone, video and
 ## Trends
 - **BYOD** — any device, with any ownership, used anywhere.
 - **Online collaboration** (Cisco Webex) and **video communication**.
+- Collaboration tools such as **Cisco Webex Teams** let people send instant messages and post images, videos and links; collaboration is a very high priority for business and education.
+- **Video** calls and conferencing reach anyone regardless of location; video is becoming a critical requirement for collaboration (Cisco TelePresence).
 - **Cloud computing** — storing files and running applications on servers over the internet; made possible by **data centers**.
 ## Four types of clouds
 - **Public** — available to the general public, free or pay-per-use.
@@ -113,6 +127,8 @@ Before convergence an organization had separate cabling for telephone, video and
 ## Тенденции
 - **BYOD** — любое устройство, чьё угодно, где угодно.
 - **Совместная работа онлайн** (Cisco Webex) и **видеосвязь**.
+- Инструменты вроде **Cisco Webex Teams** позволяют отправлять мгновенные сообщения и публиковать изображения, видео и ссылки; совместная работа — высокий приоритет для бизнеса и образования.
+- **Видеозвонки** и конференции доступны независимо от места; видео становится обязательным условием совместной работы (Cisco TelePresence).
 - **Облачные вычисления** — хранение файлов и работа приложений на серверах через интернет; возможны благодаря **дата-центрам**.
 ## Четыре типа облаков
 - **Публичное** — доступно всем, бесплатно или с оплатой по использованию.
@@ -145,6 +161,7 @@ Before convergence an organization had separate cabling for telephone, video and
 - **Kernel** — communicates between hardware and software and manages how hardware resources are used.
 - **Hardware** — the physical part, including the electronics.
 A GUI is friendlier, but it can fail or crash, so network devices are usually managed through the **CLI**.
+Examples of GUI systems: Windows, macOS, Linux KDE, Apple iOS and Android. A PC operating system lets you use a mouse, enter text and see output on a monitor; a CLI-based network operating system lets a technician run network programs and enter text-based commands from the **keyboard** and see the output on a monitor.
 ## Access methods
 - **Console** — a physical management port; used for maintenance and the **initial configuration**.
 - **SSH** — a **secure** remote CLI connection over the network. The recommended remote method.
@@ -172,9 +189,10 @@ Syntax conventions: **boldface** — type as shown; italics — a value you supp
 Help: **context-sensitive help** (the **?** key) shows available commands and keywords; the **command syntax check** tells you what is wrong with a command.
 ## Hot keys
 - **Tab** — completes a partial command. **Up Arrow / Ctrl+P** — recalls previous commands.
+- **Backspace** — erases the character to the left. **Left Arrow / Ctrl+B** and **Right Arrow / Ctrl+F** — move the cursor one character.
 - **Ctrl+C** or **Ctrl+Z** — leave configuration mode and return to privileged EXEC.
 - **Ctrl+Shift+6** — all-purpose break: aborts DNS lookups, traceroutes and pings.
-- At the **--More--** prompt: **Enter** shows the next line, **Space** the next screen.
+- At the **--More--** prompt: **Enter** shows the next line, **Space** the next screen, **any other key** ends the display and returns to privileged EXEC.
 Commands can be shortened to the fewest unique characters: **conf** for configure.
 > The command **hostname** works only in global configuration mode — you need to pass through enable and configure terminal first.`,
         ru: `## Операционная система
@@ -182,6 +200,7 @@ Commands can be shortened to the fewest unique characters: **conf** for configur
 - **Ядро (kernel)** — связывает железо и программы и распределяет аппаратные ресурсы.
 - **Аппаратная часть** — физическая часть, включая электронику.
 GUI удобнее, но может зависнуть или упасть, поэтому сетевыми устройствами обычно управляют через **CLI**.
+Примеры систем с GUI: Windows, macOS, Linux KDE, Apple iOS и Android. ОС компьютера позволяет работать мышью, вводить текст и видеть вывод на мониторе; сетевая ОС с CLI позволяет технику запускать сетевые программы и вводить текстовые команды с **клавиатуры** и видеть вывод на мониторе.
 ## Способы доступа
 - **Консоль** — физический порт управления; для обслуживания и **первоначальной настройки**.
 - **SSH** — **защищённое** удалённое подключение к CLI по сети. Рекомендуемый удалённый способ.
@@ -209,9 +228,10 @@ GUI удобнее, но может зависнуть или упасть, по
 Справка: **контекстная справка** (клавиша **?**) показывает доступные команды и ключевые слова; **проверка синтаксиса** сообщает, что не так с командой.
 ## Горячие клавиши
 - **Tab** — дописывает команду. **Стрелка вверх / Ctrl+P** — прошлые команды.
+- **Backspace** — стирает символ слева. **Стрелка влево / Ctrl+B** и **стрелка вправо / Ctrl+F** — сдвигают курсор на символ.
 - **Ctrl+C** или **Ctrl+Z** — выйти из режима конфигурации в привилегированный EXEC.
 - **Ctrl+Shift+6** — универсальное прерывание: останавливает DNS-поиск, traceroute и ping.
-- На приглашении **--More--**: **Enter** — следующая строка, **Пробел** — следующий экран.
+- На приглашении **--More--**: **Enter** — следующая строка, **Пробел** — следующий экран, **любая другая клавиша** прекращает вывод и возвращает в привилегированный EXEC.
 Команды можно сокращать до минимума уникальных символов: **conf** вместо configure.
 > Команда **hostname** работает только в режиме глобальной конфигурации — сначала нужны enable и configure terminal.`,
       },
@@ -264,6 +284,11 @@ Saving the running configuration:
 - Not saved yet: remove the commands one by one, or **reload** the device (it goes offline for a short time).
 - Already saved: **erase startup-config**, then **reload** to clear the running-config from RAM.
 - **show running-config** and **show startup-config** display the files; a terminal program can log them to a text file as a backup.
+## Capturing the configuration to a text file
+- Open terminal software (PuTTY or Tera Term) that is already connected to the switch.
+- Enable **logging** in the terminal software and choose a file name and location.
+- Run **show running-config** or **show startup-config** at the privileged EXEC prompt — the text goes into the file.
+- Disable logging. The file is a record of the configuration; it may need editing before it is used to restore a device.
 > RAM = running, NVRAM = startup. "copy running-config startup-config" is typed at the # prompt.`,
         ru: `## Имя устройства
 Первая команда настройки на любом устройстве — дать ему уникальное **имя (hostname)**. Заводское имя коммутатора Cisco — **Switch**.
@@ -296,6 +321,11 @@ Saving the running configuration:
 - Ещё не сохранено: убрать команды по одной или выполнить **reload** (устройство ненадолго уйдёт из сети).
 - Уже сохранено: **erase startup-config**, затем **reload**, чтобы очистить running-config из RAM.
 - **show running-config** и **show startup-config** показывают файлы; терминальная программа может записать их в текстовый файл как резервную копию.
+## Сохранение конфигурации в текстовый файл
+- Открой терминальную программу (PuTTY или Tera Term), уже подключённую к коммутатору.
+- Включи в ней **запись журнала (logging)** и выбери имя и место файла.
+- Выполни **show running-config** или **show startup-config** в привилегированном EXEC — текст попадёт в файл.
+- Выключи запись. Файл — это запись конфигурации; перед восстановлением устройства его может понадобиться отредактировать.
 > RAM = running, NVRAM = startup. «copy running-config startup-config» вводится в приглашении #.`,
       },
       [

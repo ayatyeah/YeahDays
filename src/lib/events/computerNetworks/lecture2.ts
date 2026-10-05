@@ -14,6 +14,12 @@ A connection is not enough — devices must agree on **how** to communicate. Eve
 - a **destination** (receiver);
 - a **channel** (media) that provides the path.
 All communications are governed by **protocols** — the rules that the communication follows.
+## Establishing the rules
+People use established rules to hold a conversation, and so do devices. Protocols must account for:
+- an **identified sender and receiver**;
+- a **common language and grammar**;
+- the **speed and timing** of delivery;
+- **confirmation or acknowledgment** requirements.
 ## What a protocol must define
 - **Message encoding** — converting information into another acceptable form for transmission. **Decoding** reverses it.
 - **Message formatting and encapsulation** — a message must use a specific format or structure, which depends on the message type and the channel.
@@ -49,6 +55,12 @@ Protocol functions:
 - **получатель**;
 - **канал** (среда), по которому идёт сообщение.
 Любое общение подчиняется **протоколам** — правилам, по которым оно идёт.
+## Установление правил
+Люди ведут разговор по принятым правилам — и устройства тоже. Протоколы должны учитывать:
+- **определённых отправителя и получателя**;
+- **общий язык и грамматику**;
+- **скорость и время** доставки;
+- требования к **подтверждению** получения.
 ## Что должен определять протокол
 - **Кодирование сообщения** — преобразование информации в форму, пригодную для передачи. **Декодирование** — обратный процесс.
 - **Формат и инкапсуляция** — у сообщения должен быть определённый формат, который зависит от типа сообщения и канала.
@@ -195,6 +207,8 @@ A layered model makes a complex process easier to explain. Benefits:
 - Data Link — **Frame**
 - Physical — **Bits**
 **De-encapsulation** goes up the stack: each layer strips its header and passes the rest up.
+## Example: a web page travels
+A web server sends a page: the **HTTP data** gets a **TCP header** (segment), then an **IP header** (packet), then an **Ethernet header and trailer** (frame), and leaves as bits. The client receives the bits and removes the Ethernet, IP and TCP information in that order, until the browser gets the page.
 > Down the stack: Data, Segment, Packet, Frame, Bits. Layer 3 = packet and routing, Layer 2 = frame and MAC.`,
         ru: `## Зачем нужны уровневые модели
 Уровневая модель упрощает объяснение сложного процесса. Преимущества:
@@ -225,6 +239,8 @@ A layered model makes a complex process easier to explain. Benefits:
 - Канальный — **Кадр (Frame)**
 - Физический — **Биты (Bits)**
 **Деинкапсуляция** идёт вверх по стеку: каждый уровень снимает свой заголовок и передаёт остальное выше.
+## Пример: путь веб-страницы
+Веб-сервер отправляет страницу: к **данным HTTP** добавляется **заголовок TCP** (сегмент), затем **заголовок IP** (пакет), затем **заголовок и концевик Ethernet** (кадр), и всё уходит битами. Клиент принимает биты и снимает информацию Ethernet, IP и TCP в этом порядке, пока браузер не получит страницу.
 > Вниз по стеку: Data, Segment, Packet, Frame, Bits. Уровень 3 = пакет и маршрутизация, уровень 2 = кадр и MAC.`,
       },
       [

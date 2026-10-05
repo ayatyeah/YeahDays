@@ -104,7 +104,7 @@ export async function newUser({ fresh = false, state = {} } = {}) {
       seenGuide: true,
       // Список должен совпадать с src/lib/features.ts: непросмотренная
       // новинка открывает шторку поверх экрана, и тапы тестов уходят в неё.
-      seenFeatures: ["social-2026-10", "events-2026-10", "challenge30-2026-10", "community-2026-09", "challenges", "todos", "schedule", "timeslots", "push", "personal-duration"],
+      seenFeatures: ["cn-midterm-2026-10", "social-2026-10", "events-2026-10", "challenge30-2026-10", "community-2026-09", "challenges", "todos", "schedule", "timeslots", "push", "personal-duration"],
       todos: [],
       plan: [],
       updatedAt: 1,

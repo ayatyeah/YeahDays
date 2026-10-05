@@ -20,7 +20,7 @@ Data link protocols are defined by the **IEEE, ITU, ISO and ANSI**.
 - **Physical topology** — the physical connections and how devices are interconnected.
 - **Logical topology** — the virtual connections, using device interfaces and IP addressing schemes.
 **WAN topologies:**
-- **Point-to-point** — the simplest and most common; a permanent link between two endpoints.
+- **Point-to-point** — the simplest and most common; a permanent link between two endpoints. The two nodes do not share the media with other hosts, so point-to-point WAN protocols can be very simple.
 - **Hub and spoke** — a central site connects branch sites through point-to-point links (like a star).
 - **Mesh** — high availability, but every end system is connected to every other.
 **LAN topologies:**
@@ -49,7 +49,7 @@ A **multiaccess network** can have two or more end devices trying to access the 
 - **Физическая топология** — физические соединения и то, как устройства связаны между собой.
 - **Логическая топология** — виртуальные соединения, с интерфейсами устройств и схемой IP-адресации.
 **Топологии WAN:**
-- **Точка — точка** — самая простая и распространённая; постоянный канал между двумя конечными точками.
+- **Точка — точка** — самая простая и распространённая; постоянный канал между двумя конечными точками. Два узла не делят среду с другими хостами, поэтому протоколы WAN «точка — точка» могут быть очень простыми.
 - **Звезда с центром (hub and spoke)** — центральный узел связан с филиалами каналами «точка — точка».
 - **Полносвязная (mesh)** — высокая доступность, но каждая система соединена с каждой.
 **Топологии LAN:**

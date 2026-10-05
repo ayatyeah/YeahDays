@@ -10,6 +10,7 @@ export const lecture3: Lecture = {
       {
         en: `## The physical connection
 Before any communication, a physical connection to a local network must exist — wired or wireless. A **Network Interface Card (NIC)** connects a device to the network; a device can have several NICs (wired and wireless). Not all physical connections give the same performance.
+A typical home wireless router shows three kinds of physical connections: the **wireless antennas**, several **Ethernet switchports** and one **internet port**.
 ## What the physical layer does
 - Transports **bits** across the network media.
 - Accepts a complete **frame** from the data link layer and **encodes it as a series of signals** sent onto the local media.
@@ -32,6 +33,7 @@ Before any communication, a physical connection to a local network must exist �
 > Bandwidth is what the medium can carry, throughput is what it actually carries, goodput is what is left after overhead.`,
         ru: `## Физическое подключение
 До любого обмена должно существовать физическое подключение к локальной сети — проводное или беспроводное. Устройство подключает к сети **сетевая карта (NIC)**; карт может быть несколько (проводная и беспроводная). Не все физические подключения дают одинаковую производительность.
+У типичного домашнего беспроводного маршрутизатора три вида физических подключений: **антенны Wi-Fi**, несколько **портов коммутатора Ethernet** и один **порт интернета**.
 ## Что делает физический уровень
 - Переносит **биты** по среде передачи.
 - Принимает готовый **кадр** от канального уровня и **кодирует его в последовательность сигналов**, которые уходят в локальную среду.
@@ -151,11 +153,13 @@ Enterprise networks (backbone), **Fiber-to-the-Home (FTTH)**, long-haul networks
 - **SC (subscriber connector)** — square, **push-pull** mechanism.
 - **LC (Lucent connector)** — smaller version of SC, simplex or duplex.
 A **yellow** jacket means single-mode; **orange (or aqua)** means multimode.
+Patch cords are named by their two connectors and the fiber type: **SC-SC multimode, LC-LC single-mode, ST-LC multimode, ST-SC single-mode**.
 ## Fiber versus copper
 - Bandwidth: UTP 10 Mb/s – 10 Gb/s; fiber 10 Mb/s – 100 Gb/s.
 - Distance: UTP 1 – 100 meters; fiber 1 – 100,000 meters.
 - Immunity to EMI/RFI and electrical hazards: UTP low; fiber completely immune.
 - Costs, installation skills and safety precautions: UTP lowest; fiber highest.
+Fiber is mainly used as **backbone cabling** for high-traffic point-to-point links between data distribution facilities and between the buildings of a campus.
 ## Wireless media
 Wireless carries electromagnetic signals using radio or microwave frequencies and gives the **greatest mobility**. Limitations:
 - **Coverage area** — depends on the physical characteristics of the location.
@@ -168,6 +172,7 @@ Wireless carries electromagnetic signals using radio or microwave frequencies an
 - **WiMAX — IEEE 802.16** — point-to-multipoint broadband wireless access.
 - **Zigbee — IEEE 802.15.4** — low data rate, low power, for the Internet of Things.
 A WLAN needs a **wireless access point (AP)** and **wireless NIC adapters**.
+The access point concentrates the wireless signals of the users and connects to the existing copper-based network. When buying WLAN equipment, check compatibility and interoperability; administrators must apply strict **security policies** to protect a WLAN from unauthorized access.
 > Single-mode: small core, laser, long, yellow. Multimode: large core, LED, 550 m, orange.`,
         ru: `## Оптоволоконный кабель
 - Передаёт данные на **большие расстояния** и с **большей пропускной способностью**, чем любая другая среда.
@@ -185,11 +190,13 @@ A WLAN needs a **wireless access point (AP)** and **wireless NIC adapters**.
 - **SC (subscriber connector)** — квадратный, механизм **push-pull** (нажал — вытянул).
 - **LC (Lucent connector)** — уменьшенная версия SC, одиночный или двойной.
 **Жёлтая** оболочка — одномодовое волокно; **оранжевая (или аква)** — многомодовое.
+Патч-корды называют по двум разъёмам и типу волокна: **SC-SC многомодовый, LC-LC одномодовый, ST-LC многомодовый, ST-SC одномодовый**.
 ## Оптика против меди
 - Пропускная способность: UTP 10 Мбит/с – 10 Гбит/с; оптика 10 Мбит/с – 100 Гбит/с.
 - Расстояние: UTP 1 – 100 метров; оптика 1 – 100 000 метров.
 - Устойчивость к EMI/RFI и электрическим рискам: UTP низкая; оптика полностью невосприимчива.
 - Стоимость, требования к монтажу и безопасности: у UTP самые низкие; у оптики самые высокие.
+Оптику применяют в основном как **магистральный кабель** для нагруженных каналов «точка — точка» между узлами распределения и между зданиями кампуса.
 ## Беспроводная среда
 Беспроводная среда передаёт электромагнитные сигналы на радио- или микроволновых частотах и даёт **наибольшую мобильность**. Ограничения:
 - **Зона покрытия** — зависит от физических особенностей места.
@@ -202,6 +209,7 @@ A WLAN needs a **wireless access point (AP)** and **wireless NIC adapters**.
 - **WiMAX — IEEE 802.16** — широкополосный доступ «точка — много точек».
 - **Zigbee — IEEE 802.15.4** — низкая скорость, малое энергопотребление, для интернета вещей.
 Для WLAN нужны **беспроводная точка доступа (AP)** и **беспроводные сетевые адаптеры**.
+Точка доступа собирает беспроводные сигналы пользователей и подключается к существующей медной сети. При покупке оборудования WLAN проверяй совместимость; администраторы обязаны применять строгие **политики безопасности**, чтобы защитить WLAN от несанкционированного доступа.
 > Одномод: тонкая сердцевина, лазер, далеко, жёлтый. Многомод: толстая сердцевина, светодиод, 550 м, оранжевый.`,
       },
       [
@@ -227,7 +235,9 @@ A WLAN needs a **wireless access point (AP)** and **wireless NIC adapters**.
 - An **IPv4 address** is a string of **32 bits**, divided into four sections called **octets**.
 - Each octet has **8 bits** (1 byte); octets are separated by a dot. People read it as **dotted decimal**.
 ## Positional notation
-A digit has a different value depending on its position. For one octet the positional values are:
+A digit has a different value depending on its position. In decimal the positions are powers of ten:
+= 1234 = 1 x 1000 + 2 x 100 + 3 x 10 + 4 x 1
+In binary they are powers of two. For one octet the positional values are:
 = 128  64  32  16  8  4  2  1
 A binary 1 in a position adds that value, a 0 adds nothing.
 = 11000000 = 128 + 64 = 192
@@ -261,7 +271,9 @@ Go through binary:
 - **Адрес IPv4** — строка из **32 бит**, разделённая на четыре части — **октеты**.
 - В каждом октете **8 бит** (1 байт); октеты разделены точкой. Люди читают адрес как **десятичный с точками**.
 ## Позиционная запись
-Значение цифры зависит от её позиции. Для одного октета веса позиций такие:
+Значение цифры зависит от её позиции. В десятичной системе позиции — степени десяти:
+= 1234 = 1 x 1000 + 2 x 100 + 3 x 10 + 4 x 1
+В двоичной — степени двойки. Для одного октета веса позиций такие:
 = 128  64  32  16  8  4  2  1
 Единица в позиции добавляет её вес, ноль не добавляет ничего.
 = 11000000 = 128 + 64 = 192

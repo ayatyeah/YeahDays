@@ -130,19 +130,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     /**
-     * Google — только вход/привязка к УЖЕ существующему аккаунту, не
-     * самостоятельная регистрация: обязательные поля (логин, пароль, год
-     * рождения) собираются только через /register. Без этой проверки
-     * PrismaAdapter создал бы новую строку User прямо здесь при первом
-     * же "Войти через Google" от кого угодно, в обход формы.
+     * Google — и вход, и регистрация: человек без аккаунта нажимает одну
+     * кнопку, и PrismaAdapter создаёт ему пользователя с именем и почтой
+     * из Google. Раньше регистрация шла только через форму (логин, пароль,
+     * год рождения), а Google без аккаунта отправлял «сначала
+     * зарегистрируйся» — лишний шаг, на котором люди уходили. Логин и год
+     * рождения у такого аккаунта пустые, как и у вошедших через Microsoft;
+     * пароль можно задать позже в профиле.
      *
-     * Но если человек уже вошёл (жмёт "Привязать Google" из профиля) —
-     * это привязка к ТЕКУЩЕЙ сессии, и Auth.js сам линкует новую identity
-     * к session.user.id независимо от того, совпадает ли email Google с
-     * чем-то в базе (см. handleLoginOrRegister — ветка "if (user)" не
-     * трогает email вообще). Блокировать по email в этом случае нельзя:
-     * тогда привязка Google с ДРУГИМ email (не как у пароля) ошибочно
-     * принималась бы за попытку регистрации и отклонялась.
+     * Почта должна быть подтверждена самим Google. По ней же Google-вход
+     * попадает в уже существующий аккаунт (allowDangerousEmailAccountLinking
+     * выше), и неподтверждённый адрес позволил бы войти в чужой.
+     *
+     * Если человек уже вошёл (жмёт «Привязать Google» из профиля) — это
+     * привязка к ТЕКУЩЕЙ сессии: Auth.js линкует identity к session.user.id
+     * независимо от почты, и проверять её здесь нельзя — привязка Google с
+     * ДРУГИМ адресом ошибочно отклонялась бы.
      */
     async signIn({ account, profile }) {
       if (account?.provider === MICROSOFT_PROVIDER) {
@@ -187,13 +190,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
 
         const email = profile?.email;
-        if (!email) return false;
+        if (!email || profile?.email_verified !== true) return false;
         const existing = await prisma.user.findUnique({
           where: { email },
-          select: { id: true, banned: true },
+          select: { banned: true },
         });
-        if (!existing) return "/login?googleFirst=1";
-        if (existing.banned) return false;
+        // Аккаунта нет — Auth.js создаст его; есть — войдёт в него, если он не заблокирован.
+        if (existing?.banned) return false;
       }
       return true;
     },

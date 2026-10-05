@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { credentialsSignIn, enterApp, safeCallbackUrl, warmSignIn } from "@/lib/fastSignIn";
+import GoogleButton from "@/components/GoogleButton";
 import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
 
@@ -77,9 +78,17 @@ function RegisterForm() {
           <h1 className="text-[22px] font-bold tracking-tight">Создать аккаунт</h1>
         </div>
 
+        {/* Самый короткий путь — сверху: одно нажатие, без пароля и анкеты. */}
+        <GoogleButton callbackUrl={callbackUrl} disabled={busy} className="mb-3" />
         <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="mb-5 flex min-h-13 items-center justify-center rounded-2xl border-2 border-[var(--color-border)] px-3 text-center font-semibold">
           Зарегистрироваться через Microsoft AITU
         </Link>
+
+        <div className="mb-5 flex items-center gap-3 text-[13px] text-[var(--color-muted)]">
+          <span className="h-px flex-1 bg-[var(--color-border)]" />
+          или с логином и паролем
+          <span className="h-px flex-1 bg-[var(--color-border)]" />
+        </div>
 
         <form onSubmit={submit} className="flex flex-col gap-3">
           <input
@@ -144,11 +153,6 @@ function RegisterForm() {
             {busy ? "Создаём…" : "Зарегистрироваться"}
           </Button>
         </form>
-
-        <p className="mt-5 text-center text-[15px] leading-snug text-[var(--color-muted)]">
-          Google можно привязать после — в профиле, для быстрого входа с
-          других устройств.
-        </p>
 
         <p className="mt-4 text-center text-[15px] text-[var(--color-muted)]">
           Уже есть аккаунт?{" "}

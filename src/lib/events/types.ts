@@ -49,6 +49,8 @@ export interface StudyEvent {
   glossary?: Term[];
   /** Шпаргалка на одну страницу, в той же разметке, что и конспекты. */
   cheatSheet?: Text;
+  /** Мини-игра по теме ивента (см. components/events/games). */
+  game?: "networks";
 }
 
 export interface Term {

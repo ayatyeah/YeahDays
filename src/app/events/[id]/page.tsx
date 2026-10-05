@@ -13,6 +13,7 @@ import EventMusic from "@/components/EventMusic";
 import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeaderboard";
 import EventPlan from "@/components/events/EventPlan";
 import Flashcards from "@/components/events/Flashcards";
+import NetworkGame from "@/components/events/NetworkGame";
 import ReportQuestion from "@/components/events/ReportQuestion";
 import ShareResult from "@/components/events/ShareResult";
 import SpeakButton from "@/components/events/SpeakButton";
@@ -27,6 +28,7 @@ type View =
   | { mode: "map" }
   | { mode: "sheet" }
   | { mode: "cards" }
+  | { mode: "game" }
   | { mode: "read"; step: Step }
   | { mode: "quiz"; step: Step; quiz: QuizQuestion[]; run: number }
   | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] };
@@ -277,6 +279,14 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             </section>
           )}
 
+          {event.game && (
+            <section className={cn(panel, "bg-gradient-to-br from-emerald-500/10 via-[var(--color-surface)] to-violet-500/10")}>
+              <h2 className="text-lg font-bold">Игра</h2>
+              <p className="text-sm text-[var(--color-muted)]">Перерыв от конспектов, но по теме: двоичный спринт на время и «Ты — коммутатор».</p>
+              <Button variant="primary" className="mt-4 h-auto min-h-11 w-full whitespace-normal" onClick={() => setView({ mode: "game" })}>Открыть игры</Button>
+            </section>
+          )}
+
           {loaded && <EventPlan event={event} progress={progress} />}
 
           {loaded && (
@@ -371,6 +381,17 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <h1 className="mt-3 text-2xl font-bold">Карточки терминов</h1>
           </header>
           <Flashcards glossary={event.glossary} lang={lang} onLang={switchLang} />
+        </>
+      )}
+
+      {view.mode === "game" && event.game && (
+        <>
+          <header>
+            <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
+            <h1 className="mt-3 text-2xl font-bold">Игры</h1>
+            <p className="mt-1 text-sm text-[var(--color-muted)]">Результаты игр не влияют на готовность — это тренировка.</p>
+          </header>
+          <NetworkGame userId={userId} />
         </>
       )}
 

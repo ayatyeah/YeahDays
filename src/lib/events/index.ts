@@ -4,6 +4,12 @@ import { week2 } from "./researchMethods/week2";
 import { week3 } from "./researchMethods/week3";
 import { week4 } from "./researchMethods/week4";
 import { cheatSheet, glossary } from "./researchMethods/extras";
+import { lecture1 } from "./computerNetworks/lecture1";
+import { lecture2 } from "./computerNetworks/lecture2";
+import { lecture3 } from "./computerNetworks/lecture3";
+import { lecture4 } from "./computerNetworks/lecture4";
+import { drill } from "./computerNetworks/drill";
+import { cheatSheet as cnCheatSheet, glossary as cnGlossary } from "./computerNetworks/extras";
 
 /**
  * Все ивенты раздела «Учёба». Новый ивент — новый объект в этом списке и
@@ -20,6 +26,18 @@ export const EVENTS: StudyEvent[] = [
     counts: { part: 8, lecture: 18, final: 45 },
     glossary,
     cheatSheet,
+  },
+  {
+    id: "computer-networks-midterm",
+    title: "Подготовка к мидтерму",
+    course: "Computer Networks",
+    description:
+      "Четыре лекции по частям и отдельный блок с темами из образцов мидтерма, которых нет в слайдах. Вопросы — в формате настоящего варианта: 25 вопросов с выбором из четырёх. Внутри есть игра: двоичный спринт и «Ты — коммутатор».",
+    lectures: [lecture1, lecture2, lecture3, lecture4, drill],
+    counts: { part: 8, lecture: 18, final: 45 },
+    glossary: cnGlossary,
+    cheatSheet: cnCheatSheet,
+    game: "networks",
   },
 ];
 

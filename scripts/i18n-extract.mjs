@@ -13,7 +13,7 @@ const root = "src";
 // Не переводится слоем интерфейса: содержимое ивентов (у него свой
 // переключатель EN/RU), юридические тексты (сила — у русской версии),
 // консоль владельца, тесты и сам каталог переводов.
-const SKIP = [/^lib\/events\/researchMethods\//, /^app\/privacy\//, /^app\/terms\//, /^app\/admin\//, /^components\/Owner/, /^i18n\//, /\.test\.tsx?$/, /^app\/api\/(owner|admin|cron|push|assistant)\//, /^lib\/(push|notify)/];
+const SKIP = [/^lib\/events\/(researchMethods|computerNetworks)\//, /^app\/privacy\//, /^app\/terms\//, /^app\/admin\//, /^components\/Owner/, /^i18n\//, /\.test\.tsx?$/, /^app\/api\/(owner|admin|cron|push|assistant)\//, /^lib\/(push|notify)/];
 const cyr = /[А-Яа-яЁё]/;
 const keys = new Map();
 const add = (raw, file) => {

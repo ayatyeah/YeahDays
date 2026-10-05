@@ -25,6 +25,7 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
+  { id: "cn-midterm-2026-10", icon: "book", title: "Ивент: мидтерм по Computer Networks", text: "Четыре лекции по частям, вопросы в формате настоящего варианта и две игры — двоичный спринт и «Ты — коммутатор».", href: "/events/computer-networks-midterm" },
   { id: "social-2026-10", icon: "chat", title: "Сообщество как соцсеть", text: "Лента с фото, лайки, комментарии и подписки — под твоим аккаунтом YeahGrind, отдельный профиль создавать не нужно.", href: "/community" },
   { id: "events-2026-10", icon: "book", title: "Ивенты в «Учёбе»", text: "Подготовка к квизу по Research Methods: конспекты лекций по частям с переводом, квиз после каждой части и итоговый — с оценкой готовности.", href: "/events" },
   { id: "challenge30-2026-10", icon: "flame", title: "Челлендж 30", text: "Месяц на то, что важно тебе: 3, 6 или 12 часов в день. ИИ один раз составляет личный план по твоим целям, дальше — отметки и аналитика.", href: "/challenge30" },

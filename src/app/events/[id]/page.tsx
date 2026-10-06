@@ -8,7 +8,8 @@ import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
 import { cn } from "@/lib/cn";
 import { findEvent } from "@/lib/events";
-import { draw, mergeProgress, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
+import { completed, deepStep, draw, mergeProgress, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
+import Achievement from "@/components/events/Achievement";
 import EventMusic from "@/components/EventMusic";
 import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeaderboard";
 import EventPlan from "@/components/events/EventPlan";
@@ -244,6 +245,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               Готовность = итоговый квиз (50%) + квизы по лекциям (30%) + квизы по частям (20%). Считается лучший результат; непройденный шаг — ноль.
             </p>
             <Verdict event={event} progress={progress} percent={ready.percent} />
+            {loaded && completed(event, progress) && <Achievement event={event} userId={userId} />}
             {loaded && (
               <Button variant="primary" className="mt-4 w-full" onClick={() => open(nextStep(event, progress) ?? list[list.length - 1])}>
                 {ready.done === 0 ? "Начать с первой части" : ready.done === ready.total ? "Пройти итоговый квиз ещё раз" : "Продолжить"}
@@ -257,7 +259,15 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               {tl === "ru" && <p className="text-sm text-[var(--color-muted)]">{lecture.title.en}</p>}
               <ol className="mt-4 space-y-2">
                 {list.filter((s) => s.lecture === li).map((step) => (
-                  <StepRow key={step.id} step={step} result={progress[step.id]} onOpen={() => open(step)} />
+                  <StepRow
+                    key={step.id}
+                    step={step}
+                    result={progress[step.id]}
+                    onOpen={() => open(step)}
+                    deep={step.kind === "part" ? deepStep(event, li, step.part!) : null}
+                    deepResult={step.kind === "part" ? progress[`${step.id}-deep`] : undefined}
+                    onDeep={() => { const d = deepStep(event, li, step.part!); if (d) startQuiz(d); }}
+                  />
                 ))}
               </ol>
             </section>
@@ -356,6 +366,17 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>
               Начать квиз по этой части · {view.step.count} вопросов
             </Button>
+            {(() => {
+              const deep = deepStep(event, view.step.lecture!, view.step.part!);
+              return deep ? (
+                <section className={cn(panel, "bg-gradient-to-br from-amber-500/10 via-[var(--color-surface)] to-rose-500/10")}>
+                  <h2 className="text-lg font-bold">Разбор до косточек · {deep.count} вопросов</h2>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">Вся часть вопросами, каждый — с объяснением, почему остальные варианты не подходят. Необязательно и на готовность не влияет; удобно тем, кому легче учить, отвечая.</p>
+                  {progress[deep.id] && <p className="mt-2 text-sm">Лучший результат: <strong className="tabular-nums">{percent(progress[deep.id].best)}</strong> · попыток: {progress[deep.id].attempts}</p>}
+                  <Button className="mt-3 h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(deep)}>{progress[deep.id] ? "Разобрать ещё раз" : "Разобрать до косточек"}</Button>
+                </section>
+              ) : null;
+            })()}
           </>
         );
       })()}
@@ -446,8 +467,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           following={following}
           onLang={switchLang}
           onRetry={() => startQuiz(view.step)}
-          onReread={view.step.kind === "part" ? () => open(view.step) : undefined}
-          onNext={following ? () => open(following) : undefined}
+          onReread={view.step.kind === "part" || view.step.kind === "deep" ? () => { const part = list.find((s) => s.kind === "part" && s.lecture === view.step.lecture && s.part === view.step.part); if (part) open(part); } : undefined}
+          onNext={following && view.step.kind !== "deep" ? () => open(following) : undefined}
           onMap={toMap}
         />
       )}
@@ -472,7 +493,7 @@ function Verdict({ event, progress, percent: value }: { event: StudyEvent; progr
   );
 }
 
-function StepRow({ step, result, onOpen }: { step: Step; result?: Progress[string]; onOpen: () => void }) {
+function StepRow({ step, result, onOpen, deep, deepResult, onDeep }: { step: Step; result?: Progress[string]; onOpen: () => void; deep?: Step | null; deepResult?: Progress[string]; onDeep?: () => void }) {
   const tl = useContentLang();
   const label = step.kind === "part" ? `Часть ${step.part! + 1}. ${step.title[tl]}` : step.title[tl];
   return (
@@ -496,6 +517,12 @@ function StepRow({ step, result, onOpen }: { step: Step; result?: Progress[strin
           {result ? percent(result.best) : "не пройдено"}
         </span>
       </button>
+      {deep && onDeep && (
+        <button onClick={onDeep} className="mt-1 flex w-full items-center justify-between gap-3 rounded-xl px-3 py-1.5 text-left text-xs text-[var(--color-fg-dim)] hover:bg-[var(--color-surface-2)]">
+          <span>↳ до косточек · {deep.count} вопросов</span>
+          <span className="tabular-nums">{deepResult ? percent(deepResult.best) : "не начато"}</span>
+        </button>
+      )}
     </li>
   );
 }
@@ -587,6 +614,15 @@ function Quiz({
             <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
               <p className="font-semibold">{picked === item.correct ? "Верно" : "Неверно"}</p>
               <p className="mt-1" lang={lang}>{item.why[lang]}</p>
+              {item.wrong && (
+                <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
+                  {item.options.map((option, i) => item.wrong?.[i] && (
+                    <li key={i} className={cn("text-[13px]", i === picked ? "text-[var(--color-strength)]" : "text-[var(--color-fg-dim)]")}>
+                      <span lang="en" className="font-medium">✗ {option}</span> — <span lang={lang}>{item.wrong[i]![lang]}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
               <button className="mt-2 text-xs underline" onClick={onLang}>
                 {lang === "en" ? "Объяснение на русском" : "Explanation in English"}
               </button>
@@ -643,6 +679,7 @@ function Result({
         <p className="mt-2 text-sm">
           {share >= 0.8 ? "Отлично — можно идти дальше." : share >= 0.6 ? "Неплохо. Разбери ошибки ниже и двигайся дальше или повтори." : "Стоит перечитать материал и пройти квиз ещё раз."}
         </p>
+        {step.kind === "deep" && <p className="mt-2 text-xs text-[var(--color-muted)]">Разбор до косточек на готовность не влияет — это тренировка.</p>}
         {step.kind === "final" && (
           <div className="mt-4 rounded-2xl bg-[var(--color-bg)] p-4">
             <p className="text-xs uppercase tracking-widest text-[var(--color-muted)]">Готовность к квизу</p>
@@ -685,6 +722,7 @@ function Result({
                 {picked !== undefined && picked >= 0 && <p lang="en" className="mt-2 text-[var(--color-strength)]">✗ {item.options[picked]}</p>}
                 <p lang="en" className="mt-1 text-[var(--color-stability)]">✓ {item.options[item.correct]}</p>
                 <p lang={lang} className="mt-2 text-[var(--color-muted)]">{item.why[lang]}</p>
+                {picked !== undefined && picked >= 0 && item.wrong?.[picked] && <p lang={lang} className="mt-1 text-[var(--color-muted)]">Почему не «{item.options[picked]}»: {item.wrong[picked]![lang]}</p>}
                 <ReportQuestion eventId={event.id} questionId={item.id} />
               </li>
             ))}

@@ -1,4 +1,6 @@
 import { part, q, tf, type Lecture } from "../types";
+import { deepXP1 } from "./deep/xp1";
+import { deepXP2 } from "./deep/xp2";
 
 /**
  * Темы из образца преподавателя и из варианта, который прислали студенты,
@@ -145,6 +147,7 @@ A TCP connection is opened with three control segments in this exact order:
         q("Which port number does Telnet use?", "23", ["22", "25", "53"], "Telnet is 23 and insecure; SSH on 22 replaces it.", "Telnet — 23 и небезопасен; его заменяет SSH на порту 22."),
         q("Which port number does HTTPS use by default?", "443", ["80", "8080", "143"], "HTTPS is HTTP over TLS on port 443.", "HTTPS — это HTTP поверх TLS на порту 443."),
       ],
+      deepXP1,
     ),
     part(
       "cn-x-p2",
@@ -297,6 +300,7 @@ Other simple filters: arp, dns, tcp, ip.addr == 192.168.1.10
         q("What is the CIDR prefix for the subnet mask 255.255.255.224?", "/27", ["/26", "/28", "/29"], "224 is 11100000: three more bits after /24.", "224 — это 11100000: ещё три бита после /24."),
         tf("192.168.10.5 is a private IPv4 address.", true, "192.168.0.0 – 192.168.255.255 is one of the three RFC 1918 private ranges.", "192.168.0.0 – 192.168.255.255 — один из трёх частных диапазонов RFC 1918."),
       ],
+      deepXP2,
     ),
   ],
 };

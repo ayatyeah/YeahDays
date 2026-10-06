@@ -16,7 +16,7 @@ test("Сети: ивент есть в списке, конспект читае
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/events");
-  await page.getByRole("link", { name: /Подготовка к мидтерму/ }).tap();
+  await page.getByRole("link", { name: /Computer Networks/ }).tap();
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
   const map = await page.locator("body").innerText();
   check(map.includes("Lecture 4") && map.includes("Beyond the slides"), "в маршруте четыре лекции и блок «сверх слайдов»");

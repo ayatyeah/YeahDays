@@ -1,41 +1,18 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { needsLogin } from "@/lib/publicPaths";
 
 /**
  * Регистрация обязательна везде, кроме витрины и юридических страниц —
- * см. тот же список MARKETING в Shell.tsx (там он про то, видна ли
- * навигация; здесь — про то, нужен ли вход вообще). /login и /register
- * само собой публичные, иначе войти будет неоткуда.
+ * список и исключения в lib/publicPaths.ts (его же читает SessionGuard в
+ * браузере). Видна ли навигация — отдельный список MARKETING в Shell.tsx.
  *
  * Файл называется proxy.ts, а не middleware.ts — в Next.js 16 конвенция
  * переименована (см. npx @next/codemod middleware-to-proxy).
  */
-const PUBLIC_PATHS = new Set([
-  "/",
-  "/terms",
-  "/privacy",
-  "/login",
-  "/login/lms",
-  "/register",
-  "/forgot-password",
-]);
-
 export default auth((req) => {
   const { pathname } = req.nextUrl;
-  // /invite/<код> открывают из чата люди без аккаунта: страница сама
-  // предложит зарегистрироваться и вернёт обратно по callbackUrl
-  // /admin — своя дверь: туда пускают либо владельческий аккаунт, либо
-  // логин с паролем консоли (см. lib/adminSession.ts). Проверяет сама
-  // страница, она же уводит на /admin/login; здесь пропускаем, иначе
-  // вошедшего по паролю консоли выкидывало бы на вход в приложение.
-  if (
-    req.auth ||
-    PUBLIC_PATHS.has(pathname) ||
-    pathname.startsWith("/invite/") ||
-    pathname.startsWith("/admin")
-  ) {
-    return;
-  }
+  if (req.auth || !needsLogin(pathname)) return;
 
   const url = new URL("/login", req.nextUrl.origin);
   // pathname один без search — раньше терял query (?client_id=...&redirect_uri=...

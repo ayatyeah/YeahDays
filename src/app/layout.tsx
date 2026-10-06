@@ -9,6 +9,7 @@ import AuthProvider from "@/components/AuthProvider";
 import ThemeApplier from "@/components/ThemeApplier";
 import DomTranslator from "@/i18n/DomTranslator";
 import VisitBeacon from "@/components/VisitBeacon";
+import SessionGuard from "@/components/SessionGuard";
 
 /**
  * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
@@ -163,6 +164,7 @@ export default function RootLayout({
         <ThemeApplier />
         <DomTranslator />
         <VisitBeacon />
+        <SessionGuard />
         <AuthProvider>
           <ErrorBoundary>
             <Shell>{children}</Shell>

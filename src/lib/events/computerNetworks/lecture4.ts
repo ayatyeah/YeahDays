@@ -27,16 +27,29 @@ Data link protocols are defined by the **IEEE, ITU, ISO and ANSI**.
 - **Star and extended star** — end devices connect to a **central device** (switch). Easy to install, very scalable, easy to troubleshoot.
 - **Bus** — all end systems chained together and terminated on each end (early Ethernet).
 - **Ring** — each end system connects to its neighbors to form a ring (legacy Token Ring).
+@diagram topologies
+![An old Ethernet hub next to a modern switch](/events/cn/hub-vs-switch.webp)
 ## Half and full duplex
 - **Half-duplex** — only one device can send or receive at a time. Used on **WLANs** and legacy bus topologies with **hubs**.
 - **Full-duplex** — both devices transmit and receive simultaneously. **Ethernet switches** work in full-duplex.
+@diagram duplex
 ## Access control methods
 A **multiaccess network** can have two or more end devices trying to access the network at the same time.
 - **Contention-based access** — all nodes compete for the medium in half-duplex:
 - **CSMA/CD** (collision **detection**) — legacy bus-topology **Ethernet**. Devices detect the collision, wait a random time and retransmit.
 - **CSMA/CA** (collision **avoidance**) — IEEE 802.11 **wireless LANs**. A device includes the time it needs, so others know how long the medium is busy.
 - **Controlled access** — deterministic; each node has its own time on the medium. Legacy **Token Ring** and ARCNET.
-> CD = wired half-duplex Ethernet, CA = Wi-Fi. A full-duplex switch port needs neither.`,
+> CD = wired half-duplex Ethernet, CA = Wi-Fi. A full-duplex switch port needs neither.
+| Method | Where | How it handles collisions |
+|---|---|---|
+| CSMA/CD | legacy Ethernet with hubs or a bus | detects the collision, waits a random time, retransmits |
+| CSMA/CA | 802.11 Wi-Fi | announces how long it needs the medium, so others wait |
+| Controlled (token) | Token Ring, ARCNET | each node has its own turn — no collisions |
+| None needed | full-duplex switch ports | both ends send at once on separate pairs |
+?? Why do modern switched Ethernet LANs not need CSMA/CD?
+?= Switch ports are full-duplex: each link has one device per end sending and receiving at the same time, so collisions cannot happen.
+?? Which sublayer tells the receiver that the frame carries an IPv4 packet rather than something else?
+?= LLC (IEEE 802.2) — it identifies the network layer protocol.`,
         ru: `## Назначение канального уровня
 - Отвечает за связь между **сетевыми картами** конечных устройств.
 - Даёт протоколам верхних уровней доступ к физической среде и **упаковывает пакеты уровня 3 в кадры уровня 2**.
@@ -56,16 +69,29 @@ A **multiaccess network** can have two or more end devices trying to access the 
 - **Звезда и расширенная звезда** — конечные устройства подключены к **центральному устройству** (коммутатору). Легко монтировать, хорошо масштабируется, просто искать неисправности.
 - **Шина** — все системы на одной линии с терминаторами на концах (ранний Ethernet).
 - **Кольцо** — каждая система соединена с соседями, образуя кольцо (старый Token Ring).
+@diagram topologies
+![Старый концентратор Ethernet рядом с современным коммутатором](/events/cn/hub-vs-switch.webp)
 ## Полудуплекс и полный дуплекс
 - **Полудуплекс** — в каждый момент передаёт или принимает только одно устройство. Применяется в **WLAN** и старых шинных сетях с **концентраторами**.
 - **Полный дуплекс** — оба устройства передают и принимают одновременно. **Коммутаторы Ethernet** работают в полном дуплексе.
+@diagram duplex
 ## Методы управления доступом
 **Сеть множественного доступа** — та, где два и более устройств могут одновременно пытаться выйти в среду.
 - **Состязательный доступ** — все узлы конкурируют за среду в полудуплексе:
 - **CSMA/CD** (**обнаружение** коллизий) — старый шинный **Ethernet**. Устройства обнаруживают коллизию, ждут случайное время и передают снова.
 - **CSMA/CA** (**предотвращение** коллизий) — **беспроводные сети** IEEE 802.11. Устройство сообщает, сколько времени ему нужно, и остальные знают, как долго среда занята.
 - **Управляемый доступ** — детерминированный; у каждого узла своё время в среде. Старые **Token Ring** и ARCNET.
-> CD = проводной полудуплексный Ethernet, CA = Wi-Fi. Порту коммутатора в полном дуплексе не нужно ни то, ни другое.`,
+> CD = проводной полудуплексный Ethernet, CA = Wi-Fi. Порту коммутатора в полном дуплексе не нужно ни то, ни другое.
+| Метод | Где | Как борется с коллизиями |
+|---|---|---|
+| CSMA/CD | старый Ethernet с концентраторами или шиной | обнаруживает коллизию, ждёт случайное время, передаёт снова |
+| CSMA/CA | Wi-Fi 802.11 | сообщает, на сколько займёт среду, и остальные ждут |
+| Управляемый (токен) | Token Ring, ARCNET | у каждого узла своя очередь — коллизий нет |
+| Не нужен | порты коммутатора в полном дуплексе | обе стороны передают одновременно по разным парам |
+?? Почему современным коммутируемым сетям Ethernet не нужен CSMA/CD?
+?= Порты коммутатора работают в полном дуплексе: на каждом канале по одному устройству с каждой стороны, передают и принимают одновременно — коллизий быть не может.
+?? Какой подуровень сообщает получателю, что в кадре пакет IPv4, а не что-то другое?
+?= LLC (IEEE 802.2) — он определяет протокол сетевого уровня.`,
       },
       [
         q("Which media access mechanism manages collisions on half-duplex Ethernet?", "CSMA/CD", ["CSMA/CA", "Token Passing", "TDMA"], "Legacy half-duplex Ethernet uses carrier sense multiple access with collision detection.", "Старый полудуплексный Ethernet использует CSMA с обнаружением коллизий."),
@@ -110,13 +136,26 @@ Ethernet works at the **data link and physical layers**. It is a family of techn
 - **Type / Length (EtherType)** — 2 bytes; identifies the upper-layer protocol. **0x0800 = IPv4**, 0x86DD = IPv6, 0x0806 = ARP.
 - **Data** — **46 to 1500 bytes**. A shorter payload is **padded** to 46 bytes.
 - **Frame Check Sequence (FCS)** — 4 bytes; a **CRC** used for **error detection**.
+@diagram ethernet-frame
+| Field | Size | Purpose |
+|---|---|---|
+| Preamble + SFD | 7 + 1 bytes | synchronization, start of frame |
+| Destination MAC | 6 bytes | who receives on this LAN |
+| Source MAC | 6 bytes | who sent — always unicast |
+| Type / Length | 2 bytes | upper protocol: 0x0800 IPv4, 0x86DD IPv6, 0x0806 ARP |
+| Data | 46–1500 bytes | the packet; padded up to 46 |
+| FCS | 4 bytes | CRC error detection |
 ## Frame size
 - Minimum frame size **64 bytes**, maximum **1518 bytes**. The preamble is **not** counted.
 - A frame shorter than 64 bytes is a **collision fragment** or **runt frame** and is discarded.
 - Frames with more than 1500 bytes of data are **jumbo** or baby giant frames.
 - A frame that is too small or too large is dropped by the receiver.
 = 64 bytes minimum = 6 + 6 + 2 + 46 + 4
-> Payload 46–1500, whole frame 64–1518. FCS = CRC = error detection, never correction or encryption.`,
+> Payload 46–1500, whole frame 64–1518. FCS = CRC = error detection, never correction or encryption.
+?? A switch receives a 50-byte frame. What happens to it and what is it called?
+?= It is discarded as a runt (collision fragment) — frames shorter than 64 bytes are invalid.
+?? The FCS of a frame does not match. Does Ethernet fix the error?
+?= No. FCS only detects the error; the frame is dropped and upper layers (TCP) handle retransmission.`,
         ru: `## В кадре три части
 Канальный уровень оборачивает пакет **заголовком** и **концевиком**:
 - **Заголовок**
@@ -142,13 +181,26 @@ Ethernet работает на **канальном и физическом ур
 - **Тип / длина (EtherType)** — 2 байта; определяет протокол верхнего уровня. **0x0800 = IPv4**, 0x86DD = IPv6, 0x0806 = ARP.
 - **Данные** — **от 46 до 1500 байт**. Более короткая нагрузка **дополняется** до 46 байт.
 - **Контрольная последовательность кадра (FCS)** — 4 байта; **CRC** для **обнаружения ошибок**.
+@diagram ethernet-frame
+| Поле | Размер | Назначение |
+|---|---|---|
+| Преамбула + SFD | 7 + 1 байт | синхронизация, начало кадра |
+| MAC назначения | 6 байт | кто получает в этой LAN |
+| MAC источника | 6 байт | кто отправил — всегда unicast |
+| Тип / длина | 2 байта | верхний протокол: 0x0800 IPv4, 0x86DD IPv6, 0x0806 ARP |
+| Данные | 46–1500 байт | пакет; дополняется до 46 |
+| FCS | 4 байта | обнаружение ошибок по CRC |
 ## Размер кадра
 - Минимальный размер кадра **64 байта**, максимальный **1518 байт**. Преамбула **не** учитывается.
 - Кадр короче 64 байт — **фрагмент коллизии** или **runt-кадр**, он отбрасывается.
 - Кадры с данными больше 1500 байт — **jumbo** или baby giant.
 - Слишком маленький или слишком большой кадр приёмник отбрасывает.
 = 64 bytes minimum = 6 + 6 + 2 + 46 + 4
-> Нагрузка 46–1500, весь кадр 64–1518. FCS = CRC = обнаружение ошибок, но не исправление и не шифрование.`,
+> Нагрузка 46–1500, весь кадр 64–1518. FCS = CRC = обнаружение ошибок, но не исправление и не шифрование.
+?? Коммутатор получает кадр в 50 байт. Что с ним будет и как это называется?
+?= Он отбрасывается как runt (фрагмент коллизии) — кадры короче 64 байт недействительны.
+?? FCS кадра не сошёлся. Исправит ли Ethernet ошибку?
+?= Нет. FCS только обнаруживает ошибку; кадр отбрасывается, а повторной передачей занимаются верхние уровни (TCP).`,
       },
       [
         q("What is the purpose of the FCS field in an Ethernet frame?", "CRC error detection", ["IP addressing", "Data encryption", "Speed autonegotiation"], "The frame check sequence carries a CRC used to detect transmission errors.", "Контрольная последовательность кадра содержит CRC для обнаружения ошибок передачи."),
@@ -175,6 +227,8 @@ Ethernet работает на **канальном и физическом ур
 = 00:1A:2B : 3C:4D:5E
 = OUI (vendor)  : vendor-assigned value
 The **first 3 bytes** are the OUI; the **last 3 bytes** are assigned by the vendor.
+@diagram mac-address
+![A label on a network device showing its MAC address](/events/cn/mac-address-label.webp)
 ## Frame processing
 - The Ethernet header carries a **source MAC** and a **destination MAC**.
 - A NIC compares the destination MAC with its own address stored in **RAM**. **No match — the frame is discarded.** A match — the frame goes up the layers for de-encapsulation.
@@ -194,7 +248,16 @@ A **unicast MAC** is the unique address used when a frame goes from one device t
 - Destination MAC starts with **01-00-5E** for IPv4 multicast and **33-33** for IPv6 multicast.
 - Flooded out all ports except the incoming one unless the switch uses **multicast snooping**; not forwarded by a router unless it is configured to route multicast.
 - A multicast address can only be a **destination**, never a source.
-> 48 bits = 12 hex digits = 6 bytes. First half — who made it (OUI), second half — which card.`,
+> 48 bits = 12 hex digits = 6 bytes. First half — who made it (OUI), second half — which card.
+| Type | Destination MAC | Who processes it | Switch | Router |
+|---|---|---|---|---|
+| Unicast | the one NIC's address | one device | one port (if known) | forwards |
+| Broadcast | FF-FF-FF-FF-FF-FF | every device on the LAN | floods all but ingress | does not forward |
+| Multicast | 01-00-5E… (IPv4), 33-33… (IPv6) | group members | floods unless snooping | only if configured |
+?? A host knows the IPv4 address of its neighbour but not its MAC address. Which protocol does it use, and what about IPv6?
+?= ARP for IPv4; Neighbor Discovery (ND) for IPv6.
+?? Can 01-00-5E-00-00-01 appear as a source MAC address?
+?= No. Multicast (and broadcast) addresses are only destinations; the source is always unicast.`,
         ru: `## MAC-адрес
 - **48-битное** значение, записанное **12 шестнадцатеричными цифрами** — это **6 байт**.
 - Шестнадцатеричные значения пишут с **0x** впереди (0x73) или с **H** после (73H). Ведущие нули сохраняются: двоичное 0000 1010 — это **0A**.
@@ -202,6 +265,8 @@ A **unicast MAC** is the unique address used when a frame goes from one device t
 = 00:1A:2B : 3C:4D:5E
 = OUI (vendor)  : vendor-assigned value
 **Первые 3 байта** — OUI; **последние 3 байта** назначает производитель.
+@diagram mac-address
+![Наклейка на сетевом устройстве с его MAC-адресом](/events/cn/mac-address-label.webp)
 ## Обработка кадра
 - В заголовке Ethernet есть **MAC источника** и **MAC назначения**.
 - Сетевая карта сравнивает MAC назначения со своим адресом, хранящимся в **RAM**. **Не совпал — кадр отбрасывается.** Совпал — кадр идёт вверх по уровням на деинкапсуляцию.
@@ -221,7 +286,16 @@ A **unicast MAC** is the unique address used when a frame goes from one device t
 - MAC назначения начинается с **01-00-5E** для multicast IPv4 и с **33-33** для multicast IPv6.
 - Рассылается во все порты, кроме входящего, если на коммутаторе нет **multicast snooping**; маршрутизатор не пересылает, если не настроен маршрутизировать multicast.
 - Групповой адрес может быть только **адресом назначения**, но не источника.
-> 48 бит = 12 шестнадцатеричных цифр = 6 байт. Первая половина — кто сделал (OUI), вторая — какая именно карта.`,
+> 48 бит = 12 шестнадцатеричных цифр = 6 байт. Первая половина — кто сделал (OUI), вторая — какая именно карта.
+| Тип | MAC назначения | Кто обрабатывает | Коммутатор | Маршрутизатор |
+|---|---|---|---|---|
+| Unicast | адрес одной карты | одно устройство | один порт (если известен) | пересылает |
+| Broadcast | FF-FF-FF-FF-FF-FF | все устройства LAN | во все порты, кроме входящего | не пересылает |
+| Multicast | 01-00-5E… (IPv4), 33-33… (IPv6) | участники группы | во все, если нет snooping | только если настроен |
+?? Хост знает IPv4-адрес соседа, но не его MAC. Какой протокол он использует, а что в IPv6?
+?= ARP для IPv4; Neighbor Discovery (ND) для IPv6.
+?? Может ли 01-00-5E-00-00-01 стоять в поле MAC источника?
+?= Нет. Групповые (и широковещательные) адреса бывают только в назначении; источник всегда unicast.`,
       },
       [
         q("In MAC address 00:1A:2B:3C:4D:5E, which part is the OUI?", "First 3 bytes (00:1A:2B)", ["Last 3 bytes (3C:4D:5E)", "Entire 48 bits", "First byte (00)"], "The organizationally unique identifier is the first 24 bits assigned to the vendor by the IEEE.", "Уникальный идентификатор организации — первые 24 бита, выданные производителю IEEE."),
@@ -252,11 +326,24 @@ For every frame the switch examines the **source MAC address** and the **port** 
 - Destination is a unicast **in the table** — forward out **that one port** (filtering).
 - Destination is a unicast **not in the table** — **flood** out all ports **except the incoming port**. This is an **unknown unicast**.
 - Destination is a **broadcast or multicast** — also flooded out all ports except the incoming one.
+@diagram switch-forwarding
+![The front panel of a 24-port switch with link LEDs](/events/cn/switch-front.webp)
+| Destination MAC | In the table? | Action |
+|---|---|---|
+| unicast | yes, on another port | forward out that one port |
+| unicast | yes, on the incoming port | filter — do not forward |
+| unicast | no | flood out all ports except ingress (unknown unicast) |
+| broadcast / multicast | — | flood out all ports except ingress |
 ## Forwarding methods
 - **Store-and-forward** — receives the **entire frame**, computes the **CRC**, and forwards only if it is valid. Frames with errors are discarded. Required for **QoS** analysis on converged networks.
 - **Cut-through** — forwards **before** the frame is entirely received; it only needs the destination MAC. **No error checking.** Two variants:
 - **Fast-forward** — lowest latency; forwards immediately after reading the destination address. The typical cut-through method.
 - **Fragment-free** — stores and checks the **first 64 bytes** before forwarding, because most errors and collisions happen there. A compromise.
+| Method | Waits for | Checks errors? | Latency |
+|---|---|---|---|
+| Store-and-forward | the whole frame | yes, CRC | highest |
+| Fragment-free | first 64 bytes | partly | medium |
+| Fast-forward | destination MAC only | no | lowest |
 ## Memory buffering
 - **Port-based memory** — frames are queued per port; one frame for a busy port can delay all the others behind it.
 - **Shared memory** — one common buffer for all ports, allocated dynamically. Fewer dropped frames; important for **asymmetric switching** (different data rates on different ports).
@@ -265,7 +352,11 @@ For every frame the switch examines the **source MAC address** and the **port** 
 - A **duplex mismatch** (one side half, the other full) is one of the most common causes of poor performance on 10/100 Mbps links.
 - **Auto-MDIX** automatically detects the cable type and swaps the transmit and receive pairs, so either a straight-through or a crossover cable works. Enabled by default; re-enabled with:
 = Switch(config-if)# mdix auto
-> A switch learns from the source and forwards by the destination. Unknown — flood everywhere except where it came from.`,
+> A switch learns from the source and forwards by the destination. Unknown — flood everywhere except where it came from.
+?? PC-A (port 1) sends a frame to PC-B. The table has only AA:AA → 1. What does the switch do, and what does the table look like afterwards?
+?= It floods the frame out all ports except port 1 (unknown unicast). The table is unchanged — AA:AA was already known; B is learned only when B sends something.
+?? One side of a link is set to full-duplex, the other to half. What is this called and what does it cause?
+?= A duplex mismatch — one of the most common causes of poor performance on 10/100 Mbps links.`,
         ru: `## Основы коммутатора
 Коммутатор Ethernet уровня 2 принимает решения о пересылке **только по MAC-адресам**. Он не смотрит, какой протокол внутри данных. Старый **концентратор** повторяет биты во все порты; коммутатор сверяется с **таблицей MAC-адресов**, её ещё называют **таблицей CAM**. При включении коммутатора таблица **пуста**.
 = Switch# show mac address-table
@@ -277,11 +368,24 @@ For every frame the switch examines the **source MAC address** and the **port** 
 - Назначение — unicast, который **есть в таблице**: отправить **в один этот порт** (фильтрация).
 - Назначение — unicast, которого **нет в таблице**: **разослать** во все порты, **кроме входящего**. Это **неизвестный unicast**.
 - Назначение — **broadcast или multicast**: тоже рассылается во все порты, кроме входящего.
+@diagram switch-forwarding
+![Передняя панель 24-портового коммутатора с индикаторами](/events/cn/switch-front.webp)
+| MAC назначения | Есть в таблице? | Действие |
+|---|---|---|
+| unicast | да, на другом порту | в этот один порт |
+| unicast | да, на входящем порту | фильтрация — не пересылать |
+| unicast | нет | во все порты, кроме входящего (неизвестный unicast) |
+| broadcast / multicast | — | во все порты, кроме входящего |
 ## Методы пересылки
 - **Store-and-forward** — принимает **кадр целиком**, вычисляет **CRC** и пересылает, только если он верен. Кадры с ошибками отбрасываются. Нужен для анализа **QoS** в конвергентных сетях.
 - **Cut-through** — пересылает, **не дожидаясь** всего кадра; ему нужен только MAC назначения. **Ошибки не проверяются.** Два варианта:
 - **Fast-forward** — наименьшая задержка; пересылает сразу после чтения адреса назначения. Типичный вариант cut-through.
 - **Fragment-free** — сохраняет и проверяет **первые 64 байта** перед пересылкой, потому что большинство ошибок и коллизий случается там. Компромисс.
+| Метод | Ждёт | Проверяет ошибки? | Задержка |
+|---|---|---|---|
+| Store-and-forward | весь кадр | да, CRC | самая большая |
+| Fragment-free | первые 64 байта | частично | средняя |
+| Fast-forward | только MAC назначения | нет | самая малая |
 ## Буферизация
 - **Буфер на порт** — кадры стоят в очереди своего порта; один кадр для занятого порта задерживает все следующие.
 - **Общая память** — единый буфер для всех портов, выделяется динамически. Меньше потерянных кадров; важно для **асимметричной коммутации** (разные скорости на разных портах).
@@ -290,7 +394,11 @@ For every frame the switch examines the **source MAC address** and the **port** 
 - **Несовпадение дуплекса** (с одной стороны half, с другой full) — одна из самых частых причин плохой работы каналов 10/100 Мбит/с.
 - **Auto-MDIX** сам определяет тип кабеля и меняет местами пары передачи и приёма, поэтому подходит и прямой, и перекрёстный кабель. Включён по умолчанию; включается заново командой:
 = Switch(config-if)# mdix auto
-> Коммутатор учится по источнику, а пересылает по назначению. Не знает — рассылает всюду, кроме порта, откуда пришло.`,
+> Коммутатор учится по источнику, а пересылает по назначению. Не знает — рассылает всюду, кроме порта, откуда пришло.
+?? PC-A (порт 1) отправляет кадр PC-B. В таблице только AA:AA → 1. Что сделает коммутатор и какой станет таблица?
+?= Разошлёт кадр во все порты, кроме порта 1 (неизвестный unicast). Таблица не изменится — AA:AA уже известен; B появится в ней, только когда B сам что-то отправит.
+?? Одна сторона канала настроена на полный дуплекс, другая — на половинный. Как это называется и к чему приводит?
+?= Несовпадение дуплекса — одна из самых частых причин плохой работы каналов 10/100 Мбит/с.`,
       },
       [
         q("What does a switch do when receiving an unknown unicast frame?", "Floods frame out all ports except ingress port", ["Drops the frame", "Sends ICMP unreachable", "Queries default gateway"], "If the destination MAC is not in the table, the frame is flooded out all ports except the incoming one.", "Если MAC назначения нет в таблице, кадр рассылается во все порты, кроме входящего."),

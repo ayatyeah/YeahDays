@@ -34,6 +34,11 @@ People use established rules to hold a conversation, and so do devices. Protocol
 - **Unicast** — one to one.
 - **Multicast** — one to many (a group).
 - **Broadcast** — one to all.
+| Option | Who receives | Example |
+|---|---|---|
+| Unicast | one device | web page to one PC |
+| Multicast | a group | video stream to subscribers |
+| Broadcast | everyone on the network | ARP request |
 ## Types and functions of protocols
 Protocol types: **network communications**, **network security** (authentication, integrity, encryption), **routing** (exchange route information and select the best path), **service discovery** (automatic detection of devices or services).
 Protocol functions:
@@ -48,7 +53,17 @@ Protocol functions:
 - **TCP** — manages individual conversations, guarantees delivery, manages flow control.
 - **IP** — delivers messages globally from the sender to the receiver.
 - **Ethernet** — delivers messages from one NIC to another NIC on the same LAN.
-> HTTP talks, TCP guarantees, IP finds the way across networks, Ethernet carries inside one LAN.`,
+> HTTP talks, TCP guarantees, IP finds the way across networks, Ethernet carries inside one LAN.
+| Protocol | Job | Layer |
+|---|---|---|
+| HTTP | web client and server talk; defines content and format | application |
+| TCP | conversations, guaranteed delivery, flow control | transport |
+| IP | global delivery from sender to receiver | network / internet |
+| Ethernet | NIC to NIC inside one LAN | data link |
+?? Which protocol function makes sure that lost pieces are detected and resent?
+?= Reliability — guaranteed delivery. Sequencing numbers the pieces; error detection finds corrupted ones.
+?? A device waits for an answer and gives up after a while. Which message timing element is that?
+?= Response timeout.`,
         ru: `## Три элемента общения
 Одного соединения мало — устройства должны договориться, **как** общаться. В любом общении есть:
 - **источник** (отправитель);
@@ -75,6 +90,11 @@ Protocol functions:
 - **Unicast** — один одному.
 - **Multicast** — один группе.
 - **Broadcast** — один всем.
+| Вариант | Кто получает | Пример |
+|---|---|---|
+| Unicast | одно устройство | веб-страница одному ПК |
+| Multicast | группа | видеопоток подписчикам |
+| Broadcast | все в сети | запрос ARP |
 ## Типы и функции протоколов
 Типы протоколов: **сетевого взаимодействия**, **безопасности** (аутентификация, целостность, шифрование), **маршрутизации** (обмен маршрутами и выбор лучшего пути), **обнаружения сервисов** (автоматический поиск устройств и сервисов).
 Функции протоколов:
@@ -89,7 +109,17 @@ Protocol functions:
 - **TCP** — ведёт отдельные диалоги, гарантирует доставку, управляет потоком.
 - **IP** — доставляет сообщения глобально от отправителя к получателю.
 - **Ethernet** — доставляет сообщения от одной сетевой карты к другой внутри одной LAN.
-> HTTP разговаривает, TCP гарантирует, IP находит путь между сетями, Ethernet несёт внутри одной LAN.`,
+> HTTP разговаривает, TCP гарантирует, IP находит путь между сетями, Ethernet несёт внутри одной LAN.
+| Протокол | Задача | Уровень |
+|---|---|---|
+| HTTP | общение веб-клиента и сервера; содержимое и формат | прикладной |
+| TCP | диалоги, гарантированная доставка, управление потоком | транспортный |
+| IP | глобальная доставка от отправителя к получателю | сетевой / интернет |
+| Ethernet | от карты к карте внутри одной LAN | канальный |
+?? Какая функция протокола гарантирует, что потерянные части заметят и отправят заново?
+?= Надёжность — гарантированная доставка. Упорядочивание нумерует части; обнаружение ошибок находит повреждённые.
+?? Устройство ждёт ответа и через какое-то время перестаёт. Какой это элемент синхронизации сообщений?
+?= Тайм-аут ответа.`,
       },
       [
         q("Which three elements are present in any communication?", "Source, destination and channel", ["Sender, router and switch", "Client, server and protocol", "Encoding, timing and size"], "Every communication has a sender, a receiver and a channel (media).", "В любом общении есть отправитель, получатель и канал (среда)."),
@@ -133,6 +163,21 @@ Open standards encourage **interoperability, competition and innovation**. Stand
 - **EIA** — electrical wiring, connectors and the **19-inch racks** for network equipment.
 - **TIA** — radio equipment, cellular towers, VoIP devices, satellite communications.
 - **ITU-T** — video compression, IPTV and broadband such as **DSL**.
+| Organization | Remember it by |
+|---|---|
+| IETF | TCP/IP and internet technologies, RFC documents |
+| IAB | management and development of internet standards |
+| IRTF | long-term research |
+| ISOC | promotes the open internet |
+| ICANN / IANA | IP addresses, domain names, protocol numbers |
+| IEEE | 802.3 Ethernet, 802.11 Wi-Fi, OUI for MAC addresses |
+| EIA | wiring, connectors, 19-inch racks |
+| TIA | radio, cellular, VoIP, satellite |
+| ITU-T | video compression, IPTV, DSL |
+?? Which organization would publish a new version of the Wi-Fi standard?
+?= IEEE — Wi-Fi is IEEE 802.11.
+?? Who manages the allocation of IP addresses on behalf of ICANN?
+?= IANA.
 > IETF builds TCP/IP, ICANN and IANA hand out addresses and names, IEEE defines Ethernet and Wi-Fi, TIA/EIA define cabling.`,
         ru: `## Наборы протоколов
 **Набор (стек) протоколов** — группа взаимосвязанных протоколов, нужных для выполнения функции связи. Протоколы рассматривают как уровни: нижние перемещают данные и обслуживают верхние.
@@ -159,6 +204,21 @@ TCP/IP — набор протоколов интернета. Это:
 - **EIA** — электропроводка, разъёмы и **19-дюймовые стойки** для сетевого оборудования.
 - **TIA** — радиооборудование, вышки сотовой связи, устройства VoIP, спутниковая связь.
 - **ITU-T** — сжатие видео, IPTV и широкополосный доступ, например **DSL**.
+| Организация | Как запомнить |
+|---|---|
+| IETF | TCP/IP и технологии интернета, документы RFC |
+| IAB | управление стандартами интернета и их развитие |
+| IRTF | долгосрочные исследования |
+| ISOC | продвигает открытый интернет |
+| ICANN / IANA | IP-адреса, доменные имена, номера протоколов |
+| IEEE | 802.3 Ethernet, 802.11 Wi-Fi, OUI для MAC-адресов |
+| EIA | проводка, разъёмы, 19-дюймовые стойки |
+| TIA | радио, сотовая связь, VoIP, спутники |
+| ITU-T | сжатие видео, IPTV, DSL |
+?? Какая организация выпустит новую версию стандарта Wi-Fi?
+?= IEEE — Wi-Fi это IEEE 802.11.
+?? Кто ведёт распределение IP-адресов от имени ICANN?
+?= IANA.
 > IETF создаёт TCP/IP, ICANN и IANA раздают адреса и имена, IEEE определяет Ethernet и Wi-Fi, TIA/EIA — кабельные системы.`,
       },
       [
@@ -197,6 +257,16 @@ A layered model makes a complex process easier to explain. Benefits:
 - **Transport** — supports communication between devices across diverse networks (OSI 4).
 - **Internet** — determines the best path through the network (OSI 3).
 - **Network Access** — controls the hardware devices and media (OSI 1 and 2).
+@diagram osi-tcpip
+| OSI | Keyword | Device / protocol |
+|---|---|---|
+| 7 Application | process to process | HTTP, DNS, DHCP |
+| 6 Presentation | format, compression, encryption | TLS, JPEG |
+| 5 Session | dialogs | — |
+| 4 Transport | segments, ports | TCP, UDP |
+| 3 Network | logical address, routing | IP, router |
+| 2 Data Link | frames, MAC | Ethernet, switch |
+| 1 Physical | bits, signals | cables, hub |
 ## Segmenting, multiplexing, sequencing
 **Segmenting** breaks a message into smaller units. **Multiplexing** interleaves several streams of segmented data. Benefits: **speed** (the link is not tied up) and **efficiency** (only failed segments are retransmitted). **Sequencing** numbers the segments for reassembly — **TCP** is responsible for it.
 ## Protocol data units
@@ -207,9 +277,15 @@ A layered model makes a complex process easier to explain. Benefits:
 - Data Link — **Frame**
 - Physical — **Bits**
 **De-encapsulation** goes up the stack: each layer strips its header and passes the rest up.
+@diagram encapsulation
+@demo encapsulation
 ## Example: a web page travels
 A web server sends a page: the **HTTP data** gets a **TCP header** (segment), then an **IP header** (packet), then an **Ethernet header and trailer** (frame), and leaves as bits. The client receives the bits and removes the Ethernet, IP and TCP information in that order, until the browser gets the page.
-> Down the stack: Data, Segment, Packet, Frame, Bits. Layer 3 = packet and routing, Layer 2 = frame and MAC.`,
+> Down the stack: Data, Segment, Packet, Frame, Bits. Layer 3 = packet and routing, Layer 2 = frame and MAC.
+?? A switch reads a frame header. Which OSI layer is it working at, and what is the PDU called?
+?= Layer 2, data link. The PDU is a frame.
+?? Which TCP/IP layer covers OSI layers 5, 6 and 7 together?
+?= The application layer.`,
         ru: `## Зачем нужны уровневые модели
 Уровневая модель упрощает объяснение сложного процесса. Преимущества:
 - **помогает проектировать протоколы** — у протокола на уровне есть определённая информация и определённый интерфейс к соседним уровням;
@@ -229,6 +305,16 @@ A web server sends a page: the **HTTP data** gets a **TCP header** (segment), th
 - **Транспортный** — поддерживает связь между устройствами через разные сети (OSI 4).
 - **Интернет** — определяет лучший путь через сеть (OSI 3).
 - **Сетевого доступа** — управляет оборудованием и средой передачи (OSI 1 и 2).
+@diagram osi-tcpip
+| OSI | Ключевое слово | Устройство / протокол |
+|---|---|---|
+| 7 Прикладной | процесс — процесс | HTTP, DNS, DHCP |
+| 6 Представления | формат, сжатие, шифрование | TLS, JPEG |
+| 5 Сеансовый | диалоги | — |
+| 4 Транспортный | сегменты, порты | TCP, UDP |
+| 3 Сетевой | логический адрес, маршрутизация | IP, маршрутизатор |
+| 2 Канальный | кадры, MAC | Ethernet, коммутатор |
+| 1 Физический | биты, сигналы | кабели, концентратор |
 ## Сегментация, мультиплексирование, упорядочивание
 **Сегментация** делит сообщение на меньшие части. **Мультиплексирование** чередует несколько потоков сегментированных данных. Польза: **скорость** (канал не занят одним сообщением) и **эффективность** (повторно шлются только потерянные сегменты). **Упорядочивание** нумерует сегменты для сборки — за него отвечает **TCP**.
 ## Блоки данных протокола (PDU)
@@ -239,9 +325,15 @@ A web server sends a page: the **HTTP data** gets a **TCP header** (segment), th
 - Канальный — **Кадр (Frame)**
 - Физический — **Биты (Bits)**
 **Деинкапсуляция** идёт вверх по стеку: каждый уровень снимает свой заголовок и передаёт остальное выше.
+@diagram encapsulation
+@demo encapsulation
 ## Пример: путь веб-страницы
 Веб-сервер отправляет страницу: к **данным HTTP** добавляется **заголовок TCP** (сегмент), затем **заголовок IP** (пакет), затем **заголовок и концевик Ethernet** (кадр), и всё уходит битами. Клиент принимает биты и снимает информацию Ethernet, IP и TCP в этом порядке, пока браузер не получит страницу.
-> Вниз по стеку: Data, Segment, Packet, Frame, Bits. Уровень 3 = пакет и маршрутизация, уровень 2 = кадр и MAC.`,
+> Вниз по стеку: Data, Segment, Packet, Frame, Bits. Уровень 3 = пакет и маршрутизация, уровень 2 = кадр и MAC.
+?? Коммутатор читает заголовок кадра. На каком уровне OSI он работает и как называется PDU?
+?= Уровень 2, канальный. PDU — кадр.
+?? Какой уровень TCP/IP объединяет уровни OSI 5, 6 и 7?
+?= Уровень приложений.`,
       },
       [
         q("Which OSI layer performs logical addressing and routing?", "Layer 3 - Network", ["Layer 2 - Data Link", "Layer 4 - Transport", "Layer 7 - Application"], "The network layer exchanges pieces of data over the network using logical (IP) addresses.", "Сетевой уровень передаёт данные по сети, используя логические (IP) адреса."),
@@ -282,6 +374,16 @@ Data link addressing is local, so there is a new source and destination MAC for 
 - first router exit interface to second router;
 - second router exit interface to web server NIC.
 The **packet is not modified**: the Layer 3 source and destination IP addresses **stay the same** from end to end, while the frame and its **MAC addresses change at every hop**.
+@diagram address-journey
+| Hop | Source MAC | Destination MAC | Source IP | Destination IP |
+|---|---|---|---|---|
+| PC1 → R1 | PC1 | R1 (gateway) | 192.168.1.110 | 172.16.1.99 |
+| R1 → R2 | R1 exit interface | R2 | 192.168.1.110 | 172.16.1.99 |
+| R2 → Web | R2 exit interface | Web server | 192.168.1.110 | 172.16.1.99 |
+?? PC1 sends a packet to a server in another city. Whose MAC address is the destination in the first frame?
+?= The default gateway's (router R1). The server's MAC is never used by PC1 — it is on a different network.
+?? What stays the same across all hops, and what changes?
+?= The IP addresses stay the same end to end; the frame with its MAC addresses is rebuilt on every link.
 > IP = global, end to end, does not change. MAC = local, link by link, changes at every router.`,
         ru: `## Два вида адресов
 Адресацию используют и сетевой, и канальный уровни:
@@ -304,6 +406,16 @@ The **packet is not modified**: the Layer 3 source and destination IP addresses 
 - выходной интерфейс первого маршрутизатора — второй маршрутизатор;
 - выходной интерфейс второго маршрутизатора — сетевая карта веб-сервера.
 **Пакет не изменяется**: IP-адреса источника и назначения уровня 3 **остаются теми же** от начала до конца, а кадр и его **MAC-адреса меняются на каждом переходе**.
+@diagram address-journey
+| Участок | MAC источника | MAC назначения | IP источника | IP назначения |
+|---|---|---|---|---|
+| PC1 → R1 | PC1 | R1 (шлюз) | 192.168.1.110 | 172.16.1.99 |
+| R1 → R2 | выходной интерфейс R1 | R2 | 192.168.1.110 | 172.16.1.99 |
+| R2 → Web | выходной интерфейс R2 | веб-сервер | 192.168.1.110 | 172.16.1.99 |
+?? PC1 отправляет пакет серверу в другом городе. Чей MAC-адрес стоит в назначении первого кадра?
+?= Шлюза по умолчанию (маршрутизатора R1). MAC сервера PC1 никогда не использует — тот в другой сети.
+?? Что остаётся одинаковым на всех участках, а что меняется?
+?= IP-адреса одинаковы от начала до конца; кадр с MAC-адресами строится заново на каждом участке.
 > IP = глобальный, от конца до конца, не меняется. MAC = локальный, от участка к участку, меняется на каждом маршрутизаторе.`,
       },
       [

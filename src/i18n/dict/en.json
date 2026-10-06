@@ -2256,5 +2256,8 @@
  "RU + термины EN": "RU + EN terms",
  "state PUT: вернули {0} серверных задач для {1}": "state PUT: returned {0} server tasks for {1}",
  "YeahGrind — одно действие в день": "YeahGrind — one action a day",
- "YeahGrind — сегодня": "YeahGrind — today"
+ "YeahGrind — сегодня": "YeahGrind — today",
+ "Ивент: мидтерм по Cloud Computing": "Event: Cloud Computing midterm",
+ "Пять лекций по частям, конспекты со схемами и квиз на 20 вопросов после каждой части — с разбором неверных вариантов.": "Five lectures in parts, notes with diagrams and a 20-question quiz after each part — with explanations of the wrong options.",
+ "Пять лекций по частям: конспект с таблицами и схемами, и после каждой части — квиз на 20 вопросов по всей части, с разбором, почему неверные варианты не подходят. Дальше — квиз по лекции и итоговый по всему курсу.": "Five lectures in parts: notes with tables and diagrams, and after each part a 20-question quiz on the whole part, explaining why the wrong options don't fit. Then a quiz for each lecture and a final one for the whole course."
 }

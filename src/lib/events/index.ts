@@ -10,6 +10,12 @@ import { lecture3 } from "./computerNetworks/lecture3";
 import { lecture4 } from "./computerNetworks/lecture4";
 import { drill } from "./computerNetworks/drill";
 import { cheatSheet as cnCheatSheet, glossary as cnGlossary } from "./computerNetworks/extras";
+import { lecture1 as cc1 } from "./cloudComputing/lecture1";
+import { lecture2 as cc2 } from "./cloudComputing/lecture2";
+import { lecture3 as cc3 } from "./cloudComputing/lecture3";
+import { lecture4 as cc4 } from "./cloudComputing/lecture4";
+import { lecture5 as cc5 } from "./cloudComputing/lecture5";
+import { cheatSheet as ccCheatSheet, glossary as ccGlossary } from "./cloudComputing/extras";
 
 /**
  * Все ивенты раздела «Учёба». Новый ивент — новый объект в этом списке и
@@ -38,6 +44,17 @@ export const EVENTS: StudyEvent[] = [
     glossary: cnGlossary,
     cheatSheet: cnCheatSheet,
     game: "networks",
+  },
+  {
+    id: "cloud-computing-midterm",
+    title: "Подготовка к мидтерму",
+    course: "Cloud Computing",
+    description:
+      "Пять лекций по частям: конспект с таблицами и схемами, и после каждой части — квиз на 20 вопросов по всей части, с разбором, почему неверные варианты не подходят. Дальше — квиз по лекции и итоговый по всему курсу.",
+    lectures: [cc1, cc2, cc3, cc4, cc5],
+    counts: { part: 20, lecture: 20, final: 45 },
+    glossary: ccGlossary,
+    cheatSheet: ccCheatSheet,
   },
 ];
 

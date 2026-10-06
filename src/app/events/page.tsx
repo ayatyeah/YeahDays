@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { EVENTS } from "@/lib/events";
-import { readiness, steps } from "@/lib/events/engine";
+import { completed, readiness, steps } from "@/lib/events/engine";
 import { loadProgress } from "@/lib/events/storage";
 
 /**
@@ -15,11 +15,11 @@ import { loadProgress } from "@/lib/events/storage";
 export default function EventsPage() {
   const { data } = useSession();
   const userId = data?.user?.id;
-  const [percent, setPercent] = useState<Record<string, { percent: number; done: number; total: number }>>({});
+  const [percent, setPercent] = useState<Record<string, { percent: number; done: number; total: number; earned: boolean }>>({});
 
   useEffect(() => {
     if (!userId) return;
-    setPercent(Object.fromEntries(EVENTS.map((e) => [e.id, readiness(e, loadProgress(userId, e.id))])));
+    setPercent(Object.fromEntries(EVENTS.map((e) => { const p = loadProgress(userId, e.id); return [e.id, { ...readiness(e, p), earned: completed(e, p) }]; })));
   }, [userId]);
 
   return (
@@ -53,7 +53,7 @@ export default function EventsPage() {
               <div className="mt-4">
                 <div className="flex justify-between text-sm">
                   <span>{mine.done ? `Пройдено шагов: ${mine.done} из ${mine.total}` : "Ещё не начато"}</span>
-                  <strong>Готовность {mine.percent}%</strong>
+                  <strong>{mine.earned ? "🏆 Пройден · " : ""}Готовность {mine.percent}%</strong>
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
                   <div className="h-full rounded-full bg-violet-400" style={{ width: `${mine.percent}%` }} />

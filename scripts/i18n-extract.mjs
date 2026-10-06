@@ -14,7 +14,7 @@ const root = "src";
 // переключатель EN/RU), юридические тексты (сила — у русской версии),
 // консоль владельца, тесты и сам каталог переводов.
 // Схемы, демонстрации и вопросы самопроверки в конспектах двуязычны сами по себе (ru/en по языку конспекта).
-const SKIP = [/^lib\/events\/(researchMethods|computerNetworks)\//, /^components\/events\/(NotesDiagram|NotesDemo|CheckQuestion)\.tsx$/, /^app\/privacy\//, /^app\/terms\//, /^app\/admin\//, /^components\/Owner/, /^i18n\//, /\.test\.tsx?$/, /^app\/api\/(owner|admin|cron|push|assistant)\//, /^lib\/(push|notify)/];
+const SKIP = [/^lib\/events\/(researchMethods|computerNetworks|cloudComputing)\//, /^components\/events\/(NotesDiagram|NotesDemo|CheckQuestion)\.tsx$/, /^app\/privacy\//, /^app\/terms\//, /^app\/admin\//, /^components\/Owner/, /^i18n\//, /\.test\.tsx?$/, /^app\/api\/(owner|admin|cron|push|assistant)\//, /^lib\/(push|notify)/];
 const cyr = /[А-Яа-яЁё]/;
 const keys = new Map();
 const add = (raw, file) => {

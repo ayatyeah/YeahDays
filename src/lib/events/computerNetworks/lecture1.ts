@@ -1,4 +1,8 @@
 import { part, q, tf, type Lecture } from "../types";
+import { deepL1P1 } from "./deep/l1p1";
+import { deepL1P2 } from "./deep/l1p2";
+import { deepL1P3 } from "./deep/l1p3";
+import { deepL1P4 } from "./deep/l1p4";
 
 export const lecture1: Lecture = {
   id: "cn-l1",
@@ -125,6 +129,7 @@ Business: **dedicated leased line** (reserved circuits in the provider's network
         tf("The internet is owned and controlled by ICANN.", false, "Nobody owns the internet; IETF, ICANN and IAB only help maintain its structure.", "Интернет никому не принадлежит; IETF, ICANN и IAB лишь помогают поддерживать его структуру."),
         q("Which business connection uses reserved circuits inside the service provider's network to link distant offices?", "Dedicated leased line", ["Ethernet WAN", "Business DSL", "Satellite link"], "A leased line is a reserved circuit that connects distant offices with private voice or data networking.", "Арендованная линия — зарезервированный канал, соединяющий удалённые офисы частной сетью."),
       ],
+      deepL1P1,
     ),
     part(
       "cn-l1-p2",
@@ -217,6 +222,7 @@ Before convergence an organization had separate cabling for telephone, video and
         q("Which technology lets a device join the LAN through an electrical outlet?", "Powerline networking", ["Wireless broadband", "Dial-up access", "Metro Ethernet"], "A powerline adapter sends data on certain frequencies over electrical wiring.", "Powerline-адаптер передаёт данные на определённых частотах по электропроводке."),
         tf("In a packet-switched network every packet of a message must follow the same dedicated path.", false, "Each packet can take a different path; a dedicated circuit is a feature of circuit switching.", "Каждый пакет может идти своим путём; выделенный канал — признак коммутации каналов."),
       ],
+      deepL1P2,
     ),
     part(
       "cn-l1-p3",
@@ -354,6 +360,7 @@ GUI удобнее, но может зависнуть или упасть, по
         q("Which key completes a partially typed command?", "Tab", ["Space Bar", "Enter", "Backspace"], "Tab completes a partial command name entry.", "Tab дописывает частично введённую команду."),
         q("In Cisco syntax notation, what do square brackets [x] indicate?", "An optional element", ["A required element", "A value you must supply", "A literal keyword"], "Square brackets mark an optional element; braces {x} mark a required one.", "Квадратные скобки — необязательный элемент; фигурные {x} — обязательный."),
       ],
+      deepL1P3,
     ),
     part(
       "cn-l1-p4",
@@ -468,6 +475,7 @@ Saving the running configuration:
         q("Which hostname follows the Cisco naming guidelines?", "Sw-Floor-1", ["1st-Switch", "Sw Floor 1", "Switch_Floor-"], "A name starts with a letter, has no spaces, ends with a letter or digit and uses only letters, digits and dashes.", "Имя начинается с буквы, не содержит пробелов, кончается буквой или цифрой и состоит только из букв, цифр и дефисов."),
         tf("After 'password cisco' on the console line, the 'login' command is needed to make the device ask for the password.", true, "login enables password checking on the line; without it the password is not requested.", "login включает проверку пароля на линии; без неё пароль не спрашивается."),
       ],
+      deepL1P4,
     ),
   ],
 };

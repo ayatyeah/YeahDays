@@ -1,4 +1,8 @@
 import { part, q, tf, type Lecture } from "../types";
+import { deepL3P1 } from "./deep/l3p1";
+import { deepL3P2 } from "./deep/l3p2";
+import { deepL3P3 } from "./deep/l3p3";
+import { deepL3P4 } from "./deep/l3p4";
 
 export const lecture3: Lecture = {
   id: "cn-l3",
@@ -101,6 +105,7 @@ A typical home wireless router shows three kinds of physical connections: the **
         tf("Encoding the frame as signals on the media is the last step of the encapsulation process.", true, "The physical layer accepts the complete frame and sends it as signals.", "Физический уровень принимает готовый кадр и отправляет его в виде сигналов."),
         q("What does throughput measure?", "The actual transfer of bits over a period of time", ["The maximum capacity of the medium", "The delay between two end devices", "The number of devices on the link"], "Throughput is the real transfer rate, usually lower than bandwidth.", "Throughput — реальная скорость передачи, обычно ниже пропускной способности."),
       ],
+      deepL3P1,
     ),
     part(
       "cn-l3-p2",
@@ -204,6 +209,7 @@ UTP has **four pairs** of color-coded copper wires and **no shielding**. It reli
         q("Compared with UTP, STP cable is…", "Better protected but more expensive", ["Cheaper and easier to install", "Immune to attenuation", "Limited to coaxial connectors"], "STP gives better noise protection but costs more and is harder to install.", "STP лучше защищён от помех, но дороже и сложнее в монтаже."),
         q("Where is coaxial cable commonly used?", "To attach antennas to wireless devices", ["To connect PCs to access switches", "To link console ports to laptops", "To build long undersea backbones"], "Coax is used in wireless installations and cable internet.", "Коаксиал применяют в беспроводных установках и кабельном интернете."),
       ],
+      deepL3P2,
     ),
     part(
       "cn-l3-p3",
@@ -347,6 +353,7 @@ The access point concentrates the wireless signals of the users and connects to 
         q("Which wireless technology targets low data-rate, low-power IoT communications?", "Zigbee", ["WiMAX", "Wi-Fi", "LTE"], "Zigbee (802.15.4) is designed for low data rate and low power consumption.", "Zigbee (802.15.4) рассчитан на низкую скорость и малое энергопотребление."),
         tf("Compared with UTP, fiber-optic cabling has lower media and connector costs.", false, "Fiber has the highest costs, installation skill and safety requirements.", "У оптики самые высокие стоимость и требования к монтажу и безопасности."),
       ],
+      deepL3P3,
     ),
     part(
       "cn-l3-p4",
@@ -483,6 +490,7 @@ Go through binary:
         q("What is the decimal value of hexadecimal F?", "15", ["16", "14", "10"], "A=10, B=11, C=12, D=13, E=14, F=15.", "A=10, B=11, C=12, D=13, E=14, F=15."),
         q("Which IPv4 address is 11000000.10101000.00001011.00001010?", "192.168.11.10", ["192.168.10.11", "192.160.11.10", "128.168.11.10"], "Convert each octet: 192, 168, 11 (8+2+1) and 10 (8+2).", "Переводим каждый октет: 192, 168, 11 (8+2+1) и 10 (8+2)."),
       ],
+      deepL3P4,
     ),
   ],
 };

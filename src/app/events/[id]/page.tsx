@@ -13,10 +13,12 @@ import EventMusic from "@/components/EventMusic";
 import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeaderboard";
 import EventPlan from "@/components/events/EventPlan";
 import Flashcards from "@/components/events/Flashcards";
+import LectureVideo from "@/components/events/LectureVideo";
 import NetworkGame from "@/components/events/NetworkGame";
 import ReportQuestion from "@/components/events/ReportQuestion";
 import ShareResult from "@/components/events/ShareResult";
 import SpeakButton from "@/components/events/SpeakButton";
+import { strip } from "@/lib/events/scenes";
 import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@/lib/events/storage";
 import type { Lang, StudyEvent } from "@/lib/events/types";
 import { useContentLang } from "@/i18n/locale";
@@ -30,6 +32,7 @@ type View =
   | { mode: "cards" }
   | { mode: "game" }
   | { mode: "read"; step: Step }
+  | { mode: "video"; step: Step }
   | { mode: "quiz"; step: Step; quiz: QuizQuestion[]; run: number }
   | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] };
 
@@ -344,6 +347,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                 {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
               </Button>
               <SpeakButton text={part.notes[lang]} lang={lang} />
+              <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "video", step: view.step })}>▶ Смотреть как видео</Button>
+              <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
             <article className={panel}>
               <EventNotes text={part.notes[lang]} lang={lang} />
@@ -352,6 +357,23 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               Начать квиз по этой части · {view.step.count} вопросов
             </Button>
           </>
+        );
+      })()}
+
+      {view.mode === "video" && (() => {
+        const lecture = event.lectures[view.step.lecture!];
+        const part = lecture.parts[view.step.part!];
+        return (
+          <LectureVideo
+            key={part.id}
+            notes={part.notes}
+            title={part.title}
+            lectureTitle={lecture.title}
+            music={music}
+            onMusic={toggleMusic}
+            onExit={() => setView({ mode: "read", step: view.step })}
+            onQuiz={() => startQuiz(view.step)}
+          />
         );
       })()}
 
@@ -670,5 +692,43 @@ function Result({
         </section>
       )}
     </>
+  );
+}
+
+/**
+ * «Скопировать конспект» — чистый текст без разметки, чтобы вставить в
+ * заметки или отправить другу. Схемы и демонстрации в текст не попадают,
+ * таблицы — строками через « · », вопросы самопроверки — с ответами.
+ */
+function CopyNotes({ text, title }: { text: string; title: string }) {
+  const [state, setState] = useState<"idle" | "done" | "fail">("idle");
+  function plain() {
+    const lines: string[] = [title, ""];
+    for (const line of text.split("\n")) {
+      if (line.startsWith("@") || line.startsWith("![")) continue;
+      if (line.startsWith("## ")) lines.push("", strip(line.slice(3)).toUpperCase());
+      else if (line.startsWith("- ")) lines.push("• " + strip(line.slice(2)));
+      else if (line.startsWith("> ")) lines.push("→ " + strip(line.slice(2)));
+      else if (line.startsWith("= ")) lines.push("    " + line.slice(2));
+      else if (line.startsWith("|")) { if (!/^\|[\s\-:|]+\|$/.test(line.trim())) lines.push(line.trim().replace(/^\||\|$/g, "").split("|").map((c) => strip(c)).join(" · ")); }
+      else if (line.startsWith("?? ")) lines.push("? " + strip(line.slice(3)));
+      else if (line.startsWith("?= ")) lines.push("  = " + strip(line.slice(3)));
+      else lines.push(strip(line));
+    }
+    return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(plain());
+      setState("done");
+    } catch {
+      setState("fail");
+    }
+    setTimeout(() => setState("idle"), 2500);
+  }
+  return (
+    <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => void copy()}>
+      {state === "done" ? "Скопировано" : state === "fail" ? "Не удалось скопировать" : "Скопировать конспект"}
+    </Button>
   );
 }

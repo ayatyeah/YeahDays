@@ -45,6 +45,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   return (
     <button
       ref={ref}
+      data-variant={variant}
       className={cn(
         // press — общий тап-эффект (scale), он же несёт transition цвета/границы
         "press inline-flex select-none items-center justify-center gap-2 font-semibold disabled:cursor-not-allowed disabled:opacity-40",

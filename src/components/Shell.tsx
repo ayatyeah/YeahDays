@@ -1,6 +1,9 @@
 "use client";
 
+import { MotionConfig } from "framer-motion";
 import { usePathname } from "next/navigation";
+import MascotGuide from "./MascotGuide";
+import "./app-experience.css";
 import BottomNav from "./BottomNav";
 import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";
@@ -56,7 +59,8 @@ const AUTH_PAGES = ["/login", "/login/lms", "/register", "/forgot-password"];
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isMarketing = MARKETING.includes(pathname) || pathname.startsWith("/invite/");
+  const isMarketing =
+    MARKETING.includes(pathname) || pathname.startsWith("/invite/");
   const isSection = tabFromPath(pathname) !== null;
 
   // На экранах входа ещё нет настроек, а язык нужен уже здесь.
@@ -74,9 +78,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <>
-      <Sidebar />
-      {/* Снизу отступа у рамки нет: он живёт ВНУТРИ прокручиваемого раздела
+    <MotionConfig reducedMotion="user">
+      <div className="yg-app">
+        <Sidebar />
+        {/* Снизу отступа у рамки нет: он живёт ВНУТРИ прокручиваемого раздела
           (.section-pane в globals.css). Иначе прокрутка заканчивалась выше
           панели, под полупрозрачной панелью оказывался просто фон, и весь
           смысл размытия пропадал — контент должен проезжать под ней.
@@ -91,31 +96,39 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           впритык к системной строке состояния — подняли пол с 1.5rem до
           2.75rem специально под этот случай; max() всё равно берёт вырез,
           если он больше. */}
-      {/* app-shell-frame (только у разделов-вкладок) — ровно высота экрана,
+        {/* app-shell-frame (только у разделов-вкладок) — ровно высота экрана,
           никогда не выше: .section-pane внутри скроллится сам, поэтому
           переключение вкладок не может менять размер этой рамки (см.
           globals.css). Остальным страницам (маркетинг/PageTransition)
           скролл окна ничем не мешает — им оставляем обычный min-h-dvh. */}
-      <div
-        className={cn(
-          "mx-auto flex max-w-md flex-col px-[18px] pt-[calc(max(2.75rem,env(safe-area-inset-top))+1rem)] pb-0 lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
-          // У разделов отступ снизу живёт внутри прокрутки (.section-pane),
-          // у обычных страниц прокрутки нет — им отступ нужен здесь, иначе
-          // низ страницы уедет под плавающую панель.
-          isSection
-            ? "app-shell-frame"
-            : "min-h-dvh pb-[calc(6rem+var(--install-offset,0px))] lg:pb-10",
-        )}
-      >
-        {isSection ? children : <PageTransition>{children}</PageTransition>}
+        <div
+          className={cn(
+            "mx-auto flex max-w-md flex-col px-[18px] pt-[calc(max(2.75rem,env(safe-area-inset-top))+1rem)] pb-0 lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
+            // У разделов отступ снизу живёт внутри прокрутки (.section-pane),
+            // у обычных страниц прокрутки нет — им отступ нужен здесь, иначе
+            // низ страницы уедет под плавающую панель.
+            isSection
+              ? "app-shell-frame"
+              : "min-h-dvh pb-[calc(6rem+var(--install-offset,0px))] lg:pb-10",
+          )}
+        >
+          {isSection ? (
+            children
+          ) : (
+            <PageTransition>
+              <MascotGuide />
+              {children}
+            </PageTransition>
+          )}
+        </div>
+        {authSwitcher}
+        <BottomNav />
+        <StandaloneViewportFix />
+        <InstallPrompt />
+        <AppGuide />
+        <WhatsNew />
+        <NotificationCenter />
       </div>
-      {authSwitcher}
-      <BottomNav />
-      <StandaloneViewportFix />
-      <InstallPrompt />
-      <AppGuide />
-      <WhatsNew />
-      <NotificationCenter />
-    </>
+    </MotionConfig>
   );
 }

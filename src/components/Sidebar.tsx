@@ -47,7 +47,7 @@ export default function Sidebar() {
   if (hydrated && !onboarded && section !== null) return null;
 
   return (
-    <nav className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">
+    <nav aria-label="Навигация приложения" className="yg-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">
       <Link href="/today" className="flex items-center gap-2.5 px-2">
         <Logo variant="white" className="h-7 w-auto" />
         <span className="text-[16px] font-bold tracking-tight">YeahGrind</span>
@@ -93,7 +93,7 @@ export default function Sidebar() {
         })}
       </div>
 
-      <div className="mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">Календарь</Link><Link href="/chat">ИИ-помощник</Link><Link href="/events">Ивенты</Link><Link href="/challenge30">Челлендж 30</Link><Link href="/app">Мой персонаж</Link></div>
+      <div className="yg-sidebar-links mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">Календарь</Link><Link href="/chat">ИИ-помощник</Link><Link href="/events">Ивенты</Link><Link href="/challenge30">Челлендж 30</Link><Link href="/app">Мой персонаж</Link></div>
       <div className="mt-auto px-2 text-[12px] text-[var(--color-muted)]">
         Одно действие в день
       </div>

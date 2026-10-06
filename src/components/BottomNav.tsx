@@ -75,7 +75,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="pointer-events-none fixed inset-x-0 z-40 lg:hidden"
+      className="yg-bottom-nav pointer-events-none fixed inset-x-0 z-40 lg:hidden"
       aria-label="Основная навигация"
       style={{ bottom: "var(--nav-offset, 0px)" }}
     >

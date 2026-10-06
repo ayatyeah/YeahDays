@@ -10,8 +10,10 @@ import { RATES, clampRate, rankVoices } from "@/lib/events/voice";
 function plain(text: string): string[] {
   return text
     .split("\n")
-    .filter((line) => line.trim() && !line.startsWith("= "))
-    .map((line) => line.replace(/^(## |- |> )/, "").replace(/\*+/g, "").trim());
+    // Таблицы, схемы, иллюстрации и ответы на самопроверку голосом не читаются: таблица
+    // превратилась бы в поток слов без строк, а ответ — в подсказку раньше вопроса.
+    .filter((line) => line.trim() && !/^(= |\||@|!\[|\?= )/.test(line))
+    .map((line) => line.replace(/^(## |- |> |\?\? )/, "").replace(/\*+/g, "").trim());
 }
 
 const select = "h-9 min-w-0 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-2 text-sm";

@@ -11,6 +11,8 @@ export const lecture3: Lecture = {
         en: `## The physical connection
 Before any communication, a physical connection to a local network must exist — wired or wireless. A **Network Interface Card (NIC)** connects a device to the network; a device can have several NICs (wired and wireless). Not all physical connections give the same performance.
 A typical home wireless router shows three kinds of physical connections: the **wireless antennas**, several **Ethernet switchports** and one **internet port**.
+![The back of a home wireless router: antennas, four LAN switchports and one internet (WAN) port](/events/cn/home-router-ports.webp)
+![A network interface card with an RJ-45 port](/events/cn/ethernet-nic.webp)
 ## What the physical layer does
 - Transports **bits** across the network media.
 - Accepts a complete **frame** from the data link layer and **encodes it as a series of signals** sent onto the local media.
@@ -19,6 +21,11 @@ A typical home wireless router shows three kinds of physical connections: the **
 - **Physical components** — the hardware, media and connectors that carry the signals: NICs, interfaces, connectors, cable materials and designs.
 - **Encoding** — converts the stream of bits into a format (a predictable pattern) recognizable by the next device. Examples: **Manchester, 4B/5B, 8B/10B**.
 - **Signaling** — how the bit values 1 and 0 are represented on the medium: **electrical signals** over copper, **light pulses** over fiber, **microwave signals** over wireless.
+| Medium | Signal | Standard body |
+|---|---|---|
+| Copper | electrical impulses | TIA/EIA cabling, IEEE categories |
+| Fiber | pulses of light (laser or LED) | TIA/EIA, ITU-T |
+| Wireless | microwave / radio modulation | IEEE 802.11, 802.15, 802.16 |
 ## Bandwidth
 **Bandwidth** is the capacity at which a medium can carry data: how many bits can be transmitted in a second.
 - 1 Kbps = 1,000 bps
@@ -30,10 +37,22 @@ A typical home wireless router shows three kinds of physical connections: the **
 - **Throughput** — the measure of the transfer of bits across the media over a given period of time.
 - **Goodput** — the measure of **usable** data transferred over a given period of time.
 = Goodput = Throughput - traffic overhead
-> Bandwidth is what the medium can carry, throughput is what it actually carries, goodput is what is left after overhead.`,
+> Bandwidth is what the medium can carry, throughput is what it actually carries, goodput is what is left after overhead.
+| Term | Meaning | Analogy |
+|---|---|---|
+| Bandwidth | capacity, bits per second | width of the road |
+| Throughput | actual bits transferred over time | cars that actually pass |
+| Goodput | useful data only | passengers, not the cars themselves |
+| Latency | travel time including delays | how long one car takes |
+?? A link is sold as 100 Mbps, a file transfer shows 60 Mbps, and 55 Mbps of that is the file itself. Name the three numbers.
+?= Bandwidth 100 Mbps, throughput 60 Mbps, goodput 55 Mbps (throughput minus overhead).
+?? What is the last step of encapsulation, and which layer does it?
+?= Encoding the frame as signals on the media — the physical layer.`,
         ru: `## Физическое подключение
 До любого обмена должно существовать физическое подключение к локальной сети — проводное или беспроводное. Устройство подключает к сети **сетевая карта (NIC)**; карт может быть несколько (проводная и беспроводная). Не все физические подключения дают одинаковую производительность.
 У типичного домашнего беспроводного маршрутизатора три вида физических подключений: **антенны Wi-Fi**, несколько **портов коммутатора Ethernet** и один **порт интернета**.
+![Задняя панель домашнего маршрутизатора: антенны, четыре порта LAN и один порт интернета (WAN)](/events/cn/home-router-ports.webp)
+![Сетевая карта с портом RJ-45](/events/cn/ethernet-nic.webp)
 ## Что делает физический уровень
 - Переносит **биты** по среде передачи.
 - Принимает готовый **кадр** от канального уровня и **кодирует его в последовательность сигналов**, которые уходят в локальную среду.
@@ -42,6 +61,11 @@ A typical home wireless router shows three kinds of physical connections: the **
 - **Физические компоненты** — оборудование, среда и разъёмы, которые несут сигналы: сетевые карты, интерфейсы, разъёмы, материалы и конструкция кабелей.
 - **Кодирование** — превращает поток битов в формат (предсказуемый шаблон), понятный следующему устройству. Примеры: **Manchester, 4B/5B, 8B/10B**.
 - **Сигнализация** — как значения 1 и 0 представлены в среде: **электрические сигналы** в меди, **световые импульсы** в оптоволокне, **микроволновые сигналы** в беспроводной среде.
+| Среда | Сигнал | Кто стандартизирует |
+|---|---|---|
+| Медь | электрические импульсы | кабели TIA/EIA, категории IEEE |
+| Оптика | импульсы света (лазер или светодиод) | TIA/EIA, ITU-T |
+| Радио | модуляция микроволн / радиоволн | IEEE 802.11, 802.15, 802.16 |
 ## Пропускная способность
 **Пропускная способность (bandwidth)** — ёмкость среды: сколько битов можно передать за секунду.
 - 1 Кбит/с = 1 000 бит/с
@@ -53,7 +77,17 @@ A typical home wireless router shows three kinds of physical connections: the **
 - **Throughput** — сколько битов реально передано через среду за период времени.
 - **Goodput** — сколько **полезных** данных передано за период времени.
 = Goodput = Throughput - traffic overhead
-> Bandwidth — сколько среда может нести, throughput — сколько реально несёт, goodput — что осталось после служебных данных.`,
+> Bandwidth — сколько среда может нести, throughput — сколько реально несёт, goodput — что осталось после служебных данных.
+| Термин | Смысл | Аналогия |
+|---|---|---|
+| Bandwidth | ёмкость, бит в секунду | ширина дороги |
+| Throughput | реально переданные биты за время | машины, которые проехали |
+| Goodput | только полезные данные | пассажиры, а не сами машины |
+| Latency | время в пути с задержками | сколько едет одна машина |
+?? Канал продают как 100 Мбит/с, передача файла показывает 60 Мбит/с, из них 55 Мбит/с — сам файл. Назови три величины.
+?= Bandwidth 100 Мбит/с, throughput 60 Мбит/с, goodput 55 Мбит/с (throughput минус служебные данные).
+?? Какой шаг инкапсуляции последний и какой уровень его делает?
+?= Кодирование кадра в сигналы среды — физический уровень.`,
       },
       [
         q("What does the physical layer transport across the network media?", "Bits", ["Frames", "Packets", "Segments"], "The physical layer encodes the frame as signals and moves bits.", "Физический уровень кодирует кадр в сигналы и переносит биты."),
@@ -81,6 +115,13 @@ Copper cabling is the most common type: inexpensive, easy to install, low resist
 - **UTP (unshielded twisted pair)** — the most common networking media. Terminated with **RJ-45** connectors. Interconnects hosts with intermediary devices. Outer jacket, twisted pairs, color-coded insulation.
 - **STP (shielded twisted pair)** — better noise protection than UTP, but **more expensive and harder to install**. Also RJ-45. A braided or foil shield plus a foil shield for each pair.
 - **Coaxial** — outer jacket, woven copper braid or foil (second wire and shield), plastic insulation, copper conductor. Used to attach **antennas** to wireless devices and for **cable internet**.
+![A UTP cable stripped to show its four twisted pairs next to an RJ-45 connector](/events/cn/utp-pairs.webp)
+![Shielded twisted pair with foil shields and a coaxial cable cross-section](/events/cn/stp-coax.webp)
+| Cable | Shield | Connector | Typical use |
+|---|---|---|---|
+| UTP | none — twisting only | RJ-45 | hosts to switches, most LANs |
+| STP | braid or foil, plus foil per pair | RJ-45 | noisy environments; pricier, harder to install |
+| Coaxial | copper braid around the core | BNC, F-type | antennas, cable internet |
 ## How UTP fights crosstalk
 UTP has **four pairs** of color-coded copper wires and **no shielding**. It relies on **cancellation**: the two wires of a pair carry opposite polarity, are twisted together, and their magnetic fields cancel each other and outside EMI/RFI.
 ## Standards
@@ -90,11 +131,23 @@ UTP has **four pairs** of color-coded copper wires and **no shielding**. It reli
 ## Wire order
 = T568A: white-green, green, white-orange, blue, white-blue, orange, white-brown, brown
 = T568B: white-orange, orange, white-green, blue, white-blue, green, white-brown, brown
+@diagram t568
 ## Three cables
 - **Straight-through** — both ends T568A or both T568B. **Host to network device** (PC to switch, switch to router).
 - **Crossover** — one end T568A, the other T568B. **Like to like**: host to host, switch to switch, router to router. Considered legacy because **Auto-MDIX** detects the cable type.
 - **Rollover** — Cisco proprietary. Host serial port to the **console port** of a router or switch.
-> Different devices — straight-through. Same devices — crossover. Console — rollover. If Auto-MDIX is off, switch to switch needs a crossover.`,
+> Different devices — straight-through. Same devices — crossover. Console — rollover. If Auto-MDIX is off, switch to switch needs a crossover.
+@diagram cable-choice
+@demo cable
+| Cable | Ends | Connects |
+|---|---|---|
+| Straight-through | T568A–T568A or T568B–T568B | PC to switch, switch to router |
+| Crossover | T568A–T568B | PC to PC, switch to switch, router to router, PC to router |
+| Rollover | Cisco pinout | PC serial port to console port |
+?? Two switches are connected with a straight-through cable and the link does not come up. What is wrong, and why does it usually work anyway?
+?= Like devices need a crossover cable; it usually works because Auto-MDIX detects the cable and swaps the pairs.
+?? What is the maximum length of one UTP run, and which limitation sets it?
+?= 100 meters, because of attenuation.`,
         ru: `## Медь: плюсы и ограничения
 Медный кабель — самый распространённый: недорогой, прост в монтаже, с малым сопротивлением току. Ограничения:
 - **Затухание** — чем дальше идёт сигнал, тем он слабее. Лечится соблюдением **предельной длины** кабеля.
@@ -104,6 +157,13 @@ UTP has **four pairs** of color-coded copper wires and **no shielding**. It reli
 - **UTP (неэкранированная витая пара)** — самая распространённая сетевая среда. Оконцовывается разъёмами **RJ-45**. Соединяет хосты с промежуточными устройствами. Внешняя оболочка, витые пары, цветная изоляция.
 - **STP (экранированная витая пара)** — лучше защищена от помех, чем UTP, но **дороже и сложнее в монтаже**. Тоже RJ-45. Общий экран из оплётки или фольги плюс экран из фольги на каждой паре.
 - **Коаксиальный** — внешняя оболочка, медная оплётка или фольга (второй провод и экран), пластиковая изоляция, медная жила. Применяется для подключения **антенн** к беспроводным устройствам и для **кабельного интернета**.
+![Зачищенный кабель UTP с четырьмя витыми парами рядом с разъёмом RJ-45](/events/cn/utp-pairs.webp)
+![Экранированная витая пара с фольгой и срез коаксиального кабеля](/events/cn/stp-coax.webp)
+| Кабель | Экран | Разъём | Где применяют |
+|---|---|---|---|
+| UTP | нет — только скрутка | RJ-45 | хосты к коммутаторам, большинство LAN |
+| STP | оплётка или фольга, плюс фольга на каждой паре | RJ-45 | шумные места; дороже и сложнее в монтаже |
+| Коаксиальный | медная оплётка вокруг жилы | BNC, F-разъём | антенны, кабельный интернет |
 ## Как UTP борется с наводками
 В UTP **четыре пары** цветных медных проводов и **нет экрана**. Он полагается на **взаимное гашение (cancellation)**: два провода пары несут противоположную полярность, скручены, и их магнитные поля гасят друг друга и внешние EMI/RFI.
 ## Стандарты
@@ -113,11 +173,23 @@ UTP has **four pairs** of color-coded copper wires and **no shielding**. It reli
 ## Порядок проводов
 = T568A: white-green, green, white-orange, blue, white-blue, orange, white-brown, brown
 = T568B: white-orange, orange, white-green, blue, white-blue, green, white-brown, brown
+@diagram t568
 ## Три кабеля
 - **Прямой (straight-through)** — оба конца T568A или оба T568B. **Хост — сетевое устройство** (ПК — коммутатор, коммутатор — маршрутизатор).
 - **Перекрёстный (crossover)** — один конец T568A, другой T568B. **Одинаковые устройства**: хост — хост, коммутатор — коммутатор, маршрутизатор — маршрутизатор. Считается устаревшим, потому что **Auto-MDIX** сам определяет тип кабеля.
 - **Консольный (rollover)** — фирменный кабель Cisco. От последовательного порта хоста к **консольному порту** маршрутизатора или коммутатора.
-> Разные устройства — прямой. Одинаковые — перекрёстный. Консоль — rollover. Если Auto-MDIX выключен, коммутатор с коммутатором соединяют перекрёстным.`,
+> Разные устройства — прямой. Одинаковые — перекрёстный. Консоль — rollover. Если Auto-MDIX выключен, коммутатор с коммутатором соединяют перекрёстным.
+@diagram cable-choice
+@demo cable
+| Кабель | Концы | Соединяет |
+|---|---|---|
+| Прямой | T568A–T568A или T568B–T568B | ПК с коммутатором, коммутатор с маршрутизатором |
+| Перекрёстный | T568A–T568B | ПК с ПК, коммутатор с коммутатором, маршрутизатор с маршрутизатором, ПК с маршрутизатором |
+| Rollover | разводка Cisco | последовательный порт ПК с консольным портом |
+?? Два коммутатора соединили прямым кабелем, и канал не поднимается. Что не так и почему обычно всё же работает?
+?= Одинаковым устройствам нужен перекрёстный кабель; обычно работает потому, что Auto-MDIX сам определяет кабель и меняет пары.
+?? Какова максимальная длина одного сегмента UTP и какое ограничение её задаёт?
+?= 100 метров, из-за затухания.`,
       },
       [
         q("What is the standard T568B wire ordering start sequence?", "White-Orange, Orange, White-Green...", ["White-Green, Green...", "White-Orange, Green...", "White-Brown, Brown..."], "T568B starts white-orange, orange, white-green; T568A starts white-green, green, white-orange.", "T568B начинается: бело-оранжевый, оранжевый, бело-зелёный; T568A — бело-зелёный, зелёный, бело-оранжевый."),
@@ -146,6 +218,7 @@ UTP has **four pairs** of color-coded copper wires and **no shielding**. It reli
 - **Single-mode fiber (SMF)** — very small core, expensive **lasers**, **long-distance** applications.
 - **Multimode fiber (MMF)** — larger core, cheaper **LEDs**, light enters at different angles, up to 10 Gbps over **550 meters**.
 **Dispersion** is the spreading out of a light pulse over time. MMF has greater dispersion than SMF.
+@diagram fiber-types
 ## Where fiber is used
 Enterprise networks (backbone), **Fiber-to-the-Home (FTTH)**, long-haul networks, submarine cable networks.
 ## Connectors and patch cords
@@ -154,11 +227,24 @@ Enterprise networks (backbone), **Fiber-to-the-Home (FTTH)**, long-haul networks
 - **LC (Lucent connector)** — smaller version of SC, simplex or duplex.
 A **yellow** jacket means single-mode; **orange (or aqua)** means multimode.
 Patch cords are named by their two connectors and the fiber type: **SC-SC multimode, LC-LC single-mode, ST-LC multimode, ST-SC single-mode**.
+![ST, SC and LC fiber connectors on yellow single-mode and orange multimode patch cords](/events/cn/fiber-connectors.webp)
+| Connector | Looks like | Locks by |
+|---|---|---|
+| ST | round, bayonet | twist |
+| SC | square | push-pull |
+| LC | small square, often duplex | latch, like RJ-45 |
 ## Fiber versus copper
 - Bandwidth: UTP 10 Mb/s – 10 Gb/s; fiber 10 Mb/s – 100 Gb/s.
 - Distance: UTP 1 – 100 meters; fiber 1 – 100,000 meters.
 - Immunity to EMI/RFI and electrical hazards: UTP low; fiber completely immune.
 - Costs, installation skills and safety precautions: UTP lowest; fiber highest.
+| | UTP | Fiber |
+|---|---|---|
+| Bandwidth | 10 Mb/s – 10 Gb/s | 10 Mb/s – 100 Gb/s |
+| Distance | 1 – 100 m | 1 – 100 000 m |
+| EMI/RFI | affected | completely immune |
+| Electrical hazards | affected | immune |
+| Cost, skills, safety | lowest | highest |
 Fiber is mainly used as **backbone cabling** for high-traffic point-to-point links between data distribution facilities and between the buildings of a campus.
 ## Wireless media
 Wireless carries electromagnetic signals using radio or microwave frequencies and gives the **greatest mobility**. Limitations:
@@ -172,8 +258,19 @@ Wireless carries electromagnetic signals using radio or microwave frequencies an
 - **WiMAX — IEEE 802.16** — point-to-multipoint broadband wireless access.
 - **Zigbee — IEEE 802.15.4** — low data rate, low power, for the Internet of Things.
 A WLAN needs a **wireless access point (AP)** and **wireless NIC adapters**.
+![A ceiling-mounted wireless access point](/events/cn/wireless-ap.webp)
+| Standard | Name | For |
+|---|---|---|
+| IEEE 802.11 | Wi-Fi | wireless LAN |
+| IEEE 802.15 | Bluetooth | personal area network |
+| IEEE 802.16 | WiMAX | broadband, point-to-multipoint |
+| IEEE 802.15.4 | Zigbee | IoT, low power |
 The access point concentrates the wireless signals of the users and connects to the existing copper-based network. When buying WLAN equipment, check compatibility and interoperability; administrators must apply strict **security policies** to protect a WLAN from unauthorized access.
-> Single-mode: small core, laser, long, yellow. Multimode: large core, LED, 550 m, orange.`,
+> Single-mode: small core, laser, long, yellow. Multimode: large core, LED, 550 m, orange.
+?? You need to link two buildings 2 km apart. Which fiber, and why not the other?
+?= Single-mode: small core and laser carry light far. Multimode is limited to about 550 m by dispersion.
+?? Why does Wi-Fi get slower for everyone when more people connect?
+?= It is a shared half-duplex medium: only one device sends or receives at a time.`,
         ru: `## Оптоволоконный кабель
 - Передаёт данные на **большие расстояния** и с **большей пропускной способностью**, чем любая другая среда.
 - Меньше подвержен затуханию и **полностью невосприимчив к EMI и RFI**.
@@ -183,6 +280,7 @@ The access point concentrates the wireless signals of the users and connects to 
 - **Одномодовое (SMF)** — очень тонкая сердцевина, дорогие **лазеры**, **большие расстояния**.
 - **Многомодовое (MMF)** — сердцевина толще, более дешёвые **светодиоды**, свет входит под разными углами, до 10 Гбит/с на **550 метров**.
 **Дисперсия** — расплывание светового импульса во времени. У MMF дисперсия больше, чем у SMF.
+@diagram fiber-types
 ## Где применяют оптику
 Корпоративные сети (магистраль), **оптика до дома (FTTH)**, магистральные сети дальней связи, подводные кабели.
 ## Разъёмы и патч-корды
@@ -191,11 +289,24 @@ The access point concentrates the wireless signals of the users and connects to 
 - **LC (Lucent connector)** — уменьшенная версия SC, одиночный или двойной.
 **Жёлтая** оболочка — одномодовое волокно; **оранжевая (или аква)** — многомодовое.
 Патч-корды называют по двум разъёмам и типу волокна: **SC-SC многомодовый, LC-LC одномодовый, ST-LC многомодовый, ST-SC одномодовый**.
+![Разъёмы ST, SC и LC на жёлтом одномодовом и оранжевом многомодовом патч-кордах](/events/cn/fiber-connectors.webp)
+| Разъём | Как выглядит | Фиксация |
+|---|---|---|
+| ST | круглый, байонет | поворотом |
+| SC | квадратный | push-pull |
+| LC | маленький квадратный, часто сдвоенный | защёлка, как у RJ-45 |
 ## Оптика против меди
 - Пропускная способность: UTP 10 Мбит/с – 10 Гбит/с; оптика 10 Мбит/с – 100 Гбит/с.
 - Расстояние: UTP 1 – 100 метров; оптика 1 – 100 000 метров.
 - Устойчивость к EMI/RFI и электрическим рискам: UTP низкая; оптика полностью невосприимчива.
 - Стоимость, требования к монтажу и безопасности: у UTP самые низкие; у оптики самые высокие.
+| | UTP | Оптика |
+|---|---|---|
+| Пропускная способность | 10 Мбит/с – 10 Гбит/с | 10 Мбит/с – 100 Гбит/с |
+| Расстояние | 1 – 100 м | 1 – 100 000 м |
+| EMI/RFI | подвержена | полностью невосприимчива |
+| Электрические риски | подвержена | невосприимчива |
+| Стоимость, навыки, безопасность | самые низкие | самые высокие |
 Оптику применяют в основном как **магистральный кабель** для нагруженных каналов «точка — точка» между узлами распределения и между зданиями кампуса.
 ## Беспроводная среда
 Беспроводная среда передаёт электромагнитные сигналы на радио- или микроволновых частотах и даёт **наибольшую мобильность**. Ограничения:
@@ -209,8 +320,19 @@ The access point concentrates the wireless signals of the users and connects to 
 - **WiMAX — IEEE 802.16** — широкополосный доступ «точка — много точек».
 - **Zigbee — IEEE 802.15.4** — низкая скорость, малое энергопотребление, для интернета вещей.
 Для WLAN нужны **беспроводная точка доступа (AP)** и **беспроводные сетевые адаптеры**.
+![Потолочная беспроводная точка доступа](/events/cn/wireless-ap.webp)
+| Стандарт | Название | Для чего |
+|---|---|---|
+| IEEE 802.11 | Wi-Fi | беспроводная LAN |
+| IEEE 802.15 | Bluetooth | персональная сеть |
+| IEEE 802.16 | WiMAX | широкополосный доступ «точка — много точек» |
+| IEEE 802.15.4 | Zigbee | интернет вещей, малое энергопотребление |
 Точка доступа собирает беспроводные сигналы пользователей и подключается к существующей медной сети. При покупке оборудования WLAN проверяй совместимость; администраторы обязаны применять строгие **политики безопасности**, чтобы защитить WLAN от несанкционированного доступа.
-> Одномод: тонкая сердцевина, лазер, далеко, жёлтый. Многомод: толстая сердцевина, светодиод, 550 м, оранжевый.`,
+> Одномод: тонкая сердцевина, лазер, далеко, жёлтый. Многомод: толстая сердцевина, светодиод, 550 м, оранжевый.
+?? Нужно соединить два здания в 2 км друг от друга. Какое волокно и почему не другое?
+?= Одномодовое: тонкая сердцевина и лазер несут свет далеко. Многомодовое ограничено примерно 550 м из-за дисперсии.
+?? Почему Wi-Fi замедляется у всех, когда подключается больше людей?
+?= Это общая полудуплексная среда: в каждый момент передаёт или принимает только одно устройство.`,
       },
       [
         q("Which fiber optic connector type features a push-pull latching mechanism and square housing?", "SC Connector", ["ST Connector", "BNC Connector", "RJ-45 Connector"], "SC is the square push-pull connector; ST is the older twist-lock bayonet type.", "SC — квадратный разъём push-pull; ST — старый байонетный с поворотом."),
@@ -240,6 +362,8 @@ A digit has a different value depending on its position. In decimal the position
 In binary they are powers of two. For one octet the positional values are:
 = 128  64  32  16  8  4  2  1
 A binary 1 in a position adds that value, a 0 adds nothing.
+@diagram binary-weights
+@demo binary
 = 11000000 = 128 + 64 = 192
 = 10101000 = 128 + 32 + 8 = 168
 = 11111111 = 255
@@ -261,11 +385,31 @@ Example with 168:
 - Base **sixteen**: digits **0–9** and letters **A–F** (A=10, B=11, C=12, D=13, E=14, F=15).
 - One hex digit stands for **four bits**. Used for **IPv6 addresses** and **MAC addresses**.
 - An **IPv6 address** is **128 bits** long: 32 hexadecimal digits in eight groups of four. Each group of four hex digits is a **hextet**.
+| Hex | Binary | Decimal |
+|---|---|---|
+| 0 | 0000 | 0 |
+| 8 | 1000 | 8 |
+| 9 | 1001 | 9 |
+| A | 1010 | 10 |
+| B | 1011 | 11 |
+| C | 1100 | 12 |
+| D | 1101 | 13 |
+| E | 1110 | 14 |
+| F | 1111 | 15 |
 ## Decimal to hex and back
 Go through binary:
 = 168 -> 10101000 -> 1010 1000 -> A8
 = D2 -> 1101 0010 -> 11010010 -> 128 + 64 + 16 + 2 = 210
-> Memorise the row 128 64 32 16 8 4 2 1 — every conversion question is solved with it.`,
+> Memorise the row 128 64 32 16 8 4 2 1 — every conversion question is solved with it.
+| Address type | Bits | Written as |
+|---|---|---|
+| IPv4 | 32 | 4 decimal octets: 192.168.11.10 |
+| MAC | 48 | 12 hex digits: 00-1A-2B-3C-4D-5E |
+| IPv6 | 128 | 8 hextets: 2001:0db8:…:0001 |
+?? Convert 224 to binary.
+?= 11100000 — 128 + 64 + 32 = 224.
+?? What is hexadecimal 0xC0 in decimal, and where have you seen that number?
+?= 1100 0000 = 192 — the first octet of 192.168.x.x.`,
         ru: `## Двоичная система и IPv4
 - В двоичной системе цифры **1 и 0** — это **биты**. В десятичной — цифры от 0 до 9.
 - **Адрес IPv4** — строка из **32 бит**, разделённая на четыре части — **октеты**.
@@ -276,6 +420,8 @@ Go through binary:
 В двоичной — степени двойки. Для одного октета веса позиций такие:
 = 128  64  32  16  8  4  2  1
 Единица в позиции добавляет её вес, ноль не добавляет ничего.
+@diagram binary-weights
+@demo binary
 = 11000000 = 128 + 64 = 192
 = 10101000 = 128 + 32 + 8 = 168
 = 11111111 = 255
@@ -297,11 +443,31 @@ Go through binary:
 - Основание **шестнадцать**: цифры **0–9** и буквы **A–F** (A=10, B=11, C=12, D=13, E=14, F=15).
 - Одна шестнадцатеричная цифра заменяет **четыре бита**. Используется для **адресов IPv6** и **MAC-адресов**.
 - **Адрес IPv6** имеет длину **128 бит**: 32 шестнадцатеричные цифры в восьми группах по четыре. Группа из четырёх цифр — **хекстет**.
+| Hex | Двоичное | Десятичное |
+|---|---|---|
+| 0 | 0000 | 0 |
+| 8 | 1000 | 8 |
+| 9 | 1001 | 9 |
+| A | 1010 | 10 |
+| B | 1011 | 11 |
+| C | 1100 | 12 |
+| D | 1101 | 13 |
+| E | 1110 | 14 |
+| F | 1111 | 15 |
 ## Из десятичной в шестнадцатеричную и обратно
 Переводи через двоичную:
 = 168 -> 10101000 -> 1010 1000 -> A8
 = D2 -> 1101 0010 -> 11010010 -> 128 + 64 + 16 + 2 = 210
-> Выучи ряд 128 64 32 16 8 4 2 1 — им решается любой вопрос на перевод.`,
+> Выучи ряд 128 64 32 16 8 4 2 1 — им решается любой вопрос на перевод.
+| Тип адреса | Бит | Запись |
+|---|---|---|
+| IPv4 | 32 | 4 десятичных октета: 192.168.11.10 |
+| MAC | 48 | 12 шестнадцатеричных цифр: 00-1A-2B-3C-4D-5E |
+| IPv6 | 128 | 8 хекстетов: 2001:0db8:…:0001 |
+?? Переведи 224 в двоичную систему.
+?= 11100000 — 128 + 64 + 32 = 224.
+?? Чему равно шестнадцатеричное 0xC0 в десятичной системе и где ты видел это число?
+?= 1100 0000 = 192 — первый октет адресов 192.168.x.x.`,
       },
       [
         q("What is decimal 192 in 8-bit binary?", "11000000", ["10101000", "11100000", "10000000"], "192 = 128 + 64, so the two left-most bits are 1.", "192 = 128 + 64, значит два старших бита равны 1."),

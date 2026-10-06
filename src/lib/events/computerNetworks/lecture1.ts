@@ -19,6 +19,8 @@ Network **media** carry the message from source to destination:
 - **metal wires** in cables — electrical impulses;
 - **glass or plastic fibers** (fiber-optic cable) — pulses of light;
 - **wireless** — modulation of electromagnetic waves.
+@diagram network-components
+![Three kinds of media: copper cable, fiber-optic cable and a wireless antenna](/events/cn/network-media.webp)
 ## Diagrams
 Key terms: **Network Interface Card (NIC)**, **physical port**, **interface** (port and interface are often used interchangeably).
 - A **physical topology** diagram shows the physical location of intermediary devices and cable installation.
@@ -34,9 +36,29 @@ Network infrastructures differ in the size of the area covered, the number of us
 - A **WAN** spans a wide geographical area, interconnects LANs, is typically administered by one or more **service providers** and usually has slower links.
 - The **internet** is a worldwide collection of interconnected LANs and WANs. Nobody owns it; **IETF, ICANN and IAB** help maintain its structure.
 - An **intranet** is a private collection of LANs and WANs for the members of one organization. An **extranet** gives secure access to people who work for a **different** organization.
+@diagram lan-wan
+| | LAN | WAN |
+|---|---|---|
+| Area | small, limited | wide geographical |
+| Administered by | one organization or person | one or more service providers |
+| Speed | high bandwidth inside | usually slower links between LANs |
+| Role | connects end devices | connects LANs |
 ## Internet connections
 Home and small office: **cable** (from cable TV providers), **DSL** (over a telephone line), **cellular**, **satellite** (useful in rural areas), **dial-up** (cheap, low bandwidth, uses a modem).
 Business: **dedicated leased line** (reserved circuits in the provider's network), **Ethernet WAN** (extends LAN technology into the WAN), business DSL such as **SDSL**, satellite.
+| Connection | Where | Note |
+|---|---|---|
+| Cable | home | from the cable TV provider, always on |
+| DSL | home, business (SDSL) | over a telephone line, always on |
+| Cellular | home, mobile | uses the cell phone network |
+| Satellite | rural areas | works where there is no wired provider |
+| Dial-up | home | cheap, low bandwidth, modem |
+| Leased line | business | reserved circuit between offices |
+| Ethernet WAN | business | LAN technology stretched over the WAN |
+?? A partner company's employees need secure access to part of your network. Intranet or extranet?
+?= Extranet — it serves people from a different organization. An intranet is for your own members only.
+?? Who administers a WAN, and who administers a LAN?
+?= A WAN is typically run by one or more service providers; a LAN by a single organization or individual.
 > Know the pairs: LAN — one owner, small area; WAN — providers, wide area. Intranet — own staff; extranet — partners from outside.`,
         ru: `## Хосты, клиенты и серверы
 Каждый компьютер в сети — это **хост**, он же **конечное устройство**. Конечное устройство — то, откуда сообщение отправляется или где оно принимается.
@@ -49,6 +71,8 @@ Business: **dedicated leased line** (reserved circuits in the provider's network
 - **металлические провода** в кабелях — электрические импульсы;
 - **стеклянные или пластиковые волокна** (оптоволокно) — импульсы света;
 - **беспроводная передача** — модуляция электромагнитных волн.
+@diagram network-components
+![Три вида среды передачи: медный кабель, оптоволокно и беспроводная антенна](/events/cn/network-media.webp)
 ## Схемы
 Термины: **сетевая карта (NIC)**, **физический порт**, **интерфейс** (порт и интерфейс часто означают одно и то же).
 - Схема **физической топологии** показывает физическое расположение промежуточных устройств и прокладку кабелей.
@@ -64,9 +88,29 @@ Business: **dedicated leased line** (reserved circuits in the provider's network
 - **WAN** охватывает большую территорию, соединяет локальные сети, обычно управляется одним или несколькими **провайдерами** и, как правило, имеет более медленные каналы.
 - **Интернет** — всемирное объединение связанных между собой LAN и WAN. Он никому не принадлежит; поддерживать его структуру помогают **IETF, ICANN и IAB**.
 - **Интранет** — частное объединение LAN и WAN для сотрудников одной организации. **Экстранет** даёт защищённый доступ людям из **другой** организации.
+@diagram lan-wan
+| | LAN | WAN |
+|---|---|---|
+| Территория | небольшая, ограниченная | большая географическая |
+| Кто управляет | одна организация или человек | один или несколько провайдеров |
+| Скорость | высокая внутри | обычно медленнее между LAN |
+| Роль | соединяет конечные устройства | соединяет LAN |
 ## Подключение к интернету
 Дом и малый офис: **кабель** (от провайдеров кабельного ТВ), **DSL** (по телефонной линии), **сотовая связь**, **спутник** (выручает в сельской местности), **dial-up** (дёшево, низкая скорость, через модем).
 Бизнес: **выделенная арендованная линия** (зарезервированные каналы в сети провайдера), **Ethernet WAN** (технология LAN, продлённая в WAN), бизнес-DSL, например **SDSL**, спутник.
+| Подключение | Где | Особенность |
+|---|---|---|
+| Кабель | дом | от провайдера кабельного ТВ, всегда включено |
+| DSL | дом, бизнес (SDSL) | по телефонной линии, всегда включено |
+| Сотовая связь | дом, в дороге | через сеть мобильного оператора |
+| Спутник | сельская местность | работает там, где нет проводного провайдера |
+| Dial-up | дом | дёшево, низкая скорость, модем |
+| Арендованная линия | бизнес | зарезервированный канал между офисами |
+| Ethernet WAN | бизнес | технология LAN, растянутая на WAN |
+?? Сотрудникам компании-партнёра нужен защищённый доступ к части вашей сети. Интранет или экстранет?
+?= Экстранет — он для людей из другой организации. Интранет — только для своих.
+?? Кто управляет WAN, а кто — LAN?
+?= WAN обычно управляют один или несколько провайдеров; LAN — одна организация или человек.
 > Запомни пары: LAN — один владелец, малая территория; WAN — провайдеры, большая территория. Интранет — свои сотрудники; экстранет — партнёры извне.`,
       },
       [
@@ -94,6 +138,12 @@ Before convergence an organization had separate cabling for telephone, video and
 - **Scalability** — the network expands quickly to support new users and applications **without hurting** the performance of existing users. Designers follow accepted standards and protocols.
 - **Quality of Service (QoS)** — the primary mechanism that ensures reliable delivery of content for all users. Voice and live video need it; breaks and pauses appear when demand for bandwidth is higher than what is available and QoS is not configured.
 - **Security** — infrastructure security (physical security of devices and preventing unauthorized access) and information security (protecting the data).
+| Characteristic | Question it answers | How |
+|---|---|---|
+| Fault tolerance | will one failure stop everyone? | multiple paths, packet switching |
+| Scalability | can we add users without slowing others? | standards and protocols |
+| QoS | will voice and video stay smooth? | prioritizing traffic |
+| Security | who can access devices and read data? | infrastructure and information security |
 ## Three goals of security
 - **Confidentiality** — only intended recipients can read the data.
 - **Integrity** — the data was not altered during transmission.
@@ -109,9 +159,14 @@ Before convergence an organization had separate cabling for telephone, video and
 - **Private** — for a specific organization, such as a government.
 - **Hybrid** — two or more cloud types connected by the same architecture.
 - **Custom** — built for a specific industry, such as healthcare or media.
+![Rows of 19-inch racks in a data center — this is where the cloud physically lives](/events/cn/data-center-racks.webp)
 ## At home
 **Smart home** technology integrates into everyday appliances. **Powerline networking** connects a device to the LAN through an electrical outlet where cables or wireless are not an option. A **WISP** (wireless internet service provider) connects subscribers to access points or hotspots, mostly in rural areas.
-> Fault tolerance = redundancy, scalability = growth, QoS = priority, security = CIA.`,
+> Fault tolerance = redundancy, scalability = growth, QoS = priority, security = CIA.
+?? A live lecture stream stutters whenever many students download files. Which characteristic of a reliable network is missing?
+?= Quality of Service — it prioritizes voice and video when demand for bandwidth exceeds supply.
+?? Name the three goals of network security.
+?= Confidentiality (only intended readers), integrity (data not altered), availability (timely access for authorized users).`,
         ru: `## Конвергентные сети
 До конвергенции у организации были отдельные кабельные системы для телефона, видео и данных — каждая со своими технологиями, правилами и стандартами. **Конвергентная сеть** передаёт **данные, голос и видео** по **одной инфраструктуре** с единым набором правил и стандартов.
 ## Четыре характеристики надёжной сети
@@ -120,6 +175,12 @@ Before convergence an organization had separate cabling for telephone, video and
 - **Масштабируемость** — сеть быстро расширяется для новых пользователей и приложений, **не ухудшая** работу существующих. Проектировщики следуют принятым стандартам и протоколам.
 - **Качество обслуживания (QoS)** — основной механизм, обеспечивающий надёжную доставку содержимого всем пользователям. Нужен голосу и живому видео; обрывы и паузы появляются, когда запрос на полосу больше доступной, а QoS не настроен.
 - **Безопасность** — защита инфраструктуры (физическая защита устройств и запрет несанкционированного доступа) и защита информации (самих данных).
+| Характеристика | На какой вопрос отвечает | Как |
+|---|---|---|
+| Отказоустойчивость | остановит ли один сбой всех? | несколько путей, коммутация пакетов |
+| Масштабируемость | можно ли добавить людей, не замедлив остальных? | стандарты и протоколы |
+| QoS | останутся ли голос и видео плавными? | приоритеты трафика |
+| Безопасность | кто может попасть к устройствам и читать данные? | защита инфраструктуры и информации |
 ## Три цели безопасности
 - **Конфиденциальность** — данные читает только тот, кому они предназначены.
 - **Целостность** — данные не изменены при передаче.
@@ -135,9 +196,14 @@ Before convergence an organization had separate cabling for telephone, video and
 - **Частное** — для конкретной организации, например правительства.
 - **Гибридное** — два и более типа облаков, связанные общей архитектурой.
 - **Специализированное (custom)** — под конкретную отрасль, например медицину или медиа.
+![Ряды 19-дюймовых стоек в дата-центре — физически облако живёт здесь](/events/cn/data-center-racks.webp)
 ## Дома
 Технологии **умного дома** встраиваются в бытовую технику. **Powerline-сеть** подключает устройство к LAN через электрическую розетку там, где кабель или Wi-Fi не подходят. **WISP** (беспроводной интернет-провайдер) подключает абонентов к точкам доступа или хот-спотам, чаще всего в сельской местности.
-> Отказоустойчивость = избыточность, масштабируемость = рост, QoS = приоритет, безопасность = конфиденциальность, целостность, доступность.`,
+> Отказоустойчивость = избыточность, масштабируемость = рост, QoS = приоритет, безопасность = конфиденциальность, целостность, доступность.
+?? Трансляция лекции заикается, когда много студентов качают файлы. Какой характеристики надёжной сети не хватает?
+?= Качества обслуживания (QoS) — оно отдаёт приоритет голосу и видео, когда полосы не хватает.
+?? Назови три цели сетевой безопасности.
+?= Конфиденциальность (читает только адресат), целостность (данные не изменены), доступность (своевременный доступ для авторизованных).`,
       },
       [
         q("What does a converged network carry over the same infrastructure?", "Data, voice and video", ["Only encrypted data traffic", "Power and data together", "Wired and wireless signals"], "A converged network delivers data, voice and video with one set of rules and standards.", "Конвергентная сеть передаёт данные, голос и видео по единым правилам и стандартам."),
@@ -167,12 +233,20 @@ Examples of GUI systems: Windows, macOS, Linux KDE, Apple iOS and Android. A PC 
 - **SSH** — a **secure** remote CLI connection over the network. The recommended remote method.
 - **Telnet** — an **insecure** remote connection: authentication, passwords and commands travel in **plaintext**.
 Terminal emulation programs: **PuTTY, Tera Term, SecureCRT**.
+![A light-blue rollover console cable connected to the console port of a switch](/events/cn/console-cable.webp)
+| Method | Secure? | When |
+|---|---|---|
+| Console | yes — physical access only | initial configuration, maintenance |
+| SSH | yes — encrypted | everyday remote management |
+| Telnet | no — plaintext | legacy; avoid |
 ## Command modes
 - **User EXEC** — limited basic monitoring commands. Prompt ends with **>**
 - **Privileged EXEC** — access to all commands. Prompt ends with **#**
 - **Global configuration** — configuration options of the whole device. Prompt **(config)#**
 - **Line configuration** — console, SSH, Telnet or AUX access. Prompt **(config-line)#**
 - **Interface configuration** — a switch port or router interface. Prompt **(config-if)#**
+@diagram ios-modes
+![A terminal window: the prompt changes from Switch> to Switch# after enable](/events/cn/putty-terminal.webp)
 ## Moving between modes
 = Switch> enable
 = Switch# configure terminal
@@ -194,6 +268,18 @@ Help: **context-sensitive help** (the **?** key) shows available commands and ke
 - **Ctrl+Shift+6** — all-purpose break: aborts DNS lookups, traceroutes and pings.
 - At the **--More--** prompt: **Enter** shows the next line, **Space** the next screen, **any other key** ends the display and returns to privileged EXEC.
 Commands can be shortened to the fewest unique characters: **conf** for configure.
+| Keystroke | Does |
+|---|---|
+| Tab | completes the command |
+| ? | context-sensitive help |
+| Up arrow / Ctrl+P | previous command |
+| Ctrl+C, Ctrl+Z | leave configuration mode → privileged EXEC |
+| Ctrl+Shift+6 | abort ping, traceroute, DNS lookup |
+| Enter / Space at --More-- | next line / next screen |
+?? You see the prompt Switch(config-if)# and want to get back to Switch# in one step. Which command?
+?= end (or Ctrl+Z). exit would only go one level up, to Switch(config)#.
+?? Which access method sends your password across the network in plaintext?
+?= Telnet. Use SSH instead.
 > The command **hostname** works only in global configuration mode — you need to pass through enable and configure terminal first.`,
         ru: `## Операционная система
 - **Оболочка (shell)** — интерфейс, через который ты отдаёшь команды: **CLI** или **GUI**.
@@ -206,12 +292,20 @@ GUI удобнее, но может зависнуть или упасть, по
 - **SSH** — **защищённое** удалённое подключение к CLI по сети. Рекомендуемый удалённый способ.
 - **Telnet** — **незащищённое** удалённое подключение: логин, пароли и команды идут **открытым текстом**.
 Программы-эмуляторы терминала: **PuTTY, Tera Term, SecureCRT**.
+![Голубой консольный кабель rollover, подключённый к консольному порту коммутатора](/events/cn/console-cable.webp)
+| Способ | Защищён? | Когда |
+|---|---|---|
+| Консоль | да — нужен физический доступ | первоначальная настройка, обслуживание |
+| SSH | да — шифруется | повседневное удалённое управление |
+| Telnet | нет — открытый текст | устаревший; избегать |
 ## Режимы команд
 - **Пользовательский EXEC** — ограниченный набор команд наблюдения. Приглашение кончается на **>**
 - **Привилегированный EXEC** — доступ ко всем командам. Приглашение кончается на **#**
 - **Глобальная конфигурация** — настройки всего устройства. Приглашение **(config)#**
 - **Конфигурация линии** — доступ через консоль, SSH, Telnet или AUX. Приглашение **(config-line)#**
 - **Конфигурация интерфейса** — порт коммутатора или интерфейс маршрутизатора. Приглашение **(config-if)#**
+@diagram ios-modes
+![Окно терминала: после enable приглашение меняется с Switch> на Switch#](/events/cn/putty-terminal.webp)
 ## Переходы между режимами
 = Switch> enable
 = Switch# configure terminal
@@ -233,6 +327,18 @@ GUI удобнее, но может зависнуть или упасть, по
 - **Ctrl+Shift+6** — универсальное прерывание: останавливает DNS-поиск, traceroute и ping.
 - На приглашении **--More--**: **Enter** — следующая строка, **Пробел** — следующий экран, **любая другая клавиша** прекращает вывод и возвращает в привилегированный EXEC.
 Команды можно сокращать до минимума уникальных символов: **conf** вместо configure.
+| Клавиши | Что делают |
+|---|---|
+| Tab | дописывают команду |
+| ? | контекстная справка |
+| Стрелка вверх / Ctrl+P | предыдущая команда |
+| Ctrl+C, Ctrl+Z | выход из режима конфигурации → привилегированный EXEC |
+| Ctrl+Shift+6 | прервать ping, traceroute, DNS-поиск |
+| Enter / Пробел на --More-- | следующая строка / следующий экран |
+?? Ты видишь приглашение Switch(config-if)# и хочешь вернуться в Switch# одним шагом. Какая команда?
+?= end (или Ctrl+Z). exit поднял бы только на один уровень, в Switch(config)#.
+?? Какой способ доступа передаёт твой пароль по сети открытым текстом?
+?= Telnet. Вместо него — SSH.
 > Команда **hostname** работает только в режиме глобальной конфигурации — сначала нужны enable и configure terminal.`,
       },
       [
@@ -275,11 +381,18 @@ The configuration files show most passwords in plaintext. This command encrypts 
 = Sw1(config)# service password-encryption
 A banner warns unauthorized people. The **#** is the **delimiting character**, typed before and after the message:
 = Sw1(config)# banner motd #Authorized access only!#
+| Protects | Commands |
+|---|---|
+| Console (user EXEC) | line console 0 → password … → login |
+| Privileged EXEC | enable secret … |
+| Remote Telnet/SSH | line vty 0 15 → password … → login |
+| All plaintext passwords | service password-encryption |
 ## Two configuration files
 - **running-config** — stored in **RAM**. It is the current configuration; changes take effect immediately. RAM is **volatile** and loses its content when the device is powered off or restarted.
 - **startup-config** — stored in **NVRAM**. It is used at startup or reboot and survives a power-off.
 Saving the running configuration:
 = Sw1# copy running-config startup-config
+@diagram config-files
 ## Undoing changes
 - Not saved yet: remove the commands one by one, or **reload** the device (it goes offline for a short time).
 - Already saved: **erase startup-config**, then **reload** to clear the running-config from RAM.
@@ -289,7 +402,11 @@ Saving the running configuration:
 - Enable **logging** in the terminal software and choose a file name and location.
 - Run **show running-config** or **show startup-config** at the privileged EXEC prompt — the text goes into the file.
 - Disable logging. The file is a record of the configuration; it may need editing before it is used to restore a device.
-> RAM = running, NVRAM = startup. "copy running-config startup-config" is typed at the # prompt.`,
+> RAM = running, NVRAM = startup. "copy running-config startup-config" is typed at the # prompt.
+?? You configured a hostname and passwords, then the switch lost power. Everything is gone. What did you forget?
+?= copy running-config startup-config — the running-config lives in RAM and is lost on power-off.
+?? Which command makes the configuration show encrypted passwords instead of plaintext ones?
+?= service password-encryption (global configuration mode).`,
         ru: `## Имя устройства
 Первая команда настройки на любом устройстве — дать ему уникальное **имя (hostname)**. Заводское имя коммутатора Cisco — **Switch**.
 Имя должно начинаться с буквы, не содержать пробелов, заканчиваться буквой или цифрой, состоять только из букв, цифр и дефисов и быть короче 64 символов.
@@ -312,11 +429,18 @@ Saving the running configuration:
 = Sw1(config)# service password-encryption
 Баннер предупреждает посторонних. **#** — **символ-разделитель**, он ставится до и после сообщения:
 = Sw1(config)# banner motd #Authorized access only!#
+| Защищает | Команды |
+|---|---|
+| Консоль (пользовательский EXEC) | line console 0 → password … → login |
+| Привилегированный EXEC | enable secret … |
+| Удалённый Telnet/SSH | line vty 0 15 → password … → login |
+| Все открытые пароли | service password-encryption |
 ## Два файла конфигурации
 - **running-config** — хранится в **RAM**. Это текущая конфигурация; изменения действуют сразу. RAM **энергозависима** и теряет содержимое при выключении или перезагрузке.
 - **startup-config** — хранится в **NVRAM**. Используется при запуске или перезагрузке и переживает выключение.
 Сохранение текущей конфигурации:
 = Sw1# copy running-config startup-config
+@diagram config-files
 ## Откат изменений
 - Ещё не сохранено: убрать команды по одной или выполнить **reload** (устройство ненадолго уйдёт из сети).
 - Уже сохранено: **erase startup-config**, затем **reload**, чтобы очистить running-config из RAM.
@@ -326,7 +450,11 @@ Saving the running configuration:
 - Включи в ней **запись журнала (logging)** и выбери имя и место файла.
 - Выполни **show running-config** или **show startup-config** в привилегированном EXEC — текст попадёт в файл.
 - Выключи запись. Файл — это запись конфигурации; перед восстановлением устройства его может понадобиться отредактировать.
-> RAM = running, NVRAM = startup. «copy running-config startup-config» вводится в приглашении #.`,
+> RAM = running, NVRAM = startup. «copy running-config startup-config» вводится в приглашении #.
+?? Ты настроил имя и пароли, потом коммутатор обесточили. Всё пропало. Что ты забыл?
+?= copy running-config startup-config — running-config живёт в RAM и теряется при выключении.
+?? Какая команда делает так, что в конфигурации пароли показываются зашифрованными?
+?= service password-encryption (режим глобальной конфигурации).`,
       },
       [
         q("Which command saves running-config from RAM to NVRAM?", "copy running-config startup-config", ["save config-file", "write memory startup", "copy startup-config running-config"], "copy running-config startup-config writes the current configuration from RAM to NVRAM.", "copy running-config startup-config записывает текущую конфигурацию из RAM в NVRAM."),

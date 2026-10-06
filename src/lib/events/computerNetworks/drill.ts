@@ -39,6 +39,7 @@ A TCP connection is opened with three control segments in this exact order:
 = 1. SYN        client -> server
 = 2. SYN-ACK    server -> client
 = 3. ACK        client -> server
+@diagram handshake
 ## ICMP and ping
 **ping** tests end-to-end reachability by sending **ICMP Echo Request** messages and waiting for Echo Replies. **traceroute** shows the path hop by hop.
 ## Devices by layer
@@ -46,6 +47,29 @@ A TCP connection is opened with three control segments in this exact order:
 - **Switch** — Layer 2; forwards frames by **MAC address**.
 - **Router** — Layer 3; connects different logical networks and decides by **IP address**.
 - **Access point** — connects wireless clients to the wired LAN.
+@diagram ports-devices
+| Service | Port | Transport | What it does |
+|---|---|---|---|
+| FTP | 20, 21 | TCP | file transfer |
+| SSH | 22 | TCP | secure remote CLI |
+| Telnet | 23 | TCP | insecure remote CLI |
+| SMTP | 25 | TCP | sending email |
+| DNS | 53 | UDP (TCP) | names to addresses |
+| DHCP | 67, 68 | UDP | automatic addressing |
+| HTTP | 80 | TCP | web |
+| HTTPS | 443 | TCP | web over TLS |
+
+| | TCP | UDP |
+|---|---|---|
+| Connection | yes — three-way handshake | no |
+| Reliability | acknowledgments, retransmission | none |
+| Ordering | sequence numbers | none |
+| Speed / overhead | slower, bigger headers | fast, small |
+| Used by | web, email, file transfer | DNS, video, voice, DHCP |
+?? Which protocol turns a name like aitu.edu.kz into an IP address, and which gives your laptop its IP address when it joins the Wi-Fi?
+?= DNS resolves names; DHCP assigns addresses.
+?? Name the three segments of the TCP handshake in order and the port of SSH.
+?= SYN, SYN-ACK, ACK; SSH is port 22.
 > SSH is 22 and secure, Telnet is 23 and plaintext. HTTP 80, HTTPS 443, DNS 53.`,
         ru: `## Зачем эта часть
 В образце варианта от преподавателя и в варианте, которым поделились студенты, есть вопросы, которых слайды четырёх лекций напрямую не раскрывают. Это стандартные факты — выучи их списком.
@@ -72,6 +96,7 @@ A TCP connection is opened with three control segments in this exact order:
 = 1. SYN        client -> server
 = 2. SYN-ACK    server -> client
 = 3. ACK        client -> server
+@diagram handshake
 ## ICMP и ping
 **ping** проверяет сквозную доступность, отправляя сообщения **ICMP Echo Request** и ожидая Echo Reply. **traceroute** показывает путь по узлам.
 ## Устройства по уровням
@@ -79,6 +104,29 @@ A TCP connection is opened with three control segments in this exact order:
 - **Коммутатор** — уровень 2; пересылает кадры по **MAC-адресу**.
 - **Маршрутизатор** — уровень 3; соединяет разные логические сети и решает по **IP-адресу**.
 - **Точка доступа** — подключает беспроводных клиентов к проводной LAN.
+@diagram ports-devices
+| Служба | Порт | Транспорт | Что делает |
+|---|---|---|---|
+| FTP | 20, 21 | TCP | передача файлов |
+| SSH | 22 | TCP | защищённый удалённый CLI |
+| Telnet | 23 | TCP | незащищённый удалённый CLI |
+| SMTP | 25 | TCP | отправка почты |
+| DNS | 53 | UDP (TCP) | имена в адреса |
+| DHCP | 67, 68 | UDP | автоматическая адресация |
+| HTTP | 80 | TCP | веб |
+| HTTPS | 443 | TCP | веб поверх TLS |
+
+| | TCP | UDP |
+|---|---|---|
+| Соединение | есть — трёхэтапное рукопожатие | нет |
+| Надёжность | подтверждения, повторная передача | нет |
+| Порядок | номера последовательности | нет |
+| Скорость / накладные | медленнее, заголовки больше | быстро, мало |
+| Кто использует | веб, почта, передача файлов | DNS, видео, голос, DHCP |
+?? Какой протокол превращает имя вроде aitu.edu.kz в IP-адрес, а какой выдаёт ноутбуку адрес при подключении к Wi-Fi?
+?= DNS разрешает имена; DHCP выдаёт адреса.
+?? Назови три сегмента рукопожатия TCP по порядку и порт SSH.
+?= SYN, SYN-ACK, ACK; SSH — порт 22.
 > SSH — 22 и защищён, Telnet — 23 и открытым текстом. HTTP 80, HTTPS 443, DNS 53.`,
       },
       [
@@ -110,11 +158,27 @@ A TCP connection is opened with three control segments in this exact order:
 Count the ones in the mask. The last octet values:
 = 128 -> /25    192 -> /26    224 -> /27    240 -> /28    248 -> /29    252 -> /30
 So **255.255.255.192 = /26**: 24 bits plus two more (128 + 64).
+@diagram subnet-mask
+| Mask | Prefix | Hosts per subnet |
+|---|---|---|
+| 255.255.255.0 | /24 | 254 |
+| 255.255.255.128 | /25 | 126 |
+| 255.255.255.192 | /26 | 62 |
+| 255.255.255.224 | /27 | 30 |
+| 255.255.255.240 | /28 | 14 |
 ## Special addresses
 - **127.0.0.1** — **loopback**; tests the local network stack.
 - **255.255.255.255** — the local (limited) IPv4 **broadcast**.
 - **224.0.0.0 – 239.255.255.255** — **multicast** range.
 - **Private (RFC 1918)**: **10.0.0.0 – 10.255.255.255**, **172.16.0.0 – 172.31.255.255**, **192.168.0.0 – 192.168.255.255**.
+| Address or range | Meaning |
+|---|---|
+| 127.0.0.1 | loopback — this host |
+| 255.255.255.255 | limited broadcast — everyone on the local network |
+| 0.0.0.0 | «any» or «no address yet» |
+| 224.0.0.0 – 239.255.255.255 | multicast (class D) |
+| 169.254.0.0/16 | link-local — no DHCP answer |
+| 10/8, 172.16/12, 192.168/16 | private (RFC 1918) — need NAT for the internet |
 ## Commands on a PC
 - **ipconfig** — shows the local IP configuration in the **Windows** CLI (**ifconfig** / ip on Linux and macOS).
 - **ping** — reachability; **tracert / traceroute** — the path; **nslookup** — DNS queries; **arp -a** — the ARP cache.
@@ -127,6 +191,15 @@ So **255.255.255.192 = /26**: 24 bits plus two more (128 + 64).
 To isolate ICMP traffic, type the display filter:
 = icmp
 Other simple filters: arp, dns, tcp, ip.addr == 192.168.1.10
+![Wireshark with the display filter icmp showing Echo request and Echo reply packets](/events/cn/wireshark-icmp.webp)
+| Task | Windows | Cisco IOS |
+|---|---|---|
+| My IP settings | ipconfig | show ip interface brief |
+| Is the host reachable? | ping | ping |
+| Which path? | tracert | traceroute |
+| Name lookup | nslookup | — |
+| Who has which MAC? | arp -a | show mac address-table |
+| Current configuration | — | show running-config |
 ## Ethernet speeds
 - Ethernet — **10 Mbps**; **Fast Ethernet — 100 Mbps**; Gigabit Ethernet — **1 Gbps**; 10 Gigabit — 10 Gbps.
 ## Wi-Fi generations
@@ -137,7 +210,11 @@ Other simple filters: arp, dns, tcp, ip.addr == 192.168.1.10
 ## Two more facts
 - **Spanning Tree Protocol (STP)** prevents **switching loops** in Ethernet networks with redundant links.
 - **Administrative distance** in Cisco IOS: connected interface **0**, **static route 1**, EIGRP 90, OSPF 110.
-> Mask to prefix: 255.255.255.0 is /24, then every extra bit in the last octet adds one — 128 /25, 192 /26, 224 /27.`,
+> Mask to prefix: 255.255.255.0 is /24, then every extra bit in the last octet adds one — 128 /25, 192 /26, 224 /27.
+?? What prefix is 255.255.255.224, and how many host addresses does such a subnet have?
+?= /27 — three more bits after /24; 2 to the power of 5 minus 2 = 30 hosts.
+?? Your laptop got 169.254.12.7. What happened?
+?= It did not get an answer from DHCP and assigned itself a link-local address.`,
         ru: `## Классы и маски по умолчанию
 - **Класс A** — маска по умолчанию **255.0.0.0** (/8).
 - **Класс B** — маска по умолчанию **255.255.0.0** (/16).
@@ -146,11 +223,27 @@ Other simple filters: arp, dns, tcp, ip.addr == 192.168.1.10
 Посчитай единицы в маске. Значения последнего октета:
 = 128 -> /25    192 -> /26    224 -> /27    240 -> /28    248 -> /29    252 -> /30
 Значит, **255.255.255.192 = /26**: 24 бита плюс ещё два (128 + 64).
+@diagram subnet-mask
+| Маска | Префикс | Хостов в подсети |
+|---|---|---|
+| 255.255.255.0 | /24 | 254 |
+| 255.255.255.128 | /25 | 126 |
+| 255.255.255.192 | /26 | 62 |
+| 255.255.255.224 | /27 | 30 |
+| 255.255.255.240 | /28 | 14 |
 ## Особые адреса
 - **127.0.0.1** — **loopback**; проверяет локальный сетевой стек.
 - **255.255.255.255** — локальный (ограниченный) **широковещательный** адрес IPv4.
 - **224.0.0.0 – 239.255.255.255** — диапазон **multicast**.
 - **Частные (RFC 1918)**: **10.0.0.0 – 10.255.255.255**, **172.16.0.0 – 172.31.255.255**, **192.168.0.0 – 192.168.255.255**.
+| Адрес или диапазон | Смысл |
+|---|---|
+| 127.0.0.1 | loopback — этот же хост |
+| 255.255.255.255 | ограниченный broadcast — всем в локальной сети |
+| 0.0.0.0 | «любой» или «адреса ещё нет» |
+| 224.0.0.0 – 239.255.255.255 | multicast (класс D) |
+| 169.254.0.0/16 | link-local — DHCP не ответил |
+| 10/8, 172.16/12, 192.168/16 | частные (RFC 1918) — для интернета нужен NAT |
 ## Команды на компьютере
 - **ipconfig** — показывает локальные настройки IP в командной строке **Windows** (**ifconfig** / ip в Linux и macOS).
 - **ping** — доступность; **tracert / traceroute** — путь; **nslookup** — запросы DNS; **arp -a** — кэш ARP.
@@ -163,6 +256,15 @@ Other simple filters: arp, dns, tcp, ip.addr == 192.168.1.10
 Чтобы оставить только трафик ICMP, введи фильтр отображения:
 = icmp
 Другие простые фильтры: arp, dns, tcp, ip.addr == 192.168.1.10
+![Wireshark с фильтром icmp: видны пакеты Echo request и Echo reply](/events/cn/wireshark-icmp.webp)
+| Задача | Windows | Cisco IOS |
+|---|---|---|
+| Мои настройки IP | ipconfig | show ip interface brief |
+| Доступен ли хост? | ping | ping |
+| Каким путём? | tracert | traceroute |
+| Запрос имени | nslookup | — |
+| У кого какой MAC? | arp -a | show mac address-table |
+| Текущая конфигурация | — | show running-config |
 ## Скорости Ethernet
 - Ethernet — **10 Мбит/с**; **Fast Ethernet — 100 Мбит/с**; Gigabit Ethernet — **1 Гбит/с**; 10 Gigabit — 10 Гбит/с.
 ## Поколения Wi-Fi
@@ -173,7 +275,11 @@ Other simple filters: arp, dns, tcp, ip.addr == 192.168.1.10
 ## Ещё два факта
 - **Протокол связующего дерева (STP)** предотвращает **петли коммутации** в сетях Ethernet с избыточными каналами.
 - **Административное расстояние** в Cisco IOS: подключённый интерфейс **0**, **статический маршрут 1**, EIGRP 90, OSPF 110.
-> От маски к префиксу: 255.255.255.0 — это /24, дальше каждый бит последнего октета добавляет единицу — 128 /25, 192 /26, 224 /27.`,
+> От маски к префиксу: 255.255.255.0 — это /24, дальше каждый бит последнего октета добавляет единицу — 128 /25, 192 /26, 224 /27.
+?? Какой префикс у маски 255.255.255.224 и сколько адресов хостов в такой подсети?
+?= /27 — ещё три бита после /24; 2 в пятой степени минус 2 = 30 хостов.
+?? Ноутбук получил адрес 169.254.12.7. Что случилось?
+?= Он не дождался ответа DHCP и назначил себе link-local адрес.`,
       },
       [
         q("What is the default subnet mask for a Class C IPv4 address?", "255.255.255.0", ["255.0.0.0", "255.255.0.0", "255.255.255.255"], "Class A is 255.0.0.0, class B is 255.255.0.0, class C is 255.255.255.0.", "Класс A — 255.0.0.0, класс B — 255.255.0.0, класс C — 255.255.255.0."),

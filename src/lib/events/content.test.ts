@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { EVENTS } from "./index";
 import { steps } from "./engine";
+import { DIAGRAM_NAMES } from "@/components/events/NotesDiagram";
 
 /**
  * Требования к содержимому — для каждого ивента в списке, а не только для
@@ -25,7 +26,8 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
   });
 
   it("у каждой части есть конспект на английском и русском с одинаковой структурой", () => {
-    const shape = (text: string) => text.split("\n").map((l) => (l.startsWith("## ") ? "h" : l.startsWith("- ") ? "b" : l.startsWith("> ") ? "q" : l.startsWith("= ") ? "c" : "p")).join("");
+    const kind = (l: string) => (l.startsWith("## ") ? "h" : l.startsWith("- ") ? "b" : l.startsWith("> ") ? "q" : l.startsWith("= ") ? "c" : l.startsWith("|") ? "t" : l.startsWith("@") ? "d" : l.startsWith("![") ? "i" : l.startsWith("?? ") ? "Q" : l.startsWith("?= ") ? "A" : l.trim() ? "p" : "_");
+    const shape = (text: string) => text.split("\n").map(kind).join("");
     for (const lecture of event.lectures) {
       for (const p of lecture.parts) {
         expect(p.notes.en.length, p.id).toBeGreaterThan(400);
@@ -33,6 +35,19 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
         // Строки с командами и числами («= …») одинаковы в обоих языках: их вводят как есть.
         const code = (text: string) => text.split("\n").filter((l) => l.startsWith("= "));
         expect(code(p.notes.ru), p.id).toEqual(code(p.notes.en));
+        // Схемы и демонстрации — те же самые, иллюстрации — те же файлы (подписи переводятся).
+        const embeds = (text: string) => text.split("\n").filter((l) => l.startsWith("@")).concat(text.split("\n").filter((l) => l.startsWith("![")).map((l) => l.replace(/^!\[[^\]]*\]/, "")));
+        expect(embeds(p.notes.ru), p.id).toEqual(embeds(p.notes.en));
+        for (const l of p.notes.en.split("\n")) {
+          if (l.startsWith("@diagram ")) expect(DIAGRAM_NAMES, `${p.id}: ${l}`).toContain(l.slice(9).trim());
+          if (l.startsWith("@demo ")) expect(["binary", "encapsulation", "cable"], `${p.id}: ${l}`).toContain(l.slice(6).trim());
+        }
+        // За вопросом самопроверки сразу идёт ответ, и наоборот.
+        const lines = p.notes.en.split("\n");
+        lines.forEach((l, i) => {
+          if (l.startsWith("?? ")) expect(lines[i + 1]?.startsWith("?= "), `${p.id}: ${l}`).toBe(true);
+          if (l.startsWith("?= ")) expect(lines[i - 1]?.startsWith("?? "), `${p.id}: ${l}`).toBe(true);
+        });
       }
     }
   });

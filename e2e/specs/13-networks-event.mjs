@@ -7,7 +7,7 @@
  * студент: по ряду весов 128…1 и по таблице MAC-адресов.
  */
 
-import { check, newUser, openSection, session, test } from "../harness.mjs";
+import { check, newUser, openSection, session, sql, test } from "../harness.mjs";
 
 const EVENT = "/events/computer-networks-midterm";
 const WEIGHTS = [128, 64, 32, 16, 8, 4, 2, 1];
@@ -161,5 +161,61 @@ test("Сети: видео по части — сцены идут одна за
   const last = await page.evaluate(() => window.__spoken.at(-1));
   check(last.lang === "en-US", `в режиме English озвучка идёт по-английски (${last.lang})`);
   await page.screenshot({ path: "e2e/.out/video-scene.png" });
+  await browser.close();
+});
+
+test("Сети: «до косточек» — все вопросы части с разбором ловушек, готовность не меняется, результат сохраняется", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user });
+  await openSection(page, EVENT);
+  await page.getByRole("button", { name: "Начать с первой части" }).tap();
+  const start = page.getByRole("button", { name: /Разобрать до косточек/ });
+  await start.waitFor({ timeout: 10_000 });
+  const total = Number((await page.getByText(/Разбор до косточек · \d+ вопросов/).innerText()).replace(/\D/g, ""));
+  check(total >= 30 && total <= 40, `в разборе части 30–40 вопросов (увидел: ${total})`);
+  await start.tap();
+  // Первый вопрос: отвечаем намеренно не первым верным — проверяем разбор ловушек.
+  await page.getByText(`Вопрос 1 из ${total}`).waitFor({ timeout: 10_000 });
+  await page.locator("section button[lang=en]").first().tap();
+  const feedback = page.getByRole("status").filter({ hasText: /Верно|Неверно/ });
+  await feedback.waitFor({ timeout: 10_000 });
+  const text = await feedback.innerText();
+  check((text.match(/✗/g) ?? []).length >= 3 || (text.match(/✗/g) ?? []).length === 1, `под объяснением разобраны неверные варианты (нашёл ${(text.match(/✗/g) ?? []).length} ✗)`);
+  for (let i = 1; i <= total; i++) {
+    if (i > 1) {
+      await page.getByText(`Вопрос ${i} из ${total}`).waitFor({ timeout: 10_000 });
+      await page.locator("section button[lang=en]").first().tap();
+      await page.getByRole("status").filter({ hasText: /Верно|Неверно/ }).waitFor({ timeout: 10_000 });
+    }
+    await page.getByRole("button", { name: i === total ? "Завершить квиз" : "Дальше", exact: true }).tap();
+  }
+  await page.getByText("Разбор до косточек на готовность не влияет").waitFor({ timeout: 10_000 });
+  check((await page.getByRole("button", { name: /^Дальше: / }).count()) === 0, "после разбора нет кнопки «Дальше: следующий шаг» — он вне маршрута");
+  await page.getByRole("button", { name: "К маршруту" }).tap();
+  await page.getByText("Готовность к квизу").waitFor({ timeout: 10_000 });
+  const map = (await page.locator("body").innerText()).replace(/\s+/g, " ");
+  check(/Шагов пройдено:\s*0 из/.test(map), "готовность и пройденные шаги не изменились");
+  check(/до косточек · \d+ вопросов \d+%/.test(map), "результат разбора показан у части на карте");
+  await browser.close();
+});
+
+test("Сети: ачивка появляется, когда все шаги пройдены и итоговый квиз не ниже 80%", async () => {
+  const user = await newUser();
+  // Прогресс берётся с сервера: сначала всё пройдено, но финал на 70% — ачивки нет; потом финал 90% — есть.
+  const ids = ["cn-l1-p1", "cn-l1-p2", "cn-l1-p3", "cn-l1-p4", "cn-l1-quiz", "cn-l2-p1", "cn-l2-p2", "cn-l2-p3", "cn-l2-p4", "cn-l2-quiz", "cn-l3-p1", "cn-l3-p2", "cn-l3-p3", "cn-l3-p4", "cn-l3-quiz", "cn-l4-p1", "cn-l4-p2", "cn-l4-p3", "cn-l4-p4", "cn-l4-quiz", "cn-x-p1", "cn-x-p2", "cn-x-quiz"];
+  const progress = (final) => JSON.stringify({ ...Object.fromEntries(ids.map((id) => [id, { best: 0.9, last: 0.9, attempts: 1 }])), "computer-networks-midterm-final": { best: final, last: final, attempts: 1 } });
+  const seed = (final) => sql(`insert into "EventProgress"("userId", "eventId", data, percent, share, "updatedAt") values ('${user.id}', 'computer-networks-midterm', '${progress(final)}'::jsonb, 80, false, now() at time zone 'utc') on conflict ("userId", "eventId") do update set data = excluded.data, "updatedAt" = now() at time zone 'utc'`);
+  seed(0.7);
+  const { browser, page } = await session({ user });
+  await openSection(page, EVENT);
+  await page.getByText(/Шагов пройдено:\s*24 из 24/).waitFor({ timeout: 15_000 });
+  check((await page.getByText("Ивент пройден").count()) === 0, "финал на 70% — ачивки ещё нет");
+  seed(0.9);
+  await openSection(page, EVENT);
+  await page.getByText("Ивент пройден").waitFor({ timeout: 15_000 });
+  check(true, "финал на 90% — ачивка «Ивент пройден» на карте");
+  await openSection(page, "/events");
+  await page.getByText(/🏆 Пройден/).waitFor({ timeout: 15_000 });
+  check(true, "в списке ивентов стоит отметка о пройденном");
   await browser.close();
 });

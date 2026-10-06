@@ -26,6 +26,13 @@ test("Сети: ивент есть в списке, конспект читае
   await page.getByRole("button", { name: "Перевести на русский" }).tap();
   await page.getByText("Хосты, клиенты и серверы").waitFor({ timeout: 10_000 });
   check(true, "конспект первой части переводится на русский");
+  const body = await page.locator("body").innerText();
+  check(body.includes("Подключение") && body.includes("Арендованная линия"), "в конспекте есть таблица подключений");
+  check((await page.locator("figure svg").count()) >= 2, "в конспекте есть схемы");
+  await page.getByRole("button", { name: "Показать ответ" }).first().tap();
+  await page.getByText(/Экстранет — он для людей из другой организации/).waitFor({ timeout: 10_000 });
+  await page.getByRole("button", { name: "Знал" }).first().tap();
+  check(true, "вопрос для самопроверки раскрывает ответ, и его можно отметить");
 
   await page.getByRole("button", { name: /Начать квиз по этой части · 8 вопросов/ }).tap();
   for (let i = 1; i <= 8; i++) {

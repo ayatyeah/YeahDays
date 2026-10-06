@@ -118,3 +118,48 @@ test("Сети: игра «Двоичный спринт» — набираю ч
   check(score === 90, `шесть верных ответов подряд дали 90 очков (увидел: ${score})`);
   await browser.close();
 });
+
+test("Сети: видео по части — сцены идут одна за другой, озвучка на двух языках, конспект копируется", async () => {
+  const user = await newUser();
+  // Синтезатор подменяем: ловим, что и на каком языке произносится, и сами завершаем реплики.
+  const init = () => {
+    const spoken = []; window.__spoken = spoken;
+    const voices = [{ name: "Google US English", lang: "en-US" }, { name: "Google русский", lang: "ru-RU" }];
+    window.SpeechSynthesisUtterance = function (text) { this.text = text; this.rate = 1; };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices, addEventListener() {}, removeEventListener() {}, cancel() { this.current = null; }, pause() {}, resume() {},
+      speak(u) { spoken.push({ text: u.text.slice(0, 40), lang: u.lang }); this.current = u; } } });
+    window.__finish = () => { const u = window.speechSynthesis.current; window.speechSynthesis.current = null; u?.onend?.(); };
+  };
+  const { browser, page, context } = await session({ user, initScript: init });
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]).catch(() => {});
+  await openSection(page, EVENT);
+  await page.getByRole("button", { name: "Начать с первой части" }).tap();
+
+  await page.getByRole("button", { name: "Скопировать конспект" }).tap();
+  await page.getByRole("button", { name: /Скопировано|Не удалось скопировать/ }).waitFor({ timeout: 5000 });
+  check(true, "кнопка копирования отвечает");
+
+  await page.getByRole("button", { name: "▶ Смотреть как видео" }).tap();
+  await page.getByText("1 / ").waitFor({ timeout: 10_000 });
+  await page.getByText("Музыка: выкл").or(page.getByText("Музыка: вкл")).first().waitFor();
+  // Первая сцена — заголовок: в смешанном режиме сначала английский, потом русский.
+  await page.waitForFunction(() => window.__spoken.length >= 1, null, { timeout: 10_000 });
+  await page.evaluate(() => window.__finish());
+  await page.waitForFunction(() => window.__spoken.length >= 2, null, { timeout: 10_000 });
+  const first = await page.evaluate(() => window.__spoken.slice(0, 2));
+  check(first[0].lang === "en-US" && first[1].lang === "ru-RU", `заголовок звучит сначала по-английски, затем по-русски (${first.map((s) => s.lang).join(" → ")})`);
+  await page.evaluate(() => window.__finish());
+  await page.getByText("2 / ").waitFor({ timeout: 10_000 });
+  check(true, "после озвучки сцена сменяется следующей");
+  // Пауза останавливает смену сцен; «Дальше» листает вручную.
+  await page.getByRole("button", { name: "Пауза" }).tap();
+  await page.getByRole("button", { name: "Дальше" }).tap();
+  await page.getByText("3 / ").waitFor({ timeout: 10_000 });
+  await page.getByRole("button", { name: "English" }).tap();
+  await page.getByRole("button", { name: "Играть" }).tap();
+  await page.waitForFunction((n) => window.__spoken.length > n, 3, { timeout: 10_000 });
+  const last = await page.evaluate(() => window.__spoken.at(-1));
+  check(last.lang === "en-US", `в режиме English озвучка идёт по-английски (${last.lang})`);
+  await page.screenshot({ path: "e2e/.out/video-scene.png" });
+  await browser.close();
+});

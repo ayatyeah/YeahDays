@@ -6,7 +6,8 @@
 
 import type { Question, StudyEvent, Text } from "./types";
 
-export type StepKind = "part" | "lecture" | "final";
+/** «deep» — разбор части до косточек: отдельный необязательный банк, в маршрут и готовность не входит. */
+export type StepKind = "part" | "lecture" | "final" | "deep";
 
 export interface Step {
   id: string;
@@ -27,6 +28,8 @@ export interface QuizQuestion {
   /** Индекс верного варианта уже ПОСЛЕ перемешивания. */
   correct: number;
   why: Text;
+  /** Почему не подходит каждый вариант (после перемешивания); у верного — null. Есть у вопросов «до косточек». */
+  wrong?: (Text | null)[];
 }
 
 /** Лучший и последний результат по шагу; доля верных от 0 до 1. */
@@ -106,6 +109,21 @@ function roundRobin<T>(piles: T[][], count: number): T[] {
  * Вопросы на одну попытку. Каждый раз заново: другой набор, другой порядок
  * вопросов и другой порядок вариантов — выучить «третий ответ» не выйдет.
  */
+/**
+ * Шаг «разбора до косточек» для части — вне маршрута: steps() его не
+ * возвращает, readiness() не учитывает. Берутся все вопросы банка.
+ */
+export function deepStep(event: StudyEvent, lecture: number, part: number): Step | null {
+  const p = event.lectures[lecture]?.parts[part];
+  if (!p?.deep?.length) return null;
+  return { id: `${p.id}-deep`, kind: "deep", lecture, part, title: { en: `Deep dive: ${p.title.en}`, ru: `До косточек: ${p.title.ru}` }, count: p.deep.length };
+}
+
+/** Все шаги «до косточек» ивента — для хранения результатов и подсчёта. */
+export function deepSteps(event: StudyEvent): Step[] {
+  return event.lectures.flatMap((l, li) => l.parts.map((_, pi) => deepStep(event, li, pi))).filter((s): s is Step => !!s);
+}
+
 export function draw(event: StudyEvent, step: Step, rng: Rng = Math.random): QuizQuestion[] {
   type Tagged = { question: Question; lecture: number };
   const lecturePile = (li: number): Tagged[] =>
@@ -115,7 +133,10 @@ export function draw(event: StudyEvent, step: Step, rng: Rng = Math.random): Qui
     ).map((question) => ({ question, lecture: li }));
 
   let picked: Tagged[];
-  if (step.kind === "part") {
+  if (step.kind === "deep") {
+    const pool = event.lectures[step.lecture!].parts[step.part!].deep ?? [];
+    picked = shuffle(pool, rng).map((question) => ({ question, lecture: step.lecture! }));
+  } else if (step.kind === "part") {
     const pool = event.lectures[step.lecture!].parts[step.part!].questions;
     picked = shuffle(pool, rng).slice(0, step.count).map((question) => ({ question, lecture: step.lecture! }));
   } else if (step.kind === "lecture") {
@@ -133,6 +154,9 @@ export function draw(event: StudyEvent, step: Step, rng: Rng = Math.random): Qui
       options: order.map((i) => question.options[i]),
       correct: order.indexOf(question.answer),
       why: question.why,
+      ...(question.wrong
+        ? { wrong: order.map((i) => (i === question.answer ? null : question.wrong![i < question.answer ? i : i - 1] ?? null)) }
+        : {}),
     };
   });
 }
@@ -226,7 +250,7 @@ export function sanitizeProgress(event: StudyEvent, raw: unknown): Progress {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
   const share = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
   const out: Progress = {};
-  for (const step of steps(event)) {
+  for (const step of [...steps(event), ...deepSteps(event)]) {
     const item = (raw as Record<string, unknown>)[step.id];
     if (!item || typeof item !== "object") continue;
     const r = item as Record<string, unknown>;
@@ -245,6 +269,18 @@ export function sanitizeProgress(event: StudyEvent, raw: unknown): Progress {
     out[step.id] = result;
   }
   return out;
+}
+
+/**
+ * Ивент пройден — ачивка. Условие: каждый шаг маршрута хотя бы раз
+ * пройден, а итоговый квиз — не ниже 80% (лучшая попытка). Разбор «до
+ * косточек» сюда не входит: он необязателен.
+ */
+export function completed(event: StudyEvent, progress: Progress): boolean {
+  const all = steps(event);
+  if (!all.every((s) => progress[s.id])) return false;
+  const final = all.find((s) => s.kind === "final");
+  return !!final && (progress[final.id]?.best ?? 0) >= 0.8;
 }
 
 /** Сколько минут примерно занимает шаг — для плана по дням. */

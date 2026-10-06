@@ -69,6 +69,26 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
     expect(shortest.length / choice.length).toBeLessThan(0.4);
   });
 
+  it("банки «до косточек»: 30–40 вопросов, у каждого неверного варианта — своё объяснение, ответ не выдаёт себя длиной", () => {
+    for (const lecture of event.lectures) for (const p of lecture.parts) {
+      if (!p.deep) continue;
+      expect(p.deep.length, p.id).toBeGreaterThanOrEqual(30);
+      expect(p.deep.length, p.id).toBeLessThanOrEqual(40);
+      expect(new Set(p.deep.map((q) => q.q.trim().toLowerCase())).size, `${p.id}: повторяющиеся вопросы`).toBe(p.deep.length);
+      for (const q of p.deep) {
+        expect(new Set(q.options).size, q.id).toBe(q.options.length);
+        expect(q.wrong, q.id).toHaveLength(q.options.length - 1);
+        for (const w of q.wrong!) { expect(w.en.length, q.id).toBeGreaterThan(6); expect(w.ru.length, q.id).toBeGreaterThan(6); }
+        expect(q.why.en.length, q.id).toBeGreaterThan(10);
+        for (const o of q.options) expect(/\b(both a and b|all of the above|none of the above)\b/i.test(o), `${q.id}: ${o}`).toBe(false);
+      }
+      const choice = p.deep.filter((q) => !q.fixed);
+      const longest = choice.filter((q) => q.options.every((o, i) => i === q.answer || o.length < q.options[q.answer].length));
+      expect(longest.length / choice.length, `${p.id}: верный ответ слишком часто самый длинный`).toBeLessThan(0.34);
+      expect(p.deep.filter((q) => q.fixed).length, `${p.id}: слишком много «верно/неверно»`).toBeLessThanOrEqual(4);
+    }
+  });
+
   it("шпаргалка и карточки: перевод той же длины, термины не повторяются", () => {
     if (event.cheatSheet) {
       expect(event.cheatSheet.en.length).toBeGreaterThan(800);

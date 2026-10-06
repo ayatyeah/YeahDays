@@ -21,6 +21,12 @@ export interface Question {
   fixed?: boolean;
   /** Почему ответ именно такой — показывается после выбора. */
   why: Text;
+  /**
+   * Почему не подходят остальные варианты — по одному на каждый неверный
+   * вариант, в порядке `options` без верного. Есть у вопросов «разбора до
+   * косточек»: там важно понять не только верный ответ, но и ловушки.
+   */
+  wrong?: Text[];
 }
 
 export interface Part {
@@ -29,6 +35,12 @@ export interface Part {
   /** Конспект в упрощённой разметке: «## », «- », «> », **жирный**. */
   notes: Text;
   questions: Question[];
+  /**
+   * «Разбор до косточек» — отдельный банк на 30–40 вопросов, покрывающий
+   * часть целиком. Необязателен и в готовность не входит: это для тех, кому
+   * легче учить, отвечая на вопросы, а не читая конспект.
+   */
+  deep?: Question[];
 }
 
 export interface Lecture {
@@ -58,7 +70,7 @@ export interface Term {
   def: Text;
 }
 
-type Draft = Omit<Question, "id">;
+export type Draft = Omit<Question, "id">;
 
 /**
  * Вопрос с выбором. Верный вариант пишется первым — так в содержимом нельзя
@@ -73,6 +85,32 @@ export function tf(statement: string, truth: boolean, en: string, ru: string): D
   return { q: statement, options: ["True", "False"], answer: truth ? 0 : 1, fixed: true, why: { en, ru } };
 }
 
-export function part(id: string, title: Text, notes: Text, drafts: Draft[]): Part {
-  return { id, title, notes, questions: drafts.map((d, i) => ({ ...d, id: `${id}-${i + 1}` })) };
+export function part(id: string, title: Text, notes: Text, drafts: Draft[], deep?: Draft[]): Part {
+  return {
+    id, title, notes,
+    questions: drafts.map((d, i) => ({ ...d, id: `${id}-${i + 1}` })),
+    ...(deep ? { deep: deep.map((d, i) => ({ ...d, id: `${id}-deep-${i + 1}` })) } : {}),
+  };
+}
+
+/** Неверный вариант с объяснением, почему он не подходит. */
+export type Trap = [option: string, en: string, ru: string];
+
+/**
+ * Вопрос с разбором каждого варианта: верный — первым, затем ловушки с
+ * объяснениями. Для банков «до косточек».
+ */
+export function qx(question: string, correct: string, traps: Trap[], en: string, ru: string): Draft {
+  return {
+    q: question,
+    options: [correct, ...traps.map((t) => t[0])],
+    answer: 0,
+    why: { en, ru },
+    wrong: traps.map((t) => ({ en: t[1], ru: t[2] })),
+  };
+}
+
+/** «Верно / неверно» с объяснением, почему противоположный ответ — ошибка. */
+export function tfx(statement: string, truth: boolean, en: string, ru: string, otherEn: string, otherRu: string): Draft {
+  return { q: statement, options: ["True", "False"], answer: truth ? 0 : 1, fixed: true, why: { en, ru }, wrong: [{ en: otherEn, ru: otherRu }] };
 }

@@ -1,4 +1,8 @@
 import { part, q, tf, type Lecture } from "../types";
+import { deepL4P1 } from "./deep/l4p1";
+import { deepL4P2 } from "./deep/l4p2";
+import { deepL4P3 } from "./deep/l4p3";
+import { deepL4P4 } from "./deep/l4p4";
 
 export const lecture4: Lecture = {
   id: "cn-l4",
@@ -106,6 +110,7 @@ A **multiaccess network** can have two or more end devices trying to access the 
         q("What does the data link layer do with Layer 3 packets?", "Encapsulates them into frames", ["Splits them into segments", "Routes them between networks", "Converts them into signals"], "Layer 2 puts a header and trailer around the packet to form a frame.", "Уровень 2 добавляет к пакету заголовок и концевик, получая кадр."),
         tf("In a mesh WAN topology every end system is connected to every other end system.", true, "Mesh gives high availability at the cost of many links.", "Полносвязная топология даёт высокую доступность ценой большого числа каналов."),
       ],
+      deepL4P1,
     ),
     part(
       "cn-l4-p2",
@@ -215,6 +220,7 @@ Ethernet работает на **канальном и физическом ур
         q("What does the Type field of a frame identify?", "The encapsulated Layer 3 protocol", ["The speed of the outgoing link", "The vendor of the network card", "The length of the preamble"], "Type (EtherType) tells the receiver which upper-layer protocol is inside.", "Тип (EtherType) сообщает приёмнику, какой протокол верхнего уровня внутри."),
         tf("The preamble is included when the size of an Ethernet frame is described.", false, "The 64–1518 byte sizes do not count the preamble.", "Размеры 64–1518 байт указаны без преамбулы."),
       ],
+      deepL4P2,
     ),
     part(
       "cn-l4-p3",
@@ -310,6 +316,7 @@ A **unicast MAC** is the unique address used when a frame goes from one device t
         q("Which organization assigns the OUI to vendors?", "IEEE", ["IETF", "ICANN", "TIA"], "Vendors register with the IEEE to obtain a unique 3-byte code.", "Производители регистрируются в IEEE и получают уникальный трёхбайтовый код."),
         tf("A multicast MAC address can be used as the source address of a frame.", false, "The source must always be a unicast address; multicast is only a destination.", "Источник — всегда одноадресный; multicast бывает только адресом назначения."),
       ],
+      deepL4P3,
     ),
     part(
       "cn-l4-p4",
@@ -414,6 +421,7 @@ For every frame the switch examines the **source MAC address** and the **port** 
         q("Which buffering method uses one common buffer for all switch ports?", "Shared memory", ["Port-based memory", "Cut-through memory", "Flash memory"], "Shared memory is allocated dynamically and supports asymmetric switching.", "Общая память выделяется динамически и поддерживает асимметричную коммутацию."),
         tf("When a switch is first turned on, its MAC address table already contains the addresses of all connected hosts.", false, "The table starts empty and is filled as frames arrive.", "Таблица сначала пуста и заполняется по мере поступления кадров."),
       ],
+      deepL4P4,
     ),
   ],
 };

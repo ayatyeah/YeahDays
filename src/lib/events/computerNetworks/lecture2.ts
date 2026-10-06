@@ -1,4 +1,8 @@
 import { part, q, tf, type Lecture } from "../types";
+import { deepL2P1 } from "./deep/l2p1";
+import { deepL2P2 } from "./deep/l2p2";
+import { deepL2P3 } from "./deep/l2p3";
+import { deepL2P4 } from "./deep/l2p4";
 
 export const lecture2: Lecture = {
   id: "cn-l2",
@@ -133,6 +137,7 @@ Protocol functions:
         q("Which type of protocol lets routers exchange path information and select the best path?", "Routing protocol", ["Service discovery protocol", "Network security protocol", "Application protocol"], "Routing protocols exchange route information and compare paths.", "Протоколы маршрутизации обмениваются маршрутами и сравнивают пути."),
         tf("A collision happens when more than one device sends traffic at the same time and the messages become corrupt.", true, "The access method exists to prevent collisions or recover from them.", "Метод доступа нужен, чтобы предотвращать коллизии или восстанавливаться после них."),
       ],
+      deepL2P1,
     ),
     part(
       "cn-l2-p2",
@@ -233,6 +238,7 @@ TCP/IP — набор протоколов интернета. Это:
         tf("Standards organizations are usually vendor-neutral, non-profit organizations.", true, "They are established to develop and promote open standards.", "Они созданы, чтобы разрабатывать и продвигать открытые стандарты."),
         q("Which are the most common network access layer LAN protocols?", "Ethernet and WLAN", ["TCP and UDP", "HTTP and DNS", "IPv4 and IPv6"], "TCP/IP itself covers the application, transport and internet layers; Ethernet and WLAN sit below.", "Сам TCP/IP охватывает уровни приложений, транспортный и интернет; Ethernet и WLAN — ниже."),
       ],
+      deepL2P2,
     ),
     part(
       "cn-l2-p3",
@@ -348,6 +354,7 @@ A web server sends a page: the **HTTP data** gets a **TCP header** (segment), th
         q("Which protocol is responsible for sequencing the individual segments?", "TCP", ["IP", "Ethernet", "HTTP"], "TCP numbers the segments so the message can be reassembled at the destination.", "TCP нумерует сегменты, чтобы сообщение можно было собрать у получателя."),
         tf("During de-encapsulation each layer adds its own header before passing the data up.", false, "On the way up each layer strips off its header; headers are added during encapsulation.", "При движении вверх каждый уровень снимает свой заголовок; заголовки добавляются при инкапсуляции."),
       ],
+      deepL2P3,
     ),
     part(
       "cn-l2-p4",
@@ -430,6 +437,7 @@ The **packet is not modified**: the Layer 3 source and destination IP addresses 
         tf("A MAC address is used only for local delivery of a frame on the link.", true, "Layer 2 addresses are local and are replaced at every hop.", "Адреса уровня 2 локальны и заменяются на каждом переходе."),
         q("Where is a MAC address physically stored?", "It is embedded in the Ethernet NIC", ["It is assigned by the router", "It is stored on the DNS server", "It is typed in by the network user"], "MAC addresses are physically embedded into the NIC by the vendor.", "MAC-адреса физически вшиты в сетевую карту производителем."),
       ],
+      deepL2P4,
     ),
   ],
 };

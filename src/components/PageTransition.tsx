@@ -13,5 +13,5 @@
  * кадр на коротких страницах.
  */
 export default function PageTransition({ children }: { children: React.ReactNode }) {
-  return <div className="flex min-h-[60vh] flex-1 flex-col">{children}</div>;
+  return <div className="yg-page-enter flex min-h-[60vh] flex-1 flex-col">{children}</div>;
 }

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,6 +12,16 @@ export default function PersonalizationSync() {
   const path = usePathname();
   const state = usePersonalizationStore();
   const data = state.owner === owner ? state.data : null;
+  const bannerRef = useRef<HTMLElement>(null);
+  const showBanner = Boolean(owner && !["/privacy", "/terms", "/personalization"].includes(path) && data?.version !== POLICY_VERSION);
+  useEffect(() => {
+    const element = bannerRef.current;
+    const update = () => document.documentElement.style.setProperty("--policy-banner-height", `${element?.getBoundingClientRect().height ?? 0}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    if (element) observer.observe(element);
+    return () => { observer.disconnect(); document.documentElement.style.removeProperty("--policy-banner-height"); };
+  }, [showBanner]);
   useEffect(() => {
     if (status === "loading") return;
     const store = usePersonalizationStore.getState(); store.reset(owner ?? null);
@@ -39,7 +49,7 @@ export default function PersonalizationSync() {
   }, [owner, data?.enabled, data?.version]);
   if (!owner || ["/privacy", "/terms", "/personalization"].includes(path)) return null;
   if (data?.version === POLICY_VERSION) return null;
-  return <aside role="status" className="relative z-40 border-b border-violet-400/40 bg-[var(--color-surface)] px-4 py-3 text-sm">
+  return <aside ref={bannerRef} role="status" className="relative z-40 border-b border-violet-400/40 bg-[var(--color-surface)] px-4 py-3 text-sm">
     <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2"><p><strong>Обновлена политика конфиденциальности.</strong> Теперь одно согласие вместо нескольких — прими один раз.</p><Link className="rounded-xl bg-[var(--color-fg)] px-3 py-2 font-semibold text-[var(--color-bg)]" href="/personalization">Прочитать и принять</Link></div>
   </aside>;
 }

@@ -1,0 +1,339 @@
+/* One visual system shared by the application routes, isolated from marketing. */
+body:has(.yg-app),
+.yg-app {
+  --color-bg: #111019;
+  --color-bg-soft: #181623;
+  --color-surface: #201d2c;
+  --color-surface-2: #2a2639;
+  --color-fg: #f6f2ff;
+  --color-fg-dim: #c4bbd5;
+  --color-muted: #a398b7;
+  --color-border: #d5bfff14;
+  --color-border-strong: #d5bfff29;
+  --color-intelligence: #bda5fa;
+  --color-stability: #8cdbc1;
+  --color-strength: #f5ab99;
+  --color-health: #edabd0;
+  --color-wealth: #e9cd8b;
+  --radius-xl: 14px;
+  --radius-2xl: 20px;
+  --radius-3xl: 26px;
+  color: var(--color-fg);
+  min-height: 100dvh;
+  background:
+    radial-gradient(ellipse at 80% 0%, #8c63bf18, transparent 55%),
+    var(--color-bg);
+  accent-color: var(--color-intelligence);
+}
+:root[data-theme="light"] body:has(.yg-app),
+:root[data-theme="light"] .yg-app {
+  --color-bg: #f4f1f8;
+  --color-bg-soft: #ebe6f2;
+  --color-surface: #fff;
+  --color-surface-2: #eee8f6;
+  --color-fg: #30243e;
+  --color-fg-dim: #665775;
+  --color-muted: #766785;
+  --color-border: #6b458312;
+  --color-border-strong: #6b45832b;
+  --color-intelligence: #8060b5;
+  --color-stability: #348d78;
+  --color-strength: #b96250;
+  --color-health: #b75e90;
+  --color-wealth: #96762c;
+}
+.yg-app .surface {
+  border: 1px solid var(--color-border);
+  box-shadow: 0 7px 25px #0000000a;
+}
+.yg-app .surface-raised {
+  border: 1px solid var(--color-border-strong);
+  box-shadow: 0 12px 40px #00000018;
+}
+.yg-app .ios-title {
+  font-size: clamp(26px, 2.4vw, 36px);
+  letter-spacing: -1.1px;
+  margin: 8px 0 20px;
+}
+.yg-app button,
+.yg-app a,
+.yg-app input,
+.yg-app select,
+.yg-app textarea {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+.yg-app :is(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-intelligence);
+  outline-offset: 4px;
+}
+.yg-app .press:active {
+  transform: scale(0.985);
+}
+.yg-app .yg-sidebar {
+  background: color-mix(in srgb, var(--color-surface) 65%, var(--color-bg));
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  top: 18px;
+  bottom: 18px;
+  left: 16px;
+  width: 236px;
+  padding: 28px 15px;
+}
+.yg-sidebar button {
+  min-height: 49px;
+  margin-bottom: 5px;
+}
+.yg-sidebar button[aria-current="page"] {
+  background: color-mix(in srgb, var(--color-intelligence) 19%, transparent);
+  color: var(--color-intelligence);
+}
+.yg-sidebar button[aria-current="page"] > span {
+  display: none;
+}
+.yg-sidebar-links {
+  border-top: 1px solid var(--color-border);
+  padding-top: 24px;
+  gap: 7px;
+}
+.yg-sidebar-links a {
+  color: var(--color-fg-dim);
+  padding: 9px 12px;
+  border-radius: 12px;
+}
+.yg-sidebar-links a:hover {
+  background: var(--color-surface-2);
+  color: var(--color-intelligence);
+}
+.yg-app .yg-bottom-nav {
+  padding: 0 10px 9px;
+}
+.yg-bottom-nav > .liquid-bar {
+  max-width: 520px;
+  margin: auto;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 25px;
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  box-shadow: 0 8px 35px #0003;
+  backdrop-filter: blur(18px);
+}
+.yg-bottom-nav button[aria-current="page"] {
+  color: var(--color-intelligence);
+}
+.yg-app .section-pane {
+  padding-bottom: calc(
+    105px + env(safe-area-inset-bottom) + var(--install-offset, 0px)
+  );
+}
+.yg-app .section-pane[data-section-active],
+.yg-page-enter {
+  animation: yg-screen-in 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes yg-screen-in {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.yg-guide {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-height: 240px;
+  margin: 0 0 26px;
+  padding: 25px 195px 25px 28px;
+  border: 1px solid
+    color-mix(in srgb, var(--color-intelligence) 24%, transparent);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 100% 0%, #bca2f22a, transparent 65%),
+    linear-gradient(115deg, var(--color-surface), var(--color-bg-soft));
+  overflow: hidden;
+}
+.yg-eyebrow {
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 1.8px;
+  color: var(--color-intelligence);
+}
+.yg-guide h2 {
+  font-size: clamp(20px, 2vw, 29px);
+  font-weight: 650;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+  margin: 10px 0;
+}
+.yg-guide p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-fg-dim);
+}
+.yg-guide button {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-intelligence);
+  padding: 10px 0 0;
+  min-height: 38px;
+  cursor: pointer;
+}
+.yg-guide button span {
+  margin-left: 15px;
+}
+.yg-guide-mascot {
+  position: absolute;
+  right: 22px;
+  bottom: -5px;
+  width: 137px;
+  height: 205px;
+  object-fit: contain;
+  pointer-events: none;
+}
+.yg-guide-tip {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border-strong);
+  animation: yg-screen-in 180ms ease;
+}
+.yg-guide-tip a {
+  display: inline-block;
+  color: var(--color-intelligence);
+  font-size: 12px;
+  padding-top: 10px;
+}
+.yg-app .yg-day-progress {
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--color-stability) 12%, var(--color-surface)),
+    color-mix(in srgb, var(--color-intelligence) 14%, var(--color-surface))
+  );
+  border-color: color-mix(in srgb, var(--color-stability) 24%, transparent);
+  padding: 25px;
+}
+.yg-day-progress > div:first-child {
+  margin-bottom: 20px;
+}
+@media (min-width: 1024px) {
+  .yg-app .section-pane {
+    padding-bottom: 30px;
+  }
+  .yg-app .app-shell-frame {
+    padding-top: 25px;
+  }
+}
+@media (max-width: 700px) {
+  .yg-guide {
+    min-height: 205px;
+    padding: 20px 120px 20px 19px;
+    margin-bottom: 21px;
+    border-radius: 24px;
+  }
+  .yg-guide h2 {
+    font-size: 21px;
+    line-height: 1.17;
+  }
+  .yg-guide p {
+    font-size: 11px;
+  }
+  .yg-eyebrow {
+    font-size: 7px;
+    letter-spacing: 1.2px;
+  }
+  .yg-guide-mascot {
+    width: 118px;
+    height: 177px;
+    right: 5px;
+    bottom: 4px;
+  }
+  .yg-guide button {
+    font-size: 10px;
+    text-align: left;
+  }
+  .yg-app .yg-day-progress {
+    padding: 20px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yg-app *,
+  .yg-app *:before,
+  .yg-app *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+body:has(.yg-app) button[data-variant="primary"] {
+  background: linear-gradient(120deg, #cfbaff, #ad96eb);
+  color: #2d1b48;
+  box-shadow: 0 5px 18px #9873d526;
+}
+body:has(.yg-app) [role="dialog"] {
+  border-radius: 26px;
+}
+@media (min-width: 701px) and (max-width: 1023px) {
+  .yg-app > .app-shell-frame,
+  .yg-app > div.min-h-dvh {
+    max-width: 760px;
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body:has(.yg-app) [role="dialog"],
+  body:has(.yg-app) [role="dialog"] * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+.yg-app .app-shell-frame {
+  height: calc(var(--app-h, 100dvh) - var(--policy-banner-height, 0px));
+}
+.yg-app .yg-character-panel {
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 65%, #b9a1ed22, transparent 70%),
+    var(--color-surface);
+  padding-top: 40px;
+}
+.yg-character-label {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  z-index: 1;
+}
+.yg-character-label span {
+  display: block;
+  color: var(--color-intelligence);
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+.yg-character-label strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 5px;
+}
+@media (max-width: 1023px) {
+  .yg-app .app-shell-frame {
+    padding-top: max(24px, env(safe-area-inset-top));
+  }
+}
+@media (min-width: 1024px) {
+  body:has(.yg-app) aside[role="status"] {
+    padding-left: 280px;
+  }
+}
+@media (min-width: 701px) {
+  .yg-guide-mascot {
+    width: 160px;
+    height: 240px;
+    bottom: 0;
+  }
+}
+.yg-app { min-height: calc(100dvh - var(--policy-banner-height, 0px)); }

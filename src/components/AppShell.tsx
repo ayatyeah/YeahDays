@@ -10,6 +10,7 @@ import {
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { LogoLoader } from "@/components/Logo";
+import MascotGuide from "@/components/MascotGuide";
 import Onboarding from "@/components/Onboarding";
 import { useNavStore } from "@/store/useNavStore";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
@@ -118,15 +119,8 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
     active?.scrollTo({ top: 0, behavior: "smooth" });
   }, [scrollTopTick]);
 
-  /*
-   * Переключение раздела — мгновенное, без анимации.
-   *
-   * Здесь были кроссфейд и подъём нового раздела: старый ещё кадр держался
-   * в дереве и гас, новый приезжал снизу за 260 мс. Задумано это было как
-   * «переход ощущается переходом», а на практике мешало: между нажатием и
-   * готовым экраном стояла заметная пауза. Резкая смена честнее — палец
-   * нажал, экран уже другой.
-   */
+  // Вкладки остаются смонтированы; короткое CSS-проявление активной
+  // панели не меняет её геометрию и учитывает reduced-motion.
 
   /* ── Прогрев остальных разделов в простое ── */
   useEffect(() => {
@@ -300,6 +294,7 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
               "lg:w-full",
             )}
           >
+            <MascotGuide section={t} />
             <Section />
           </div>
         );

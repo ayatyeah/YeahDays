@@ -103,6 +103,21 @@ self.addEventListener("message", (event) => {
   if (event.data?.type === "PRECACHE") {
     event.waitUntil(fillShell());
   }
+  // Выход из аккаунта: без копий разделов следующий запуск пойдёт на сервер
+  // и сразу получит вход, а не мелькнёт приложением прошлого человека.
+  // После входа их снова доложит PRECACHE.
+  if (event.data?.type === "FORGET_SHELL") {
+    event.waitUntil(
+      caches.open(SHELL).then(async (cache) => {
+        const keys = await cache.keys();
+        await Promise.all(
+          keys
+            .filter((req) => INSTANT.has(new URL(req.url).pathname))
+            .map((req) => cache.delete(req)),
+        );
+      }),
+    );
+  }
 });
 
 /* ────────────────────────  Кэш  ──────────────────────── */
@@ -144,7 +159,35 @@ async function staleWhileRevalidate(request, cacheName) {
 }
 
 /**
- * Навигация: сеть с ограничением по времени → кэш → офлайн-страница.
+ * Разделы-оболочки. Их HTML статичный и одинаковый у всех: данные
+ * аккаунта приходят уже в браузере. Поэтому копию из кэша отдаём сразу,
+ * а не после сети — иначе на каждом запуске PWA человек секунды смотрит
+ * на белый экран, пока телефон заново поднимает соединение с сервером.
+ * Вход проверяет SessionGuard в браузере: копия из кэша сервер минует.
+ */
+const INSTANT = new Set(["/app", "/today", "/calendar", "/progress", "/account", "/settings"]);
+
+/** Обновить копию раздела в фоне — к следующему запуску она будет свежей. */
+async function refresh(event, cache, path) {
+  try {
+    // Safari не отдаёт preload, если на навигацию уже ответили кэшем: промис
+    // висит вечно. Ждём его недолго, дальше — обычный запрос.
+    const preload = await Promise.race([
+      event.preloadResponse,
+      new Promise((resolve) => setTimeout(resolve, 2000)),
+    ]);
+    const res = preload || (await fetch(event.request.url, { cache: "no-store" }));
+    // переадресация на вход (кончилась сессия) сюда не попадает: у неё
+    // redirected, а без следования за ней — ok false
+    if (res && res.ok && !res.redirected) await cache.put(path, res);
+  } catch {
+    /* нет сети — останется прежняя копия */
+  }
+}
+
+/**
+ * Навигация: оболочка — из кэша сразу; остальное — сеть с ограничением по
+ * времени → кэш → офлайн-страница.
  *
  * Таймаут принципиален. Без него в метро или при «есть сеть, но нет
  * интернета» приложение висит белым экраном до тайм-аута ОС, хотя рабочая
@@ -152,17 +195,24 @@ async function staleWhileRevalidate(request, cacheName) {
  */
 async function navigate(event) {
   const cache = await caches.open(SHELL);
+  const path = new URL(event.request.url).pathname;
+
+  if (INSTANT.has(path)) {
+    const cached = await cache.match(path);
+    if (cached && !cached.redirected) {
+      event.waitUntil(refresh(event, cache, path));
+      return cached;
+    }
+  }
 
   try {
-    const preload = await event.preloadResponse;
-    const fresh =
-      preload ||
-      (await Promise.race([
-        fetch(event.request),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("slow-network")), 3500),
-        ),
-      ]));
+    // preload тоже под таймаутом: раньше его ждали сколько угодно
+    const fresh = await Promise.race([
+      (async () => (await event.preloadResponse) || fetch(event.request))(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("slow-network")), 3500),
+      ),
+    ]);
     if (fresh && fresh.ok) {
       cache.put(event.request, fresh.clone()).catch(() => {});
     }

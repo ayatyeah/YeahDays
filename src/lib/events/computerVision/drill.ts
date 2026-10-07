@@ -1082,5 +1082,321 @@ Accuracy различается всего на 2 пункта, но одна м
         tfx("A confusion matrix shows which pairs of classes the model mixes up, not only how many errors it makes.", true, "Each off-diagonal cell counts images of one true class predicted as another, e.g. 15 Glass predicted as Plastic.", "Каждая ячейка вне диагонали считает снимки одного истинного класса, предсказанные как другой, например 15 Glass, принятых за Plastic.", "Choosing False reduces the matrix to accuracy; its value is exactly the per-pair breakdown of errors.", "Ответ False сводит матрицу к accuracy; её ценность как раз в разбивке ошибок по парам классов."),
       ],
     ),
+    part(
+      "cv-drill-p5",
+      { en: "Questions from real exam variants", ru: "Вопросы с настоящих вариантов" },
+      {
+        en: `## Three real papers, one structure
+Three real papers are known: the **instructor's sample** (Variant 1), another group's **fabric variant** and **Variant 5** (bird species, from students' photos). They ask the **same five questions in the same order**; only the scenario, the numbers and the planted bugs change (— = not visible on the photo).
+| Item | Sample (Variant 1) | Fabric variant | Variant 5 |
+|---|---|---|---|
+| Q1 scenario | leaves with plant diseases | striped, checked, plain fabric | bird species from trail cameras |
+| Q1 trade-off | grayscale: pro and con | resize to 32 × 32 | resize to 32 × 32 |
+| Q1 planted bugs | RGB2GRAY; kernel (4, 4) | no sigmaX; no threshold type | img[50, 20]; imwrite of a float image |
+| Q1 claim to argue with | more preprocessing always helps | looks fine to a human, so no preprocessing | equalize every dataset |
+| Q3c–d | what W and b mean; why not every dataset | — | the same two items |
+| Q4 pipeline | resize (224, 224), gray, blur, Canny | — | resize (300, 200), BGR2RGB, resize (150, 100), / 255 |
+| Q4 colour item | colour task: edges alone? | — | feather colour: edges? |
+| Q5 dataset | waste, 2 000 images, 4 classes | — | clothing, 5 000 images, 4 classes |
+## Question types — what the grader wants
+| Question type | What the grader wants | Typical mistake |
+|---|---|---|
+| Q1a three preprocessing steps | each step + the scenario problem it solves | a bare list «resize, blur, normalize» |
+| Q1b trade-off (gray, 32 × 32) | one pro and one con tied to the classes | «faster» and «worse», no reason |
+| Q1c two bugs in OpenCV code | the line, why it is wrong, the corrected code | one bug only, or no rewritten code |
+| Q1d «always / every» claim | disagree + one concrete counterexample | «it depends» with no example |
+| Q2 score table | argmax per row, accuracy, the wrong image | reading the true class as the prediction |
+| Q3a–b s = Wx + b | every product written out, then argmax | forgetting b or using a column of W |
+| Q3c meaning of W and b | W = class templates, b = class offsets | «b is the error of the model» |
+| Q3d limits of a linear classifier | straight boundaries + an XOR drawing | «it just needs more data» |
+| Q4a shapes | (height, width, channels) after each line | copying dsize (w, h) as the shape |
+| Q4b channels | which call changes the channel count | «BGR2RGB: 3 channels → 1» |
+| Q4c dividing by 255.0 | why scale + the range 0.0–1.0 | «to make it gray», «range 0–255» |
+| Q4d edges for a colour task | no: Canny throws colour away | «edges remove noise, so yes» |
+| Q5a–b dataset and split | a folder per class, counts for every split | percentages without counts |
+| Q5c–e steps, metric, new phone | each choice tied to this dataset | «accuracy» with no reason |
+## Variant 5, Q1a — three operations for trail-camera photos
+«A nature reserve classifies bird species from trail-camera photos. Cameras differ in resolution, many photos are taken at dawn or dusk (low light), and night shots are grainy.»
+- **Resize to one size**, e.g. cv2.resize(img, (224, 224)) — the cameras **differ in resolution**, and the network needs one input shape.
+- **Denoise the grainy night shots:** Gaussian (3, 3) or median 3; non-local means (cv2.fastNlMeansDenoisingColored) keeps more detail. Keep it mild — plumage detail is the signal.
+- **Lift dawn and dusk shots:** gamma correction or **CLAHE on the L channel of LAB** (or V of HSV) — brighter, more contrast, **feather colours unchanged**. Denoise first: CLAHE amplifies any grain that is left.
+- Bonus: scale to [0, 1]; infrared night shots are effectively gray, so include such shots of every species in training.
+= img = cv2.resize(img, (224, 224))
+= img = cv2.GaussianBlur(img, (3, 3), 0)
+= l, a, b = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2LAB))
+= l = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(l)
+= img = cv2.cvtColor(cv2.merge((l, a, b)), cv2.COLOR_LAB2BGR)
+## Variant 5, Q1b — 32 × 32 for bird species
+= 32 * 32 * 3 = 3072 values,   224 * 224 * 3 = 150528 values (49 times more)
+= a bird 60 px wide in a 1920 px wide frame:  60 * 32 / 1920 = 1 px at 32 x 32
+- **Advantage:** a small uniform input — fast training, little memory, a small model, one shape for every camera.
+- **Disadvantage:** species differ in **fine details** — plumage pattern, beak shape, eye ring; a distant bird shrinks to a pixel or two, and non-square frames are **distorted**. Fine-grained classes need more pixels, or a crop around the bird first.
+## Variant 5, Q1c — two bugs and the corrected code
+@diagram cv-image-array
+= img = cv2.imread("bird.jpg")
+= # read the pixel at x = 50 (column), y = 20 (row)
+= pixel = img[50, 20]
+= norm = img / 255.0
+= cv2.imwrite("bird_norm.jpg", norm)   # save a copy for checking
+- **Problem 1 (line 3):** NumPy indexes **img[row, column] = img[y, x]**. img[50, 20] reads x = 20, y = 50 — another pixel, **silently** (or IndexError if the image has fewer than 51 rows). Fix: img[20, 50], which returns [B, G, R].
+- **Problem 2 (line 5):** norm is **float64 in [0, 1]**, but a JPEG stores **8-bit** values. imwrite converts without an error, every pixel becomes 0 or 1 out of 255, and the saved copy is **almost black**. Scale back and cast to uint8 (or save img itself).
+= img = cv2.imread("bird.jpg")
+= pixel = img[20, 50]                # [B, G, R] at x = 50, y = 20
+= norm = img / 255.0                 # float64, 0.0..1.0, input for the model
+= cv2.imwrite("bird_norm.jpg", (norm * 255).astype("uint8"))
+- For full marks, also guard the read with if img is None — imread returns None for a missing file.
+## Variant 5, Q1d — «Histogram equalization should be applied to every image dataset»
+**Disagree.** Equalization helps when **low contrast** hides the class; it is not a universal step.
+- **This very scenario:** night shots are dark and **grainy**; global equalization stretches the dark range and **amplifies the grain**. Denoise first and use **CLAHE**, whose clip limit restrains it.
+- **Brightness is the information:** in X-rays brightness is tissue density; in a «day vs night» or ripeness task equalization erases the cue.
+- **Colour:** equalizing B, G and R separately **shifts the colours** — fatal when feather colour separates species; equalize only L of LAB or V of HSV.
+- On well-exposed photos it adds little — keep a step only if validation accuracy improves. And equalizeHist needs an **8-bit single-channel** image.
+## Variant 5, Q3c — what W and b represent
+= s = W x + b      W: C x D,   x: D values,   b: C values,   s: C scores
+- **W** holds the learned weights. Row k is the **template of class k**: each weight says how strongly one input value (a pixel) pushes the score of class k up or down. Geometrically, the row sets the **direction of the class boundary**.
+- **b** is one learned **offset per class**, added whatever the image is — a built-in preference for that class; it **shifts the boundary** away from the origin.
+- The answer on the students' photo — «W … how strongly each input feature affects the score; b … adds a class-specific offset» — has the right idea; add the template view to make it complete.
+## Variant 5, Q3d — why one linear classifier cannot separate every dataset
+= XOR:  (0, 0) -> A   (1, 1) -> A   (0, 1) -> B   (1, 0) -> B
+- Each score is a **linear** function of x, so the boundary between two classes is a **straight line** (a hyperplane in more dimensions). In XOR, any line that puts both A points on one side leaves a B point with them.
+- Other failures: one class **inside a ring** of another; a class with **several looks** — one template per class cannot cover a horse facing left and one facing right.
+- The drawing on the students' photo — A B over B A, labelled XOR — is the expected picture. Fix: non-linear features or a neural network with a non-linearity such as ReLU.
+## Variant 5, Q4 — the pipeline line by line
+= img = cv2.imread("bird.jpg")                  # (H, W, 3), uint8, BGR
+= img = cv2.resize(img, (300, 200))             # (200, 300, 3)
+= rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)    # (200, 300, 3), B and R swapped
+= small = cv2.resize(rgb, (150, 100))           # (100, 150, 3)
+= norm = small / 255.0                          # (100, 150, 3), float64, 0.0..1.0
+- **Q4a:** dsize is **(width, height)** and the shape starts with the height: img is **(200, 300, 3)**, small is **(100, 150, 3)**.
+- **Q4b:** the channel count **stays 3** and the shape does not change; only the **order of B and R** is swapped, and no value is changed. Channel 0 is now R, so plt.imshow shows true colours (cv2.imshow would now show them swapped).
+= img pixel [B, G, R] = [30, 120, 200]   ->   rgb pixel [R, G, B] = [200, 120, 30]
+- **The real mistake:** a student wrote «3 channels → 1 channel». That is what **BGR2GRAY** does; BGR2RGB only **reorders** the channels — RGB has three letters and three channels. Read the code after the 2: GRAY means one channel, while RGB, HSV and LAB keep three.
+- **Q4c:** dividing by 255.0 puts every input on the **same small scale**, which keeps gradient-based training **stable and faster**; the values become **float64 in [0.0, 1.0]**: 0 → 0.0, 128 → 0.502, 255 → 1.0.
+- **Q4d:** **No.** Canny returns a **single-channel 0/255 map**: the colour is gone, and two species of the same shape give the same edges. Keep the colour image (or HSV hue); edges could at most be an extra input.
+## Variant 5, Q5a–b — clothing shop, 5 000 images
+@diagram cv-data-split
+- **Q5a:** a folder per class inside each split, so the folder name is the label; remove duplicates and keep all photos of **one product in one split**, otherwise near-duplicates leak into the test set.
+= data/train/shirt/   data/train/trousers/   data/train/dress/   data/train/shoes/
+= data/val/shirt/   ...   data/test/shoes/
+- **Q5b:** a stratified split, with the counts written out:
+= 80/20:     5000 * 0.8 = 4000 train,  5000 * 0.2 = 1000 test
+= 70/15/15:  5000 * 0.7 = 3500 train,  750 validation,  750 test
+= if balanced (1250 per class), 80/20 gives 1000 train + 250 test per class
+- Q5c–e were not visible on the photo; they repeat the sample: two preprocessing steps, a metric with a reason, and domain shift on another phone's photos.
+## How variants change
+- **Same skeleton:** in all three papers Q1 has a scenario, a trade-off, a bug hunt in a few lines of code and an «always / every» claim; Q4 is a pipeline to trace; Q5 is a system to design.
+- **New scenario:** leaves → fabric → birds; waste → clothing. First find what **defines the class** (colour, pattern, fine detail) — every trade-off answer hangs on it.
+- **New bugs from the same rule list:** BGR vs RGB, an odd kernel and sigmaX, the threshold type, (w, h) vs (h, w), **img[y, x]**, **uint8 when saving**, None from imread, one channel for equalizeHist and Otsu.
+- **New numbers:** other resize sizes, another dataset size — compute the shapes line by line and the split counts part by part.
+> Variants change the scenario and the bugs, never the rules: shape is (h, w, c) while dsize is (w, h), a pixel is img[y, x], only 2GRAY changes the channel count, save uint8, and answer every «always» claim with one counterexample.
+## Check yourself
+?? After img = cv2.resize(img, (300, 200)), a student writes hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) and says that hsv has one channel. Give the shape of hsv and correct the claim.
+?= hsv has shape (200, 300, 3): BGR2HSV keeps three channels (hue, saturation, value) and only re-expresses the colour; only a 2GRAY conversion leaves one channel, (200, 300).
+?? Code: img = cv2.imread("owl.jpg"), value = img[120, 40] meant for x = 120, y = 40, then cv2.imwrite("owl_check.jpg", img / 255.0). Identify two problems and correct them.
+?= Indexing is img[y, x], so the pixel is img[40, 120]; img / 255.0 is a float image in [0, 1] that imwrite saves almost black — save img itself, or scale back to 0–255 and cast to uint8 first.`,
+        ru: `## Три настоящих билета, одна структура
+Известны три настоящих билета: **образец преподавателя** (вариант 1), **вариант с тканями** другой группы и **вариант 5** (виды птиц, по фото студентов). В них **те же пять вопросов в том же порядке**; меняются только сценарий, числа и подложенные ошибки (— = на фото не видно).
+| Пункт | Образец (вариант 1) | Вариант с тканями | Вариант 5 |
+|---|---|---|---|
+| Q1 сценарий | листья с болезнями растений | ткань в полоску, в клетку, однотонная | виды птиц с фотоловушек |
+| Q1 компромисс | оттенки серого: плюс и минус | resize до 32 × 32 | resize до 32 × 32 |
+| Q1 подложенные ошибки | RGB2GRAY; ядро (4, 4) | нет sigmaX; нет type у threshold | img[50, 20]; imwrite для float-картинки |
+| Q1 утверждение для спора | больше предобработки всегда лучше | человеку снимки нравятся, значит, предобработка не нужна | выравнивать каждый датасет |
+| Q3c–d | что значат W и b; почему не любой датасет | — | те же два пункта |
+| Q4 конвейер | resize (224, 224), серое, размытие, Canny | — | resize (300, 200), BGR2RGB, resize (150, 100), / 255 |
+| Q4 пункт про цвет | задача по цвету: только границы? | — | цвет перьев: границы? |
+| Q5 датасет | мусор, 2 000 снимков, 4 класса | — | одежда, 5 000 снимков, 4 класса |
+## Типы вопросов — чего ждёт проверяющий
+| Тип вопроса | Чего ждёт проверяющий | Типичная ошибка |
+|---|---|---|
+| Q1a три шага предобработки | шаг + проблема сценария, которую он решает | голый список «resize, blur, normalize» |
+| Q1b компромисс (серое, 32 × 32) | один плюс и один минус, привязанные к классам | «быстрее» и «хуже» без причины |
+| Q1c две ошибки в коде OpenCV | строка, почему она неверна, исправленный код | только одна ошибка или код не переписан |
+| Q1d утверждение «всегда / каждый» | не согласен + один конкретный контрпример | «смотря как» без примера |
+| Q2 таблица оценок | argmax по строке, accuracy, ошибочный снимок | истинный класс принят за предсказание |
+| Q3a–b s = Wx + b | каждое произведение расписано, затем argmax | забыто b или взят столбец W |
+| Q3c смысл W и b | W — шаблоны классов, b — сдвиги классов | «b — это ошибка модели» |
+| Q3d пределы линейного классификатора | прямые границы + рисунок XOR | «просто нужно больше данных» |
+| Q4a формы | (высота, ширина, каналы) после каждой строки | dsize (w, h) переписан как shape |
+| Q4b каналы | какой вызов меняет число каналов | «BGR2RGB: 3 канала → 1» |
+| Q4c деление на 255.0 | зачем масштаб + диапазон 0.0–1.0 | «чтобы стало серым», «диапазон 0–255» |
+| Q4d границы для задачи по цвету | нет: Canny выбрасывает цвет | «границы убирают шум, значит, да» |
+| Q5a–b датасет и разбиение | папка на класс, числа для каждой части | проценты без чисел |
+| Q5c–e шаги, метрика, новый телефон | каждый выбор привязан к этому датасету | «accuracy» без причины |
+## Вариант 5, Q1a — три операции для снимков фотоловушек
+«Заповедник классифицирует виды птиц по снимкам фотоловушек. Камеры различаются разрешением, многие снимки сделаны на рассвете или в сумерках (мало света), а ночные кадры зернистые.»
+- **Resize к одному размеру**, например cv2.resize(img, (224, 224)), — у камер **разное разрешение**, а сети нужна одна форма входа.
+- **Убрать шум с зернистых ночных кадров:** Гаусс (3, 3) или медиана 3; non-local means (cv2.fastNlMeansDenoisingColored) сохраняет больше деталей. Делайте это мягко — детали оперения и есть сигнал.
+- **Осветлить кадры рассвета и сумерек:** гамма-коррекция или **CLAHE по каналу L в LAB** (или V в HSV) — светлее, контрастнее, а **цвета перьев не меняются**. Шум убирайте раньше: CLAHE усиливает оставшееся зерно.
+- Бонус: масштаб в [0, 1]; инфракрасные ночные кадры фактически серые, поэтому включите такие кадры каждого вида в обучение.
+= img = cv2.resize(img, (224, 224))
+= img = cv2.GaussianBlur(img, (3, 3), 0)
+= l, a, b = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2LAB))
+= l = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8)).apply(l)
+= img = cv2.cvtColor(cv2.merge((l, a, b)), cv2.COLOR_LAB2BGR)
+## Вариант 5, Q1b — 32 × 32 для видов птиц
+= 32 * 32 * 3 = 3072 values,   224 * 224 * 3 = 150528 values (49 times more)
+= a bird 60 px wide in a 1920 px wide frame:  60 * 32 / 1920 = 1 px at 32 x 32
+- **Плюс:** маленький одинаковый вход — быстрое обучение, мало памяти, маленькая модель, одна форма для любой камеры.
+- **Минус:** виды различаются **мелкими деталями** — узором оперения, формой клюва, кольцом вокруг глаза; далёкая птица сжимается до пикселя-двух, а неквадратные кадры **искажаются**. Тонким классам нужно больше пикселей — или сначала вырезать область с птицей.
+## Вариант 5, Q1c — две ошибки и исправленный код
+@diagram cv-image-array
+= img = cv2.imread("bird.jpg")
+= # read the pixel at x = 50 (column), y = 20 (row)
+= pixel = img[50, 20]
+= norm = img / 255.0
+= cv2.imwrite("bird_norm.jpg", norm)   # save a copy for checking
+- **Проблема 1 (строка 3):** NumPy индексирует **img[строка, столбец] = img[y, x]**. img[50, 20] читает x = 20, y = 50 — другой пиксель, **молча** (или IndexError, если в картинке меньше 51 строки). Исправление: img[20, 50] — он возвращает [B, G, R].
+- **Проблема 2 (строка 5):** norm — это **float64 в [0, 1]**, а JPEG хранит **8-битные** значения. imwrite переводит без ошибки, каждый пиксель становится 0 или 1 из 255, и сохранённая копия **почти чёрная**. Верните масштаб и приведите к uint8 (или сохраните сам img).
+= img = cv2.imread("bird.jpg")
+= pixel = img[20, 50]                # [B, G, R] at x = 50, y = 20
+= norm = img / 255.0                 # float64, 0.0..1.0, input for the model
+= cv2.imwrite("bird_norm.jpg", (norm * 255).astype("uint8"))
+- Для полного балла проверьте и чтение: if img is None — imread возвращает None, если файла нет.
+## Вариант 5, Q1d — «Выравнивание гистограммы нужно применять к любому датасету»
+**Не согласен.** Выравнивание помогает, когда класс скрыт **низким контрастом**; универсальным шагом оно не является.
+- **Этот же сценарий:** ночные кадры тёмные и **зернистые**; глобальное выравнивание растягивает тёмный диапазон и **усиливает зерно**. Сначала уберите шум и берите **CLAHE** — его clipLimit это сдерживает.
+- **Яркость и есть информация:** на рентгене яркость — это плотность ткани; в задаче «день или ночь» или о спелости выравнивание стирает признак.
+- **Цвет:** выравнивание B, G и R по отдельности **сдвигает цвета** — губительно, когда виды различаются цветом перьев; выравнивайте только L в LAB или V в HSV.
+- На хорошо экспонированных снимках пользы мало — оставляйте шаг, только если растёт точность на валидации. И equalizeHist нужно **8-битное одноканальное** изображение.
+## Вариант 5, Q3c — что означают W и b
+= s = W x + b      W: C x D,   x: D values,   b: C values,   s: C scores
+- **W** хранит выученные веса. Строка k — **шаблон класса k**: каждый вес говорит, насколько сильно одно входное значение (пиксель) поднимает или опускает оценку класса k. Геометрически строка задаёт **направление границы класса**.
+- **b** — один выученный **сдвиг на класс**, который добавляется независимо от снимка, — встроенное предпочтение этого класса; он **сдвигает границу** от начала координат.
+- Ответ на фото студентов — «W … насколько сильно каждый входной признак влияет на оценку; b … добавляет сдвиг для каждого класса» — по сути верный; добавьте взгляд «строка = шаблон», чтобы он был полным.
+## Вариант 5, Q3d — почему один линейный классификатор не разделит любой датасет
+= XOR:  (0, 0) -> A   (1, 1) -> A   (0, 1) -> B   (1, 0) -> B
+- Каждая оценка — **линейная** функция от x, поэтому граница между двумя классами — **прямая** (гиперплоскость в большем числе измерений). В XOR любая прямая, оставляющая обе точки A по одну сторону, захватывает с ними и точку B.
+- Другие провалы: один класс **внутри кольца** другого; класс с **несколькими обликами** — один шаблон на класс не покроет лошадь, смотрящую влево и вправо.
+- Рисунок на фото студентов — A B над B A с подписью XOR — именно то, что ждут. Решение: нелинейные признаки или нейросеть с нелинейностью, например ReLU.
+## Вариант 5, Q4 — конвейер строка за строкой
+= img = cv2.imread("bird.jpg")                  # (H, W, 3), uint8, BGR
+= img = cv2.resize(img, (300, 200))             # (200, 300, 3)
+= rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)    # (200, 300, 3), B and R swapped
+= small = cv2.resize(rgb, (150, 100))           # (100, 150, 3)
+= norm = small / 255.0                          # (100, 150, 3), float64, 0.0..1.0
+- **Q4a:** dsize — это **(ширина, высота)**, а shape начинается с высоты: img — **(200, 300, 3)**, small — **(100, 150, 3)**.
+- **Q4b:** число каналов **остаётся 3**, shape не меняется; меняется только **порядок B и R**, ни одно значение не меняется. Канал 0 теперь R, поэтому plt.imshow показывает настоящие цвета (а cv2.imshow теперь показал бы их перепутанными).
+= img pixel [B, G, R] = [30, 120, 200]   ->   rgb pixel [R, G, B] = [200, 120, 30]
+- **Настоящая ошибка:** студент написал «3 канала → 1 канал». Так работает **BGR2GRAY**; BGR2RGB лишь **переставляет** каналы — в RGB три буквы и три канала. Читайте код после 2: GRAY — один канал, а RGB, HSV и LAB оставляют три.
+- **Q4c:** деление на 255.0 приводит все входы к **одной малой шкале**, и обучение градиентом идёт **стабильнее и быстрее**; значения становятся **float64 в [0.0, 1.0]**: 0 → 0.0, 128 → 0.502, 255 → 1.0.
+- **Q4d:** **Нет.** Canny возвращает **одноканальную карту 0/255**: цвета нет, и два вида одной формы дают одинаковые границы. Оставьте цветное изображение (или тон в HSV); границы — разве что дополнительным входом.
+## Вариант 5, Q5a–b — магазин одежды, 5 000 снимков
+@diagram cv-data-split
+- **Q5a:** папка на класс внутри каждой части, чтобы имя папки было меткой; дубликаты удалить, а все снимки **одного товара держать в одной части**, иначе почти-дубликаты утекут в тест.
+= data/train/shirt/   data/train/trousers/   data/train/dress/   data/train/shoes/
+= data/val/shirt/   ...   data/test/shoes/
+- **Q5b:** стратифицированное разбиение с расписанными числами:
+= 80/20:     5000 * 0.8 = 4000 train,  5000 * 0.2 = 1000 test
+= 70/15/15:  5000 * 0.7 = 3500 train,  750 validation,  750 test
+= if balanced (1250 per class), 80/20 gives 1000 train + 250 test per class
+- Q5c–e на фото не видны; они повторяют образец: два шага предобработки, метрика с обоснованием и сдвиг домена на снимках с другого телефона.
+## Как меняются варианты
+- **Тот же скелет:** во всех трёх билетах в Q1 есть сценарий, компромисс, поиск ошибок в нескольких строках кода и утверждение «всегда / каждый»; Q4 — конвейер, который надо проследить; Q5 — система, которую надо спроектировать.
+- **Новый сценарий:** листья → ткани → птицы; мусор → одежда. Сначала найдите, что **задаёт класс** (цвет, узор, мелкие детали), — на этом держится любой ответ о компромиссе.
+- **Новые ошибки из того же списка правил:** BGR и RGB, нечётное ядро и sigmaX, type у threshold, (w, h) и (h, w), **img[y, x]**, **uint8 при сохранении**, None от imread, один канал для equalizeHist и Otsu.
+- **Новые числа:** другие размеры в resize, другой размер датасета — считайте формы строка за строкой, а числа разбиения — по частям.
+> Варианты меняют сценарий и ошибки, но не правила: shape — это (h, w, c), а dsize — (w, h), пиксель — img[y, x], число каналов меняет только 2GRAY, сохранять — в uint8, а на любое «всегда» отвечать одним контрпримером.
+## Проверь себя
+?? После img = cv2.resize(img, (300, 200)) студент пишет hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV) и говорит, что у hsv один канал. Укажите shape у hsv и исправьте утверждение.
+?= У hsv shape (200, 300, 3): BGR2HSV сохраняет три канала (тон, насыщенность, яркость) и лишь иначе записывает цвет; один канал, (200, 300), оставляет только преобразование 2GRAY.
+?? Код: img = cv2.imread("owl.jpg"), value = img[120, 40] — задуман пиксель x = 120, y = 40, затем cv2.imwrite("owl_check.jpg", img / 255.0). Найдите две ошибки и исправьте их.
+?= Индексация — img[y, x], поэтому нужен img[40, 120]; img / 255.0 — float-картинка в [0, 1], которую imwrite сохранит почти чёрной, — сохраните сам img или сначала верните масштаб 0–255 и приведите к uint8.`,
+      },
+      [
+        qx("Code comment: read the pixel at x = 50 (column), y = 20 (row). Which expression reads that pixel?", "img[20, 50]", [
+          ["img[50, 20]", "This is the Variant 5 bug: the first index is the row, so it reads x = 20, y = 50.", "Это ошибка из варианта 5: первый индекс — строка, поэтому читается x = 20, y = 50."],
+          ["img[50][20]", "Chained indexing is the same as img[50, 20] — still row 50, column 20.", "Цепочка индексов — то же, что img[50, 20]: всё та же строка 50, столбец 20."],
+          ["img(50, 20)", "A NumPy array is indexed with square brackets; calling it raises TypeError.", "Массив NumPy индексируют квадратными скобками; вызов как функции даёт TypeError."],
+        ], "NumPy indexes img[row, column] = img[y, x], so x = 50, y = 20 is img[20, 50]; for a colour image it returns [B, G, R].", "NumPy индексирует img[строка, столбец] = img[y, x], поэтому x = 50, y = 20 — это img[20, 50]; для цветного изображения возвращается [B, G, R]."),
+        qx("norm = img / 255.0, then cv2.imwrite('bird_norm.jpg', norm). What ends up in the file?", "An almost black image, with no error", [
+          ["A correct copy of the bird photo", "JPEG stores 8-bit values; 0.0–1.0 become 0 or 1 out of 255, which is nearly black.", "JPEG хранит 8-битные значения; 0.0–1.0 превращаются в 0 или 1 из 255 — почти чёрный цвет."],
+          ["Nothing: imwrite raises a dtype error", "imwrite converts the float values to 8 bits silently; no exception is raised.", "imwrite молча переводит float-значения в 8 бит; исключения нет."],
+          ["A white image, since 1.0 means the maximum", "1.0 is the maximum only for float images in matplotlib; in an 8-bit file it is 1 of 255.", "1.0 — максимум только для float-картинок в matplotlib; в 8-битном файле это 1 из 255."],
+        ], "img / 255.0 is float64 in [0, 1]; imwrite converts it to 8 bits for JPEG, so every pixel becomes 0 or 1 — the saved copy is almost black, and no error warns you.", "img / 255.0 — это float64 в [0, 1]; imwrite переводит его в 8 бит для JPEG, каждый пиксель становится 0 или 1 — сохранённая копия почти чёрная, и никакая ошибка об этом не предупреждает."),
+        qx("With path = 'bird_norm.jpg' and norm = img / 255.0, which line saves a correct 8-bit copy?", "cv2.imwrite(path, (norm * 255).astype('uint8'))", [
+          ["cv2.imwrite(path, norm.astype('uint8'))", "Casting 0.0–1.0 straight to uint8 gives 0 or 1, so the copy is still black.", "Прямое приведение 0.0–1.0 к uint8 даёт 0 или 1, и копия всё равно чёрная."],
+          ["cv2.imwrite(path, np.clip(norm, 0, 255).astype('uint8'))", "Clipping to 0–255 leaves the 0–1 values as they are, so the cast still gives 0 or 1.", "Обрезка до 0–255 оставляет значения 0–1 как есть, поэтому приведение всё равно даёт 0 или 1."],
+          ["cv2.imwrite(path, norm / 255.0)", "Dividing again gives values below 0.004 — an even darker file.", "Повторное деление даёт значения меньше 0.004 — файл ещё темнее."],
+        ], "Scale back to 0–255 and cast to uint8 before saving — or simply save img, which is already uint8.", "Перед сохранением верните масштаб 0–255 и приведите к uint8 — или просто сохраните img, он и так uint8."),
+        qx("Variant 5, Q4b: what happens to the number of channels after cv2.COLOR_BGR2RGB?", "It stays 3; only the B and R order is swapped", [
+          ["3 channels become 1 channel", "This is a real student answer, and it describes BGR2GRAY; RGB still has three channels.", "Это настоящий ответ студента, и он описывает BGR2GRAY; в RGB по-прежнему три канала."],
+          ["3 channels become 4, an alpha channel is added", "Alpha is added by BGR2BGRA or BGR2RGBA, not by BGR2RGB.", "Альфа-канал добавляют BGR2BGRA или BGR2RGBA, а не BGR2RGB."],
+          ["It stays 3, and every value is rescaled", "No value is rescaled; the values only move between channels 0 and 2.", "Ни одно значение не масштабируется; значения лишь переезжают между каналами 0 и 2."],
+        ], "BGR2RGB keeps the shape (h, w, 3) and the pixel values; it only swaps the B and R channels, which matplotlib and RGB-trained models need.", "BGR2RGB сохраняет shape (h, w, 3) и значения пикселей; он лишь меняет местами каналы B и R — это нужно для matplotlib и моделей, обученных на RGB."),
+        qx("A pixel of img is [30, 120, 200]. What is that pixel in rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)?", "[200, 120, 30]", [
+          ["[30, 120, 200]", "The values do not stay in place: channels 0 and 2 are swapped.", "Значения не остаются на месте: каналы 0 и 2 меняются местами."],
+          ["[120, 30, 200]", "G stays in the middle; only the first and the last channels swap.", "G остаётся в середине; меняются только первый и последний каналы."],
+          ["One gray value, 134", "0.299·200 + 0.587·120 + 0.114·30 ≈ 134 is what BGR2GRAY would give, not BGR2RGB.", "0.299·200 + 0.587·120 + 0.114·30 ≈ 134 дал бы BGR2GRAY, а не BGR2RGB."],
+        ], "imread order is B, G, R = 30, 120, 200; BGR2RGB writes R, G, B = 200, 120, 30 — the same colour, the channels in the opposite order.", "Порядок imread — B, G, R = 30, 120, 200; BGR2RGB записывает R, G, B = 200, 120, 30 — тот же цвет, каналы в обратном порядке."),
+        qx("img = cv2.resize(img, (300, 200)) on a colour photo. What is img.shape afterwards?", "(200, 300, 3)", [
+          ["(300, 200, 3)", "dsize is (width, height), but shape starts with the height, so 200 comes first.", "dsize — это (ширина, высота), а shape начинается с высоты, поэтому 200 идёт первым."],
+          ["(200, 300)", "resize keeps all three colour channels.", "resize сохраняет все три цветовых канала."],
+          ["(300, 200)", "Both the order and the channel count are wrong here.", "Здесь неверны и порядок, и число каналов."],
+        ], "dsize = (width 300, height 200); shape = (height, width, channels) = (200, 300, 3).", "dsize = (ширина 300, высота 200); shape = (высота, ширина, каналы) = (200, 300, 3)."),
+        qx("Variant 5: rgb has shape (200, 300, 3), and small = cv2.resize(rgb, (150, 100)). What is small.shape?", "(100, 150, 3)", [
+          ["(150, 100, 3)", "That is (width, height, channels); shape lists the height first.", "Это (ширина, высота, каналы); shape начинается с высоты."],
+          ["(100, 150, 1)", "BGR2RGB kept three channels, and resize does not change them.", "BGR2RGB сохранил три канала, и resize их не меняет."],
+          ["(50, 75, 3)", "resize sets an absolute size; it does not halve the current one again.", "resize задаёт абсолютный размер, а не уменьшает текущий ещё вдвое."],
+        ], "dsize (150, 100) means 150 wide and 100 high, so small has shape (100, 150, 3); the channels are still R, G, B.", "dsize (150, 100) — это 150 в ширину и 100 в высоту, поэтому shape у small — (100, 150, 3); каналы по-прежнему R, G, B."),
+        qx("norm = small / 255.0, where small is uint8. What are the dtype and the value range of norm?", "float64, values from 0.0 to 1.0", [
+          ["uint8, values from 0 to 1", "Division by a float gives float64; a uint8 array could hold only 0 or 1.", "Деление на float даёт float64; массив uint8 мог бы хранить только 0 или 1."],
+          ["float64, values from −1.0 to 1.0", "−1 to 1 needs (x − 127.5) / 127.5; dividing 0–255 by 255 gives 0–1.", "Для −1…1 нужно (x − 127.5) / 127.5; деление 0–255 на 255 даёт 0–1."],
+          ["float32, values from 0.0 to 255.0", "Dividing by 255 shrinks the range, and NumPy's default float type is float64.", "Деление на 255 сужает диапазон, а float по умолчанию в NumPy — float64."],
+        ], "Dividing uint8 by the float 255.0 gives float64 of the same shape; 0 → 0.0 and 255 → 1.0, so the range is [0, 1].", "Деление uint8 на float 255.0 даёт float64 той же формы; 0 → 0.0, 255 → 1.0, поэтому диапазон — [0, 1]."),
+        qx("Why does the Variant 5 pipeline divide the pixel values by 255.0?", "A small common scale for stable training", [
+          ["To convert the image to grayscale", "Division keeps all three channels; gray needs cvtColor.", "Деление сохраняет все три канала; для серого нужен cvtColor."],
+          ["To remove the sensor grain from dark night shots", "Scaling multiplies every value by the same factor, noise included.", "Масштабирование умножает каждое значение на один и тот же множитель, шум тоже."],
+          ["To make the array smaller in memory", "float64 takes 8 bytes per value instead of 1, so the array grows.", "float64 занимает 8 байт на значение вместо 1, поэтому массив растёт."],
+        ], "Inputs in [0, 1] on one scale keep gradient-based training stable and faster, and every image gets the same range; the same step is needed at test time.", "Входы в [0, 1] на одной шкале делают обучение градиентом стабильнее и быстрее, а у всех снимков одинаковый диапазон; тот же шаг нужен и на тесте."),
+        qx("A student says histogram equalization should be applied to every image dataset. Which example refutes it?", "Grainy night shots: it amplifies the grain", [
+          ["Dim dawn shots: it lifts their low contrast in dark regions", "That is a case where equalization helps, so it supports the claim.", "Это случай, когда выравнивание помогает, — он поддерживает утверждение."],
+          ["Any dataset: it changes the image size", "Equalization keeps the size; it only remaps brightness values.", "Выравнивание сохраняет размер; оно лишь перераспределяет значения яркости."],
+          ["Bird photos: it turns colour into gray", "Equalization does not convert colour spaces; it needs one channel as input.", "Выравнивание не меняет цветовое пространство; ему на вход нужен один канал."],
+        ], "A counterexample must show harm: in dark, grainy night shots global equalization stretches the dark range together with its noise; CLAHE after denoising is safer.", "Контрпример должен показывать вред: на тёмных зернистых ночных снимках глобальное выравнивание растягивает тёмный диапазон вместе с шумом; безопаснее CLAHE после шумоподавления."),
+        qx("A student equalizes the B, G and R channels of each bird photo separately. What is the main risk?", "The hues shift, so feather colours change", [
+          ["An error, because equalizeHist needs a colour image", "It is the reverse: equalizeHist takes one 8-bit channel, so per-channel calls run fine.", "Наоборот: equalizeHist принимает один 8-битный канал, поэтому поканальные вызовы работают."],
+          ["None; the colours stay exactly the same", "Each channel gets its own mapping, so the ratios between them, the hue, change.", "Каждый канал получает своё отображение, поэтому соотношения между ними — тон — меняются."],
+          ["The image becomes grayscale", "Three equalized channels are still three channels.", "Три выровненных канала — по-прежнему три канала."],
+        ], "Separate mappings change the balance of B, G and R, so colours drift — harmful when feather colour separates species. Equalize only L of LAB or V of HSV.", "Отдельные отображения меняют баланс B, G и R, и цвета уплывают — вредно, когда виды различаются цветом перьев. Выравнивайте только L в LAB или V в HSV."),
+        tfx("Histogram equalization can hurt when brightness itself carries the class, for example tissue density in X-rays.", true, "Equalization spreads the brightness values evenly, so the absolute brightness differences between images — the very cue — are erased.", "Выравнивание равномерно перераспределяет яркость, поэтому абсолютные различия яркости между снимками — тот самый признак — стираются.", "Choosing False treats equalization as always harmless; it is not universal, which is the point of the Variant 5 claim.", "Ответ False считает выравнивание всегда безвредным; оно не универсально — в этом и смысл утверждения из варианта 5."),
+        qx("Variant 5: every trail-camera photo is resized to 32 × 32. What is the main disadvantage for bird species?", "Fine plumage and beak details are lost", [
+          ["Training becomes slower and needs more memory", "3 072 values per image make training faster and lighter — that is the advantage.", "3 072 значения на снимок делают обучение быстрее и легче — это как раз плюс."],
+          ["The colour information is removed", "resize keeps all three channels; it removes spatial detail.", "resize сохраняет все три канала; он убирает пространственные детали."],
+          ["Images from different cameras keep different sizes", "After the resize every image is 32 × 32; a uniform size is the advantage.", "После resize каждый снимок 32 × 32; одинаковый размер — это плюс."],
+        ], "Species are told apart by small details — plumage pattern, beak shape, eye ring; at 32 × 32 a distant bird is a pixel or two, so these cues vanish.", "Виды различают по мелким деталям — узору оперения, форме клюва, кольцу вокруг глаза; при 32 × 32 далёкая птица занимает пиксель-два, и эти признаки пропадают."),
+        qx("Two bird species differ mainly in feather colour. Should the images be converted to Canny edges before classification?", "No: an edge map keeps the shape but drops colour", [
+          ["Yes: edges remove noise, so accuracy rises", "Edges remove colour too, and colour is exactly what separates these species.", "Границы убирают и цвет, а именно цвет различает эти виды."],
+          ["Yes, if the thresholds are lowered to 50 and 100", "Lower thresholds only add weak edges; no threshold brings colour back.", "Более низкие пороги лишь добавляют слабые границы; никакой порог не вернёт цвет."],
+          ["No, because Canny cannot read a colour image", "Canny accepts 8-bit colour or gray input; the problem is its output, not its input.", "Canny принимает 8-битный цветной или серый вход; проблема в его выходе, а не во входе."],
+        ], "Canny returns one 0/255 channel: two species with the same shape give the same edges. Keep the colour image (or HSV hue).", "Canny возвращает один канал 0/255: два вида одной формы дают одинаковые границы. Оставьте цветное изображение (или тон в HSV)."),
+        qx("Trail cameras: different resolutions, dim dawn and dusk shots, grainy nights. Which three operations fit best?", "Resize to one size, denoise, CLAHE on brightness", [
+          ["Grayscale, Canny edges, an Otsu threshold", "These throw away feather colour and texture, the cues that separate species.", "Они выбрасывают цвет и текстуру перьев — признаки, по которым различают виды."],
+          ["Resize to 32 × 32, a (15, 15) blur, global equalization", "Each step hurts here: a tiny size, a heavy blur and amplified grain erase fine detail.", "Каждый шаг здесь вредит: крошечный размер, сильное размытие и усиленное зерно стирают мелкие детали."],
+          ["Rotation by 180°, colour inversion, a sky crop", "None of these fixes a named problem; inverting colours even destroys the colour cue.", "Ни один не решает названных проблем; инверсия цветов даже уничтожает цветовой признак."],
+        ], "Each operation answers a named problem: resize for different resolutions, a mild denoise for grainy nights, CLAHE on L or V for dim dawn and dusk shots.", "Каждая операция отвечает на названную проблему: resize — на разные разрешения, мягкое шумоподавление — на зернистые ночи, CLAHE по L или V — на тёмные кадры рассвета и сумерек."),
+        qx("Variant 5, Q5b: 5 000 clothing images are split 80/20. How many go to train and to test?", "4 000 train, 1 000 test", [
+          ["4 500 train, 500 test", "That is a 90/10 split: 5 000 · 0.9 = 4 500.", "Это разбиение 90/10: 5 000 · 0.9 = 4 500."],
+          ["3 500 train, 1 500 test", "That is 70/30, not 80/20.", "Это 70/30, а не 80/20."],
+          ["1 000 train, 4 000 test", "Train and test are swapped; the larger part is for training.", "Train и test перепутаны; большая часть идёт на обучение."],
+        ], "5 000 · 0.8 = 4 000 train and 5 000 · 0.2 = 1 000 test, split per class so that every class keeps its share.", "5 000 · 0.8 = 4 000 на обучение и 5 000 · 0.2 = 1 000 на тест, с разбиением по классам, чтобы доли классов сохранились."),
+        qx("The same 5 000 images are split 70/15/15 into train, validation and test. What are the counts?", "3 500, 750 and 750", [
+          ["3 500, 700 and 800", "15% of 5 000 is 750 for both validation and test.", "15% от 5 000 — это 750 и для validation, и для test."],
+          ["3 000, 1 000 and 1 000", "That is 60/20/20, not 70/15/15.", "Это 60/20/20, а не 70/15/15."],
+          ["4 000, 500 and 500", "That is 80/10/10, not 70/15/15.", "Это 80/10/10, а не 70/15/15."],
+        ], "5 000 · 0.7 = 3 500 train, 5 000 · 0.15 = 750 validation and 750 test; validation is for tuning, test is used once.", "5 000 · 0.7 = 3 500 на обучение, 5 000 · 0.15 = 750 на валидацию и 750 на тест; валидация — для настройки, тест — один раз."),
+        qx("In s = Wx + b for a C-class problem, what does row k of W represent?", "A learned template for class k", [
+          ["The pixel values of the k-th training image", "x holds an image; W is learned and shared by all images.", "Изображение хранится в x; W выучивается и общая для всех снимков."],
+          ["The probability of class k", "Probabilities appear only after softmax; W holds weights.", "Вероятности появляются только после softmax; W хранит веса."],
+          ["The bias of class k", "The bias is b_k, a separate number for each class.", "Смещение — это b_k, отдельное число для каждого класса."],
+        ], "Row k is multiplied by x to give score k: each weight says how strongly one input value pushes class k up or down — a template of the class.", "Строка k скалярно умножается на x и даёт оценку k: каждый вес говорит, насколько сильно одно входное значение поднимает или опускает класс k, — это шаблон класса."),
+        tfx("In s = Wx + b, the bias b_k of class k is added to its score whatever the input image is.", true, "b holds one learned offset per class; it does not depend on x, so it sets a baseline preference for each class and shifts the boundary away from the origin.", "b хранит по одному выученному сдвигу на класс; он не зависит от x, поэтому задаёт исходное предпочтение каждого класса и сдвигает границу от начала координат.", "Choosing False confuses b with W, whose effect depends on the pixel values.", "Ответ False путает b с W, чьё влияние зависит от значений пикселей."),
+        qx("Points (0, 0) and (1, 1) are class A; (0, 1) and (1, 0) are class B. Why does one linear classifier fail here?", "No single straight line separates A from B", [
+          ["There are too few points to train on", "More XOR points would not help; the layout itself is not linearly separable.", "Больше точек XOR не помогут: сама раскладка линейно не разделима."],
+          ["The bias b cannot be negative", "b can be any real number, and changing it only shifts the line.", "b может быть любым вещественным числом, и его изменение лишь сдвигает прямую."],
+          ["The points must first be scaled to [0, 1]", "They are already in [0, 1]; scaling never makes XOR separable.", "Они и так в [0, 1]; масштабирование не делает XOR разделимым."],
+        ], "A linear classifier draws straight boundaries; any line that keeps both A points on one side leaves a B point with them. Non-linear features or a neural network are needed.", "Линейный классификатор проводит прямые границы; любая прямая, оставляющая обе точки A по одну сторону, захватывает и точку B. Нужны нелинейные признаки или нейросеть."),
+      ],
+    ),
   ],
 };

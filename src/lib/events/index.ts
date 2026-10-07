@@ -30,6 +30,7 @@ import { lecture3 as cv3 } from "./computerVision/lecture3";
 import { lecture4 as cv4 } from "./computerVision/lecture4";
 import { lecture5 as cv5 } from "./computerVision/lecture5";
 import { drill as cvDrill } from "./computerVision/drill";
+import { mocks as cvMocks } from "./computerVision/mocks";
 import { cheatSheet as cvCheatSheet, glossary as cvGlossary } from "./computerVision/extras";
 
 /**
@@ -76,11 +77,12 @@ export const EVENTS: StudyEvent[] = [
     title: "Подготовка к мидтерму",
     course: "Computer Vision",
     description:
-      "Пять лекций по частям — от обработки изображений и kNN до линейных классификаторов, backprop и CNN — и блок практики в формате мидтерма: баги в коде OpenCV, расчёт Wx + b и accuracy, выбор предобработки и своя CV-система, с разобранными ответами. После каждой части — квиз на 20 вопросов с разбором неверных вариантов.",
+      "Пять лекций по частям — от обработки изображений и kNN до линейных классификаторов, backprop и CNN — и блок практики в формате мидтерма: баги в коде OpenCV, расчёт Wx + b и accuracy, выбор предобработки и своя CV-система, с разобранными ответами. После каждой части — квиз на 20 вопросов с разбором неверных вариантов. Плюс пробные варианты мидтерма с открытыми вопросами — в том числе настоящие варианты других групп: пишешь ответ, ИИ ставит баллы по критериям.",
     lectures: [cv1, cv2, cv3, cv4, cv5, cvDrill],
     counts: { part: 20, lecture: 20, final: 45 },
     glossary: cvGlossary,
     cheatSheet: cvCheatSheet,
+    mocks: cvMocks,
   },
   {
     // Ивент одной команды: защита своего проекта по их же отчёту. Только по

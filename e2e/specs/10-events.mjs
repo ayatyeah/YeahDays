@@ -30,7 +30,7 @@ test("Ивенты: из «Учёбы» нахожу ивент, читаю ча
   const { browser, page } = await session({ user });
   await openSection(page, "/learn");
 
-  await page.getByRole("link", { name: /Ивенты/ }).first().tap();
+  await page.getByRole("link", { name: /ивенты/i }).first().tap();
   await page.waitForURL((u) => u.pathname === "/events", { timeout: 15_000 });
   check(true, "плашка «Ивенты» в «Учёбе» ведёт к списку ивентов");
 

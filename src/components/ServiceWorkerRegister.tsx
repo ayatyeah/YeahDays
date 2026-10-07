@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { YgIcon } from "@/components/yg-icons";
+import { decideUpdate } from "@/lib/swUpdate";
 
 /** Id сборки: подставляется в next.config, меняется на каждый билд. */
 const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || "dev";
@@ -11,12 +12,13 @@ const BUILD_ID = process.env.NEXT_PUBLIC_BUILD_ID || "dev";
 /**
  * Регистрирует service worker и мягко управляет обновлениями.
  *
- * Как обновляется установленное приложение:
+ * Как обновляется установленное приложение (решает lib/swUpdate.ts):
  *  - новый воркер ставится в ожидание (sw.js без skipWaiting);
- *  - если приложение открыто — показываем тост «Обновить»; по нажатию
- *    воркер активируется и страница перезагружается на новую версию;
- *  - если пользователь просто закрыл и переоткрыл приложение — ожидающий
- *    воркер активируется сам, новая версия применяется без действий.
+ *  - та же сборка — ничего не показываем;
+ *  - новая сборка ждала к запуску, а человек ещё ничего не нажал — тихо
+ *    применяем: перезагрузка на старте незаметна;
+ *  - новая сборка пришла посреди работы — тост «Обновить»; по нажатию
+ *    воркер активируется и страница перезагружается на новую версию.
  */
 export default function ServiceWorkerRegister() {
   const pathname = usePathname();
@@ -51,6 +53,23 @@ export default function ServiceWorkerRegister() {
     let reg: ServiceWorkerRegistration | null = null;
     let interval = 0;
     let disposed = false;
+
+    // «Свежий запуск»: первые секунды после загрузки, пока человек ничего не
+    // нажал и не начал печатать, — перезагрузка в этот момент ничего не сбивает.
+    const loadedAt = Date.now();
+    let touched = false;
+    const touch = () => { touched = true; };
+    window.addEventListener("pointerdown", touch, { capture: true, once: true });
+    window.addEventListener("keydown", touch, { capture: true, once: true });
+    const consider = (r: ServiceWorkerRegistration, next: ServiceWorker) => {
+      const action = decideUpdate({ active: r.active?.scriptURL, waiting: next.scriptURL, fresh: !touched && Date.now() - loadedAt < 4000 });
+      // controllerchange ниже перезагрузит страницу уже на новой версии
+      if (action === "apply") next.postMessage({ type: "SKIP_WAITING" });
+      else if (action === "announce") {
+        setWaiting(next);
+        setDismissed(false);
+      }
+    };
     const checkWhenVisible = () => {
       if (document.visibilityState === "visible") reg?.update().catch(() => {});
     };
@@ -64,21 +83,13 @@ export default function ServiceWorkerRegister() {
           if (disposed) return;
           reg = r;
           // обновление уже дождалось нас
-          if (r.waiting && navigator.serviceWorker.controller) {
-            setWaiting(r.waiting);
-          }
+          if (r.waiting && navigator.serviceWorker.controller) consider(r, r.waiting);
           // новое обновление прилетело во время сессии
           r.addEventListener("updatefound", () => {
             const nw = r.installing;
             if (!nw) return;
             nw.addEventListener("statechange", () => {
-              if (
-                nw.state === "installed" &&
-                navigator.serviceWorker.controller
-              ) {
-                setWaiting(nw);
-                setDismissed(false);
-              }
+              if (nw.state === "installed" && navigator.serviceWorker.controller) consider(r, nw);
             });
           });
           // приложение может висеть открытым весь день — проверяем раз в час
@@ -104,6 +115,8 @@ export default function ServiceWorkerRegister() {
     return () => {
       disposed = true;
       document.removeEventListener("visibilitychange", checkWhenVisible);
+      window.removeEventListener("pointerdown", touch, true);
+      window.removeEventListener("keydown", touch, true);
       window.removeEventListener("load", register);
       navigator.serviceWorker.removeEventListener(
         "controllerchange",

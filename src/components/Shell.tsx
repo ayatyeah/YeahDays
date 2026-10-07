@@ -107,7 +107,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           скролл окна ничем не мешает — им оставляем обычный min-h-dvh. */}
         <div
           className={cn(
-            "mx-auto flex max-w-md flex-col px-[18px] pt-[calc(max(2.75rem,env(safe-area-inset-top))+1rem)] pb-0 lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
+            "yg-content-frame mx-auto flex max-w-md flex-col px-[18px] pt-[calc(max(2.75rem,env(safe-area-inset-top))+1rem)] pb-0 lg:mx-0 lg:max-w-none lg:pl-72 lg:pr-8 lg:pb-10 lg:pt-[max(2.5rem,env(safe-area-inset-top))]",
             // У разделов отступ снизу живёт внутри прокрутки (.section-pane),
             // у обычных страниц прокрутки нет — им отступ нужен здесь, иначе
             // низ страницы уедет под плавающую панель.

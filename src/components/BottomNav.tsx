@@ -81,10 +81,10 @@ export default function BottomNav() {
     >
       <div className="pointer-events-auto liquid-bar border-t border-[var(--color-border-strong)] shadow-[var(--shadow-up)]">
         <div
-          className="mx-auto flex max-w-lg items-stretch gap-1 px-2"
+          className="yg-bottom-nav-items mx-auto flex max-w-lg items-stretch gap-1 px-2"
           style={{
-            height: "calc(64px + env(safe-area-inset-bottom))",
-            paddingBottom: "env(safe-area-inset-bottom)",
+            height: "var(--nav-items-height, calc(64px + env(safe-area-inset-bottom)))",
+            paddingBottom: "var(--nav-items-inset, env(safe-area-inset-bottom))",
           }}
         >
           {NAV.map(({ tab: key, label, Icon }) => {

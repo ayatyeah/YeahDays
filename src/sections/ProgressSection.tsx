@@ -2,8 +2,7 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import LearningEntry from "@/components/LearningEntry";
-import Avatar3D from "@/components/AvatarLazy";
+import CompanionWardrobe from "@/components/companion/CompanionWardrobe";
 import {
   useUserStore,
   useHydrated,
@@ -16,7 +15,11 @@ import {
   useBestStreak,
 } from "@/store/useUserStore";
 import { STAT_LIST, CATEGORIES, type CategoryKey } from "@/lib/domain";
-import { getLevelProgress, TIER_MILESTONES, tierForLevel } from "@/lib/leveling";
+import {
+  getLevelProgress,
+  TIER_MILESTONES,
+  tierForLevel,
+} from "@/lib/leveling";
 import { cn } from "@/lib/cn";
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
 import { timeSpentBySubject, fmtHours } from "@/lib/timeSpent";
@@ -52,7 +55,10 @@ export default function ProgressSection() {
   const streak = useStreak();
   const best = useBestStreak();
   const catXp = useMemo(() => selectCategoryXp(plan), [plan]);
-  const activeDays = useMemo(() => selectActiveDays(plan, todos), [plan, todos]);
+  const activeDays = useMemo(
+    () => selectActiveDays(plan, todos),
+    [plan, todos],
+  );
 
   const progress = getLevelProgress(totalXp);
   const level = progress.level;
@@ -74,8 +80,10 @@ export default function ProgressSection() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <h1 className="ios-title text-[28px] font-bold tracking-tight">Прогресс</h1>
-      <LearningEntry />
+      <h1 className="ios-title text-[28px] font-bold tracking-tight">
+        Твой ритм
+      </h1>
+      <p className="companion-subtitle">Настрой себя на рост</p>
 
       {/*
         lg:+: два столбца, как на Today — широкий слева (персонаж, уровень,
@@ -88,9 +96,22 @@ export default function ProgressSection() {
       <div className="desk">
         <div className="flex flex-col desk-main lg:gap-5">
           {/* Персонаж крупно */}
-          <div className="canvas-slot mt-1 h-[320px] lg:mt-0">
-            <Avatar3D stats={stats} level={level} className="h-full w-full" />
-          </div>
+          <CompanionWardrobe />
+          <section className="companion-skills">
+            <h2>Твои навыки</h2>
+            {STAT_LIST.map((s) => (
+              <div key={s.key}>
+                <YgIcon name={s.icon} />
+                <span>{s.label}</span>
+                <progress
+                  aria-label={s.label}
+                  value={stats[s.key]}
+                  max={maxStat}
+                />
+                <small>{stats[s.key]} XP</small>
+              </div>
+            ))}
+          </section>
 
           {/* Уровень */}
           <section className="mb-5 rounded-3xl surface p-5 lg:mb-0">
@@ -99,7 +120,9 @@ export default function ProgressSection() {
                 <p className="text-[12px] uppercase tracking-wider text-[var(--color-muted)]">
                   Уровень
                 </p>
-                <p className="text-4xl font-black leading-none tabular-nums">{level}</p>
+                <p className="text-4xl font-black leading-none tabular-nums">
+                  {level}
+                </p>
               </div>
               <p className="text-[15px] font-semibold tabular-nums text-[var(--color-fg-dim)]">
                 {totalXp} XP
@@ -114,7 +137,8 @@ export default function ProgressSection() {
               />
             </div>
             <p className="mt-1.5 text-[12px] text-[var(--color-muted)]">
-              {progress.currentInLevel} / {progress.neededForNext} до уровня {level + 1}
+              {progress.currentInLevel} / {progress.neededForNext} до уровня{" "}
+              {level + 1}
             </p>
           </section>
 
@@ -166,7 +190,10 @@ export default function ProgressSection() {
                     <div key={b.subject}>
                       <div className="mb-1 flex items-center justify-between gap-3 text-[14px]">
                         <span className="flex min-w-0 items-center gap-2">
-                          <span className="flex shrink-0" style={{ color: hex }}>
+                          <span
+                            className="flex shrink-0"
+                            style={{ color: hex }}
+                          >
                             <YgIcon name={b.icon} className="h-4 w-4" />
                           </span>
                           <span className="truncate">{b.subject}</span>
@@ -202,7 +229,8 @@ export default function ProgressSection() {
                 Когда ты закрываешь дела
               </h2>
               <p className="mb-3 text-[13px] text-[var(--color-muted)]">
-                Чаще всего — {hourWindow(activity.peak)} · {activity.total} за месяц
+                Чаще всего — {hourWindow(activity.peak)} · {activity.total} за
+                месяц
               </p>
               <div className="flex h-16 items-end gap-[3px]">
                 {activity.hours.map((h) => (
@@ -232,38 +260,6 @@ export default function ProgressSection() {
             </section>
           )}
 
-          {/* Характеристики */}
-          <section className="mb-6 lg:mb-0">
-            <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
-              Характеристики
-            </h2>
-            <div className="space-y-3.5">
-              {STAT_LIST.map((s) => (
-                <div key={s.key}>
-                  <div className="mb-1.5 flex items-center justify-between text-[15px]">
-                    <span className="flex items-center gap-2 font-medium">
-                      <span className="flex" style={{ color: s.hex }}><YgIcon name={s.icon} className="h-4 w-4" /></span>
-                      {s.label}
-                    </span>
-                    <span className="tabular-nums text-[var(--color-muted)]">
-                      {stats[s.key]}
-                    </span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-surface-2)]">
-                    <motion.div
-                      className="h-full rounded-full"
-                      style={{ background: s.hex, boxShadow: `0 0 12px ${s.hex}66` }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${(stats[s.key] / maxStat) * 100}%` }}
-                      transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                    />
-                  </div>
-                  <p className="mt-1 text-[12px] text-[var(--color-muted)]">{s.hint}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* Категории */}
           {topCats.length > 0 && (
             <section className="mb-6 lg:mb-0">
@@ -279,7 +275,9 @@ export default function ProgressSection() {
                       className="flex items-center gap-3 rounded-2xl bg-[var(--color-surface)] px-3.5 py-2.5"
                     >
                       <YgIcon name={c.icon} className="h-[18px] w-[18px]" />
-                      <span className="flex-1 text-[15px] font-medium">{c.label}</span>
+                      <span className="flex-1 text-[15px] font-medium">
+                        {c.label}
+                      </span>
                       <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
                         <div
                           className="h-full rounded-full bg-[var(--color-fg-dim)]"
@@ -323,7 +321,15 @@ export default function ProgressSection() {
                           : "bg-[var(--color-surface-2)] text-[var(--color-muted)]",
                       )}
                     >
-                      {reached ? <YgIcon name="check" className="h-3.5 w-3.5" strokeWidth={2.4} /> : m.level}
+                      {reached ? (
+                        <YgIcon
+                          name="check"
+                          className="h-3.5 w-3.5"
+                          strokeWidth={2.4}
+                        />
+                      ) : (
+                        m.level
+                      )}
                     </div>
                     <div className="flex-1">
                       <p className="text-[16px] font-semibold">{m.label}</p>
@@ -362,7 +368,12 @@ function Metric({
   return (
     <div className="press rounded-3xl surface px-3 py-4 text-center">
       <p className="text-[28px] font-bold tabular-nums">
-        {accent && <YgIcon name={accent} className="mr-1 inline h-5 w-5 align-[-3px] text-[var(--color-strength)]" />}
+        {accent && (
+          <YgIcon
+            name={accent}
+            className="mr-1 inline h-5 w-5 align-[-3px] text-[var(--color-strength)]"
+          />
+        )}
         {value}
       </p>
       <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">{label}</p>

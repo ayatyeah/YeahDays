@@ -10,7 +10,7 @@ import Logo from "@/components/Logo";
 import {
   LearnIcon,
   CommunityIcon,
-  TodayIcon,
+  HomeIcon,
   CalendarIcon,
   ProgressIcon,
   AccountIcon,
@@ -20,9 +20,9 @@ import { TAB_PATH, tabFromPath } from "@/lib/nav";
 import { usePathname, useRouter } from "next/navigation";
 
 const NAV = [
-  { tab: "today", label: "Сегодня", Icon: TodayIcon },
+  { tab: "today", label: "Сегодня", Icon: HomeIcon },
   { tab: "learn", label: "Учёба", Icon: LearnIcon },
-  { tab: "community", label: "Сообщество", Icon: CommunityIcon },
+  { tab: "community", label: "Вместе", Icon: CommunityIcon },
   { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
   { tab: "account", label: "Профиль", Icon: AccountIcon },
 ] as const;

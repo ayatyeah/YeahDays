@@ -12,7 +12,7 @@ import { useKeyboardInset } from "@/lib/useKeyboardInset";
 import {
   LearnIcon,
   CommunityIcon,
-  TodayIcon,
+  HomeIcon,
   CalendarIcon,
   ProgressIcon,
   AccountIcon,
@@ -20,9 +20,9 @@ import {
 } from "@/components/nav-icons";
 
 const NAV = [
-  { tab: "today", label: "Сегодня", Icon: TodayIcon },
+  { tab: "today", label: "Сегодня", Icon: HomeIcon },
   { tab: "learn", label: "Учёба", Icon: LearnIcon },
-  { tab: "community", label: "Сообщество", Icon: CommunityIcon },
+  { tab: "community", label: "Вместе", Icon: CommunityIcon },
   { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
   { tab: "account", label: "Профиль", Icon: AccountIcon },
 ] as const;
@@ -77,7 +77,7 @@ export default function BottomNav() {
     <nav
       className="yg-bottom-nav pointer-events-none fixed inset-x-0 z-40 lg:hidden"
       aria-label="Основная навигация"
-      style={{ bottom: "var(--nav-offset, 0px)" }}
+      style={{ bottom: 0 }}
     >
       <div className="pointer-events-auto liquid-bar border-t border-[var(--color-border-strong)] shadow-[var(--shadow-up)]">
         <div

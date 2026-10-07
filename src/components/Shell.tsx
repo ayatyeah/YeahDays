@@ -4,6 +4,7 @@ import { MotionConfig } from "framer-motion";
 import { usePathname } from "next/navigation";
 import MascotGuide from "./MascotGuide";
 import "./app-experience.css";
+import "./companion/companion.css";
 import BottomNav from "./BottomNav";
 import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";
@@ -11,7 +12,6 @@ import PageTransition from "./PageTransition";
 import WhatsNew from "./WhatsNew";
 import AppGuide from "./AppGuide";
 import NotificationCenter from "./NotificationCenter";
-import StandaloneViewportFix from "./StandaloneViewportFix";
 import { tabFromPath } from "@/lib/nav";
 import { cn } from "@/lib/cn";
 import LanguageSwitcher from "@/i18n/LanguageSwitcher";
@@ -127,7 +127,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         </div>
         {authSwitcher}
         <BottomNav />
-        <StandaloneViewportFix />
         <InstallPrompt />
         <AppGuide />
         <WhatsNew />

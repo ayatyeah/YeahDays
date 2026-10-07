@@ -17,7 +17,7 @@ export default function ThemeApplier() {
     // Цвет статус-бара PWA — иначе на светлой теме сверху останется
     // тёмная полоса, зашитая в metadata.viewport (статична на сервере).
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "light" ? "#f6f5fa" : "#08080b");
+    if (meta) meta.setAttribute("content", theme === "light" ? "#fcf9f3" : "#08080b");
   }, [theme]);
 
   return null;

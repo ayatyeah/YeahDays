@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import CompanionAssistant from "./companion/CompanionAssistant";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useHydrated, useUserStore } from "@/store/useUserStore";
@@ -89,36 +89,22 @@ export default function MascotGuide({ section }: { section?: string }) {
     href: "/today",
     action: "К плану дня",
   };
-  if (!hydrated || !onboarded) return null;
+  if (!hydrated || !onboarded || key === "today" || key === "progress")
+    return null;
   return (
-    <aside className="yg-guide" aria-label="Подсказка гида YeahGrind">
-      <div className="yg-guide-copy">
-        <span className="yg-eyebrow">ТВОЙ МАЛЕНЬКИЙ ШАГ СЕГОДНЯ</span>
-        <h2>{guide.title}</h2>
-        <p>{guide.text}</p>
-        <button
-          type="button"
-          aria-expanded={expanded}
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? "Скрыть подсказку" : "Подскажи, с чего начать"}{" "}
-          <span aria-hidden>{expanded ? "−" : "↗"}</span>
-        </button>
-        {expanded && (
-          <div className="yg-guide-tip">
-            <p>{guide.tip}</p>
-            <Link href={guide.href}>{guide.action} →</Link>
-          </div>
-        )}
-      </div>
-      <Image
-        className="yg-guide-mascot"
-        src={`/landing/mascot-${guide.pose}.webp`}
-        width={160}
-        height={240}
-        sizes="(max-width: 700px) 118px, 160px"
-        alt=""
-      />
-    </aside>
+    <>
+      <button
+        className="companion-mini-guide"
+        onClick={() => setExpanded(true)}
+      >
+        <Image src="/companion/portrait.webp" width={70} height={80} alt="" />
+        <span>
+          <b>{guide.title}</b>
+          <small>Помочь с маленьким шагом?</small>
+        </span>
+        <span aria-hidden="true">+</span>
+      </button>
+      <CompanionAssistant open={expanded} onClose={() => setExpanded(false)} />
+    </>
   );
 }

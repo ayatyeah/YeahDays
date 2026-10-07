@@ -4,13 +4,9 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { credentialsSignIn, enterApp, safeCallbackUrl, warmSignIn } from "@/lib/fastSignIn";
+import AuthShell, { AuthDivider, AuthError, AuthField, MicrosoftIcon, authInput, authPrimary, authSecondary } from "@/components/auth/AuthShell";
 import GoogleButton from "@/components/GoogleButton";
-import Logo from "@/components/Logo";
-import Button from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
-
-const inputClass =
-  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
 
 export default function RegisterPage() {
   return (
@@ -74,91 +70,62 @@ function RegisterForm() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center px-5 py-10">
-      <div className="w-full max-w-[380px]">
-        <div className="mb-8 flex flex-col items-center gap-3">
-          <Logo glow className="h-10 w-auto" />
-          <h1 className="text-[22px] font-bold tracking-tight">Создать аккаунт</h1>
-        </div>
-
-        {/* Самый короткий путь — сверху: одно нажатие, без пароля и анкеты. */}
-        <GoogleButton callbackUrl={callbackUrl} disabled={busy} className="mb-3" />
-        <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="mb-5 flex min-h-13 items-center justify-center rounded-2xl border-2 border-[var(--color-border)] px-3 text-center font-semibold">
-          Зарегистрироваться через Microsoft AITU
+    <AuthShell mode="register" title="Создать аккаунт" subtitle="Меньше минуты. Быстрее всего — через Google, в одно нажатие." callbackUrl={callbackUrl}>
+      {/* Самый короткий путь — сверху: одно нажатие, без пароля и анкеты. */}
+      <div className="flex flex-col gap-3">
+        <GoogleButton callbackUrl={callbackUrl} disabled={busy} className="h-12" />
+        <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className={authSecondary}>
+          <MicrosoftIcon />
+          Через Microsoft AITU
         </Link>
-
-        <div className="mb-5 flex items-center gap-3 text-[13px] text-[var(--color-muted)]">
-          <span className="h-px flex-1 bg-[var(--color-border)]" />
-          или с логином и паролем
-          <span className="h-px flex-1 bg-[var(--color-border)]" />
-        </div>
-
-        <form onSubmit={submit} className="flex flex-col gap-3">
-          <input
-            name="name"
-            placeholder="Имя"
-            maxLength={40}
-            required
-            className={inputClass}
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            className={inputClass}
-          />
-          <div className="flex gap-3">
-            <input
-              name="username"
-              placeholder="Логин"
-              maxLength={20}
-              required
-              className={inputClass}
-            />
-            <input
-              type="number"
-              inputMode="numeric"
-              name="birthYear"
-              placeholder="Год рождения"
-              required
-              className={inputClass}
-            />
-          </div>
-          <PasswordInput
-            name="password"
-            placeholder="Пароль (минимум 8 символов)"
-            required
-            minLength={8}
-            className={inputClass}
-          />
-          <PasswordInput
-            name="confirm"
-            placeholder="Повтори пароль"
-            required
-            minLength={8}
-            className={inputClass}
-          />
-
-          {error && (
-            <p className="text-[15px] text-[var(--color-strength)]">{error}</p>
-          )}
-
-          <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
-            {busy ? "Создаём…" : "Зарегистрироваться"}
-          </Button>
-        </form>
-
-        <p className="mt-4 text-center text-[15px] text-[var(--color-muted)]">
-          Уже есть аккаунт?{" "}
-          <Link
-            href={callbackUrl === "/app" ? "/login" : `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-            className="font-semibold text-[var(--color-fg)]"
-          >
-            Войти
-          </Link>
-        </p>
       </div>
-    </div>
+
+      <AuthDivider>или по почте</AuthDivider>
+
+      <form onSubmit={submit} className="flex flex-col gap-4">
+        <AuthField label="Как тебя зовут">
+          <input name="name" placeholder="Имя" autoComplete="given-name" maxLength={40} required className={authInput} />
+        </AuthField>
+        <AuthField label="Email">
+          <input type="email" name="email" placeholder="you@example.com" autoComplete="email" required className={authInput} />
+        </AuthField>
+        <div className="grid grid-cols-2 gap-3">
+          <AuthField label="Логин">
+            <input name="username" placeholder="nickname" autoComplete="username" maxLength={20} required className={authInput} />
+          </AuthField>
+          <AuthField label="Год рождения">
+            <input type="number" inputMode="numeric" name="birthYear" placeholder="2006" required className={authInput} />
+          </AuthField>
+        </div>
+        <AuthField label="Пароль" hint="Минимум 8 символов">
+          <PasswordInput name="password" placeholder="••••••••" autoComplete="new-password" required minLength={8} className={authInput} />
+        </AuthField>
+        <AuthField label="Повтори пароль">
+          <PasswordInput name="confirm" placeholder="••••••••" autoComplete="new-password" required minLength={8} className={authInput} />
+        </AuthField>
+
+        {error && <AuthError>{error}</AuthError>}
+
+        <button type="submit" disabled={busy} className={authPrimary}>
+          {busy ? "Создаём…" : <>Создать аккаунт <span aria-hidden>↗</span></>}
+        </button>
+        <p className="text-center text-[12px] leading-relaxed text-[#a0a39c]">
+          Что мы храним и зачем — в{" "}
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-[#f2f3ed]">политике конфиденциальности</Link>
+          {" "}и{" "}
+          <Link href="/terms" className="underline underline-offset-2 hover:text-[#f2f3ed]">условиях</Link>.
+        </p>
+      </form>
+
+      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">
+        Уже есть аккаунт?{" "}
+        <Link
+          href={callbackUrl === "/app" ? "/login" : `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          className="font-semibold text-[#d3f693] underline-offset-2 hover:underline"
+        >
+          Войти
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

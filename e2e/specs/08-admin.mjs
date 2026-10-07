@@ -6,7 +6,7 @@
  * дверь открывается своим, и то, что чужим она не поддаётся.
  */
 
-import { check, checkText, newUser, openSection, session, test } from "../harness.mjs";
+import { acceptPolicy, check, checkText, newUser, openSection, session, test } from "../harness.mjs";
 
 test("Консоль: десять нажатий по логотипу открывают вход в консоль", async () => {
   const { browser, page } = await session();
@@ -46,7 +46,8 @@ test("Консоль: чужой пароль не пускает, свой — 
   await page.fill('input[name="password"]', "admin");
   await page.tap('button[type=submit]');
   await page.waitForURL(/\/admin$/, { timeout: 20_000 });
-  await checkText(page.locator("h1"), "Владелец", "консоль открылась");
+  await page.getByText("В сети сейчас").waitFor({ timeout: 15_000 });
+  check(true, "консоль открылась");
   await checkText(
     page.locator("body"),
     "ADMIN_PASSWORD",
@@ -72,6 +73,47 @@ test("Консоль: без входа в консоль не попасть, �
   await page.waitForURL(/\/admin\/login/, { timeout: 20_000 });
   await page.goto("/admin", { waitUntil: "networkidle" });
   check(page.url().includes("/admin/login"), "после выхода консоль снова закрыта");
+  await browser.close();
+});
+
+/** Войти в консоль запасной парой admin/admin (так запущен сервер тестов). */
+async function enterConsole(page) {
+  await page.goto("/admin/login", { waitUntil: "networkidle" });
+  await page.fill('input[name="username"]', "admin");
+  await page.fill('input[name="password"]', "admin");
+  await page.tap('button[type=submit]');
+  await page.waitForURL(/\/admin$/, { timeout: 20_000 });
+  await page.getByText("В сети сейчас").waitFor({ timeout: 15_000 });
+}
+
+test("Консоль: отдельная страница без разделов приложения, видно, кто в сети, а кто был час назад", async () => {
+  // Статус берётся из учёта активности: у кого он включён — отметка времени,
+  // у кого выключен — «нет данных».
+  const online = await newUser();
+  acceptPolicy(online, { enabled: true, lastTick: Date.now() - 20_000 });
+  const away = await newUser();
+  acceptPolicy(away, { enabled: true, lastTick: Date.now() - 61 * 60_000 });
+  const unknown = await newUser();
+
+  const { browser, page } = await session();
+  await enterConsole(page);
+  const nav = await page.getByText("Сообщество", { exact: true }).count();
+  check(nav === 0, "вокруг консоли нет вкладок приложения");
+
+  const row = async (user) => {
+    await page.getByPlaceholder("Имя, почта или логин").fill(user.email);
+    const card = page.locator("div.rounded-2xl:visible", { hasText: user.email }).last();
+    await card.waitFor({ timeout: 10_000 });
+    return card.innerText();
+  };
+  check((await row(online)).includes("в сети"), "активный 20 секунд назад — «в сети»");
+  check((await row(away)).includes("1 ч назад"), "активный час назад — «1 ч назад»");
+  check((await row(unknown)).includes("нет данных"), "без учёта активности — «нет данных»");
+
+  await page.getByPlaceholder("Имя, почта или логин").fill("");
+  await page.getByRole("button", { name: /^В сети · \d+/ }).tap();
+  const body = await page.locator("body").innerText();
+  check(body.includes(online.email) && !body.includes(away.email) && !body.includes(unknown.email), "фильтр «В сети» оставляет только тех, кто сейчас в приложении");
   await browser.close();
 });
 

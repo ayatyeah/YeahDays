@@ -8,20 +8,13 @@
  * прогресс и посты не появляются там, где их не должно быть.
  */
 
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import sharp from "sharp";
-import { check, newUser, openSection, ROOT, session, sql, test } from "../harness.mjs";
+import { check, newUser, openSection, session, sql, test } from "../harness.mjs";
 
-const POLICY = /POLICY_VERSION = "([^"]+)"/.exec(readFileSync(join(ROOT, "src/lib/personalization.ts"), "utf8"))[1];
 const tabs = (page) => page.getByRole("navigation", { name: "Разделы сообщества" });
 
-/** Принять действующую политику — как будто человек нажал «Принять всё». */
-const accept = (user) => {
-  const data = { revision: 1, version: POLICY, acceptedAt: new Date().toISOString(), enabled: false, since: null, ai: false, receipts: [{ version: POLICY, at: new Date().toISOString(), enabled: false, ai: false }], timezone: "Asia/Almaty", days: {}, seen: [], lastTick: 0 };
-  sql(`insert into "PersonalizationProfile"("userId", data, "updatedAt") values ('${user.id}', '${JSON.stringify(data)}'::jsonb, now() at time zone 'utc') on conflict ("userId") do update set data = excluded.data`);
-};
-const member = async () => { const user = await newUser(); accept(user); return user; };
+/** Участник сообщества: newUser по умолчанию уже принял действующую политику. */
+const member = () => newUser();
 const seedPost = (user, text) => {
   const id = `e2e-post-${user.id.slice(0, 8)}-${Math.random().toString(36).slice(2, 8)}`;
   sql(`insert into "SocialPost"(id, "userId", text, "createdAt") values ('${id}', '${user.id}', '${text}', now() at time zone 'utc')`);
@@ -110,7 +103,7 @@ test("Сообщество: без принятой политики ленту 
   const author = await member();
   const blockedAuthor = await member();
   const hiddenAuthor = await member();
-  const guest = await newUser();
+  const guest = await newUser({ policy: false });
   seedPost(author, "Пост от участника сообщества");
   seedPost(blockedAuthor, "Пост заблокированного человека");
   seedPost(hiddenAuthor, "Пост скрытого человека");
@@ -148,7 +141,7 @@ test("Сообщество: без принятой политики ленту 
 });
 
 test("Сообщество: принял политику одной кнопкой — можно публиковать; «Скрыть меня» убирает из ленты", async () => {
-  const user = await newUser();
+  const user = await newUser({ policy: false });
   const viewer = await member();
   const { browser, page } = await session({ user });
   await openSection(page, "/community");
@@ -206,7 +199,7 @@ test("Команды: открытую команду видно в поиске
 });
 
 test("Согласие: одно нажатие принимает политику, ИИ и учёт активности — челлендж больше не спрашивает", async () => {
-  const user = await newUser();
+  const user = await newUser({ policy: false });
   const { browser, page } = await session({ user });
   await openSection(page, "/challenge30");
   check((await page.getByText(/Разрешаю отправить цели/).count()) === 1, "до общего согласия челлендж спрашивает разрешение сам");

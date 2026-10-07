@@ -9,6 +9,24 @@ import CookieConsent from "@/components/CookieConsent";
 import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 import styles from "./landing.module.css";
 
+function Arrow({ up = false }: { up?: boolean }) {
+  return (
+    <svg
+      className={styles.arrowIcon}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d={up ? "M12 19V5m-6 6 6-6 6 6" : "M6 18 18 6M6 6h12v12"} />
+    </svg>
+  );
+}
+
 const actions = [
   {
     name: "Выйди на прогулку",
@@ -214,7 +232,10 @@ export default function Landing() {
             Войти
           </Link>
           <Link className={styles.navCta} href="/app">
-            Начать <span>↗</span>
+            Начать{" "}
+            <span>
+              <Arrow />
+            </span>
           </Link>
           <button
             className={styles.menuButton}
@@ -250,16 +271,28 @@ export default function Landing() {
             }}
           >
             <a href="#product" onClick={() => setMenu(false)}>
-              Возможности <span>↗</span>
+              Возможности{" "}
+              <span>
+                <Arrow />
+              </span>
             </a>
             <a href="#how" onClick={() => setMenu(false)}>
-              Как это работает <span>↗</span>
+              Как это работает{" "}
+              <span>
+                <Arrow />
+              </span>
             </a>
             <a href="#about" onClick={() => setMenu(false)}>
-              О проекте <span>↗</span>
+              О проекте{" "}
+              <span>
+                <Arrow />
+              </span>
             </a>
             <Link href="/login">
-              Войти в аккаунт <span>↗</span>
+              Войти в аккаунт{" "}
+              <span>
+                <Arrow />
+              </span>
             </Link>
           </nav>
         )}
@@ -272,7 +305,10 @@ export default function Landing() {
               ПЕРЕМЕНЫ.
             </div>
             <div className={styles.heroEdition}>
-              ЖИЗНЬ В РЕЖИМЕ <span>«МОГУ» ↗</span>
+              ЖИЗНЬ В РЕЖИМЕ{" "}
+              <span>
+                «МОГУ» <Arrow />
+              </span>
             </div>
             <h1>
               Не идеальнее.
@@ -288,10 +324,26 @@ export default function Landing() {
             </p>
             <div className={styles.heroButtons}>
               <Link href="/app" className={styles.primary}>
-                Начать свой путь <span>↗</span>
+                Начать свой путь{" "}
+                <span>
+                  <Arrow />
+                </span>
               </Link>
               <a href="#how" className={styles.secondary}>
-                <span className={styles.play}>▷</span> Как это работает
+                <span className={styles.play}>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path d="m9 6 9 6-9 6Z" />
+                  </svg>
+                </span>{" "}
+                Как это работает
               </a>
             </div>
             <p className={styles.free}>
@@ -361,7 +413,7 @@ export default function Landing() {
                   </button>
                   <button onClick={() => (done ? next() : setDone(true))}>
                     {done ? "Ещё одно действие" : "Попробовать в демо"}
-                    <span>{done ? "↗" : "+"}</span>
+                    <span>{done ? <Arrow /> : "+"}</span>
                   </button>
                 </div>
                 <span className={styles.demoStatus} aria-live="polite">
@@ -392,7 +444,9 @@ export default function Landing() {
             <div key={n}>
               <strong>
                 {n}
-                <span>↗</span>
+                <span>
+                  <Arrow />
+                </span>
               </strong>
               <p>{t}</p>
             </div>
@@ -419,7 +473,10 @@ export default function Landing() {
                 <p>{look.text}</p>
               </div>
               <Link href="/app" className={styles.darkCta}>
-                Найти своё действие <span>↗</span>
+                Найти своё действие{" "}
+                <span>
+                  <Arrow />
+                </span>
               </Link>
             </div>
             <div className={styles.lookStage}>
@@ -606,7 +663,10 @@ export default function Landing() {
               </h2>
             </div>
             <Link href="/app" className={styles.textLink}>
-              Заглянуть внутрь <span>↗</span>
+              Заглянуть внутрь{" "}
+              <span>
+                <Arrow />
+              </span>
             </Link>
           </div>
           <div className={styles.bento}>
@@ -623,7 +683,9 @@ export default function Landing() {
                   действие делает тебя чуть сильнее.
                 </p>
                 <div className={styles.statPills}>
-                  <span>↗ Сила</span>
+                  <span>
+                    <Arrow /> Сила
+                  </span>
                   <span>✳ Интеллект</span>
                   <span>♡ Здоровье</span>
                 </div>
@@ -637,7 +699,10 @@ export default function Landing() {
                   height={400}
                 />
                 <span className={styles.level}>
-                  УРОВЕНЬ 12 <b>↗</b>
+                  УРОВЕНЬ 12{" "}
+                  <b>
+                    <Arrow />
+                  </b>
                 </span>
               </div>
             </article>
@@ -711,7 +776,9 @@ export default function Landing() {
                 fill
                 sizes="180px"
               />
-              <figcaption>из жизни, не из стока ↗</figcaption>
+              <figcaption>
+                из жизни, не из стока <Arrow />
+              </figcaption>
             </figure>
           </div>
           <div className={styles.founderStory}>
@@ -752,7 +819,9 @@ export default function Landing() {
                   <strong>Аят Балмагамбетов</strong>
                   <small>Создатель YeahGrind</small>
                 </div>
-                <b>↗</b>
+                <b>
+                  <Arrow />
+                </b>
               </a>
             </div>
           </div>
@@ -777,7 +846,7 @@ export default function Landing() {
               href="mailto:balmagambet.ayat@gmail.com"
               className={styles.textLink}
             >
-              Задать свой вопрос ↗
+              Задать свой вопрос <Arrow />
             </a>
           </div>
           <div className={styles.questions}>
@@ -817,7 +886,10 @@ export default function Landing() {
             </h2>
             <p>Пять минут сегодня — уже начало чего-то большего.</p>
             <Link href="/app" className={styles.primary}>
-              Начать бесплатно <span>↗</span>
+              Начать бесплатно{" "}
+              <span>
+                <Arrow />
+              </span>
             </Link>
             <small>В твоём темпе. На твоих условиях.</small>
           </div>
@@ -839,7 +911,7 @@ export default function Landing() {
             Становись лучше. Оставайся собой.
           </p>
           <a href="#top" aria-label="Наверх">
-            ↑
+            <Arrow up />
           </a>
         </div>
         <div className={styles.footerBottom}>
@@ -849,7 +921,9 @@ export default function Landing() {
             <Link href="/privacy">Конфиденциальность</Link>
             <Link href="/terms">Условия</Link>
           </nav>
-          <span>Сделано в Казахстане ↗</span>
+          <span>
+            Сделано в Казахстане <Arrow />
+          </span>
         </div>
       </footer>
       <CookieConsent />

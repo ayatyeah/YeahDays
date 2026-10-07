@@ -95,3 +95,19 @@ test("PWA: без сессии раздел из кэша уводит на вх
   check(!left.some((p) => ["/app", "/today", "/calendar", "/progress", "/account", "/settings"].includes(p)), `после выхода копий разделов в кэше нет (осталось: ${left.join(", ") || "—"})`);
   await browser.close();
 });
+
+test("PWA: «Обновить» появляется, только когда пришла другая сборка посреди работы", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user });
+  await openSection(page, "/today");
+  await shellReady(page);
+  await page.waitForTimeout(4500); // «свежий запуск» прошёл — обновление уже не применится само
+  check((await page.getByText("Новая версия готова").count()) === 0, "без новой сборки плашки нет");
+
+  await page.locator("body").tap({ position: { x: 5, y: 5 } });
+  // другая сборка = другой ?v= у воркера; браузер ставит его в ожидание
+  await page.evaluate(() => navigator.serviceWorker.register("/sw.js?v=e2e-next-build"));
+  await page.getByText("Новая версия готова").waitFor({ timeout: 20_000 });
+  check(true, "новая сборка посреди работы — плашка «Обновить»");
+  await browser.close();
+});

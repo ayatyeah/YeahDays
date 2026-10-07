@@ -337,3 +337,57 @@ body:has(.yg-app) [role="dialog"] {
   }
 }
 .yg-app { min-height: calc(100dvh - var(--policy-banner-height, 0px)); }
+
+/* Installed mobile app: safe areas surround the controls, not their content. */
+@media (display-mode: standalone) and (max-width: 1023px) {
+  .yg-app .yg-content-frame {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+  }
+  .yg-app .yg-bottom-nav {
+    --nav-items-height: 60px;
+    --nav-items-inset: 0px;
+    padding: 0 10px max(8px, env(safe-area-inset-bottom, 0px));
+  }
+  .yg-app .section-pane {
+    padding-bottom: calc(76px + max(8px, env(safe-area-inset-bottom, 0px)));
+  }
+  .yg-app .yg-content-frame:not(.app-shell-frame) {
+    padding-bottom: calc(76px + max(8px, env(safe-area-inset-bottom, 0px)));
+  }
+  .yg-app .ios-title {
+    margin-top: 4px;
+    margin-bottom: 14px;
+  }
+}
+@media (display-mode: standalone) and (max-width: 700px) {
+  .yg-app .yg-guide {
+    min-height: 156px;
+    padding: 14px 112px 14px 16px;
+    margin-bottom: 14px;
+    border-radius: 22px;
+  }
+  .yg-app .yg-guide h2 {
+    font-size: 19px;
+    margin: 6px 0;
+    line-height: 1.2;
+  }
+  .yg-app .yg-guide p {
+    line-height: 1.5;
+  }
+  .yg-app .yg-guide button {
+    min-height: 44px;
+    padding-top: 4px;
+  }
+  .yg-app .yg-guide-mascot {
+    width: 104px;
+    height: 156px;
+    right: 4px;
+    bottom: 0;
+  }
+  .yg-app .yg-day-progress {
+    padding: 16px;
+  }
+  .yg-app .yg-day-progress > div:first-child {
+    margin-bottom: 14px;
+  }
+}

@@ -341,7 +341,7 @@ body:has(.yg-app) [role="dialog"] {
 /* Installed mobile app: safe areas surround the controls, not their content. */
 @media (display-mode: standalone) and (max-width: 1023px) {
   .yg-app .yg-content-frame {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 12px);
+    padding-top: max(12px, env(safe-area-inset-top, 0px));
   }
   .yg-app .yg-bottom-nav {
     --nav-items-height: 60px;

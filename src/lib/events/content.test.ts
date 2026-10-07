@@ -101,6 +101,28 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
       expect(new Set(event.glossary.map((t) => t.term)).size).toBe(event.glossary.length);
     }
   });
+
+  it("пробные экзамены: баллы сходятся, у каждого подпункта критерии и эталон, id не повторяются", () => {
+    const ids = new Set<string>();
+    for (const exam of event.mocks ?? []) {
+      expect(exam.questions.reduce((n, q) => n + q.points, 0), `${exam.id}: сумма баллов`).toBe(100);
+      for (const q of exam.questions) {
+        expect(q.tasks.reduce((n, t) => n + t.points, 0), `${q.id}: подпункты дают баллы задания`).toBe(q.points);
+        for (const t of q.tasks) {
+          expect(ids.has(t.id), `${t.id} повторяется`).toBe(false);
+          ids.add(t.id);
+          expect(t.prompt.trim().length, `${t.id}: формулировка`).toBeGreaterThan(10);
+          expect(t.rubric.length, `${t.id}: критерии`).toBeGreaterThanOrEqual(2);
+          // «2 pts — …», «0.5 pts — …»: сумма по критериям = баллы подпункта, иначе ИИ не из чего ставить оценку
+          const sum = t.rubric.reduce((n, r) => n + Number(/^(\d+(?:\.\d+)?)\s*pts?\b/.exec(r)?.[1] ?? NaN), 0);
+          expect(sum, `${t.id}: критерии в сумме`).toBe(t.points);
+          expect(t.answer.en.trim().length, `${t.id}: эталон EN`).toBeGreaterThan(10);
+          expect(t.answer.ru.trim().length, `${t.id}: разбор RU`).toBeGreaterThan(10);
+          expect(t.prompt + t.answer.en + t.answer.ru).not.toMatch(/\$\{|`/);
+        }
+      }
+    }
+  });
 });
 
 it("id вопросов и шагов не пересекаются между ивентами — прогресс одного не попадёт в другой", () => {

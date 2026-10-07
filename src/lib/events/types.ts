@@ -71,6 +71,52 @@ export interface StudyEvent {
   unlisted?: boolean;
   /** Что в карточках: термины (по умолчанию) или вопросы комиссии с ответами. */
   cards?: "terms" | "questions";
+  /**
+   * Пробные варианты экзамена с открытыми вопросами: ответ пишут в поле,
+   * проверяет ИИ по критериям (api/study-events/grade). В готовность не идут.
+   */
+  mocks?: MockExam[];
+}
+
+/**
+ * Подпункт задания пробного экзамена («a) [6 pts] …»).
+ *
+ * Критерии и эталон живут только здесь, в коде: сервер берёт их по id, а не
+ * из запроса, — человек не может подсунуть ИИ свои «критерии».
+ */
+export interface ExamTask {
+  /** Уникален в ивенте: «v3-q2-b». */
+  id: string;
+  /** Буква подпункта: «a», «b»… */
+  label: string;
+  points: number;
+  /** Формулировка на языке экзамена, в разметке конспекта (код — строками «= »). */
+  prompt: string;
+  /** За что дают баллы: по пункту на строку, с баллами («2 pts — …»); сумма = points. */
+  rubric: string[];
+  /** Эталонный ответ: en — как написал бы сильный студент, ru — разбор по-русски. */
+  answer: Text;
+}
+
+export interface ExamQuestion {
+  /** «v3-q2». */
+  id: string;
+  /** «Question 2 — Image Classification». */
+  title: string;
+  points: number;
+  /** Условие перед подпунктами (сценарий, таблица, код) в разметке конспекта; может быть пустым. */
+  context: string;
+  tasks: ExamTask[];
+}
+
+export interface MockExam {
+  /** «v3». */
+  id: string;
+  title: Text;
+  minutes: number;
+  /** Откуда вариант: «Sample from the instructor», «Based on a real variant», «New». */
+  source: Text;
+  questions: ExamQuestion[];
 }
 
 export interface Term {

@@ -24,6 +24,13 @@ import { block5 as pd5 } from "./projectDefense/block5";
 import { block6 as pd6 } from "./projectDefense/block6";
 import { block7 as pd7 } from "./projectDefense/block7";
 import { cheatSheet as pdCheatSheet, glossary as pdGlossary } from "./projectDefense/extras";
+import { lecture1 as cv1 } from "./computerVision/lecture1";
+import { lecture2 as cv2 } from "./computerVision/lecture2";
+import { lecture3 as cv3 } from "./computerVision/lecture3";
+import { lecture4 as cv4 } from "./computerVision/lecture4";
+import { lecture5 as cv5 } from "./computerVision/lecture5";
+import { drill as cvDrill } from "./computerVision/drill";
+import { cheatSheet as cvCheatSheet, glossary as cvGlossary } from "./computerVision/extras";
 
 /**
  * Все ивенты раздела «Учёба». Новый ивент — новый объект в этом списке и
@@ -63,6 +70,17 @@ export const EVENTS: StudyEvent[] = [
     counts: { part: 20, lecture: 20, final: 45 },
     glossary: ccGlossary,
     cheatSheet: ccCheatSheet,
+  },
+  {
+    id: "computer-vision-midterm",
+    title: "Подготовка к мидтерму",
+    course: "Computer Vision",
+    description:
+      "Пять лекций по частям — от обработки изображений и kNN до линейных классификаторов, backprop и CNN — и блок практики в формате мидтерма: баги в коде OpenCV, расчёт Wx + b и accuracy, выбор предобработки и своя CV-система, с разобранными ответами. После каждой части — квиз на 20 вопросов с разбором неверных вариантов.",
+    lectures: [cv1, cv2, cv3, cv4, cv5, cvDrill],
+    counts: { part: 20, lecture: 20, final: 45 },
+    glossary: cvGlossary,
+    cheatSheet: cvCheatSheet,
   },
   {
     // Ивент одной команды: защита своего проекта по их же отчёту. Только по

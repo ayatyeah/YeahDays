@@ -89,7 +89,13 @@ export default function MascotGuide({ section }: { section?: string }) {
     href: "/today",
     action: "К плану дня",
   };
-  if (!hydrated || !onboarded || key === "today" || key === "progress")
+  if (
+    !hydrated ||
+    !onboarded ||
+    key === "today" ||
+    key === "progress" ||
+    key === "learn"
+  )
     return null;
   return (
     <>

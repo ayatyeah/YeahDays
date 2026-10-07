@@ -97,8 +97,91 @@ function Mascot({
   );
 }
 
+const LOOKS = [
+  {
+    id: "streetwear",
+    label: "Город",
+    title: "Выйти за привычный маршрут.",
+    text: "Новые места, новые идеи. Иногда достаточно просто выйти из дома.",
+    color: "#c8b4ed",
+  },
+  {
+    id: "campus",
+    label: "Учёба",
+    title: "Разобраться. А не зазубрить.",
+    text: "Одна тема, несколько страниц и чуть больше уверенности в себе.",
+    color: "#b5d4bb",
+  },
+  {
+    id: "sport-wave",
+    label: "Спорт",
+    title: "Начать со своего темпа.",
+    text: "Пять минут движения сегодня лучше идеальной тренировки когда-нибудь.",
+    color: "#d3f693",
+  },
+  {
+    id: "sport-warmup",
+    label: "Разминка",
+    title: "Расправить плечи. Выдохнуть.",
+    text: "Небольшая пауза для тела — и можно продолжать с новыми силами.",
+    color: "#edc4aa",
+  },
+  {
+    id: "hiking",
+    label: "Природа",
+    title: "Чуть дальше от уведомлений.",
+    text: "Свежий воздух и время для себя тоже заслуживают места в планах.",
+    color: "#eab786",
+  },
+  {
+    id: "smart-casual",
+    label: "Планы",
+    title: "Большие идеи. Маленькие шаги.",
+    text: "Разложи то, что важно, на действия, которые можно сделать сегодня.",
+    color: "#dcc7ab",
+  },
+  {
+    id: "black-tee",
+    label: "Каждый день",
+    title: "Просто быть собой.",
+    text: "Без гонки за идеалом. У каждого дня может быть свой ритм.",
+    color: "#bfc8d8",
+  },
+  {
+    id: "sport-win",
+    label: "Победа",
+    title: "Получилось. Это считается.",
+    text: "Замечай сделанное. Даже самый маленький шаг меняет твою историю.",
+    color: "#d3f693",
+  },
+];
+
+function Outfit({
+  name,
+  className = "",
+  priority = false,
+}: {
+  name: string;
+  className?: string;
+  priority?: boolean;
+}) {
+  return (
+    <Image
+      src={`/landing/looks/${name}.webp`}
+      alt=""
+      width={360}
+      height={540}
+      sizes="(max-width: 700px) 240px, 360px"
+      className={className}
+      priority={priority}
+    />
+  );
+}
+
 export default function Landing() {
   const [menu, setMenu] = useState(false);
+  const [lookIndex, setLookIndex] = useState(0);
+  const look = LOOKS[lookIndex];
   const [actionIndex, setActionIndex] = useState(0);
   const [done, setDone] = useState(false);
   const action = actions[actionIndex];
@@ -188,12 +271,13 @@ export default function Landing() {
               <span className={styles.liveDot} /> МАЛЕНЬКИЕ ШАГИ. БОЛЬШИЕ
               ПЕРЕМЕНЫ.
             </div>
+            <div className={styles.heroEdition}>
+              ЖИЗНЬ В РЕЖИМЕ <span>«МОГУ» ↗</span>
+            </div>
             <h1>
-              Твой день.
+              Не идеальнее.
               <br />
-              Твой темп.
-              <br />
-              <span>Твой прогресс.</span>
+              <span>Живее.</span>
             </h1>
             <p className={styles.heroText}>
               Не нужно менять жизнь за понедельник.
@@ -215,6 +299,11 @@ export default function Landing() {
             </p>
           </div>
           <div className={styles.heroVisual}>
+            <span className={styles.heroWord} aria-hidden>
+              YEAH!
+            </span>
+            <Outfit name="streetwear" className={styles.heroOutfit} priority />
+            <span className={styles.heroSticker}>100% ТВОЙ ТЕМП</span>
             <div className={styles.orbit} />
             <div className={styles.visualLabel}>
               МЕНЬШЕ ПЛАНИРУЙ. БОЛЬШЕ ЖИВИ.
@@ -309,6 +398,64 @@ export default function Landing() {
             </div>
           ))}
         </section>
+        <section
+          className={styles.wardrobe}
+          aria-labelledby="wardrobe-heading"
+          style={{ "--look-color": look.color } as React.CSSProperties}
+        >
+          <div className={styles.wardrobeTop}>
+            <span>ОДИН ТЫ. МНОГО ВОЗМОЖНОСТЕЙ.</span>
+            <span>01 — 08 / ВЫБЕРИ НАСТРОЕНИЕ</span>
+          </div>
+          <div className={styles.wardrobeBody}>
+            <div className={styles.wardrobeCopy}>
+              <h2 id="wardrobe-heading">
+                Сегодня ты
+                <br />
+                можешь <em>по-разному.</em>
+              </h2>
+              <div className={styles.lookStory} aria-live="polite">
+                <h3>{look.title}</h3>
+                <p>{look.text}</p>
+              </div>
+              <Link href="/app" className={styles.darkCta}>
+                Найти своё действие <span>↗</span>
+              </Link>
+            </div>
+            <div className={styles.lookStage}>
+              <span className={styles.lookNumber} aria-hidden>
+                {String(lookIndex + 1).padStart(2, "0")}
+              </span>
+              <Outfit
+                key={look.id}
+                name={look.id}
+                className={styles.lookModel}
+              />
+              <span className={styles.lookStamp}>
+                SAME YOU.
+                <br />
+                NEW ENERGY.
+              </span>
+            </div>
+          </div>
+          <div
+            className={styles.lookPicker}
+            role="group"
+            aria-label="Образы маскота"
+          >
+            {LOOKS.map((item, i) => (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={i === lookIndex}
+                onClick={() => setLookIndex(i)}
+              >
+                <Outfit name={item.id} />
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </div>
+        </section>
         <section id="how" className={styles.section}>
           <div className={styles.sectionHeading}>
             <div>
@@ -359,6 +506,16 @@ export default function Landing() {
                 </div>
                 <h3>{s.title}</h3>
                 <p>{s.text}</p>
+                <Outfit
+                  name={
+                    s.n === "01"
+                      ? "black-tee"
+                      : s.n === "02"
+                        ? "campus"
+                        : "sport-win"
+                  }
+                  className={styles.stepOutfit}
+                />
               </article>
             ))}
           </div>
@@ -412,6 +569,16 @@ export default function Landing() {
                   alt={item.alt}
                   fill
                   sizes="(max-width: 700px) 100vw, 550px"
+                />
+                <Outfit
+                  name={
+                    item.image === "walk"
+                      ? "hiking"
+                      : item.image === "read"
+                        ? "campus"
+                        : "smart-casual"
+                  }
+                  className={styles.lifeOutfit}
                 />
                 <span className={styles.lifeTag}>{item.tag}</span>
                 <div className={styles.lifeCaption}>
@@ -599,7 +766,7 @@ export default function Landing() {
               <span>Простые ответы.</span>
             </h2>
             <div className={styles.faqMascot}>
-              <Mascot pose="read" />
+              <Outfit name="smart-casual" />
               <span>
                 Спрашивай.
                 <br />
@@ -631,7 +798,7 @@ export default function Landing() {
               Я тоже начинал с одного шага.
             </span>
             <Image
-              src="/landing/mascot-win.webp"
+              src="/landing/looks/sport-win.webp"
               alt="Маскот YeahGrind радуется маленькой победе и показывает большой палец"
               width={360}
               height={540}

@@ -2019,5 +2019,682 @@
     padding: 5px 8px;
   }
 }
-.lifeCard { padding-top: 0; }
-.lifeCard img { position: relative !important; width: 100% !important; }
+.lifeCard {
+  padding-top: 0;
+}
+.lifeCard img {
+  position: relative !important;
+  width: 100% !important;
+}
+
+/* Editorial art direction: large type, changing rhythm, illustrated wardrobe. */
+.landing {
+  background: #121310;
+}
+.header {
+  border-radius: 50px;
+  background: #20231ce8;
+}
+.hero {
+  grid-template-columns: 1fr 1fr;
+  min-height: 720px;
+  gap: 0;
+  padding-top: 48px;
+}
+.heroEdition {
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin: 35px 0 18px;
+  color: #b9beae;
+}
+.heroEdition span {
+  display: inline-block;
+  background: #c4afe7;
+  color: #2b2433;
+  padding: 5px 8px;
+  transform: rotate(-4deg);
+  margin-left: 4px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+.hero h1 {
+  font-size: clamp(60px, 6.1vw, 88px);
+  letter-spacing: -5px;
+  line-height: 1.02;
+  margin: 15px 0 26px;
+}
+.hero h1 > span {
+  font-size: 1.25em;
+  font-style: italic;
+  font-weight: 500;
+}
+.heroVisual {
+  min-height: 570px;
+  transform: none;
+}
+.heroWord {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 122px;
+  font-weight: 900;
+  letter-spacing: -10px;
+  color: #c2ade415;
+  transform: rotate(-9deg);
+}
+.heroOutfit {
+  position: absolute;
+  height: 485px;
+  width: 323px;
+  object-fit: contain;
+  left: -25px;
+  bottom: 15px;
+  z-index: 2;
+  filter: drop-shadow(0 25px 22px #0004);
+}
+.heroSticker {
+  position: absolute;
+  z-index: 4;
+  background: #c5b0e8;
+  color: #2e253b;
+  border-radius: 50%;
+  width: 86px;
+  height: 86px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 16px;
+  left: 4px;
+  top: 118px;
+  transform: rotate(-15deg);
+}
+.heroVisual .cardStack {
+  width: 275px;
+  position: absolute;
+  right: -7px;
+  bottom: 66px;
+  transform: rotate(7deg);
+}
+.heroVisual .actionCard {
+  padding: 19px;
+  background: linear-gradient(140deg, #353f2b, #252b20);
+}
+.heroVisual .actionArt {
+  height: 100px;
+}
+.heroVisual .cardMascot {
+  height: 110px;
+  width: 74px;
+}
+.heroVisual .actionCard h2 {
+  font-size: 21px;
+}
+.heroVisual .streak {
+  right: 8px;
+  top: 42px;
+  transform: rotate(8deg);
+}
+.heroVisual .progressFloat {
+  bottom: 8px;
+  left: 160px;
+  white-space: nowrap;
+}
+.numbers {
+  border: 0;
+  background: #20241a;
+  border-radius: 22px;
+  padding: 25px 30px;
+}
+.numbers strong {
+  color: #d3f693;
+}
+.wardrobe {
+  margin-top: 85px;
+  padding: 30px 38px;
+  background: var(--look-color);
+  border-radius: 34px;
+  color: #23271e;
+  transition: background-color 0.35s ease;
+  overflow: hidden;
+}
+.wardrobeTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 9px;
+  font-weight: 650;
+  letter-spacing: 1.7px;
+  border-bottom: 1px solid #242a2425;
+  padding-bottom: 20px;
+}
+.wardrobeBody {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  min-height: 450px;
+}
+.wardrobeCopy h2 {
+  font-size: 52px;
+  line-height: 1.07;
+  letter-spacing: -2.7px;
+  font-weight: 550;
+}
+.wardrobeCopy em {
+  font-weight: 450;
+}
+.lookStory {
+  min-height: 110px;
+  margin-top: 25px;
+  max-width: 320px;
+}
+.lookStory h3 {
+  font-size: 17px;
+}
+.lookStory p {
+  color: #424a3d;
+  font-size: 13px;
+  line-height: 1.8;
+  margin-top: 10px;
+}
+.darkCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 35px;
+  padding: 15px 20px;
+  border-radius: 13px;
+  color: #f3f5eb;
+  background: #23281e;
+  font-size: 12px;
+  margin-top: 16px;
+}
+.lookStage {
+  position: relative;
+  height: 445px;
+  display: grid;
+  place-items: center;
+}
+.lookNumber {
+  position: absolute;
+  font-size: 280px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -25px;
+  color: #fff4;
+}
+.lookModel {
+  width: 270px;
+  height: 405px;
+  object-fit: contain;
+  z-index: 1;
+  animation: lookAppear 0.3s ease both;
+}
+@keyframes lookAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px) rotate(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.lookStamp {
+  position: absolute;
+  bottom: 45px;
+  right: 0;
+  border: 1px solid #25301f;
+  border-radius: 50%;
+  width: 94px;
+  height: 94px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.5;
+  transform: rotate(12deg);
+}
+.lookPicker {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+.lookPicker button {
+  min-width: 0;
+  background: #ffffff25;
+  border: 1px solid #252b201c;
+  border-radius: 15px;
+  padding: 8px 2px 11px;
+  color: #36402d;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.lookPicker button[aria-pressed="true"] {
+  background: #fff9;
+  border-color: #323f28;
+  transform: translateY(-4px);
+}
+.lookPicker button img {
+  width: 62px;
+  height: 93px;
+  object-fit: contain;
+  margin: auto;
+}
+.lookPicker button span {
+  font-size: 9px;
+  font-weight: 600;
+  display: block;
+  margin-top: 7px;
+}
+.landing .lookPicker button:focus-visible {
+  outline-color: #22291c;
+}
+.steps {
+  gap: 20px;
+  align-items: start;
+  padding-bottom: 25px;
+}
+.steps article {
+  position: relative;
+  min-height: 290px;
+  padding-right: 112px;
+  overflow: hidden;
+}
+.steps article:nth-child(2) {
+  margin-top: 30px;
+  background: #24202c;
+  border-color: #40364e;
+}
+.steps article:nth-child(3) {
+  margin-top: 60px;
+  background: #29251d;
+  border-color: #473f30;
+}
+.stepTop {
+  margin-right: -88px;
+}
+.steps h3 {
+  line-height: 1.35;
+}
+.stepOutfit {
+  position: absolute;
+  right: -16px;
+  bottom: 0;
+  width: 143px;
+  height: 215px;
+  object-fit: contain;
+}
+.steps p {
+  font-size: 12px;
+}
+.lifeGrid {
+  grid-template-columns: 1.15fr 1fr;
+  gap: 24px;
+}
+.lifeCard {
+  overflow: visible;
+  isolation: auto;
+}
+.lifeCard:first-child {
+  grid-row: span 2;
+}
+.lifeCard:last-child {
+  grid-column: 2;
+  width: 100%;
+}
+.lifeCard > img:not(.lifeOutfit) {
+  border-radius: 24px 24px 0 0;
+}
+.lifeCard:first-child > img:not(.lifeOutfit) {
+  aspect-ratio: 4/5;
+  object-fit: cover;
+}
+.lifeCard .lifeOutfit {
+  position: absolute !important;
+  width: 115px !important;
+  height: 172px !important;
+  aspect-ratio: auto;
+  right: -6px !important;
+  left: auto !important;
+  bottom: 10px !important;
+  top: auto !important;
+  z-index: 2;
+  filter: drop-shadow(0 8px 10px #0004);
+}
+.lifeCaption {
+  padding-right: 112px;
+  min-height: 110px;
+}
+.lifeCaption h3,
+.lifeCard:first-child h3 {
+  font-size: 20px;
+}
+.lifeCard:first-child .lifeOutfit {
+  width: 170px !important;
+  height: 255px !important;
+}
+.lifeCard:first-child .lifeCaption {
+  padding-right: 150px;
+  min-height: 155px;
+}
+.about {
+  border: 0;
+  background: #1d2019;
+  border-radius: 30px;
+  padding: 48px 36px;
+}
+.mascotCta {
+  background: #cbb9ed;
+  color: #25202f;
+  border: 0;
+}
+.mascotCta h2 span {
+  color: #594274;
+}
+.mascotCta p,
+.mascotCta small,
+.mascotCta .eyebrow,
+.mascotCaption {
+  color: #655774;
+}
+.mascotCta .primary {
+  background: #26202e;
+  color: #f3edf9;
+}
+.mascotBubble {
+  background: #f4edf9;
+  border-color: #a78dbf;
+  color: #594274;
+}
+@media (max-width: 1000px) {
+  .hero h1 {
+    font-size: 60px;
+    letter-spacing: -3px;
+  }
+  .heroOutfit {
+    left: -25px;
+    width: 260px;
+    height: 390px;
+    bottom: 70px;
+  }
+  .heroVisual .cardStack {
+    width: 235px;
+    right: -5px;
+  }
+  .heroVisual .actionCard h2 {
+    font-size: 18px;
+  }
+  .heroVisual .progressFloat {
+    left: 65px;
+  }
+  .heroSticker {
+    left: -10px;
+    top: 85px;
+  }
+  .wardrobeCopy h2 {
+    font-size: 43px;
+  }
+  .steps article {
+    padding: 20px 90px 20px 20px;
+  }
+  .stepOutfit {
+    width: 120px;
+    height: 180px;
+    right: -20px;
+  }
+  .steps h3 {
+    font-size: 16px;
+  }
+  .stepTop {
+    margin-right: -65px;
+  }
+}
+@media (max-width: 700px) {
+  .header {
+    border-radius: 22px;
+  }
+  .hero {
+    padding-top: 39px;
+    min-height: 0;
+    gap: 0;
+  }
+  .heroEdition {
+    margin-top: 23px;
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .hero h1 {
+    font-size: clamp(47px, 12vw, 72px);
+    letter-spacing: -2.8px;
+    margin-top: 20px;
+  }
+  .hero h1 > span {
+    font-size: 1.4em;
+  }
+  .heroVisual {
+    min-height: 490px;
+    padding-bottom: 0;
+    max-width: 400px;
+    transform: none;
+    margin: 15px auto 0;
+  }
+  .heroWord {
+    font-size: 95px;
+    letter-spacing: -7px;
+    left: 5px;
+  }
+  .heroOutfit {
+    width: 220px;
+    height: 330px;
+    left: -32px;
+    bottom: 67px;
+  }
+  .heroVisual .cardStack {
+    width: 218px;
+    bottom: 57px;
+    right: -2px;
+  }
+  .heroVisual .actionCard {
+    padding: 15px;
+  }
+  .heroVisual .actionCard h2 {
+    font-size: 17px;
+    letter-spacing: -0.6px;
+  }
+  .heroVisual .actionCard > p {
+    font-size: 10px;
+  }
+  .heroVisual .cardTop {
+    font-size: 6px;
+  }
+  .heroVisual .actionArt {
+    height: 75px;
+  }
+  .heroVisual .cardMascot {
+    height: 85px;
+    width: 57px;
+  }
+  .heroVisual .streak {
+    top: 39px;
+    right: 0;
+  }
+  .heroVisual .progressFloat {
+    bottom: 7px;
+    left: 30px;
+  }
+  .heroSticker {
+    width: 64px;
+    height: 64px;
+    font-size: 8px;
+    left: 0;
+    top: 103px;
+    padding: 10px;
+  }
+  .heroVisual .visualLabel {
+    display: none;
+  }
+  .numbers {
+    padding: 0 20px;
+    border-radius: 20px;
+  }
+  .wardrobe {
+    margin-top: 55px;
+    padding: 23px 20px;
+    border-radius: 27px;
+  }
+  .wardrobeTop {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .wardrobeTop > span:last-child {
+    display: none;
+  }
+  .wardrobeBody {
+    grid-template-columns: 1fr;
+    padding-top: 25px;
+  }
+  .wardrobeCopy h2 {
+    font-size: 37px;
+    letter-spacing: -1.8px;
+  }
+  .lookStory {
+    min-height: 105px;
+    margin-top: 20px;
+  }
+  .lookStory h3 {
+    font-size: 15px;
+  }
+  .lookStory p {
+    font-size: 12px;
+  }
+  .darkCta {
+    margin-top: 8px;
+  }
+  .lookStage {
+    height: 315px;
+  }
+  .lookModel {
+    height: 305px;
+    width: 204px;
+  }
+  .lookNumber {
+    font-size: 220px;
+  }
+  .lookStamp {
+    width: 71px;
+    height: 71px;
+    font-size: 8px;
+    right: -5px;
+    bottom: 30px;
+  }
+  .lookPicker {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+  .lookPicker button img {
+    width: 47px;
+    height: 70px;
+  }
+  .lookPicker button span {
+    font-size: 8px;
+  }
+  .steps {
+    gap: 14px;
+    padding-bottom: 0;
+  }
+  .steps article {
+    min-height: 230px;
+    padding: 23px 125px 23px 23px;
+  }
+  .steps article:nth-child(2),
+  .steps article:nth-child(3) {
+    margin-top: 0;
+  }
+  .steps h3 {
+    font-size: 18px;
+  }
+  .stepOutfit {
+    width: 147px;
+    height: 220px;
+    right: -12px;
+  }
+  .stepTop {
+    margin-right: -100px;
+  }
+  .lifeGrid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .lifeCard:first-child {
+    grid-row: auto;
+  }
+  .lifeCard:last-child {
+    grid-column: auto;
+  }
+  .lifeCard:first-child > img:not(.lifeOutfit) {
+    aspect-ratio: 3/2;
+  }
+  .lifeCard:first-child .lifeOutfit,
+  .lifeCard .lifeOutfit {
+    width: 115px !important;
+    height: 172px !important;
+  }
+  .lifeCaption,
+  .lifeCard:first-child .lifeCaption {
+    padding: 20px 105px 20px 20px;
+    min-height: 135px;
+  }
+  .lifeCaption h3,
+  .lifeCard:first-child h3 {
+    font-size: 19px;
+  }
+  .about {
+    padding: 30px 20px;
+    border-radius: 24px;
+  }
+  .founderPhotos {
+    padding-right: 24px;
+  }
+  .founderSnapshot {
+    right: -8px;
+  }
+}
+@media (max-width: 360px) {
+  .heroVisual .cardStack {
+    width: 192px;
+    right: -1px;
+  }
+  .heroOutfit {
+    left: -39px;
+    width: 200px;
+    height: 300px;
+    bottom: 91px;
+  }
+  .heroVisual .progressFloat {
+    left: 5px;
+  }
+  .heroVisual .actionCard h2 {
+    font-size: 15px;
+  }
+  .wardrobeCopy h2 {
+    font-size: 31px;
+  }
+  .steps article {
+    padding-right: 105px;
+  }
+  .steps h3 {
+    font-size: 16px;
+  }
+  .stepOutfit {
+    right: -23px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lookModel {
+    animation: none;
+  }
+}
+.heroOutfit,.heroSticker,.heroWord,.stepOutfit,.lifeOutfit { pointer-events: none; }
+.heroVisual .cardStack { z-index: 3; }

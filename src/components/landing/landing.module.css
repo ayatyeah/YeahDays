@@ -2696,5 +2696,35 @@
     animation: none;
   }
 }
-.heroOutfit,.heroSticker,.heroWord,.stepOutfit,.lifeOutfit { pointer-events: none; }
-.heroVisual .cardStack { z-index: 3; }
+.heroOutfit,
+.heroSticker,
+.heroWord,
+.stepOutfit,
+.lifeOutfit {
+  pointer-events: none;
+}
+.heroVisual .cardStack {
+  z-index: 3;
+}
+
+/* Vector icons stay consistent across desktop and iOS font rendering. */
+.arrowIcon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+}
+.secondary {
+  min-height: 44px;
+  line-height: 1.25;
+}
+.play {
+  flex-shrink: 0;
+  line-height: 1;
+}
+.play svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}

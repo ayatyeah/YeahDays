@@ -33,7 +33,7 @@ test("Практикум CV: тренажёр проверяет ответ и �
   check(["Пробные варианты · 8", "Тренажёр расчётов", "Найди баг", "Песочница OpenCV", "✦ ИИ-помощник"].every((l) => labels.includes(l)), "под заголовком ивента — быстрый доступ к вариантам, практикуму и помощнику");
   await page.getByText("Практикум").first().scrollIntoViewIfNeeded();
 
-  await page.getByRole("button", { name: "Тренажёр расчётов" }).tap();
+  await quick.getByRole("button", { name: "Тренажёр расчётов" }).tap();
   await page.getByRole("button", { name: "Проверить" }).waitFor({ timeout: 10_000 });
   const prompt = await page.locator("[lang=en]").first().innerText();
   for (const box of await page.getByRole("textbox").all()) await box.fill("-12345");
@@ -67,7 +67,7 @@ test("Песочница OpenCV: картинка обрабатывается, 
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openEvent(page);
-  await page.getByRole("button", { name: "Песочница OpenCV" }).tap();
+  await page.getByRole("navigation", { name: "Быстрый доступ" }).getByRole("button", { name: "Песочница OpenCV" }).tap();
   const canvas = page.getByLabel("Результат обработки");
   await canvas.waitFor({ timeout: 10_000 });
   await page.waitForFunction(() => (document.querySelector("canvas")?.width ?? 0) > 50, null, { timeout: 10_000 });

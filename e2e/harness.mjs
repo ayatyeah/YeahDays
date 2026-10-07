@@ -170,7 +170,7 @@ const engines = { webkit, chromium };
  * `waitUntil: "networkidle"` перед вводом не прихоть: до гидрации поля
  * живут своей жизнью, и тест, который печатает слишком рано, врёт.
  */
-export async function session({ user, engine = "webkit", permissions, initScript } = {}) {
+export async function session({ user, engine = "webkit", permissions, initScript, serviceWorkers = "allow" } = {}) {
   const browser = await engines[engine].launch();
   const context = await browser.newContext({
     ...devices["iPhone 13"],
@@ -178,6 +178,9 @@ export async function session({ user, engine = "webkit", permissions, initScript
     locale: "ru-RU",
     timezoneId: "Asia/Almaty",
     permissions,
+    // "block" — для тестов, которые подменяют ответы API через page.route:
+    // запросы страницы под service worker'ом до подмены не доходят.
+    serviceWorkers,
   });
   if (initScript) await context.addInitScript(initScript);
   const page = await context.newPage();

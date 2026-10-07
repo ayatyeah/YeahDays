@@ -27,6 +27,22 @@ function Arrow({ up = false }: { up?: boolean }) {
   );
 }
 
+function Spark() {
+  return (
+    <svg
+      className={styles.arrowIcon}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M12 1v22M1 12h22M4.2 4.2l15.6 15.6M4.2 19.8 19.8 4.2" />
+    </svg>
+  );
+}
+
 const actions = [
   {
     name: "Выйди на прогулку",
@@ -391,7 +407,9 @@ export default function Landing() {
                     }
                     priority
                   />
-                  <span className={styles.sparkOne}>✳</span>
+                  <span className={styles.sparkOne}>
+                    <Spark />
+                  </span>
                   <span className={styles.sparkTwo}>+</span>
                 </div>
                 <span className={styles.category}>{action.category}</span>
@@ -686,7 +704,9 @@ export default function Landing() {
                   <span>
                     <Arrow /> Сила
                   </span>
-                  <span>✳ Интеллект</span>
+                  <span>
+                    <Spark /> Интеллект
+                  </span>
                   <span>♡ Здоровье</span>
                 </div>
               </div>
@@ -894,7 +914,7 @@ export default function Landing() {
             <small>В твоём темпе. На твоих условиях.</small>
           </div>
           <span className={styles.finalStar} aria-hidden>
-            ✳
+            <Spark />
           </span>
         </section>
       </main>

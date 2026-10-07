@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import Button from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
@@ -18,7 +17,6 @@ const inputClass =
  * попыток), а обычная гигиена: незачем показывать дверь всем подряд.
  */
 export default function AdminLoginPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -42,7 +40,10 @@ export default function AdminLoginPage() {
         setBusy(false);
         return;
       }
-      router.replace("/admin");
+      // Полная загрузка, а не router.replace: в кэше роутера лежит прежний
+      // ответ «/admin → на вход», и клиентский переход показывал форму входа
+      // снова — уже под адресом /admin.
+      window.location.replace("/admin");
     } catch {
       setError("Нет связи");
       setBusy(false);

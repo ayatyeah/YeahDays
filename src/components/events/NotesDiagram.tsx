@@ -553,6 +553,165 @@ const DIAGRAMS: Record<string, (t: L) => ReactNode> = {
       <text x={354} y={122} textAnchor="end" fontSize={8.5} fill="currentColor" opacity={0.8}>southbound (OpenFlow)</text>
     </Svg>
   ),
+
+  /* ── Защита проекта YeahTrack (Project Management) — цифры из отчёта команды ── */
+  "pm-process-groups": (t) => (
+    <Svg h={176} label={t("Пять групп процессов и где проект на мидтерме", "Five process groups and where the project is at the midterm")}>
+      <rect x={176} y={6} width={92} height={18} rx={9} fill={A} opacity={0.25} stroke={A} />
+      <text x={222} y={19} textAnchor="middle" fontSize={9.5} fontWeight={700} fill="currentColor">{t("мы здесь · 5 окт", "we are here · 5 Oct")}</text>
+      <Box x={4} y={34} w={80} h={42} label="Initiation" sub={t("готово", "done")} stroke={G} size={10.5} />
+      <Box x={92} y={34} w={80} h={42} label="Planning" sub="M1 · 5 Sep" stroke={G} size={10.5} />
+      <Box x={180} y={34} w={84} h={42} label="Execution" sub={t("сейчас", "now")} stroke={A} fill={F} size={10.5} />
+      <Box x={272} y={34} w={84} h={42} label="Closing" sub="4 Nov" stroke={B} size={10.5} />
+      <Arrow x1={84} y1={55} x2={92} y2={55} /><Arrow x1={172} y1={55} x2={180} y2={55} /><Arrow x1={264} y1={55} x2={272} y2={55} />
+      <Box x={80} y={100} w={200} h={40} label="Monitoring & controlling" sub={t("сверки, изменения, риски, часы", "check-ins, change log, risks, hours")} stroke={A} size={10.5} />
+      <Arrow x1={222} y1={76} x2={222} y2={100} color={A} /><Arrow x1={140} y1={100} x2={140} y2={76} color={A} dashed />
+      <text x={180} y={162} textAnchor="middle" fontSize={9} fill="currentColor" opacity={0.75}>{t("на мидтерме проект одновременно выполняется и контролируется", "at the midterm the project is executed and controlled at the same time")}</text>
+    </Svg>
+  ),
+  "pm-change-flow": (t) => (
+    <Svg h={190} label={t("Семь шагов запроса на изменение", "The seven steps of a change request")}>
+      {[["1 Submit", t("issue в GitHub", "GitHub issue")], ["2 Assess", t("влияние · 2 дня", "impact · 2 days")], ["3 Classify", "minor / major"], ["4 Decide", t("кто решает ↓", "who decides ↓")]].map(([l, sub], i) => (
+        <Box key={l} x={4 + i * 89} y={10} w={82} h={40} label={l} sub={sub} stroke={i === 3 ? V : B} size={10.5} />
+      ))}
+      {[0, 1, 2].map((i) => <Arrow key={i} x1={86 + i * 89} y1={30} x2={93 + i * 89} y2={30} />)}
+      <Arrow x1={301} y1={50} x2={301} y2={76} />
+      {[["5 Baselines", t("обновить scope, WBS…", "update scope, WBS…")], ["6 Implement", t("ветка + PR", "branch + PR")], ["7 Close & log", t("Telegram + журнал", "Telegram + log")]].map(([l, sub], i) => (
+        <Box key={l} x={246 - i * 118} y={76} w={110} h={40} label={l} sub={sub} stroke={i === 2 ? G : B} size={10.5} />
+      ))}
+      <Arrow x1={246} y1={96} x2={238} y2={96} /><Arrow x1={128} y1={96} x2={120} y2={96} />
+      <text x={8} y={138} fontSize={9.5} fill="currentColor"><tspan fontWeight={700} fill={G}>minor</tspan>{t(" — меньше 4 ч, вехи и цели на месте:", " — under 4 h, no milestone or objective moves:")}</text>
+      <text x={8} y={151} fontSize={9.5} fill="currentColor">{t("владелец области + Ayat, в тот же день", "area owner + Ayat, the same day")}</text>
+      <text x={8} y={167} fontSize={9.5} fill="currentColor"><tspan fontWeight={700} fill={R}>major</tspan>{t(" — веха, цель, функция, покупка или 4+ ч: все четверо", " — milestone, objective, feature, purchase or 4+ h: all four")}</text>
+      <text x={8} y={182} fontSize={9} fill="currentColor" opacity={0.7}>{t("нет согласия — решает Ayat как владелец дизайна системы", "no agreement — Ayat decides as the owner of the system design")}</text>
+    </Svg>
+  ),
+  "pm-network": (t) => {
+    const path: [string, string][] = [["1.1", "1–3 Sep"], ["1.2", "3–5 Sep"], ["2.1", "5–12 Sep"], ["3.1", "12–19 Sep"], ["3.2", t("19 сен–10 окт", "19 Sep–10 Oct")], ["3.3", "3–20 Oct"], ["4.3", t("20 окт–1 ноя", "20 Oct–1 Nov")], ["4.4", "1–4 Nov"]];
+    const x = (i: number) => 4 + i * 44.5;
+    return (
+      <Svg h={200} label={t("Сетевой график и критический путь YeahTrack", "YeahTrack network diagram and critical path")}>
+        {path.map(([code, dates], i) => (
+          <g key={code}>
+            <Wrap x={x(i) + 19} y={14} text={dates} max={7} size={7.5} gap={9} />
+            <rect x={x(i)} y={46} width={38} height={30} rx={7} fill={F} stroke={R} strokeWidth={2} />
+            <text x={x(i) + 19} y={65} textAnchor="middle" fontSize={11} fontWeight={700} fill="currentColor">{code}</text>
+            {i > 0 && <Arrow x1={x(i) - 6.5} y1={61} x2={x(i)} y2={61} color={R} />}
+          </g>
+        ))}
+        <Box x={100} y={112} w={58} h={30} label="3.4" sub="4–5 Oct" stroke={S} size={10} />
+        <Box x={170} y={112} w={58} h={30} label="4.1" sub="6–15 Oct" stroke={S} size={10} />
+        <Box x={240} y={112} w={58} h={30} label="4.2" sub="13–18 Oct" stroke={S} size={10} />
+        <Arrow x1={210} y1={112} x2={x(6) + 12} y2={76} color={S} dashed />
+        <Arrow x1={276} y1={112} x2={x(6) + 22} y2={76} color={S} dashed />
+        <text x={129} y={156} textAnchor="middle" fontSize={8.5} fill={S}>{t("вне пути", "off the path")}</text>
+        <text x={269} y={156} textAnchor="middle" fontSize={8.5} fill={S}>{t("резерв ≈ 2 дня", "float ≈ 2 days")}</text>
+        <text x={180} y={178} textAnchor="middle" fontSize={9.5} fontWeight={600} fill={R}>{t("критический путь: 1 сен → 4 ноя", "critical path: 1 Sep → 4 Nov")}</text>
+        <text x={180} y={193} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("3.3 стартует 3 окт — на неделю раньше конца 3.2 (перекрытие)", "3.3 starts on 3 Oct — a week before 3.2 ends (overlap)")}</text>
+      </Svg>
+    );
+  },
+  "pm-budget": (t) => {
+    const items: [string, number][] = [[t("Веб-камеры ×2", "Webcams ×2"), 32580], [t("Кольцевая лампа", "Ring light"), 12238], ["Railway × 3", 6660], [t("Резерв 10%", "Reserve 10%"), 5191], [t("Домен", "Domain"), 435]];
+    const labour = 708240, cash = 57104, total = 765344;
+    const w = (v: number) => (v / total) * 340;
+    return (
+      <Svg h={200} label={t("Бюджет YeahTrack: деньги и труд", "YeahTrack budget: cash and labour")}>
+        <text x={10} y={14} fontSize={10} fontWeight={700} fill="currentColor">{t("Полная экономическая стоимость — 765 344 ₸", "Total economic cost — 765 344 ₸")}</text>
+        <rect x={10} y={22} width={w(cash)} height={22} fill={A} opacity={0.8} />
+        <rect x={10 + w(cash)} y={22} width={w(labour)} height={22} fill={V} opacity={0.45} />
+        <text x={14 + w(cash)} y={37} fontSize={9.5} fill="currentColor">{t("труд 300 ч — 708 240 ₸ (не платится, вклад студентов)", "labour 300 h — 708 240 ₸ (unpaid, in kind)")}</text>
+        <text x={10} y={58} fontSize={9} fill={A}>{t("деньги 57 104 ₸ — платит команда, ≈ 14 276 ₸ с человека", "cash 57 104 ₸ — paid by the team, ≈ 14 276 ₸ each")}</text>
+        <text x={10} y={80} fontSize={10} fontWeight={700} fill="currentColor">{t("Из чего 57 104 ₸", "What the 57 104 ₸ is")}</text>
+        {items.map(([label, v], i) => (
+          <g key={label}>
+            <text x={10} y={100 + i * 19} fontSize={9.5} fill="currentColor">{label}</text>
+            <rect x={110} y={91 + i * 19} width={Math.max(2, (v / 32580) * 170)} height={12} rx={2} fill={i === 3 ? G : A} opacity={0.75} />
+            <text x={286} y={100 + i * 19} fontSize={9.5} fill="currentColor">{v.toLocaleString("ru-RU")} ₸</text>
+          </g>
+        ))}
+        <text x={180} y={196} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("покупки 51 913 ₸ + резерв 5 191 ₸ · курс 444 ₸ за $", "purchases 51 913 ₸ + reserve 5 191 ₸ · 444 ₸ per USD")}</text>
+      </Svg>
+    );
+  },
+  "pm-evm": (t) => {
+    const pv = [75, 146, 213, 279, 350, 430, 497, 581, 666, 708];
+    const px = (wk: number) => 40 + (wk - 1) * 33;
+    const py = (v: number) => 150 - (v / 720) * 128;
+    return (
+      <Svg h={214} label={t("Освоенный объём на мидтерме", "Earned value at the midterm")}>
+        <line x1={40} y1={150} x2={344} y2={150} stroke="currentColor" opacity={0.4} />
+        <line x1={40} y1={18} x2={40} y2={150} stroke="currentColor" opacity={0.4} />
+        {pv.map((_, i) => <text key={i} x={px(i + 1)} y={162} textAnchor="middle" fontSize={8} fill="currentColor" opacity={0.7}>W{i + 1}</text>)}
+        <text x={6} y={22} fontSize={8} fill="currentColor" opacity={0.7}>{t("тыс ₸", "k ₸")}</text>
+        <polyline points={pv.map((v, i) => `${px(i + 1)},${py(v)}`).join(" ")} fill="none" stroke={V} strokeWidth={2} />
+        {pv.map((v, i) => <circle key={i} cx={px(i + 1)} cy={py(v)} r={2.5} fill={V} />)}
+        <line x1={px(5)} y1={14} x2={px(5)} y2={150} stroke={A} strokeDasharray="4 3" />
+        <text x={px(5) + 4} y={22} fontSize={8.5} fill={A}>{t("мидтерм", "midterm")}</text>
+        <circle cx={px(5)} cy={py(350)} r={4} fill={V} />
+        <text x={px(5) + 6} y={py(350) + 16} fontSize={8.5} fill={V}>PV = 349 900</text>
+        <circle cx={px(5)} cy={py(470)} r={4} fill={G} />
+        <text x={px(5) - 8} y={py(470) + 3} textAnchor="end" fontSize={8.5} fill={G}>{t("EV > PV: впереди", "EV > PV: ahead")}</text>
+        <Arrow x1={px(5) - 3} y1={py(350) - 4} x2={px(5) - 3} y2={py(470) + 6} color={G} />
+        <text x={px(5) - 8} y={py(410) + 6} textAnchor="end" fontSize={8.5} fill={G}>SV &gt; 0</text>
+        <text x={px(8) + 4} y={py(581) + 16} fontSize={8.5} fill={V}>PV (BCWS)</text>
+        <text x={8} y={180} fontSize={9.5} fill="currentColor">CV = EV − AC · SV = EV − PV · CPI = EV / AC · SPI = EV / PV</text>
+        <text x={8} y={196} fontSize={9} fill="currentColor" opacity={0.75}>{t("AC (фактические часы) пока неизвестны точно: журнал часов ведётся с 5 окт", "AC (actual hours) is not known precisely yet: the time log started on 5 Oct")}</text>
+        <text x={8} y={209} fontSize={8.5} fill="currentColor" opacity={0.6}>{t("точка EV показывает направление, а не измеренную сумму", "the EV point shows the direction, not a measured amount")}</text>
+      </Svg>
+    );
+  },
+  "pm-org-structures": (t) => {
+    const tree = (cx: number, top: string, kids: string[], color: string) => (
+      <g>
+        <Box x={cx - 44} y={30} w={88} h={24} label={top} stroke={color} size={9.5} />
+        {kids.map((k, i) => {
+          const x = cx - 38 + i * (76 / Math.max(1, kids.length - 1));
+          return <g key={k}><line x1={cx} y1={54} x2={x} y2={84} stroke="currentColor" opacity={0.5} /><Box x={x - 18} y={84} w={36} h={22} label={k} size={8} /></g>;
+        })}
+      </g>
+    );
+    return (
+      <Svg h={190} label={t("Функциональная, матричная и проектная структуры", "Functional, matrix and projectized structures")}>
+        <text x={60} y={16} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="currentColor">Functional</text>
+        {tree(60, t("Директор", "Director"), ["Dev", "QA", "Web"], B)}
+        <Wrap x={60} y={124} text={t("проект делят отделы, у каждого свой начальник", "the project is split across departments, each with its own boss")} max={22} />
+        <text x={180} y={16} textAnchor="middle" fontSize={10.5} fontWeight={700} fill="currentColor">Matrix</text>
+        {[0, 1, 2].map((c) => <line key={c} x1={150 + c * 30} y1={30} x2={150 + c * 30} y2={104} stroke={B} />)}
+        {[0, 1].map((r) => <line key={r} x1={136} y1={50 + r * 34} x2={226} y2={50 + r * 34} stroke={V} strokeWidth={2} />)}
+        <text x={180} y={116} textAnchor="middle" fontSize={8.5} fill={V}>{t("PM по горизонтали", "PMs across")}</text>
+        <Wrap x={180} y={130} text={t("два начальника: функциональный и проектный", "two bosses: functional and project")} max={22} />
+        <rect x={244} y={4} width={112} height={182} rx={10} fill={G} opacity={0.08} stroke={G} />
+        <text x={300} y={16} textAnchor="middle" fontSize={10.5} fontWeight={700} fill={G}>Projectized</text>
+        {tree(300, "Ayat · lead", ["Yernar", "Akbota", "Aizat"], G)}
+        <Wrap x={300} y={124} text={t("наш случай: команда работает только на проект", "our case: the team works only on the project")} max={20} />
+        <Wrap x={300} y={160} text={t("спонсор — преподаватель", "sponsor — the instructor")} max={20} opacity={0.65} />
+      </Svg>
+    );
+  },
+  "pm-risk-matrix": (t) => {
+    const cells: Record<string, string> = { "3-3": "R-01 R-02 R-03", "2-3": "R-04 R-08", "3-2": "R-05 R-06", "2-2": "R-07 R-12", "3-1": "R-11", "1-2": "R-09 R-10" };
+    const color = (s: number) => (s >= 6 ? R : s >= 3 ? A : G);
+    return (
+      <Svg h={206} label={t("Матрица рисков YeahTrack: вероятность × влияние", "YeahTrack risk matrix: probability × impact")}>
+        {[3, 2, 1].map((p, row) => [1, 2, 3].map((i, col) => {
+          const score = p * i;
+          return (
+            <g key={`${p}-${i}`}>
+              <rect x={70 + col * 94} y={8 + row * 48} width={90} height={44} rx={6} fill={color(score)} opacity={0.18} stroke={color(score)} />
+              <text x={70 + col * 94 + 84} y={8 + row * 48 + 13} textAnchor="end" fontSize={9} fontWeight={700} fill={color(score)}>{score}</text>
+              {cells[`${p}-${i}`] && <Wrap x={70 + col * 94 + 45} y={8 + row * 48 + 26} text={cells[`${p}-${i}`]} max={10} size={9.5} opacity={1} gap={12} />}
+            </g>
+          );
+        }))}
+        {["3", "2", "1"].map((p, row) => <text key={p} x={60} y={34 + row * 48} textAnchor="end" fontSize={10} fill="currentColor">P {p}</text>)}
+        {["1", "2", "3"].map((i, col) => <text key={i} x={115 + col * 94} y={164} textAnchor="middle" fontSize={10} fill="currentColor">I {i}</text>)}
+        <text x={8} y={84} fontSize={9} fill="currentColor" opacity={0.7} transform="rotate(-90 14 84)">{t("вероятность", "probability")}</text>
+        <text x={210} y={178} textAnchor="middle" fontSize={9} fill="currentColor" opacity={0.7}>{t("влияние", "impact")}</text>
+        <text x={180} y={198} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.75}>{t("6–9: на каждой встрече · 3–4: на вехах · 1–2: при изменении условий", "6–9: every weekly meeting · 3–4: each milestone · 1–2: if conditions change")}</text>
+      </Svg>
+    );
+  },
 };
 
 export default function NotesDiagram({ name, lang }: { name: string; lang: string }) {

@@ -16,6 +16,14 @@ import { lecture3 as cc3 } from "./cloudComputing/lecture3";
 import { lecture4 as cc4 } from "./cloudComputing/lecture4";
 import { lecture5 as cc5 } from "./cloudComputing/lecture5";
 import { cheatSheet as ccCheatSheet, glossary as ccGlossary } from "./cloudComputing/extras";
+import { block1 as pd1 } from "./projectDefense/block1";
+import { block2 as pd2 } from "./projectDefense/block2";
+import { block3 as pd3 } from "./projectDefense/block3";
+import { block4 as pd4 } from "./projectDefense/block4";
+import { block5 as pd5 } from "./projectDefense/block5";
+import { block6 as pd6 } from "./projectDefense/block6";
+import { block7 as pd7 } from "./projectDefense/block7";
+import { cheatSheet as pdCheatSheet, glossary as pdGlossary } from "./projectDefense/extras";
 
 /**
  * Все ивенты раздела «Учёба». Новый ивент — новый объект в этом списке и
@@ -55,6 +63,21 @@ export const EVENTS: StudyEvent[] = [
     counts: { part: 20, lecture: 20, final: 45 },
     glossary: ccGlossary,
     cheatSheet: ccCheatSheet,
+  },
+  {
+    // Ивент одной команды: защита своего проекта по их же отчёту. Только по
+    // ссылке — в общем списке его нет (см. StudyEvent.unlisted).
+    id: "yeahtrack-defense",
+    title: "Подготовка к защите проекта",
+    course: "Project Management · YeahTrack",
+    description:
+      "Не теория ради теории, а ваш проект: что написано в отчёте, какая идея из лекций за этим стоит, как сказать это на защите по-английски и что может спросить комиссия — со слабыми местами и честными ответами. Семь блоков по разделам отчёта, после каждой части — квиз на 15 вопросов, карточки «вопрос комиссии → ответ» и шпаргалка с цифрами проекта.",
+    lectures: [pd1, pd2, pd3, pd4, pd5, pd6, pd7],
+    counts: { part: 15, lecture: 20, final: 40 },
+    glossary: pdGlossary,
+    cheatSheet: pdCheatSheet,
+    cards: "questions",
+    unlisted: true,
   },
 ];
 

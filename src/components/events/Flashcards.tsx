@@ -6,13 +6,14 @@ import { shuffle } from "@/lib/events/engine";
 import type { Lang, Term } from "@/lib/events/types";
 
 /**
- * Карточки «термин → определение».
+ * Карточки «термин → определение» (или «вопрос комиссии → ответ», см.
+ * StudyEvent.cards).
  *
  * Правило одно: карточку, которую не вспомнил, откладываем в конец колоды и
  * встретим ещё раз; колода кончается, когда каждая карточка получила «Знаю».
  * Ничего не сохраняется — это разминка перед квизом, а не ещё один счётчик.
  */
-export default function Flashcards({ glossary, lang, onLang }: { glossary: Term[]; lang: Lang; onLang: () => void }) {
+export default function Flashcards({ glossary, lang, onLang, questions = false }: { glossary: Term[]; lang: Lang; onLang: () => void; questions?: boolean }) {
   const [queue, setQueue] = useState<Term[]>(() => shuffle(glossary));
   const [flipped, setFlipped] = useState(false);
   const card = queue[0];
@@ -21,7 +22,7 @@ export default function Flashcards({ glossary, lang, onLang }: { glossary: Term[
   if (!card) {
     return (
       <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 text-center">
-        <p className="text-2xl font-bold">Все {glossary.length} терминов разобраны</p>
+        <p className="text-2xl font-bold">{questions ? <>Все {glossary.length} вопросов разобраны</> : <>Все {glossary.length} терминов разобраны</>}</p>
         <p className="mt-2 text-sm text-[var(--color-muted)]">Можно пройти колоду ещё раз — порядок будет другим.</p>
         <Button variant="primary" className="mt-4" onClick={() => { setQueue(shuffle(glossary)); setFlipped(false); }}>Ещё раз</Button>
       </section>

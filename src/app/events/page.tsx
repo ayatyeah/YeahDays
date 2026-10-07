@@ -30,7 +30,8 @@ export default function EventsPage() {
         <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности.</p>
       </header>
 
-      {EVENTS.map((event) => {
+      {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted) */}
+      {EVENTS.filter((event) => !event.unlisted).map((event) => {
         const questions = event.lectures.reduce((n, l) => n + l.parts.reduce((m, p) => m + p.questions.length, 0), 0);
         const parts = event.lectures.reduce((n, l) => n + l.parts.length, 0);
         const mine = percent[event.id];

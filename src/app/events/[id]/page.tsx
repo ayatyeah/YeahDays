@@ -287,7 +287,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               <p className="text-sm text-[var(--color-muted)]">Короткое повторение, когда на лекции времени уже нет.</p>
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {event.cheatSheet && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "sheet" })}>Шпаргалка на одну страницу</Button>}
-                {event.glossary && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cards" })}>Карточки терминов · {event.glossary.length}</Button>}
+                {event.glossary && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cards" })}>{event.cards === "questions" ? "Вопросы комиссии" : "Карточки терминов"} · {event.glossary.length}</Button>}
               </div>
             </section>
           )}
@@ -421,9 +421,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
         <>
           <header>
             <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
-            <h1 className="mt-3 text-2xl font-bold">Карточки терминов</h1>
+            <h1 className="mt-3 text-2xl font-bold">{event.cards === "questions" ? "Вопросы комиссии" : "Карточки терминов"}</h1>
           </header>
-          <Flashcards glossary={event.glossary} lang={lang} onLang={switchLang} />
+          <Flashcards glossary={event.glossary} lang={lang} onLang={switchLang} questions={event.cards === "questions"} />
         </>
       )}
 

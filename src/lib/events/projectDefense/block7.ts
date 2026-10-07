@@ -1,0 +1,448 @@
+import { part, qx, tfx, type Lecture } from "../types";
+
+export const block7: Lecture = {
+  id: "pd-b7",
+  title: { en: "Block 7 — Quality and risks", ru: "Блок 7 — Качество и риски" },
+  parts: [
+    part(
+      "pd-b7-p1",
+      { en: "Quality: assurance, control and the baseline", ru: "Качество: обеспечение, контроль и базовый уровень" },
+      {
+        en: `## What we wrote
+Section 12 defines quality for YeahTrack in **two aspects**: the application must meet the measurable targets of the **quality baseline** (Section 18, Table 20), and **a person who has never seen it must be able to set up a gesture without assistance**.
+Quality management has two halves: **quality assurance (QA)** during development and **quality control (QC)** during testing.
+## Quality assurance: how we build it
+| Practice | What it means | Status on 5 Oct |
+|---|---|---|
+| Direct commits to main | how changes were made until 5 October 2026 | stopped |
+| Pull request review | every change is reviewed by a second member before it is merged | since 5 Oct (CR-03, M7) |
+| Mandatory reviewer | Ayat must review the recognition code, the bridge and the tests | since 5 Oct |
+| Tests before a pull request | the author runs the suites for gesture recognition, browser storage, onboarding and the database | in place; all four suites pass |
+| GitHub Actions | the same tests run automatically on every push | being introduced (R-12, owner Yernar) |
+- The test suite has already **prevented one serious defect**: when the old modes were removed (CR-01), it found a **leftover reference to a deleted function** that would have stopped the page from loading.
+- In the register this is occurred risk **R-20**: detected before release, and **tests now run before every commit**.
+- Tools from Table 1: **Node.js test scripts** (Aizat, Ayat), **GitHub pull requests and CODEOWNERS** (whole team), **GitHub Actions** (Yernar).
+## Quality control: how we will check it
+Quality control has **three steps**. **Aizat** is responsible for the test results; in the RACI matrix Aizat is R and Ayat is A for the accuracy and lighting studies.
+| Step | What happens | Size | WBS and milestone |
+|---|---|---|---|
+| 1. Accuracy study | Aizat records people performing gestures and counts correct and false activations | 5 people × 5 gestures × 20 times | 4.1, 6–15 Oct; M8 on 15 Oct |
+| 2. Lighting study | the same recordings are evaluated with the ring light to find the minimum conditions for recognition | 3 lighting levels | 4.2, 13–18 Oct; M9 on 18 Oct |
+| 3. User testing | each participant trains gestures and performs each one 20 times; the time to add a gesture is measured; a short questionnaire | 30 participants × 3 gestures × 20 | 4.3, 20 Oct – 1 Nov; M11 on 1 Nov |
+= 5 × 5 × 20 = 500
+= 30 × 3 × 20 = 1 800
+- All results are recorded in a **shared spreadsheet**.
+- **Any metric below the baseline becomes a GitHub issue**, and **Ayat decides with the team** which issues are fixed before the final demonstration.
+- QC equipment from Table 8, bought in week 6: **two Logitech C270 webcams** (a second and third camera, so the results do not depend on one laptop camera) and a **30 cm ring light** (R-02).
+- The schedule protects quality: development is about three weeks ahead, and the gained time goes to studies 4.1 and 4.2, not to new features; user testing starts on **20 October in any case**, and if work slips, minor features are reduced instead of shortening testing.
+## The quality baseline (Table 20)
+The first two targets come straight from the objectives (Section 1.4); the others were added so that the remaining features in scope also have measurable criteria.
+| Metric | Target | Measured so far (5 Oct) | How it will be checked |
+|---|---|---|---|
+| Recognition accuracy | at least 90% | synthetic hands, per frame: 95% (tilt up to ±10°), 93% (±25°), 85% (±40°); real video not yet measured | 5 × 5 × 20 on video, then 30 test users |
+| Time to add a gesture | under 1 minute | 3 s countdown + 20–30 s of recording, usable immediately; full time with naming not measured | stopwatch during user testing |
+| Swipe recognition | at least 90% | synthetic motions: 100% | 20 swipes per direction per user |
+| False activations | no more than 1 in 5 minutes | untrained poses activated in 0% of synthetic frames | 5 minutes of normal use |
+| Delay from gesture to command | under 0.5 s | pose held about 0.3 s by design; detection 16–46 ms; key press 45–55 ms; full delay not measured | timestamps in the application log |
+| Frame rate | at least 20 FPS | 56 FPS with GPU; about 22 FPS in CPU-only background mode | frame counter in the application |
+| Automated tests | all suites pass before every merge | all four suites pass | test suite, GitHub Actions |
+| Stability | no crashes during test sessions | not yet measured | test session log |
+| Ease of use | average of at least 4 out of 5 | not yet measured | questionnaire after each session |
+**Synthetic hands** are generated by the project's own test code with random tilt, size and position. They **confirm that the recognition logic works**, but they **do not replace testing with real people** — which is why **R-01** and **R-02** have the highest score in the risk register.
+> Our numbers so far are honest but synthetic: they prove the logic works, not that it works for real people — M8, M9 and the 30-user test exist to close that gap.
+- The delay target reflects the design: a pose must be held for about **0.3 s**, so that a random hand movement does not trigger a command.
+- The quality baseline can be changed **only through the change procedure** (Section 6); the final value of each metric goes into the **test results** deliverable.
+- Acceptance (Table 10): the desktop application must record a new gesture in under one minute, reach at least 90% accuracy in the user test, execute the assigned command and pass all automated tests; the whole team accepts it, then the sponsor.
+## The theory behind it
+- **Success (Kerzner, L1)**: the objectives are reached within time, within cost, **at the desired performance level** and **accepted by the customer**. Table 20 is our performance level: at least 90% accuracy, under 1 minute per gesture, 30 users.
+- **Planning (L1)** includes the **definition of the quality and quantity of work**: we wrote the targets and the way to check each one before testing starts.
+- **Monitoring and control (L1)**: track progress, **compare the actual outcome with the predicted outcome**, analyse variances, make adjustments. Ours: the measured value against the target; a metric below the baseline becomes a GitHub issue.
+- **QA vs QC** (PMBOK terms used in the report): QA improves the **process** so that defects do not appear (review, tests before a pull request); QC **inspects the product** against the targets (the three studies).
+- **Prevention over cure (L4)**: the earned value system is an early-warning system, because small variances are easier to correct than large ones. Same idea in quality: the test suite stopped the R-20 defect before release, while the fix was cheap.
+## How to say it at the defense
+- **Say:** "We separate quality assurance, which is our process, from quality control, which is measuring the product."
+- **Say:** "Since 5 October every change goes through a pull request, and Ayat must review the core code."
+- **Say:** "Our tests caught a broken page before release, so now they run before every commit."
+- **Say:** "All accuracy numbers so far come from synthetic hands, so we do not claim 90% on real users yet."
+- **Say:** "Any metric below the baseline becomes a GitHub issue, and the team decides what to fix before the demo."
+## Weak spots and honest answers
+- **"You show 93% — so the 90% target is already met?"** Not yet. It is per frame, on synthetic hands from our own test code; real video is not measured (R-01, score 9). The first real numbers come from the accuracy study, M8 on 15 October.
+- **"Until October you had no code review at all?"** True: until 5 October changes went straight to main. We saw the gap and closed it through CR-03 (M7): task cards, pull request review, a risk register and a time log.
+- **"Is GitHub Actions running?"** It is being introduced (R-12, under review). Until then the author runs all four suites by hand before every pull request.
+## Check yourself
+?? Name the three quality control steps and the size of each.
+?= Accuracy study: 5 people × 5 gestures × 20 times on video. Lighting study: the same recordings at three lighting levels with the ring light. User testing: 30 participants × 3 gestures × 20, plus the time to add a gesture and a questionnaire.
+?? Which Table 20 metrics had no measurement at all on 5 October?
+?= Stability (no crashes during test sessions) and ease of use (average of at least 4 out of 5). Accuracy on real video, the full time to add a gesture and the full delay are also still open.`,
+        ru: `## Что мы написали
+Раздел 12 определяет качество YeahTrack в **двух аспектах**: приложение должно достичь измеримых целей **базового уровня качества (quality baseline)** (раздел 18, таблица 20), и **человек, который видит его впервые, должен настроить жест без посторонней помощи**.
+Управление качеством состоит из двух половин: **обеспечение качества (quality assurance, QA)** во время разработки и **контроль качества (quality control, QC)** во время тестирования.
+## Обеспечение качества: как мы строим
+| Практика | Что это значит | Статус на 5 октября |
+|---|---|---|
+| Коммиты прямо в main | так вносились изменения до 5 октября 2026 | прекращено |
+| Ревью pull request | каждое изменение проверяет второй участник до слияния | с 5 октября (CR-03, M7) |
+| Обязательный ревьюер | ревью Ayat обязательно для кода распознавания, моста (bridge) и тестов | с 5 октября |
+| Тесты перед pull request | автор запускает наборы тестов: распознавание жестов, хранилище браузера, онбординг и база данных | действует; все четыре набора проходят |
+| GitHub Actions | те же тесты автоматически при каждом push | внедряется (R-12, владелец Yernar) |
+- Набор тестов уже **предотвратил один серьёзный дефект**: когда удаляли старые режимы (CR-01), он нашёл **оставшуюся ссылку на удалённую функцию**, из-за которой страница перестала бы загружаться.
+- В реестре это случившийся риск **R-20**: найден до релиза, и **теперь тесты запускаются перед каждым коммитом**.
+- Инструменты из таблицы 1: **тестовые скрипты на Node.js** (Aizat, Ayat), **pull requests и CODEOWNERS на GitHub** (вся команда), **GitHub Actions** (Yernar).
+## Контроль качества: как мы будем проверять
+Контроль качества идёт в **три шага**. За результаты тестов отвечает **Aizat**; в матрице RACI для исследований точности и освещения Aizat — R, Ayat — A.
+| Шаг | Что происходит | Объём | WBS и веха |
+|---|---|---|---|
+| 1. Исследование точности | Aizat записывает людей, выполняющих жесты, и считает верные и ложные срабатывания | 5 человек × 5 жестов × 20 раз | 4.1, 6–15 окт; M8 15 окт |
+| 2. Исследование освещения | те же записи оцениваются с кольцевой лампой, чтобы найти минимальные условия для распознавания | 3 уровня освещения | 4.2, 13–18 окт; M9 18 окт |
+| 3. Пользовательское тестирование | каждый участник обучает жесты и выполняет каждый 20 раз; замеряется время добавления жеста; короткая анкета | 30 участников × 3 жеста × 20 | 4.3, 20 окт – 1 ноя; M11 1 ноя |
+= 5 × 5 × 20 = 500
+= 30 × 3 × 20 = 1 800
+- Все результаты заносятся в **общую таблицу (shared spreadsheet)**.
+- **Любая метрика ниже базового уровня становится задачей (issue) на GitHub**, и **Ayat вместе с командой решает**, какие задачи исправить до финальной демонстрации.
+- Оборудование для QC из таблицы 8, покупка на 6-й неделе: **две веб-камеры Logitech C270** (вторая и третья камера, чтобы результаты не зависели от одной камеры ноутбука) и **кольцевая лампа 30 см** (R-02).
+- Расписание защищает качество: разработка опережает план примерно на три недели, и выигранное время идёт на исследования 4.1 и 4.2, а не на новые функции; тестирование с пользователями начинается **20 октября в любом случае**, а если работа запаздывает, урезаются второстепенные функции, а не тестирование.
+## Базовый уровень качества (таблица 20)
+Первые две цели взяты прямо из задач проекта (раздел 1.4); остальные добавлены, чтобы у прочих функций в рамках проекта тоже были измеримые критерии.
+| Метрика | Цель | Измерено на 5 октября | Как будет проверено |
+|---|---|---|---|
+| Точность распознавания | не меньше 90% | синтетические руки, по кадрам: 95% (наклон до ±10°), 93% (±25°), 85% (±40°); на реальном видео ещё не измерено | 5 × 5 × 20 на видео, затем 30 тестовых пользователей |
+| Время добавления жеста | меньше 1 минуты | отсчёт 3 с + 20–30 с записи, жест готов сразу; полное время с вводом названия не измерено | секундомер при тестировании с пользователями |
+| Распознавание свайпов | не меньше 90% | синтетические движения: 100% | 20 свайпов в каждую сторону на пользователя |
+| Ложные срабатывания | не больше 1 за 5 минут | необученные позы сработали в 0% синтетических кадров | 5 минут обычной работы |
+| Задержка от жеста до команды | меньше 0,5 с | поза удерживается около 0,3 с по замыслу; детекция 16–46 мс; нажатие клавиши 45–55 мс; полная задержка не измерена | отметки времени в журнале приложения |
+| Частота кадров | не меньше 20 FPS | 56 FPS с GPU; около 22 FPS в фоновом режиме только на CPU | счётчик кадров в приложении |
+| Автотесты | все наборы проходят перед каждым слиянием | все четыре набора проходят | набор тестов, GitHub Actions |
+| Стабильность | без падений во время тестовых сессий | ещё не измерено | журнал тестовых сессий |
+| Удобство | в среднем не меньше 4 из 5 | ещё не измерено | анкета после каждой сессии |
+**Синтетические руки (synthetic hands)** генерирует собственный тестовый код проекта со случайным наклоном, размером и положением. Они **подтверждают, что логика распознавания работает**, но **не заменяют тестирования с реальными людьми** — поэтому у **R-01** и **R-02** самый высокий балл в реестре рисков.
+> Наши цифры честные, но синтетические: они доказывают, что логика работает, а не что она работает у реальных людей, — M8, M9 и тест на 30 пользователях нужны, чтобы закрыть этот разрыв.
+- Цель по задержке учитывает замысел: позу нужно удерживать около **0,3 с**, чтобы случайное движение руки не запускало команду.
+- Базовый уровень качества можно менять **только через процедуру изменений** (раздел 6); итоговое значение каждой метрики войдёт в результат **test results**.
+- Приёмка (таблица 10): настольное приложение должно записывать новый жест меньше чем за минуту, давать не меньше 90% точности в пользовательском тесте, выполнять назначенную команду и проходить все автотесты; принимает вся команда, затем спонсор.
+## Теория за этим
+- **Успех (Керцнер, L1)**: цели достигнуты в срок, в рамках бюджета, **на нужном уровне характеристик (desired performance level)** и **приняты заказчиком**. Таблица 20 — это наш уровень характеристик: не меньше 90% точности, меньше 1 минуты на жест, 30 пользователей.
+- **Планирование (L1)** включает **определение качества и объёма работ (definition of the quality and quantity of work)**: мы записали цели и способ проверки каждой до начала тестирования.
+- **Мониторинг и контроль (L1)**: отслеживать ход работ, **сравнивать фактический результат с ожидаемым**, анализировать отклонения, вносить корректировки. У нас: измеренное значение против цели; метрика ниже базового уровня становится задачей на GitHub.
+- **QA и QC** (термины PMBOK из отчёта): QA улучшает **процесс**, чтобы дефекты не появлялись (ревью, тесты перед pull request); QC **проверяет продукт** по целям (три исследования).
+- **Предупреждать, а не лечить (L4)**: система освоенного объёма — система раннего предупреждения, потому что малые отклонения исправить легче, чем большие. Та же идея в качестве: набор тестов остановил дефект R-20 до релиза, пока исправление было дешёвым.
+## Как сказать на защите
+- **Скажи:** «We separate quality assurance, which is our process, from quality control, which is measuring the product.» — мы разделяем обеспечение качества (процесс) и контроль качества (измерение продукта).
+- **Скажи:** «Since 5 October every change goes through a pull request, and Ayat must review the core code.» — с 5 октября каждое изменение идёт через pull request, а ядро обязательно проверяет Ayat.
+- **Скажи:** «Our tests caught a broken page before release, so now they run before every commit.» — тесты поймали сломанную страницу до релиза, теперь их запускают перед каждым коммитом.
+- **Скажи:** «All accuracy numbers so far come from synthetic hands, so we do not claim 90% on real users yet.» — все цифры точности пока с синтетических рук, поэтому 90% на реальных людях мы не заявляем.
+- **Скажи:** «Any metric below the baseline becomes a GitHub issue, and the team decides what to fix before the demo.» — метрика ниже базового уровня становится задачей, команда решает, что чинить до демо.
+## Слабые места и честные ответы
+- **«You show 93% — so the 90% target is already met?»** Пока нет. Это по кадрам, на синтетических руках из нашего тестового кода; реальное видео не измерено (R-01, балл 9). Первые реальные цифры даст исследование точности — M8, 15 октября.
+- **«Until October you had no code review at all?»** Верно: до 5 октября изменения шли прямо в main. Мы увидели пробел и закрыли его через CR-03 (M7): карточки задач, ревью pull request, реестр рисков и журнал часов.
+- **«Is GitHub Actions running?»** Он внедряется (R-12, на ревью). До тех пор автор вручную запускает все четыре набора тестов перед каждым pull request.
+## Проверь себя
+?? Назови три шага контроля качества и объём каждого.
+?= Исследование точности: 5 человек × 5 жестов × 20 раз на видео. Исследование освещения: те же записи при трёх уровнях освещения с кольцевой лампой. Тестирование с пользователями: 30 участников × 3 жеста × 20, плюс время добавления жеста и анкета.
+?? Какие метрики таблицы 20 на 5 октября не были измерены вообще?
+?= Стабильность (без падений во время тестовых сессий) и удобство (в среднем не меньше 4 из 5). Точность на реальном видео, полное время добавления жеста и полная задержка тоже пока не измерены.`,
+      },
+      [
+        qx("Since which date has every YeahTrack change been submitted as a pull request and reviewed by a second member?", "5 October 2026", [
+          ["3 October 2026", "3 October is the date of CR-01, the removal of the workout mode, not the start of code review.", "3 октября — дата CR-01 (удаление режима тренировок), а не начала ревью кода."],
+          ["12 September 2026", "12 September is when the first working version (M3) was ready; review was introduced later.", "12 сентября была готова первая рабочая версия (M3); ревью появилось позже."],
+          ["20 October 2026", "20 October is M10 and the start of user testing; review was already in place by then.", "20 октября — веха M10 и начало пользовательского тестирования; ревью к тому времени уже было."],
+        ], "Section 12.1: until 5 October changes went straight to main; since then every change is a pull request reviewed by a second member (CR-03, M7).", "Раздел 12.1: до 5 октября изменения шли прямо в main; с тех пор каждое изменение — pull request, который проверяет второй участник (CR-03, M7)."),
+        qx("Whose review is mandatory for the recognition code, the bridge and the tests?", "Ayat's, as owner of the core of the product", [
+          ["Yernar's, as owner of the automated tests on GitHub", "Yernar owns storage, build and the test automation on GitHub, but the mandatory core reviewer is Ayat.", "Yernar отвечает за хранилище, сборку и автоматизацию тестов на GitHub, но обязательный ревьюер ядра — Ayat."],
+          ["Aizat's, as the person responsible for test results", "Aizat is responsible for the test results and quality control, not for the mandatory review of core code.", "Aizat отвечает за результаты тестов и контроль качества, а не за обязательное ревью кода ядра."],
+          ["Any second member's; no one is mandatory", "Any second member reviews ordinary changes, but for the core code a review by Ayat is required.", "Обычные изменения проверяет любой второй участник, но для кода ядра ревью Ayat обязательно."],
+        ], "Section 12.1 and Table 15: a review by Ayat is mandatory for the recognition code, the bridge and the tests — Ayat owns the core of the product.", "Раздел 12.1 и таблица 15: ревью Ayat обязательно для кода распознавания, моста и тестов — Ayat владеет ядром продукта."),
+        qx("Which defect did the automated test suite catch before release?", "A leftover reference to a deleted function", [
+          ["Renaming a gesture silently deleted all of its samples", "That is R-17; it was fixed with stable identifiers in the database, not reported as caught by the tests.", "Это R-17; его исправили стабильными идентификаторами в базе, и в отчёте он не назван пойманным тестами."],
+          ["A blocking CAA record on the domain", "That is R-19, a DNS problem fixed by correcting the records and clearing the local DNS cache.", "Это R-19 — проблема DNS, решённая исправлением записей и очисткой локального кэша DNS."],
+          ["A finger snap firing during swipes", "That is R-15, fixed with a still-wrist check and a minimum finger opening speed.", "Это R-15, исправленный проверкой неподвижного запястья и минимальной скоростью раскрытия пальцев."],
+        ], "R-20: removing the old modes left a reference to a deleted function that would have stopped the page from loading; the test suite caught it before release.", "R-20: после удаления старых режимов осталась ссылка на удалённую функцию, из-за которой страница не загрузилась бы; набор тестов поймал это до релиза."),
+        qx("How large is the accuracy study, quality control step 1?", "5 people × 5 gestures × 20 attempts", [
+          ["30 people × 3 gestures × 20 attempts", "That is step 3, user testing with 30 participants, not the accuracy study on video.", "Это шаг 3 — пользовательское тестирование с 30 участниками, а не исследование точности на видео."],
+          ["5 people × 3 gestures × 30 attempts", "The study uses five gestures performed 20 times each, not three gestures 30 times.", "В исследовании пять жестов по 20 раз, а не три жеста по 30 раз."],
+          ["4 people × 5 gestures × 20 attempts", "The study records five people, not four.", "В исследовании записывают пятерых человек, а не четверых."],
+        ], "Section 12.2: Aizat records five people performing five gestures 20 times each and counts correct and false activations (WBS 4.1, M8).", "Раздел 12.2: Aizat записывает пятерых человек, каждый выполняет пять жестов по 20 раз, и считает верные и ложные срабатывания (WBS 4.1, M8)."),
+        qx("How does quality control step 2, the lighting study, test the recordings?", "At three lighting levels, using the ring light", [
+          ["At two levels: daylight and a dim room", "The plan uses three lighting levels, not two.", "В плане три уровня освещения, а не два."],
+          ["With a depth camera in a dark room", "Depth cameras are explicitly outside the scope; the light source is the ring light from Table 8.", "Камеры глубины прямо исключены из рамок проекта; источник света — кольцевая лампа из таблицы 8."],
+          ["At three levels, using the second Logitech webcam", "The webcams are the second and third cameras; the controlled light comes from the ring light.", "Веб-камеры — это вторая и третья камеры; управляемый свет даёт кольцевая лампа."],
+        ], "Section 12.2: the same recordings are evaluated at three lighting levels with the ring light from Table 8 to find the minimum conditions (WBS 4.2, M9).", "Раздел 12.2: те же записи оцениваются при трёх уровнях освещения с кольцевой лампой из таблицы 8, чтобы найти минимальные условия (WBS 4.2, M9)."),
+        qx("What is the false-activation target in the quality baseline (Table 20)?", "No more than 1 in 5 minutes of normal use", [
+          ["0% of frames with untrained poses", "0% of synthetic frames is what was measured so far, not the target itself.", "0% синтетических кадров — это то, что уже измерено, а не сама цель."],
+          ["No more than 1 in 20 attempts", "20 attempts is the per-gesture count in the studies; this target is set per 5 minutes.", "20 попыток — это число повторов жеста в исследованиях; эта цель задана на 5 минут."],
+          ["No more than 1 per test session", "Test sessions belong to the stability target (no crashes); false activations are counted per 5 minutes.", "Тестовые сессии относятся к цели стабильности (без падений); ложные срабатывания считаются на 5 минут."],
+        ], "Table 20: no more than one false activation in 5 minutes, checked with 5 minutes of normal use with the application running.", "Таблица 20: не больше одного ложного срабатывания за 5 минут, проверка — 5 минут обычной работы с запущенным приложением."),
+        qx("What accuracy do the measurements so far show at a ±25° wrist tilt?", "93% per frame, on synthetic hands", [
+          ["95% per frame, on synthetic hands", "95% is the value for a tilt of up to ±10°.", "95% — это значение для наклона до ±10°."],
+          ["85% per frame, on synthetic hands", "85% is the value for a tilt of ±40°.", "85% — это значение для наклона ±40°."],
+          ["93% on real video of five people", "Real video has not been measured yet; that is the accuracy study, M8 on 15 October.", "Реальное видео ещё не измерено — это исследование точности, M8 15 октября."],
+        ], "Table 20: synthetic hands, per frame — 95% up to ±10°, 93% at ±25°, 85% at ±40°; real video not yet measured.", "Таблица 20: синтетические руки, по кадрам — 95% до ±10°, 93% при ±25°, 85% при ±40°; реальное видео ещё не измерено."),
+        qx("Which two Table 20 metrics had no measurement at all on 5 October?", "Stability and ease of use", [
+          ["Swipe recognition and frame rate", "Both were measured: swipes 100% on synthetic motions, 56 FPS with GPU and about 22 FPS on CPU.", "Обе измерены: свайпы — 100% на синтетических движениях, 56 FPS с GPU и около 22 FPS на CPU."],
+          ["False activations and automated tests", "Both have values: 0% of synthetic frames and all four test suites passing.", "У обеих есть значения: 0% синтетических кадров и все четыре набора тестов проходят."],
+          ["Frame rate and ease of use", "Ease of use is unmeasured, but frame rate was measured at 56 FPS with GPU.", "Удобство не измерено, но частота кадров измерена — 56 FPS с GPU."],
+        ], "Table 20 marks stability (no crashes in test sessions) and ease of use (at least 4 out of 5) as not yet measured.", "В таблице 20 стабильность (без падений в тестовых сессиях) и удобство (не меньше 4 из 5) отмечены как ещё не измеренные."),
+        tfx("A GitHub Actions workflow already runs all four test suites automatically on every push.", false, "Not yet: Section 12.1 says the workflow is being introduced, and R-12 (tests run manually, not on every push) is still open and under review.", "Пока нет: раздел 12.1 говорит, что workflow внедряется, а риск R-12 (тесты запускаются вручную, не при каждом push) ещё открыт и на ревью.", "Choosing True over-claims: today the author runs the suites by hand before each pull request.", "Ответ True — преувеличение: сейчас автор вручную запускает тесты перед каждым pull request."),
+        qx("Kerzner: success is within time, within cost, at the desired performance and accepted. Which one does Table 20 define?", "The desired performance level", [
+          ["Within cost: the 57 104 KZT cash budget", "Cost is the cash budget and the 300 hours (Sections 8 and 17), not the quality baseline.", "Стоимость — это денежный бюджет и 300 часов (разделы 8 и 17), а не базовый уровень качества."],
+          ["Within time: delivery by 4 November", "Time is the 4 November deadline in the schedule; Table 20 sets measurable product targets.", "Срок — это дедлайн 4 ноября в расписании; таблица 20 задаёт измеримые цели продукта."],
+          ["Acceptance by the customer (sponsor)", "Acceptance is the sponsor's sign-off (Section 19); Table 20 gives the targets it relies on.", "Приёмка — это подпись спонсора (раздел 19); таблица 20 даёт цели, на которые она опирается."],
+        ], "Table 20 turns the performance criterion into numbers: at least 90% accuracy, under 1 minute per gesture, tests with 30 users and the other metrics.", "Таблица 20 переводит критерий характеристик в числа: не меньше 90% точности, меньше минуты на жест, тесты с 30 пользователями и другие метрики."),
+        qx("Pull request review and running the tests before every pull request are examples of what?", "Quality assurance: improving the process", [
+          ["Quality control: inspecting the product", "Quality control is the three studies that measure the product; review and tests before a pull request act on the process.", "Контроль качества — это три исследования, измеряющие продукт; ревью и тесты перед pull request работают с процессом."],
+          ["Scope verification against Table 10", "Scope verification checks deliverables against acceptance criteria at milestone reviews.", "Проверка содержания сверяет результаты с критериями приёмки на обзорах вех."],
+          ["Risk transfer to a second reviewer", "Transfer passes a risk to a third party and is not used in the project; a teammate is not a third party.", "Передача отдаёт риск третьей стороне и в проекте не используется; участник команды — не третья сторона."],
+        ], "Section 12.1 lists review and tests before a pull request under quality assurance: they improve the way code is made, so defects do not appear.", "В разделе 12.1 ревью и тесты перед pull request отнесены к обеспечению качества: они улучшают способ написания кода, чтобы дефекты не появлялись."),
+        tfx("Writing the Table 20 targets before testing starts matches Kerzner's planning task: defining the quality and quantity of work.", true, "Lecture 1 lists the definition of the quality and quantity of work under project planning; Table 20 sets the targets and the checks before 4.1–4.3 begin.", "Лекция 1 относит определение качества и объёма работ к планированию; таблица 20 задаёт цели и проверки до начала 4.1–4.3.", "Choosing False would mean quality is defined only after measuring; in Kerzner's model it is defined in planning and checked in monitoring and control.", "Ответ False означал бы, что качество определяется только после измерений; у Керцнера его задают на планировании и проверяют на мониторинге и контроле."),
+        qx("L4 says the earned value system favours prevention over cure. Which YeahTrack quality practice is prevention?", "Running the tests before every pull request", [
+          ["Counting false activations in user testing", "Counting activations measures the finished product, which is detection, not prevention.", "Подсчёт срабатываний измеряет готовый продукт — это обнаружение, а не предупреждение."],
+          ["Moving occurred risks to the Table 14 list", "Table 14 records lessons after a problem has already happened.", "Таблица 14 записывает уроки уже после того, как проблема случилась."],
+          ["Asking each user to fill in a questionnaire", "The questionnaire measures ease of use after the session, not before a defect appears.", "Анкета измеряет удобство после сессии, а не до появления дефекта."],
+        ], "Tests before a pull request stop a defect before it reaches main, as they did with R-20; this is the early-warning idea of L4.", "Тесты перед pull request останавливают дефект до попадания в main, как было с R-20; это идея раннего предупреждения из L4."),
+        qx("Examiner: ‘You show 93% accuracy. So the 90% target is met?’ What is the best answer?", "Not yet: it is per frame, on synthetic hands", [
+          ["Yes, 93% is already above our 90% target", "This over-claims: real users have not been measured, and R-01 says not to claim it before then.", "Это преувеличение: реальных пользователей не измеряли, а R-01 прямо запрещает заявлять это до замеров."],
+          ["Accuracy is fine; only lighting is a real risk", "This denies R-01, which scores 9 out of 9 in the register.", "Это отрицает R-01, у которого в реестре 9 из 9."],
+          ["Those tests were Aizat's job; ask Aizat", "Passing the question to a teammate dodges it; the team answers together.", "Переадресовать вопрос участнику — значит уйти от ответа; команда отвечает вместе."],
+        ], "The honest answer: 93% is per frame at ±25° on synthetic hands; real video comes with the accuracy study (M8, 15 October) and then 30 users.", "Честный ответ: 93% — по кадрам при ±25° на синтетических руках; реальное видео даст исследование точности (M8, 15 октября), затем 30 пользователей."),
+        qx("Examiner: ‘Until October you pushed straight to main with no review. Why?’ What is the best answer?", "True; we fixed it on 5 Oct with CR-03 and PR review", [
+          ["We always reviewed every change, just informally in Telegram", "This denies a fact written in Section 12.1 of our own report.", "Это отрицает факт, записанный в разделе 12.1 нашего же отчёта."],
+          ["Review is not needed in a team of four", "This dismisses QA, while our own plan introduced review as a quality measure.", "Это обесценивает QA, хотя наш же план ввёл ревью как меру качества."],
+          ["That was one person's habit, not the team's", "Blaming one member is unfair; the report records it as a team process gap closed by CR-03.", "Сваливать на одного участника нечестно; в отчёте это пробел процесса всей команды, закрытый CR-03."],
+        ], "Admit the fact and show the fix: on 5 October CR-03 (M7) introduced task cards, pull request review, a risk register and a time log.", "Признай факт и покажи исправление: 5 октября CR-03 (M7) ввёл карточки задач, ревью pull request, реестр рисков и журнал часов."),
+      ],
+    ),
+    part(
+      "pd-b7-p2",
+      { en: "Risks: scoring, register and lessons", ru: "Риски: оценка, реестр и уроки" },
+      {
+        en: `## What we wrote: the method
+Risk management follows **four steps**: **identification, assessment, response planning and monitoring** (PMI, 2021). The register is kept in the repository (**docs/RISKS.md**) and reviewed at the **weekly meeting**; **Aizat** maintains it (RACI: Aizat R, Ayat A).
+- **Any member** may add a risk, and a risk is recorded **on the day it is noticed, not on the day it occurs**.
+- **Probability (P)** and **impact (I)** are each rated low, medium or high, which means **1, 2 or 3**.
+= P × I = 1 … 9
+- Each open risk also has a **task card on GitHub**.
+| Score | Band | Monitoring |
+|---|---|---|
+| 6 to 9 | high | owner and response plan; reviewed at every weekly meeting |
+| 3 to 4 | medium | owner; reviewed at each milestone review |
+| 1 to 2 | low | kept in the register and reviewed if conditions change |
+@diagram pm-risk-matrix
+- On a 1–3 scale only the scores 1, 2, 3, 4, 6 and 9 can occur, so the three bands leave no gaps.
+## Responses: three used, one not
+| Response | Meaning in our plan | Closest example in the register |
+|---|---|---|
+| Avoidance | the plan is changed so that the risk cannot occur | R-06: remove the Windows promise from the website (one of two options in CR-05) |
+| Mitigation | its probability or impact is reduced | R-08: backup video, room inspected in advance, website kept open |
+| Acceptance | the risk is monitored and handled if it occurs | R-05 in part: the GNOME-only limit stays and is stated openly |
+| Transfer | the risk is passed to a third party | not used: not practical in a student project |
+## Open risks (Table 13, sorted by score)
+P is probability and I is impact; every open risk has an owner and a planned response.
+| ID | Risk | P × I | Owner | Response |
+|---|---|---|---|---|
+| R-01 | accuracy measured only on synthetic hands; accuracy on real video with different people unknown | 3 × 3 = 9 | Ayat | record 5 people × 5 gestures × 20 attempts, count correct and false activations; no accuracy claims on real users before then |
+| R-02 | lighting not studied: backlight, a dim room or mixed light may prevent hand detection | 3 × 3 = 9 | Aizat | evaluate the recordings at three lighting levels; describe the minimum conditions in the README |
+| R-03 | code knowledge concentrated in one person; the repository has a single author | 3 × 3 = 9 | Ayat | areas of responsibility, review of all changes through pull requests, decisions documented in the README |
+| R-04 | gestures stored only on the user's computer; reinstalling or clearing site data deletes them | 2 × 3 = 6 | Yernar | export and import of the full gesture set as one file |
+| R-05 | the desktop version runs only on GNOME Wayland; KDE and X11 lack the input interface | 3 × 2 = 6 | Ayat | state the limit in the README and on the website; evaluate ydotool |
+| R-06 | no Windows version, but the website lists it as in progress | 3 × 2 = 6 | Akbota | build it with Electron or remove the promise from the website |
+| R-08 | the demonstration at the defence may fail: no camera, poor lighting or no network | 2 × 3 = 6 | Akbota | backup video ready; inspect the room in advance; website open as a fallback |
+| R-07 | the browser version downloads about 17 MB on first load | 2 × 2 = 4 | Yernar | a warning is already shown; examine delivering the model in parts |
+| R-12 | tests are run manually, not automatically on every push | 2 × 2 = 4 | Yernar | run the suite in GitHub Actions on every push (under review) |
+| R-11 | users may expect the browser version to control the system | 3 × 1 = 3 | Aizat | explain the difference in the README, on the website and in the app with consistent wording |
+| R-09 | hosting depends on the free Railway plan | 1 × 2 = 2 | Yernar | keep the Docker image portable, test a move once; the paid plan is budgeted (Table 8) |
+| R-10 | MediaPipe 0.10.14 is downloaded from jsdelivr during the build | 1 × 2 = 2 | Yernar | verify checksums on download and keep a copy of the files |
+- **12 open risks**: 7 high (R-01, R-02, R-03 at 9; R-04, R-05, R-06, R-08 at 6), 3 medium (R-07, R-12, R-11) and 2 low (R-09, R-10).
+> Score = P × I on a 1–3 scale; our three 9s — real-user accuracy, lighting and one person holding the core — are named first, each with an owner and a response.
+## Risks that already happened (Table 14)
+Occurred risks are **not deleted**: they move to a separate list with a description of how they were resolved, so that the team does not repeat the same mistakes.
+| ID | What happened | How it was resolved |
+|---|---|---|
+| R-13 | recognition failed with a tilted wrist: raw coordinates gave 41% at ±25° and 26% at ±40° | rotation-independent features (joint angles, fingertip distances divided by hand size) and rotated copies of samples: 93% and 85% |
+| R-14 | one gesture fired zero or two commands: a continuous chain of good frames lost 6–21% of genuine attempts | voting over a 450 ms window; two follow-up defects fixed (a pause that blocked quick repetition, a double activation) |
+| R-15 | the finger snap fired during swipes, because a swipe begins by opening a half-closed hand | a check that the wrist stays still and a minimum opening speed of the fingers |
+| R-16 | swipes worked in one direction only: the browser slowed recognition when the window was hidden on another desktop | window pinned to all desktops, compact always-on-top mode, short grace period when the hand is lost |
+| R-17 | renaming a gesture deleted its samples, because records were matched by name | stable identifiers for gestures in the database |
+| R-18 | opening a website by gesture failed silently: browsers open new tabs only after a real click | a confirmation panel appears, and clicking it opens the website |
+| R-19 | the domain did not open and no certificate was issued: missing ALIAS record, blocking CAA record | DNS records corrected, local DNS cache cleared |
+| R-20 | removing the old modes left a reference to a deleted function; the page would not have loaded | caught by the test suite before release; tests now run before every commit |
+= R-13: ±25° 41% → 93%; ±40° 26% → 85%
+## R-08: if the demo fails at the defence
+- The demonstration may fail because of a **missing camera, poor lighting or no network**: P 2 × I 3 = **6**, owner **Akbota**.
+- Response: a **backup video is ready**, the room is **inspected in advance**, and the **website is kept open** as a fallback (the browser version needs no installation).
+- If the live demo fails, switch calmly to the video and name it: this is the risk plan working.
+## The theory behind it
+- **Risk (Kerzner, L3)**: dangerous activities or factors that, if they occur, **increase the probability that the goals of time, cost and performance will not be met**. Project plans are **living documents** and change to prevent or fix such situations.
+- **Kerzner's six steps**: identification, **quantifying**, **prioritizing**, developing a strategy, **sponsor/executive review**, taking action. Our four steps cover the same ground: P × I quantifies, the bands prioritize, the Response column is the strategy; the whole team reviews the register weekly, and an issue it cannot resolve goes to the instructor, our sponsor (Section 7).
+- **Common risks (L3)** include **lack of qualified resources** — R-03 (only Ayat knows the core code in detail) is our version of it. Kerzner's identification tools include **independent reviews and audits**; our pull request review plays that role.
+- **L1**: planning includes the **evaluation of the various risks**, and one benefit of project management is the **early identification of problems so that corrective action may follow** — hence the rule to record a risk on the day it is noticed.
+- **Money for risks (L4)**: some purchases are risk responses — the ring light (R-02) and the Railway Hobby plan (R-09). The 10% reserve (5 191 KZT) is not tied to a single risk and sits outside the cost baseline, like a **management reserve**.
+## How to say it at the defense
+- **Say:** "We score every risk as probability times impact, each from one to three, so scores run from one to nine."
+- **Say:** "Our three highest risks score nine: real-user accuracy, lighting, and knowledge of the core in one person."
+- **Say:** "We do not transfer risks, because in a student project there is no third party to take them."
+- **Say:** "Risks that already happened stay in the register with their fix, so we do not repeat them."
+- **Say:** "Rotation-independent features raised accuracy at a 40-degree tilt from 26 to 85 percent on synthetic hands."
+- **Say:** "If the live demo fails, we switch to our backup video — that is the planned response to R-08."
+## Weak spots and honest answers
+- **"Three risks at the maximum score — is the project in trouble?"** They score 9 because they are not measured yet, not because something failed. CR-04 added the accuracy and lighting studies (4.1, 4.2; M8, M9), and the time gained in development goes there; R-03 is answered by areas of responsibility, pull request review and decisions written in the README.
+- **"Your register only started on 5 October."** True: it came with CR-03 (M7). Problems before that were fixed as they appeared, and they are now recorded as R-13 to R-20, so the lessons are not lost.
+- **"Which risks are mitigated and which are accepted?"** The Response column lists actions, not labels. Most responses reduce probability or impact (mitigation); R-06 includes an avoidance option; transfer is not used. We can add a type column.
+## Check yourself
+?? R-04 has P = 2 and I = 3. What is its score and band, and how is it monitored?
+?= 2 × 3 = 6, the high band (6 to 9): it has an owner, Yernar, and a response plan (export and import of the full gesture set as one file), and it is reviewed at every weekly meeting.
+?? What went wrong in R-14, and how was it fixed?
+?= One gesture fired zero or two commands, because requiring a continuous chain of good frames lost 6–21% of genuine attempts. It was replaced by voting over a 450 ms window, and two follow-up defects (a pause that blocked quick repetition and a double activation) were fixed.`,
+        ru: `## Что мы написали: метод
+Управление рисками идёт в **четыре шага**: **идентификация, оценка, планирование реагирования и мониторинг** (PMI, 2021). Реестр хранится в репозитории (**docs/RISKS.md**) и разбирается на **еженедельной встрече**; ведёт его **Aizat** (RACI: Aizat — R, Ayat — A).
+- **Любой участник** может добавить риск, и риск записывают **в день, когда его заметили, а не в день, когда он случился**.
+- **Вероятность (P)** и **влияние (I)** оцениваются как низкая, средняя или высокая, то есть **1, 2 или 3**.
+= P × I = 1 … 9
+- У каждого открытого риска есть ещё и **карточка задачи на GitHub**.
+| Балл | Уровень | Мониторинг |
+|---|---|---|
+| 6–9 | высокий | владелец и план реагирования; разбор на каждой еженедельной встрече |
+| 3–4 | средний | владелец; разбор на каждом обзоре вехи |
+| 1–2 | низкий | хранится в реестре, разбирается при изменении условий |
+@diagram pm-risk-matrix
+- На шкале 1–3 возможны только баллы 1, 2, 3, 4, 6 и 9, поэтому у трёх уровней нет пробелов.
+## Реагирование: три способа используем, один — нет
+| Способ | Смысл в нашем плане | Ближайший пример из реестра |
+|---|---|---|
+| Уклонение (avoidance) | план меняется так, что риск не может наступить | R-06: убрать обещание Windows с сайта (один из двух вариантов в CR-05) |
+| Снижение (mitigation) | снижается вероятность или влияние | R-08: запасное видео, заранее осмотренная аудитория, открытый сайт |
+| Принятие (acceptance) | риск отслеживают и разбираются, если он наступит | R-05 частично: ограничение «только GNOME» остаётся и прямо указано |
+| Передача (transfer) | риск передаётся третьей стороне | не используется: в студенческом проекте это непрактично |
+## Открытые риски (таблица 13, по убыванию балла)
+P — вероятность, I — влияние; у каждого открытого риска есть владелец и план реагирования.
+| ID | Риск | P × I | Владелец | Реагирование |
+|---|---|---|---|---|
+| R-01 | точность измерена только на синтетических руках; точность на реальном видео с разными людьми неизвестна | 3 × 3 = 9 | Ayat | записать 5 человек × 5 жестов × 20 попыток, посчитать верные и ложные срабатывания; до этого не заявлять точность на реальных пользователях |
+| R-02 | освещение не изучено: контровой свет, тёмная комната или смешанный свет могут мешать находить руку | 3 × 3 = 9 | Aizat | оценить записи при трёх уровнях освещения; описать минимальные условия в README |
+| R-03 | знание кода сосредоточено у одного человека; у репозитория один автор | 3 × 3 = 9 | Ayat | зоны ответственности, ревью всех изменений через pull request, решения записаны в README |
+| R-04 | жесты хранятся только на компьютере пользователя; переустановка или очистка данных сайта их удаляет | 2 × 3 = 6 | Yernar | экспорт и импорт всего набора жестов одним файлом |
+| R-05 | настольная версия работает только в GNOME Wayland; в KDE и X11 нет нужного интерфейса ввода | 3 × 2 = 6 | Ayat | указать ограничение в README и на сайте; оценить ydotool |
+| R-06 | версии для Windows нет, а сайт называет её «в работе» | 3 × 2 = 6 | Akbota | сделать её на Electron или убрать обещание с сайта |
+| R-08 | демонстрация на защите может сорваться: нет камеры, плохой свет или нет сети | 2 × 3 = 6 | Akbota | запасное видео готово; аудиторию осмотреть заранее; сайт открыт как запасной вариант |
+| R-07 | браузерная версия при первой загрузке скачивает около 17 МБ | 2 × 2 = 4 | Yernar | предупреждение уже показывается; изучить загрузку модели частями |
+| R-12 | тесты запускаются вручную, а не автоматически при каждом push | 2 × 2 = 4 | Yernar | запускать тесты в GitHub Actions при каждом push (на ревью) |
+| R-11 | пользователи могут ждать, что браузерная версия управляет системой | 3 × 1 = 3 | Aizat | объяснить разницу в README, на сайте и в приложении одинаковыми словами |
+| R-09 | хостинг зависит от бесплатного плана Railway | 1 × 2 = 2 | Yernar | держать Docker-образ переносимым, один раз проверить переезд; платный план заложен в бюджет (таблица 8) |
+| R-10 | MediaPipe 0.10.14 скачивается с jsdelivr во время сборки | 1 × 2 = 2 | Yernar | проверять контрольные суммы при загрузке и хранить копию файлов |
+- **12 открытых рисков**: 7 высоких (R-01, R-02, R-03 с баллом 9; R-04, R-05, R-06, R-08 с баллом 6), 3 средних (R-07, R-12, R-11) и 2 низких (R-09, R-10).
+> Балл = P × I по шкале 1–3; три наши «девятки» — точность на реальных людях, освещение и ядро в руках одного человека — называем первыми, у каждой есть владелец и ответ.
+## Риски, которые уже случились (таблица 14)
+Случившиеся риски **не удаляются**: их переносят в отдельный список с описанием, как их решили, чтобы команда не повторяла тех же ошибок.
+| ID | Что случилось | Как решили |
+|---|---|---|
+| R-13 | при наклоне запястья распознавание ломалось: сырые координаты давали 41% при ±25° и 26% при ±40° | признаки, не зависящие от поворота (углы суставов, расстояния между кончиками пальцев, делённые на размер руки), и повёрнутые копии образцов: 93% и 85% |
+| R-14 | один жест давал ноль или две команды: требование непрерывной цепочки хороших кадров теряло 6–21% настоящих попыток | голосование в окне 450 мс; исправлены два последующих дефекта (пауза, мешавшая быстрому повтору, и двойное срабатывание) |
+| R-15 | щелчок пальцами срабатывал во время свайпов, потому что свайп начинается с раскрытия полусжатой руки | проверка, что запястье неподвижно, и минимальная скорость раскрытия пальцев |
+| R-16 | свайпы работали только в одну сторону: браузер замедлял распознавание, когда окно было скрыто на другом рабочем столе | окно закреплено на всех рабочих столах, компактный режим поверх всех окон, короткая пауза ожидания, когда рука потеряна |
+| R-17 | переименование жеста удаляло его образцы, потому что записи сопоставлялись по имени | у жестов появились стабильные идентификаторы в базе данных |
+| R-18 | открытие сайта жестом молча не срабатывало: браузеры открывают новые вкладки только после настоящего клика | появляется панель подтверждения, клик по ней открывает сайт |
+| R-19 | домен не открывался и сертификат не выдавался: не было записи ALIAS, мешала запись CAA | DNS-записи исправлены, локальный кэш DNS очищен |
+| R-20 | после удаления старых режимов осталась ссылка на удалённую функцию; страница бы не загрузилась | поймано набором тестов до релиза; теперь тесты запускаются перед каждым коммитом |
+= R-13: ±25° 41% → 93%; ±40° 26% → 85%
+## R-08: если демо на защите сорвётся
+- Демонстрация может сорваться из-за **отсутствия камеры, плохого света или отсутствия сети**: P 2 × I 3 = **6**, владелец — **Akbota**.
+- Реагирование: **запасное видео готово**, аудиторию **осматривают заранее**, а **сайт держат открытым** как запасной вариант (браузерной версии не нужна установка).
+- Если живое демо сорвётся, спокойно переключись на видео и назови это: так работает план по рискам.
+## Теория за этим
+- **Риск (Керцнер, L3)**: опасные действия или факторы, которые, если наступят, **повышают вероятность, что цели по срокам, стоимости и характеристикам не будут достигнуты**. Планы проекта — **живые документы (living documents)** и меняются, чтобы предотвратить или исправить такие ситуации.
+- **Шесть шагов Керцнера**: идентификация, **количественная оценка (quantifying)**, **приоритизация (prioritizing)**, разработка стратегии, **обзор спонсором/руководством (sponsor/executive review)**, действие. Наши четыре шага покрывают то же: P × I даёт количественную оценку, уровни — приоритеты, столбец «Реагирование» — стратегию; вся команда разбирает реестр еженедельно, а то, что не решается внутри, уходит к преподавателю — нашему спонсору (раздел 7).
+- **Типичные риски (L3)** включают **нехватку квалифицированных ресурсов (lack of qualified resources)** — наш вариант этого R-03 (подробно код ядра знает только Ayat). Среди инструментов идентификации у Керцнера — **независимые проверки и аудиты (independent reviews and audits)**; эту роль у нас играет ревью pull request.
+- **L1**: планирование включает **оценку различных рисков**, а одна из выгод управления проектами — **раннее обнаружение проблем, чтобы успеть их исправить** — отсюда правило записывать риск в день, когда его заметили.
+- **Деньги на риски (L4)**: часть покупок — это реагирование на риски: кольцевая лампа (R-02) и план Railway Hobby (R-09). Резерв 10% (5 191 KZT) не привязан к одному риску и лежит вне базового плана затрат, как **управленческий резерв (management reserve)**.
+## Как сказать на защите
+- **Скажи:** «We score every risk as probability times impact, each from one to three, so scores run from one to nine.» — балл риска = вероятность × влияние, каждое от 1 до 3, итог от 1 до 9.
+- **Скажи:** «Our three highest risks score nine: real-user accuracy, lighting, and knowledge of the core in one person.» — три главных риска с баллом 9: точность на реальных людях, освещение и знание ядра у одного человека.
+- **Скажи:** «We do not transfer risks, because in a student project there is no third party to take them.» — риски не передаём: в студенческом проекте их некому передать.
+- **Скажи:** «Risks that already happened stay in the register with their fix, so we do not repeat them.» — случившиеся риски остаются в реестре с решением, чтобы не повторять ошибок.
+- **Скажи:** «Rotation-independent features raised accuracy at a 40-degree tilt from 26 to 85 percent on synthetic hands.» — признаки, не зависящие от поворота, подняли точность при наклоне 40° с 26 до 85% на синтетических руках.
+- **Скажи:** «If the live demo fails, we switch to our backup video — that is the planned response to R-08.» — если живое демо сорвётся, включаем запасное видео — это запланированный ответ на R-08.
+## Слабые места и честные ответы
+- **«Three risks at the maximum score — is the project in trouble?»** Балл 9 у них потому, что они ещё не измерены, а не потому, что что-то провалилось. CR-04 добавил исследования точности и освещения (4.1, 4.2; M8, M9), и туда идёт время, выигранное на разработке; на R-03 отвечают зоны ответственности, ревью pull request и решения, записанные в README.
+- **«Your register only started on 5 October.»** Верно: он появился с CR-03 (M7). Проблемы до этого решались по мере появления, а теперь записаны как R-13–R-20, чтобы уроки не потерялись.
+- **«Which risks are mitigated and which are accepted?»** В столбце «Реагирование» — действия, а не ярлыки. Большинство ответов снижают вероятность или влияние (mitigation); у R-06 есть вариант уклонения; передача не используется. Можем добавить столбец с типом.
+## Проверь себя
+?? У R-04 P = 2 и I = 3. Какой у него балл и уровень и как его отслеживают?
+?= 2 × 3 = 6, высокий уровень (6–9): у него есть владелец — Yernar — и план реагирования (экспорт и импорт всего набора жестов одним файлом), его разбирают на каждой еженедельной встрече.
+?? Что пошло не так в R-14 и как это исправили?
+?= Один жест давал ноль или две команды, потому что требование непрерывной цепочки хороших кадров теряло 6–21% настоящих попыток. Его заменили голосованием в окне 450 мс и исправили два последующих дефекта (паузу, мешавшую быстрому повтору, и двойное срабатывание).`,
+      },
+      [
+        qx("How is a risk score calculated in the YeahTrack risk management plan?", "Probability × impact, each rated 1 to 3", [
+          ["Probability × impact, each rated 1 to 5", "Our plan rates each value as 1, 2 or 3, so the score ends at 9, not 25.", "В нашем плане каждое значение — 1, 2 или 3, поэтому балл заканчивается на 9, а не на 25."],
+          ["Probability + impact, each rated 1 to 3", "The plan multiplies the two values; adding them would give scores from 2 to 6.", "План перемножает два значения; сумма давала бы баллы от 2 до 6."],
+          ["Impact × hours needed to fix it", "Hours are not part of the score; only probability and impact are rated.", "Часы в балл не входят; оцениваются только вероятность и влияние."],
+        ], "Section 13: probability and impact are each low, medium or high (1, 2, 3), and their product gives a score from 1 to 9.", "Раздел 13: вероятность и влияние — низкие, средние или высокие (1, 2, 3), а их произведение даёт балл от 1 до 9."),
+        qx("A risk scores 4. How is it monitored according to Table 12?", "It has an owner; reviewed at each milestone review", [
+          ["Owner and plan; reviewed every weekly meeting", "That is the high band, scores 6 to 9; a 4 is medium.", "Это высокий уровень, баллы 6–9; балл 4 — средний."],
+          ["Kept in register; reviewed if conditions change", "That is the low band, scores 1 to 2.", "Это низкий уровень, баллы 1–2."],
+          ["Reviewed daily at the progress check-in", "Table 12 has no daily review; check-ins compare progress with milestones.", "В таблице 12 нет ежедневного разбора; на чек-инах сверяют прогресс с вехами."],
+        ], "Table 12: scores 3 to 4 (medium) have an owner and are reviewed at each milestone review, like R-07, R-12 and R-11.", "Таблица 12: баллы 3–4 (средний уровень) имеют владельца и разбираются на каждом обзоре вехи — как R-07, R-12 и R-11."),
+        qx("Which three open risks have the maximum score of 9?", "R-01, R-02 and R-03", [
+          ["R-01, R-02 and R-08", "R-08 (the demo may fail) scores 2 × 3 = 6, not 9.", "R-08 (может сорваться демо) — 2 × 3 = 6, а не 9."],
+          ["R-01, R-04 and R-06", "R-04 scores 2 × 3 = 6 and R-06 scores 3 × 2 = 6.", "У R-04 балл 2 × 3 = 6, у R-06 — 3 × 2 = 6."],
+          ["R-02, R-03 and R-05", "R-05 (GNOME Wayland only) scores 3 × 2 = 6.", "R-05 (только GNOME Wayland) — 3 × 2 = 6."],
+        ], "Table 13: R-01 (accuracy only on synthetic hands), R-02 (lighting not studied) and R-03 (code knowledge in one person) are 3 × 3 = 9.", "Таблица 13: R-01 (точность только на синтетических руках), R-02 (освещение не изучено) и R-03 (знание кода у одного человека) — 3 × 3 = 9."),
+        qx("Who owns R-02, the risk that lighting has not been studied?", "Aizat", [
+          ["Ayat", "Ayat owns R-01, R-03 and R-05, not the lighting risk.", "Ayat владеет R-01, R-03 и R-05, а не риском освещения."],
+          ["Akbota", "Akbota owns R-06 (Windows) and R-08 (the demo).", "Akbota владеет R-06 (Windows) и R-08 (демо)."],
+          ["Yernar", "Yernar owns R-04, R-07, R-09, R-10 and R-12.", "Yernar владеет R-04, R-07, R-09, R-10 и R-12."],
+        ], "Table 13: R-02 belongs to Aizat; the lighting study (WBS 4.2) is also in Aizat's area, quality and documentation.", "Таблица 13: R-02 принадлежит Aizat; исследование освещения (WBS 4.2) тоже в зоне Aizat — качество и документация."),
+        qx("What is the planned response to R-08, a failed demonstration at the defence?", "Backup video, room checked early, website open", [
+          ["Two extra webcams bought only for the defence day", "The two webcams in Table 8 are for the accuracy and lighting studies, bought in week 6.", "Две веб-камеры из таблицы 8 — для исследований точности и освещения, покупка на 6-й неделе."],
+          ["Skip the live demo and show only the slides", "The plan keeps the demo and adds fallbacks; it does not drop it in advance.", "План сохраняет демо и добавляет запасные варианты, а не отменяет его заранее."],
+          ["Postpone the demo to the final presentation", "R-08's response works on the day itself; nothing in the register moves the demo.", "Ответ на R-08 работает в сам день защиты; в реестре ничего не переносит демо."],
+        ], "Table 13: a backup video is ready, the room is inspected in advance, and the website is kept open as a fallback; owner Akbota.", "Таблица 13: запасное видео готово, аудиторию осматривают заранее, сайт держат открытым как запасной вариант; владелец — Akbota."),
+        qx("In R-13, raw coordinates gave 41% at a ±25° tilt. What did rotation-independent features reach at ±25°?", "93%", [
+          ["85%", "85% is the result at ±40°, where raw coordinates gave 26%.", "85% — результат при ±40°, где сырые координаты давали 26%."],
+          ["95%", "95% is the value for a tilt of up to ±10° in Table 20.", "95% — значение для наклона до ±10° в таблице 20."],
+          ["90%", "90% is the accuracy target, not a measured result.", "90% — целевая точность, а не измеренный результат."],
+        ], "Table 14: joint angles, fingertip distances divided by hand size and rotated copies of samples raised accuracy to 93% at ±25° and 85% at ±40°.", "Таблица 14: углы суставов, расстояния между кончиками пальцев, делённые на размер руки, и повёрнутые копии образцов подняли точность до 93% при ±25° и 85% при ±40°."),
+        qx("R-14: one gesture fired zero or two commands. What replaced the chain of good frames?", "Voting: win 70% of frames in a 450 ms window", [
+          ["A k = 5 nearest-neighbours classifier", "The classifier is the step that picks the gesture; R-14 changed the rule that fires the command.", "Классификатор выбирает жест; R-14 изменил правило, по которому срабатывает команда."],
+          ["A check that the wrist stays still", "The still-wrist check is the fix for R-15, the snap that fired during swipes.", "Проверка неподвижного запястья — исправление R-15, щелчка во время свайпов."],
+          ["A confirmation panel that the user clicks first", "The confirmation panel is the R-18 fix for opening websites.", "Панель подтверждения — исправление R-18 для открытия сайтов."],
+        ], "Table 14 and Section 1.2: a gesture fires only if it wins at least 70% of the frames in a 450 ms window; two follow-up defects were then fixed.", "Таблица 14 и раздел 1.2: жест срабатывает, только если побеждает минимум в 70% кадров окна 450 мс; затем исправили два последующих дефекта."),
+        qx("R-17: renaming a gesture deleted its samples. What was the cause and the fix?", "Matched by name; gestures got stable IDs", [
+          ["Storage was full; export and import added", "Export and import is the response to the open risk R-04, not the R-17 fix.", "Экспорт и импорт — ответ на открытый риск R-04, а не исправление R-17."],
+          ["SQLite bug; switched storage to IndexedDB", "Both stores are used (desktop and browser); the cause was matching by name.", "Используются оба хранилища (настольное и браузерное); причина — сопоставление по имени."],
+          ["Matched by name; renaming was disabled", "Renaming is still in scope (the settings panel); the fix was stable identifiers.", "Переименование по-прежнему в рамках проекта (панель настроек); исправлением стали стабильные идентификаторы."],
+        ], "Table 14: records were matched by name, so a new name lost the samples; gestures received stable identifiers in the database.", "Таблица 14: записи сопоставлялись по имени, и новое имя теряло образцы; жесты получили стабильные идентификаторы в базе данных."),
+        qx("Why does the YeahTrack risk plan not use risk transfer?", "It is not practical in a student project", [
+          ["PMBOK allows only three response types", "Transfer is a standard response; the team left it out for practical reasons.", "Передача — стандартный способ реагирования; команда исключила его по практическим причинам."],
+          ["All open risks are already low-score", "Three open risks score 9 and four more score 6.", "Три открытых риска имеют балл 9 и ещё четыре — 6."],
+          ["The sponsor agreed to carry all risks", "The report says nothing like this, and the sponsor's signature block is still empty.", "В отчёте ничего такого нет, а блок подписи спонсора ещё пуст."],
+        ], "Section 13: transferring a risk to a third party is not practical in a student project and is therefore not used.", "Раздел 13: передача риска третьей стороне непрактична в студенческом проекте, поэтому не используется."),
+        tfx("When a risk has occurred, it is deleted from the register and its task card is closed.", false, "Occurred risks are not deleted: they move to a separate list (Table 14, R-13 to R-20) with a description of how they were resolved.", "Случившиеся риски не удаляются: их переносят в отдельный список (таблица 14, R-13–R-20) с описанием, как их решили.", "Choosing True would throw away the lessons; the report keeps them so the team does not repeat the same mistakes.", "Ответ True выбросил бы уроки; отчёт сохраняет их, чтобы команда не повторяла тех же ошибок."),
+        qx("Kerzner's six risk steps include quantifying and prioritizing. What does that in our plan?", "P × I scores and the bands", [
+          ["The Response column of Table 13", "The Response column is the strategy step, developing a response.", "Столбец «Реагирование» — это шаг разработки стратегии."],
+          ["The review at the weekly meeting", "The weekly review is monitoring, closest to the review step.", "Еженедельный разбор — это мониторинг, ближе к шагу обзора."],
+          ["Adding a risk on the day it is noticed", "Recording a risk when it is noticed is identification, the first step.", "Запись риска в день, когда его заметили, — это идентификация, первый шаг."],
+        ], "Scoring P × I quantifies each risk, and the bands of Table 12 set priority: how closely the risk is watched.", "Балл P × I даёт количественную оценку риска, а уровни таблицы 12 задают приоритет — насколько пристально за ним следят."),
+        qx("Removing the Windows promise from the website, one option for R-06, is which response type?", "Avoidance", [
+          ["Mitigation", "Mitigation reduces probability or impact; removing the promise removes the gap itself.", "Снижение уменьшает вероятность или влияние; удаление обещания убирает сам разрыв."],
+          ["Acceptance", "Acceptance would keep the promise and only watch the risk.", "Принятие оставило бы обещание и только наблюдало бы за риском."],
+          ["Transfer", "Transfer passes a risk to a third party and is not used in the project.", "Передача отдаёт риск третьей стороне и в проекте не используется."],
+        ], "Avoidance changes the plan so that the risk cannot occur: with no promise, there is no gap between the website and the product (CR-05, pending).", "Уклонение меняет план так, что риск не может наступить: без обещания нет разрыва между сайтом и продуктом (CR-05, ожидает решения)."),
+        qx("Which Kerzner common risk (L3) is closest to R-03, code knowledge concentrated in one person?", "Lack of qualified resources", [
+          ["Poorly defined requirements", "Requirements were set in WBS 1.1 and 1.2; R-03 is about who knows the code.", "Требования задали в WBS 1.1 и 1.2; R-03 — о том, кто знает код."],
+          ["Poor estimating", "Estimating concerns hours and costs; R-03 is about knowledge held by one person.", "Оценка касается часов и затрат; R-03 — о знаниях у одного человека."],
+          ["Lack of management support", "R-03 is not about support from above; it is about one person holding the core.", "R-03 не о поддержке сверху, а о том, что ядро держит один человек."],
+        ], "Only Ayat knows the core code in detail, so the team lacks a second qualified person for it; reviews and written decisions spread the knowledge.", "Подробно код ядра знает только Ayat, поэтому команде не хватает второго квалифицированного человека; ревью и записанные решения распространяют знания."),
+        qx("Examiner: ‘Three risks score 9 out of 9. Is your project in trouble?’ What is the best answer?", "High but handled: each has an owner and a response", [
+          ["No, the scores are pessimistic; the app works", "This denies the register's own scores instead of explaining them.", "Это отрицает баллы собственного реестра вместо того, чтобы их объяснить."],
+          ["R-03 is there only because Ayat committed all the code alone", "This blames one member; the register treats R-03 as a team risk with a team response.", "Это перекладывает вину на одного участника; реестр считает R-03 риском команды с командным ответом."],
+          ["No, our synthetic 93% already closes R-01", "This over-claims: synthetic results are the very reason R-01 is open.", "Это преувеличение: синтетические результаты — как раз причина, по которой R-01 открыт."],
+        ], "Say why they are high (not yet measured) and show the plan: owners, the studies 4.1 and 4.2, M8 and M9, pull request review for R-03.", "Скажи, почему балл высокий (ещё не измерено), и покажи план: владельцы, исследования 4.1 и 4.2, M8 и M9, ревью pull request для R-03."),
+        qx("The live demo fails at the defence: the camera is not detected. What should the team do?", "Switch to the backup video: the R-08 response", [
+          ["Ask to reschedule the defence to another day", "The plan does not move the defence; fallbacks are ready for exactly this case.", "План не переносит защиту; запасные варианты готовы как раз на этот случай."],
+          ["Keep restarting the laptop until the camera is detected", "This wastes the defence time when a planned fallback already exists.", "Это тратит время защиты, хотя запланированный запасной вариант уже есть."],
+          ["Explain that Akbota owns R-08 and step back", "Blaming the owner does not help; the response belongs to the whole team.", "Перекладывать на владельца бесполезно; ответ — дело всей команды."],
+        ], "R-08's response is a ready backup video, an inspected room and the website kept open; using them is the risk plan working.", "Ответ на R-08 — готовое запасное видео, осмотренная аудитория и открытый сайт; воспользоваться ими — значит, план по рискам работает."),
+      ],
+    ),
+  ],
+};

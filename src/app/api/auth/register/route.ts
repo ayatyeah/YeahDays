@@ -8,6 +8,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
+import { notifyNewUser } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -79,6 +80,8 @@ export async function POST(req: Request) {
         birthYear: birthYearNum,
       },
     });
+    // владельцу в Telegram; не ждём — регистрация от этого не зависит
+    void notifyNewUser({ name: nameStr, email: emailStr, username: usernameStr }, "password");
 
     return NextResponse.json({ ok: true });
   } catch (e) {

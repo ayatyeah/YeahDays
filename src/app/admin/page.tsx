@@ -22,5 +22,9 @@ import { adminCredentialsAreDefault } from "@/lib/adminSession";
 export default async function AdminPage() {
   // Владельческий аккаунт ИЛИ вход логином и паролем (/admin/login).
   if (!(await requireAdmin())) redirect("/admin/login");
-  return <OwnerConsole showCredentialsWarning={adminCredentialsAreDefault()} />;
+  return (
+    <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-10 sm:px-8 sm:pt-10">
+      <OwnerConsole showCredentialsWarning={adminCredentialsAreDefault()} />
+    </main>
+  );
 }

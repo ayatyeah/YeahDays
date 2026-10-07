@@ -42,7 +42,12 @@ export async function POST(req: Request) {
   res.cookies.set(ADMIN_COOKIE, token.value, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    // Secure — когда сайт на https, как у куки сессии Auth.js. Раньше флаг
+    // зависел от NODE_ENV: боевая сборка на http://localhost (тесты) ставила
+    // Secure-куку, WebKit её не сохранял, и консоль не пускала после входа.
+    secure: process.env.AUTH_URL
+      ? process.env.AUTH_URL.startsWith("https://")
+      : process.env.NODE_ENV === "production",
     path: "/",
     maxAge: token.maxAgeSec,
   });

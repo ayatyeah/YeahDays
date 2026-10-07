@@ -2,11 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Logo from "@/components/Logo";
-import Button from "@/components/ui/Button";
-
-const inputClass =
-  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
+import AuthShell, { AuthError, AuthField, authInput, authPrimary } from "@/components/auth/AuthShell";
 
 /**
  * Публичная форма «забыли пароль». Сайт не шлёт email/SMS, поэтому это не
@@ -46,79 +42,48 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center px-5 py-10">
-      <div className="w-full max-w-[380px]">
-        <div className="mb-8 flex flex-col items-center gap-3">
-          <Logo glow className="h-10 w-auto" />
-          <h1 className="text-[22px] font-bold tracking-tight">Забыли пароль?</h1>
+    <AuthShell
+      mode="neutral"
+      title="Забыли пароль?"
+      subtitle="Автоматического сброса пароля нет — оставь контакты, и я поменяю пароль вручную и напишу тебе в Telegram."
+      tabs={false}
+    >
+      {sent ? (
+        <div className="rounded-2xl border border-[#d3f693]/30 bg-[#d3f693]/10 p-4 text-center">
+          <p className="text-[15px] font-semibold text-[#d3f693]">Заявка отправлена</p>
+          <p className="mt-2 text-[15px] leading-snug text-[#b4b8ae]">Я свяжусь с тобой в Telegram и помогу восстановить доступ.</p>
         </div>
-
-        {sent ? (
-          <div className="surface rounded-2xl p-4 text-center">
-            <p className="text-[15px] font-medium">Заявка отправлена</p>
-            <p className="mt-2 text-[15px] leading-snug text-[var(--color-fg-dim)]">
-              Я свяжусь с тобой в Telegram и помогу восстановить доступ.
-            </p>
+      ) : (
+        <form onSubmit={submit} className="flex flex-col gap-4">
+          <AuthField label="Email от аккаунта">
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoFocus className={authInput} />
+          </AuthField>
+          <AuthField label="Номер телефона">
+            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+7 700 000 00 00" required className={authInput} />
+          </AuthField>
+          <div className="grid grid-cols-2 gap-3">
+            <AuthField label="Год рождения">
+              <input type="number" inputMode="numeric" value={birthYear} onChange={(e) => setBirthYear(e.target.value)} placeholder="2006" required className={authInput} />
+            </AuthField>
+            <AuthField label="Telegram">
+              <input value={telegram} onChange={(e) => setTelegram(e.target.value)} placeholder="@username" required className={authInput} />
+            </AuthField>
           </div>
-        ) : (
-          <>
-            <p className="mb-5 text-[15px] leading-snug text-[var(--color-fg-dim)]">
-              Автоматического сброса пароля нет — оставь контакты, и я поменяю
-              пароль вручную и напишу тебе в Telegram.
-            </p>
-            <form onSubmit={submit} className="flex flex-col gap-3">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email от аккаунта"
-                required
-                autoFocus
-                className={inputClass}
-              />
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Номер телефона"
-                required
-                className={inputClass}
-              />
-              <input
-                type="number"
-                inputMode="numeric"
-                value={birthYear}
-                onChange={(e) => setBirthYear(e.target.value)}
-                placeholder="Год рождения"
-                required
-                className={inputClass}
-              />
-              <input
-                value={telegram}
-                onChange={(e) => setTelegram(e.target.value)}
-                placeholder="Telegram (@username)"
-                required
-                className={inputClass}
-              />
 
-              {error && (
-                <p className="text-[15px] text-[var(--color-strength)]">{error}</p>
-              )}
+          {error && <AuthError>{error}</AuthError>}
 
-              <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
-                {busy ? "Отправляем…" : "Отправить заявку"}
-              </Button>
-            </form>
-          </>
-        )}
+          <button type="submit" disabled={busy} className={authPrimary}>
+            {busy ? "Отправляем…" : "Отправить заявку"}
+          </button>
+        </form>
+      )}
 
-        <p className="mt-6 text-center text-[15px] text-[var(--color-muted)]">
-          Вспомнил пароль?{" "}
-          <Link href="/login" className="font-semibold text-[var(--color-fg)]">
-            Войти
-          </Link>
-        </p>
-      </div>
-    </div>
+      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">
+        Помнишь пароль?{" "}
+        <Link href="/login" className="font-semibold text-[#d3f693] underline-offset-2 hover:underline">
+          Войти
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

@@ -734,7 +734,7 @@ export default function Landing() {
                 сдержал.
               </p>
               <div className={styles.weekLabels}>
-                {["П", "В", "С", "Ч", "П", "С", "В"].map((d, i) => (
+                {["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"].map((d, i) => (
                   <span key={i}>{d}</span>
                 ))}
               </div>

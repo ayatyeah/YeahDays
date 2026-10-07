@@ -3,15 +3,11 @@
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import AuthShell, { AuthDivider, AuthError, AuthField, MicrosoftIcon, authInput, authPrimary, authSecondary } from "@/components/auth/AuthShell";
 import GoogleButton from "@/components/GoogleButton";
-import Logo from "@/components/Logo";
 import { credentialsSignIn, enterApp, safeCallbackUrl, warmSignIn } from "@/lib/fastSignIn";
 import { oauthErrorMessage } from "@/lib/oauthErrors";
-import Button from "@/components/ui/Button";
 import PasswordInput from "@/components/ui/PasswordInput";
-
-const inputClass =
-  "h-13 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]";
 
 export default function LoginPage() {
   return (
@@ -62,66 +58,46 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center px-5 py-10">
-      <div className="w-full max-w-[380px]">
-        <div className="mb-8 flex flex-col items-center gap-3">
-          <Logo glow className="h-10 w-auto" />
-          <h1 className="text-[22px] font-bold tracking-tight">Вход</h1>
-        </div>
+    <AuthShell mode="login" title="Войти в YeahGrind" subtitle="Рады видеть снова — план на сегодня уже ждёт." callbackUrl={callbackUrl}>
+      {providerError && <div className="mb-4"><AuthError>{providerError}</AuthError></div>}
 
-        {providerError && <p role="alert" className="mb-4 text-sm text-[var(--color-strength)]">{providerError}</p>}
-
-        <form onSubmit={submit} className="flex flex-col gap-3">
-          <input
-            name="identifier"
-            placeholder="Email или логин"
-            required
-            autoFocus
-            className={inputClass}
-          />
-          <PasswordInput name="password" placeholder="Пароль" required className={inputClass} />
-
-          {error && (
-            <p className="text-[15px] text-[var(--color-strength)]">{error}</p>
-          )}
-
-          <Button type="submit" variant="primary" size="lg" disabled={busy} className="mt-1 w-full">
-            {busy ? "Входим…" : "Войти"}
-          </Button>
-
-          <Link
-            href="/forgot-password"
-            className="text-center text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
-          >
-            Забыли пароль?
-          </Link>
-        </form>
-
-        <div className="my-5 flex items-center gap-3 text-[13px] text-[var(--color-muted)]">
-          <span className="h-px flex-1 bg-[var(--color-border)]" />
-          или
-          <span className="h-px flex-1 bg-[var(--color-border)]" />
-        </div>
-
-        <Link
-          href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-          className="mb-3 flex h-13 w-full items-center justify-center rounded-2xl border-2 border-[var(--color-border)] text-[15px] font-semibold"
+      <form onSubmit={submit} className="flex flex-col gap-4">
+        <AuthField label="Email или логин">
+          <input name="identifier" placeholder="you@example.com" autoComplete="username" required autoFocus className={authInput} />
+        </AuthField>
+        <AuthField
+          label="Пароль"
+          aside={<Link href="/forgot-password" className="font-normal text-[#a0a39c] underline-offset-2 transition hover:text-[#d3f693] hover:underline">Забыли пароль?</Link>}
         >
-          Вход через Microsoft AITU
+          <PasswordInput name="password" placeholder="••••••••" autoComplete="current-password" required className={authInput} />
+        </AuthField>
+
+        {error && <AuthError>{error}</AuthError>}
+
+        <button type="submit" disabled={busy} className={authPrimary}>
+          {busy ? "Входим…" : <>Войти <span aria-hidden>↗</span></>}
+        </button>
+      </form>
+
+      <AuthDivider>или</AuthDivider>
+
+      <div className="flex flex-col gap-3">
+        <GoogleButton callbackUrl={callbackUrl} disabled={busy} className="h-12" />
+        <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className={authSecondary}>
+          <MicrosoftIcon />
+          Microsoft AITU
         </Link>
-
-        <GoogleButton callbackUrl={callbackUrl} disabled={busy} />
-
-        <p className="mt-6 text-center text-[15px] text-[var(--color-muted)]">
-          Ещё нет аккаунта?{" "}
-          <Link
-            href={callbackUrl === "/app" ? "/register" : `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
-            className="font-semibold text-[var(--color-fg)]"
-          >
-            Зарегистрироваться
-          </Link>
-        </p>
       </div>
-    </div>
+
+      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">
+        Ещё нет аккаунта?{" "}
+        <Link
+          href={callbackUrl === "/app" ? "/register" : `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          className="font-semibold text-[#d3f693] underline-offset-2 hover:underline"
+        >
+          Создать за минуту
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

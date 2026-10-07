@@ -47,7 +47,7 @@ export default function PersonalizationSync() {
     }, 15000);
     return () => { clearInterval(timer); events.forEach(event => window.removeEventListener(event, input, true)); window.removeEventListener("focus", visibility); window.removeEventListener("blur", visibility); document.removeEventListener("visibilitychange", visibility); };
   }, [owner, data?.enabled, data?.version]);
-  if (!owner || ["/privacy", "/terms", "/personalization"].includes(path)) return null;
+  if (!owner || ["/privacy", "/terms", "/personalization"].includes(path) || path.startsWith("/admin")) return null;
   if (data?.version === POLICY_VERSION) return null;
   return <aside ref={bannerRef} role="status" className="relative z-40 border-b border-violet-400/40 bg-[var(--color-surface)] px-4 py-3 text-sm">
     <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2"><p><strong>Обновлена политика конфиденциальности.</strong> Теперь одно согласие вместо нескольких — прими один раз.</p><Link className="rounded-xl bg-[var(--color-fg)] px-3 py-2 font-semibold text-[var(--color-bg)]" href="/personalization">Прочитать и принять</Link></div>

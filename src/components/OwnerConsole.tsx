@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
+import Logo from "@/components/Logo";
 import OwnerAnalytics from "@/components/OwnerAnalytics";
 import { cn } from "@/lib/cn";
+import { agoLabel, type Presence } from "@/lib/presence";
 
 type Tab = "users" | "requests" | "devices" | "analytics";
 
@@ -19,7 +21,12 @@ interface OwnerUser {
   hasPassword: boolean;
   banned: boolean;
   providers: string[];
+  presence: Presence;
 }
+
+type UserFilter = "all" | "online" | "new";
+
+const DAY = 24 * 60 * 60_000;
 
 interface ResetRequest {
   id: string;
@@ -61,10 +68,14 @@ function fmtDateTime(iso: string) {
 
 /**
  * Владельческая консоль (/admin, доступ гейтится на сервере в page.tsx).
- * Две задачи: видеть пользователей и вручную менять им пароль, и разбирать
- * заявки с публичной формы /forgot-password (сайт не шлёт email/SMS, так что
- * это не автосброс, а ручная обработка через telegram из заявки).
- * Плюс вкладка «Аналитика» со сводными числами по сервису (OwnerAnalytics).
+ * Видеть пользователей (кто в сети — по учёту активности, см. lib/presence.ts)
+ * и вручную менять им пароль, разбирать заявки с публичной формы
+ * /forgot-password (сайт не шлёт email/SMS, так что это не автосброс, а
+ * ручная обработка через telegram из заявки). Плюс вкладка «Аналитика» со
+ * сводными числами по сервису (OwnerAnalytics).
+ *
+ * Страница своя, не раздел приложения: Shell не рисует вокруг неё навигацию,
+ * ширину задаёт app/admin/page.tsx.
  */
 export default function OwnerConsole({
   /** true — вход открыт запасными admin/admin, об этом нужно сказать прямо */
@@ -100,6 +111,44 @@ export default function OwnerConsole({
     void loadDevices();
   }, []);
 
+  // «В сети» живёт минутами: пока список пользователей на экране, тихо
+  // перечитываем его раз в 30 секунд (и сразу — когда вкладку вернули).
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (tab !== "users") return;
+    const refresh = () => {
+      if (document.visibilityState !== "visible") return;
+      setNow(Date.now());
+      void loadUsers().catch(() => {});
+    };
+    const timer = window.setInterval(refresh, 30_000);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [tab]);
+
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<UserFilter>("all");
+  const stats = useMemo(() => {
+    const list = users ?? [];
+    return {
+      total: list.length,
+      online: list.filter((u) => u.presence.state === "online").length,
+      day: list.filter((u) => u.presence.lastActiveAt && now - Date.parse(u.presence.lastActiveAt) < DAY).length,
+      week: list.filter((u) => now - Date.parse(u.createdAt) < 7 * DAY).length,
+    };
+  }, [users, now]);
+  const shown = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return (users ?? []).filter((u) => {
+      if (filter === "online" && u.presence.state !== "online") return false;
+      if (filter === "new" && now - Date.parse(u.createdAt) >= 7 * DAY) return false;
+      return !q || [u.name, u.email, u.username].some((v) => v?.toLowerCase().includes(q));
+    });
+  }, [users, query, filter, now]);
+
   const toggleBan = async (u: OwnerUser) => {
     const banned = !u.banned;
     setUsers((prev) => (prev ? prev.map((x) => (x.id === u.id ? { ...x, banned } : x)) : prev));
@@ -133,9 +182,18 @@ export default function OwnerConsole({
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="mb-4 flex items-baseline justify-between gap-3">
-        <h1 className="text-[28px] font-bold tracking-tight">Владелец</h1>
+      <header className="mb-6 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Logo className="h-7 w-auto" />
+          <h1 className="text-[22px] font-bold tracking-tight sm:text-[26px]">Консоль</h1>
+        </div>
         <div className="flex shrink-0 items-baseline gap-4">
+          <Link
+            href="/today"
+            className="text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
+          >
+            в приложение →
+          </Link>
           <button
             onClick={async () => {
               await fetch("/api/admin/login", { method: "DELETE" }).catch(() => {});
@@ -145,12 +203,6 @@ export default function OwnerConsole({
           >
             выйти
           </button>
-          <Link
-            href="/today"
-            className="text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
-          >
-            в приложение →
-          </Link>
         </div>
       </header>
 
@@ -164,6 +216,25 @@ export default function OwnerConsole({
           <b>ADMIN_PASSWORD</b>, и это предупреждение пропадёт.
         </p>
       )}
+
+      <div className="mb-5 grid grid-cols-2 gap-2 lg:grid-cols-4">
+        {(
+          [
+            ["Пользователей", stats.total, null],
+            ["В сети сейчас", stats.online, "online"],
+            ["Активны за сутки", stats.day, null],
+            ["Новых за неделю", stats.week, null],
+          ] as [string, number, string | null][]
+        ).map(([label, value, kind]) => (
+          <div key={label} className="rounded-2xl surface px-4 py-3">
+            <p className="text-[13px] text-[var(--color-muted)]">{label}</p>
+            <p className="mt-0.5 flex items-center gap-2 text-[26px] font-bold tabular-nums">
+              {kind === "online" && <StatusDot state="online" />}
+              {users === null ? "…" : value}
+            </p>
+          </div>
+        ))}
+      </div>
 
       <div className="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {(
@@ -190,51 +261,125 @@ export default function OwnerConsole({
       </div>
 
       {tab === "users" && (
-        <div className="space-y-1.5">
+        <div>
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Имя, почта или логин"
+              className="h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[15px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)] sm:max-w-sm"
+            />
+            <div className="flex gap-1.5">
+              {(
+                [
+                  ["all", `Все · ${stats.total}`],
+                  ["online", `В сети · ${stats.online}`],
+                  ["new", `Новые · ${stats.week}`],
+                ] as [UserFilter, string][]
+              ).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  className={cn(
+                    "h-11 rounded-2xl border px-3.5 text-[14px] font-medium whitespace-nowrap transition",
+                    filter === key
+                      ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
+                      : "border-[var(--color-border)] text-[var(--color-muted)]",
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {users === null ? (
             <p className="text-[15px] text-[var(--color-muted)]">Загрузка…</p>
-          ) : users.length === 0 ? (
-            <p className="text-[15px] text-[var(--color-muted)]">Пока нет пользователей.</p>
+          ) : shown.length === 0 ? (
+            <p className="text-[15px] text-[var(--color-muted)]">
+              {users.length === 0 ? "Пока нет пользователей." : "Никого не нашлось."}
+            </p>
           ) : (
-            users.map((u) => (
-              <div key={u.id} className="rounded-2xl surface px-3 py-2.5">
-                <div className={cn("min-w-0", u.banned && "opacity-50")}>
-                  <p className="truncate text-[15px] font-medium">
-                    {u.name || u.username || u.email || u.id}
-                    {u.banned && (
-                      <span className="ml-1.5 text-[12px] font-bold uppercase text-[var(--color-strength)]">
-                        забанен
-                      </span>
-                    )}
-                  </p>
-                  <p className="truncate text-[12px] text-[var(--color-muted)]">
-                    {[u.email, u.username && `@${u.username}`, u.birthYear]
-                      .filter(Boolean)
-                      .join(" · ")}
-                    {" · с "}
-                    {fmtDate(u.createdAt)}
-                    {u.providers.length > 0 && ` · ${u.providers.join(", ")}`}
-                    {u.hasPassword ? " · есть пароль" : " · без пароля"}
-                  </p>
-                </div>
-                <div className="mt-2.5 flex gap-1.5">
-                  <Button size="sm" className="flex-1" onClick={() => setPasswordTarget(u)}>
-                    Пароль
-                  </Button>
-                  <Button size="sm" className="flex-1" onClick={() => void toggleBan(u)}>
-                    {u.banned ? "Разбанить" : "Забанить"}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    className="flex-1"
-                    onClick={() => setDeleteTarget(u)}
-                  >
-                    Удалить
-                  </Button>
-                </div>
+            <>
+              {/* Широкий экран — таблица: консоль открывают в основном с ноутбука. */}
+              <div className="hidden overflow-hidden rounded-2xl border border-[var(--color-border)] md:block">
+                <table className="w-full text-left text-[14px]">
+                  <thead className="bg-[var(--color-surface)] text-[12px] uppercase tracking-wide text-[var(--color-muted)]">
+                    <tr>
+                      <th className="px-4 py-2.5 font-medium">Пользователь</th>
+                      <th className="px-4 py-2.5 font-medium">Активность</th>
+                      <th className="px-4 py-2.5 font-medium">Вход</th>
+                      <th className="px-4 py-2.5 font-medium">С нами</th>
+                      <th className="px-4 py-2.5" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shown.map((u) => (
+                      <tr key={u.id} className={cn("border-t border-[var(--color-border)] align-middle", u.banned && "opacity-50")}>
+                        <td className="max-w-[320px] px-4 py-3">
+                          <p className="truncate font-medium">
+                            {u.name || u.username || u.email || u.id}
+                            {u.banned && <BannedTag />}
+                          </p>
+                          <p className="truncate text-[12px] text-[var(--color-muted)]">
+                            {[u.email, u.username && `@${u.username}`, u.birthYear].filter(Boolean).join(" · ")}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          <PresenceLabel presence={u.presence} now={now} />
+                        </td>
+                        <td className="px-4 py-3 text-[13px] text-[var(--color-muted)]">
+                          {[...u.providers, u.hasPassword ? "пароль" : null].filter(Boolean).join(", ") || "—"}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-[13px] text-[var(--color-muted)]">
+                          {fmtDate(u.createdAt)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end gap-1.5">
+                            <UserActions user={u} onPassword={setPasswordTarget} onBan={toggleBan} onDelete={setDeleteTarget} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))
+
+              {/* Телефон — карточки. */}
+              <div className="space-y-1.5 md:hidden">
+                {shown.map((u) => (
+                  <div key={u.id} className="rounded-2xl surface px-3 py-2.5">
+                    <div className={cn("min-w-0", u.banned && "opacity-50")}>
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-[15px] font-medium">
+                          {u.name || u.username || u.email || u.id}
+                          {u.banned && <BannedTag />}
+                        </p>
+                        <span className="shrink-0 text-[12px]">
+                          <PresenceLabel presence={u.presence} now={now} />
+                        </span>
+                      </div>
+                      <p className="truncate text-[12px] text-[var(--color-muted)]">
+                        {[
+                          u.email,
+                          u.username && `@${u.username}`,
+                          u.birthYear,
+                          `с ${fmtDate(u.createdAt)}`,
+                          u.providers.join(", "),
+                          u.hasPassword ? "есть пароль" : "без пароля",
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    </div>
+                    <div className="mt-2.5 flex gap-1.5">
+                      <UserActions user={u} onPassword={setPasswordTarget} onBan={toggleBan} onDelete={setDeleteTarget} stretch />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
@@ -325,6 +470,76 @@ export default function OwnerConsole({
         }}
       />
     </div>
+  );
+}
+
+function StatusDot({ state }: { state: Presence["state"] }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "inline-block h-2.5 w-2.5 shrink-0 rounded-full",
+        state === "online" && "bg-[var(--color-stability)] shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-stability)_25%,transparent)]",
+        state === "away" && "bg-[var(--color-muted)]",
+        state === "unknown" && "border border-[var(--color-border)]",
+      )}
+    />
+  );
+}
+
+/** «в сети» / «5 мин назад» / «нет данных» — у кого учёт активности выключен. */
+function PresenceLabel({ presence, now }: { presence: Presence; now: number }) {
+  return (
+    <span
+      className="inline-flex items-center gap-2"
+      title={presence.state === "unknown" ? "Учёт активности выключен — статус неизвестен" : undefined}
+    >
+      <StatusDot state={presence.state} />
+      {presence.state === "online" ? (
+        <span className="font-medium text-[var(--color-stability)]">в сети</span>
+      ) : presence.lastActiveAt ? (
+        <span className="text-[var(--color-fg-dim)]">{agoLabel(presence.lastActiveAt, now)}</span>
+      ) : (
+        <span className="text-[var(--color-muted)]">нет данных</span>
+      )}
+    </span>
+  );
+}
+
+function BannedTag() {
+  return (
+    <span className="ml-1.5 text-[12px] font-bold uppercase text-[var(--color-strength)]">
+      забанен
+    </span>
+  );
+}
+
+function UserActions({
+  user,
+  onPassword,
+  onBan,
+  onDelete,
+  stretch = false,
+}: {
+  user: OwnerUser;
+  onPassword: (u: OwnerUser) => void;
+  onBan: (u: OwnerUser) => void;
+  onDelete: (u: OwnerUser) => void;
+  /** на телефоне кнопки делят строку поровну */
+  stretch?: boolean;
+}) {
+  return (
+    <>
+      <Button size="sm" className={cn(stretch && "flex-1")} onClick={() => onPassword(user)}>
+        Пароль
+      </Button>
+      <Button size="sm" className={cn(stretch && "flex-1")} onClick={() => void onBan(user)}>
+        {user.banned ? "Разбанить" : "Забанить"}
+      </Button>
+      <Button size="sm" variant="danger" className={cn(stretch && "flex-1")} onClick={() => onDelete(user)}>
+        Удалить
+      </Button>
+    </>
   );
 }
 

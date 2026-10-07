@@ -8,6 +8,7 @@ import { failureLimit, clientIp, rateLimit } from "@/lib/rateLimit";
 import { loginToLms, LmsError } from "@/lib/lmsClient";
 import { saveLmsAccount, LmsAccountConflict } from "@/lib/lmsAccount";
 import { microsoftProvider, MICROSOFT_PROVIDER, AITU_ENTRA_TENANT_ID } from "@/lib/microsoftAuth";
+import { notifyNewUser } from "@/lib/telegram";
 
 const microsoft = microsoftProvider();
 
@@ -128,6 +129,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  events: {
+    // Google и Microsoft: аккаунт создаёт сам Auth.js, isNewUser — это и есть
+    // регистрация. Владельцу в Telegram; не ждём — вход от этого не зависит.
+    signIn({ user, account, isNewUser }) {
+      if (isNewUser && account) void notifyNewUser(user, account.provider);
+    },
+  },
   callbacks: {
     /**
      * Google — и вход, и регистрация: человек без аккаунта нажимает одну

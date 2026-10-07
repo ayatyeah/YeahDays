@@ -68,7 +68,11 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     <LanguageSwitcher className="fixed right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-50 bg-[var(--color-bg)]" />
   );
 
-  if (isMarketing) {
+  // Консоль владельца — отдельный инструмент, а не раздел приложения: без
+  // навигации, баннера установки и гайдов, во всю ширину экрана.
+  const isConsole = pathname === "/admin" || pathname.startsWith("/admin/");
+
+  if (isMarketing || isConsole) {
     return (
       <div className="min-h-dvh">
         {authSwitcher}

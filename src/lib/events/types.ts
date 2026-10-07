@@ -103,6 +103,8 @@ export interface ExamQuestion {
   id: string;
   /** «Question 2 — Image Classification». */
   title: string;
+  /** Открытый вопрос (объясни, предложи, спорь) или задача с расчётом/кодом. */
+  kind?: "question" | "task";
   points: number;
   /** Условие перед подпунктами (сценарий, таблица, код) в разметке конспекта; может быть пустым. */
   context: string;

@@ -712,6 +712,268 @@ const DIAGRAMS: Record<string, (t: L) => ReactNode> = {
       </Svg>
     );
   },
+
+  /* ── Computer Vision ── */
+  "cv-image-array": (t) => (
+    <Svg h={176} label={t("Изображение в OpenCV — массив высота × ширина × 3 (BGR)", "An OpenCV image — a height × width × 3 array (BGR)")}>
+      {([[2, "R", R], [1, "G", G], [0, "B", S]] as const).map(([k, name, color]) => (
+        <g key={name}>
+          <rect x={20 + k * 14} y={30 - k * 12} width={96} height={96} fill={F} stroke={color} strokeWidth={1.8} />
+          <text x={20 + k * 14 + 100} y={30 - k * 12 + 10} fontSize={10} fontWeight={700} fill={color}>{name}</text>
+        </g>
+      ))}
+      {[1, 2, 3, 4, 5].map((i) => <g key={i} opacity={0.35}><line x1={20 + i * 16} y1={30} x2={20 + i * 16} y2={126} stroke="currentColor" /><line x1={20} y1={30 + i * 16} x2={116} y2={30 + i * 16} stroke="currentColor" /></g>)}
+      <rect x={52} y={62} width={16} height={16} fill={A} opacity={0.6} />
+      <text x={68} y={142} textAnchor="middle" fontSize={9} fill="currentColor">{t("ширина (столбцы x) →", "width (columns x) →")}</text>
+      <text x={10} y={78} fontSize={9} fill="currentColor" transform="rotate(-90 10 78)" textAnchor="middle">{t("высота (строки y)", "height (rows y)")}</text>
+      <text x={170} y={36} fontSize={10.5} fontWeight={700} fill="currentColor">img.shape = (h, w, 3)</text>
+      <text x={170} y={52} fontSize={9.5} fill="currentColor">dtype uint8 · 0–255</text>
+      <text x={170} y={72} fontSize={9.5} fill={A}>img[y, x] = [B, G, R]</text>
+      <text x={170} y={86} fontSize={9.5} fill={A}>= [12, 200, 34]</text>
+      <text x={170} y={108} fontSize={9.5} fill="currentColor">{t("cv2.imread → порядок BGR,", "cv2.imread → BGR order,")}</text>
+      <text x={170} y={121} fontSize={9.5} fill="currentColor">{t("не RGB", "not RGB")}</text>
+      <text x={170} y={142} fontSize={9.5} fill={S}>BGR2GRAY → (h, w)</text>
+      <text x={180} y={168} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("индекс сначала строка (y), потом столбец (x)", "index the row (y) first, then the column (x)")}</text>
+    </Svg>
+  ),
+  "cv-pipeline": (t) => {
+    const rows: [string, string, string][] = [
+      ["cv2.imread('cat.jpg')", "(h, w, 3) · BGR", B],
+      ["cv2.resize(img, (224, 224))", "(224, 224, 3)", S],
+      ["cvtColor(…, COLOR_BGR2GRAY)", t("(224, 224) · 1 канал", "(224, 224) · 1 channel"), V],
+      ["GaussianBlur(gray, (5, 5), 0)", t("(224, 224) · меньше шума", "(224, 224) · less noise"), G],
+      ["cv2.Canny(blur, 100, 200)", t("(224, 224) · края 0/255", "(224, 224) · edges 0/255"), A],
+    ];
+    return (
+      <Svg h={190} label={t("Пайплайн OpenCV и форма массива на каждом шаге", "An OpenCV pipeline and the array shape after each step")}>
+        {rows.map(([call, shape, color], i) => (
+          <g key={call}>
+            <rect x={6} y={6 + i * 34} width={196} height={26} rx={7} fill={F} stroke={color} strokeWidth={1.5} />
+            <text x={14} y={23 + i * 34} fontSize={9.5} fontFamily="ui-monospace, monospace" fill="currentColor">{call}</text>
+            <Arrow x1={204} y1={19 + i * 34} x2={222} y2={19 + i * 34} />
+            <text x={228} y={23 + i * 34} fontSize={9.5} fontWeight={600} fill={color}>{shape}</text>
+            {i < rows.length - 1 && <line x1={104} y1={32 + i * 34} x2={104} y2={40 + i * 34} stroke="currentColor" opacity={0.4} />}
+          </g>
+        ))}
+        <text x={180} y={184} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("resize берёт (ширина, высота); после серого и Canny цвета нет", "resize takes (width, height); after gray and Canny the colour is gone")}</text>
+      </Svg>
+    );
+  },
+  "cv-knn": (t) => {
+    const a: [number, number][] = [[60, 50], [90, 80], [70, 120], [120, 40], [100, 135]];
+    const b: [number, number][] = [[200, 70], [230, 110], [182, 120], [250, 60], [215, 140], [168, 118]];
+    const qx = 150, qy = 98;
+    return (
+      <Svg h={190} label={t("kNN: k = 1 и k = 3 дают разный ответ", "kNN: k = 1 and k = 3 give different answers")}>
+        <circle cx={qx} cy={qy} r={13} fill="none" stroke={V} strokeDasharray="4 3" />
+        <circle cx={qx} cy={qy} r={42} fill="none" stroke={A} strokeDasharray="4 3" />
+        {a.map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r={6} fill={S} opacity={0.8} />)}
+        {b.map(([x, y]) => <polygon key={`${x}-${y}`} points={`${x},${y - 7} ${x - 6},${y + 5} ${x + 6},${y + 5}`} fill={R} opacity={0.8} />)}
+        <circle cx={140} cy={92} r={6} fill={S} opacity={0.8} />
+        <text x={qx} y={qy + 4} textAnchor="middle" fontSize={12} fontWeight={700} fill={A}>?</text>
+        <text x={266} y={30} fontSize={9} fill={V}>k = 1:</text>
+        <text x={266} y={43} fontSize={9} fontWeight={700} fill={S}>{t("круг", "circle")}</text>
+        <text x={266} y={66} fontSize={9} fill={A}>{t("k = 3: 2 треуг.", "k = 3: 2 triangles")}</text>
+        <text x={266} y={79} fontSize={9} fill={A}>{t("и 1 круг →", "+ 1 circle →")}</text>
+        <text x={266} y={92} fontSize={9} fontWeight={700} fill={R}>{t("треугольник", "triangle")}</text>
+        <text x={180} y={168} textAnchor="middle" fontSize={9} fill="currentColor">L1 = Σ|I₁ − I₂| · L2 = √Σ(I₁ − I₂)²</text>
+        <text x={180} y={182} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("k и метрика — гиперпараметры: подбираются на validation", "k and the metric are hyperparameters: tune them on validation")}</text>
+      </Svg>
+    );
+  },
+  "cv-data-split": (t) => (
+    <Svg h={180} label={t("Train, validation, test и кросс-валидация", "Train, validation, test and cross-validation")}>
+      <text x={8} y={14} fontSize={10} fontWeight={700} fill="currentColor">{t("2 000 изображений · 70 / 15 / 15", "2 000 images · 70 / 15 / 15")}</text>
+      <rect x={8} y={22} width={240} height={26} fill={S} opacity={0.35} stroke={S} /><text x={128} y={39} textAnchor="middle" fontSize={10} fill="currentColor">train · 1 400</text>
+      <rect x={248} y={22} width={52} height={26} fill={A} opacity={0.35} stroke={A} /><text x={274} y={39} textAnchor="middle" fontSize={9} fill="currentColor">val · 300</text>
+      <rect x={300} y={22} width={52} height={26} fill={R} opacity={0.35} stroke={R} /><text x={326} y={39} textAnchor="middle" fontSize={9} fill="currentColor">test · 300</text>
+      <text x={8} y={68} fontSize={10} fontWeight={700} fill="currentColor">{t("5-fold cross-validation (на train + val)", "5-fold cross-validation (on train + val)")}</text>
+      {[0, 1, 2, 3, 4].map((r) => (
+        <g key={r}>
+          {[0, 1, 2, 3, 4].map((c) => <rect key={c} x={8 + c * 58} y={76 + r * 15} width={56} height={12} fill={c === r ? A : S} opacity={c === r ? 0.55 : 0.25} />)}
+          <text x={300} y={86 + r * 15} fontSize={8.5} fill="currentColor">{t(`раунд ${r + 1}`, `round ${r + 1}`)}</text>
+        </g>
+      ))}
+      <text x={180} y={168} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.75}>{t("test трогаем один раз в самом конце; делим по классам (stratified)", "touch the test set once, at the very end; split per class (stratified)")}</text>
+    </Svg>
+  ),
+  "cv-linear": (t) => {
+    const col = (x: number, vals: string[], color: string, w = 26) => (
+      <g>
+        <rect x={x} y={20} width={w} height={vals.length * 22 + 6} rx={4} fill="none" stroke={color} strokeWidth={1.5} />
+        {vals.map((v, i) => <text key={i} x={x + w / 2} y={38 + i * 22} textAnchor="middle" fontSize={11} fill="currentColor">{v}</text>)}
+      </g>
+    );
+    return (
+      <Svg h={160} label={t("Линейный классификатор s = Wx + b на числах варианта 1", "The linear classifier s = Wx + b with the Variant 1 numbers")}>
+        <rect x={6} y={20} width={64} height={72} rx={4} fill="none" stroke={V} strokeWidth={1.5} />
+        {[["1", "2"], ["−1", "1"], ["2", "−1"]].map((r, i) => r.map((v, j) => <text key={`${i}${j}`} x={22 + j * 30} y={38 + i * 22} textAnchor="middle" fontSize={11} fill="currentColor">{v}</text>))}
+        <text x={38} y={110} textAnchor="middle" fontSize={10} fontWeight={700} fill={V}>W (3×2)</text>
+        <text x={80} y={60} fontSize={13} fill="currentColor">×</text>
+        <g transform="translate(0, 22)">{col(92, ["2", "−1"], S)}</g>
+        <text x={105} y={110} textAnchor="middle" fontSize={10} fontWeight={700} fill={S}>x</text>
+        <text x={128} y={60} fontSize={13} fill="currentColor">+</text>
+        {col(142, ["0", "1", "−1"], A)}
+        <text x={155} y={110} textAnchor="middle" fontSize={10} fontWeight={700} fill={A}>b</text>
+        <text x={178} y={60} fontSize={13} fill="currentColor">=</text>
+        {col(194, ["0", "−2", "4"], G, 30)}
+        <text x={209} y={110} textAnchor="middle" fontSize={10} fontWeight={700} fill={G}>s</text>
+        <text x={236} y={38} fontSize={9.5} fill="currentColor">Cat: 2 − 2 + 0 = 0</text>
+        <text x={236} y={60} fontSize={9.5} fill="currentColor">Dog: −2 − 1 + 1 = −2</text>
+        <text x={236} y={82} fontSize={9.5} fontWeight={700} fill={G}>Bird: 4 + 1 − 1 = 4</text>
+        <text x={180} y={136} textAnchor="middle" fontSize={10} fontWeight={600} fill={G}>{t("argmax(s) = 2 → Bird", "argmax(s) = 2 → Bird")}</text>
+        <text x={180} y={152} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("строка W — шаблон класса, b — сдвиг оценки класса", "a row of W is a class template, b shifts that class's score")}</text>
+      </Svg>
+    );
+  },
+  "cv-softmax": (t) => {
+    const rows: [string, string, string, string][] = [["cat", "3.2", "24.5", "0.13"], ["car", "5.1", "164.0", "0.87"], ["frog", "−1.7", "0.18", "0.00"]];
+    return (
+      <Svg h={170} label={t("Softmax и cross-entropy на примере из лекции", "Softmax and cross-entropy on the lecture example")}>
+        {[t("класс", "class"), t("оценка s", "score s"), "exp(s)", t("вероятность", "probability")].map((h, i) => <text key={h} x={40 + i * 86} y={16} textAnchor="middle" fontSize={9.5} fontWeight={700} fill={[B, V, A, G][i]}>{h}</text>)}
+        {rows.map((r, i) => r.map((v, j) => <text key={`${i}${j}`} x={40 + j * 86} y={40 + i * 22} textAnchor="middle" fontSize={11} fontWeight={i === 0 && j === 3 ? 700 : 400} fill="currentColor">{v}</text>))}
+        {[1, 2].map((j) => <Arrow key={j} x1={66 + j * 86} y1={58} x2={96 + j * 86} y2={58} color={B} />)}
+        <text x={212} y={112} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.8}>{t("сумма 188.68", "sum 188.68")}</text>
+        <text x={298} y={112} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.8}>{t("сумма = 1", "sum = 1")}</text>
+        <text x={180} y={136} textAnchor="middle" fontSize={10.5} fill="currentColor">{t("верный класс cat: L = −log(0.13) = 2.04", "true class cat: L = −log(0.13) = 2.04")}</text>
+        <text x={180} y={156} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("оценки — любые числа; вероятности в (0, 1); argmax не меняется", "scores are any real numbers; probabilities are in (0, 1); argmax is unchanged")}</text>
+      </Svg>
+    );
+  },
+  "cv-overfitting": (t) => {
+    const train = [40, 58, 70, 79, 85, 89, 92, 94, 95, 95.5];
+    const val = [38, 52, 60, 64, 65, 64.5, 63.5, 63, 62.5, 62];
+    const px = (i: number) => 40 + i * 32;
+    const py = (v: number) => 150 - (v - 30) * 1.75;
+    return (
+      <Svg h={186} label={t("Переобучение: train растёт, validation падает", "Overfitting: train keeps rising, validation drops")}>
+        <line x1={40} y1={150} x2={340} y2={150} stroke="currentColor" opacity={0.4} /><line x1={40} y1={14} x2={40} y2={150} stroke="currentColor" opacity={0.4} />
+        <polyline points={train.map((v, i) => `${px(i)},${py(v)}`).join(" ")} fill="none" stroke={S} strokeWidth={2} />
+        <polyline points={val.map((v, i) => `${px(i)},${py(v)}`).join(" ")} fill="none" stroke={R} strokeWidth={2} />
+        <text x={px(9) - 4} y={py(95.5) - 6} textAnchor="end" fontSize={9.5} fill={S}>train 95%</text>
+        <text x={px(9) - 4} y={py(62) + 14} textAnchor="end" fontSize={9.5} fill={R}>validation 62%</text>
+        <line x1={px(4)} y1={14} x2={px(4)} y2={150} stroke={G} strokeDasharray="4 3" />
+        <text x={px(4) + 4} y={24} fontSize={8.5} fill={G}>early stopping</text>
+        <Arrow x1={px(8) + 10} y1={py(94)} x2={px(8) + 10} y2={py(63)} color={A} />
+        <text x={px(8) + 4} y={py(78)} textAnchor="end" fontSize={8.5} fill={A}>{t("разрыв", "gap")}</text>
+        <text x={190} y={164} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("эпохи обучения →", "training epochs →")}</text>
+        <text x={180} y={180} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.75}>{t("лечат: больше данных и аугментация, регуляризация, проще модель", "fixes: more data and augmentation, regularization, a simpler model")}</text>
+      </Svg>
+    );
+  },
+  "cv-neuron": (t) => (
+    <Svg h={140} label={t("Искусственный нейрон", "An artificial neuron")}>
+      {[0, 1, 2].map((i) => (
+        <g key={i}>
+          <circle cx={30} cy={30 + i * 36} r={13} fill={F} stroke={S} strokeWidth={1.5} />
+          <text x={30} y={34 + i * 36} textAnchor="middle" fontSize={10} fill="currentColor">x{i + 1}</text>
+          <Arrow x1={44} y1={30 + i * 36} x2={140} y2={66} color={S} />
+          <text x={86} y={[40, 60, 100][i]} fontSize={9} fill={V}>w{i + 1}</text>
+        </g>
+      ))}
+      <circle cx={162} cy={66} r={22} fill={F} stroke={V} strokeWidth={1.5} />
+      <text x={162} y={70} textAnchor="middle" fontSize={11} fontWeight={700} fill="currentColor">Σ + b</text>
+      <text x={162} y={104} textAnchor="middle" fontSize={9} fill="currentColor" opacity={0.8}>z = w·x + b</text>
+      <Arrow x1={184} y1={66} x2={214} y2={66} />
+      <Box x={214} y={50} w={64} h={32} label="g(z)" sub="ReLU, σ" stroke={G} size={11} />
+      <Arrow x1={278} y1={66} x2={306} y2={66} />
+      <text x={326} y={70} textAnchor="middle" fontSize={11} fontWeight={700} fill={G}>a</text>
+      <text x={180} y={130} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.75}>{t("без нелинейности g слои схлопываются в один линейный классификатор", "without the non-linearity g the layers collapse into one linear classifier")}</text>
+    </Svg>
+  ),
+  "cv-backprop-gates": (t) => {
+    const gate = (x: number, y: number, name: string, color: string, inA: string, inB: string, gA: string, gB: string, rule: string) => (
+      <g>
+        <circle cx={x + 80} cy={y + 32} r={15} fill={F} stroke={color} strokeWidth={1.5} />
+        <text x={x + 80} y={y + 36} textAnchor="middle" fontSize={11} fontWeight={700} fill={color}>{name}</text>
+        <line x1={x + 10} y1={y + 16} x2={x + 66} y2={y + 28} stroke="currentColor" opacity={0.5} /><line x1={x + 10} y1={y + 48} x2={x + 66} y2={y + 36} stroke="currentColor" opacity={0.5} />
+        <line x1={x + 95} y1={y + 32} x2={x + 150} y2={y + 32} stroke="currentColor" opacity={0.5} />
+        <text x={x + 8} y={y + 12} fontSize={9} fill="currentColor">{inA}</text><text x={x + 8} y={y + 60} fontSize={9} fill="currentColor">{inB}</text>
+        <text x={x + 30} y={y + 22} fontSize={9} fill={R}>{gA}</text><text x={x + 30} y={y + 52} fontSize={9} fill={R}>{gB}</text>
+        <text x={x + 122} y={y + 26} fontSize={9} fill={R}>↑ 2</text>
+        <text x={x + 80} y={y + 74} textAnchor="middle" fontSize={8.5} fill={color}>{rule}</text>
+      </g>
+    );
+    return (
+      <Svg h={176} label={t("Как градиент проходит через гейты", "How the gradient flows through gates")}>
+        {gate(4, 4, "+", S, "x = 3", "y = −4", "2", "2", t("add: копирует градиент", "add: distributes the gradient"))}
+        {gate(184, 4, "×", V, "x = 3", "y = −4", "−8", "6", t("mul: меняет местами (y·up, x·up)", "mul: swaps (y·up, x·up)"))}
+        {gate(4, 92, "max", A, "x = 3", "y = −4", "2", "0", t("max: всё — большему входу", "max: routes to the larger input"))}
+        <g>
+          <circle cx={264} cy={124} r={15} fill={F} stroke={G} strokeWidth={1.5} />
+          <text x={264} y={128} textAnchor="middle" fontSize={10} fontWeight={700} fill={G}>copy</text>
+          <line x1={194} y1={124} x2={249} y2={124} stroke="currentColor" opacity={0.5} />
+          <line x1={279} y1={118} x2={334} y2={104} stroke="currentColor" opacity={0.5} /><line x1={279} y1={130} x2={334} y2={144} stroke="currentColor" opacity={0.5} />
+          <text x={318} y={100} fontSize={9} fill={R}>↑ 4</text><text x={318} y={156} fontSize={9} fill={R}>↑ 1</text>
+          <text x={214} y={118} fontSize={9} fill={R}>5</text>
+          <text x={264} y={166} textAnchor="middle" fontSize={8.5} fill={G}>{t("copy: градиенты складываются", "copy: gradients add up")}</text>
+        </g>
+      </Svg>
+    );
+  },
+  "cv-convolution": (t) => {
+    const cell = 18;
+    return (
+      <Svg h={176} label={t("Свёртка: фильтр 3×3 по входу 5×5", "Convolution: a 3×3 filter over a 5×5 input")}>
+        {[0, 1, 2, 3, 4].map((r) => [0, 1, 2, 3, 4].map((c) => <rect key={`${r}${c}`} x={10 + c * cell} y={20 + r * cell} width={cell} height={cell} fill={r < 3 && c < 3 ? S : F} opacity={r < 3 && c < 3 ? 0.35 : 1} stroke={B} />))}
+        <rect x={10} y={20} width={cell * 3} height={cell * 3} fill="none" stroke={S} strokeWidth={2.5} />
+        <text x={55} y={14} textAnchor="middle" fontSize={9.5} fontWeight={700} fill="currentColor">{t("вход 5×5", "input 5×5")}</text>
+        <text x={125} y={70} fontSize={14} fill="currentColor">∗</text>
+        {[0, 1, 2].map((r) => [0, 1, 2].map((c) => <rect key={`f${r}${c}`} x={145 + c * cell} y={38 + r * cell} width={cell} height={cell} fill={V} opacity={0.3} stroke={V} />))}
+        <text x={172} y={32} textAnchor="middle" fontSize={9.5} fontWeight={700} fill={V}>{t("фильтр 3×3", "filter 3×3")}</text>
+        <text x={216} y={70} fontSize={14} fill="currentColor">=</text>
+        {[0, 1, 2].map((r) => [0, 1, 2].map((c) => <rect key={`o${r}${c}`} x={236 + c * cell} y={38 + r * cell} width={cell} height={cell} fill={r === 0 && c === 0 ? G : F} opacity={r === 0 && c === 0 ? 0.6 : 1} stroke={B} />))}
+        <text x={263} y={32} textAnchor="middle" fontSize={9.5} fontWeight={700} fill={G}>{t("выход 3×3", "output 3×3")}</text>
+        <text x={180} y={130} textAnchor="middle" fontSize={10.5} fontWeight={600} fill="currentColor">(W − F + 2P) / S + 1 = (5 − 3 + 0) / 1 + 1 = 3</text>
+        <text x={180} y={148} textAnchor="middle" fontSize={9} fill="currentColor" opacity={0.8}>{t("одна выходная клетка = сумма 9 произведений + bias", "one output cell = sum of 9 products + bias")}</text>
+        <text x={180} y={164} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.7}>{t("параметры слоя: K × (F·F·C + 1)", "layer parameters: K × (F·F·C + 1)")}</text>
+      </Svg>
+    );
+  },
+  "cv-pooling": (t) => {
+    const m = [[1, 1, 2, 4], [5, 6, 7, 8], [3, 2, 1, 0], [1, 2, 3, 4]];
+    const q = (r: number, c: number) => [S, V, A, G][Math.floor(r / 2) * 2 + Math.floor(c / 2)];
+    return (
+      <Svg h={150} label={t("Max pooling 2×2 с шагом 2", "2×2 max pooling with stride 2")}>
+        {m.map((row, r) => row.map((v, c) => (
+          <g key={`${r}${c}`}>
+            <rect x={20 + c * 26} y={20 + r * 26} width={26} height={26} fill={q(r, c)} opacity={0.3} stroke={B} />
+            <text x={33 + c * 26} y={37 + r * 26} textAnchor="middle" fontSize={11} fill="currentColor">{v}</text>
+          </g>
+        )))}
+        <Arrow x1={140} y1={72} x2={196} y2={72} />
+        <text x={168} y={64} textAnchor="middle" fontSize={8.5} fill="currentColor">max 2×2, S = 2</text>
+        {[[6, 8], [3, 4]].map((row, r) => row.map((v, c) => (
+          <g key={`p${r}${c}`}>
+            <rect x={212 + c * 34} y={38 + r * 34} width={34} height={34} fill={[S, V, A, G][r * 2 + c]} opacity={0.4} stroke={B} />
+            <text x={229 + c * 34} y={60 + r * 34} textAnchor="middle" fontSize={13} fontWeight={700} fill="currentColor">{v}</text>
+          </g>
+        )))}
+        <text x={180} y={140} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.75}>{t("4×4 → 2×2: меньше размер, нет параметров, глубина не меняется", "4×4 → 2×2: smaller size, no parameters, depth unchanged")}</text>
+      </Svg>
+    );
+  },
+  "cv-resnet": (t) => (
+    <Svg h={150} label={t("Residual-блок ResNet", "A ResNet residual block")}>
+      <text x={18} y={74} fontSize={12} fontWeight={700} fill="currentColor">x</text>
+      <Arrow x1={30} y1={70} x2={58} y2={70} />
+      <Box x={58} y={56} w={64} h={28} label="3×3 conv" stroke={V} size={10} />
+      <Arrow x1={122} y1={70} x2={138} y2={70} />
+      <Box x={138} y={56} w={44} h={28} label="ReLU" stroke={G} size={10} />
+      <Arrow x1={182} y1={70} x2={198} y2={70} />
+      <Box x={198} y={56} w={64} h={28} label="3×3 conv" stroke={V} size={10} />
+      <Arrow x1={262} y1={70} x2={282} y2={70} />
+      <circle cx={292} cy={70} r={10} fill={F} stroke={A} strokeWidth={1.5} />
+      <text x={292} y={74} textAnchor="middle" fontSize={12} fontWeight={700} fill={A}>+</text>
+      <Arrow x1={302} y1={70} x2={326} y2={70} />
+      <text x={330} y={66} fontSize={8.5} fill="currentColor">ReLU</text>
+      <path d="M 44 70 L 44 26 L 292 26 L 292 58" fill="none" stroke={A} strokeWidth={1.5} strokeDasharray="5 3" />
+      <text x={168} y={20} textAnchor="middle" fontSize={9} fill={A}>{t("shortcut: x идёт в обход", "shortcut: x skips the layers")}</text>
+      <text x={160} y={104} textAnchor="middle" fontSize={9.5} fill={V}>F(x)</text>
+      <text x={180} y={126} textAnchor="middle" fontSize={11} fontWeight={600} fill="currentColor">{t("выход = F(x) + x", "output = F(x) + x")}</text>
+      <text x={180} y={142} textAnchor="middle" fontSize={8.5} fill="currentColor" opacity={0.75}>{t("если слой не нужен, F(x) → 0 и блок пропускает x: глубже не хуже", "if a layer isn't needed, F(x) → 0 and the block passes x: deeper isn't worse")}</text>
+    </Svg>
+  ),
 };
 
 export default function NotesDiagram({ name, lang }: { name: string; lang: string }) {

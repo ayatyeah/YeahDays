@@ -7,6 +7,9 @@ import { cn } from "@/lib/cn";
 import type { MockExam, StudyEvent } from "@/lib/events/types";
 import { useContentLang, useLocaleStore } from "@/i18n/locale";
 import { usePersonalizationStore } from "@/store/usePersonalizationStore";
+import { TRAINER_KINDS, type TrainerKind } from "@/lib/visionTrainer";
+import type { MockReport } from "@/lib/examReport";
+import { openTutor, useTutorDetail } from "@/lib/tutorFocus";
 
 /**
  * Пробные варианты экзамена с открытыми вопросами и проверкой ИИ.
@@ -18,6 +21,7 @@ import { usePersonalizationStore } from "@/store/usePersonalizationStore";
  */
 
 const CONSENT = "event-grade-v1";
+const REPORT_CONSENT = "event-report-v1";
 
 interface Grade {
   score: number;
@@ -35,6 +39,8 @@ interface Saved {
   answers: Record<string, string>;
   grades: Record<string, Grade>;
   startedAt?: number;
+  /** Последний отчёт ИИ и по скольким проверенным ответам он собран. */
+  report?: MockReport & { graded: number };
 }
 
 const key = (userId: string, eventId: string, examId: string) => `yg-mock:${userId}:${eventId}:${examId}`;
@@ -43,7 +49,7 @@ function load(userId: string, eventId: string, examId: string): Saved {
   try {
     const raw = localStorage.getItem(key(userId, eventId, examId));
     const parsed = raw ? JSON.parse(raw) : null;
-    if (parsed && typeof parsed === "object") return { answers: parsed.answers ?? {}, grades: parsed.grades ?? {}, startedAt: parsed.startedAt };
+    if (parsed && typeof parsed === "object") return { answers: parsed.answers ?? {}, grades: parsed.grades ?? {}, startedAt: parsed.startedAt, report: parsed.report };
   } catch {
     /* хранилище недоступно — начнём с чистого листа */
   }
@@ -106,7 +112,21 @@ const verdictStyle: Record<Grade["verdict"], string> = {
   empty: "border-red-400/60 bg-red-500/10",
 };
 
-export default function MockExamView({ event, exam, userId, onExit }: { event: StudyEvent; exam: MockExam; userId: string; onExit: () => void }) {
+export default function MockExamView({
+  event,
+  exam,
+  userId,
+  onExit,
+  onOpenPart,
+  onOpenTrainer,
+}: {
+  event: StudyEvent;
+  exam: MockExam;
+  userId: string;
+  onExit: () => void;
+  onOpenPart?: (partId: string) => void;
+  onOpenTrainer?: (kind: TrainerKind) => void;
+}) {
   const tl = useContentLang();
   const locale = useLocaleStore((s) => s.locale);
   const aiAllowed = usePersonalizationStore((s) => s.data?.ai === true);
@@ -119,6 +139,8 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [batch, setBatch] = useState<{ done: number; of: number } | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [reportBusy, setReportBusy] = useState(false);
+  const [reportError, setReportError] = useState("");
   const latest = useRef(saved);
 
   useEffect(() => {
@@ -147,6 +169,14 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
 
   const tasks = useMemo(() => tasksOf(exam), [exam]);
   const max = total(exam);
+  // Подпункт, над которым человек сейчас думает: его видит ИИ-помощник.
+  const [focusId, setFocusId] = useState(tasks[0]?.id ?? "");
+  const focusQ = exam.questions.find((q) => q.tasks.some((t) => t.id === focusId));
+  const focusGrade = saved.grades[focusId];
+  useTutorDetail(
+    { mock: { examId: exam.id, taskId: focusId, answer: saved.answers[focusId], grade: focusGrade && { score: focusGrade.score, points: focusGrade.points, missing: focusGrade.missing, mistakes: focusGrade.mistakes } } },
+    focusQ ? `${focusQ.title.split(" — ")[0]} ${focusQ.tasks.find((t) => t.id === focusId)?.label})` : "",
+  );
   const graded = tasks.filter((t) => saved.grades[t.id]);
   const score = graded.reduce((n, t) => n + saved.grades[t.id].score, 0);
   const canSend = available === true && (aiAllowed || consent);
@@ -170,6 +200,32 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
       setErrors((x) => ({ ...x, [taskId]: e instanceof Error ? e.message : "Не удалось проверить — попробуй ещё раз" }));
     } finally {
       setBusy((b) => ({ ...b, [taskId]: false }));
+    }
+  }
+
+  async function makeReport() {
+    setReportBusy(true);
+    setReportError("");
+    try {
+      const items = tasks
+        .filter((t) => latest.current.grades[t.id])
+        .map((t) => {
+          const g = latest.current.grades[t.id];
+          return { taskId: t.id, score: g.score, points: g.points, missing: g.missing, mistakes: g.mistakes };
+        });
+      const res = await fetch("/api/study-events/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eventId: event.id, examId: exam.id, items, lang: locale, consent: REPORT_CONSENT }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(typeof body.error === "string" ? body.error : "Не удалось собрать отчёт — попробуй ещё раз");
+      update((s) => ({ ...s, report: { ...(body as MockReport), graded: items.length } }));
+      setConsent(false);
+    } catch (e) {
+      setReportError(e instanceof Error ? e.message : "Не удалось собрать отчёт — попробуй ещё раз");
+    } finally {
+      setReportBusy(false);
     }
   }
 
@@ -238,6 +294,51 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
         )}
       </section>
 
+      {available && graded.length >= 3 && (
+        <section className="space-y-3 rounded-3xl border border-sky-400/40 bg-sky-500/5 p-5">
+          <h2 className="text-lg font-bold">Отчёт по варианту</h2>
+          {saved.report ? (
+            <>
+              {saved.report.summary && <p className="text-sm leading-relaxed">{saved.report.summary}</p>}
+              {saved.report.topics.map((t) => (
+                <div key={t.title} className="space-y-1.5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3">
+                  <p className="font-semibold">{t.title}</p>
+                  {t.why && <p className="text-sm text-[var(--color-muted)]">{t.why}</p>}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {t.parts.map((id) => {
+                      const part = event.lectures.flatMap((l) => l.parts).find((p) => p.id === id);
+                      return part && onOpenPart ? (
+                        <button key={id} className="rounded-full border border-[var(--color-border)] px-3 py-1 text-xs hover:border-[var(--color-fg-dim)]" onClick={() => onOpenPart(id)}>
+                          Конспект: {part.title[tl]}
+                        </button>
+                      ) : null;
+                    })}
+                    {t.trainers.map((k) => onOpenTrainer && (
+                      <button key={k} className="rounded-full border border-amber-400/50 px-3 py-1 text-xs hover:border-amber-300" onClick={() => onOpenTrainer(k)}>
+                        Тренажёр: {TRAINER_KINDS.find((x) => x.kind === k)?.title ?? k}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              {saved.report.plan.length > 0 && (
+                <div className="text-sm">
+                  <b>План на следующее занятие:</b>
+                  <ol className="list-decimal pl-5">{saved.report.plan.map((p) => <li key={p}>{p}</li>)}</ol>
+                </div>
+              )}
+              <p className="text-xs text-[var(--color-muted)]">Собран по {saved.report.graded} проверенным ответам.</p>
+            </>
+          ) : (
+            <p className="text-sm text-[var(--color-muted)]">ИИ соберёт слабые темы по итогам проверки и подскажет, какие части конспекта перечитать и какие задачи порешать в тренажёре. Твои ответы не отправляются — только баллы и замечания проверки.</p>
+          )}
+          {reportError && <p role="alert" className="text-sm text-red-400">{reportError}</p>}
+          <Button disabled={!canSend || reportBusy || !!batch} onClick={() => void makeReport()}>
+            {reportBusy ? "Собираю отчёт…" : saved.report ? "Обновить отчёт" : "Собрать отчёт ИИ"}
+          </Button>
+        </section>
+      )}
+
       {ready && exam.questions.map((question) => (
         <section key={question.id} className="space-y-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
           {question.kind && (
@@ -266,6 +367,7 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
                   maxLength={3000}
                   rows={4}
                   placeholder="Твой ответ…"
+                  onFocus={() => setFocusId(task.id)}
                   onChange={(e) => {
                     const value = e.target.value;
                     update((s) => ({ ...s, answers: { ...s.answers, [task.id]: value } }));
@@ -279,6 +381,7 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
                     </Button>
                   )}
                   <Button size="sm" variant="ghost" onClick={() => setOpen((o) => ({ ...o, [task.id]: !o[task.id] }))}>{open[task.id] ? "Скрыть эталон" : "Эталон и критерии"}</Button>
+                  <Button size="sm" variant="ghost" onClick={() => { setFocusId(task.id); openTutor(); }}>✦ Спросить помощника</Button>
                 </div>
                 {errors[task.id] && <p role="alert" className="text-sm text-red-400">{errors[task.id]}</p>}
                 {g && (

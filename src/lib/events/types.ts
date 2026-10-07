@@ -76,6 +76,8 @@ export interface StudyEvent {
    * проверяет ИИ по критериям (api/study-events/grade). В готовность не идут.
    */
   mocks?: MockExam[];
+  /** Практикум к курсу: тренажёр расчётов, «Найди баг», песочница (см. components/events/VisionTrainer и др.). */
+  practice?: "vision";
 }
 
 /**

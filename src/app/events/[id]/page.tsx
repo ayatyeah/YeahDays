@@ -16,6 +16,10 @@ import EventPlan from "@/components/events/EventPlan";
 import Flashcards from "@/components/events/Flashcards";
 import LectureVideo from "@/components/events/LectureVideo";
 import MockExamView, { MockList } from "@/components/events/MockExams";
+import VisionTrainer from "@/components/events/VisionTrainer";
+import BugHunt from "@/components/events/BugHunt";
+import OpenCVSandbox from "@/components/events/OpenCVSandbox";
+import type { TrainerKind } from "@/lib/visionTrainer";
 import NetworkGame from "@/components/events/NetworkGame";
 import ReportQuestion from "@/components/events/ReportQuestion";
 import ShareResult from "@/components/events/ShareResult";
@@ -24,6 +28,8 @@ import { strip } from "@/lib/events/scenes";
 import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@/lib/events/storage";
 import type { Lang, MockExam, StudyEvent } from "@/lib/events/types";
 import { useContentLang } from "@/i18n/locale";
+import Tutor from "@/components/events/Tutor";
+import { openTutor, useTutorDetail, useTutorFocus } from "@/lib/tutorFocus";
 
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 const percent = (value: number) => `${Math.round(value * 100)}%`;
@@ -37,7 +43,10 @@ type View =
   | { mode: "video"; step: Step }
   | { mode: "quiz"; step: Step; quiz: QuizQuestion[]; run: number }
   | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] }
-  | { mode: "mock"; exam: MockExam };
+  | { mode: "mock"; exam: MockExam }
+  | { mode: "trainer"; kind?: TrainerKind }
+  | { mode: "bughunt" }
+  | { mode: "sandbox" };
 
 /** Кто открывал ивент на этом устройстве в последний раз — для работы без сети. */
 const LAST_USER = "yg-event-last-user";
@@ -207,8 +216,25 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   const ready = readiness(event, progress);
   const following = "step" in view ? list[list.findIndex((s) => s.id === view.step.id) + 1] : undefined;
 
+  // Помощнику — где человек сейчас и как идёт подготовка (без ответов квизов).
+  const focusStep = "step" in view ? view.step : undefined;
+  const focusPart = focusStep?.kind === "part" || focusStep?.kind === "deep" ? event.lectures[focusStep.lecture!]?.parts[focusStep.part!] : undefined;
+  const weakSteps = list.filter((s) => progress[s.id] && progress[s.id].best < 0.7).map((s) => `${s.title.en} ${Math.round(progress[s.id].best * 100)}%`).slice(0, 6);
+  const progressLine = `readiness ${ready.percent}%, steps done ${ready.done}/${ready.total}${weakSteps.length ? `; weak: ${weakSteps.join(", ")}` : ""}; not started: ${list.filter((s) => !progress[s.id]).length} steps`;
+  const baseKey = `${view.mode}|${focusStep?.id ?? ""}|${progressLine}|${view.mode === "mock" ? view.exam.id : ""}`;
+  useEffect(() => {
+    useTutorFocus.getState().setBase({
+      view: view.mode,
+      partId: focusPart?.id,
+      step: focusStep ? focusStep.title.en : view.mode === "mock" ? view.exam.title.en : undefined,
+      progress: progressLine,
+    });
+    // всё нужное помощнику описано ключом
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [baseKey]);
+
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-5 pb-6">
+    <div className="mx-auto w-full max-w-3xl space-y-5 pb-24">
       <div ref={top} />
       {view.mode === "map" && (
         <>
@@ -218,6 +244,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <h1 className="ios-title mt-2">{event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>
           </header>
+          <QuickLinks
+            event={event}
+            onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            onView={(mode) => setView({ mode })}
+          />
           {!online && (
             <p role="status" className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm">
               Нет сети. Конспекты и квизы работают, результаты сохраняются на устройстве и отправятся, когда появится интернет.
@@ -283,7 +314,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             </ol>
           </section>
 
-          <MockList event={event} userId={userId} onOpen={(exam) => setView({ mode: "mock", exam })} />
+          <div id="mocks" className="scroll-mt-4">
+            <MockList event={event} userId={userId} onOpen={(exam) => setView({ mode: "mock", exam })} />
+          </div>
 
           {(event.cheatSheet || event.glossary) && (
             <section className={panel}>
@@ -292,6 +325,18 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
                 {event.cheatSheet && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "sheet" })}>Шпаргалка на одну страницу</Button>}
                 {event.glossary && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cards" })}>{event.cards === "questions" ? "Вопросы комиссии" : "Карточки терминов"} · {event.glossary.length}</Button>}
+              </div>
+            </section>
+          )}
+
+          {event.practice === "vision" && (
+            <section className={cn(panel, "bg-gradient-to-br from-amber-500/10 via-[var(--color-surface)] to-sky-500/10")}>
+              <h2 className="text-lg font-bold">Практикум</h2>
+              <p className="text-sm text-[var(--color-muted)]">Набить руку на том, за что дают баллы: расчёты, баги в коде OpenCV и что делает каждая операция с картинкой. В готовность не идёт.</p>
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                <Button variant="primary" className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "trainer" })}>Тренажёр расчётов</Button>
+                <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "bughunt" })}>Игра «Найди баг»</Button>
+                <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "sandbox" })}>Песочница OpenCV</Button>
               </div>
             </section>
           )}
@@ -345,7 +390,23 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
         </>
       )}
 
-      {view.mode === "mock" && <MockExamView event={event} exam={view.exam} userId={userId} onExit={toMap} />}
+      {view.mode === "mock" && (
+        <MockExamView
+          event={event}
+          exam={view.exam}
+          userId={userId}
+          onExit={toMap}
+          onOpenPart={(id) => {
+            const step = list.find((s) => s.kind === "part" && s.id === id);
+            if (step) open(step);
+          }}
+          onOpenTrainer={(kind) => setView({ mode: "trainer", kind })}
+        />
+      )}
+      {view.mode === "trainer" && <VisionTrainer key={view.kind ?? "all"} userId={userId} initialKind={view.kind} onExit={toMap} />}
+      {view.mode === "bughunt" && <BugHunt userId={userId} lang={tl} onExit={toMap} />}
+      {view.mode === "sandbox" && <OpenCVSandbox onExit={toMap} />}
+      <Tutor event={event} userId={userId} />
 
       {view.mode === "read" && (() => {
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];
@@ -483,6 +544,36 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
 }
 
 /** Совет по итогам: что именно подтянуть, а не просто цифра. */
+/**
+ * Быстрый доступ под заголовком ивента: пробные варианты, практикум,
+ * шпаргалка и помощник — чтобы не листать до них мимо всех лекций.
+ */
+function QuickLinks({ event, onMocks, onView }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet") => void }) {
+  const links: { label: string; go: () => void; accent?: boolean }[] = [];
+  if (event.mocks?.length) links.push({ label: `Пробные варианты · ${event.mocks.length}`, go: onMocks, accent: true });
+  if (event.practice === "vision") {
+    links.push({ label: "Тренажёр расчётов", go: () => onView("trainer") }, { label: "Найди баг", go: () => onView("bughunt") }, { label: "Песочница OpenCV", go: () => onView("sandbox") });
+  }
+  if (event.cheatSheet) links.push({ label: "Шпаргалка", go: () => onView("sheet") });
+  links.push({ label: "✦ ИИ-помощник", go: () => openTutor() });
+  return (
+    <nav aria-label="Быстрый доступ" className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
+      {links.map((l) => (
+        <button
+          key={l.label}
+          onClick={l.go}
+          className={cn(
+            "shrink-0 rounded-full border px-3.5 py-2 text-sm font-medium transition",
+            l.accent ? "border-sky-400/60 bg-sky-500/15" : "border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-fg-dim)]",
+          )}
+        >
+          {l.label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 function Verdict({ event, progress, percent: value }: { event: StudyEvent; progress: Progress; percent: number }) {
   const tl = useContentLang();
   const final = progress[`${event.id}-final`];
@@ -552,6 +643,7 @@ function Quiz({
   const item = quiz[index];
   const picked: number | undefined = answers[index];
   const answered = picked !== undefined;
+  useTutorDetail({ quiz: { question: item.q, options: item.options, picked, correct: answered ? item.correct : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
   const feedback = useRef<HTMLDivElement>(null);
 
   // На телефоне объяснение и кнопка «Дальше» оказываются под длинными

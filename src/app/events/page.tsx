@@ -7,6 +7,12 @@ import { EVENTS } from "@/lib/events";
 import { completed, readiness, steps } from "@/lib/events/engine";
 import { loadProgress } from "@/lib/events/storage";
 
+const plural = (n: number, one: string, few: string, many: string) => {
+  const d = n % 10;
+  const dd = n % 100;
+  return d === 1 && dd !== 11 ? one : d >= 2 && d <= 4 && (dd < 12 || dd > 14) ? few : many;
+};
+
 /**
  * Список ивентов раздела «Учёба». Ивенты общие для всех; у каждого человека
  * свой прогресс — он подставляется уже в браузере, поэтому до загрузки
@@ -27,11 +33,11 @@ export default function EventsPage() {
       <header>
         <Link href="/learn" className="text-sm underline">← Учёба</Link>
         <h1 className="ios-title mt-3">Ивенты</h1>
-        <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности.</p>
+        <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности. В каждом ивенте есть ИИ-помощник ✦ — он видит, что у тебя открыто, и помогает по просьбе.</p>
       </header>
 
-      {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted) */}
-      {EVENTS.filter((event) => !event.unlisted).map((event) => {
+      {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted); свежие — сверху */}
+      {EVENTS.filter((event) => !event.unlisted).reverse().map((event) => {
         const questions = event.lectures.reduce((n, l) => n + l.parts.reduce((m, p) => m + p.questions.length, 0), 0);
         const parts = event.lectures.reduce((n, l) => n + l.parts.length, 0);
         const mine = percent[event.id];
@@ -45,7 +51,9 @@ export default function EventsPage() {
             <h2 className="mt-3 text-2xl font-bold">{event.title}</h2>
             <p className="mt-2 text-sm leading-relaxed">{event.description}</p>
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures.length} лекции</span>
+              {!!event.mocks?.length && <span className="rounded-xl bg-sky-500/15 px-3 py-2 font-semibold">{event.mocks.length} {plural(event.mocks.length, "пробный вариант", "пробных варианта", "пробных вариантов")}</span>}
+              {event.practice === "vision" && <span className="rounded-xl bg-amber-500/15 px-3 py-2 font-semibold">Практикум: тренажёр, «Найди баг», песочница</span>}
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures.length} {plural(event.lectures.length, "лекция", "лекции", "лекций")}</span>
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} частей</span>
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} вопросов в банке</span>
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{steps(event).length} шагов</span>

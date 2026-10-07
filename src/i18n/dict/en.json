@@ -2284,7 +2284,6 @@
  "Ответ {0}": "Answer {0}",
  "Ответ длиннее {0} символов": "The answer is longer than {0} characters",
  "ответ изменён — проверь заново": "answer changed — check it again",
- "Открытые вопросы в формате настоящего экзамена: пишешь ответ, ИИ ставит баллы по критериям и объясняет, чего не хватило. В готовность не идёт — это тренировка.": "Open-ended questions in the real exam format: you write an answer, AI scores it against the rubric and explains what was missing. It does not count towards readiness — it is practice.",
  "Ошибки": "Mistakes",
  "Пробный мидтерм ·": "Mock midterm ·",
  "Проверить все ответы ИИ · {0}": "Check all answers with AI · {0}",
@@ -2305,5 +2304,8 @@
  "Не удалось проверить — попробуй ещё раз": "Could not check — try again",
  "На сегодня проверок больше нет — лимит обновится через сутки": "No more checks today — the limit resets in 24 hours",
  "Такого задания нет": "No such task",
- "Напиши ответы — и проверь все разом": "Write your answers — then check them all at once"
+ "Напиши ответы — и проверь все разом": "Write your answers — then check them all at once",
+ "Задача: расчёт": "Task: calculation",
+ "Открытый вопрос": "Open-ended question",
+ "Как настоящий мидтерм: пять заданий — три открытых вопроса и две задачи с расчётом. Пишешь ответ, ИИ ставит баллы по критериям и объясняет, чего не хватило. В готовность не идёт — это тренировка.": "Like the real midterm: five items — three open-ended questions and two calculation tasks. You write an answer, AI scores it against the rubric and explains what was missing. It does not count towards readiness — it is practice."
 }

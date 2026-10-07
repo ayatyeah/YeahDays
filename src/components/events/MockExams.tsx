@@ -78,7 +78,7 @@ export function MockList({ event, userId, onOpen }: { event: StudyEvent; userId:
   return (
     <section className="rounded-3xl border border-sky-400/40 bg-gradient-to-br from-sky-500/10 via-[var(--color-surface)] to-violet-500/10 p-5">
       <h2 className="text-lg font-bold">Пробный мидтерм · {event.mocks.length} вариантов</h2>
-      <p className="text-sm text-[var(--color-muted)]">Открытые вопросы в формате настоящего экзамена: пишешь ответ, ИИ ставит баллы по критериям и объясняет, чего не хватило. В готовность не идёт — это тренировка.</p>
+      <p className="text-sm text-[var(--color-muted)]">Как настоящий мидтерм: пять заданий — три открытых вопроса и две задачи с расчётом. Пишешь ответ, ИИ ставит баллы по критериям и объясняет, чего не хватило. В готовность не идёт — это тренировка.</p>
       <ol className="mt-4 space-y-2">
         {event.mocks.map((exam) => {
           const s = summaries[exam.id];
@@ -240,6 +240,11 @@ export default function MockExamView({ event, exam, userId, onExit }: { event: S
 
       {ready && exam.questions.map((question) => (
         <section key={question.id} className="space-y-4 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
+          {question.kind && (
+            <p className={cn("w-fit rounded-full px-2.5 py-0.5 text-xs font-semibold", question.kind === "task" ? "bg-amber-500/15 text-amber-300" : "bg-sky-500/15 text-sky-300")}>
+              {question.kind === "task" ? "Задача: расчёт" : "Открытый вопрос"}
+            </p>
+          )}
           <h2 className="text-lg font-bold" lang="en">{question.title} <span className="text-sm font-normal text-[var(--color-muted)]">[{question.points} pts]</span></h2>
           {question.context.trim() && <div lang="en"><EventNotes text={question.context} lang="en" /></div>}
           {question.tasks.map((task) => {

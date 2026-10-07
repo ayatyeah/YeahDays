@@ -20,7 +20,7 @@
 import bcrypt from "bcryptjs";
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, devices, webkit } from "playwright";
@@ -63,6 +63,19 @@ export function rows(query) {
 let seq = 0;
 const created = new Set();
 
+const POLICY = /POLICY_VERSION = "([^"]+)"/.exec(readFileSync(join(ROOT, "src/lib/personalization.ts"), "utf8"))[1];
+
+/**
+ * Принять действующую политику — как будто человек нажал «Выбрать самому»
+ * без ИИ и учёта активности. `extra` ложится поверх: например, включить учёт
+ * и поставить время последней активности для консоли владельца.
+ */
+export function acceptPolicy(user, extra = {}) {
+  const at = new Date().toISOString();
+  const data = { revision: 1, version: POLICY, acceptedAt: at, enabled: false, since: null, ai: false, receipts: [{ version: POLICY, at, enabled: false, ai: false }], timezone: "Asia/Almaty", days: {}, seen: [], lastTick: 0, ...extra };
+  sql(`insert into "PersonalizationProfile"("userId", data, "updatedAt") values ('${user.id}', '${JSON.stringify(data)}'::jsonb, now() at time zone 'utc') on conflict ("userId") do update set data = excluded.data`);
+}
+
 /**
  * Тестовый аккаунт.
  *
@@ -75,8 +88,12 @@ const created = new Set();
  * `state` кладётся в UserState — это снимок, который приложение тянет при
  * входе. По умолчанию человек «уже освоился»: онбординг и гайд пройдены.
  * Тест про онбординг просит `fresh: true`.
+ *
+ * Политику «уже освоившийся» человек тоже принял: иначе сверху висит баннер
+ * «Обновлена политика», сдвигает экран, и тапы тестов промахиваются. Тесты
+ * про само согласие просят `policy: false`.
  */
-export async function newUser({ fresh = false, state = {} } = {}) {
+export async function newUser({ fresh = false, state = {}, policy = !fresh } = {}) {
   const id = `${Date.now().toString(36)}${seq++}`;
   const user = {
     name: `Тест ${seq}`,
@@ -119,6 +136,7 @@ export async function newUser({ fresh = false, state = {} } = {}) {
        on conflict ("userId") do update set data = excluded.data, "clientAt" = excluded."clientAt"`,
     );
   }
+  if (policy) acceptPolicy(user);
   return user;
 }
 

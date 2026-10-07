@@ -8,7 +8,7 @@
  * спрашивал.
  */
 
-export type AiFeature = "chat" | "planner" | "learning" | "challenge30";
+export type AiFeature = "chat" | "planner" | "learning" | "challenge30" | "grade";
 
 interface Usage {
   input_tokens?: number;

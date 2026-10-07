@@ -68,6 +68,7 @@ const FEATURE_NAMES: Record<string, string> = {
   planner: "Планировщик",
   learning: "ИИ-подготовка",
   challenge30: "Челлендж 30",
+  grade: "Проверка ответов в ивентах",
 };
 
 /**

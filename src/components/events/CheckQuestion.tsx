@@ -24,7 +24,7 @@ export default function CheckQuestion({ question, answer, lang }: { question: st
           <p className="mt-2 rounded-xl bg-[var(--color-bg)] px-3 py-2 text-sm">{answer}</p>
           {state === "open" && (
             <div className="mt-2 flex gap-2">
-              <button className="rounded-xl bg-emerald-500/20 px-3 py-1.5 text-sm font-semibold" onClick={() => setState("known")}>{ru ? "Знал" : "I knew it"}</button>
+              <button className="rounded-xl bg-emerald-500/20 px-3 py-1.5 text-sm font-semibold" onClick={() => setState("known")}>{ru ? "Знаю" : "I knew it"}</button>
               <button className="rounded-xl bg-amber-500/20 px-3 py-1.5 text-sm font-semibold" onClick={() => setState("repeat")}>{ru ? "Повторить" : "Review again"}</button>
             </div>
           )}

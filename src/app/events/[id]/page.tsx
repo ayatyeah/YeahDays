@@ -15,13 +15,14 @@ import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeade
 import EventPlan from "@/components/events/EventPlan";
 import Flashcards from "@/components/events/Flashcards";
 import LectureVideo from "@/components/events/LectureVideo";
+import MockExamView, { MockList } from "@/components/events/MockExams";
 import NetworkGame from "@/components/events/NetworkGame";
 import ReportQuestion from "@/components/events/ReportQuestion";
 import ShareResult from "@/components/events/ShareResult";
 import SpeakButton from "@/components/events/SpeakButton";
 import { strip } from "@/lib/events/scenes";
 import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@/lib/events/storage";
-import type { Lang, StudyEvent } from "@/lib/events/types";
+import type { Lang, MockExam, StudyEvent } from "@/lib/events/types";
 import { useContentLang } from "@/i18n/locale";
 
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
@@ -35,7 +36,8 @@ type View =
   | { mode: "read"; step: Step }
   | { mode: "video"; step: Step }
   | { mode: "quiz"; step: Step; quiz: QuizQuestion[]; run: number }
-  | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] };
+  | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] }
+  | { mode: "mock"; exam: MockExam };
 
 /** Кто открывал ивент на этом устройстве в последний раз — для работы без сети. */
 const LAST_USER = "yg-event-last-user";
@@ -281,6 +283,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             </ol>
           </section>
 
+          <MockList event={event} userId={userId} onOpen={(exam) => setView({ mode: "mock", exam })} />
+
           {(event.cheatSheet || event.glossary) && (
             <section className={panel}>
               <h2 className="text-lg font-bold">Перед самым квизом</h2>
@@ -340,6 +344,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           )}
         </>
       )}
+
+      {view.mode === "mock" && <MockExamView event={event} exam={view.exam} userId={userId} onExit={toMap} />}
 
       {view.mode === "read" && (() => {
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];

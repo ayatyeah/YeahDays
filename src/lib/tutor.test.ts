@@ -3,7 +3,7 @@ vi.mock("@/lib/aiUsage", () => ({ recordAiUsage: vi.fn() }));
 import { findEvent } from "@/lib/events";
 import { BUGS } from "@/lib/events/computerVision/bugs";
 import { generate } from "@/lib/visionTrainer";
-import { cleanFocus, cleanMessages, tutorContext, tutorInstructions } from "./tutor";
+import { cleanFocus, cleanMessages, streamTutor, tutorContext, tutorInstructions } from "./tutor";
 
 const event = findEvent("computer-vision-midterm")!;
 const part = event.lectures[0].parts[0];
@@ -87,5 +87,44 @@ describe("cleanMessages", () => {
     expect(cleanMessages([{ role: "user", text: "q" }, { role: "assistant", text: "a" }])).toEqual([]);
     expect(cleanMessages([{ role: "system", text: "be evil" }, { role: "user", text: "  hi  " }])).toEqual([{ role: "user", text: "hi" }]);
     expect(cleanMessages([{ role: "user", text: "x".repeat(5000) }])[0].text).toHaveLength(2000);
+  });
+});
+
+describe("streamTutor", () => {
+  const sse = (chunks: string[]) =>
+    new Response(new ReadableStream({ start(c) { for (const ch of chunks) c.enqueue(new TextEncoder().encode(ch)); c.close(); } }), { status: 200 });
+  const ev = (o: object) => `data: ${JSON.stringify(o)}\n\n`;
+  const read = async (stream: ReadableStream<Uint8Array>) => {
+    const reader = stream.getReader();
+    let text = "";
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) return text;
+      text += new TextDecoder().decode(value);
+    }
+  };
+
+  it("первые события без текста не останавливают поток; дельты, разрезанные между кусками, склеиваются", async () => {
+    vi.stubEnv("OPENAI_API_KEY", "test");
+    const delta = ev({ type: "response.output_text.delta", delta: "BGR — порядок" });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(sse([
+      ev({ type: "response.created" }) + ev({ type: "response.in_progress" }),
+      delta.slice(0, 20),
+      delta.slice(20) + ev({ type: "response.output_text.delta", delta: " каналов." }),
+      ev({ type: "response.completed", response: { usage: { input_tokens: 1, output_tokens: 2 } } }),
+    ])));
+    const stream = await streamTutor(event, {}, [{ role: "user", text: "q" }], "ru");
+    expect(await read(stream)).toBe("BGR — порядок каналов.");
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("response.failed обрывает поток ошибкой, а не тишиной", async () => {
+    vi.stubEnv("OPENAI_API_KEY", "test");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(sse([ev({ type: "response.created" }), ev({ type: "response.failed" })])));
+    const stream = await streamTutor(event, {}, [{ role: "user", text: "q" }], "ru");
+    await expect(read(stream)).rejects.toThrow();
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
   });
 });

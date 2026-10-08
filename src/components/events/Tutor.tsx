@@ -20,6 +20,8 @@ import { usePersonalizationStore } from "@/store/usePersonalizationStore";
 const CONSENT = "event-tutor-v1";
 const KEEP = 40;
 const SEND = 12;
+/** Сколько ждать первых слов ответа, прежде чем сказать, что ответа нет. */
+const WAIT = 45_000;
 
 interface Message {
   role: "user" | "assistant";
@@ -283,6 +285,13 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
       const ctrl = new AbortController();
       abort.current = ctrl;
       let acc = "";
+      // Страховка: если за WAIT мс не пришло ни слова — не «думаем» вечно,
+      // а говорим, что ответа нет, и возвращаем вопрос в поле.
+      let silent = false;
+      const watchdog = window.setTimeout(() => {
+        silent = true;
+        ctrl.abort();
+      }, WAIT);
       const sentFocus: TutorFocus = screen ? { ...focus, selection: quote || undefined } : { selection: quote || undefined };
       try {
         const response = await fetch("/api/study-events/tutor", {
@@ -306,6 +315,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
         for (;;) {
           const { done, value } = await reader.read();
           if (done) break;
+          window.clearTimeout(watchdog);
           acc += decoder.decode(value, { stream: true });
           const shown = acc;
           setMessages((m) => [...m.slice(0, -1), { role: "assistant", text: shown }]);
@@ -324,9 +334,11 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
           // Ничего не пришло — возвращаем как было, вопрос — обратно в поле.
           setMessages(prev);
           if (!options.replace) setInput(text);
-          if (!ctrl.signal.aborted) setError({ text: e instanceof TypeError || !(e instanceof Error) ? "Нет связи — проверь интернет" : e.message });
+          if (silent) setError({ text: "Помощник не ответил за 45 секунд — попробуй ещё раз" });
+          else if (!ctrl.signal.aborted) setError({ text: e instanceof TypeError || !(e instanceof Error) ? "Нет связи — проверь интернет" : e.message });
         }
       } finally {
+        window.clearTimeout(watchdog);
         setBusy(false);
         abort.current = null;
       }

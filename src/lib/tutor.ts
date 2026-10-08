@@ -218,27 +218,54 @@ export async function streamTutor(event: StudyEvent, focus: TutorFocus, messages
   const decoder = new TextDecoder();
   const reader = response.body.getReader();
   let buffer = "";
-  return new ReadableStream<Uint8Array>({
-    async pull(controller) {
-      const { done, value } = await reader.read();
-      if (done) {
-        controller.close();
-        return;
+  let failed = false;
+
+  /** Разобрать строки SSE, вернуть текст ответа из них. */
+  const take = (lines: string[]) => {
+    let text = "";
+    for (const line of lines) {
+      if (!line.startsWith("data: ")) continue;
+      let data: { type?: string; delta?: string; response?: { usage?: { input_tokens?: number; output_tokens?: number } } };
+      try {
+        data = JSON.parse(line.slice(6));
+      } catch {
+        continue;
       }
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-      for (const line of lines) {
-        if (!line.startsWith("data: ")) continue;
-        let data: { type?: string; delta?: string; response?: { usage?: { input_tokens?: number; output_tokens?: number } } };
-        try {
-          data = JSON.parse(line.slice(6));
-        } catch {
-          continue;
+      if (data.type === "response.output_text.delta" && data.delta) text += data.delta;
+      else if (data.type === "response.completed" || data.type === "response.incomplete") recordAiUsage("tutor", data.response?.usage);
+      else if (data.type === "response.failed" || data.type === "error") failed = true;
+    }
+    return text;
+  };
+
+  return new ReadableStream<Uint8Array>({
+    // Читаем, пока не наберётся текст: pull, который ничего не положил в
+    // очередь, второй раз не вызывается, и поток замирает навсегда. А первые
+    // события OpenAI (response.created, in_progress) текста не содержат.
+    async pull(controller) {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) {
+          const text = take([buffer]);
+          buffer = "";
+          if (text) controller.enqueue(encoder.encode(text));
+          if (failed) controller.error(new Error("AI failed"));
+          else controller.close();
+          return;
         }
-        if (data.type === "response.output_text.delta" && data.delta) controller.enqueue(encoder.encode(data.delta));
-        else if (data.type === "response.completed" || data.type === "response.incomplete") recordAiUsage("tutor", data.response?.usage);
-        else if (data.type === "response.failed" || data.type === "error") controller.error(new Error("AI failed"));
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        const text = take(lines);
+        if (failed) {
+          controller.error(new Error("AI failed"));
+          void reader.cancel();
+          return;
+        }
+        if (text) {
+          controller.enqueue(encoder.encode(text));
+          return;
+        }
       }
     },
     cancel() {

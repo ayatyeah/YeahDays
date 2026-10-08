@@ -63,6 +63,49 @@ export const glossary: Term[] = [
   t("SDN", "Software-Defined Networking: moves the control plane into a central controller and programs the whole network through open APIs.", "Software-Defined Networking: control plane выносится в центральный контроллер, а вся сеть программируется через открытые API."),
   t("IoT", "The Internet of Things: connected devices and sensors whose data streams are collected, stored and processed in the cloud.", "Internet of Things: подключённые устройства и датчики, потоки данных которых собираются, хранятся и обрабатываются в облаке."),
   t("Blockchain", "A secure, distributed, immutable ledger that adds transparency and traceability to transactions.", "Защищённый распределённый неизменяемый реестр, который даёт транзакциям прозрачность и отслеживаемость."),
+  // Модули AWS Academy Cloud Foundations — термины мидтерма.
+  t("Economies of scale", "Usage from hundreds of thousands of customers is aggregated in the cloud, so AWS buys cheaper and offers lower pay-as-you-go prices.", "Потребление сотен тысяч клиентов собирается в облаке, поэтому AWS закупает дешевле и даёт более низкие цены pay-as-you-go."),
+  t("Multi-tenancy", "VMs of different customers run on the same physical host: each VM is isolated, but they share the host's CPU, memory and network.", "VM разных клиентов работают на одном физическом хосте: каждая изолирована, но они делят CPU, память и сеть хоста."),
+  t("Shared responsibility model", "AWS secures the cloud itself (facilities, hardware, network, hypervisor); the customer secures what is in it (data, IAM, security groups, the OS on EC2).", "AWS защищает само облако (здания, железо, сеть, гипервизор); клиент — то, что в нём (данные, IAM, security groups, ОС на EC2)."),
+  t("AWS Support plans", "Basic (free), Developer, Business and Enterprise; the paid plans add technical support with faster response times.", "Basic (бесплатно), Developer, Business и Enterprise; платные планы добавляют техподдержку с более быстрым ответом."),
+  t("AWS Trusted Advisor", "Checks your account against best practices in cost, performance, security (e.g. MFA on root, access key rotation, exposed keys), fault tolerance and service limits.", "Проверяет аккаунт по лучшим практикам: стоимость, производительность, безопасность (MFA на root, ротация и утечка access keys), отказоустойчивость, лимиты сервисов."),
+  t("On-Demand Instances", "Pay per second or hour with no commitment and no upfront payment; the default for new or unpredictable workloads.", "Оплата за секунду или час без обязательств и предоплаты; вариант по умолчанию для новых или непредсказуемых нагрузок."),
+  t("Savings Plans", "A discount for committing to a fixed hourly spend on compute for 1 or 3 years, applied flexibly across instance types and Regions.", "Скидка за обязательство тратить фиксированную сумму в час на вычисления в течение 1 или 3 лет; гибко применяется к разным типам инстансов и регионам."),
+  t("Dedicated Hosts", "A whole physical server for one customer: visible sockets and cores, control over instance placement, own per-socket licences; for compliance.", "Целый физический сервер для одного клиента: видны сокеты и ядра, есть контроль над размещением инстансов, свои лицензии на сокет; для compliance."),
+  t("Scheduled Reserved Instances", "Reserved capacity for a recurring time window (daily, weekly, monthly) at a discount, e.g. a monthly reporting job; no longer sold for new purchases.", "Резерв мощности на повторяющееся окно (день, неделя, месяц) со скидкой, например под ежемесячные отчёты; новые больше не продаются."),
+  t("EC2 instance families", "General purpose (T, M), compute optimized (C, CPU-heavy work), memory optimized (R, X, large datasets in memory), storage optimized (I, D, local I/O), accelerated computing (P, G, GPUs).", "General purpose (T, M), compute optimized (C, много CPU), memory optimized (R, X, большие данные в памяти), storage optimized (I, D, локальный ввод-вывод), accelerated computing (P, G, GPU)."),
+  t("Elastic IP address", "A static public IPv4 address that stays with your account and can be remapped between instances; a NAT gateway uses one.", "Статический публичный IPv4-адрес, закреплённый за аккаунтом; его можно перевесить на другой инстанс; NAT gateway использует такой адрес."),
+  t("Amazon EBS", "Persistent block storage for EC2 in one Availability Zone; data survives an instance stop, and a volume attaches to instances in the same AZ.", "Постоянное блочное хранилище для EC2 в одной Availability Zone; данные переживают остановку инстанса, том подключается к инстансам в той же AZ."),
+  t("EBS snapshot", "A point-in-time, incremental backup of an EBS volume stored in Amazon S3; new volumes can be created from it in any AZ, and it can be copied to another Region.", "Инкрементный бэкап тома EBS на момент времени, хранится в Amazon S3; из него создают новые тома в любой AZ, его можно скопировать в другой регион."),
+  t("EBS Multi-Attach", "Attaches one Provisioned IOPS (io1/io2) volume to several Nitro instances at once — only within the same Availability Zone.", "Подключает один том Provisioned IOPS (io1/io2) сразу к нескольким инстансам Nitro — только в пределах одной Availability Zone."),
+  t("Instance store", "Temporary block storage on disks physically attached to the host; very fast, but data is lost when the instance stops or terminates.", "Временное блочное хранилище на дисках, физически подключённых к хосту; очень быстрое, но данные пропадают при остановке или удалении инстанса."),
+  t("Amazon EFS", "A managed, elastic NFS file system for Linux that many instances in many AZs mount and read and write at the same time; it grows and shrinks automatically.", "Управляемая эластичная файловая система NFS для Linux: её монтируют много инстансов в разных AZ и одновременно читают и пишут; растёт и сжимается сама."),
+  t("EFS mount target", "The network interface in a subnet of each AZ through which EC2 instances connect to an EFS file system.", "Сетевой интерфейс в подсети каждой AZ, через который инстансы EC2 подключаются к файловой системе EFS."),
+  t("Amazon FSx", "Managed third-party file systems: FSx for Windows File Server (SMB, Active Directory) for Windows apps, FSx for Lustre for high-performance computing.", "Управляемые сторонние файловые системы: FSx for Windows File Server (SMB, Active Directory) для Windows-приложений, FSx for Lustre для HPC."),
+  t("S3 storage classes", "Standard (frequent access), Intelligent-Tiering (unknown patterns), Standard-IA and One Zone-IA (infrequent), Glacier classes and Glacier Deep Archive (archive, cheapest).", "Standard (частый доступ), Intelligent-Tiering (неизвестный характер доступа), Standard-IA и One Zone-IA (редкий доступ), классы Glacier и Glacier Deep Archive (архив, дешевле всех)."),
+  t("Amazon RDS", "Managed relational databases — Aurora, MySQL, MariaDB, PostgreSQL, Oracle, SQL Server; AWS handles provisioning, patching and backups.", "Управляемые реляционные базы — Aurora, MySQL, MariaDB, PostgreSQL, Oracle, SQL Server; provisioning, патчи и бэкапы берёт на себя AWS."),
+  t("RDS Multi-AZ deployment", "A synchronous standby copy in another AZ with automatic failover when the primary fails; for availability, the standby serves no reads.", "Синхронная резервная копия в другой AZ с автоматическим failover при отказе основной базы; для доступности, чтение резерв не обслуживает."),
+  t("Read replica", "An asynchronous read-only copy of an RDS database with its own endpoint, used to offload read traffic; promoting it is a manual step.", "Асинхронная копия базы RDS только для чтения со своим адресом, снимает нагрузку чтения; её повышение до основной — ручной шаг."),
+  t("Amazon DynamoDB", "A fully managed serverless NoSQL key-value database with single-digit millisecond latency at any scale.", "Полностью управляемая serverless NoSQL-база «ключ–значение» с задержкой в единицы миллисекунд на любом масштабе."),
+  t("DynamoDB Query vs Scan", "Query finds items by partition key (of the table or an index); Scan reads every item and filters, so it is used to search by a non-key attribute.", "Query находит элементы по partition key (таблицы или индекса); Scan читает все элементы и фильтрует, поэтому им ищут по атрибуту, который не ключ."),
+  t("Amazon Redshift", "A managed petabyte-scale data warehouse for analytics (SQL over columnar storage) — a separate service, not an RDS engine.", "Управляемое хранилище данных петабайтного масштаба для аналитики (SQL поверх колоночного хранения) — отдельный сервис, а не движок RDS."),
+  t("AWS root user", "The identity created with the account that has unrestricted access; protect it with MFA, create no access keys, and use IAM users for daily work.", "Учётная запись, созданная вместе с аккаунтом, с неограниченным доступом; её защищают MFA, не создают для неё access keys, а для ежедневной работы используют IAM users."),
+  t("IAM user", "A person or application in your account with long-term credentials — a console password and/or access keys.", "Человек или приложение в аккаунте с долгосрочными учётными данными — паролем от консоли и/или access keys."),
+  t("IAM group", "A collection of IAM users; permissions attached to the group apply to every member. Groups cannot be nested and have no credentials.", "Набор пользователей IAM; права группы действуют на каждого участника. Группы не вкладываются друг в друга и не имеют учётных данных."),
+  t("IAM role", "An identity with temporary credentials that a user, an application or an AWS service (e.g. an EC2 instance) assumes; the secure way to give EC2 access to other services.", "Учётная запись с временными учётными данными, которую принимает пользователь, приложение или сервис AWS (например, инстанс EC2); безопасный способ дать EC2 доступ к другим сервисам."),
+  t("Inline policy", "A policy embedded directly in one user, group or role and deleted with it; unlike a managed policy it cannot be reused.", "Политика, встроенная прямо в одного пользователя, группу или роль и удаляемая вместе с ними; в отличие от managed policy её нельзя переиспользовать."),
+  t("MFA", "Multi-factor authentication: a one-time code from a device on top of the password; enable it on the root user first.", "Многофакторная аутентификация: одноразовый код с устройства в дополнение к паролю; первым делом включается на root user."),
+  t("AWS CloudTrail", "Records every API call in the account — who, when, from where, what — so you can find, for example, who deleted an EC2 instance.", "Записывает каждый вызов API в аккаунте — кто, когда, откуда и что, — например, чтобы найти, кто удалил инстанс EC2."),
+  t("AWS Config", "Records resource configurations and their changes over time and evaluates them against rules you define (compliance).", "Записывает конфигурации ресурсов и их изменения во времени и проверяет их по заданным правилам (compliance)."),
+  t("Amazon CloudWatch", "Monitors AWS resources and applications in real time: metrics, logs, dashboards and alarms.", "Мониторинг ресурсов AWS и приложений в реальном времени: метрики, логи, дашборды и alarms."),
+  t("CloudWatch alarm", "Watches a metric against a threshold and acts when it is crossed — e.g. notifies through an SNS topic or triggers an Auto Scaling policy.", "Следит за метрикой относительно порога и срабатывает при его пересечении — например, уведомляет через тему SNS или запускает политику Auto Scaling."),
+  t("Amazon SNS", "Simple Notification Service: publish/subscribe that pushes each message to all subscribers at once (email, SMS, Lambda, HTTP, SQS queues).", "Simple Notification Service: publish/subscribe, который сразу рассылает каждое сообщение всем подписчикам (email, SMS, Lambda, HTTP, очереди SQS)."),
+  t("Amazon SQS", "Simple Queue Service: a managed message queue; messages wait until a consumer polls them, which decouples producers from consumers.", "Simple Queue Service: управляемая очередь сообщений; сообщения ждут, пока потребитель их заберёт, — так отправители отвязаны от получателей."),
+  t("Elastic Load Balancing", "Distributes incoming traffic across multiple targets (EC2 instances, containers, IPs) in several AZs and sends it only to healthy ones.", "Распределяет входящий трафик по нескольким целям (инстансы EC2, контейнеры, IP) в нескольких AZ и отправляет его только на исправные."),
+  t("Amazon EC2 Auto Scaling", "Adds and removes EC2 instances in an Auto Scaling group to keep the desired capacity and follow demand, between a minimum and a maximum.", "Добавляет и убирает инстансы EC2 в Auto Scaling group, чтобы держать нужную мощность и следовать за спросом в пределах минимума и максимума."),
+  t("Target tracking policy", "An Auto Scaling policy that keeps a metric at a target value, e.g. average CPU 70%: it adds instances above the target and removes them below.", "Политика Auto Scaling, которая держит метрику на целевом значении, например средний CPU 70%: выше цели добавляет инстансы, ниже — убирает."),
+  t("Route 53 routing policies", "Simple, weighted (percentages), latency-based (lowest-latency Region), geolocation (by user's country), geoproximity, failover and multivalue answer.", "Simple, weighted (по процентам), latency-based (регион с наименьшей задержкой), geolocation (по стране пользователя), geoproximity, failover и multivalue answer."),
+  t("AWS Well-Architected Framework", "Best practices organized in pillars: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization and Sustainability.", "Лучшие практики, разложенные по столпам: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization и Sustainability."),
 ];
 
 /** Шпаргалка на одну страницу — то, что стоит перечитать за пять минут до мидтерма. */
@@ -133,7 +176,40 @@ export const cheatSheet: Text = {
 - **American Airlines** — monolith to microservices for better customer service. **Spotify** — moved to **GCP** (planned from 2015), services and data took a year each, engineers freed to innovate.
 - **Dropbox** — left **Amazon S3**, moved about **90%** of files in-house for cost and control: on-premises can still suit a business that is big enough.
 - **Netflix** — video on **S3 + Open Connect**, Kafka for streaming, Chaos Monkey and Spinnaker in CI/CD.
-- **IoT delivers the data, AI powers the insights, the cloud gives the scale.** Blockchain — a trusted, immutable, decentralized source of truth.`,
+- **IoT delivers the data, AI powers the insights, the cloud gives the scale.** Blockchain — a trusted, immutable, decentralized source of truth.
+## Midterm: scenario → answer
+| Scenario in the question | Answer |
+|---|---|
+| New app, unknown usage, no long-term commitment | **On-Demand** |
+| Steady, predictable workload for at least 1 year | **Reserved Instances** (1-year term) |
+| Stateless job that can be interrupted, lowest cost | **Spot Instances** |
+| Monthly reports over huge data on a fixed schedule | **Scheduled Reserved Instances** |
+| Compliance, full control over the physical server | **Dedicated Hosts** |
+| Avoid large upfront hardware costs | **Pay-as-you-go** |
+| Three separate data-center groups with own power and cooling inside a Region | **Availability Zones** |
+| App went down when one AZ lost power | **Multiple AZs in the same Region** |
+| Who deleted the EC2 instance yesterday? | **AWS CloudTrail** |
+| Monitor resources and apps in real time | **Amazon CloudWatch** |
+| Send alerts from a CloudWatch alarm | **Amazon SNS** |
+| Notify some people now, let others process later | **Amazon SNS** (fan-out to SQS) |
+| Unused IAM access keys flagged automatically | **AWS Trusted Advisor** |
+| EC2 app needs DynamoDB credentials securely | **IAM role** attached to the instance |
+| Temporary access to permissions | **IAM role** |
+| Manager uses the root account daily | **IAM users** for daily work + **MFA on root** |
+| Optional security control at the subnet level | **Network ACL** |
+| Site blocked, security group allows only port 22 | Add **inbound TCP 80** to that security group |
+| Private instance cannot reach the internet | **NAT gateway** is missing |
+| Public subnet vs private subnet | Route **0.0.0.0/0 → internet gateway** |
+| Users in Europe and Asia, route to the fastest Region | Route 53 **latency-based** routing |
+| 10 instances read and write shared files at once | **Amazon EFS** |
+| Shared Windows file storage over SMB | **Amazon FSx** |
+| One EBS volume for instances in different AZs | Impossible — EBS is AZ-scoped, use **EFS** |
+| 11 nines durability, documents and photos | **Amazon S3** |
+| Automatic RDS failover to another AZ | **RDS Multi-AZ** (pillar: **Reliability**) |
+| DynamoDB search by a non-key attribute | **Scan** |
+| Scale an application with demand | **Elastic Load Balancing + EC2 Auto Scaling** |
+| Add instances when CPU is above 70% | **Target tracking** policy |
+| Unexpected bills, cost-effective resources | **Cost Optimization** pillar |`,
   ru: `## Лекция 1 — основы облака и NIST
 - **NIST:** удобный on-demand доступ по сети к общему пулу настраиваемых ресурсов, которые быстро выделяются и освобождаются с минимальными усилиями по управлению.
 - **5 характеристик:** on-demand self-service, broad network access, resource pooling (multi-tenant), rapid elasticity, measured service.
@@ -200,5 +276,38 @@ export const cheatSheet: Text = {
 - **American Airlines** — от монолита к микросервисам ради лучшего обслуживания клиентов. **Spotify** — переезд на **GCP** (планировали с 2015), сервисы и данные заняли по году, инженеры освободились для инноваций.
 - **Dropbox** — ушёл с **Amazon S3**, перенёс около **90%** файлов к себе ради цены и контроля: своя инфраструктура всё ещё подходит достаточно крупному бизнесу.
 - **Netflix** — видео на **S3 + Open Connect**, Kafka для стриминга, Chaos Monkey и Spinnaker в CI/CD.
-- **IoT даёт данные, AI — выводы, облако — масштаб.** Blockchain — надёжный, неизменяемый, децентрализованный источник истины.`,
+- **IoT даёт данные, AI — выводы, облако — масштаб.** Blockchain — надёжный, неизменяемый, децентрализованный источник истины.
+## Мидтерм: сценарий → ответ
+| Сценарий в вопросе | Ответ |
+|---|---|
+| Новое приложение, нагрузка неизвестна, без долгих обязательств | **On-Demand** |
+| Стабильная предсказуемая нагрузка минимум на год | **Reserved Instances** (на 1 год) |
+| Stateless-задача, которую можно прерывать, минимальная цена | **Spot Instances** |
+| Ежемесячные отчёты по огромным данным по расписанию | **Scheduled Reserved Instances** |
+| Compliance, полный контроль над физическим сервером | **Dedicated Hosts** |
+| Избежать крупных затрат на железо заранее | **Pay-as-you-go** |
+| Три отдельные группы дата-центров со своим питанием и охлаждением внутри региона | **Availability Zones** |
+| Приложение легло, когда в одной AZ пропало питание | **Несколько AZ в том же регионе** |
+| Кто вчера удалил инстанс EC2? | **AWS CloudTrail** |
+| Мониторинг ресурсов и приложений в реальном времени | **Amazon CloudWatch** |
+| Отправить оповещения по CloudWatch alarm | **Amazon SNS** |
+| Одних уведомить сразу, другим дать обработать позже | **Amazon SNS** (fan-out в SQS) |
+| Автоматически найти неиспользуемые access keys IAM | **AWS Trusted Advisor** |
+| Приложению на EC2 безопасно нужен доступ к DynamoDB | **IAM role**, прикреплённая к инстансу |
+| Временный доступ к правам | **IAM role** |
+| Руководитель каждый день входит под root | **IAM users** для работы + **MFA на root** |
+| Необязательная защита на уровне подсети | **Network ACL** |
+| Сайт не открывается, security group пускает только порт 22 | Добавить **входящий TCP 80** в эту security group |
+| Приватный инстанс не выходит в интернет | Нет **NAT gateway** |
+| Public subnet против private subnet | Маршрут **0.0.0.0/0 → internet gateway** |
+| Пользователи в Европе и Азии, направлять в самый быстрый регион | Route 53 **latency-based** routing |
+| 10 инстансов одновременно читают и пишут общие файлы | **Amazon EFS** |
+| Общее файловое хранилище Windows по SMB | **Amazon FSx** |
+| Один том EBS для инстансов в разных AZ | Невозможно — EBS привязан к AZ, нужен **EFS** |
+| Durability 11 девяток, документы и фото | **Amazon S3** |
+| Автоматический failover RDS в другую AZ | **RDS Multi-AZ** (столп **Reliability**) |
+| Поиск в DynamoDB по атрибуту, который не ключ | **Scan** |
+| Масштабировать приложение по спросу | **Elastic Load Balancing + EC2 Auto Scaling** |
+| Добавлять инстансы, когда CPU выше 70% | Политика **target tracking** |
+| Неожиданные счета, выгодные ресурсы | Столп **Cost Optimization** |`,
 };

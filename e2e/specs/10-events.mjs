@@ -34,19 +34,19 @@ test("Ивенты: из «Учёбы» нахожу ивент, читаю ча
   await page.waitForURL((u) => u.pathname === "/events", { timeout: 15_000 });
   check(true, "плашка «Ивенты» в «Учёбе» ведёт к списку ивентов");
 
-  await page.getByRole("link", { name: /Подготовка к квизу №1/ }).tap();
+  await page.getByRole("link", { name: /Подготовка к квизам и мидтерму/ }).tap();
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
   check((await page.locator("body").innerText()).includes("не пройдено"), "новый человек видит маршрут с непройденными шагами");
 
   await page.getByRole("button", { name: "Начать с первой части" }).tap();
-  await page.getByRole("heading", { name: "What research is and the researcher's mindset" }).waitFor({ timeout: 10_000 });
-  check((await page.locator("article").innerText()).includes("Myth and reality"), "конспект открывается на английском — на языке квиза");
+  await page.getByRole("heading", { name: "What research is — and what it is not" }).waitFor({ timeout: 10_000 });
+  check((await page.locator("article").innerText()).includes("The myth and the reality"), "конспект открывается на английском — на языке квиза");
 
   await page.getByRole("button", { name: "Перевести на русский" }).tap();
   await page.getByText("Миф и реальность").waitFor({ timeout: 10_000 });
   check(true, "одна кнопка переводит конспект на русский");
   await page.getByRole("button", { name: /Показать оригинал/ }).tap();
-  await page.getByText("Myth and reality").waitFor({ timeout: 10_000 });
+  await page.getByText("The myth and the reality").waitFor({ timeout: 10_000 });
   check(true, "и обратно на английский");
   await browser.close();
 });
@@ -57,22 +57,22 @@ test("Ивенты: квиз по части считается, сохраня�
   await openSection(page, EVENT);
 
   await page.getByRole("button", { name: "Начать с первой части" }).tap();
-  await page.getByRole("button", { name: /Начать квиз по этой части · 8 вопросов/ }).tap();
+  await page.getByRole("button", { name: /Начать квиз по этой части · 20 вопросов/ }).tap();
 
   const music = page.getByRole("button", { name: /Музыка/ });
   check((await music.innerText()).includes("вкл"), "во время квиза музыка включена по умолчанию");
   await music.tap();
   check((await music.innerText()).includes("выкл"), "музыку можно выключить одной кнопкой");
 
-  const first = await passQuiz(page, 8);
-  await page.getByText(/Верных ответов: \d из 8/).waitFor({ timeout: 10_000 });
-  check(new Set(first).size === 8, "в квизе 8 разных вопросов");
+  const first = await passQuiz(page, 20);
+  await page.getByText(/Верных ответов: \d+ из 20/).waitFor({ timeout: 10_000 });
+  check(new Set(first).size === 20, "в квизе 20 разных вопросов — весь банк части");
 
   const stored = await page.evaluate(() => Object.entries(localStorage).filter(([k]) => k.startsWith("yg-event:")).map(([, v]) => JSON.parse(v)));
-  check(stored.length === 1 && stored[0]["rm-w1-p1"]?.attempts === 1, "результат попытки сохранён за этим аккаунтом");
+  check(stored.length === 1 && stored[0]["rm-l1-p1"]?.attempts === 1, "результат попытки сохранён за этим аккаунтом");
 
   await page.getByRole("button", { name: /Пройти ещё раз/ }).tap();
-  const second = await passQuiz(page, 8);
+  const second = await passQuiz(page, 20);
   check(first.join("|") !== second.join("|"), "при повторе вопросы идут в другом порядке или другом составе");
 
   await page.getByRole("button", { name: "К маршруту" }).tap();
@@ -102,9 +102,9 @@ test("Ивенты: шпаргалка открывается и перевод�
   await openSection(page, EVENT);
 
   await page.getByRole("button", { name: "Шпаргалка на одну страницу" }).tap();
-  await page.getByText("AND narrows, OR broadens").waitFor({ timeout: 10_000 });
+  await page.getByText("AND between concepts, OR between synonyms").waitFor({ timeout: 10_000 });
   await page.getByRole("button", { name: "Перевести на русский" }).tap();
-  await page.getByText("AND сужает, OR расширяет").waitFor({ timeout: 10_000 });
+  await page.getByText("AND между понятиями, OR между синонимами").waitFor({ timeout: 10_000 });
   check(true, "шпаргалка есть на английском и на русском");
 
   await page.getByRole("button", { name: "← К маршруту" }).tap();
@@ -143,7 +143,7 @@ test("Ивенты: дата квиза раскладывает шаги по �
   });
   await page.getByLabel("Дата квиза").fill(iso);
   await page.getByText("До квиза 5 дн.").waitFor({ timeout: 10_000 });
-  check((await page.getByText("≈").count()) === 5, "шаги разложены на пять дней до квиза");
+  check((await page.locator("section", { hasText: "До квиза 5 дн." }).last().getByText("≈").count()) === 5, "шаги разложены на пять дней до квиза");
 
   await page.getByRole("button", { name: "Добавить в мой план" }).tap();
   await page.getByText("В план добавлено дней: 5").waitFor({ timeout: 15_000 });
@@ -172,11 +172,11 @@ test("Ивенты: результат уезжает на сервер, дру�
 
   await page.getByRole("button", { name: "Начать с первой части" }).tap();
   await page.getByRole("button", { name: /Начать квиз по этой части/ }).tap();
-  await passQuiz(page, 8);
+  await passQuiz(page, 20);
   await page.getByText(/Верных ответов/).waitFor({ timeout: 10_000 });
   await page.waitForTimeout(1500);
   check(sql(`select share from "EventProgress" where "userId" = '${me.id}'`) === "f", "результат сохранён на сервере, но в рейтинг без согласия не попал");
-  check(sql(`select (data->'rm-w1-p1'->>'attempts') from "EventProgress" where "userId" = '${me.id}'`) === "1", "на сервере записана попытка квиза");
+  check(sql(`select (data->'rm-l1-p1'->>'attempts') from "EventProgress" where "userId" = '${me.id}'`) === "1", "на сервере записана попытка квиза");
 
   // Сообщение об ошибке в вопросе из разбора ошибок или из самого квиза.
   const report = page.getByRole("button", { name: "Сообщить об ошибке в вопросе" }).first();

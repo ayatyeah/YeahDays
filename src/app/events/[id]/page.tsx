@@ -19,6 +19,7 @@ import MockExamView, { MockList } from "@/components/events/MockExams";
 import VisionTrainer from "@/components/events/VisionTrainer";
 import BugHunt from "@/components/events/BugHunt";
 import OpenCVSandbox from "@/components/events/OpenCVSandbox";
+import FastMode, { fastProgress } from "@/components/events/FastMode";
 import type { TrainerKind } from "@/lib/visionTrainer";
 import NetworkGame from "@/components/events/NetworkGame";
 import ReportQuestion from "@/components/events/ReportQuestion";
@@ -46,7 +47,8 @@ type View =
   | { mode: "mock"; exam: MockExam }
   | { mode: "trainer"; kind?: TrainerKind }
   | { mode: "bughunt" }
-  | { mode: "sandbox" };
+  | { mode: "sandbox" }
+  | { mode: "fast" };
 
 /** Кто открывал ивент на этом устройстве в последний раз — для работы без сети. */
 const LAST_USER = "yg-event-last-user";
@@ -249,6 +251,18 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
             onView={(mode) => setView({ mode })}
           />
+          {event.fast && (
+            <section className="rounded-3xl border border-amber-400/40 bg-gradient-to-br from-amber-500/15 via-[var(--color-surface)] to-rose-500/10 p-5">
+              <h2 className="text-lg font-bold">⚡ Фаст-мод · ≈ {event.fast.hours.toLocaleString("ru")} ч</h2>
+              <p className="mt-1 text-sm text-[var(--color-muted)]">Мало времени до экзамена? Только то, за что дают баллы: {event.fast.sections.length} коротких блоков с шаблонами ответов и ловушками.</p>
+              {loaded && fastProgress(userId, event) > 0 && (
+                <p className="mt-2 text-sm">Прочитано {fastProgress(userId, event)} из {event.fast.sections.length}</p>
+              )}
+              <Button variant="primary" className="mt-3 h-auto min-h-11 w-full whitespace-normal" onClick={() => setView({ mode: "fast" })}>
+                {loaded && fastProgress(userId, event) > 0 ? "Продолжить фаст-мод" : "Открыть фаст-мод"}
+              </Button>
+            </section>
+          )}
           {!online && (
             <p role="status" className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm">
               Нет сети. Конспекты и квизы работают, результаты сохраняются на устройстве и отправятся, когда появится интернет.
@@ -406,6 +420,18 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
       {view.mode === "trainer" && <VisionTrainer key={view.kind ?? "all"} userId={userId} initialKind={view.kind} onExit={toMap} />}
       {view.mode === "bughunt" && <BugHunt userId={userId} lang={tl} onExit={toMap} />}
       {view.mode === "sandbox" && <OpenCVSandbox onExit={toMap} />}
+      {view.mode === "fast" && event.fast && (
+        <FastMode
+          event={event}
+          userId={userId}
+          lang={lang}
+          onLang={switchLang}
+          onExit={toMap}
+          onFinal={() => open(list[list.length - 1])}
+          onMocks={event.mocks?.length ? () => { toMap(); window.setTimeout(() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" }), 150); } : undefined}
+          onSheet={event.cheatSheet ? () => setView({ mode: "sheet" }) : undefined}
+        />
+      )}
       <Tutor event={event} userId={userId} />
 
       {view.mode === "read" && (() => {
@@ -548,8 +574,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
  * Быстрый доступ под заголовком ивента: пробные варианты, практикум,
  * шпаргалка и помощник — чтобы не листать до них мимо всех лекций.
  */
-function QuickLinks({ event, onMocks, onView }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet") => void }) {
+function QuickLinks({ event, onMocks, onView }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet" | "fast") => void }) {
   const links: { label: string; go: () => void; accent?: boolean }[] = [];
+  if (event.fast) links.push({ label: `⚡ Фаст-мод · ${event.fast.hours.toLocaleString("ru")} ч`, go: () => onView("fast"), accent: true });
   if (event.mocks?.length) links.push({ label: `Пробные варианты · ${event.mocks.length}`, go: onMocks, accent: true });
   if (event.practice === "vision") {
     links.push({ label: "Тренажёр расчётов", go: () => onView("trainer") }, { label: "Найди баг", go: () => onView("bughunt") }, { label: "Песочница OpenCV", go: () => onView("sandbox") });

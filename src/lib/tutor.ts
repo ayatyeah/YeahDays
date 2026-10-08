@@ -30,6 +30,8 @@ export interface TutorMessage {
 export interface TutorFocus {
   view?: string;
   partId?: string;
+  /** Открытый блок фаст-мода. */
+  fastId?: string;
   step?: string;
   quiz?: { question: string; options: string[]; picked?: number; correct?: number; index?: number; total?: number };
   mock?: { examId: string; taskId?: string; answer?: string; grade?: { score: number; points: number; missing: string[]; mistakes: string[] } };
@@ -49,6 +51,7 @@ export function cleanFocus(raw: unknown): TutorFocus {
   const out: TutorFocus = {};
   if (typeof f.view === "string") out.view = clip(f.view, 20);
   if (typeof f.partId === "string") out.partId = clip(f.partId, 60);
+  if (typeof f.fastId === "string") out.fastId = clip(f.fastId, 60);
   if (typeof f.step === "string") out.step = clip(f.step, 160);
   if (typeof f.selection === "string" && f.selection.trim()) out.selection = clip(f.selection.trim(), 800);
   if (typeof f.progress === "string") out.progress = clip(f.progress, 800);
@@ -97,6 +100,8 @@ export function tutorContext(event: StudyEvent, focus: TutorFocus): string {
 
   const part = focus.partId ? event.lectures.flatMap((l) => l.parts.map((p) => ({ l, p }))).find(({ p }) => p.id === focus.partId) : undefined;
   if (part) out.push(`## Notes part open on screen: ${part.l.title.en} — ${part.p.title.en}\n${part.p.notes.en.slice(0, 7000)}`);
+  const fast = focus.fastId ? event.fast?.sections.find((s) => s.id === focus.fastId) : undefined;
+  if (fast) out.push(`## Fast-track (cram mode) block open on screen: ${fast.title.en}\n${fast.notes.en.slice(0, 7000)}`);
 
   if (focus.quiz) {
     const q = focus.quiz;
@@ -111,7 +116,22 @@ export function tutorContext(event: StudyEvent, focus: TutorFocus): string {
     const exam = event.mocks?.find((m) => m.id === focus.mock!.examId);
     const found = exam?.questions.flatMap((q) => q.tasks.map((t) => ({ q, t }))).find(({ t }) => t.id === focus.mock!.taskId);
     if (exam) out.push(`## Mock exam open: ${exam.title.en}`);
-    if (found) {
+    if (found && found.t.options) {
+      // тестовый подпункт: до выбора ответ не раскрываем, как в квизе
+      const { q, t } = found;
+      const letter = (i: number) => String.fromCharCode(65 + i);
+      const picked = focus.mock.answer !== undefined && /^\d+$/.test(focus.mock.answer) ? Number(focus.mock.answer) : undefined;
+      out.push(
+        [
+          `Multiple-choice sub-question in focus: ${q.title} ${t.label}) (${t.points} pts)`,
+          t.prompt.slice(0, 1500),
+          ...(t.options ?? []).map((o, i) => `${letter(i)}) ${o}`),
+          picked === undefined
+            ? "The student has NOT answered yet. Do not reveal or hint which option is correct; help with the underlying concept only."
+            : `Student picked ${letter(picked)}; correct is ${letter(t.correct ?? 0)}. Explanation (for you): ${t.answer.en.slice(0, 1500)}`,
+        ].join("\n"),
+      );
+    } else if (found) {
       const { q, t } = found;
       out.push(
         [

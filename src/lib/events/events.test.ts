@@ -35,9 +35,10 @@ describe("содержимое ивента", () => {
     }
   });
 
-  it("банка хватает на квизы нужного размера: 5–10 по части, 15–20 по лекции, 40–50 итоговый", () => {
+  it("банка хватает на квизы нужного размера: по части 5–10 (или весь банк до 20), 15–20 по лекции, 40–50 итоговый", () => {
     const list = steps(event);
-    for (const s of list.filter((s) => s.kind === "part")) expect(s.count, s.id).toBeGreaterThanOrEqual(5), expect(s.count).toBeLessThanOrEqual(10);
+    // Квиз по части — выборка 5–10 или весь банк части, до 20 (как в ивентах с банком «ровно квиз»).
+    for (const s of list.filter((s) => s.kind === "part")) expect(s.count, s.id).toBeGreaterThanOrEqual(5), expect(s.count).toBeLessThanOrEqual(event.counts.part > 10 ? 20 : 10);
     for (const s of list.filter((s) => s.kind === "lecture")) expect(s.count, s.id).toBeGreaterThanOrEqual(15), expect(s.count).toBeLessThanOrEqual(20);
     const final = list.at(-1)!;
     expect(final.kind).toBe("final");
@@ -95,7 +96,7 @@ describe("прохождение", () => {
   it("итоговый квиз покрывает все лекции примерно поровну", () => {
     const quiz = draw(event, steps(event).at(-1)!, seeded(5));
     const perLecture = event.lectures.map((_, li) => quiz.filter((x) => x.lecture === li).length);
-    expect(Math.min(...perLecture)).toBeGreaterThanOrEqual(10);
+    expect(Math.min(...perLecture)).toBeGreaterThanOrEqual(Math.floor(event.counts.final / event.lectures.length));
     expect(Math.max(...perLecture) - Math.min(...perLecture)).toBeLessThanOrEqual(1);
   });
 

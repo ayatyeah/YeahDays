@@ -102,16 +102,40 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
     }
   });
 
+  it("фаст-мод: блоки с переводом строка в строку, минуты сходятся с обещанными часами", () => {
+    if (!event.fast) return;
+    const kind = (l: string) => (l.startsWith("## ") ? "h" : l.startsWith("- ") ? "b" : l.startsWith("> ") ? "q" : l.startsWith("= ") ? "c" : l.startsWith("|") ? "t" : l.startsWith("@") ? "d" : l.startsWith("?? ") ? "Q" : l.startsWith("?= ") ? "A" : l.trim() ? "p" : "_");
+    const shape = (text: string) => text.split("\n").map(kind).join("");
+    const minutes = event.fast.sections.reduce((n, s) => n + s.minutes, 0);
+    expect(minutes).toBeGreaterThanOrEqual(event.fast.hours * 60 * 0.75);
+    expect(minutes).toBeLessThanOrEqual(event.fast.hours * 60 * 1.25);
+    expect(new Set(event.fast.sections.map((s) => s.id)).size).toBe(event.fast.sections.length);
+    for (const s of event.fast.sections) {
+      expect(s.notes.en.length, s.id).toBeGreaterThan(1200);
+      expect(shape(s.notes.ru), s.id).toBe(shape(s.notes.en));
+      for (const l of s.notes.en.split("\n")) if (l.startsWith("@diagram ")) expect(DIAGRAM_NAMES, `${s.id}: ${l}`).toContain(l.slice(9).trim());
+    }
+  });
+
   it("пробные экзамены: баллы сходятся, у каждого подпункта критерии и эталон, id не повторяются", () => {
     const ids = new Set<string>();
     for (const exam of event.mocks ?? []) {
-      expect(exam.questions.reduce((n, q) => n + q.points, 0), `${exam.id}: сумма баллов`).toBe(100);
+      expect(exam.questions.reduce((n, q) => n + q.points, 0), `${exam.id}: сумма баллов`).toBe(exam.total ?? 100);
       for (const q of exam.questions) {
         expect(q.tasks.reduce((n, t) => n + t.points, 0), `${q.id}: подпункты дают баллы задания`).toBe(q.points);
         for (const t of q.tasks) {
           expect(ids.has(t.id), `${t.id} повторяется`).toBe(false);
           ids.add(t.id);
           expect(t.prompt.trim().length, `${t.id}: формулировка`).toBeGreaterThan(10);
+          if (t.options) {
+            // тестовый подпункт: проверяется без ИИ, критерии не нужны
+            expect(t.options.length, `${t.id}: варианты`).toBeGreaterThanOrEqual(2);
+            expect(new Set(t.options).size, `${t.id}: варианты не повторяются`).toBe(t.options.length);
+            expect(t.options[t.correct ?? -1], `${t.id}: верный вариант`).toBeTruthy();
+            expect(t.answer.en.trim().length, `${t.id}: объяснение EN`).toBeGreaterThan(10);
+            expect(t.answer.ru.trim().length, `${t.id}: объяснение RU`).toBeGreaterThan(10);
+            continue;
+          }
           expect(t.rubric.length, `${t.id}: критерии`).toBeGreaterThanOrEqual(2);
           // «2 pts — …», «0.5 pts — …»: сумма по критериям = баллы подпункта, иначе ИИ не из чего ставить оценку
           const sum = t.rubric.reduce((n, r) => n + Number(/^(\d+(?:\.\d+)?)\s*pts?\b/.exec(r)?.[1] ?? NaN), 0);

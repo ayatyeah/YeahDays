@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
 import { cn } from "@/lib/cn";
-import type { MockExam, StudyEvent } from "@/lib/events/types";
+import type { ExamTask, MockExam, StudyEvent } from "@/lib/events/types";
 import { useContentLang, useLocaleStore } from "@/i18n/locale";
 import { usePersonalizationStore } from "@/store/usePersonalizationStore";
 import { TRAINER_KINDS, type TrainerKind } from "@/lib/visionTrainer";
@@ -83,8 +83,17 @@ export function MockList({ event, userId, onOpen }: { event: StudyEvent; userId:
   if (!event.mocks?.length) return null;
   return (
     <section className="rounded-3xl border border-sky-400/40 bg-gradient-to-br from-sky-500/10 via-[var(--color-surface)] to-violet-500/10 p-5">
-      <h2 className="text-lg font-bold">Пробный мидтерм · {event.mocks.length} вариантов</h2>
-      <p className="text-sm text-[var(--color-muted)]">Как настоящий мидтерм: пять заданий — три открытых вопроса и две задачи с расчётом. Пишешь ответ, ИИ ставит баллы по критериям и объясняет, чего не хватило. В готовность не идёт — это тренировка.</p>
+      {event.mocksKind === "case" ? (
+        <>
+          <h2 className="text-lg font-bold">Пробный квиз-кейс · {event.mocks.length} вариантов</h2>
+          <p className="text-sm text-[var(--color-muted)]">Как настоящий квиз: кейс и таблица исследований. Часть A — тест, проверяется сразу; часть B — открытые задания, ИИ ставит баллы по критериям преподавателя и объясняет, чего не хватило. В готовность не идёт — это тренировка.</p>
+        </>
+      ) : (
+        <>
+          <h2 className="text-lg font-bold">Пробный мидтерм · {event.mocks.length} вариантов</h2>
+          <p className="text-sm text-[var(--color-muted)]">Как настоящий мидтерм: пять заданий — три открытых вопроса и две задачи с расчётом. Пишешь ответ, ИИ ставит баллы по критериям и объясняет, чего не хватило. В готовность не идёт — это тренировка.</p>
+        </>
+      )}
       <ol className="mt-4 space-y-2">
         {event.mocks.map((exam) => {
           const s = summaries[exam.id];
@@ -180,7 +189,33 @@ export default function MockExamView({
   const graded = tasks.filter((t) => saved.grades[t.id]);
   const score = graded.reduce((n, t) => n + saved.grades[t.id].score, 0);
   const canSend = available === true && (aiAllowed || consent);
-  const pending = tasks.filter((t) => (saved.answers[t.id] ?? "").trim() && saved.grades[t.id]?.answer !== (saved.answers[t.id] ?? "").trim());
+  const pending = tasks.filter((t) => !t.options && (saved.answers[t.id] ?? "").trim() && saved.grades[t.id]?.answer !== (saved.answers[t.id] ?? "").trim());
+
+  /** Тестовый подпункт: ответ проверяется сразу на устройстве, без ИИ; выбор окончательный. */
+  function choose(task: ExamTask, index: number) {
+    if (!task.options || latest.current.grades[task.id]) return;
+    const right = index === task.correct;
+    const picked = task.options[index];
+    const answer = String(index);
+    setFocusId(task.id);
+    update((s) => ({
+      ...s,
+      answers: { ...s.answers, [task.id]: answer },
+      grades: {
+        ...s.grades,
+        [task.id]: {
+          score: right ? task.points : 0,
+          points: task.points,
+          verdict: right ? "full" : "wrong",
+          correct: right ? [picked] : [],
+          missing: right ? [] : [`Correct option: ${task.options![task.correct ?? 0]}`],
+          mistakes: right ? [] : [`Chose: ${picked}`],
+          tip: "",
+          answer,
+        },
+      },
+    }));
+  }
 
   async function grade(taskId: string): Promise<void> {
     const answer = (latest.current.answers[taskId] ?? "").trim();
@@ -256,12 +291,12 @@ export default function MockExamView({
         <button className="text-sm underline" onClick={onExit}>← К маршруту</button>
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{event.course} · {exam.source[tl]}</p>
         <h1 className="text-2xl font-bold">{exam.title[tl]}</h1>
-        <p className="text-sm text-[var(--color-muted)]">{exam.minutes} минут · {max} баллов · пиши так, как писал бы на экзамене, по-английски или по-русски. Черновик сохраняется на этом устройстве.</p>
+        <p className="text-sm text-[var(--color-muted)]">{exam.minutes} минут · {max} баллов · пиши, как на экзамене, по-английски или по-русски. Черновик сохраняется на этом устройстве.</p>
       </header>
 
       <div className="sticky top-2 z-10 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-sm shadow-lg">
         <span>
-          ИИ: <b>{graded.length}</b> из {tasks.length} · <b className="tabular-nums">{score}</b> / {max}
+          Проверено: <b>{graded.length}</b> из {tasks.length} · <b className="tabular-nums">{score}</b> / {max}
         </span>
         {saved.startedAt ? (
           <span className="flex items-center gap-2 tabular-nums">
@@ -361,6 +396,41 @@ export default function MockExamView({
                     <EventNotes text={task.prompt} lang="en" />
                   </div>
                 </div>
+                {task.options ? (
+                  <div className="space-y-2">
+                    {task.options.map((option, i) => {
+                      const chosen = g ? Number(g.answer) === i : false;
+                      const right = !!g && i === task.correct;
+                      return (
+                        <button
+                          key={i}
+                          lang="en"
+                          disabled={!!g}
+                          aria-pressed={chosen}
+                          onClick={() => choose(task, i)}
+                          className={cn(
+                            "block w-full rounded-2xl border px-3 py-2.5 text-left text-sm transition",
+                            !g && "border-[var(--color-border)] hover:bg-[var(--color-surface-2)]",
+                            right && "border-emerald-400 bg-emerald-500/15",
+                            chosen && !right && "border-red-400 bg-red-500/15",
+                            g && !right && !chosen && "border-[var(--color-border)] opacity-60",
+                          )}
+                        >
+                          <span className="mr-2 font-semibold">{String.fromCharCode(65 + i)})</span>
+                          {option}
+                        </button>
+                      );
+                    })}
+                    {g && (
+                      <div role="status" className={cn("space-y-1.5 rounded-2xl border px-4 py-3 text-sm", verdictStyle[g.verdict])}>
+                        <p className="font-semibold">{g.score > 0 ? "Верно" : "Неверно"} · {g.score} из {g.points}</p>
+                        <div lang={tl}><EventNotes text={task.answer[tl]} lang={tl} /></div>
+                      </div>
+                    )}
+                    <Button size="sm" variant="ghost" onClick={() => { setFocusId(task.id); openTutor(); }}>✦ Спросить помощника</Button>
+                  </div>
+                ) : (
+                <>
                 <textarea
                   aria-label={`Ответ ${task.label}`}
                   value={answer}
@@ -397,7 +467,7 @@ export default function MockExamView({
                   </div>
                 )}
                 {open[task.id] && (
-                  <div className="space-y-3 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-4 py-3 text-sm">
+                  <div className="space-y-3 rounded-2xl border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-4 py-3 text-sm">{/* эталон и критерии */}
                     <div lang="en">
                       <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">Как написать на экзамене</p>
                       <EventNotes text={task.answer.en} lang="en" />
@@ -411,6 +481,8 @@ export default function MockExamView({
                       <ul className="list-disc space-y-1 pl-5">{task.rubric.map((r) => <li key={r}>{r}</li>)}</ul>
                     </div>
                   </div>
+                )}
+                </>
                 )}
               </div>
             );

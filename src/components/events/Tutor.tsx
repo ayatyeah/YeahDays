@@ -115,6 +115,8 @@ function suggestions(f: TutorFocus): string[] {
       return f.bug?.line === undefined ? ["Подскажи, куда смотреть", "Какие баги бывают в таком коде?"] : ["Объясни этот баг", "Ещё пример такой ошибки"];
     case "sandbox":
       return ["Что делает этот конвейер?", "Почему получился такой результат?", "Как это спросят на экзамене?"];
+    case "fast":
+      return ["Объясни этот блок проще", "Проверь меня по этому блоку: 3 вопроса", "Дай похожий экзаменационный вопрос", "Что повторить, если осталось 30 минут?"];
     case "sheet":
     case "cards":
       return ["Проверь меня по шпаргалке", "Что из этого чаще всего спрашивают?"];
@@ -133,6 +135,7 @@ const VIEW_NAME: Record<string, string> = {
   trainer: "Тренажёр",
   bughunt: "Найди баг",
   sandbox: "Песочница OpenCV",
+  fast: "Фаст-мод",
   sheet: "Шпаргалка",
   cards: "Карточки",
   game: "Игра",
@@ -381,7 +384,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
   }
 
   const where = VIEW_NAME[focus.view ?? "map"] ?? "Ивент";
-  const what = focus.view === "mock" || focus.view === "trainer" || focus.view === "bughunt" || focus.view === "quiz" ? label : "";
+  const what = focus.view === "mock" || focus.view === "trainer" || focus.view === "bughunt" || focus.view === "quiz" || focus.view === "fast" ? label : "";
   const tips = quote ? ["Объясни выделенное", ...suggestions(focus).slice(0, 2)] : suggestions(focus);
   const mobile = typeof window !== "undefined" && window.matchMedia("(max-width: 639px)").matches;
 

@@ -76,6 +76,10 @@ export interface StudyEvent {
    * проверяет ИИ по критериям (api/study-events/grade). В готовность не идут.
    */
   mocks?: MockExam[];
+  /** «case» — варианты в формате квиза-кейса (часть A тест, часть B открытые); иначе — мидтерм с открытыми вопросами. */
+  mocksKind?: "case";
+  /** Фаст-мод: всё главное коротко, чтобы подготовиться за часы (см. FastTrack). */
+  fast?: FastTrack;
   /** Практикум к курсу: тренажёр расчётов, «Найди баг», песочница (см. components/events/VisionTrainer и др.). */
   practice?: "vision";
 }
@@ -98,6 +102,13 @@ export interface ExamTask {
   rubric: string[];
   /** Эталонный ответ: en — как написал бы сильный студент, ru — разбор по-русски. */
   answer: Text;
+  /**
+   * Тестовый подпункт (часть A квиза с выбором ответа): варианты и индекс
+   * верного. Проверяется сразу на устройстве, без ИИ; rubric может быть
+   * пустым, а в answer — объяснение, почему верен именно этот вариант.
+   */
+  options?: string[];
+  correct?: number;
 }
 
 export interface ExamQuestion {
@@ -118,9 +129,24 @@ export interface MockExam {
   id: string;
   title: Text;
   minutes: number;
+  /** Сколько баллов во всём варианте; по умолчанию 100 (у квизов бывает 10). */
+  total?: number;
   /** Откуда вариант: «Sample from the instructor», «Based on a real variant», «New». */
   source: Text;
   questions: ExamQuestion[];
+}
+
+/**
+ * Фаст-мод: подготовка за несколько часов. Только то, что спрашивают:
+ * короткие блоки «знать наизусть», ловушки и шаблоны ответов, у каждого
+ * блока — сколько минут на него нужно. Разметка — как у конспектов.
+ */
+export interface FastTrack {
+  /** Сколько часов на всё, если идти подряд. */
+  hours: number;
+  /** Одна-две фразы: как пользоваться и что делать после. */
+  intro: Text;
+  sections: { id: string; title: Text; minutes: number; notes: Text }[];
 }
 
 export interface Term {

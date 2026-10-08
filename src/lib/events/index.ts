@@ -1,8 +1,12 @@
 import type { StudyEvent } from "./types";
-import { week1 } from "./researchMethods/week1";
-import { week2 } from "./researchMethods/week2";
-import { week3 } from "./researchMethods/week3";
-import { week4 } from "./researchMethods/week4";
+import { lecture1 as rm1 } from "./researchMethods/l1";
+import { lecture2 as rm2 } from "./researchMethods/l2";
+import { lecture3 as rm3 } from "./researchMethods/l3";
+import { lecture4 as rm4 } from "./researchMethods/l4";
+import { lecture5 as rm5 } from "./researchMethods/l5";
+import { practice as rmPractice } from "./researchMethods/practice";
+import { rmMocks } from "./researchMethods/mocks";
+import { rmFast } from "./researchMethods/fast";
 import { cheatSheet, glossary } from "./researchMethods/extras";
 import { lecture1 } from "./computerNetworks/lecture1";
 import { lecture2 } from "./computerNetworks/lecture2";
@@ -15,6 +19,13 @@ import { lecture2 as cc2 } from "./cloudComputing/lecture2";
 import { lecture3 as cc3 } from "./cloudComputing/lecture3";
 import { lecture4 as cc4 } from "./cloudComputing/lecture4";
 import { lecture5 as cc5 } from "./cloudComputing/lecture5";
+import { lecture6 as cc6 } from "./cloudComputing/l6";
+import { lecture7 as cc7 } from "./cloudComputing/l7";
+import { lecture8 as cc8 } from "./cloudComputing/l8";
+import { lecture9 as cc9 } from "./cloudComputing/l9";
+import { lecture10 as cc10 } from "./cloudComputing/l10";
+import { realMidterm as ccReal } from "./cloudComputing/real";
+import { ccFast } from "./cloudComputing/fast";
 import { cheatSheet as ccCheatSheet, glossary as ccGlossary } from "./cloudComputing/extras";
 import { block1 as pd1 } from "./projectDefense/block1";
 import { block2 as pd2 } from "./projectDefense/block2";
@@ -40,14 +51,17 @@ import { cheatSheet as cvCheatSheet, glossary as cvGlossary } from "./computerVi
 export const EVENTS: StudyEvent[] = [
   {
     id: "research-methods-quiz-1",
-    title: "Подготовка к квизу №1",
+    title: "Подготовка к квизам и мидтерму",
     course: "Research Methods and Tools · Mill 3222",
     description:
-      "Четыре лекции по частям: читаешь конспект, проходишь короткий квиз, в конце лекции — квиз по всей лекции, а в финале — большой квиз по всему курсу и оценка готовности.",
-    lectures: [week1, week2, week3, week4],
-    counts: { part: 8, lecture: 18, final: 45 },
+      "Пять лекций по частям — от того, что такое исследование, до количественных и качественных методов — и практика в формате квиза-кейса, как SafeDrive от преподавателя. После каждой части — квиз на 20 вопросов с разбором каждого варианта. Плюс 8 пробных квизов-кейсов: часть A — тест, часть B — открытые задания, ИИ ставит баллы по критериям. Мало времени — фаст-мод.",
+    lectures: [rm1, rm2, rm3, rm4, rm5, rmPractice],
+    counts: { part: 20, lecture: 20, final: 45 },
     glossary,
     cheatSheet,
+    mocks: rmMocks,
+    mocksKind: "case",
+    fast: rmFast,
   },
   {
     id: "computer-networks-midterm",
@@ -66,9 +80,10 @@ export const EVENTS: StudyEvent[] = [
     title: "Подготовка к мидтерму",
     course: "Cloud Computing",
     description:
-      "Пять лекций по частям: конспект с таблицами и схемами, и после каждой части — квиз на 20 вопросов по всей части, с разбором, почему неверные варианты не подходят. Дальше — квиз по лекции и итоговый по всему курсу.",
-    lectures: [cc1, cc2, cc3, cc4, cc5],
-    counts: { part: 20, lecture: 20, final: 45 },
+      "Пять лекций преподавателя и модули AWS Cloud Foundations 1–10, по которым идёт мидтерм: экономика и поддержка, безопасность и IAM, EC2, хранилища и базы, архитектура и масштабирование с лабами. Плюс банк реальных вопросов мидтерма с разбором и итоговый квиз на 40 вопросов, как в Moodle. Мало времени — фаст-мод.",
+    lectures: [cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9, cc10, ccReal],
+    counts: { part: 20, lecture: 20, final: 40 },
+    fast: ccFast,
     glossary: ccGlossary,
     cheatSheet: ccCheatSheet,
   },

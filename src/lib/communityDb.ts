@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { prisma } from '@/lib/db';
 import { CommunityError, textField, linesField, focusCredit, focusRequired } from './community';
 import { askChat } from './aiChat';
-import { rateLimit } from './rateLimit';
+import { dailyLimit } from './aiLimit';
 
 export async function blockedIds(userId: string) {
   const [own, others] = await Promise.all([
@@ -147,7 +147,7 @@ export async function communityAction(userId: string, body: Record<string, unkno
 
 async function answerDiscussion(userId: string, teamId: string, postId: string) {
   if (!process.env.OPENAI_API_KEY) throw new CommunityError('ИИ пока не подключён', 503);
-  if (!rateLimit(`community-ai:${userId}`, 20, 86400000) || !rateLimit('community-ai:global',500,86400000)) throw new CommunityError('Лимит ИИ на сегодня исчерпан',429);
+  if (!(await dailyLimit(`community-ai:${userId}`, 20)) || !(await dailyLimit('community-ai:global', 500))) throw new CommunityError('Лимит ИИ на сегодня исчерпан',429);
   // Only the author sends their own post; no other member's replies/private data go to OpenAI.
   const post = await prisma.$transaction(async tx => {
     await tx.$queryRaw`SELECT id FROM "StudyPost" WHERE id = ${postId} FOR UPDATE`;

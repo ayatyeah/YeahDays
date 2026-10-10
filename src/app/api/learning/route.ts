@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
+import { dailyLimit } from "@/lib/aiLimit";
 import { applyGrade, buySkin, equipSkin, LearningError, publicLearning } from "@/lib/learning";
 import { readLearning, mutateLearning } from "@/lib/learningDb";
 import { createLearningSkill, gradeLearningAnswer } from "@/lib/learningAi";
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
       const subject = parseLearningSubject(body.subject);
       if (current.state.skills.some(s => s.id === body.requestId)) return NextResponse.json({ state: publicLearning(current.state, current.revision, available()) });
       if (current.state.skills.length >= 12 || current.state.skills.filter(s => s.quests.some(q => !q.completed)).length >= 3) throw new LearningError("Сначала заверши один из начатых маршрутов (максимум 3 одновременно, 12 всего).");
-      if (!rateLimit(`learning:create:${userId}`, 3, 86_400_000) || !rateLimit("learning:global:create", 100, 86_400_000)) return NextResponse.json({ error: "На сегодня лимит новых маршрутов исчерпан" }, { status: 429 });
+      if (!(await dailyLimit(`learning:create:${userId}`, 3)) || !(await dailyLimit("learning:global:create", 100))) return NextResponse.json({ error: "На сегодня лимит новых маршрутов исчерпан" }, { status: 429 });
       const skill = await createLearningSkill(body.goal.trim(), body.minutes, subject); skill.id = body.requestId;
       const updated = await mutateLearning(userId, state => {
         if (state.skills.some(s => s.id === skill.id)) return;
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
     if (!quest) throw new LearningError("Квест не найден в твоём аккаунте");
     if (quest.completed) return NextResponse.json({ state: publicLearning(current.state, current.revision, available()), result: { awarded: false, passed: true, xp: 0, coins: 0 } });
     if (skill!.quests.find(q => !q.completed)?.id !== quest.id) throw new LearningError("Пройди предыдущий квест");
-    if (!rateLimit(`learning:grade:${userId}`, 30, 86_400_000) || !rateLimit("learning:global:grade", 1000, 86_400_000)) return NextResponse.json({ error: "Лимит проверок на сегодня исчерпан. Продолжим завтра." }, { status: 429 });
+    if (!(await dailyLimit(`learning:grade:${userId}`, 30)) || !(await dailyLimit("learning:global:grade", 1000))) return NextResponse.json({ error: "Лимит проверок на сегодня исчерпан. Продолжим завтра." }, { status: 429 });
     const grade = await gradeLearningAnswer(quest, body.answer.trim());
     const updated = await mutateLearning(userId, state => applyGrade(state, body.skillId, body.questId, grade.score, grade.feedback, new Date().toISOString()));
     return NextResponse.json({ state: publicLearning(updated.state, updated.revision, available()), result: { ...updated.result, feedback: grade.feedback, score: grade.score } });

@@ -9,7 +9,7 @@
 
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { rateLimit } from "@/lib/rateLimit";
+import { dailyLimit } from "@/lib/aiLimit";
 import { findEvent } from "@/lib/events";
 import { gradeAvailable, type GradeLang } from "@/lib/examGrade";
 import { buildReport, REPORT_CONSENT, type ReportItem } from "@/lib/examReport";
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     }));
   if (items.length < 3) return json({ error: "Сначала проверь хотя бы три ответа" }, 400);
   if (!gradeAvailable()) return json({ error: "ИИ ещё не подключён" }, 503);
-  if (!rateLimit(`report:${userId}`, 12, 86_400_000)) return json({ error: "На сегодня отчётов больше нет — лимит обновится через сутки" }, 429);
+  if (!(await dailyLimit(`report:${userId}`, 12))) return json({ error: "На сегодня отчётов больше нет — лимит обновится через сутки" }, 429);
   const lang: GradeLang = body.lang === "en" || body.lang === "kk" ? body.lang : "ru";
 
   try {

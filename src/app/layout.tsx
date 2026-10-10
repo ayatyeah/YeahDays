@@ -64,7 +64,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    // Keep content below the iOS status bar instead of under its translucent edge.
+    statusBarStyle: "default",
     title: "YeahGrind",
     // Заставки при запуске с домашнего экрана: без них iOS показывает
     // белый лист до первого кадра. Картинка подбирается по точным

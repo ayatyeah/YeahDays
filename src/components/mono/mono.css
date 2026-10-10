@@ -46,7 +46,8 @@
   zoom: 1;
 }
 .yg-app .yg-content-frame {
-  padding-top: max(18px, env(safe-area-inset-top));
+  /* Keep the logo clear of the system edge, including full-screen Safari. */
+  padding-top: calc(18px + env(safe-area-inset-top, 0px));
 }
 .yg-app .surface {
   box-shadow: none;

@@ -9,7 +9,7 @@ import {
   isTodoOnDay,
 } from "@/store/useUserStore";
 import { useLearningStore } from "@/store/useLearningStore";
-import { currentSlot } from "@/lib/domain";
+import { currentSlot, type EnergyLevel } from "@/lib/domain";
 import {
   dayContext,
   chooseStudy,
@@ -127,19 +127,18 @@ export default function NextStep({
         <span>СЕЙЧАС ДЛЯ ТЕБЯ</span>
         <Link href="/calendar">Расписание</Link>
       </div>
-      <fieldset className="flow-time">
-        <legend>Сколько времени есть?</legend>
-        {[5, 15, 25].map((n) => (
-          <button
-            key={n}
-            type="button"
-            aria-pressed={minutes === n}
-            onClick={() => setMinutes(n)}
-          >
-            {n} <span>мин</span>
-          </button>
-        ))}
-      </fieldset>
+      <div className="polish-settings">
+        <select aria-label="Как твоя энергия?" value={energy}
+          onChange={(e) => useUserStore.getState().setSlotEnergy(currentSlot(), e.target.value as EnergyLevel)}>
+          <option value="low">Спокойно</option>
+          <option value="medium">Нормально</option>
+          <option value="high">Много сил</option>
+        </select>
+        <select aria-label="Сколько времени есть?" value={minutes}
+          onChange={(e) => setMinutes(Number(e.target.value))}>
+          {[5, 15, 25].map((n) => <option key={n} value={n}>{n} мин</option>)}
+        </select>
+      </div>
       <div className="flow-suggestion" aria-live="polite">
         <small>
           {occupied

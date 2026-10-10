@@ -9,6 +9,7 @@ import "./companion/companion.css";
 import "./mono/mono.css";
 import "./dayflow/dayflow.css";
 import "./capsule-nav.css";
+import "@/components/dayflow/polish.css";
 import BottomNav from "./BottomNav";
 import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";

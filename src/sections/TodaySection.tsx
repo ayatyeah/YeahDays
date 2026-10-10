@@ -15,7 +15,7 @@ import Challenges from "@/components/Challenges";
 import EveningRetro from "@/components/EveningRetro";
 import LevelUpOverlay from "@/components/LevelUpOverlay";
 import DayCompleteOverlay from "@/components/DayCompleteOverlay";
-import { LogoLoader } from "@/components/Logo";
+import TodaySkeleton from "@/components/dayflow/TodaySkeleton";
 import { YgIcon } from "@/components/yg-icons";
 import {
   useUserStore,
@@ -41,7 +41,7 @@ export default function TodaySection() {
     planning.current
       .querySelector<HTMLInputElement>("input[data-quick-todo]")
       ?.focus();
-    planning.current.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    planning.current.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   }
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [smallStep, setSmallStep] = useState("");
@@ -50,7 +50,7 @@ export default function TodaySection() {
     title: string;
     kind: "todo" | "plan";
   } | null>(null);
-  const [showDone, setShowDone] = useState(false);
+  const [showDone, setShowDone] = useState(true);
   const day = dateKey();
   const planned = selectToday(store.plan);
   const personal = store.todos.filter(
@@ -96,7 +96,7 @@ export default function TodaySection() {
   const focusedPlan = planned.find(
     (t) => t.id === selectedTask && !t.completed,
   );
-  if (!hydrated) return <LogoLoader />;
+  if (!hydrated) return <TodaySkeleton />;
   return (
     <div className="companion-today">
       <CompanionHeader completed={completed} count={count} compact />
@@ -107,42 +107,11 @@ export default function TodaySection() {
           requestAnimationFrame(() =>
             document
               .getElementById("flow-task")
-              ?.scrollIntoView({ block: "nearest", behavior: "smooth" }),
+              ?.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }),
           );
         }}
         onCreate={openPlanning}
       />
-      {receipt && (
-        <section className="flow-result" aria-label="Результат действия">
-          <div role="status">
-            <h2>Ещё один шаг готов</h2>
-            <p>{receipt.title}</p>
-            <p>
-              {completed === count
-                ? "На сегодня достаточно. Можно отдохнуть."
-                : "Можно продолжить или сделать паузу — результат уже в плане."}
-            </p>
-          </div>
-          <div className="flow-actions">
-            <button
-              onClick={() => {
-                if (receipt.kind === "todo") {
-                  const task = store.todos.find((t) => t.id === receipt.id);
-                  if (task && isTodoDone(task, day))
-                    store.toggleTodo(receipt.id, day);
-                } else if (
-                  planned.some((t) => t.id === receipt.id && t.completed)
-                )
-                  store.toggleTask(receipt.id);
-                setReceipt(null);
-              }}
-            >
-              Отменить выполнение
-            </button>
-            <button onClick={() => setReceipt(null)}>Продолжить день</button>
-          </div>
-        </section>
-      )}
       {focusedPlan && (
         <section id="flow-task" className="flow-task-detail">
           <h2>{focusedPlan.snapshot.title}</h2>
@@ -326,6 +295,37 @@ export default function TodaySection() {
               </button>
             )}
           </section>
+      {receipt && (
+        <section className="flow-result" aria-label="Результат действия">
+          <div role="status">
+            <h2>Ещё один шаг готов</h2>
+            <p>{receipt.title}</p>
+            <p>
+              {completed === count
+                ? "На сегодня достаточно. Можно отдохнуть."
+                : "Можно продолжить или сделать паузу — результат уже в плане."}
+            </p>
+          </div>
+          <div className="flow-actions">
+            <button
+              onClick={() => {
+                if (receipt.kind === "todo") {
+                  const task = store.todos.find((t) => t.id === receipt.id);
+                  if (task && isTodoDone(task, day))
+                    store.toggleTodo(receipt.id, day);
+                } else if (
+                  planned.some((t) => t.id === receipt.id && t.completed)
+                )
+                  store.toggleTask(receipt.id);
+                setReceipt(null);
+              }}
+            >
+              Отменить выполнение
+            </button>
+            <button onClick={() => setReceipt(null)}>Продолжить день</button>
+          </div>
+        </section>
+      )}
           <DaySupport />
           <details ref={planning} className="companion-planning">
             <summary>Добавить или изменить задачи</summary>

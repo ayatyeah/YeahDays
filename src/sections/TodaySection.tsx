@@ -2,6 +2,7 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { taskLearningHref } from "@/lib/dayFlow";
+import HomeSection from "./HomeSection";
 import NextStep from "@/components/dayflow/NextStep";
 import { haptic } from "@/lib/motion";
 import DaySupport from "@/components/mono/DaySupport";
@@ -100,6 +101,9 @@ export default function TodaySection() {
   return (
     <div className="companion-today">
       <CompanionHeader completed={completed} count={count} compact />
+      <HomeSection embedded />
+      <details className="one-action-plan">
+        <summary>Мой план <span>{completed}/{count}</span></summary>
       <NextStep
         onTask={(id) => {
           setSelectedTask(id);
@@ -360,6 +364,7 @@ export default function TodaySection() {
           <EveningRetro />
         </aside>
       </div>
+      </details>
       <LevelUpOverlay />
       <DayCompleteOverlay />
     </div>

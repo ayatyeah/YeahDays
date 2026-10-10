@@ -120,6 +120,7 @@ async function until(fn, message, timeout = 10_000) {
 async function openToday(page) {
   await openSection(page, "/today");
   const sec = page.locator('[data-section="today"]');
+  await sec.locator(".one-action-plan > summary").click();
   await sec.getByText("Добавить или изменить задачи", { exact: true }).click();
   return sec;
 }

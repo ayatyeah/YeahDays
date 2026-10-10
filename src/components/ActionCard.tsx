@@ -4,10 +4,11 @@ import {
   animate,
   motion,
   useMotionValue,
+  useReducedMotion,
   useTransform,
   type PanInfo,
 } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   CATEGORIES,
   DIFFICULTY_LABEL,
@@ -54,6 +55,8 @@ export default function ActionCard({
   forced,
 }: ActionCardProps) {
   const { action, reason } = scored;
+  const flying = useRef(false);
+  const reduceMotion = useReducedMotion();
   const cat = CATEGORIES[action.category];
   const stat = STATS[cat.stat];
   const xp = xpForAction(action);
@@ -106,8 +109,10 @@ export default function ActionCard({
    * приняли. Теперь она доезжает до края, и только потом снимается.
    */
   function flyOut(dir: SwipeDir) {
+    if (flying.current) return;
+    flying.current = true;
     animate(x, dir === "right" ? FLY_OUT : -FLY_OUT, {
-      duration: 0.22,
+      duration: reduceMotion ? 0 : 0.22,
       ease: [0.32, 0, 0.67, 0],
       onComplete: () => onSwipe(dir, action),
     });
@@ -126,14 +131,18 @@ export default function ActionCard({
     const passed =
       Math.abs(dx) > SWIPE_DISTANCE || Math.abs(vx) > SWIPE_VELOCITY;
 
-    if (!passed) return; // dragSnapToOrigin вернёт карту на место
+    if (!passed) {
+      animate(x, 0, reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 360, damping: 32 });
+      return;
+    }
 
-    flyOut(dx > 0 || vx > 0 ? "right" : "left");
+    flyOut((Math.abs(dx) > SWIPE_DISTANCE ? dx : vx) > 0 ? "right" : "left");
   }
 
   return (
     <motion.div
       className="absolute inset-0"
+      aria-hidden={!isTop}
       style={{ zIndex: 10 - index }}
       initial={{ scale: stackScale - 0.04, y: stackY + 10, opacity: 0 }}
       animate={{ scale: stackScale, y: stackY, opacity: 1 }}
@@ -163,8 +172,8 @@ export default function ActionCard({
         /* Без dragConstraints: с ограничением в ноль и эластичностью 0.62
            карточка шла медленнее пальца и пружинила — жест ощущался
            вязким и «неотзывчивым». Теперь она следует один в один, а
-           возврат при недостаточном свайпе делает dragSnapToOrigin. */
-        dragSnapToOrigin
+           возврат при недостаточном свайпе делаем сами, чтобы он не отменял вылет. */
+        dragSnapToOrigin={false}
         dragMomentum={false}
         onDragEnd={handleDragEnd}
         whileTap={isTop ? { cursor: "grabbing" } : undefined}
@@ -273,7 +282,7 @@ export default function ActionCard({
 
           {/* почему предложено */}
           <div
-            className="mb-4 flex items-center gap-2 rounded-2xl px-3.5 py-2.5"
+            className="action-reason mb-4 flex items-center gap-2 rounded-2xl px-3.5 py-2.5"
             style={{ background: `${stat.hex}14` }}
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none">
@@ -290,7 +299,7 @@ export default function ActionCard({
           </div>
 
           {/* параметры */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="action-meta grid grid-cols-3 gap-2">
             <Meta
               label="Время"
               value={`${personal ?? action.duration} мин`}

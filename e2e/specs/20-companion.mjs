@@ -36,6 +36,7 @@ test("Компаньон: задачи, помощник, таймер и гар
     browser = s.browser;
     const p = s.page;
     await p.goto("/today", { waitUntil: "networkidle" });
+    await p.locator(".one-action-plan > summary").click();
     await p.getByRole("button", { name: "Открыть помощника" }).waitFor();
     await p.waitForTimeout(700);
 
@@ -91,6 +92,7 @@ test("Компаньон: задачи, помощник, таймер и гар
     for (const width of [320, 390, 1440]) {
       await p.setViewportSize({ width, height: 844 });
       await p.goto("/today", { waitUntil: "networkidle" });
+    await p.locator(".one-action-plan > summary").click();
       await p.getByRole("button", { name: "Открыть помощника" }).waitFor();
       await p.waitForTimeout(400);
       const metrics = await p.evaluate(() => ({
@@ -133,6 +135,7 @@ test("Компаньон: пустой план и панель на мален�
   try {
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/today", { waitUntil: "networkidle" });
+    await page.locator(".one-action-plan > summary").click();
     await page.getByRole("button", { name: "Открыть помощника" }).waitFor();
     check(
       (await page.locator(".companion-empty").count()) === 1,
@@ -158,7 +161,7 @@ test("Компаньон: пустой план и панель на мален�
         rect.y + rect.height <= 569,
       "панель не выходит за экран 320×568, даже при масштабе раздела",
     );
-    const dismiss = page.getByRole("button", {
+    const dismiss = page.locator("dialog[open]").getByRole("button", {
       name: "Не сейчас",
       exact: true,
     });

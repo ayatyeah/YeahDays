@@ -49,3 +49,32 @@
 .yg-app .learning-lesson > .flow-result { padding:24px; border-radius:20px; }
 .yg-app .learning-lesson > .flow-result h2 { font-size:26px; letter-spacing:-.03em; }
 .yg-app .polish-header { max-width:none; }
+/* The primary screen offers one decision, then one active action. */
+.one-action { max-width:520px; margin:20px auto 24px; }
+.one-action-heading { margin-bottom:20px; }
+.one-action-heading h2 { font-size:26px; font-weight:750; letter-spacing:-.04em; line-height:1.15; }
+.one-action-heading p { margin-top:8px; font-size:14px; color:var(--color-muted); }
+.one-action .swipe-deck-stage { height:400px; flex:none; }
+.one-action .swipe-deck-stage article { border:1px solid var(--color-border); border-radius:24px; }
+.one-action .swipe-deck-controls { gap:16px; margin-top:28px; }
+.swipe-deck-label { display:none; }
+.one-action .swipe-deck-button { flex:1; gap:10px; width:auto; height:52px; border:1px solid var(--color-border); border-radius:16px; color:var(--color-fg) !important; }
+.one-action .swipe-deck-button:last-child { background:var(--color-fg); color:var(--color-bg) !important; }
+.one-action .swipe-deck-label { display:inline; font-size:15px; font-weight:650; }
+.one-action .swipe-deck-button svg { width:22px; height:22px; }
+.one-action-custom { display:block; min-height:44px; margin:12px auto 0; font-size:14px; color:var(--color-muted); }
+.one-action-finished,.one-action-loading { min-height:340px; border-radius:24px; background:var(--color-surface-2); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:24px; text-align:center; }
+.one-action-finished h3 { font-size:24px; font-weight:700; }
+.one-action-plan { border-top:1px solid var(--color-border); margin-top:24px; }
+.one-action-plan > summary { display:flex; justify-content:space-between; align-items:center; min-height:56px; cursor:pointer; font-size:16px; font-weight:650; list-style:none; }
+.one-action-plan > summary::-webkit-details-marker { display:none; }
+.one-action-plan > summary span { color:var(--color-muted); margin-left:auto; margin-right:12px; }
+.one-action-plan > summary::after { content:'+'; font-size:24px; font-weight:400; }
+.one-action-plan[open] > summary::after { content:'−'; }
+.one-action-plan[open] > summary { margin-bottom:16px; }
+@media(min-width:1024px) { .one-action { margin-top:28px; } .one-action-plan { max-width:960px; margin-inline:auto; } }
+.one-action .action-reason { background:transparent !important; padding:0; font-size:13px; }
+.one-action .action-meta { border-top:1px solid var(--color-border); padding-top:14px; }
+.one-action .action-meta > div { background:transparent; border-radius:0; padding:0 4px; }
+.one-action .action-meta p:last-child { white-space:normal; font-size:12px; line-height:1.4; }
+.one-action .swipe-deck-button { border-color:var(--color-border) !important; }

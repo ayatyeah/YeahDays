@@ -8,6 +8,7 @@ import {
 import { weeklyActivity } from "@/lib/weeklyActivity";
 import { dateKey } from "@/lib/domain";
 import { useLocaleStore } from "@/i18n/locale";
+import Link from "next/link";
 import ProgressRing from "./ProgressRing";
 export default function WeeklyOverview({
   ratio,
@@ -28,6 +29,16 @@ export default function WeeklyOverview({
     todayTodos.filter((t) => isTodoDone(t, dateKey())).length;
   const total = todayPlan.length + todayTodos.length;
   const max = Math.max(1, ...days.map((d) => d.count));
+  if (!active && !total && level === 1 && ratio === 0)
+    return (
+      <section className="flow-result">
+        <h2>Первый результат важнее цифр</h2>
+        <p>Заверши одно небольшое дело. Здесь появится твой ритм за неделю.</p>
+        <Link className="flow-primary" href="/today">
+          Выбрать свой шаг
+        </Link>
+      </section>
+    );
   return (
     <section className="mono-weekly-overview">
       <div className="mono-rings">
@@ -64,35 +75,47 @@ export default function WeeklyOverview({
           <span>Уровень</span>
         </div>
       </div>
-      <div className="mono-week-chart">
-        <div>
-          <h2>Эта неделя</h2>
-          <small>{`Выполнено: ${days.reduce((n, d) => n + d.count, 0)}`}</small>
+      {!active ? (
+        <div className="flow-result">
+          <h2>Первый результат важнее цифр</h2>
+          <p>
+            Заверши одно небольшое дело. Здесь появится твой ритм за неделю.
+          </p>
+          <Link className="flow-primary" href="/today">
+            Выбрать свой шаг
+          </Link>
         </div>
-        <div className="mono-bars">
-          {days.map((d) => (
-            <div
-              key={d.key}
-              aria-label={`${d.date.toLocaleDateString(locale, { weekday: "long" })}: ${d.count}`}
-            >
-              <span className="mono-bar-track">
-                <i
-                  className={d.key === dateKey() ? "is-today" : ""}
-                  style={{
-                    height: d.count ? `${(d.count / max) * 100}%` : "3px",
-                  }}
-                />
-              </span>
-              <small>
-                {d.date.toLocaleDateString(locale, { weekday: "short" })}
-              </small>
-            </div>
-          ))}
+      ) : (
+        <div className="mono-week-chart">
+          <div>
+            <h2>Эта неделя</h2>
+            <small>{`Выполнено: ${days.reduce((n, d) => n + d.count, 0)}`}</small>
+          </div>
+          <div className="mono-bars">
+            {days.map((d) => (
+              <div
+                key={d.key}
+                aria-label={`${d.date.toLocaleDateString(locale, { weekday: "long" })}: ${d.count}`}
+              >
+                <span className="mono-bar-track">
+                  <i
+                    className={d.key === dateKey() ? "is-today" : ""}
+                    style={{
+                      height: d.count ? `${(d.count / max) * 100}%` : "3px",
+                    }}
+                  />
+                </span>
+                <small>
+                  {d.date.toLocaleDateString(locale, { weekday: "short" })}
+                </small>
+              </div>
+            ))}
+          </div>
+          {!days.some((d) => d.count) && (
+            <p>Здесь появятся твои выполненные дела</p>
+          )}
         </div>
-        {!days.some((d) => d.count) && (
-          <p>Здесь появятся твои выполненные дела</p>
-        )}
-      </div>
+      )}
     </section>
   );
 }

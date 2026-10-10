@@ -46,7 +46,7 @@ test("Компаньон: задачи, помощник, таймер и гар
         exact: true,
       })
       .click();
-    assert.match(await p.locator(".mono-day-overview").innerText(), /1 из 3/);
+    assert.match(await p.locator(".flow-compact-progress").innerText(), /1 из 3/);
     await p.getByRole("button", { name: "Открыть помощника" }).click();
     await p.locator("dialog[open]").waitFor();
     await p.waitForTimeout(350);

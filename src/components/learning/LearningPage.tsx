@@ -1,4 +1,5 @@
 "use client";
+import { lessonDraftKey, lessonVisitKey } from "@/lib/dayFlow";
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -21,7 +22,7 @@ import { useLearningStore } from "@/store/useLearningStore";
 import { useLearningActions } from "@/components/useLearningActions";
 import { rewardFor } from "@/lib/learning";
 import { dateKey } from "@/lib/domain";
-import { isTodoOnDay, useUserStore } from "@/store/useUserStore";
+import { isTodoOnDay, isTodoDone, useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
 
 const field =
@@ -159,6 +160,68 @@ export default function LearningPage({
     !!quest &&
     !quest.completed &&
     skill.quests.find((q) => !q.completed)?.id !== quest.id;
+  const [draftStatus, setDraftStatus] = useState("");
+  useEffect(() => {
+    setDraftStatus("");
+    if (!owner || !skill || !quest || view !== "lesson") return;
+    try {
+      const visits = JSON.parse(
+        localStorage.getItem(lessonVisitKey(owner)) ?? "{}",
+      );
+      localStorage.setItem(
+        lessonVisitKey(owner),
+        JSON.stringify({ ...visits, [skill.id]: Date.now() }),
+      );
+      const saved = JSON.parse(
+        localStorage.getItem(lessonDraftKey(owner, skill.id, quest.id)) ??
+          "null",
+      );
+      if (saved && !quest.completed) {
+        setAnswer(
+          typeof saved.answer === "string" ? saved.answer.slice(0, 6000) : "",
+        );
+        setLessonTab(saved.tab === "practice" ? "practice" : "lesson");
+        setDraftStatus("Место и черновик восстановлены на этом устройстве.");
+      }
+    } catch {
+      /* No storage: keep the lesson usable. */
+    }
+  }, [owner, skill?.id, quest?.id, view]);
+  function saveDraft(nextAnswer: string, nextTab: "lesson" | "practice") {
+    if (!owner || !skill || !quest || quest.completed) return;
+    try {
+      localStorage.setItem(
+        lessonDraftKey(owner, skill.id, quest.id),
+        JSON.stringify({ answer: nextAnswer, tab: nextTab }),
+      );
+      setDraftStatus("Черновик сохранён на этом устройстве.");
+    } catch {
+      setDraftStatus("Не удалось сохранить черновик на устройстве.");
+    }
+  }
+  function changeTab(tab: "lesson" | "practice") {
+    setLessonTab(tab);
+    saveDraft(answer, tab);
+  }
+  async function tomorrow() {
+    if (!skill) return;
+    const next = skill.quests.find((q) => !q.completed);
+    if (!next) return;
+    const date = new Date();
+    date.setDate(date.getDate() + 1);
+    const day = dateKey(date);
+    const title = `Учёба: ${next.title}`;
+    const store = useUserStore.getState();
+    if (!store.todos.some((t) => t.title === title && t.date === day))
+      store.addTodo({
+        title,
+        date: day,
+        duration: skill.minutes,
+        note: `/learn?view=lesson&skill=${encodeURIComponent(skill.id)}&quest=${encodeURIComponent(next.id)}`,
+      });
+    setMessage("Следующий квест добавлен в план на завтра.");
+    await useSyncStatus.getState().syncNow?.();
+  }
   const complete = skill?.quests.filter((q) => q.completed).length ?? 0;
   async function create(event: React.FormEvent) {
     event.preventDefault();
@@ -188,6 +251,24 @@ export default function LearningPage({
       questId: quest.id,
       answer,
     });
+    if (result?.result?.passed && owner && skill && quest) {
+      try {
+        localStorage.removeItem(lessonDraftKey(owner, skill.id, quest.id));
+      } catch {}
+      setDraftStatus("");
+      const store = useUserStore.getState();
+      const today = dateKey();
+      const link = `/learn?view=lesson&skill=${encodeURIComponent(skill.id)}&quest=${encodeURIComponent(quest.id)}`;
+      for (const task of store.todos)
+        if (
+          task.note === link &&
+          task.date <= today &&
+          !isTodoDone(task, today)
+        )
+          store.toggleTodo(task.id, today);
+      void useSyncStatus.getState().syncNow?.();
+    }
+    if (result && !result.result.passed) setHelp(true);
     if (result)
       setMessage(
         result.result.awarded
@@ -236,7 +317,7 @@ export default function LearningPage({
       duration: skill.minutes,
       hour: slot === undefined ? undefined : Math.floor(slot / 60),
       minute: slot === undefined ? undefined : slot % 60,
-      note: "Квест в разделе «Прокачать навык». Награда начисляется после проверки ответа.",
+      note: `/learn?view=lesson&skill=${encodeURIComponent(skill.id)}&quest=${encodeURIComponent(quest.id)}`,
     });
     setMessage(
       slot === undefined
@@ -801,6 +882,29 @@ export default function LearningPage({
             <span>+{rewardFor(quest.boss).xp} XP</span>
           </div>
           <h2>{quest.title}</h2>
+          <Link href="/today" className="flow-return">
+            Вернуться к своему дню
+          </Link>
+          {draftStatus && !quest.completed && (
+            <p className="flow-draft" role="status">
+              {draftStatus}
+            </p>
+          )}
+          {quest.completed && (
+            <section className="flow-result" aria-label="Результат занятия">
+              <h2>Занятие завершено</h2>
+              <p>Разобрано: {quest.title}</p>
+              <p>Результат сохранён. Продолжить можно сейчас или завтра.</p>
+              <div className="flow-actions">
+                <Link href="/today">На сегодня достаточно</Link>
+                {skill.quests.some((q) => !q.completed) && (
+                  <button onClick={() => void tomorrow()}>
+                    Следующий шаг на завтра
+                  </button>
+                )}
+              </div>
+            </section>
+          )}
           {locked ? (
             <div className="learning-notice">
               Сначала заверши предыдущий квест.
@@ -823,7 +927,7 @@ export default function LearningPage({
                   id="lesson-tab"
                   aria-controls="lesson-panel"
                   aria-selected={lessonTab === "lesson"}
-                  onClick={() => setLessonTab("lesson")}
+                  onClick={() => changeTab("lesson")}
                 >
                   Разобраться
                 </button>
@@ -832,7 +936,7 @@ export default function LearningPage({
                   id="practice-tab"
                   aria-controls="practice-panel"
                   aria-selected={lessonTab === "practice"}
-                  onClick={() => setLessonTab("practice")}
+                  onClick={() => changeTab("practice")}
                 >
                   Практика
                 </button>
@@ -850,7 +954,7 @@ export default function LearningPage({
               {lessonTab === "lesson" && (
                 <button
                   className="learning-secondary"
-                  onClick={() => setLessonTab("practice")}
+                  onClick={() => changeTab("practice")}
                 >
                   Попробовать на практике <YgIcon name="chevron" />
                 </button>
@@ -872,7 +976,10 @@ export default function LearningPage({
                     maxLength={6000}
                     value={answer}
                     disabled={busy}
-                    onChange={(e) => setAnswer(e.target.value)}
+                    onChange={(e) => {
+                      setAnswer(e.target.value);
+                      saveDraft(e.target.value, lessonTab);
+                    }}
                     placeholder="Объясни своими словами или вставь свой код…"
                   />
                   <div className="learning-answer-actions">

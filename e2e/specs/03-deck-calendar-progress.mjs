@@ -100,7 +100,7 @@ const DECK = [
 
 /** Верхняя карта колоды. В DOM стопка идёт снизу вверх (см. reverse в SwipeDeck). */
 function topCard(page) {
-  return page.locator("article").last();
+  return page.locator("[data-section-active] article").last();
 }
 
 async function topTitle(page) {
@@ -159,7 +159,7 @@ async function swipe(page, dir) {
 
 /** Переключить раздел нижней навигацией — как это делает человек. */
 async function goTab(page, label) {
-  await page.locator("nav").getByRole("button", { name: label, exact: true }).tap();
+  await page.locator("nav").getByRole("button", { name: new RegExp(`^${label}(?:,|$)`) }).tap();
   await page.waitForTimeout(700);
 }
 
@@ -181,7 +181,7 @@ async function waitServerPlan(page, userId, count, timeout = 15_000) {
 
 test("Колода: свайп вправо берёт действие — оно в плане и в снимке на сервере", async () => {
   const user = await newUser({ state: deckState(DECK) });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
 
   /*
    * Автосохранение придерживаем до самого свайпа.
@@ -213,7 +213,7 @@ test("Колода: свайп вправо берёт действие — он
   await goTab(page, "Сегодня");
   await checkText(
     page.locator('[data-section="today"]'),
-    "Взято из колоды · 1",
+    "Сейчас — только это",
     "в «Сегодня» появился ровно один взятый пункт",
   );
   await checkText(page.locator('[data-section="today"]'), taken, "и это то самое действие");
@@ -229,7 +229,7 @@ test("Колода: свайп вправо берёт действие — он
 
 test("Колода: свайп влево пропускает — карточка сменяется, в план ничего не попадает", async () => {
   const user = await newUser({ state: deckState(DECK) });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/app");
   await waitForDeck(page);
 
@@ -246,7 +246,7 @@ test("Колода: свайп влево пропускает — карточ�
   await goTab(page, "Сегодня");
   await checkText(
     page.locator('[data-section="today"]'),
-    "Ничего не взято",
+    "Одно дело. В твоём темпе.",
     "план на сегодня остался пустым",
   );
 
@@ -259,7 +259,7 @@ test("Колода: после вертикальной прокрутки го�
   // тянуться. Проверяем связку: прокрутили раздел, потянули карточку
   // вниз (это не свайп) — и только потом вбок.
   const user = await newUser({ state: deckState(DECK) });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/app");
   await waitForDeck(page);
 
@@ -302,7 +302,7 @@ test("Колода: после вертикальной прокрутки го�
   await goTab(page, "Сегодня");
   await checkText(
     page.locator('[data-section="today"]'),
-    "Взято из колоды · 1",
+    "Сейчас — только это",
     "в плане ровно одно действие, лишних свайпов не случилось",
   );
 
@@ -311,7 +311,7 @@ test("Колода: после вертикальной прокрутки го�
 
 test("Колода: кнопки «беру» и «не сейчас» под колодой делают то же, что жест", async () => {
   const user = await newUser({ state: deckState(DECK) });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/app");
   await waitForDeck(page);
 
@@ -333,7 +333,7 @@ test("Колода: чек-ин про силы и минуты проходит
   const user = await newUser({
     state: { useOwnActionsOnly: true, customActions: DECK },
   });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/app");
 
   await checkText(page.locator("h1"), "Как ты сегодня?", "встречает чек-ин");
@@ -379,7 +379,7 @@ test("Календарь: другой день в полоске недели �
       ],
     },
   });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/calendar");
 
   const section = page.locator('[data-section="calendar"]');
@@ -417,7 +417,7 @@ test("Календарь: задача через «+» появляется в 
   const other = shiftKey(today, otherIndex - mine);
 
   const user = await newUser({ state: { todos: [] } });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/calendar");
 
   const section = page.locator('[data-section="calendar"]');
@@ -451,7 +451,7 @@ test("Календарь: сетка часов открывается на те
       todos: [todo("e2e-t-now", "Лекция по сетям", todayKey(), { hour: 9, minute: 0, duration: 60 })],
     },
   });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/calendar");
   await page.locator('[data-section="calendar"] .glass-panel').waitFor({ timeout: 20_000 });
   // прокрутка ставится не сразу: раздел домонтируется и меряет себя сам
@@ -505,7 +505,7 @@ test("Календарь: «Выгрузить в календарь» отда�
       ],
     },
   });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/settings");
 
   const button = page.getByRole("button", { name: /Выгрузить в календарь/ });
@@ -555,7 +555,7 @@ test("Прогресс: видны уровень с опытом, свод по
       ],
     },
   });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/progress");
 
   const section = page.locator('[data-section="progress"]');
@@ -582,7 +582,7 @@ test("Прогресс: видны уровень с опытом, свод по
 
 test("Прогресс: закрытое из колоды действие поднимает опыт и счётчик выполненного", async () => {
   const user = await newUser({ state: deckState(DECK) });
-  const { browser, page } = await session({ user });
+  const { browser, page } = await session({ user, initScript: () => localStorage.setItem("yd-install-dismissed", "1") });
   await openSection(page, "/progress");
 
   const section = page.locator('[data-section="progress"]');

@@ -121,9 +121,9 @@ export default function SwipeDeck({
   return (
     // data-no-swipe: колода забирает горизонтальный жест себе. Без этого
     // «беру / не беру» одновременно листало бы разделы приложения.
-    <div ref={deckRef} className="flex flex-1 flex-col" data-no-swipe>
+    <div ref={deckRef} className="swipe-deck flex flex-1 flex-col" data-no-swipe>
       {/* Колода */}
-      <div className="relative flex-1" style={{ minHeight: 400 }}>
+      <div className="swipe-deck-stage relative flex-1" style={{ minHeight: 400 }}>
         <AnimatePresence mode="popLayout">
           {exhausted ? (
             <motion.div
@@ -154,7 +154,7 @@ export default function SwipeDeck({
           «свайпни / ← мимо · беру →» между ними нет: крестик и галочка
           говорят сами, а лишняя строка под колодой отвлекала. */}
       {!exhausted && (
-        <div className="mt-4 mb-1 flex items-center justify-center gap-16">
+        <div className="swipe-deck-controls mt-4 mb-1 flex items-center justify-center gap-16">
           <DeckButton
             label="Не сейчас"
             color="#cf8578"
@@ -205,12 +205,13 @@ function DeckButton({
       aria-label={label}
       whileTap={{ scale: 0.88 }}
       whileHover={{ scale: 1.06 }}
-      className="flex h-16 w-16 items-center justify-center rounded-full border-2 bg-[var(--color-surface)] transition"
+      className="swipe-deck-button flex h-16 w-16 items-center justify-center rounded-full border-2 bg-[var(--color-surface)] transition"
       style={{ borderColor: `${color}55`, color }}
     >
       <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none">
         {children}
       </svg>
+      <span className="swipe-deck-label">{label}</span>
     </motion.button>
   );
 }

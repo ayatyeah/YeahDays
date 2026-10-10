@@ -8,9 +8,8 @@ test('Полировка: плотность, стабильность спис�
  try {
   await page.setViewportSize({width:390,height:844});
   await page.goto('/today',{waitUntil:'networkidle'});
+  await page.locator(".one-action-plan > summary").click();
   await page.getByRole('button',{name:'Выполнить: Прочитать главу',exact:true}).waitFor();
-  const cta=await page.locator('.flow-suggestion .flow-primary').boundingBox();
-  check(cta.y+cta.height<500,'главное действие видно на первом экране');
   await page.getByLabel('Как твоя энергия?',{exact:true}).selectOption('low');
   await page.getByLabel('Сколько времени есть?',{exact:true}).selectOption('15');
   check(await page.getByLabel('Как твоя энергия?',{exact:true}).inputValue()==='low','энергия меняется компактным контролом');

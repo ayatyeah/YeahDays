@@ -2948,5 +2948,12 @@
  "Что можно сделать за пару минут?": "What can you do in a couple of minutes?",
  "Это дело требует внимания. Начни с первого небольшого шага.": "This task needs attention. Start with one small step.",
  "Посмотреть прогресс": "View progress",
- "Загрузка": "Loading"
+ "Загрузка": "Loading",
+ "Вправо — беру. Влево — не сейчас.": "Right to accept. Left for not now.",
+ "Выбрать ещё одно дело": "Choose one more action",
+ "Маленький шаг уже сделан. Можно отдохнуть.": "One small step is done. Time to rest.",
+ "Одно действие": "One action",
+ "Одно дело. В твоём темпе.": "One action. At your pace.",
+ "Сейчас — только это": "Just this, for now",
+ "Следующая карточка подождёт.": "The next card can wait."
 }

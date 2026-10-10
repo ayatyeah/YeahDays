@@ -51,7 +51,8 @@ function routineScored(action: Action, reason: string): ScoredAction {
   };
 }
 
-export default function HomeSection() {
+export default function HomeSection({ embedded = false }: { embedded?: boolean }) {
+  const [finished, setFinished] = useState(false);
   const hydrated = useHydrated();
 
   const name = useUserStore((s) => s.name);
@@ -159,7 +160,7 @@ export default function HomeSection() {
     return [...cards, ...rest];
   }, [routineBlock, visibleDeck, plan]);
 
-  const needsCheckIn = hydrated && lastCheckIn !== dateKey();
+  const needsCheckIn = !embedded && hydrated && lastCheckIn !== dateKey();
 
   /* ── Загрузка колоды ── */
   useEffect(() => {
@@ -266,6 +267,29 @@ export default function HomeSection() {
       />
     );
   }
+
+  if (embedded) return (
+    <section className="one-action" aria-label="Одно действие">
+      <header className="one-action-heading">
+        <h2>{activeTask ? "Сейчас — только это" : finished ? "На сегодня достаточно" : "Одно дело. В твоём темпе."}</h2>
+        <p>{activeTask ? "Следующая карточка подождёт." : finished ? "Маленький шаг уже сделан. Можно отдохнуть." : "Вправо — беру. Влево — не сейчас."}</p>
+      </header>
+      {activeTask ? <ActiveTask task={activeTask} onDone={() => {
+        toggleTask(activeTask.id);
+        setFinished(true);
+        haptic("success");
+        track("action_completed", { category:activeTask.snapshot.category, xp:activeTask.xp });
+        trackEvent({type:"complete",actionId:activeTask.actionId,at:Date.now(),category:activeTask.snapshot.category,xp:activeTask.xp});
+      }} /> : finished ? <div className="one-action-finished" role="status">
+        <YgIcon name="check" className="h-10 w-10" />
+        <h3>Ещё один шаг готов</h3>
+        <button className="flow-primary" onClick={() => setFinished(false)}>Выбрать ещё одно дело</button>
+      </div> : loading ? <div className="one-action-loading" role="status" aria-label="Загрузка" /> :
+        <SwipeDeck deck={fullDeck} resetKey={deckVersion} onAccept={handleAccept} onReject={handleReject}
+          emptyState={<DeckEmpty onRefresh={() => setReloadKey(k => k + 1)} />} />}
+      {!activeTask && !finished && <button className="one-action-custom" onClick={() => openCreate()}>+ Добавить своё действие</button>}
+    </section>
+  );
 
   return (
     <div className="flex flex-1 flex-col">

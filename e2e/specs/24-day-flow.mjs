@@ -36,6 +36,7 @@ test("День: следующий шаг, подзадачи, результа�
   mkdirSync("artifacts/day-flow", { recursive: true });
   try {
     await page.goto("/today", { waitUntil: "networkidle" });
+    await page.locator(".one-action-plan > summary").click();
     await page
       .getByRole("button", { name: "Начать с этого", exact: true })
       .click();

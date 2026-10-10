@@ -46,7 +46,7 @@ test("Компаньон: задачи, помощник, таймер и гар
         exact: true,
       })
       .click();
-    assert.match(await p.locator(".companion-day-meter").innerText(), /1 из 3/);
+    assert.match(await p.locator(".mono-day-overview").innerText(), /1 из 3/);
     await p.getByRole("button", { name: "Открыть помощника" }).click();
     await p.locator("dialog[open]").waitFor();
     await p.waitForTimeout(350);
@@ -71,6 +71,7 @@ test("Компаньон: задачи, помощник, таймер и гар
     await p.getByRole("button", { name: "Прогресс", exact: true }).click();
     await p.getByRole("heading", { name: "Твой ритм", exact: true }).waitFor();
     await p.waitForTimeout(500);
+    await p.getByText("Образ компаньона", { exact: true }).click();
     await p.getByRole("button", { name: "Уютный", exact: true }).click();
     assert.equal(
       await p
@@ -79,6 +80,7 @@ test("Компаньон: задачи, помощник, таймер и гар
       "true",
     );
     await p.reload({ waitUntil: "networkidle" });
+    await p.getByText("Образ компаньона", { exact: true }).click();
     assert.equal(
       await p
         .getByRole("button", { name: "Уютный", exact: true })

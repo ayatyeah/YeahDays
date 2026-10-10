@@ -2,6 +2,8 @@
 
 import { useMemo } from "react";
 import { motion } from "framer-motion";
+import AppBrand from "@/components/mono/AppBrand";
+import WeeklyOverview from "@/components/mono/WeeklyOverview";
 import CompanionWardrobe from "@/components/companion/CompanionWardrobe";
 import {
   useUserStore,
@@ -79,7 +81,8 @@ export default function ProgressSection() {
   }
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="mono-progress flex flex-1 flex-col">
+      <AppBrand />
       <h1 className="ios-title text-[28px] font-bold tracking-tight">
         Твой ритм
       </h1>
@@ -96,23 +99,7 @@ export default function ProgressSection() {
       <div className="desk">
         <div className="flex flex-col desk-main lg:gap-5">
           {/* Персонаж крупно */}
-          <CompanionWardrobe />
-          <section className="companion-skills">
-            <h2>Твои навыки</h2>
-            {STAT_LIST.map((s) => (
-              <div key={s.key}>
-                <YgIcon name={s.icon} />
-                <span>{s.label}</span>
-                <progress
-                  aria-label={s.label}
-                  value={stats[s.key]}
-                  max={maxStat}
-                />
-                <small>{stats[s.key]} XP</small>
-              </div>
-            ))}
-          </section>
-
+          <WeeklyOverview ratio={progress.ratio} level={level} />
           {/* Уровень */}
           <section className="mb-5 rounded-3xl surface p-5 lg:mb-0">
             <div className="flex items-end justify-between">
@@ -147,6 +134,21 @@ export default function ProgressSection() {
             <Metric value={completed.length} label="Выполнено" />
             <Metric value={streak} label="Стрик" accent="flame" />
             <Metric value={activeDays.size} label="Активных дней" />
+          </section>
+          <section className="companion-skills">
+            <h2>Твои навыки</h2>
+            {STAT_LIST.map((s) => (
+              <div key={s.key}>
+                <YgIcon name={s.icon} />
+                <span>{s.label}</span>
+                <progress
+                  aria-label={s.label}
+                  value={stats[s.key]}
+                  max={maxStat}
+                />
+                <small>{stats[s.key]} XP</small>
+              </div>
+            ))}
           </section>
         </div>
 
@@ -185,7 +187,7 @@ export default function ProgressSection() {
               </div>
               <div className="space-y-2.5">
                 {spent.map((b) => {
-                  const hex = STATS[b.stat].hex;
+                  const hex = "#929e91";
                   return (
                     <div key={b.subject}>
                       <div className="mb-1 flex items-center justify-between gap-3 text-[14px]">
@@ -294,6 +296,10 @@ export default function ProgressSection() {
             </section>
           )}
 
+          <details className="companion-planning mono-wardrobe-details">
+            <summary>Образ компаньона</summary>
+            <CompanionWardrobe />
+          </details>
           {/* Эволюция */}
           <section className="mb-2 lg:mb-0">
             <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useThemeStore } from "@/store/useThemeStore";
 
 /**
@@ -10,6 +11,7 @@ import { useThemeStore } from "@/store/useThemeStore";
  * из localStorage.
  */
 export default function ThemeApplier() {
+  const pathname = usePathname();
   const theme = useThemeStore((s) => s.theme);
 
   useEffect(() => {
@@ -17,8 +19,19 @@ export default function ThemeApplier() {
     // Цвет статус-бара PWA — иначе на светлой теме сверху останется
     // тёмная полоса, зашитая в metadata.viewport (статична на сервере).
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", theme === "light" ? "#fcf9f3" : "#08080b");
-  }, [theme]);
+    const inApp = !!document.querySelector(".yg-app");
+    if (meta)
+      meta.setAttribute(
+        "content",
+        inApp
+          ? theme === "light"
+            ? "#ffffff"
+            : "#121213"
+          : theme === "light"
+            ? "#fcf9f3"
+            : "#08080b",
+      );
+  }, [theme, pathname]);
 
   return null;
 }

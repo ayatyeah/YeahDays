@@ -1,52 +1,80 @@
 "use client";
-import { useState } from "react";
-import Image from "next/image";
 import { useUserStore } from "@/store/useUserStore";
 import { currentSlot, type EnergyLevel } from "@/lib/domain";
-import { useNavStore } from "@/store/useNavStore";
-import CompanionAssistant from "./CompanionAssistant";
-export default function CompanionHeader() {
-  const [open, setOpen] = useState(false);
+import { useLocaleStore } from "@/i18n/locale";
+import AppBrand from "@/components/mono/AppBrand";
+import ProgressRing from "@/components/mono/ProgressRing";
+
+export default function CompanionHeader({
+  completed,
+  count,
+}: {
+  completed: number;
+  count: number;
+}) {
   const slot = currentSlot();
   const energy = useUserStore((s) => s.energyProfile[slot]);
   const setEnergy = useUserStore((s) => s.setSlotEnergy);
-  const go = useNavStore((s) => s.go);
-  const minutes = energy === "low" ? 5 : energy === "high" ? 30 : 20;
+  const locale = useLocaleStore((s) => s.locale);
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   return (
     <div className="companion-header">
-      <header className="companion-brand">
-        <b>
-          YeahGrind
-          <span />
-        </b>
+      <AppBrand />
+      <header className="mono-page-heading">
+        <h1>Сегодня</h1>
         <p>
-          Маленькие шаги.
-          <br />
-          Больше ты.
+          {now.toLocaleDateString(locale, {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+          })}
         </p>
       </header>
-      <button
-        className="companion-welcome"
-        onClick={() => setOpen(true)}
-        aria-label="Открыть помощника"
-      >
-        <Image
-          src="/companion/portrait.webp"
-          width={220}
-          height={240}
-          alt=""
-          priority
-        />
-        <span>
-          <b>Начни всего с</b>
-          <strong>{minutes} минут</strong>
-          <small>Хорошее время, чтобы стать чуть ближе к своим целям.</small>
-          <em>Ты можешь!</em>
-        </span>
-      </button>
+      <section className="mono-day-overview">
+        <ProgressRing
+          value={completed}
+          max={count}
+          label={`Выполнение плана дня: ${completed} из ${count}`}
+          tone="sage"
+        >
+          {completed}/{count}
+        </ProgressRing>
+        <div>
+          <h2>
+            {count > 0 && completed === count
+              ? "Всё на сегодня сделано"
+              : "Хороший ритм"}
+          </h2>
+          <p>
+            {count
+              ? `Выполнено: ${completed} из ${count}`
+              : "Начни с одного небольшого дела"}
+          </p>
+        </div>
+      </section>
+      <div className="mono-week" aria-label="Текущая неделя">
+        {Array.from({ length: 7 }, (_, i) => {
+          const date = new Date(monday);
+          date.setDate(monday.getDate() + i);
+          const today = date.toDateString() === now.toDateString();
+          return (
+            <time
+              key={i}
+              dateTime={`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`}
+              aria-current={today ? "date" : undefined}
+            >
+              <small>
+                {date.toLocaleDateString(locale, { weekday: "short" })}
+              </small>
+              <b>{date.getDate()}</b>
+            </time>
+          );
+        })}
+      </div>
       <div className="companion-energy-label">
         <b>Как твоя энергия?</b>
-        <button onClick={() => go("home")}>Подобрать задачи</button>
       </div>
       <div className="companion-energy">
         {(
@@ -64,11 +92,7 @@ export default function CompanionHeader() {
             {label}
           </button>
         ))}
-        <button onClick={() => setOpen(true)} aria-label="Помощь с планом дня">
-          Помоги мне
-        </button>
       </div>
-      <CompanionAssistant open={open} onClose={() => setOpen(false)} />
     </div>
   );
 }

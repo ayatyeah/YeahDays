@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
+import DaySupport from "@/components/mono/DaySupport";
 import CompanionHeader from "@/components/companion/CompanionHeader";
 import TodoList from "@/components/TodoList";
 import PlanItem from "@/components/PlanItem";
@@ -30,6 +31,17 @@ export default function TodaySection() {
   const hydrated = useHydrated();
   const store = useUserStore();
   const go = useNavStore((s) => s.go);
+  const planning = useRef<HTMLDetailsElement>(null);
+  function openPlanning() {
+    if (!planning.current) return;
+    planning.current.open = true;
+    planning.current
+      .querySelector<HTMLInputElement>(
+        'input[data-quick-todo]',
+      )
+      ?.focus();
+    planning.current.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
   const [showDone, setShowDone] = useState(false);
   const day = dateKey();
   const planned = selectToday(store.plan);
@@ -60,18 +72,18 @@ export default function TodaySection() {
   if (!hydrated) return <LogoLoader />;
   return (
     <div className="companion-today">
-      <CompanionHeader />
+      <CompanionHeader completed={completed} count={count} />
       <div className="companion-day-layout">
         <div>
           <header className="companion-today-heading">
-            <h1>Сегодня</h1>
-            <span>
-              {new Date().toLocaleDateString("ru-RU", {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-              })}
-            </span>
+            <h2>Мой план</h2>
+            <button
+              className="mono-add"
+              onClick={openPlanning}
+              aria-label="Добавить задачу"
+            >
+              +
+            </button>
           </header>
           <div className="companion-task-list">
             {personal
@@ -152,7 +164,8 @@ export default function TodaySection() {
               </button>
             )}
           </section>
-          <details className="companion-planning">
+          <DaySupport />
+          <details ref={planning} className="companion-planning">
             <summary>Добавить или изменить задачи</summary>
             <TodoList />
             {planned.length > 0 && (
@@ -168,11 +181,6 @@ export default function TodaySection() {
               </div>
             )}
           </details>
-          <p className="companion-note">
-            Маленькие шаги каждый день.
-            <br />
-            Большие перемены со временем.
-          </p>
         </div>
         <aside className="companion-day-aside">
           <details className="companion-planning">

@@ -2,9 +2,11 @@
 
 import { MotionConfig } from "framer-motion";
 import { usePathname } from "next/navigation";
+import LearningVisitTracker from "./mono/LearningVisitTracker";
 import MascotGuide from "./MascotGuide";
 import "./app-experience.css";
 import "./companion/companion.css";
+import "./mono/mono.css";
 import BottomNav from "./BottomNav";
 import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";
@@ -83,7 +85,10 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="yg-app">
+      <div
+        className="yg-app"
+        data-study={pathname.startsWith("/events") ? "true" : undefined}
+      >
         <Sidebar />
         {/* Снизу отступа у рамки нет: он живёт ВНУТРИ прокручиваемого раздела
           (.section-pane в globals.css). Иначе прокрутка заканчивалась выше
@@ -125,6 +130,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
             </PageTransition>
           )}
         </div>
+        <LearningVisitTracker />
         {authSwitcher}
         <BottomNav />
         <InstallPrompt />

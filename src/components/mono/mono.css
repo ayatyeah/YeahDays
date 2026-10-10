@@ -71,9 +71,6 @@
 .yg-app .yg-bottom-nav button[aria-current="page"] {
   color: var(--color-fg);
 }
-.yg-app .yg-bottom-nav button[aria-current="page"] > span > span:first-child {
-  background: var(--color-surface-2);
-}
 .yg-app .yg-bottom-nav button svg {
   color: inherit;
 }

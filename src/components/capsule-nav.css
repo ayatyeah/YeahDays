@@ -1,0 +1,131 @@
+/* Safe area is outside the capsule, in browser and installed mode alike. */
+.yg-app .yg-bottom-nav.yg-capsule {
+  padding: 0 12px max(10px, env(safe-area-inset-bottom, 0px));
+  background: transparent;
+  border: 0;
+}
+.yg-capsule-bar {
+  max-width: 450px;
+  margin-inline: auto;
+  padding: 5px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: var(--color-surface);
+  box-shadow:
+    0 4px 16px #00000012,
+    0 1px 3px #00000008;
+}
+.yg-capsule-items {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 48px;
+}
+.yg-app .yg-capsule .yg-capsule-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  height: 48px;
+  flex: 1 1 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--color-fg-dim);
+  background: transparent;
+  transition:
+    flex-grow 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    color 180ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.yg-app .yg-capsule .yg-capsule-tab[aria-current="page"] {
+  flex-grow: 2.6;
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.yg-capsule-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+.yg-app .yg-capsule .yg-capsule-icon svg {
+  width: 22px;
+  height: 22px;
+  color: inherit;
+}
+.yg-capsule-label {
+  display: grid;
+  grid-template-columns: 0fr;
+  opacity: 0;
+  min-width: 0;
+  transition:
+    grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 160ms ease,
+    margin 260ms ease;
+  margin-left: 0;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
+}
+.yg-capsule-label > span {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.yg-capsule-tab[aria-current="page"] .yg-capsule-label {
+  grid-template-columns: 1fr;
+  opacity: 1;
+  margin-left: 7px;
+}
+.yg-app .yg-capsule .yg-capsule-icon .yg-capsule-badge {
+  position: absolute;
+  right: -7px;
+  top: -8px;
+  min-width: 14px;
+  height: 14px;
+  display: grid;
+  place-items: center;
+  padding: 0 3px;
+  border-radius: 99px;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  font-size: 8px;
+  line-height: 1;
+  font-weight: 700;
+  border: 1px solid var(--color-surface);
+}
+.yg-app .yg-capsule .is-active .yg-capsule-icon .yg-capsule-badge {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  border-color: var(--color-fg);
+}
+.yg-capsule-tab:focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 3px;
+}
+@media (hover: hover) {
+  .yg-app .yg-capsule-tab:not([aria-current]):hover {
+    background: var(--color-surface-2);
+    color: var(--color-fg);
+  }
+}
+@media (max-width: 1023px) {
+  .yg-app .section-pane,
+  .yg-app .yg-content-frame:not(.app-shell-frame) {
+    padding-bottom: calc(
+      82px + max(10px, env(safe-area-inset-bottom, 0px)) +
+        var(--install-offset, 0px)
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .yg-app .yg-capsule .yg-capsule-tab,
+  .yg-capsule-label {
+    transition: none;
+  }
+}

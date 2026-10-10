@@ -1,0 +1,51 @@
+/* Shared finishing rules, scoped to the application; landing and navigation keep their own geometry. */
+.yg-app .polish-header { display:grid; grid-template-columns:1fr auto; align-items:center; gap:8px 12px; margin-bottom:16px; }
+.yg-app .polish-header .mono-brand { margin:0; }
+.yg-app .polish-header .mono-page-heading { margin:0; text-align:right; }
+.yg-app .polish-header .mono-page-heading h1 { font-size:16px; letter-spacing:-.02em; }
+.yg-app .polish-header .mono-page-heading p { font-size:11px; margin-top:2px; }
+.yg-app .polish-header .flow-compact-progress { grid-column:1/-1; margin:0; font-size:12px; justify-content:space-between; min-height:20px; }
+.yg-app .flow-next { display:block; padding:0; border:0; border-radius:0; background:transparent; margin-bottom:24px; }
+.polish-settings { display:flex; gap:8px; margin:10px 0 12px; }
+.polish-settings select { min-height:44px; max-width:65%; padding:8px 28px 8px 12px; border:1px solid var(--color-border); border-radius:12px; background-color:var(--color-surface); color:var(--color-fg); font-size:14px; cursor:pointer; }
+.yg-app .flow-suggestion { min-height:232px; align-content:start; grid-template-rows:auto minmax(54px,auto) minmax(42px,auto) auto; gap:8px; border-radius:20px; padding:20px; }
+.yg-app .flow-suggestion h2 { font-size:24px; line-height:1.15; }
+.yg-app .flow-suggestion .flow-primary { min-height:44px; padding:10px 16px; border-radius:12px; justify-self:stretch; }
+.yg-app .companion-task-list { gap:0; }
+.yg-app .companion-task { background:transparent; border:0; border-bottom:1px solid var(--color-border); border-radius:0; padding:10px 0; min-height:68px; box-shadow:none; }
+.yg-app .companion-task b { font-size:15px; line-height:1.4; }
+.yg-app .companion-task span { transition:opacity 180ms ease; }
+.yg-app .companion-task .companion-task-done { opacity:.5; }
+.yg-app .companion-check { transition:transform 120ms ease; }
+.yg-app .companion-check:active { transform:scale(.92); }
+.yg-app .flow-result { padding:16px; border-radius:16px; box-shadow:none; }
+.yg-app .flow-result h2 { font-size:18px; }
+.yg-app :is(.flow-primary,.flow-actions button,.learning-page button[data-variant]) { transition:transform 120ms ease,background-color 160ms ease; }
+.yg-app :is(.flow-primary,.flow-actions button,.learning-page button[data-variant]):active { transform:scale(.98); }
+.yg-app :is(button,a,select,input,textarea):focus-visible { outline:2px solid var(--color-fg); outline-offset:3px; }
+.yg-app .learning-reading, .yg-app[data-study] article { max-width:70ch; margin-inline:auto; border:0; border-radius:0; background:transparent; box-shadow:none; font-size:16px; line-height:1.85; padding:20px 4px; }
+.yg-app .learning-reading { min-height:240px; }
+.yg-app[data-study] section:has(> h2[lang="en"]) { border:0; background:transparent; box-shadow:none; padding-inline:0; }
+.yg-app[data-study] section > h2[lang="en"] { font-size:24px; line-height:1.4; letter-spacing:-.025em; margin-bottom:24px; }
+.yg-app[data-study] button[lang="en"] { min-height:52px; border-radius:14px; padding:14px 16px; text-align:left; line-height:1.5; }
+.yg-app[data-study] section[class*="from-violet-500"] { padding:28px; border-radius:24px; }
+.polish-skeleton { min-height:640px; padding:4px 0; }
+.polish-skeleton > div { background:var(--color-surface-2); border-radius:12px; margin-bottom:16px; }
+.polish-skeleton > div:first-child { height:64px; }
+.polish-skeleton > div:nth-child(2) { height:44px; width:65%; }
+.polish-skeleton > div:nth-child(3) { height:232px; border-radius:20px; }
+.polish-skeleton > div:nth-child(n+4) { height:68px; }
+@media(min-width:1024px) {
+ .yg-app .polish-header .mono-page-heading h1 { font-size:20px; }
+ .yg-app .flow-suggestion { padding:24px; }
+ .yg-app .flow-suggestion .flow-primary { justify-self:start; min-width:200px; }
+ .yg-app .flow-suggestion h2 { font-size:30px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .yg-app :is(.flow-primary,.flow-actions button,.companion-check,.companion-task span,.learning-page button[data-variant]) { transition:none; }
+}
+.yg-app .learning-tabs > button { min-height:44px; }
+.yg-app .learning-page button[data-variant] { min-height:44px; height:auto; border-radius:12px; font-size:14px; padding-block:10px; }
+.yg-app .learning-lesson > .flow-result { padding:24px; border-radius:20px; }
+.yg-app .learning-lesson > .flow-result h2 { font-size:26px; letter-spacing:-.03em; }
+.yg-app .polish-header { max-width:none; }

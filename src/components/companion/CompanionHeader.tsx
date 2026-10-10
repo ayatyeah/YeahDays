@@ -22,7 +22,7 @@ export default function CompanionHeader({
   const monday = new Date(now);
   monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
   return (
-    <div className="companion-header">
+    <div className={`companion-header${compact ? " polish-header" : ""}`}>
       <AppBrand />
       <header className="mono-page-heading">
         <h1>Сегодня</h1>
@@ -91,26 +91,30 @@ export default function CompanionHeader({
           })}
         </div>
       )}
-      <div className="companion-energy-label">
-        <b>Как твоя энергия?</b>
-      </div>
-      <div className="companion-energy">
-        {(
-          [
-            ["low", "Спокойно"],
-            ["medium", "Нормально"],
-            ["high", "Много сил"],
-          ] as [EnergyLevel, string][]
-        ).map(([value, label]) => (
-          <button
-            key={value}
-            aria-pressed={energy === value}
-            onClick={() => setEnergy(slot, value)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
+      {!compact && (
+        <>
+          <div className="companion-energy-label">
+            <b>Как твоя энергия?</b>
+          </div>
+          <div className="companion-energy">
+            {(
+              [
+                ["low", "Спокойно"],
+                ["medium", "Нормально"],
+                ["high", "Много сил"],
+              ] as [EnergyLevel, string][]
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                aria-pressed={energy === value}
+                onClick={() => setEnergy(slot, value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

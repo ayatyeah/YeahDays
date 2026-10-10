@@ -1,4 +1,5 @@
 "use client";
+import { useReadingPosition } from "./useReadingPosition";
 import { lessonDraftKey, lessonVisitKey } from "@/lib/dayFlow";
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useState } from "react";
@@ -187,6 +188,11 @@ export default function LearningPage({
       /* No storage: keep the lesson usable. */
     }
   }, [owner, skill?.id, quest?.id, view]);
+  useReadingPosition(
+    owner && view === "lesson" && skill && quest
+      ? `${owner}:${skill.id}:${quest.id}:${lessonTab}` : null,
+    !!data,
+  );
   function saveDraft(nextAnswer: string, nextTab: "lesson" | "practice") {
     if (!owner || !skill || !quest || quest.completed) return;
     try {

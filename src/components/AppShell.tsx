@@ -9,6 +9,7 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import TodaySkeleton from "@/components/dayflow/TodaySkeleton";
 import { LogoLoader } from "@/components/Logo";
 import MascotGuide from "@/components/MascotGuide";
 import Onboarding from "@/components/Onboarding";
@@ -41,7 +42,7 @@ const SECTIONS: Record<TabKey, React.ComponentType> = {
   }),
   today: dynamic(() => import("@/sections/TodaySection"), {
     ssr: false,
-    loading: () => <LogoLoader />,
+    loading: () => <TodaySkeleton />,
   }),
   calendar: dynamic(() => import("@/sections/CalendarSection"), {
     ssr: false,

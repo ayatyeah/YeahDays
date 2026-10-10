@@ -42,7 +42,7 @@ test("Учёба: обзор, маршрут, практика и создани
           id: `q${i}`,
           title,
           lesson:
-            "Фильтр проходит по изображению и выделяет локальные признаки.\n\nНапример, края и текстуры.",
+            "Фильтр проходит по изображению и выделяет локальные признаки.\n\nНапример, края и текстуры.\n\n".repeat(35),
           exercise: "Объясни, зачем фильтру смотреть на соседние пиксели.",
           boss: i === 5,
           completed: i < 2,
@@ -153,6 +153,15 @@ test("Учёба: обзор, маршрут, практика и создани
       path: "artifacts/learning-concepts/implemented-lesson.png",
       fullPage: true,
     });
+    await page.evaluate(() => window.scrollTo(0, 650));
+    await page.waitForTimeout(150);
+    const readingY = await page.evaluate(() => window.scrollY);
+    check(readingY > 500, "длинный конспект прокручивается");
+    await page.reload({ waitUntil: "networkidle" });
+    await page.locator(".learning-reading").waitFor();
+    await page.waitForTimeout(300);
+    check(Math.abs(await page.evaluate(() => window.scrollY) - readingY) < 5,
+      "позиция чтения восстановлена после перезагрузки");
     await page.getByRole("tab", { name: "Практика", exact: true }).click();
     await page
       .getByLabel("Твой ответ", { exact: true })

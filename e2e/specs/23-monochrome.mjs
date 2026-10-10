@@ -177,7 +177,7 @@ test("Монохром: экраны, логотип, кольца и учебн
       for (const route of ["today", "progress"]) {
         await page.goto(`/${route}`, { waitUntil: "networkidle" });
         await page
-          .locator(`.mono-${route === "today" ? "day-overview" : "rings"}`)
+          .locator(route === "today" ? ".flow-next" : ".mono-rings")
           .waitFor();
         await page.screenshot({
           path: `${out}/${route}-ru-${width}.png`,

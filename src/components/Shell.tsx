@@ -7,6 +7,7 @@ import MascotGuide from "./MascotGuide";
 import "./app-experience.css";
 import "./companion/companion.css";
 import "./mono/mono.css";
+import "./dayflow/dayflow.css";
 import BottomNav from "./BottomNav";
 import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";

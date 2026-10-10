@@ -157,6 +157,13 @@ test("Учёба: обзор, маршрут, практика и создани
     await page
       .getByLabel("Твой ответ", { exact: true })
       .fill("Первый вариант ответа");
+    await page.reload({ waitUntil: "networkidle" });
+    await page.getByLabel("Твой ответ", { exact: true }).waitFor();
+    check(
+      (await page.getByLabel("Твой ответ", { exact: true }).inputValue()) ===
+        "Первый вариант ответа",
+      "черновик и вкладка восстанавливаются после перезагрузки",
+    );
     await page
       .getByRole("button", { name: "Проверить ответ", exact: true })
       .click();
@@ -179,6 +186,28 @@ test("Учёба: обзор, маршрут, практика и создани
       .getByRole("button", { name: "Проверить ответ", exact: true })
       .click();
     await page.getByText("Зачтено", { exact: true }).waitFor();
+    await page.waitForFunction(async () => {
+      const body = await fetch("/api/state", { cache: "no-store" }).then((r) =>
+        r.json(),
+      );
+      return body.data?.todos?.some(
+        (t) => t.note === "/learn?view=lesson&skill=cv&quest=q2" && t.done,
+      );
+    });
+    check(
+      true,
+      "зачтённый квест отмечен выполненным в плане и сохранён на сервере",
+    );
+    await page
+      .getByRole("button", { name: "Следующий шаг на завтра", exact: true })
+      .click();
+    await page
+      .getByText("Следующий квест добавлен в план на завтра.", { exact: true })
+      .waitFor();
+    check(
+      await page.getByRole("region", { name: "Результат занятия" }).isVisible(),
+      "понятный результат занятия и план на завтра",
+    );
     check(
       page.url().includes("quest=q2"),
       "после проверки открыт прежний квест с обратной связью",

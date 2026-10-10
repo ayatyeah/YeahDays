@@ -1,22 +1,19 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { motion, useReducedMotion } from "framer-motion";
-import { haptic, indicatorTween, springSnappy } from "@/lib/motion";
+import { haptic } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
-import { TAB_PATH, tabFromPath, type TabKey } from "@/lib/nav";
+import { TAB_PATH, tabFromPath } from "@/lib/nav";
 import { useEffect, useMemo } from "react";
 import { useKeyboardInset } from "@/lib/useKeyboardInset";
 import {
   LearnIcon,
   CommunityIcon,
   HomeIcon,
-  CalendarIcon,
   ProgressIcon,
   AccountIcon,
-  type IconProps,
 } from "@/components/nav-icons";
 
 const NAV = [
@@ -34,7 +31,6 @@ export default function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const section = tabFromPath(pathname);
-  const reducedMotion = useReducedMotion();
   const tab = useNavStore((s) => s.tab);
   const go = useNavStore((s) => s.go);
   const hydrated = useHydrated();
@@ -57,7 +53,9 @@ export default function BottomNav() {
       clearAppBadge?: () => Promise<void>;
     };
     if (!n.setAppBadge) return;
-    void (pending > 0 ? n.setAppBadge(pending) : n.clearAppBadge?.()).catch(() => {});
+    void (pending > 0 ? n.setAppBadge(pending) : n.clearAppBadge?.()).catch(
+      () => {},
+    );
   }, [pending]);
 
   /*
@@ -75,20 +73,21 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="yg-bottom-nav pointer-events-none fixed inset-x-0 z-40 lg:hidden"
+      className="yg-bottom-nav yg-capsule pointer-events-none fixed inset-x-0 z-40 lg:hidden"
       aria-label="Основная навигация"
       style={{ bottom: 0 }}
     >
-      <div className="pointer-events-auto liquid-bar border-t border-[var(--color-border-strong)] shadow-[var(--shadow-up)]">
-        <div
-          className="yg-bottom-nav-items mx-auto flex max-w-lg items-stretch gap-1 px-2"
-          style={{
-            height: "var(--nav-items-height, calc(64px + env(safe-area-inset-bottom)))",
-            paddingBottom: "var(--nav-items-inset, env(safe-area-inset-bottom))",
-          }}
-        >
+      <div className="pointer-events-auto yg-capsule-bar">
+        <div className="yg-bottom-nav-items yg-capsule-items">
           {NAV.map(({ tab: key, label, Icon }) => {
-            const active = key === "learn" ? LEARN_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`)) : key === "community" ? pathname === "/community" : section !== null && tab === key;
+            const active =
+              key === "learn"
+                ? LEARN_PATHS.some(
+                    (p) => pathname === p || pathname.startsWith(`${p}/`),
+                  )
+                : key === "community"
+                  ? pathname === "/community"
+                  : section !== null && tab === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
             return (
               <button
@@ -98,38 +97,29 @@ export default function BottomNav() {
                 // страниц возвращаемся через роутер Next.
                 onClick={() => {
                   if (!active) haptic("select");
-                  if (key === "learn" || key === "community") router.push(`/${key}`);
+                  if (key === "learn" || key === "community")
+                    router.push(`/${key}`);
                   else if (section === null) router.push(TAB_PATH[key]);
                   else go(key);
                 }}
                 aria-current={active ? "page" : undefined}
-                aria-label={badge ? `${label}, незавершённых дел: ${badge}` : label}
-                className={cn(
-                  "relative my-1 flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-xl text-[10px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-intelligence)] motion-reduce:transition-none",
-                  active ? "text-[var(--color-fg)]" : "text-[var(--color-fg-dim)] hover:text-[var(--color-fg)]",
-                )}
+                aria-label={
+                  badge ? `${label}, незавершённых дел: ${badge}` : label
+                }
+                title={label}
+                className={cn("yg-capsule-tab", active && "is-active")}
               >
-                <span className="relative flex h-8 w-12 items-center justify-center">
-                  {active && (
-                    <motion.span
-                      layoutId="nav-pill"
-                      className="absolute inset-0 rounded-full bg-[var(--color-intelligence)]/20"
-                      transition={reducedMotion ? { duration: 0 } : indicatorTween}
-                    />
-                  )}
-                  <Icon className={cn("relative h-[22px] w-[22px]", active && "text-[var(--color-intelligence)]")} />
+                <span className="yg-capsule-icon" aria-hidden="true">
+                  <Icon />
                   {badge > 0 && (
-                    <motion.span
-                      initial={reducedMotion ? false : { scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={springSnappy}
-                      className="absolute -right-0.5 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--color-strength)] px-1 text-[9px] font-bold text-[var(--color-bg)] shadow-[var(--shadow-1)]"
-                    >
+                    <span className="yg-capsule-badge">
                       {badge > 99 ? "99+" : badge}
-                    </motion.span>
+                    </span>
                   )}
                 </span>
-                <span className={cn("relative", active && "font-semibold")}>{label}</span>
+                <span className="yg-capsule-label" aria-hidden="true">
+                  <span>{label}</span>
+                </span>
               </button>
             );
           })}

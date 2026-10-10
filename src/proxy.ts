@@ -25,5 +25,6 @@ export default auth((req) => {
 export const config = {
   // Всё, кроме /api/*, служебных путей Next и файлов со статикой
   // (расширение в пути — иконки, manifest, sw.js и т.п.).
-  matcher: ["/((?!api|_next/static|_next/image|.*\\..*).*)"],
+  // events-data — статический JSON ивентов, вход не нужен (см. lib/publicPaths)
+  matcher: ["/((?!api|_next/static|_next/image|events-data|.*\\..*).*)"],
 };

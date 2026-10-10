@@ -7,29 +7,13 @@ import { cn } from "@/lib/cn";
 import type { Lang, StudyEvent } from "@/lib/events/types";
 import { useContentLang } from "@/i18n/locale";
 import { useTutorDetail } from "@/lib/tutorFocus";
+import { fastKey as storeKey, loadFastRead as loadRead } from "@/lib/events/fastProgress";
 
 /**
  * Фаст-мод: подготовка за несколько часов. Блоки идут по порядку от самых
  * «баллоёмких»; открыт один, «Дальше» отмечает его прочитанным и открывает
  * следующий. Отметки — на этом устройстве, в готовность не идут.
  */
-
-const storeKey = (userId: string, eventId: string) => `yg-fast:${userId}:${eventId}`;
-
-function loadRead(key: string): string[] {
-  try {
-    const raw = JSON.parse(localStorage.getItem(key) ?? "[]");
-    return Array.isArray(raw) ? raw.filter((x) => typeof x === "string") : [];
-  } catch {
-    return [];
-  }
-}
-
-/** Сколько блоков фаст-мода уже прочитано — для карточки на карте ивента. */
-export function fastProgress(userId: string, event: StudyEvent) {
-  const ids = new Set(event.fast?.sections.map((s) => s.id) ?? []);
-  return loadRead(storeKey(userId, event.id)).filter((id) => ids.has(id)).length;
-}
 
 export default function FastMode({
   event,

@@ -23,7 +23,10 @@ export const PUBLIC_PATHS = new Set([
  * предложит зарегистрироваться и вернёт обратно по callbackUrl.
  * /admin — своя дверь: туда пускают либо владельческий аккаунт, либо
  * логин с паролем консоли (см. lib/adminSession.ts), проверяет сама страница.
+ * /events-data — статический JSON с содержимым ивентов (одинаковым у всех):
+ * без входа переадресация на /login попала бы в кэш service worker'а вместо
+ * данных, а сами конспекты и раньше лежали в открытых JS-файлах.
  */
 export function needsLogin(pathname: string): boolean {
-  return !(PUBLIC_PATHS.has(pathname) || pathname.startsWith("/invite/") || pathname.startsWith("/admin"));
+  return !(PUBLIC_PATHS.has(pathname) || pathname.startsWith("/invite/") || pathname.startsWith("/admin") || pathname.startsWith("/events-data/"));
 }

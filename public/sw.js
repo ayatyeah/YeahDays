@@ -21,6 +21,8 @@ const PRECACHE = [
   "/progress",
   "/account",
   "/settings",
+  "/learn",
+  "/events",
   "/offline",
   "/manifest.webmanifest",
   "/favicon-v3.png",
@@ -112,7 +114,7 @@ self.addEventListener("message", (event) => {
         const keys = await cache.keys();
         await Promise.all(
           keys
-            .filter((req) => INSTANT.has(new URL(req.url).pathname))
+            .filter((req) => isInstant(new URL(req.url).pathname))
             .map((req) => cache.delete(req)),
         );
       }),
@@ -137,7 +139,8 @@ async function cacheFirst(request, cacheName) {
   const hit = await cache.match(request);
   if (hit) return hit;
   const res = await fetch(request);
-  if (res.ok && res.type === "basic") {
+  // переадресация (например, на вход) — не тот файл, который просили; не кэшируем
+  if (res.ok && res.type === "basic" && !res.redirected) {
     await cache.put(request, res.clone());
     trim(cacheName);
   }
@@ -165,7 +168,9 @@ async function staleWhileRevalidate(request, cacheName) {
  * на белый экран, пока телефон заново поднимает соединение с сервером.
  * Вход проверяет SessionGuard в браузере: копия из кэша сервер минует.
  */
-const INSTANT = new Set(["/app", "/today", "/calendar", "/progress", "/account", "/settings"]);
+const INSTANT = new Set(["/app", "/today", "/calendar", "/progress", "/account", "/settings", "/learn", "/events", "/community", "/challenge30", "/chat"]);
+/** Страницы ивентов тоже статичные (контент приходит отдельным чанком), их оболочку — сразу из кэша. */
+const isInstant = (path) => INSTANT.has(path) || /^\/events\/[a-z0-9-]+$/.test(path);
 
 /** Обновить копию раздела в фоне — к следующему запуску она будет свежей. */
 async function refresh(event, cache, path) {
@@ -197,7 +202,7 @@ async function navigate(event) {
   const cache = await caches.open(SHELL);
   const path = new URL(event.request.url).pathname;
 
-  if (INSTANT.has(path)) {
+  if (isInstant(path)) {
     const cached = await cache.match(path);
     if (cached && !cached.redirected) {
       event.waitUntil(refresh(event, cache, path));
@@ -262,6 +267,13 @@ self.addEventListener("fetch", (event) => {
   // Сборочные ассеты неизменяемы по контракту Next — только кэш.
   if (url.pathname.startsWith("/_next/static/")) {
     event.respondWith(cacheFirst(request, STATIC));
+    return;
+  }
+
+  // Содержимое ивента (app/events-data): в адресе id сборки, файл неизменен —
+  // берём из кэша этой сборки без перепроверки, сеть только в первый раз.
+  if (url.pathname.startsWith("/events-data/")) {
+    event.respondWith(cacheFirst(request, SHELL));
     return;
   }
 

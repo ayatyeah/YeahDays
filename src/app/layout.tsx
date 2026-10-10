@@ -10,6 +10,7 @@ import ThemeApplier from "@/components/ThemeApplier";
 import DomTranslator from "@/i18n/DomTranslator";
 import VisitBeacon from "@/components/VisitBeacon";
 import SessionGuard from "@/components/SessionGuard";
+import RoutePrefetch from "@/components/RoutePrefetch";
 
 /**
  * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
@@ -172,6 +173,7 @@ export default function RootLayout({
           </ErrorBoundary>
           <CreateTaskModal />
           <ServiceWorkerRegister />
+          <RoutePrefetch />
         </AuthProvider>
       </body>
     </html>

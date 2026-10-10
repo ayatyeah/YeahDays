@@ -197,8 +197,15 @@ export function nextStep(event: StudyEvent, progress: Progress): Step | null {
  * того, кто пропустил лекцию. Берётся лучший результат, а не последний,
  * чтобы повторение ради закрепления не наказывалось.
  */
+/** Шаг без содержимого — для списков, которым не нужен сам ивент (см. readinessFrom). */
+export type StepMeta = Pick<Step, "id" | "kind">;
+
 export function readiness(event: StudyEvent, progress: Progress) {
-  const all = steps(event);
+  return readinessFrom(steps(event), progress);
+}
+
+/** То же, что readiness, но по списку шагов: так список ивентов не тянет в браузер их контент. */
+export function readinessFrom(all: StepMeta[], progress: Progress) {
   const average = (kind: StepKind) => {
     const list = all.filter((s) => s.kind === kind);
     return list.length ? list.reduce((n, s) => n + (progress[s.id]?.best ?? 0), 0) / list.length : 0;
@@ -277,7 +284,10 @@ export function sanitizeProgress(event: StudyEvent, raw: unknown): Progress {
  * косточек» сюда не входит: он необязателен.
  */
 export function completed(event: StudyEvent, progress: Progress): boolean {
-  const all = steps(event);
+  return completedFrom(steps(event), progress);
+}
+
+export function completedFrom(all: StepMeta[], progress: Progress): boolean {
   if (!all.every((s) => progress[s.id])) return false;
   const final = all.find((s) => s.kind === "final");
   return !!final && (progress[final.id]?.best ?? 0) >= 0.8;

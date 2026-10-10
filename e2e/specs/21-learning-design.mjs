@@ -1,6 +1,8 @@
+import { mkdirSync } from "node:fs";
 import { test, check, newUser, session } from "../harness.mjs";
 
 test("Учёба: обзор, маршрут, практика и создание", async () => {
+  mkdirSync("artifacts/learning-concepts", { recursive: true });
   const user = await newUser();
   const { browser, page } = await session({
     user,
@@ -124,8 +126,8 @@ test("Учёба: обзор, маршрут, практика и создани
       .getByRole("button", { name: "Продолжить", exact: true })
       .waitFor();
     check(
-      (await page.locator(".learning-hero-mascot").count()) === 1,
-      "один маскот в обзоре",
+      (await page.locator(".learning-hero-mascot").count()) === 0,
+      "нет декоративного маскота в обзоре",
     );
     await page.screenshot({
       path: "artifacts/learning-concepts/implemented-mobile.png",

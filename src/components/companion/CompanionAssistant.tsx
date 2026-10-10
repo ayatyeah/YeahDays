@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
-import Image from "next/image";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useUserStore, isTodoOnDay, isTodoDone } from "@/store/useUserStore";
@@ -11,8 +10,10 @@ import { YgIcon } from "@/components/yg-icons";
 export default function CompanionAssistant({
   open,
   onClose,
+  initialMode = "menu",
 }: {
   open: boolean;
+  initialMode?: "menu" | "focus";
   onClose: () => void;
 }) {
   const [mounted, setMounted] = useState(false);
@@ -46,7 +47,7 @@ export default function CompanionAssistant({
     const el = dialog.current;
     if (!el) return;
     if (open) {
-      setMode("menu");
+      setMode(initialMode);
       setSaved(false);
       el.showModal();
       el.querySelector<HTMLElement>("h2")?.focus({ preventScroll: true });
@@ -59,7 +60,7 @@ export default function CompanionAssistant({
       el.close();
       delete document.body.dataset.modalOpen;
     };
-  }, [open, mounted]);
+  }, [open, mounted, initialMode]);
   function saveSteps() {
     const task = todos.find((t) => t.id === taskId);
     const titles = steps
@@ -93,13 +94,6 @@ export default function CompanionAssistant({
       }}
     >
       <div className="companion-sheet">
-        <Image
-          className="companion-peek"
-          src="/companion/peek.webp"
-          width={220}
-          height={160}
-          alt=""
-        />
         <div className="companion-handle" />
         <button
           className="companion-close"

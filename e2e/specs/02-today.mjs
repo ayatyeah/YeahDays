@@ -119,11 +119,14 @@ async function until(fn, message, timeout = 10_000) {
 /** Открыть «Сегодня» и вернуть локатор раздела. */
 async function openToday(page) {
   await openSection(page, "/today");
-  return page.locator('[data-section="today"]');
+  const sec = page.locator('[data-section="today"]');
+  await sec.getByText("Добавить или изменить задачи", { exact: true }).click();
+  return sec;
 }
 
 /** Развернуть расписание: в «Сегодня» оно свёрнуто до нажатия «показать». */
 async function showSchedule(sec) {
+  await sec.getByText("Расписание и инструменты", { exact: true }).click();
   await sec.getByRole("button", { name: "показать", exact: true }).tap();
   await sec.locator("[data-hour]").first().waitFor({ timeout: 10_000 });
 }

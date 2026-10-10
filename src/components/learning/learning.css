@@ -105,7 +105,7 @@
   gap: 18px;
   min-height: 46px;
   padding: 12px 20px;
-  background: #4d73ff;
+  background: var(--color-intelligence);
   color: white;
   font-size: 14px;
   font-weight: 600;
@@ -130,18 +130,18 @@
   border: 0;
   border-radius: 20px;
   overflow: hidden;
-  accent-color: #4d73ff;
+  accent-color: var(--color-intelligence);
   background: var(--color-border-strong);
 }
 .learning-page progress::-webkit-progress-bar {
   background: var(--color-border-strong);
 }
 .learning-page progress::-webkit-progress-value {
-  background: #6487ff;
+  background: var(--color-intelligence);
   border-radius: 20px;
 }
 .learning-page progress::-moz-progress-bar {
-  background: #6487ff;
+  background: var(--color-intelligence);
 }
 .learning-section-title {
   display: flex;
@@ -188,7 +188,7 @@
     box-shadow 0.18s ease;
 }
 .learning-subject:hover {
-  box-shadow: 0 4px 16px #4d73ff12;
+  box-shadow: 0 4px 16px var(--color-intelligence)12;
 }
 .learning-subject-icon {
   display: grid;
@@ -473,7 +473,7 @@
   color: white;
 }
 .learning-route [data-current="true"] .learning-node {
-  background: #4d73ff;
+  background: var(--color-intelligence);
   color: white;
 }
 .learning-route li > button {
@@ -510,7 +510,7 @@
   gap: 20px;
   justify-content: center;
   font-size: 12px;
-  background: #4d73ff;
+  background: var(--color-intelligence);
   color: white;
   min-height: 36px;
   border-radius: 12px;
@@ -590,7 +590,7 @@
   font-size: 13px;
 }
 .learning-tabs [aria-selected="true"] {
-  background: #4d73ff;
+  background: var(--color-intelligence);
   color: white;
 }
 .learning-reading {

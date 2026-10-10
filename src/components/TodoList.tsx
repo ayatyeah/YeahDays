@@ -161,6 +161,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Что нужно сделать?"
+          data-quick-todo
           maxLength={120}
           className="h-11 min-w-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none focus:border-[var(--color-fg-dim)]"
         />

@@ -1,3 +1,4 @@
+import { plural } from "./plural";
 /**
  * Ближайшая цель — «до чего осталось чуть-чуть».
  *
@@ -61,18 +62,6 @@ const STREAK_NEAR_DAYS = 3;
 
 /** Круглые вехи стрика, ради которых стоит тянуться. */
 const STREAK_TARGETS = [7, 14, 30, 50, 75, 100, 150, 200, 365];
-
-/**
- * Русская форма числительного: plural(1,'день','дня','дней') → «день».
- * one — 1, 21, 31…; few — 2–4, 22–24…; many — 0, 5–20, 11–14 (исключения).
- */
-function plural(n: number, one: string, few: string, many: string): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return one;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
-  return many;
-}
 
 /**
  * Ближайшая достижимая цель, либо null, если предложить нечего

@@ -89,21 +89,21 @@ export default function MascotGuide({ section }: { section?: string }) {
     href: "/today",
     action: "К плану дня",
   };
-  if (
-    !hydrated ||
-    !onboarded ||
-    key === "today" ||
-    key === "progress" ||
-    key === "learn"
-  )
-    return null;
+  // Contextual help belongs on Today; standalone courses have their own tutor.
+  if (!hydrated || !onboarded || key !== "home") return null;
   return (
     <>
       <button
         className="companion-mini-guide"
         onClick={() => setExpanded(true)}
       >
-        <Image src="/companion/portrait.webp" width={70} height={80} alt="" />
+        <Image
+          src="/companion/portrait.webp"
+          unoptimized
+          width={70}
+          height={80}
+          alt=""
+        />
         <span>
           <b>{guide.title}</b>
           <small>Помочь с маленьким шагом?</small>

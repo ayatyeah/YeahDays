@@ -2,9 +2,18 @@
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import AppBrand from "@/components/mono/AppBrand";
+import ProgressRing from "@/components/mono/ProgressRing";
 import { useRouter, useSearchParams } from "next/navigation";
 import { YgIcon } from "@/components/yg-icons";
+import { plural } from "@/lib/plural";
+import {
+  learningVisitKey,
+  orderLearningEvents,
+  summarizeLearningProgress,
+  type LearningEventSummary,
+  type LearningEventProgress,
+} from "@/lib/learningEvents";
 import { loadProgress } from "@/lib/events/storage";
 import "./learning.css";
 import Button from "@/components/ui/Button";
@@ -17,13 +26,6 @@ import { useSyncStatus } from "@/store/useSyncStatus";
 
 const field =
   "mt-2 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3 text-[16px]";
-export type LearningEventSummary = {
-  id: string;
-  course: string;
-  title: string;
-  lectures: number;
-  stepIds: string[];
-};
 export default function LearningPage({
   events,
 }: {
@@ -39,7 +41,10 @@ export default function LearningPage({
   const questId = params.get("quest") ?? "";
   const [lessonTab, setLessonTab] = useState<"lesson" | "practice">("lesson");
   const [help, setHelp] = useState(false);
-  const [eventDone, setEventDone] = useState<Record<string, number>>({});
+  const [eventProgress, setEventProgress] = useState<
+    Record<string, LearningEventProgress>
+  >({});
+  const [eventVisits, setEventVisits] = useState<Record<string, number>>({});
   function navigate(next: string, skillId = "", nextQuest = "") {
     const query = new URLSearchParams();
     if (next !== "hub") query.set("view", next);
@@ -116,17 +121,31 @@ export default function LearningPage({
     setHelp(false);
   }, [selected, questId, view]);
   useEffect(() => {
-    setEventDone({});
+    setEventProgress({});
+    setEventVisits({});
+    if (owner) {
+      try {
+        setEventVisits(
+          JSON.parse(localStorage.getItem(learningVisitKey(owner)) ?? "{}"),
+        );
+      } catch {
+        /* storage unavailable */
+      }
+    }
     if (owner)
-      setEventDone(
+      setEventProgress(
         Object.fromEntries(
           events.map((e) => {
             const progress = loadProgress(owner, e.id);
-            return [e.id, e.stepIds.filter((id) => progress[id]).length];
+            return [e.id, summarizeLearningProgress(e, progress)];
           }),
         ),
       );
   }, [owner, events]);
+  const orderedEvents = orderLearningEvents(events, eventProgress);
+  const lastStartedEvent = orderedEvents
+    .filter((e) => eventProgress[e.id]?.done)
+    .sort((a, b) => (eventVisits[b.id] ?? 0) - (eventVisits[a.id] ?? 0))[0];
   const skill =
     data?.skills.find((s) => s.id === selected) ??
     data?.skills.find((s) => s.quests.some((q) => !q.completed)) ??
@@ -397,6 +416,7 @@ export default function LearningPage({
     <div
       className={`learning-page ${view === "lesson" ? "learning-focus" : ""}`}
     >
+      {view === "hub" && <AppBrand />}
       <header className="learning-header">
         <div>
           {view !== "hub" && (
@@ -455,6 +475,12 @@ export default function LearningPage({
         </p>
       )}
       {view === "hub" && (
+        <nav className="mono-learning-links" aria-label="Разделы учёбы">
+          <a href="#learning-subjects">Мои предметы</a>
+          <a href="#learning-exams">Подготовка к экзаменам</a>
+        </nav>
+      )}
+      {view === "hub" && (
         <div className="learning-layout">
           <div className="learning-main">
             {data && (
@@ -505,19 +531,21 @@ export default function LearningPage({
                     <YgIcon name="chevron" />
                   </button>
                 </div>
-                <Image
-                  src="/companion/portrait.webp"
-                  width={180}
-                  height={230}
-                  alt=""
-                  className="learning-hero-mascot"
-                  priority
-                />
+                {skill && (
+                  <ProgressRing
+                    value={complete}
+                    max={total}
+                    label={`Прогресс: ${complete} из ${total}`}
+                    tone="sage"
+                  >
+                    {complete}/{total}
+                  </ProgressRing>
+                )}
               </section>
             )}
             <section>
               <div className="learning-section-title">
-                <h2>Мои предметы</h2>
+                <h2 id="learning-subjects">Мои предметы</h2>
                 <button disabled={!data} onClick={() => navigate("create")}>
                   + Новый маршрут
                 </button>
@@ -571,31 +599,59 @@ export default function LearningPage({
             </section>
             <section>
               <div className="learning-section-title">
-                <h2>Подготовка к экзаменам</h2>
+                <h2 id="learning-exams">Подготовка к экзаменам</h2>
                 <Link href="/events">
                   Все ивенты <YgIcon name="chevron" />
                 </Link>
               </div>
               <div className="learning-events">
-                {events.slice(0, 3).map((e, i) => (
+                {orderedEvents.map((e, i) => (
                   <Link
                     href={`/events/${e.id}`}
                     key={e.id}
-                    className={`learning-event learning-tone-${(i + 1) % 3}`}
+                    className="learning-event"
                   >
                     <span className="learning-eyebrow">{e.course}</span>
                     <h3>{e.title}</h3>
-                    <p>{e.lectures} лекций · Конспекты и квизы</p>
+                    <p>{`${e.lectures} ${plural(e.lectures, "лекция", "лекции", "лекций")} · Конспекты и квизы`}</p>
+                    <div className="learning-event-badges">
+                      {e.mocks > 0 && (
+                        <span>
+                          {e.mocks}{" "}
+                          {plural(
+                            e.mocks,
+                            "пробный вариант",
+                            "пробных варианта",
+                            "пробных вариантов",
+                          )}
+                        </span>
+                      )}
+                      {e.practice && <span>Практикум</span>}
+                      <span>
+                        <YgIcon name="bulb" /> ИИ-помощник
+                      </span>
+                    </div>
                     <div className="learning-event-progress">
                       <small>
-                        {owner
-                          ? `${eventDone[e.id] ?? 0} / ${e.stepIds.length} проверок`
-                          : "Учебная программа"}
+                        {owner ? (
+                          <>
+                            {eventProgress[e.id]?.done ?? 0} /{" "}
+                            {e.stepIds.length}{" "}
+                            {plural(
+                              e.stepIds.length,
+                              "проверка",
+                              "проверки",
+                              "проверок",
+                            )}
+                          </>
+                        ) : (
+                          "Учебная программа"
+                        )}
                       </small>
                       <YgIcon name="chevron" />
                     </div>
                     <progress
-                      value={eventDone[e.id] ?? 0}
+                      value={eventProgress[e.id]?.done ?? 0}
                       max={e.stepIds.length || 1}
                       aria-label={`Пройденные проверки: ${e.course}`}
                     />
@@ -620,7 +676,20 @@ export default function LearningPage({
             </section>
             <section className="learning-help-card">
               <h2>Разберём сложное</h2>
-              <p>Задай вопрос по теме или вернись к текущему заданию.</p>
+              <p>
+                Готовишься к экзамену? В ивенте помощник видит твой конспект и
+                вариант.
+              </p>
+              <Link
+                href={
+                  lastStartedEvent
+                    ? `/events/${lastStartedEvent.id}`
+                    : "/events"
+                }
+              >
+                <YgIcon name="book" /> Помощник по экзамену{" "}
+                <YgIcon name="chevron" />
+              </Link>
               <Link href="/chat">
                 <YgIcon name="bulb" /> ИИ-помощник <YgIcon name="chevron" />
               </Link>
@@ -853,12 +922,6 @@ export default function LearningPage({
               </button>
               {help && (
                 <div className="learning-help-expanded">
-                  <Image
-                    src="/companion/portrait.webp"
-                    width={56}
-                    height={70}
-                    alt=""
-                  />
                   <div>
                     <p>
                       Начни с одного вопроса: какая часть объяснения непонятна?

@@ -1,0 +1,718 @@
+/* Monochrome app theme. Marketing keeps its independent colors. */
+:root[data-theme="light"] body:has(.yg-app),
+:root[data-theme="light"] .yg-app {
+  --color-bg: #fff;
+  --color-bg-soft: #f5f5f5;
+  --color-surface: #fff;
+  --color-surface-2: #f1f2f3;
+  --color-fg: #141416;
+  --color-fg-dim: #505256;
+  --color-muted: #66686d;
+  --color-border: #e9eaec;
+  --color-border-strong: #d3d5d8;
+  --color-intelligence: #171719;
+  --color-stability: #5e7565;
+  --color-strength: #8d5c51;
+  --color-health: #746a7c;
+  --color-wealth: #776d59;
+  --companion-blue: #f0f1f2;
+  --companion-peach: #f2efeb;
+  background: var(--color-bg);
+}
+:root:not([data-theme="light"]) body:has(.yg-app),
+:root:not([data-theme="light"]) .yg-app {
+  --color-bg: #121213;
+  --color-bg-soft: #171719;
+  --color-surface: #1c1c1e;
+  --color-surface-2: #29292c;
+  --color-fg: #f5f5f5;
+  --color-fg-dim: #b9bbbe;
+  --color-muted: #aaadb1;
+  --color-border: #323235;
+  --color-border-strong: #49494d;
+  --color-intelligence: #d4d6d8;
+  --color-stability: #a2b3a5;
+  --color-strength: #c2a399;
+  --color-health: #b4acba;
+  --color-wealth: #b8b09f;
+  --companion-blue: #252629;
+  --companion-peach: #2a2825;
+  background: var(--color-bg);
+}
+.yg-app {
+  background: var(--color-bg);
+}
+.yg-app .section-pane {
+  zoom: 1;
+}
+.yg-app .yg-content-frame {
+  padding-top: max(18px, env(safe-area-inset-top));
+}
+.yg-app .surface {
+  box-shadow: none;
+}
+.yg-app .yg-sidebar {
+  background: var(--color-bg);
+  box-shadow: none;
+  border-radius: 0;
+  top: 0;
+  bottom: 0;
+}
+.yg-app .yg-sidebar button[aria-current="page"] {
+  color: var(--color-fg);
+  background: var(--color-surface-2);
+}
+.yg-app .yg-sidebar img {
+  filter: grayscale(1) brightness(0);
+}
+:root:not([data-theme="light"]) .yg-app .yg-sidebar img {
+  filter: grayscale(1) brightness(0) invert(1);
+}
+.yg-app .yg-bottom-nav button[aria-current="page"] {
+  color: var(--color-fg);
+}
+.yg-app .yg-bottom-nav button[aria-current="page"] > span > span:first-child {
+  background: var(--color-surface-2);
+}
+.yg-app .yg-bottom-nav button svg {
+  color: inherit;
+}
+.mono-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--color-fg);
+  margin-bottom: 18px;
+  font-size: 19px;
+  font-weight: 760;
+  letter-spacing: -0.7px;
+}
+.mono-brand img {
+  width: 34px;
+  height: 27px;
+  object-fit: contain;
+  filter: brightness(0);
+}
+:root:not([data-theme="light"]) .mono-brand img {
+  filter: none;
+}
+.mono-page-heading {
+  margin-bottom: 18px;
+}
+.mono-page-heading h1 {
+  font-size: 30px;
+  line-height: 1.15;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+.mono-page-heading p {
+  margin-top: 5px;
+  color: var(--color-fg-dim);
+  font-size: 13px;
+}
+.mono-day-overview {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  border-radius: 20px;
+  padding: 16px;
+  background: #171719;
+  color: #fff;
+}
+.mono-day-overview h2 {
+  font-size: 18px;
+  font-weight: 650;
+}
+.mono-day-overview p {
+  font-size: 12px;
+  color: #c7c9cc;
+  margin-top: 5px;
+}
+.mono-ring {
+  display: inline-grid;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  place-items: center;
+  --ring-color: var(--color-fg);
+}
+.mono-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.mono-ring circle {
+  fill: none;
+  stroke-width: 6;
+}
+.mono-ring-track {
+  stroke: var(--color-border);
+}
+.mono-ring-fill {
+  stroke: var(--ring-color);
+  stroke-linecap: round;
+  transition: stroke-dasharray 300ms ease;
+}
+.mono-ring b {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.mono-ring-sage {
+  --ring-color: #9eafa1;
+}
+.mono-ring-stone {
+  --ring-color: #aaa69e;
+}
+.mono-day-overview .mono-ring-track {
+  stroke: #46474a;
+}
+.mono-week {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 17px 0 6px;
+}
+.mono-week time {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  flex: 1;
+}
+.mono-week small {
+  font-size: 10px;
+  text-transform: capitalize;
+  color: var(--color-fg-dim);
+}
+.mono-week b {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--color-surface-2);
+}
+.mono-week time[aria-current] b {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.yg-app .companion-energy {
+  gap: 8px;
+}
+.yg-app .companion-energy button {
+  border: 0;
+  background: var(--color-surface-2);
+  padding: 9px 10px;
+  min-height: 38px;
+  font-size: 12px;
+  border-radius: 12px;
+}
+.yg-app .companion-energy button[aria-pressed="true"] {
+  color: var(--color-bg);
+  background: var(--color-fg);
+}
+.yg-app .companion-header {
+  margin-bottom: 24px;
+}
+.yg-app .companion-today-heading {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+.companion-today-heading h2 {
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+}
+.mono-add {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  font-size: 23px;
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.yg-app .companion-task {
+  min-height: 70px;
+  background: var(--color-surface-2);
+  border-radius: 16px;
+  padding: 14px;
+}
+.yg-app .companion-task b {
+  font-size: 14px;
+  line-height: 1.35;
+}
+.yg-app .companion-task small {
+  font-size: 11px;
+}
+.yg-app .companion-check {
+  border-color: var(--color-fg);
+  width: 25px;
+  height: 25px;
+}
+.yg-app .companion-check[aria-pressed="true"] {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.yg-app .companion-day-meter {
+  border: 0;
+  margin: 10px 0;
+  padding: 7px 0;
+  background: none;
+}
+.yg-app .companion-day-meter > div,
+.yg-app .companion-day-meter > progress {
+  display: none;
+}
+.mono-day-support {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 20px;
+}
+.mono-focus-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  background: #171719;
+  color: #fff;
+  border-radius: 16px;
+  text-align: left;
+}
+.mono-focus-strip > svg {
+  width: 25px;
+  height: 25px;
+}
+.mono-focus-strip > span:nth-child(2) {
+  flex: 1;
+}
+.mono-focus-strip b,
+.mono-helper-row b {
+  display: block;
+  font-size: 13px;
+}
+.mono-focus-strip small {
+  display: block;
+  font-size: 11px;
+  color: #c7c9cc;
+  margin-top: 3px;
+}
+.mono-play {
+  border-radius: 50%;
+  background: #fff;
+  color: #171719;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+.mono-helper-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 5px 0;
+}
+.mono-helper-row img {
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  width: 38px;
+  height: 38px;
+  background: #ecebea;
+}
+.mono-helper-row > span {
+  flex: 1;
+}
+.mono-helper-row small {
+  display: block;
+  font-size: 11px;
+  color: var(--color-fg-dim);
+  margin-top: 2px;
+}
+.mono-helper-row svg {
+  width: 18px;
+  height: 18px;
+}
+body:has(.yg-app) .companion-sheet {
+  padding-top: 26px;
+}
+body:has(.yg-app) .companion-dialog {
+  padding-top: 0;
+}
+body:has(.yg-app) :is(.companion-primary, button[data-variant="primary"]) {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  box-shadow: none;
+}
+body:has(.yg-app) .companion-option-icon {
+  background: var(--color-surface-2);
+  color: var(--color-fg);
+}
+.yg-app .learning-primary {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.yg-app .learning-continue {
+  background: #171719;
+  color: #fff;
+  min-height: 185px;
+  padding: 20px;
+}
+.yg-app .learning-continue-copy {
+  padding-right: 78px;
+}
+.yg-app .learning-continue > .mono-ring {
+  position: absolute;
+  top: 20px;
+  right: 16px;
+  width: 66px;
+  height: 66px;
+}
+.yg-app .learning-continue .mono-ring-track {
+  stroke: #45464a;
+}
+.yg-app .learning-continue :is(.learning-eyebrow, small) {
+  color: #c8cacc;
+}
+.yg-app .learning-continue .learning-primary {
+  color: #171719;
+  background: #fff;
+}
+.yg-app .learning-continue h2 {
+  font-size: 23px;
+}
+.yg-app .learning-event {
+  background: #171719;
+  color: #fff;
+  border: 1px solid #303033;
+}
+.yg-app .learning-event :is(p, small, .learning-eyebrow) {
+  color: #ccced1;
+}
+.yg-app .learning-event progress,
+.yg-app .learning-continue progress {
+  background: #484a4d;
+}
+.yg-app .learning-event progress::-webkit-progress-bar,
+.yg-app .learning-continue progress::-webkit-progress-bar {
+  background: #484a4d;
+}
+.yg-app .learning-event progress::-webkit-progress-value,
+.yg-app .learning-continue progress::-webkit-progress-value {
+  background: #a3b1a5;
+}
+.yg-app .learning-event progress::-moz-progress-bar,
+.yg-app .learning-continue progress::-moz-progress-bar {
+  background: #a3b1a5;
+}
+.yg-app .learning-subject,
+.yg-app .learning-help-card,
+.yg-app .learning-challenge {
+  background: var(--color-surface-2);
+}
+.yg-app .learning-subject-icon {
+  color: var(--color-fg);
+  background: var(--color-bg);
+}
+.yg-app .learning-event-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+.yg-app .learning-event-badges span {
+  color: #dedfe1;
+  background: #343538;
+  border-radius: 20px;
+  padding: 4px 8px;
+  font-size: 10px;
+}
+.yg-app .learning-event-badges svg {
+  width: 12px;
+  height: 12px;
+  display: inline;
+}
+.yg-app .learning-help-card {
+  display: block;
+}
+.mono-progress .companion-subtitle {
+  text-align: left;
+}
+.mono-rings {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 4px 0 24px;
+}
+.mono-rings > div {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+.mono-rings > div > span:last-child {
+  font-size: 12px;
+  color: var(--color-fg-dim);
+  text-align: center;
+}
+.mono-rings .mono-ring {
+  width: min(100%, 100px);
+  height: auto;
+  aspect-ratio: 1;
+}
+.mono-week-chart {
+  border-radius: 20px;
+  background: #171719;
+  color: #fff;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+.mono-week-chart > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mono-week-chart h2 {
+  font-size: 18px;
+  font-weight: 650;
+}
+.mono-week-chart small,
+.mono-week-chart p {
+  font-size: 11px;
+  color: #d0d2d4;
+}
+.mono-week-chart p {
+  margin-top: 10px;
+}
+.mono-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+  margin-top: 22px;
+}
+.mono-bars > div {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+.mono-bar-track {
+  display: flex;
+  align-items: end;
+  height: 92px;
+  width: 100%;
+}
+.mono-bar-track i {
+  display: block;
+  width: 100%;
+  border-radius: 7px;
+  background: #777b80;
+}
+.mono-bar-track .is-today {
+  background: #a2b3a5;
+}
+.yg-app .companion-skills {
+  margin-bottom: 18px;
+}
+.yg-app .mono-wardrobe-details .companion-stage {
+  max-height: 220px;
+}
+.yg-app .mono-wardrobe-details .companion-stage img {
+  max-height: 220px;
+}
+/* Event source files are owned by the event team. Theme integration stays in the shell. */
+.yg-app[data-study] [class*="bg-gradient"] {
+  background-image: none;
+  background-color: var(--color-surface-2);
+  border-color: var(--color-border-strong);
+}
+.yg-app[data-study] [class*="bg-violet-400"] {
+  background-color: var(--color-fg);
+}
+.yg-app[data-study] [class*="border-violet-400"] {
+  border-color: var(--color-border-strong);
+}
+.yg-app[data-study] [class*="bg-violet-500/"] {
+  background-color: var(--color-surface-2);
+}
+.yg-app[data-study] article {
+  box-shadow: none;
+}
+.yg-app[data-study] article h3 {
+  letter-spacing: -0.4px;
+  line-height: 1.4;
+}
+.yg-app[data-study] article blockquote {
+  background: var(--color-surface-2);
+  border-color: #9eafa1;
+}
+.yg-app[data-study] section > h2[lang="en"] {
+  font-size: clamp(21px, 3vw, 28px);
+  letter-spacing: -0.5px;
+}
+.yg-app[data-study] button[lang="en"] {
+  min-height: 52px;
+  border-radius: 16px;
+  background: var(--color-surface-2);
+}
+.yg-app[data-study] button[lang="en"][aria-pressed="true"] {
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-color: var(--color-fg);
+}
+.yg-app[data-study] button[lang="en"][class*="border-emerald"] {
+  border-color: #839c89;
+}
+.yg-app[data-study] button[lang="en"][class*="border-red"] {
+  border-color: #aa8278;
+}
+.yg-app[data-study] [class*="bg-emerald-500/"] {
+  background-color: color-mix(in srgb, #839c89 15%, var(--color-bg));
+}
+.yg-app[data-study] [class*="bg-red-500/"] {
+  background-color: color-mix(in srgb, #aa8278 15%, var(--color-bg));
+}
+@media (min-width: 1024px) {
+  .yg-app .yg-content-frame {
+    padding-top: 28px;
+  }
+  .yg-app .companion-header {
+    max-width: 670px;
+  }
+  .yg-app .mono-weekly-overview {
+    max-width: 680px;
+  }
+  .yg-app .companion-day-layout {
+    align-items: start;
+  }
+  .mono-page-heading h1 {
+    font-size: 34px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mono-ring-fill {
+    transition: none;
+  }
+}
+body:has(.yg-app) .companion-sheet {
+  margin-top: 0;
+}
+.mono-learning-links {
+  display: flex;
+  gap: 5px;
+  padding: 5px;
+  background: var(--color-surface-2);
+  border-radius: 24px;
+  margin-bottom: 22px;
+  width: fit-content;
+  max-width: 100%;
+}
+.mono-learning-links a {
+  padding: 8px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  text-align: center;
+}
+.mono-learning-links a:first-child {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.yg-app .learning-event .learning-event-progress svg {
+  color: #d4d6d8;
+}
+.yg-app[data-study] a[href^="/events/"] {
+  background: #171719;
+  color: white;
+  --color-muted: #c6c8cc;
+  --color-bg: #343538;
+  --color-surface-2: #444649;
+}
+.yg-app[data-study] section[class*="from-violet-500"] {
+  background: #171719;
+  color: #fff;
+  --color-muted: #c6c8cc;
+  --color-bg: #29292c;
+  --color-surface-2: #444649;
+  --color-fg: #fff;
+}
+.yg-app[data-study]
+  section[class*="from-violet-500"]
+  button[data-variant="primary"] {
+  background: #fff;
+  color: #171719;
+}
+.yg-app[data-study] section[class*="from-violet-500"] [class*="bg-violet-400"] {
+  background: #9eafa1;
+}
+.yg-app .companion-skills progress {
+  accent-color: var(--color-fg);
+}
+.yg-app .companion-skills progress::-webkit-progress-value {
+  background: var(--color-fg);
+}
+.yg-app .companion-skills progress::-moz-progress-bar {
+  background: var(--color-fg);
+}
+body:has(.yg-app) .companion-dialog::backdrop {
+  background: #0008;
+}
+/* Compact first screen, while preserving 44px task hit areas. */
+.yg-app .companion-check {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+}
+.yg-app .companion-check[aria-pressed="true"] {
+  background: transparent;
+}
+.yg-app .companion-check:before {
+  border-color: var(--color-fg);
+}
+.yg-app .companion-check[aria-pressed="true"]:before {
+  background: var(--color-fg);
+}
+.yg-app .companion-check[aria-pressed="true"] svg {
+  color: var(--color-bg);
+}
+.yg-app .companion-task {
+  min-height: 64px;
+  padding: 10px;
+  gap: 8px;
+}
+.yg-app .companion-header {
+  margin-bottom: 18px;
+}
+.yg-app .companion-header .mono-brand {
+  margin-bottom: 12px;
+}
+.mono-page-heading {
+  margin-bottom: 12px;
+}
+.mono-day-overview {
+  padding: 14px;
+}
+.mono-day-overview .mono-ring {
+  width: 64px;
+  height: 64px;
+}
+.mono-week {
+  padding-top: 12px;
+}
+.yg-app .companion-energy-label {
+  margin-top: 10px;
+}
+.yg-app .companion-energy button[aria-pressed="true"] {
+  box-shadow: none;
+}
+.yg-app .learning-route [data-current="true"] .learning-node,
+.yg-app .learning-tabs [aria-selected="true"],
+.yg-app .learning-start { color: var(--color-bg); }
+:root:not([data-theme="light"]) .yg-app .learning-route [data-done="true"] .learning-node { color: #141416; }

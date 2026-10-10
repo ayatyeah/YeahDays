@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
+import { dailyLimit } from "@/lib/aiLimit";
 import { ChallengeError, applyReview, dayIndex, parseBrief, localDay, plusDays, logBlock, reviewAllowed, weekSummary, type Plan30 } from "@/lib/challenge30";
 import { createRecipe, reviewRecipe } from "@/lib/challenge30Ai";
 export const runtime = "nodejs";
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
       if (b.consent !== "challenge30-v1") throw new ChallengeError("Нужно согласие на отправку анкеты в OpenAI");
       const brief = parseBrief(b.brief);
       if (!available()) return NextResponse.json({ error: "ИИ ещё не подключён" }, { status: 503 });
-      if (!rateLimit("challenge30:global", 100, 86400000)) return NextResponse.json({ error: "Общий дневной лимит ИИ исчерпан" }, { status: 429 });
+      if (!(await dailyLimit("challenge30:global", 100))) return NextResponse.json({ error: "Общий дневной лимит ИИ исчерпан" }, { status: 429 });
       const token = randomUUID(); const now = new Date(); const day = now.toISOString().slice(0, 10);
       await locked(userId, async (tx, row) => {
         if (row.revision !== b.revision) throw new ChallengeError("Челлендж изменился. Обнови страницу");
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
       if (b.consent !== "challenge30-v1") throw new ChallengeError("Нужно согласие на отправку данных плана в OpenAI");
       const note = typeof b.note === "string" ? b.note.trim().slice(0, 300) : "";
       if (!available()) return NextResponse.json({ error: "ИИ ещё не подключён" }, { status: 503 });
-      if (!rateLimit("challenge30:global", 100, 86400000)) return NextResponse.json({ error: "Общий дневной лимит ИИ исчерпан" }, { status: 429 });
+      if (!(await dailyLimit("challenge30:global", 100))) return NextResponse.json({ error: "Общий дневной лимит ИИ исчерпан" }, { status: 429 });
       const token = randomUUID(); const now = new Date(); const day = now.toISOString().slice(0, 10);
       const snapshot = await locked(userId, async (tx, row) => {
         if (row.revision !== b.revision) throw new ChallengeError("Челлендж изменился. Обнови страницу");

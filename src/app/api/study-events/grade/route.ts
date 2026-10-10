@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
+import { dailyLimit } from "@/lib/aiLimit";
 import { findGradeTarget, GRADE_CONSENT, gradeAnswer, gradeAvailable, MAX_ANSWER, type GradeLang } from "@/lib/examGrade";
 
 export const runtime = "nodejs";
@@ -49,8 +50,8 @@ export async function POST(req: Request) {
   // Целый вариант — 22 подпункта: в минуту хватает на один вариант с запасом,
   // за день — на несколько вариантов. Общий лимит держит расход в рамках.
   if (!rateLimit(`grade:${userId}`, 25, 60_000)) return json({ error: "Слишком часто — подожди минуту" }, 429);
-  if (!rateLimit(`grade-day:${userId}`, 150, 86_400_000)) return json({ error: "На сегодня проверок больше нет — лимит обновится через сутки" }, 429);
-  if (!rateLimit("grade:global", 4000, 86_400_000)) return json({ error: "Общий дневной лимит ИИ исчерпан" }, 429);
+  if (!(await dailyLimit(`grade-day:${userId}`, 150))) return json({ error: "На сегодня проверок больше нет — лимит обновится через сутки" }, 429);
+  if (!(await dailyLimit("grade:global", 4000))) return json({ error: "Общий дневной лимит ИИ исчерпан" }, 429);
 
   try {
     return json(await gradeAnswer(target, answer, lang));

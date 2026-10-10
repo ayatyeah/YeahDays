@@ -14,7 +14,7 @@ async function ask(schema: object, instructions: string, input: object, budget: 
   if (!key) throw new Error("ИИ ещё не подключён: нужен OPENAI_API_KEY на сервере");
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST", signal: AbortSignal.timeout(75_000), headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-    body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4o", store: false, max_output_tokens: budget,
+    body: JSON.stringify({ model: process.env.OPENAI_MODEL || "gpt-4.1-mini", store: false, max_output_tokens: budget,
       instructions, input: JSON.stringify(input), text: { format: { type: "json_schema", name: "learning", strict: true, schema } },
     }),
   });

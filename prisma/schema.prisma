@@ -665,6 +665,16 @@ model EventReport {
   @@index([status, createdAt])
 }
 
+// Daily AI limits that survive a deploy (lib/aiLimit.ts): one counter per key and UTC day.
+// Keys look like "tutor-day:<userId>" or "tutor:global"; no prompt text. Rows older than two days are deleted.
+model AiLimit {
+  key String
+  day String
+  count Int @default(0)
+  @@id([key, day])
+  @@index([day])
+}
+
 // Daily OpenAI usage per feature. Counters only: no user, no prompt text.
 model AiUsage {
   day String

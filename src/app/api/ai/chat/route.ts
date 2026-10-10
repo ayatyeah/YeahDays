@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { rateLimit } from "@/lib/rateLimit";
+import { dailyLimit } from "@/lib/aiLimit";
 import { askChat, type ChatMessage } from "@/lib/aiChat";
 import { requestScopes, permittedHistory, AI_ACCESS_VERSION, type AiScope } from "@/lib/aiAccess";
 import { loadAiContext } from "@/lib/aiContext";
@@ -45,7 +46,7 @@ export async function POST(req: Request) {
       if ((row.messages as ChatMessage[]).length >= 200) return { row, kind: "full" };
       if (body.expectedRevision !== undefined && body.expectedRevision !== row.revision) return { row, kind: "changed" };
       if (view(row).busy) return { row, kind: "busy" };
-      if (!rateLimit(`chat:daily:${userId}`, 60, 86400000) || !rateLimit("chat:daily:global", 1000, 86400000)) return { row, kind: "limit" };
+      if (!(await dailyLimit(`chat:daily:${userId}`, 60)) || !(await dailyLimit("chat:daily:global", 1000))) return { row, kind: "limit" };
       await tx.aiChat.update({ where: { userId }, data: { pendingId: body.requestId, pendingAt: new Date() } });
       return { row, kind: "reserved" };
     }, { timeout: 15000 });

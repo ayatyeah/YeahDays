@@ -10,6 +10,7 @@ import "./mono/mono.css";
 import "./dayflow/dayflow.css";
 import "./capsule-nav.css";
 import "@/components/dayflow/polish.css";
+import StandaloneViewportFix from "./StandaloneViewportFix";
 import BottomNav from "./BottomNav";
 import Sidebar from "./Sidebar";
 import InstallPrompt from "./InstallPrompt";
@@ -92,6 +93,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         className="yg-app"
         data-study={pathname.startsWith("/events") ? "true" : undefined}
       >
+        <StandaloneViewportFix />
         <Sidebar />
         {/* Снизу отступа у рамки нет: он живёт ВНУТРИ прокручиваемого раздела
           (.section-pane в globals.css). Иначе прокрутка заканчивалась выше

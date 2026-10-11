@@ -75,7 +75,7 @@ export default function BottomNav() {
     <nav
       className="yg-bottom-nav yg-capsule pointer-events-none fixed inset-x-0 z-40 lg:hidden"
       aria-label="Основная навигация"
-      style={{ bottom: 0 }}
+      style={{ top: "var(--app-bottom, 100dvh)", bottom: "auto", transform: "translateY(-100%)" }}
     >
       <div className="pointer-events-auto yg-capsule-bar">
         <div className="yg-bottom-nav-items yg-capsule-items">

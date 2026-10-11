@@ -1,91 +1,56 @@
 "use client";
 
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
-/**
- * Лечит известную ошибку WebKit в установленном PWA (display: standalone).
- *
- * При запуске с домашнего экрана iOS считает вьюпорт по высоте окна Safari
- * — с несуществующей нижней панелью — и не пересчитывает его до первого
- * скролла. В итоге нижняя навигация (position: fixed; bottom: 0) висит на
- * ~80pt выше края экрана, пока пользователь не свайпнет.
- *
- * Уговаривать WebKit пересчитать вьюпорт (менять высоту корня) не помогло.
- * Поэтому меряем сами: в standalone на iPhone настоящая высота — это
- * screen.height (статус-бар прозрачный, приложение занимает экран целиком).
- * Если innerHeight меньше на высоту панели Safari, выставляем рамке
- * приложения высоту экрана в пикселях (--app-h) и сдвигаем таб-бар вниз на
- * разницу (--nav-offset, отрицательный bottom). Как только WebKit сам
- * пересчитает вьюпорт, разница станет нулём и переменные снимутся.
- *
- * Дополнительно повторяем то, что помогает руками: крошечный скролл
- * активного раздела — часто именно он и заставляет WebKit проснуться.
- *
- * Только iOS (у Safari есть navigator.standalone) и только standalone:
- * на Android innerHeight законно меньше экрана из-за системной панели.
+/** Share the visible PWA height between the shell and bottom navigation.
+ * screen.height includes system UI and is not the application's viewport.
+ * Ignore keyboard/pinch changes; they must not resize the app behind a form.
  */
 export default function StandaloneViewportFix() {
-  useEffect(() => {
-    const nav = window.navigator as Navigator & { standalone?: boolean };
-    const isIos = "standalone" in nav;
-    const standalone =
-      window.matchMedia?.("(display-mode: standalone)").matches || nav.standalone === true;
-    if (!isIos || !standalone) return;
-
+  useLayoutEffect(() => {
+    const nav = navigator as Navigator & { standalone?: boolean };
+    if (!nav.standalone && !matchMedia("(display-mode: standalone)").matches) return;
     const root = document.documentElement.style;
-
+    const viewport = window.visualViewport;
+    let frame = 0;
     const apply = () => {
-      const portrait = window.matchMedia("(orientation: portrait)").matches;
-      const full = portrait ? window.screen.height : window.screen.width;
-      const diff = full - window.innerHeight;
-      // 40–200: высота панели Safari (~80pt), а не клавиатура и не ошибка замера
-      if (diff > 40 && diff < 200) {
-        root.setProperty("--app-h", `${full}px`);
-        root.setProperty("--nav-offset", `${-diff}px`);
-      } else {
-        root.removeProperty("--app-h");
-        root.removeProperty("--nav-offset");
-      }
+      if (viewport && Math.abs(viewport.scale - 1) > 0.01) return;
+      const focused = document.activeElement;
+      if (focused instanceof HTMLElement &&
+          (focused.matches("input, textarea, select") || focused.isContentEditable)) return;
+      const height = viewport?.height ?? window.innerHeight;
+      if (!Number.isFinite(height) || height <= 0) return;
+      root.setProperty("--app-h", `${height}px`);
+      root.setProperty("--app-bottom", `${height + (viewport?.offsetTop ?? 0)}px`);
     };
-
-    const nudge = () => {
-      const pane = document.querySelector<HTMLElement>("[data-section-active]");
-      if (!pane) return;
-      const top = pane.scrollTop;
-      pane.scrollTop = top + 1;
-      pane.scrollTop = top;
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(apply);
     };
-
-    const tick = () => {
-      apply();
-      nudge();
-    };
-
-    tick();
-    const t1 = window.setTimeout(tick, 250);
-    const t2 = window.setTimeout(tick, 900);
-
-    const onVisible = () => {
-      if (document.visibilityState === "visible") tick();
-    };
-    window.addEventListener("resize", apply);
-    window.visualViewport?.addEventListener("resize", apply);
-    window.addEventListener("orientationchange", tick);
-    window.addEventListener("pageshow", tick);
-    document.addEventListener("visibilitychange", onVisible);
-
+    const visible = () => { if (document.visibilityState === "visible") schedule(); };
+    apply();
+    schedule();
+    const timers = [250, 900].map(delay => window.setTimeout(schedule, delay));
+    window.addEventListener("resize", schedule);
+    window.addEventListener("pageshow", schedule);
+    window.addEventListener("orientationchange", schedule);
+    viewport?.addEventListener("resize", schedule);
+    viewport?.addEventListener("scroll", schedule);
+    document.addEventListener("visibilitychange", visible);
+    document.addEventListener("focusout", schedule);
     return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-      window.removeEventListener("resize", apply);
-      window.visualViewport?.removeEventListener("resize", apply);
-      window.removeEventListener("orientationchange", tick);
-      window.removeEventListener("pageshow", tick);
-      document.removeEventListener("visibilitychange", onVisible);
+      cancelAnimationFrame(frame);
+      timers.forEach(clearTimeout);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("pageshow", schedule);
+      window.removeEventListener("orientationchange", schedule);
+      viewport?.removeEventListener("resize", schedule);
+      viewport?.removeEventListener("scroll", schedule);
+      document.removeEventListener("visibilitychange", visible);
+      document.removeEventListener("focusout", schedule);
       root.removeProperty("--app-h");
-      root.removeProperty("--nav-offset");
+      root.removeProperty("--app-bottom");
     };
   }, []);
-
   return null;
 }

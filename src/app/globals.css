@@ -753,8 +753,7 @@ body[data-modal-open="1"] .section-pane {
 }
 @supports (height: 100dvh) {
   .app-shell-frame {
-    /* --app-h ставит StandaloneViewportFix, когда iOS в PWA занизил
-       вьюпорт на высоту панели Safari; в норме переменной нет. */
+    /* StandaloneViewportFix shares the measured visible PWA height with navigation. */
     height: var(--app-h, 100dvh);
   }
 }

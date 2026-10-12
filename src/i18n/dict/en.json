@@ -2955,5 +2955,9 @@
  "Одно действие": "One action",
  "Одно дело. В твоём темпе.": "One action. At your pace.",
  "Сейчас — только это": "Just this, for now",
- "Следующая карточка подождёт.": "The next card can wait."
+ "Следующая карточка подождёт.": "The next card can wait.",
+ "Пять лекций по частям — от устройства сетей до сетевого уровня, ARP и настройки маршрутизатора — и отдельный блок с темами из образцов мидтерма, которых нет в слайдах. Вопросы — в формате настоящего варианта: 25 вопросов с выбором из четырёх. Внутри есть игра: двоичный спринт и «Ты — коммутатор».": "Five lectures in parts — from how networks are built to the network layer, ARP and router configuration — plus a separate block with topics from the sample midterms that aren’t in the slides. Questions follow the real exam format: 25 multiple-choice questions with four options. There’s also a game inside: the binary sprint and “Be the switch”.",
+ "Не удалось загрузить ивент — проверь сеть.": "Couldn’t load the event — check your connection.",
+ "Открываем ивент": "Opening the event",
+ "Попробовать ещё раз": "Try again"
 }

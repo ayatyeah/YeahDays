@@ -11,6 +11,7 @@ import { diagrams as cc7 } from "./diagrams/cc7";
 import { diagrams as cc8 } from "./diagrams/cc8";
 import { diagrams as cc9 } from "./diagrams/cc9";
 import { diagrams as cc10 } from "./diagrams/cc10";
+import { diagrams as cn5 } from "./diagrams/cn5";
 
 /**
  * Схемы для конспектов — рукописный SVG, без картинок и библиотек.
@@ -931,7 +932,7 @@ const DIAGRAMS: Record<string, Draw> = {
   ),
 };
 
-Object.assign(DIAGRAMS, rm1, rm2, rm3, rm4, rm5, rmx, cc6, cc7, cc8, cc9, cc10);
+Object.assign(DIAGRAMS, rm1, rm2, rm3, rm4, rm5, rmx, cc6, cc7, cc8, cc9, cc10, cn5);
 
 export default function NotesDiagram({ name, lang }: { name: string; lang: string }) {
   const draw = DIAGRAMS[name];

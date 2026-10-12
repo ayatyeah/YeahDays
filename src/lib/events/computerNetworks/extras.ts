@@ -62,6 +62,21 @@ export const glossary: Term[] = [
   t("DHCP", "Automatically assigns IP address, mask and default gateway.", "Автоматически выдаёт IP-адрес, маску и шлюз по умолчанию."),
   t("NAT", "Translates private addresses into a public address.", "Преобразует частные адреса в публичный."),
   t("Three-way handshake", "SYN, SYN-ACK, ACK — how a TCP connection opens.", "SYN, SYN-ACK, ACK — так открывается соединение TCP."),
+  t("Best effort", "IP does not guarantee delivery: no acknowledgments, no resending.", "IP не гарантирует доставку: нет подтверждений и повторной отправки."),
+  t("MTU", "Maximum Transmission Unit: the largest packet a medium can carry; 1500 bytes on Ethernet.", "Наибольший пакет, который может передать среда; в Ethernet — 1500 байт."),
+  t("Fragmentation", "Layer 3 splits an IPv4 packet bigger than the next link's MTU; routers never fragment IPv6.", "Уровень 3 делит пакет IPv4, который больше MTU следующего канала; IPv6 маршрутизаторы не фрагментируют."),
+  t("TTL", "IPv4 hop count: every router subtracts 1 and drops the packet at 0.", "Счётчик переходов IPv4: каждый маршрутизатор вычитает 1 и при 0 отбрасывает пакет."),
+  t("Hop Limit", "The IPv6 header field that replaces TTL.", "Поле заголовка IPv6, которое заменяет TTL."),
+  t("Flow Label", "A 20-bit IPv6 field: packets with the same label are handled the same way.", "20-битное поле IPv6: пакеты с одной меткой обрабатываются одинаково."),
+  t("Extension header", "An optional IPv6 header between the main header and the payload: fragmentation, security, mobility.", "Необязательный заголовок IPv6 между основным заголовком и нагрузкой: фрагментация, безопасность, мобильность."),
+  t("Directly connected route (C / L)", "Added automatically for an active interface: C — its network, L — its own /32 address.", "Добавляется автоматически для активного интерфейса: C — его сеть, L — его собственный адрес /32."),
+  t("Default route (S*)", "0.0.0.0/0 — the gateway of last resort, used when no other route matches.", "0.0.0.0/0 — шлюз последней надежды, когда другие маршруты не подходят."),
+  t("ARP request / ARP reply", "The request is a broadcast to FF-FF-FF-FF-FF-FF; the reply is a unicast with the MAC address.", "Запрос — broadcast на FF-FF-FF-FF-FF-FF; ответ — unicast с MAC-адресом."),
+  t("ARP spoofing", "Fake ARP replies with the attacker's MAC for another IP, usually the gateway's; mitigated by DAI.", "Поддельные ARP-ответы с MAC злоумышленника для чужого IP, обычно шлюза; защита — DAI."),
+  t("NS / NA", "ICMPv6 Neighbor Solicitation and Advertisement: IPv6 address resolution and DAD.", "ICMPv6 Neighbor Solicitation и Advertisement: разрешение адресов IPv6 и DAD."),
+  t("RS / RA", "Router Solicitation (a host asks) and Router Advertisement (a router sends the prefix and default gateway).", "Router Solicitation (хост спрашивает) и Router Advertisement (маршрутизатор сообщает префикс и шлюз по умолчанию)."),
+  t("Solicited-node multicast", "FF02::1:FF plus the last 24 bits of an IPv6 address; where an NS is sent.", "FF02::1:FF плюс последние 24 бита адреса IPv6; туда отправляется NS."),
+  t("ip default-gateway", "Gives a Layer 2 switch a gateway so that it can be managed from other networks.", "Даёт коммутатору уровня 2 шлюз, чтобы им можно было управлять из других сетей."),
 ];
 
 /** Шпаргалка на одну страницу — то, что стоит перечитать за пять минут до мидтерма. */
@@ -108,7 +123,15 @@ export const cheatSheet: Text = {
 ## Addresses
 - Class C mask **255.255.255.0**. **255.255.255.192 = /26**, .224 = /27.
 - Loopback **127.0.0.1**. Private: **10.0.0.0/8**, 172.16.0.0/12, 192.168.0.0/16.
-- Fast Ethernet **100 Mbps**. **802.11ac** — 5 GHz. **STP** prevents switching loops. Static route distance **1**.`,
+- Fast Ethernet **100 Mbps**. **802.11ac** — 5 GHz. **STP** prevents switching loops. Static route distance **1**.
+## Network layer and routers
+- IP is **connectionless, best effort, media independent**. Ethernet MTU **1500 bytes**; routers fragment IPv4 only.
+- IPv4 header: **TTL** −1 per router (0 = drop), **Protocol** 1 ICMP / 6 TCP / 17 UDP, **DS** = QoS, the checksum covers the header only.
+- IPv6 header: fixed **40 bytes**; **Hop Limit** = TTL, **Traffic Class** = DS, **Next Header** = Protocol, **Flow Label** 20 bits.
+- Host: same network — straight to the host; other network — **default gateway**. Routing table: **route print** / **netstat -r**.
+- **show ip route**: **C** connected network, **L** own interface /32, **S** static, S* default, **O** OSPF, **D** EIGRP.
+- **ARP request = broadcast, reply = unicast**; **arp -a** (PC), **show ip arp** (router). IPv6: **NS/NA**, **RS/RA**, solicited-node **FF02::1:FF** + last 24 bits.
+- Router interfaces are **shut down by default** — **no shutdown**. **line vty 0 4**, **transport input ssh**. Switch: **ip default-gateway** for remote management.`,
   ru: `## Уровни OSI и PDU
 - **7 Прикладной, 6 Представления, 5 Сеансовый, 4 Транспортный, 3 Сетевой, 2 Канальный, 1 Физический.**
 - PDU вниз по стеку: **Data, Segment, Packet, Frame, Bits.**
@@ -151,5 +174,13 @@ export const cheatSheet: Text = {
 ## Адреса
 - Маска класса C **255.255.255.0**. **255.255.255.192 = /26**, .224 = /27.
 - Loopback **127.0.0.1**. Частные: **10.0.0.0/8**, 172.16.0.0/12, 192.168.0.0/16.
-- Fast Ethernet **100 Мбит/с**. **802.11ac** — 5 ГГц. **STP** предотвращает петли коммутации. Расстояние статического маршрута **1**.`,
+- Fast Ethernet **100 Мбит/с**. **802.11ac** — 5 ГГц. **STP** предотвращает петли коммутации. Расстояние статического маршрута **1**.
+## Сетевой уровень и маршрутизаторы
+- IP — **без соединения, по возможности (best effort), независим от среды**. MTU Ethernet — **1500 байт**; маршрутизаторы фрагментируют только IPv4.
+- Заголовок IPv4: **TTL** −1 на каждом маршрутизаторе (0 = отброс), **Protocol** 1 ICMP / 6 TCP / 17 UDP, **DS** = QoS, контрольная сумма — только заголовок.
+- Заголовок IPv6: фиксированные **40 байт**; **Hop Limit** = TTL, **Traffic Class** = DS, **Next Header** = Protocol, **Flow Label** 20 бит.
+- Хост: та же сеть — прямо хосту; другая сеть — **шлюзу по умолчанию**. Таблица маршрутизации: **route print** / **netstat -r**.
+- **show ip route**: **C** подключённая сеть, **L** свой адрес интерфейса /32, **S** статический, S* по умолчанию, **O** OSPF, **D** EIGRP.
+- **ARP-запрос = broadcast, ответ = unicast**; **arp -a** (ПК), **show ip arp** (маршрутизатор). IPv6: **NS/NA**, **RS/RA**, solicited-node **FF02::1:FF** + последние 24 бита.
+- Интерфейсы маршрутизатора **по умолчанию выключены** — **no shutdown**. **line vty 0 4**, **transport input ssh**. Коммутатор: **ip default-gateway** для удалённого управления.`,
 };

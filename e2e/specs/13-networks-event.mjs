@@ -19,7 +19,7 @@ test("Сети: ивент есть в списке, конспект читае
   await page.getByRole("link", { name: /Computer Networks/ }).tap();
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
   const map = await page.locator("body").innerText();
-  check(map.includes("Lecture 4") && map.includes("Beyond the slides"), "в маршруте четыре лекции и блок «сверх слайдов»");
+  check(map.includes("Lecture 5") && map.includes("Beyond the slides"), "в маршруте пять лекций и блок «сверх слайдов»");
 
   await page.getByRole("button", { name: "Начать с первой части" }).tap();
   await page.getByRole("heading", { name: "Network components and types of networks" }).waitFor({ timeout: 10_000 });
@@ -202,13 +202,13 @@ test("Сети: «до косточек» — все вопросы части �
 test("Сети: ачивка появляется, когда все шаги пройдены и итоговый квиз не ниже 80%", async () => {
   const user = await newUser();
   // Прогресс берётся с сервера: сначала всё пройдено, но финал на 70% — ачивки нет; потом финал 90% — есть.
-  const ids = ["cn-l1-p1", "cn-l1-p2", "cn-l1-p3", "cn-l1-p4", "cn-l1-quiz", "cn-l2-p1", "cn-l2-p2", "cn-l2-p3", "cn-l2-p4", "cn-l2-quiz", "cn-l3-p1", "cn-l3-p2", "cn-l3-p3", "cn-l3-p4", "cn-l3-quiz", "cn-l4-p1", "cn-l4-p2", "cn-l4-p3", "cn-l4-p4", "cn-l4-quiz", "cn-x-p1", "cn-x-p2", "cn-x-quiz"];
+  const ids = ["cn-l1-p1", "cn-l1-p2", "cn-l1-p3", "cn-l1-p4", "cn-l1-quiz", "cn-l2-p1", "cn-l2-p2", "cn-l2-p3", "cn-l2-p4", "cn-l2-quiz", "cn-l3-p1", "cn-l3-p2", "cn-l3-p3", "cn-l3-p4", "cn-l3-quiz", "cn-l4-p1", "cn-l4-p2", "cn-l4-p3", "cn-l4-p4", "cn-l4-quiz", "cn-l5-p1", "cn-l5-p2", "cn-l5-p3", "cn-l5-p4", "cn-l5-quiz", "cn-x-p1", "cn-x-p2", "cn-x-quiz"];
   const progress = (final) => JSON.stringify({ ...Object.fromEntries(ids.map((id) => [id, { best: 0.9, last: 0.9, attempts: 1 }])), "computer-networks-midterm-final": { best: final, last: final, attempts: 1 } });
   const seed = (final) => sql(`insert into "EventProgress"("userId", "eventId", data, percent, share, "updatedAt") values ('${user.id}', 'computer-networks-midterm', '${progress(final)}'::jsonb, 80, false, now() at time zone 'utc') on conflict ("userId", "eventId") do update set data = excluded.data, "updatedAt" = now() at time zone 'utc'`);
   seed(0.7);
   const { browser, page } = await session({ user });
   await openSection(page, EVENT);
-  await page.getByText(/Шагов пройдено:\s*24 из 24/).waitFor({ timeout: 15_000 });
+  await page.getByText(/Шагов пройдено:\s*29 из 29/).waitFor({ timeout: 15_000 });
   check((await page.getByText("Ивент пройден").count()) === 0, "финал на 70% — ачивки ещё нет");
   seed(0.9);
   await openSection(page, EVENT);

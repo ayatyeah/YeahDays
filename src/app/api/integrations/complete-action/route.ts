@@ -5,8 +5,9 @@
  * колоде. Авторизация: scoped ApiKey + userId, привязанный этим же ключом
  * через /api/keys/redeem (см. src/lib/apiKey.ts).
  *
- * POST { userId, source, activityType: "reading"|"writing"|"quiz"|"notes",
- *        title, minutes, date? }
+ * POST { userId, source, activityType, title, minutes, date? }
+ *   activityType: "reading"|"writing"|"quiz"|"notes" (StudyLoop) или
+ *   "workout"|"run"|"walk"|"meditation"|"study" (YeahSoldiers) — см. ACTIVITY_PRESET
  *   → { ok, xp, totalXp, level }
  *
  * date — локальный день пользователя (YYYY-MM-DD), если он у вызывающего
@@ -25,21 +26,14 @@
 
 import { NextResponse } from "next/server";
 import { authorizeServiceKey, userAllowedForKey } from "@/lib/apiKey";
-import { makeId, loadState, saveState, type PlannedTask, type Todo } from "@/lib/externalState";
+import { makeId, loadState, saveState, type PlannedTask } from "@/lib/externalState";
 import { xpForAction } from "@/lib/domain";
 import { levelForXp } from "@/lib/leveling";
-import { TODO_PRIORITY_XP } from "@/lib/todoCategory";
-import { buildExternalActionSnapshot, type ActivityType } from "@/lib/externalActions";
+import { todoXp } from "@/lib/integrationProgress";
+import { buildExternalActionSnapshot, isActivityType } from "@/lib/externalActions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function todoXp(todos: Todo[]): number {
-  return todos.reduce((sum, t) => {
-    const n = t.repeat ? t.doneDays.length : t.done ? 1 : 0;
-    return sum + n * TODO_PRIORITY_XP[t.priority];
-  }, 0);
-}
 
 export async function POST(req: Request) {
   const key = await authorizeServiceKey(req);
@@ -56,7 +50,7 @@ export async function POST(req: Request) {
 
   const userId = typeof body.userId === "string" ? body.userId : "";
   const source = typeof body.source === "string" ? body.source.slice(0, 40) : "external";
-  const activityType = body.activityType as ActivityType;
+  const activityType = body.activityType;
   const title = typeof body.title === "string" ? body.title.trim().slice(0, 120) : "";
   const minutes = typeof body.minutes === "number" && body.minutes > 0 ? Math.round(body.minutes) : 0;
   // Локальный день пользователя сервер не угадывает — если вызывающий его
@@ -66,13 +60,7 @@ export async function POST(req: Request) {
     typeof body.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(body.date)
       ? body.date
       : new Date().toISOString().slice(0, 10);
-  const validType =
-    activityType === "reading" ||
-    activityType === "writing" ||
-    activityType === "quiz" ||
-    activityType === "notes";
-
-  if (!userId || !title || !minutes || !validType) {
+  if (!userId || !title || !minutes || !isActivityType(activityType)) {
     return NextResponse.json(
       { error: "userId, title, minutes and valid activityType required" },
       { status: 400 },

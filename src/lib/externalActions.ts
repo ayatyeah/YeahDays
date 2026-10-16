@@ -5,20 +5,39 @@
  * активности, вынесен отдельно, чтобы XP-математику можно было
  * протестировать без поднятия роута (см. externalActions.test.ts).
  */
-import { xpForAction, type Action, type Difficulty, type Impact } from "./domain";
+import { xpForAction, type Action, type CategoryKey, type Difficulty, type Impact } from "./domain";
 
-export type ActivityType = "reading" | "writing" | "quiz" | "notes";
+export type ActivityType =
+  | "reading"
+  | "writing"
+  | "quiz"
+  | "notes"
+  // YeahSoldiers (Telegram-агенты): тренировки, бег, восстановление, учёба вне StudyLoop
+  | "workout"
+  | "run"
+  | "walk"
+  | "meditation"
+  | "study";
 
-/** Сложность/impact подобраны по ощутимости активности — тюнить можно менять здесь без миграций. */
+/** Категория, сложность и impact подобраны по ощутимости активности — тюнить можно здесь без миграций. */
 export const ACTIVITY_PRESET: Record<
   ActivityType,
-  { difficulty: Difficulty; impact: Impact; why: string }
+  { category: CategoryKey; difficulty: Difficulty; impact: Impact; why: string }
 > = {
-  reading: { difficulty: 2, impact: 3, why: "IELTS Reading через StudyLoop" },
-  writing: { difficulty: 3, impact: 4, why: "IELTS Writing с AI-фидбэком через StudyLoop" },
-  quiz: { difficulty: 2, impact: 2, why: "Квиз по конспекту через StudyLoop" },
-  notes: { difficulty: 1, impact: 2, why: "Повтор конспекта через StudyLoop" },
+  reading: { category: "learning", difficulty: 2, impact: 3, why: "IELTS Reading через StudyLoop" },
+  writing: { category: "learning", difficulty: 3, impact: 4, why: "IELTS Writing с AI-фидбэком через StudyLoop" },
+  quiz: { category: "learning", difficulty: 2, impact: 2, why: "Квиз по конспекту через StudyLoop" },
+  notes: { category: "learning", difficulty: 1, impact: 2, why: "Повтор конспекта через StudyLoop" },
+  workout: { category: "fitness", difficulty: 4, impact: 4, why: "Тренировка" },
+  run: { category: "fitness", difficulty: 3, impact: 4, why: "Пробежка" },
+  walk: { category: "health", difficulty: 1, impact: 2, why: "Прогулка" },
+  meditation: { category: "mindfulness", difficulty: 2, impact: 3, why: "Медитация" },
+  study: { category: "learning", difficulty: 3, impact: 3, why: "Учёба" },
 };
+
+export function isActivityType(value: unknown): value is ActivityType {
+  return typeof value === "string" && Object.hasOwn(ACTIVITY_PRESET, value);
+}
 
 /** Снимок Action под конкретное закрытие — duration берётся из реального времени, не из константы. */
 export function buildExternalActionSnapshot(
@@ -32,7 +51,7 @@ export function buildExternalActionSnapshot(
     id: `ext-${source}-${activityType}`,
     title,
     why: preset.why,
-    category: "learning",
+    category: preset.category,
     difficulty: preset.difficulty,
     duration: minutes,
     energy: "medium",

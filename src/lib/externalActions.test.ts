@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { xpForExternalActivity, buildExternalActionSnapshot } from "./externalActions";
+import { xpForExternalActivity, buildExternalActionSnapshot, isActivityType } from "./externalActions";
 import { xpForAction } from "./domain";
 
 describe("xpForExternalActivity", () => {
@@ -33,5 +33,23 @@ describe("xpForExternalActivity", () => {
     expect(xpForExternalActivity("studyloop", "writing", "Task 2", 30)).toBe(
       xpForAction(snapshot),
     );
+  });
+});
+
+describe("активности YeahSoldiers", () => {
+  it("тренировка и бег качают силу, прогулка — здоровье, медитация — стабильность", () => {
+    expect(buildExternalActionSnapshot("yeahsoldiers", "workout", "Силовая", 60).category).toBe("fitness");
+    expect(buildExternalActionSnapshot("yeahsoldiers", "run", "5 км", 30).category).toBe("fitness");
+    expect(buildExternalActionSnapshot("yeahsoldiers", "walk", "Прогулка", 40).category).toBe("health");
+    expect(buildExternalActionSnapshot("yeahsoldiers", "meditation", "Дыхание", 10).category).toBe("mindfulness");
+    expect(buildExternalActionSnapshot("yeahsoldiers", "study", "React", 50).category).toBe("learning");
+  });
+
+  it("isActivityType пропускает только известные типы", () => {
+    expect(isActivityType("run")).toBe(true);
+    expect(isActivityType("reading")).toBe(true);
+    expect(isActivityType("swim")).toBe(false);
+    expect(isActivityType("toString")).toBe(false);
+    expect(isActivityType(undefined)).toBe(false);
   });
 });

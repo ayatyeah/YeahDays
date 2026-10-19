@@ -11,11 +11,11 @@ try {
     console.log('Pilot created; excluded from research exports and allocation.');
   } else if (command === 'purge') {
     // Consent-time retention dates survive later environment changes.
-    const rows = await db.researchParticipant.findMany({ select: { userId: true, data: true } });
+    const rows = await db.researchParticipant.findMany({ select: { participantId: true, data: true } });
     const expired = rows.filter(r => r.data.consentInformation?.deleteAt && Date.parse(r.data.consentInformation.deleteAt) <= Date.now());
     console.log(`Expired participant records: ${expired.length}`);
     if (process.argv.includes('--apply')) {
-      const result = await db.researchParticipant.deleteMany({ where: { userId: { in: expired.map(r => r.userId) } } });
+      const result = await db.researchParticipant.deleteMany({ where: { participantId: { in: expired.map(r => r.participantId) } } });
       console.log(`Deleted: ${result.count}`);
     } else console.log('Preview only. Add --apply to delete. Remove exported copies separately.');
   } else throw new Error('Commands: pilot USER_ID A|B; purge [--apply]');

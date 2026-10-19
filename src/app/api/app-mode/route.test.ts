@@ -14,3 +14,9 @@ it('records crossover only once and never changes assignment or clears study dat
  await POST(request('rmt'));expect(data.selectedVersion).toBe('rmt');expect(data.events).toHaveLength(1);expect(data.ordinaryAccessAt).toBeTruthy();
 });
 it('does not create a study account for ordinary users',async()=>{m.auth.mockResolvedValue({user:{id:'alice'}});m.find.mockResolvedValue(null);const r=await POST(request('normal'));expect((await r.json()).redirect).toBe('/app');expect(m.mutate).not.toHaveBeenCalled();});
+
+it('uses the public HTTPS origin behind the deployment proxy',async()=>{
+ const req=new Request('http://localhost:3000/api/app-mode',{method:'POST',headers:{origin:'https://yeahgrind.site','x-forwarded-host':'yeahgrind.site','x-forwarded-proto':'https'},body:JSON.stringify({mode:'normal'})});
+ const response=await POST(req);expect(response.status).toBe(200);expect(response.headers.get('set-cookie')).toContain('Secure');
+ const bad=new Request('http://localhost:3000/api/app-mode',{method:'POST',headers:{origin:'https://evil.example','x-forwarded-host':'yeahgrind.site','x-forwarded-proto':'https'},body:JSON.stringify({mode:'normal'})});expect((await POST(bad)).status).toBe(403);
+});

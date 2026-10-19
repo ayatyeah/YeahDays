@@ -54,6 +54,7 @@ model User {
   eventReports      EventReport[]
   aiChatArchives    AiChatArchive[]
   aiChat            AiChat?
+  research          ResearchParticipant?
   personalization   PersonalizationProfile?
   learningProfile   LearningProfile?
   lmsConnection     LmsConnection?
@@ -773,4 +774,16 @@ model SocialMedia {
   createdAt DateTime @default(now())
   @@index([postId, position])
   @@index([userId, createdAt])
+}
+
+// Assignment 3: isolated, versioned four-week comparison.
+model ResearchParticipant {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  participantId String @unique
+  condition String
+  pilot Boolean @default(false)
+  enrolledAt DateTime @default(now())
+  withdrawnAt DateTime?
+  data Json
 }

@@ -78,7 +78,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   // навигации, баннера установки и гайдов, во всю ширину экрана.
   const isConsole = pathname === "/admin" || pathname.startsWith("/admin/");
 
-  if (isMarketing || isConsole) {
+  if (isMarketing || isConsole || pathname === "/research") {
     return (
       <div className="min-h-dvh">
         {authSwitcher}

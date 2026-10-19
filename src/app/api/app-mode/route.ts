@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const publicUrl=new URL(req.url);
   const forwardedHost=(req.headers.get('x-forwarded-host') ?? req.headers.get('host'))?.split(',')[0].trim();
   const forwardedProto=req.headers.get('x-forwarded-proto')?.split(',')[0].trim();
-  if(forwardedHost)publicUrl.host=forwardedHost;
+  if(forwardedHost){publicUrl.port='';publicUrl.host=forwardedHost;}
   if(forwardedProto==='https'||forwardedProto==='http')publicUrl.protocol=forwardedProto+':';
   if(origin && origin!==publicUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403});
   let body;try{const raw=await req.text();if(raw.length>1000)throw new Error();body=JSON.parse(raw);}catch{return NextResponse.json({error:'Некорректный запрос'},{status:400});}

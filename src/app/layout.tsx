@@ -1,3 +1,8 @@
+import { cookies } from "next/headers";
+import { APP_MODE_COOKIE, parseAppMode } from "@/lib/appMode";
+import { AppModeProvider } from "@/components/AppModeProvider";
+import OrdinaryRuntime from "@/components/OrdinaryRuntime";
+import VersionSwitcher from "@/components/VersionSwitcher";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -144,13 +149,14 @@ export const viewport: Viewport = {
   interactiveWidget: "resizes-content",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // suppressHydrationWarning — data-theme ставится инлайн-скриптом ДО
   // гидрации (см. THEME_INIT_SCRIPT), поэтому серверный HTML и первый
   // клиентский рендер этого атрибута расходятся намеренно; это ожидаемо
   // и не патчится React, но без флага заливает консоль лишним варнингом.
+  const mode = parseAppMode((await cookies()).get(APP_MODE_COOKIE)?.value);
   return (
     <html lang="ru" className={inter.variable} suppressHydrationWarning>
       <body>
@@ -160,12 +166,16 @@ export default function RootLayout({
 
         <ThemeApplier />
         <SessionGuard />
+        <AppModeProvider mode={mode}>
         <AuthProvider>
           <ErrorBoundary>
             <Shell>{children}</Shell>
           </ErrorBoundary>
+          <OrdinaryRuntime />
+          <VersionSwitcher />
           <ServiceWorkerRegister />
         </AuthProvider>
+        </AppModeProvider>
       </body>
     </html>
   );

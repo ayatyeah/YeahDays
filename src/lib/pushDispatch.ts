@@ -12,6 +12,7 @@
  * бесполезно и выглядит как спам.
  */
 
+import { ordinaryUsers } from "./ordinaryUsers";
 import { prisma } from "@/lib/db";
 import { sendPush, pushConfigured, localHour, localDateKey } from "@/lib/push";
 import {
@@ -136,7 +137,7 @@ function todoStartAt(day: string, hour: number, minute: number, tzOffsetMinutes:
 /** Досчитать и завести в очередь то, что ещё никто не запланировал. */
 async function scheduleProactive(now: Date) {
   const users = await prisma.user.findMany({
-    where: { pushSubs: { some: { enabled: true } } },
+    where: { ...ordinaryUsers, pushSubs: { some: { enabled: true } } },
     select: {
       id: true,
       pushSubs: { where: { enabled: true }, select: { tzOffset: true }, take: 1 },
@@ -237,6 +238,7 @@ export async function runDispatch(now: Date = new Date()) {
 
   const due = await prisma.scheduledNotification.findMany({
     where: {
+      user: ordinaryUsers,
       sentAt: null,
       fireAt: { lte: now, gte: new Date(now.getTime() - GRACE_MS) },
     },

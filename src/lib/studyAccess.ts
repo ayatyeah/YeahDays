@@ -2,7 +2,7 @@
  * stay inaccessible even through old clients or a manually entered URL. */
 export const STUDY_PAGES = new Set(['/app', '/today', '/calendar', '/progress', '/account']);
 export function studyApiAllowed(path: string) {
-  return path === '/api/research' || path.startsWith('/api/research/')
+  return path === '/api/app-mode' || path === '/api/research' || path.startsWith('/api/research/')
     || path.startsWith('/api/auth/') || path.startsWith('/api/owner/')
     || path.startsWith('/api/admin/') || path === '/api/account'
     || path === '/api/account/password' || path === '/api/account/providers';

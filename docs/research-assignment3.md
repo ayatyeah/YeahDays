@@ -1,12 +1,14 @@
 # Assignment 3: main-app AI personalization comparison
 
-The main YeahGrind website now implements the controlled comparison. `/app` is the participant home; `/today` holds benchmark tasks, `/calendar` the four-week schedule, `/progress` metrics/achievements/interview, and `/account` consent/data controls/withdrawal. `/research` redirects to `/app`. The public landing page neutrally explains participation; existing authenticated users enter the main application. The stack remains Next.js, React, TypeScript and PostgreSQL. The source DOCX is preserved.
+The root `/` and `/versions` offer “Версия для РМТ” and “Обычная версия”. The ordinary application is restored from pre-Assignment-3 commit `bf80528`: `/app`, `/today`, `/calendar`, `/progress`, `/account` and its original learning, game and AI features; its landing is `/ordinary`. Research lives at `/rmt`, `/rmt/tasks`, `/rmt/calendar`, `/rmt/progress`, `/rmt/account`; `/research` redirects there after version selection. The source DOCX is preserved.
 
 ## Equivalent conditions across the website
 
 The same five screens, task definitions, unlock rules, 10 points per completion and milestones (1, 3, 6, 12 tasks) apply to both groups. Condition A receives predetermined feedback; B receives `gpt-4o-mini` feedback based on pseudonymous task/session events. Completion triggers feedback in both groups; both have the same manual feedback button. Neither model output nor client input can alter tasks, rewards or deadlines.
 
-Legacy chat, planner, learning generators, personalized recommendation APIs, old analytics/sync, external task-writing integrations and push endpoints are blocked at the Next.js request boundary. Old feature pages redirect to `/app`; navigation no longer exposes them. The legacy push scheduler is not started, the push cron now serves as a daily retention backup, and LMS cron is paused. Old account data are retained for personal export/deletion, not used for study feedback. No old activity beacons, client state synchronization or automatic language translation run in the new app. Core study instructions are uniformly Russian.
+The HttpOnly `yg-version` cookie selects the browser interface. In RMT mode legacy AI, analytics and sync APIs are blocked and ordinary runtime components are not mounted. Ordinary mode restores those features with their existing authentication and consent checks. Push/LMS scheduling excludes active research participants unless they explicitly choose ordinary mode. Server integrations retain their own authentication. Research retention remains enabled independently.
+
+Choosing ordinary mode as an enrolled participant records `ordinaryAccessAt` and one `version_switch` event, marking `mixed_interface` in exports. Switching back preserves group, enrollment time and progress. Version selection never enrolls anyone or changes A/B assignment. Both versions use the same login; study and ordinary progress remain in separate records. No schema migration is required for the selector.
 
 The request boundary is in `src/lib/studyAccess.ts` and `src/proxy.ts`. Allowed endpoints retain their own authentication/authorization checks. API payloads cannot select condition or target another account. Deployment must include the updated proxy, not merely the client UI.
 

@@ -8,6 +8,10 @@
  */
 export const PUBLIC_PATHS = new Set([
   "/",
+  "/versions",
+  "/ordinary",
+  "/rmt-privacy",
+  "/rmt-terms",
   "/terms",
   "/privacy",
   "/login",

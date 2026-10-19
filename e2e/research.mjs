@@ -15,17 +15,17 @@ async function account(owner=false) {
   const user=await db.user.create({data:{email:owner?'research-owner@test.local':`research-${crypto.randomUUID()}@test.local`,name:'Test'}});ids.push(user.id);
   const context=await browser.newContext({viewport:{width:390,height:844}});
   const token=await encode({secret:process.env.AUTH_SECRET,salt:'authjs.session-token',token:{id:user.id,sub:user.id,email:user.email,name:user.name}});
-  await context.addCookies([{name:'authjs.session-token',value:token,url:base,httpOnly:true}]);
+  await context.addCookies([{name:'authjs.session-token',value:token,url:base,httpOnly:true},{name:'yg-version',value:'rmt',url:base,httpOnly:true}]);
   return {user,context,page:await context.newPage()};
 }
 async function post(context,body) { const r=await context.request.post(`${base}/api/research`,{data:body});assert.equal(r.status(),200,await r.text());return r.json(); }
 const consent={version:'assignment3-v1',appVersion:'main-app-v1',adult:true,notDeveloper:true,consent:true,aiConsent:true};
 try {
   const anon=await browser.newContext(); assert.equal((await anon.request.get(`${base}/api/research`)).status(),401);
-  const landing=await anon.newPage();await landing.goto(base);await landing.getByRole('heading',{name:/Меньше откладывать/}).waitFor();
+  const landing=await anon.newPage();await landing.goto(base);await landing.getByRole('heading',{name:/Какую версию/}).waitFor();
   const a=await account();const forbidden=[];
   a.page.on('request',r=>{if(['/api/state','/api/personalization','/api/visit','/api/learning'].some(p=>r.url().endsWith(p)))forbidden.push(r.url());});
-  await a.page.goto(`${base}/app`);await a.page.getByRole('button',{name:'Начать участие'}).waitFor();
+  await a.page.goto(`${base}/rmt`);await a.page.getByRole('button',{name:'Начать участие'}).waitFor();
   assert.equal((await a.context.request.post(`${base}/api/research`,{data:{action:'activity'}})).status(),400);
   for(const box of await a.page.getByRole('checkbox').all())await box.check();
   await a.page.getByRole('button',{name:'Начать участие'}).click();
@@ -41,24 +41,38 @@ try {
   const standard=row.condition==='A'?a:b; const standardFeedback=await standard.context.request.post(`${base}/api/research/feedback`);assert.equal(standardFeedback.status(),200);assert.equal((await standardFeedback.json()).source,'standard');
   for(const user of [a,b])for(const path of ['/api/ai/chat','/api/ai/planner','/api/learning','/api/recommendations','/api/study-events/tutor','/api/integrations/add-todo','/api/push/send'])assert.equal((await user.context.request.post(base+path,{data:{}})).status(),403,path);
   assert.equal((await a.context.request.post(`${base}/api/research/retention`)).status(),401);
-  await a.page.goto(`${base}/research`);assert.equal(new URL(a.page.url()).pathname,'/app');
-  await a.page.goto(`${base}/chat`);assert.equal(new URL(a.page.url()).pathname,'/app');
-  await a.page.goto(`${base}/`);assert.equal(new URL(a.page.url()).pathname,'/app');
+  await a.page.goto(`${base}/research`);assert.equal(new URL(a.page.url()).pathname,'/rmt');
+  await a.page.goto(`${base}/chat`);assert.equal(new URL(a.page.url()).pathname,'/rmt');
+  await a.page.goto(`${base}/`);await a.page.getByRole('heading',{name:/Какую версию/}).waitFor();
   mkdirSync('artifacts/research',{recursive:true});
   for(const width of [320,390,1440]) {
     await a.page.setViewportSize({width,height:900});
-    for(const [path,title] of [['/app','Следующий шаг'],['/today','Ваши задания'],['/calendar','Ваши четыре недели'],['/progress','Ваш прогресс'],['/account','Ваш профиль']]) {
+    for(const [path,title] of [['/rmt','Следующий шаг'],['/rmt/tasks','Ваши задания'],['/rmt/calendar','Ваши четыре недели'],['/rmt/progress','Ваш прогресс'],['/rmt/account','Ваш профиль']]) {
       await a.page.goto(base+path);await a.page.getByRole('heading',{name:title,exact:true}).waitFor();
       assert(await a.page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`${path} overflow at ${width}`);
-      await a.page.screenshot({path:`artifacts/research/main-${path.slice(1)}-${width}.png`,fullPage:true});
+      await a.page.screenshot({path:`artifacts/research/main-${path.slice(1).replaceAll('/','-')}-${width}.png`,fullPage:true});
     }
   }
   await a.page.evaluate(()=>localStorage.setItem('yeahdays-theme',JSON.stringify({state:{theme:'dark'},version:0})));
-  await a.page.goto(`${base}/app`);await a.page.getByRole('heading',{name:'Следующий шаг'}).waitFor();await a.page.screenshot({path:'artifacts/research/main-dark.png',fullPage:true});
+  await a.page.goto(`${base}/rmt`);await a.page.getByRole('heading',{name:'Следующий шаг'}).waitFor();await a.page.screenshot({path:'artifacts/research/main-dark.png',fullPage:true});
   assert.deepEqual(forbidden,[],'No legacy analytics or synchronization runs');
+  // Switching versions preserves assignment and marks research crossover once.
+  const beforeSwitch=await db.researchParticipant.findUniqueOrThrow({where:{userId:a.user.id}});
+  await a.page.goto(base);await a.page.getByRole('button',{name:'Открыть обычную версию'}).click();
+  await a.page.waitForURL(base+'/app');
+  assert.equal((await a.context.request.get(base+'/api/state')).status(),200);
+  await a.page.getByRole('link',{name:/Сменить версию/}).click();
+  await a.page.getByRole('button',{name:'Открыть версию для РМТ'}).click();
+  await a.page.waitForURL(base+'/rmt');await a.page.getByRole('heading',{name:'Следующий шаг'}).waitFor();
+  const afterSwitch=await db.researchParticipant.findUniqueOrThrow({where:{userId:a.user.id}});
+  assert.equal(afterSwitch.condition,beforeSwitch.condition);assert(afterSwitch.data.ordinaryAccessAt);
+  assert.equal(afterSwitch.data.selectedVersion,'rmt');
+  assert.equal(afterSwitch.data.events.filter(e=>e.event_type==='version_switch').length,1);
+  assert.equal((await a.context.request.get(base+'/api/state')).status(),403);
+
   assert.equal((await a.context.request.get(`${base}/api/owner/research`)).status(),403);
   await db.researchParticipant.update({where:{userId:a.user.id},data:{enrolledAt:new Date(Date.now()-22*86400000)}});
-  await a.page.goto(`${base}/progress`);await a.page.getByRole('button',{name:'Отправить ответы'}).waitFor();
+  await a.page.goto(`${base}/rmt/progress`);await a.page.getByRole('button',{name:'Отправить ответы'}).waitFor();
   for(const box of await a.page.getByRole('textbox').all())await box.fill('Neutral test feedback');
   await a.page.getByRole('button',{name:'Отправить ответы'}).click();await a.page.getByText('Ответы сохранены. Спасибо!').waitFor();
   const owner=await account(true);await owner.page.goto(`${base}/admin/research`);await owner.page.getByRole('heading',{name:'Исследование A/B'}).waitFor();
@@ -69,7 +83,7 @@ try {
   const old=await account();const oldStart=new Date(Date.now()-86400000);const oldEvents=[{event_type:'session_start',event_timestamp:oldStart.toISOString(),task_id:null}];
   await db.researchParticipant.create({data:{userId:old.user.id,participantId:crypto.randomUUID(),condition:'A',pilot:true,enrolledAt:oldStart,data:{version:'assignment3-v1',aiConsent:true,lastActivity:oldStart.getTime(),events:oldEvents,interview:null}}});
   assert.equal((await old.context.request.post(`${base}/api/research`,{data:{action:'start',taskId:'w1-plan'}})).status(),400);
-  await old.page.goto(`${base}/app`);await old.page.getByRole('heading',{name:'Приложение обновилось'}).waitFor();
+  await old.page.goto(`${base}/rmt`);await old.page.getByRole('heading',{name:'Приложение обновилось'}).waitFor();
   await post(old.context,{...consent,action:'consent'});await post(old.context,{...consent,action:'consent'});
   const preserved=await db.researchParticipant.findUniqueOrThrow({where:{userId:old.user.id}});assert.equal(preserved.data.appConsent.migrated,true);assert.equal(preserved.condition,'A');assert.equal(preserved.enrolledAt.getTime(),oldStart.getTime());assert.deepEqual(preserved.data.events[0],oldEvents[0]);assert.equal(preserved.data.events.filter(e=>e.event_type==='app_consent').length,1);
   const exported=await(await owner.context.request.get(`${base}/api/owner/research`)).json();assert(!exported.participants.some(p=>p.participant_id===preserved.participantId));

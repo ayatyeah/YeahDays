@@ -20,6 +20,9 @@ const PRECACHE = [
   "/calendar",
   "/progress",
   "/account",
+  "/settings",
+  "/learn",
+  "/events",
   "/offline",
   "/manifest.webmanifest",
   "/favicon-v3.png",
@@ -167,7 +170,8 @@ async function staleWhileRevalidate(request, cacheName) {
  */
 const INSTANT = new Set(["/app", "/today", "/calendar", "/progress", "/account", "/settings", "/learn", "/events", "/community", "/challenge30", "/chat"]);
 /** Страницы ивентов тоже статичные (контент приходит отдельным чанком), их оболочку — сразу из кэша. */
-const isInstant = (path) => INSTANT.has(path) || /^\/events\/[a-z0-9-]+$/.test(path);
+// Version selection is server-owned; never serve another mode from cache first.
+const isInstant = () => false;
 
 /** Обновить копию раздела в фоне — к следующему запуску она будет свежей. */
 async function refresh(event, cache, path) {

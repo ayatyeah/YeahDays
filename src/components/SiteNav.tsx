@@ -22,7 +22,7 @@ const SECTIONS = [
 
 export default function SiteNav() {
   const pathname = usePathname();
-  const onLanding = pathname === "/";
+  const onLanding = pathname === "/ordinary";
   const [active, setActive] = useState<string>("top");
 
   /**
@@ -56,7 +56,7 @@ export default function SiteNav() {
     <header className="sticky top-0 z-40">
       <div className="marble-bar border-b border-[var(--color-border)]">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3 sm:px-8">
-          <Link href="/" className="flex shrink-0 items-center gap-2.5">
+          <Link href="/ordinary" className="flex shrink-0 items-center gap-2.5">
             <Logo variant="white" className="h-7 w-auto" />
             <span className="text-[17px] font-extrabold tracking-tight">
               YeahGrind
@@ -69,7 +69,7 @@ export default function SiteNav() {
               return (
                 <a
                   key={s.id}
-                  href={onLanding ? `#${s.id}` : `/#${s.id}`}
+                  href={onLanding ? `#${s.id}` : `/ordinary#${s.id}`}
                   className={cn(
                     "press relative shrink-0 rounded-xl px-3 py-2 text-[14.5px] font-medium",
                     isActive

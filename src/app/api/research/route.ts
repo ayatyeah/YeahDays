@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         const a = rows.filter(r => r.condition === 'A').length;
         const b = rows.length - a;
         const condition = a === b ? (randomInt(2) ? 'A' : 'B') : a < b ? 'A' : 'B';
-        return tx.researchParticipant.create({ data: { userId, participantId: randomUUID(), condition, data: researchJson({ ...initialResearch(), appConsent: { version: MAIN_APP_CONSENT, at: new Date().toISOString() }, consentInformation: { contact: researchConfig().contact, deleteAt: researchConfig().deleteAt } }) } });
+        return tx.researchParticipant.create({ data: { userId, participantId: randomUUID(), condition, data: researchJson({ ...initialResearch(), selectedVersion: 'rmt', appConsent: { version: MAIN_APP_CONSENT, at: new Date().toISOString() }, consentInformation: { contact: researchConfig().contact, deleteAt: researchConfig().deleteAt } }) } });
       });
       return json({ participant: publicResearch(row) });
     }
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
         const previous = await tx.researchParticipant.findUniqueOrThrow({ where: { userId } });
         const previousData = previous.data as unknown as ResearchData;
         const receipt = previousData.consentInformation;
-        await tx.researchParticipant.update({ where: { userId }, data: { withdrawnAt: previous.withdrawnAt ?? new Date(), data: researchJson({ ...initialResearch(), aiConsent: false, ...(previousData.appConsent ? { appConsent: previousData.appConsent } : {}), ...(receipt ? { consentInformation: receipt } : {}) }) } });
+        await tx.researchParticipant.update({ where: { userId }, data: { withdrawnAt: previous.withdrawnAt ?? new Date(), data: researchJson({ ...initialResearch(), aiConsent: false, ...(previousData.ordinaryAccessAt ? { ordinaryAccessAt: previousData.ordinaryAccessAt } : {}), ...(previousData.appConsent ? { appConsent: previousData.appConsent } : {}), ...(receipt ? { consentInformation: receipt } : {}) }) } });
       });
       return json({ participant: publicResearch(await prisma.researchParticipant.findUnique({ where: { userId } })) });
     }
@@ -58,6 +58,7 @@ export async function POST(req: Request) {
       const now = Date.now(); const week = studyWeek(row.enrolledAt, now);
       if (body.action === 'consent') {
         if (data.appConsent?.version === MAIN_APP_CONSENT) return;
+        data.selectedVersion = 'rmt';
         data.appConsent = { version: MAIN_APP_CONSENT, at: new Date(now).toISOString(), migrated: true };
         data.events.push({ event_type: 'app_consent', event_timestamp: new Date(now).toISOString(), task_id: null });
         return;

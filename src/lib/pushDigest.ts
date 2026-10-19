@@ -8,6 +8,7 @@
  * уведомление конкретное: «осталось 1 из 3», а не «зайди в приложение».
  */
 
+import { ordinaryUsers } from "./ordinaryUsers";
 import { prisma } from "@/lib/db";
 import {
   sendPush,
@@ -98,7 +99,7 @@ export async function runDigest(now: Date = new Date()) {
   let expired = 0;
 
   const subs = await prisma.pushSubscription.findMany({
-    where: { enabled: true },
+    where: { enabled: true, user: ordinaryUsers },
     include: { user: { select: { state: { select: { data: true } } } } },
     take: 5000,
   });

@@ -1,0 +1,25 @@
+name: Push notifications cron
+
+# ЗАПАСНОЙ путь. Основной — таймер внутри самого сервера
+# (src/lib/pushScheduler.ts): он срабатывает ровно по минутам. Расписание
+# ниже раньше стояло на «*/5», но GitHub его не держит — по истории запусков
+# приходил раз в 2–5 часов, и напоминания «за 5 минут» не доходили вовсе.
+# Теперь это страховка раз в час на случай, если сервер перезапускался:
+# отправка идемпотентна, дублей с таймером не будет.
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Morning/evening digest (hourly-ish, cheap to call every run)
+        run: |
+          curl -sf -X POST "https://yeahgrind.site/api/push/send" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "send failed (non-fatal)"
+      - name: Scheduled task/todo reminders
+        run: |
+          curl -sf -X POST "https://yeahgrind.site/api/push/dispatch" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "dispatch failed (non-fatal)"

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ordinaryUsers } from "@/lib/ordinaryUsers";
 import { prisma } from "@/lib/db";
 import { decryptLmsUrl } from "@/lib/lmsConnection";
 import { syncLmsCalendar } from "@/lib/lmsSync";
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const dry = new URL(req.url).searchParams.get("dry") === "1";
-  const connections = await prisma.lmsConnection.findMany({ where: { user: { banned: false } } });
+  const connections = await prisma.lmsConnection.findMany({ where: { user: { ...ordinaryUsers, banned: false } } });
   const results: { userId: string; ok: boolean; created?: number; error?: string }[] = [];
   for (const connection of connections) {
     if (!connection.encryptedUrl) continue; // explicitly disconnected, including legacy owners
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
   // Preserve the owner's existing env-based connection until they link their LMS account.
   const legacyId = process.env.LMS_SYNC_USER_ID;
   if (legacyId && process.env.LMS_ICAL_URL && !connections.some((c) => c.userId === legacyId)) {
-    const owner = await prisma.user.findUnique({ where: { id: legacyId }, select: {
+    const owner = await prisma.user.findUnique({ where: { id: legacyId, AND: ordinaryUsers }, select: {
       banned: true, accounts: { where: { provider: LMS_PROVIDER }, select: { id: true }, take: 1 },
     } });
     if (owner && !owner.banned && owner.accounts.length === 0) {

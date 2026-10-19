@@ -6,7 +6,7 @@ try {
   const [command, userId, condition] = process.argv.slice(2);
   if (command === 'pilot') {
     if (!userId || !['A', 'B'].includes(condition)) throw new Error('Usage: pilot USER_ID A|B (use a dedicated developer account)');
-    const data = { version: 'assignment3-v1', aiConsent: true, lastActivity: 0, events: [], interview: null };
+    const data = { version: 'assignment3-v1', aiConsent: true, appConsent: { version: 'main-app-v1', at: new Date().toISOString() }, lastActivity: 0, events: [], interview: null };
     await db.researchParticipant.create({ data: { userId, participantId: randomUUID(), condition, pilot: true, data } });
     console.log('Pilot created; excluded from research exports and allocation.');
   } else if (command === 'purge') {

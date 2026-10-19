@@ -11,6 +11,13 @@ if data.get('dataset') != 'behavior':
     raise SystemExit('Use the behavior export; interviews stay in a separate restricted dataset.')
 out = Path(destination)
 out.mkdir(parents=True, exist_ok=True)
+# The standalone pilot and the main application are distinct interface exposures.
+# Preserve their raw exports, but do not silently pool them into the main trial.
+all_participants = data['participants']
+target_interface = 'main-app-v1' if any(p.get('interface_version') == 'main-app-v1' for p in all_participants) else 'standalone-v1'
+excluded = [p for p in all_participants if p.get('mixed_interface') or p.get('interface_version', 'standalone-v1') != target_interface]
+data['participants'] = [p for p in all_participants if p not in excluded]
+(out / 'analysis-scope.json').write_text(json.dumps({'interface': target_interface, 'excluded_mixed_or_other_interface': len(excluded), 'excluded_participant_ids': [p['participant_id'] for p in excluded]}, indent=2))
 rows = []
 for p in data['participants']:
     for w in p['weeks']:

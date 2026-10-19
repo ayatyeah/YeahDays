@@ -8,7 +8,7 @@ import { POST } from './route';
 import { initialResearch } from '@/lib/research';
 beforeEach(() => { vi.resetAllMocks(); vi.stubGlobal('fetch', m.fetch); vi.stubEnv('OPENAI_API_KEY', 'test-key'); m.auth.mockResolvedValue({ user: { id: 'account-secret' } }); });
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
-const row = (condition: string) => ({ condition, enrolledAt: new Date(), withdrawnAt: null, data: initialResearch() });
+const row = (condition: string) => ({ condition, enrolledAt: new Date(), withdrawnAt: null, data: { ...initialResearch(), appConsent: { version: 'main-app-v1', at: new Date().toISOString() } } });
 it('requires authentication', async () => { m.auth.mockResolvedValue(null); expect((await POST()).status).toBe(401); expect(m.find).not.toHaveBeenCalled(); });
 it('never calls AI for A, ignoring any caller-side condition', async () => { m.find.mockResolvedValue(row('A')); const r = await POST(); expect(r.status).toBe(200); expect((await r.json()).source).toBe('standard'); expect(m.fetch).not.toHaveBeenCalled(); expect(m.find).toHaveBeenCalledWith({ where: { userId: 'account-secret' } }); });
 it('rejects withdrawn and expired participants', async () => {
@@ -23,3 +23,5 @@ it('projects only permitted events to the pinned model', async () => {
   expect(payload.input).not.toContain('private interview'); expect(payload.input).not.toContain('account-secret'); expect(payload.input).toContain('w1-plan');
 });
 it('records failure without pretending standard feedback is AI', async () => { m.find.mockResolvedValue(row('B')); m.fetch.mockRejectedValue(new Error('provider-secret')); const r = await POST(); expect(r.status).toBe(503); expect(await r.text()).not.toContain('provider-secret'); expect(m.mutate).toHaveBeenCalled(); });
+
+it('requires renewed consent for existing standalone participants', async () => { const p = row('B'); p.data.appConsent.version = 'old'; m.find.mockResolvedValue(p); expect((await POST()).status).toBe(403); expect(m.fetch).not.toHaveBeenCalled(); });

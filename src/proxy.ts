@@ -1,30 +1,21 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { needsLogin } from "@/lib/publicPaths";
+import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
+import { needsLogin } from '@/lib/publicPaths';
+import { studyApiAllowed, studyPageAllowed } from '@/lib/studyAccess';
 
-/**
- * Регистрация обязательна везде, кроме витрины и юридических страниц —
- * список и исключения в lib/publicPaths.ts (его же читает SessionGuard в
- * браузере). Видна ли навигация — отдельный список MARKETING в Shell.tsx.
- *
- * Файл называется proxy.ts, а не middleware.ts — в Next.js 16 конвенция
- * переименована (см. npx @next/codemod middleware-to-proxy).
- */
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  if (req.auth || !needsLogin(pathname)) return;
-
-  const url = new URL("/login", req.nextUrl.origin);
-  // pathname один без search — раньше терял query (?client_id=...&redirect_uri=...
-  // у /oauth/authorize), после логина человек попадал на страницу без единого
-  // параметра.
-  url.searchParams.set("callbackUrl", pathname + req.nextUrl.search);
+export default auth(req => {
+  const path = req.nextUrl.pathname;
+  if (path.startsWith('/api/')) {
+    if (!studyApiAllowed(path)) return NextResponse.json({ error: 'В этой версии приложения доступны задания и обратная связь на главной.', code: 'STUDY_SURFACE_ONLY' }, { status: 403, headers: { 'Cache-Control': 'private, no-store' } });
+    return;
+  }
+  if (req.auth && path === '/') return NextResponse.redirect(new URL('/app', req.nextUrl.origin));
+  if (!studyPageAllowed(path)) return NextResponse.redirect(new URL('/app', req.nextUrl.origin));
+  if (req.auth || !needsLogin(path)) return;
+  const url = new URL('/login', req.nextUrl.origin);
+  url.searchParams.set('callbackUrl', path + req.nextUrl.search);
   return NextResponse.redirect(url);
 });
-
 export const config = {
-  // Всё, кроме /api/*, служебных путей Next и файлов со статикой
-  // (расширение в пути — иконки, manifest, sw.js и т.п.).
-  // events-data — статический JSON ивентов, вход не нужен (см. lib/publicPaths)
-  matcher: ["/((?!api|_next/static|_next/image|events-data|.*\\..*).*)"],
+  matcher: ['/api/:path*', '/((?!api|_next/static|_next/image|.*\\..*).*)'],
 };

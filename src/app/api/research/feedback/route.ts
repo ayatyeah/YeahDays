@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
 import { rateLimit } from '@/lib/rateLimit';
-import { type ResearchData, studyWeek } from '@/lib/research';
+import { type ResearchData, studyWeek, MAIN_APP_CONSENT } from '@/lib/research';
 import { mutateResearch } from '@/lib/researchDb';
 export const runtime = 'nodejs';
 const json = (v: unknown, status = 200) => NextResponse.json(v, { status, headers: { 'Cache-Control': 'private, no-store' } });
@@ -13,11 +13,12 @@ export async function POST() {
   try {
     const row = await prisma.researchParticipant.findUnique({ where: { userId } });
     if (!row || row.withdrawnAt || studyWeek(row.enrolledAt, Date.now()) > 4) return json({ error: 'Участие не активно' }, 403);
-    if (row.condition === 'A') return json({ source: 'standard', text: 'Выберите доступное задание, прочитайте инструкцию и выполняйте шаги по порядку. После выполнения отметьте результат. Каждое задание приносит 10 очков.' });
     const data = row.data as unknown as ResearchData;
+    if (data.appConsent?.version !== MAIN_APP_CONSENT) return json({ error: 'Подтвердите условия основной версии' }, 403);
+    if (row.condition === 'A') return json({ source: 'standard', text: 'Выберите доступное задание, прочитайте инструкцию и выполняйте шаги по порядку. После выполнения отметьте результат. Каждое задание приносит 10 очков.' });
     if (!data.aiConsent) return json({ error: 'Нет согласия на передачу событий' }, 403);
     const key = process.env.OPENAI_API_KEY;
-    if (!key) return json({ error: 'ИИ временно недоступен' }, 503);
+    if (!key) throw new Error('provider unavailable');
     // Explicit projection: no account IDs, names, plans, answers or personal content.
     const response = await fetch('https://api.openai.com/v1/responses', {
       method: 'POST', signal: AbortSignal.timeout(20000), headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },

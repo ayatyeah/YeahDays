@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
 import { rateLimit } from '@/lib/rateLimit';
-import { activity, initialResearch, parseInterview, RESEARCH_VERSION, studyWeek, taskAction, type ResearchData } from '@/lib/research';
+import { MAIN_APP_CONSENT, activity, initialResearch, parseInterview, RESEARCH_VERSION, studyWeek, taskAction, type ResearchData } from '@/lib/research';
 import { mutateResearch, publicResearch, researchConfig, researchJson } from '@/lib/researchDb';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,8 +22,9 @@ export async function POST(req: Request) {
   if (raw.length > 22000) return json({ error: 'Слишком большой запрос' }, 400);
   let body;
   try { body = JSON.parse(raw); } catch { return json({ error: 'Некорректный JSON' }, 400); }
-  if (!body || !['enroll', 'activity', 'start', 'complete', 'interview', 'withdraw'].includes(body.action)) return json({ error: 'Некорректное действие' }, 400);
+  if (!body || !['enroll', 'activity', 'start', 'complete', 'interview', 'withdraw', 'consent'].includes(body.action)) return json({ error: 'Некорректное действие' }, 400);
   try {
+    if (['enroll', 'consent'].includes(body.action) && (body.version !== RESEARCH_VERSION || body.appVersion !== MAIN_APP_CONSENT || body.adult !== true || body.notDeveloper !== true || body.consent !== true || body.aiConsent !== true)) return json({ error: 'Нужно подтвердить текущие условия участия' }, 400);
     if (body.action === 'enroll') {
       if (!researchConfig().enabled) return json({ error: 'Набор ещё не открыт' }, 409);
       if (body.version !== RESEARCH_VERSION || body.adult !== true || body.notDeveloper !== true || body.consent !== true || body.aiConsent !== true) return json({ error: 'Нужно подтвердить условия участия' }, 400);
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
         const a = rows.filter(r => r.condition === 'A').length;
         const b = rows.length - a;
         const condition = a === b ? (randomInt(2) ? 'A' : 'B') : a < b ? 'A' : 'B';
-        return tx.researchParticipant.create({ data: { userId, participantId: randomUUID(), condition, data: researchJson({ ...initialResearch(), consentInformation: { contact: researchConfig().contact, deleteAt: researchConfig().deleteAt } }) } });
+        return tx.researchParticipant.create({ data: { userId, participantId: randomUUID(), condition, data: researchJson({ ...initialResearch(), appConsent: { version: MAIN_APP_CONSENT, at: new Date().toISOString() }, consentInformation: { contact: researchConfig().contact, deleteAt: researchConfig().deleteAt } }) } });
       });
       return json({ participant: publicResearch(row) });
     }
@@ -47,13 +48,21 @@ export async function POST(req: Request) {
       await prisma.$transaction(async tx => {
         await tx.$queryRaw`SELECT "userId" FROM "ResearchParticipant" WHERE "userId" = ${userId} FOR UPDATE`;
         const previous = await tx.researchParticipant.findUniqueOrThrow({ where: { userId } });
-        const receipt = (previous.data as unknown as ResearchData).consentInformation;
-        await tx.researchParticipant.update({ where: { userId }, data: { withdrawnAt: previous.withdrawnAt ?? new Date(), data: researchJson({ ...initialResearch(), aiConsent: false, ...(receipt ? { consentInformation: receipt } : {}) }) } });
+        const previousData = previous.data as unknown as ResearchData;
+        const receipt = previousData.consentInformation;
+        await tx.researchParticipant.update({ where: { userId }, data: { withdrawnAt: previous.withdrawnAt ?? new Date(), data: researchJson({ ...initialResearch(), aiConsent: false, ...(previousData.appConsent ? { appConsent: previousData.appConsent } : {}), ...(receipt ? { consentInformation: receipt } : {}) }) } });
       });
       return json({ participant: publicResearch(await prisma.researchParticipant.findUnique({ where: { userId } })) });
     }
     const row = await mutateResearch(userId, (data, row) => {
       const now = Date.now(); const week = studyWeek(row.enrolledAt, now);
+      if (body.action === 'consent') {
+        if (data.appConsent?.version === MAIN_APP_CONSENT) return;
+        data.appConsent = { version: MAIN_APP_CONSENT, at: new Date(now).toISOString(), migrated: true };
+        data.events.push({ event_type: 'app_consent', event_timestamp: new Date(now).toISOString(), task_id: null });
+        return;
+      }
+      if (data.appConsent?.version !== MAIN_APP_CONSENT) throw new Error('Подтвердите условия основной версии');
       if (body.action === 'interview') {
         if (week < 4) throw new Error('Интервью откроется на четвёртой неделе');
         if (!data.interview) data.interview = { ...parseInterview(body), at: new Date(now).toISOString() };
@@ -66,7 +75,7 @@ export async function POST(req: Request) {
     return json({ participant: publicResearch(row) });
   } catch (error) {
     const message = error instanceof Error ? error.message : '';
-    const expected = ['Набор завершён', 'Сначала вступите в исследование', 'Участие завершено', 'Интервью откроется на четвёртой неделе', 'Период выполнения заданий завершён', 'Задание пока недоступно', 'Сначала откройте задание', 'Заполните шесть ответов; оценки — от 1 до 5 или пропуск'];
+    const expected = ['Подтвердите условия основной версии', 'Набор завершён', 'Сначала вступите в исследование', 'Участие завершено', 'Интервью откроется на четвёртой неделе', 'Период выполнения заданий завершён', 'Задание пока недоступно', 'Сначала откройте задание', 'Заполните шесть ответов; оценки — от 1 до 5 или пропуск'];
     return json({ error: expected.includes(message) ? message : 'Не удалось сохранить данные' }, expected.includes(message) ? 400 : 503);
   }
 }

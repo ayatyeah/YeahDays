@@ -1,4 +1,5 @@
 export const RESEARCH_VERSION = 'assignment3-v1';
+export const MAIN_APP_CONSENT = 'main-app-v1';
 export const DAY = 86_400_000;
 export const SESSION_GAP = 30 * 60_000;
 export const TASKS = Array.from({ length: 4 }, (_, w) => [
@@ -15,8 +16,8 @@ export const QUESTIONS = [
   'Какое одно изменение больше всего улучшило бы ваш опыт?',
 ];
 export const RATINGS = ['Я чувствовал(а) интерес при использовании приложения', 'Приложение мотивировало меня завершать задания', 'Обратная связь или рекомендации были полезны'];
-export type ResearchEvent = { event_type: 'session_start' | 'task_start' | 'task_complete' | 'ai_feedback' | 'ai_failure'; event_timestamp: string; task_id: string | null };
-export type ResearchData = { version: string; aiConsent: boolean; consentInformation?: { contact: string; deleteAt: string }; lastActivity: number; events: ResearchEvent[]; interview: { answers: string[]; ratings: (number | null)[]; at: string } | null };
+export type ResearchEvent = { event_type: 'session_start' | 'task_start' | 'task_complete' | 'ai_feedback' | 'ai_failure' | 'app_consent'; event_timestamp: string; task_id: string | null };
+export type ResearchData = { version: string; aiConsent: boolean; appConsent?: { version: string; at: string; migrated?: boolean }; consentInformation?: { contact: string; deleteAt: string }; lastActivity: number; events: ResearchEvent[]; interview: { answers: string[]; ratings: (number | null)[]; at: string } | null };
 export const initialResearch = (): ResearchData => ({ version: RESEARCH_VERSION, aiConsent: true, lastActivity: 0, events: [], interview: null });
 export function studyWeek(enrolledAt: Date | string, now: number) { return Math.floor((now - new Date(enrolledAt).getTime()) / (7 * DAY)) + 1; }
 export function activity(data: ResearchData, now: number) {

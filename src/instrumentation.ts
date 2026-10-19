@@ -6,8 +6,7 @@
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
-  const { startPushScheduler } = await import("@/lib/pushScheduler");
-  startPushScheduler();
+  // Legacy personalized reminders are paused for the controlled comparison.
   const { startResearchRetention } = await import("@/lib/researchRetention");
   startResearchRetention();
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/owner";
 import OwnerConsole from "@/components/OwnerConsole";
@@ -24,6 +25,7 @@ export default async function AdminPage() {
   if (!(await requireAdmin())) redirect("/admin/login");
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 pt-[max(1.5rem,env(safe-area-inset-top))] pb-10 sm:px-8 sm:pt-10">
+      <Link href="/admin/research" className="mb-6 rounded-xl border p-4 font-semibold">Исследование A/B: участники, показатели и выгрузки →</Link>
       <OwnerConsole showCredentialsWarning={adminCredentialsAreDefault()} />
     </main>
   );

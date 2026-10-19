@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from './db';
-import { type ResearchData, RESEARCH_VERSION, studyWeek, TASKS } from './research';
+import { type ResearchData, RESEARCH_VERSION, studyWeek, TASKS, MAIN_APP_CONSENT, metrics, totalMetrics } from './research';
 export const researchJson = (data: ResearchData) => data as unknown as Prisma.InputJsonValue;
 export function researchConfig() {
   const contact = process.env.RESEARCH_CONTACT?.trim() || '';
@@ -11,7 +11,7 @@ export function researchConfig() {
 export function publicResearch(row: { participantId: string; condition: string; pilot: boolean; enrolledAt: Date; withdrawnAt: Date | null; data: unknown } | null) {
   if (!row) return null;
   const data = row.data as ResearchData;
-  return { participantId: row.participantId, condition: row.condition, pilot: row.pilot, enrolledAt: row.enrolledAt, withdrawnAt: row.withdrawnAt, week: studyWeek(row.enrolledAt, Date.now()), tasks: TASKS.map(t => ({ ...t, started: data.events.some(e => e.task_id === t.id && e.event_type === 'task_start'), completed: data.events.some(e => e.task_id === t.id && e.event_type === 'task_complete') })), points: 10 * data.events.filter(e => e.event_type === 'task_complete').length, interviewSubmitted: !!data.interview };
+  return { participantId: row.participantId, condition: row.condition, pilot: row.pilot, enrolledAt: row.enrolledAt, withdrawnAt: row.withdrawnAt, needsAppConsent: data.appConsent?.version !== MAIN_APP_CONSENT, week: studyWeek(row.enrolledAt, Date.now()), summary: totalMetrics(row.enrolledAt, data, Date.now()), weeks: metrics(row.enrolledAt, data, Date.now()), tasks: TASKS.map(t => ({ ...t, startedAt: data.events.find(e => e.task_id === t.id && e.event_type === 'task_start')?.event_timestamp ?? null, started: data.events.some(e => e.task_id === t.id && e.event_type === 'task_start'), completed: data.events.some(e => e.task_id === t.id && e.event_type === 'task_complete') })), points: 10 * data.events.filter(e => e.event_type === 'task_complete').length, interviewSubmitted: !!data.interview };
 }
 export async function mutateResearch(userId: string, change: (data: ResearchData, row: { enrolledAt: Date; withdrawnAt: Date | null; condition: string }) => void) {
   return prisma.$transaction(async tx => {

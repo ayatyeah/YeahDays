@@ -2,15 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Shell from "@/components/Shell";
-import CreateTaskModal from "@/components/CreateTaskModal";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import AuthProvider from "@/components/AuthProvider";
 import ThemeApplier from "@/components/ThemeApplier";
-import DomTranslator from "@/i18n/DomTranslator";
-import VisitBeacon from "@/components/VisitBeacon";
 import SessionGuard from "@/components/SessionGuard";
-import RoutePrefetch from "@/components/RoutePrefetch";
 
 /**
  * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
@@ -27,7 +23,6 @@ const THEME_INIT_SCRIPT = `(function(){try{var raw=localStorage.getItem('yeahday
  * 2,5 секунды он показывается в любом случае — даже если словарь не пришёл.
  * Ключ хранилища — LOCALE_KEY из src/i18n/locale.ts.
  */
-const LOCALE_INIT_SCRIPT = `(function(){try{var raw=localStorage.getItem('yg-locale');if(!raw)return;var l=JSON.parse(raw).state.locale;if(l==='en'||l==='kk'){var d=document.documentElement;d.lang=l;d.setAttribute('data-i18n-pending','');setTimeout(function(){d.removeAttribute('data-i18n-pending')},2500);}}catch(e){}})();`;
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -49,19 +44,19 @@ export const metadata: Metadata = {
     siteName: "YeahGrind",
     locale: "ru_RU",
     title: "YeahGrind — одно действие в день",
-    description: "План под твоё состояние, учёба, квизы и челленджи — в одном приложении.",
+    description: "Четыре недели небольших заданий, обратной связи и видимого прогресса.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "YeahGrind — одно действие в день" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "YeahGrind — одно действие в день",
-    description: "План под твоё состояние, учёба, квизы и челленджи — в одном приложении.",
+    description: "Четыре недели небольших заданий, обратной связи и видимого прогресса.",
     images: ["/og.png"],
   },
   applicationName: "YeahGrind",
   title: "YeahGrind — одно действие в день",
   description:
-    "Не список задач, а подборка действий под твоё состояние. Свайпни то, что берёшь на сегодня — и смотри, как растёт твой персонаж.",
+    "Выполняйте небольшие задания, получайте обратную связь и наблюдайте за своим прогрессом.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -136,11 +131,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#08080b",
+  themeColor: "#255841",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  maximumScale: 5,
+  userScalable: true,
   // под вырез и домашнюю полосу: контент рисуется во весь экран, отступы
   // добавляем сами через env(safe-area-inset-*)
   viewportFit: "cover",
@@ -162,18 +157,14 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script dangerouslySetInnerHTML={{ __html: LOCALE_INIT_SCRIPT }} />
+
         <ThemeApplier />
-        <DomTranslator />
-        <VisitBeacon />
         <SessionGuard />
         <AuthProvider>
           <ErrorBoundary>
             <Shell>{children}</Shell>
           </ErrorBoundary>
-          <CreateTaskModal />
           <ServiceWorkerRegister />
-          <RoutePrefetch />
         </AuthProvider>
       </body>
     </html>

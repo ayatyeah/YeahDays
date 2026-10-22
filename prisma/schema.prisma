@@ -787,3 +787,55 @@ model ResearchParticipant {
   withdrawnAt DateTime?
   data Json
 }
+
+// Командный трекер задач диплома (/team) — аналог YouTrack внутри приложения.
+// Доступ: владелец (OWNER_EMAIL) и участники из TrackerMember.
+model TrackerMember {
+  email String @id
+  name String
+  addedAt DateTime @default(now())
+}
+model TrackerTask {
+  number Int @id
+  summary String
+  description String @default("")
+  epic String @default("")
+  type String @default("Task")
+  priority String @default("Normal")
+  state String @default("Open")
+  assignee String @default("")
+  reviewer String @default("")
+  estimate String @default("")
+  sprint String @default("")
+  dueDate String @default("")
+  requirements String @default("")
+  acceptance String @default("")
+  dependsOn String @default("")
+  links String @default("")
+  createdBy String @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  comments TrackerComment[]
+  activity TrackerActivity[]
+  @@index([state])
+}
+model TrackerComment {
+  id String @id @default(cuid())
+  taskNumber Int
+  task TrackerTask @relation(fields: [taskNumber], references: [number], onDelete: Cascade)
+  author String
+  text String
+  createdAt DateTime @default(now())
+  @@index([taskNumber, createdAt])
+}
+model TrackerActivity {
+  id String @id @default(cuid())
+  taskNumber Int
+  task TrackerTask @relation(fields: [taskNumber], references: [number], onDelete: Cascade)
+  actor String
+  field String
+  fromValue String @default("")
+  toValue String @default("")
+  at DateTime @default(now())
+  @@index([taskNumber, at])
+}

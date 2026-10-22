@@ -78,7 +78,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 
   // Консоль владельца — отдельный инструмент, а не раздел приложения: без
   // навигации, баннера установки и гайдов, во всю ширину экрана.
-  const isConsole = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isConsole = pathname === "/admin" || pathname.startsWith("/admin/") || pathname === "/team" || pathname.startsWith("/team/");
 
   if (isMarketing || isConsole || isRmtPath(pathname) || isVersionPicker(pathname)) {
     return (

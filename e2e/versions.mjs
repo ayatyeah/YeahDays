@@ -4,14 +4,16 @@ import {encode} from 'next-auth/jwt';
 import {chromium} from 'playwright';
 import {mkdirSync} from 'node:fs';
 const base=process.env.E2E_BASE||'http://localhost:3109';
-assert(new URL(process.env.DATABASE_URL).hostname==='localhost' && /test/.test(new URL(process.env.DATABASE_URL).pathname));
+// Only against a local database: the test creates and deletes its own account.
+assert(new URL(process.env.DATABASE_URL).hostname==='localhost' && /(test|dev)/.test(new URL(process.env.DATABASE_URL).pathname+new URL(process.env.DATABASE_URL).search));
 const db=new PrismaClient();const browser=await chromium.launch();let user;
 try {
  const context=await browser.newContext({viewport:{width:390,height:844}});const page=await context.newPage();
- await page.goto(base);await page.getByRole('heading',{name:/Какую версию/}).waitFor();
+ // The RMT/ordinary picker is gone: / is the landing, /versions redirects there.
+ await page.goto(base,{waitUntil:'networkidle'});assert.equal(await page.getByRole('heading',{name:/Какую версию/}).count(),0);assert.match(await page.title(),/YeahGrind/);
  mkdirSync('artifacts/versions',{recursive:true});
- for(const width of [320,390,1440]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`artifacts/versions/selector-${width}.png`,fullPage:true});}
- await page.getByRole('button',{name:'Открыть обычную версию'}).click();await page.waitForURL(base+'/ordinary');
+ for(const width of [320,390,1440]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.screenshot({path:`artifacts/versions/landing-${width}.png`});}
+ await page.goto(base+'/versions');await page.waitForURL(base+'/');
  user=await db.user.create({data:{email:`versions-${crypto.randomUUID()}@test.local`,name:'Version test'}});
  const actions=['Прочитать страницу','Размяться пять минут','Записать одну мысль'].map((title,i)=>({id:`one-${i}`,title,why:'Небольшое действие помогает начать.',category:'learning',difficulty:1,duration:5,energy:'low',timePreference:'any',impact:2,custom:true}));
  await db.userState.create({data:{userId:user.id,clientAt:new Date(1000),data:{name:user.name,onboarded:true,seenGuide:true,seenFeatures:['cv-midterm-2026-10','cc-midterm-2026-10','cn-midterm-2026-10','social-2026-10','events-2026-10','challenge30-2026-10','community-2026-09','challenges','todos','schedule','timeslots','push','personal-duration'],todos:[],plan:[],updatedAt:1,customActions:actions,useOwnActionsOnly:true}}});
@@ -25,5 +27,5 @@ try {
  await page.getByRole('button',{name:/Сделал ·/}).click();await page.getByRole('button',{name:'Выбрать ещё одно дело',exact:true}).waitFor();
  await page.screenshot({path:'artifacts/versions/ordinary-task.png',fullPage:true});
  assert.equal(await db.researchParticipant.count({where:{userId:user.id}}),0);
- console.log('PASS: version selector 320/390/1440, ordinary landing, restored task acceptance, persistence and completion, no implicit study enrollment');
+ console.log('PASS: landing without version picker at 320/390/1440, /versions redirect, task acceptance, persistence and completion, no implicit study enrollment');
 }finally{await browser.close();if(user)await db.user.delete({where:{id:user.id}});await db.$disconnect();}

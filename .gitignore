@@ -30,6 +30,8 @@ next-env.d.ts
 # playwright / test artifacts
 /.playwright-mcp
 /shot-*.png
+# скриншоты, которые пишут e2e-скрипты (каждый сам создаёт свою папку)
+/artifacts/
 
 # local MCP config — содержит секреты (напр. FIGMA_API_KEY)
 /.mcp.json

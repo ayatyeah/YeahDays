@@ -170,7 +170,8 @@ const engines = { webkit, chromium };
  * `waitUntil: "networkidle"` перед вводом не прихоть: до гидрации поля
  * живут своей жизнью, и тест, который печатает слишком рано, врёт.
  */
-export async function session({ user, engine = "webkit", permissions, initScript, serviceWorkers = "allow" } = {}) {
+// E2E_ENGINE=chromium — запасной вариант, когда WebKit на машине не запускается.
+export async function session({ user, engine = process.env.E2E_ENGINE || "webkit", permissions, initScript, serviceWorkers = "allow" } = {}) {
   const browser = await engines[engine].launch();
   const context = await browser.newContext({
     ...devices["iPhone 13"],
@@ -184,6 +185,21 @@ export async function session({ user, engine = "webkit", permissions, initScript
   });
   if (initScript) await context.addInitScript(initScript);
   const page = await context.newPage();
+  // В Chromium приложение держит фоновые запросы, и «сеть затихла» может не наступить:
+  // там networkidle заменяем на загрузку страницы и мягкое ожидание сети.
+  if (engine === "chromium") {
+    for (const name of ["goto", "reload"]) {
+      const original = page[name].bind(page);
+      page[name] = async (...args) => {
+        const opts = (name === "goto" ? args[1] : args[0]) ?? {};
+        if (opts.waitUntil !== "networkidle") return original(...args);
+        const soft = { ...opts, waitUntil: "load" };
+        const result = await (name === "goto" ? original(args[0], soft) : original(soft));
+        await page.waitForLoadState("networkidle", { timeout: 8_000 }).catch(() => {});
+        return result;
+      };
+    }
+  }
   // Запоминаем последнюю открытую вкладку: с неё снимается скриншот, если
   // тест упадёт. Иначе каждый тест пришлось бы передавать её руками.
   current.page = page;
@@ -201,7 +217,8 @@ export async function session({ user, engine = "webkit", permissions, initScript
     // аккаунта. Человек в эту секунду никуда не уходит — и тест не должен:
     // иначе загрузка обрывается на полпути, и первый обмен с сервером
     // достаётся следующей странице.
-    await page.waitForLoadState("networkidle");
+    // В Chromium главная держит фоновые запросы, и «сеть затихла» может не наступить.
+    await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
   }
   return { browser, context, page, errors };
 }

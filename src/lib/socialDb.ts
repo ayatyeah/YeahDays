@@ -66,6 +66,7 @@ const postInclude = (viewer: string) => ({
   media: { orderBy: { position: "asc" as const }, select: { id: true, width: true, height: true } },
   _count: { select: { likes: true, replies: true } },
   likes: { where: { userId: viewer }, select: { userId: true } },
+  pathShare: { select: { kind: true, goal: { select: { title: true, subject: true, _count: { select: { members: true } } } } } },
 });
 type PostRow = Prisma.SocialPostGetPayload<{ include: ReturnType<typeof postInclude> }>;
 
@@ -74,6 +75,8 @@ function postView(p: PostRow, viewer: string) {
     id: p.id, text: p.text, createdAt: p.createdAt, ...person(p.user),
     media: p.media.map((m) => ({ src: mediaUrl(m.id), width: m.width, height: m.height })),
     likes: p._count.likes, comments: p._count.replies, liked: p.likes.length > 0, mine: p.userId === viewer,
+    // Учебный репост (цель, юнит или видео траектории): карточка ведёт в цель через сам пост.
+    learning: p.pathShare ? { kind: p.pathShare.kind, title: p.pathShare.goal.title, subject: p.pathShare.goal.subject, members: p.pathShare.goal._count.members, href: `/learn/s/${p.id}` } : null,
   };
 }
 

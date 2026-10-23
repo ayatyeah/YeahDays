@@ -1,0 +1,8 @@
+import GoalPage from "@/components/path/GoalPage";
+
+export const metadata = { title: "Траектория — YeahGrind" };
+
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return <GoalPage goalId={id} />;
+}

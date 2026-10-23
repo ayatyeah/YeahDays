@@ -25,6 +25,7 @@ import { rewardFor } from "@/lib/learning";
 import { dateKey } from "@/lib/domain";
 import { isTodoOnDay, isTodoDone, useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
+import PathwaysHub from "@/components/path/PathwaysHub";
 
 const field =
   "mt-2 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3 text-[16px]";
@@ -563,14 +564,17 @@ export default function LearningPage({
       )}
       {view === "hub" && (
         <nav className="mono-learning-links" aria-label="Разделы учёбы">
-          <a href="#learning-subjects">Мои предметы</a>
+          <a href="#path-hub-title">Траектории</a>
+          {!!data?.skills.length && <a href="#learning-subjects">Мои предметы</a>}
           <a href="#learning-exams">Подготовка к экзаменам</a>
         </nav>
       )}
       {view === "hub" && (
         <div className="learning-layout">
           <div className="learning-main">
-            {data && (
+            <PathwaysHub />
+            {/* Прежние ИИ-маршруты из шести квестов — только у тех, кто их уже начал. */}
+            {data && data.skills.length > 0 && (
               <section className="learning-continue">
                 <div className="learning-continue-copy">
                   <span className="learning-eyebrow">
@@ -607,7 +611,7 @@ export default function LearningPage({
                     onClick={() =>
                       skill
                         ? navigate("lesson", skill.id, nextQuest?.id)
-                        : navigate("create")
+                        : router.push("/learn/new")
                     }
                   >
                     {skill
@@ -630,12 +634,9 @@ export default function LearningPage({
                 )}
               </section>
             )}
-            <section>
+            {!!data?.skills.length && <section>
               <div className="learning-section-title">
                 <h2 id="learning-subjects">Мои предметы</h2>
-                <button disabled={!data} onClick={() => navigate("create")}>
-                  + Новый маршрут
-                </button>
               </div>
               <div className="learning-subjects">
                 {data?.skills.map((s, i) => {
@@ -677,13 +678,7 @@ export default function LearningPage({
                   );
                 })}
               </div>
-              {data?.skills.length === 0 && (
-                <p className="learning-empty">
-                  Здесь появятся твои маршруты. Можно начать с предмета из
-                  университета или любой интересной темы.
-                </p>
-              )}
-            </section>
+            </section>}
             <section>
               <div className="learning-section-title">
                 <h2 id="learning-exams">Подготовка к экзаменам</h2>

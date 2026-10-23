@@ -18,6 +18,24 @@ export interface Media { src: string; width: number; height: number }
 export interface PostView extends PersonBase {
   id: string; text: string; createdAt: string; media: Media[];
   likes: number; comments: number; liked: boolean; mine: boolean;
+  learning?: { kind: string; title: string; subject: string; members: number; href: string } | null;
+}
+
+const LEARNING_KIND: Record<string, string> = { goal: "Учебная цель", unit: "Юнит траектории", video: "Короткое видео" };
+
+/** Карточка учебного репоста: открывает цель (и предлагает присоединиться). */
+function LearningCard({ learning }: { learning: NonNullable<PostView["learning"]> }) {
+  return (
+    <a href={learning.href} className="mx-3 mt-2 flex items-center gap-3 rounded-xl border border-[var(--color-border-strong)] bg-[var(--color-surface-2)] px-3 py-2.5">
+      <span aria-hidden className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-gradient-to-br from-emerald-500/30 to-sky-500/20 text-lg">{learning.kind === "video" ? "▶" : "◆"}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-xs text-[var(--color-fg-dim)]">{LEARNING_KIND[learning.kind] ?? LEARNING_KIND.goal}</span>
+        <b data-no-i18n className="block truncate text-sm">{learning.title}</b>
+        <span className="block text-xs text-[var(--color-fg-dim)]">Участников: <span className="tabular-nums">{learning.members}</span></span>
+      </span>
+      <span className="text-sm font-semibold">Открыть</span>
+    </a>
+  );
 }
 export interface Person extends PersonBase { bio: string; subjects: string[]; followers: number; isFollowing: boolean }
 export interface OpenTeam { id: string; name: string; subject: string; about: string; members: number; joined: boolean }
@@ -326,6 +344,7 @@ export function PostCard({ post: initial, ctx, onRemoved, expanded = false }: {
           <RichText text={post.text} />
         </div>
       )}
+      {post.learning && <LearningCard learning={post.learning} />}
 
       <div className="flex items-center gap-1 px-1.5 pt-1">
         <button

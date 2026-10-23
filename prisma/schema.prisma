@@ -72,6 +72,15 @@ model User {
   ownedChallenges   SharedChallenge[]         @relation("challengeOwner")
   challengeMembers  SharedChallengeMember[]
   challengeProgress SharedChallengeProgress[]
+  pathGoals         PathGoal[]                @relation("pathGoalOwner")
+  pathMembers       PathMember[]
+  pathMastery       PathMastery[]
+  pathLearner       PathLearner?
+  pathQuizzes       PathQuiz[]
+  pathProgress      PathProgress[]
+  pathCheckIns      PathCheckIn[]
+  pathEvents        PathEvent[]
+  pathReports       PathReport[]
 }
 
 // Секрет календаря хранится только на сервере, зашифрованным.
@@ -710,6 +719,7 @@ model SocialPost {
   likes SocialLike[]
   reports SocialReport[]
   media SocialMedia[]
+  pathShare PathShare?
   @@index([userId, createdAt])
   @@index([parentId, createdAt])
   @@index([createdAt])
@@ -838,4 +848,311 @@ model TrackerActivity {
   toValue String @default("")
   at DateTime @default(now())
   @@index([taskNumber, at])
+}
+
+// ── Траектории обучения: цели с картой навыков и микро-юнитами, адаптивная
+// оценка (Elo), короткие видео по юнитам и совместное прохождение. Пишет
+// только src/lib/path; формулы и пороги — docs/diploma-en, разделы 7.6–7.8.
+
+/// Учебная цель. Содержимое (навыки, юниты, вопросы, видео) общее для всех
+/// участников, освоение и прогресс — у каждого свои.
+model PathGoal {
+  id           String         @id @default(cuid())
+  ownerId      String
+  owner        User           @relation("pathGoalOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  title        String
+  goal         String
+  subject      String         @default("")
+  level        String         @default("beginner")
+  /// язык содержимого: ru | en | kk
+  language     String         @default("ru")
+  /// материал, который прислал владелец (≤ 20 000 символов); данные, не инструкции
+  source       String         @default("")
+  invite       String         @unique
+  /// цель совместного челленджа на неделю (юниты на всех); 0 — по 3 на участника
+  weeklyTarget Int            @default(0)
+  createdAt    DateTime       @default(now())
+  skills       PathSkill[]
+  units        PathUnit[]
+  members      PathMember[]
+  questions    PathQuestion[]
+  events       PathEvent[]
+  shares       PathShare[]
+  quizzes      PathQuiz[]
+  reports      PathReport[]
+
+  @@index([ownerId])
+}
+
+model PathMember {
+  goalId        String
+  userId        String
+  goal          PathGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// owner | member
+  role          String   @default("member")
+  /// бюджет на день по умолчанию, минут
+  minutes       Int      @default(20)
+  /// дата экзамена или дедлайна по цели, YYYY-MM-DD; "" — нет
+  deadline      String   @default("")
+  placementDone Boolean  @default(false)
+  joinedAt      DateTime @default(now())
+
+  @@id([goalId, userId])
+  @@index([userId])
+}
+
+model PathSkill {
+  id            String        @id @default(cuid())
+  goalId        String
+  goal          PathGoal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  position      Int
+  name          String
+  description   String
+  /// id навыков-предпосылок (граф без циклов)
+  prerequisites String[]      @default([])
+  masteries     PathMastery[]
+
+  @@index([goalId, position])
+}
+
+model PathUnit {
+  id         String         @id @default(cuid())
+  goalId     String
+  goal       PathGoal       @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  position   Int
+  skillIds   String[]
+  title      String
+  objective  String
+  minutes    Int
+  /// вклад юнита в цель (goalRelevance), 0..1
+  weight     Float          @default(0.5)
+  /// цитата из материала владельца, на которую опирается юнит
+  sourceSpan String         @default("")
+  /// текст юнита (≤ 400 слов) — генерируется при первом открытии
+  body       String         @default("")
+  /// outline | generating | ready | failed
+  status     String         @default("outline")
+  version    Int            @default(1)
+  startedAt  DateTime?
+  videos     PathVideo[]
+  progress   PathProgress[]
+
+  @@index([goalId, position])
+}
+
+model PathQuestion {
+  id          String   @id @default(cuid())
+  goalId      String
+  goal        PathGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  skillId     String
+  unitId      String?
+  /// mcq | open
+  kind        String   @default("mcq")
+  stem        String
+  options     String[] @default([])
+  /// индекс верного варианта; клиенту не отдаётся до попытки
+  answer      Int      @default(-1)
+  explanation String   @default("")
+  /// почему неверен каждый неверный вариант, по порядку options без верного
+  wrongWhy    String[] @default([])
+  hints       String[] @default([])
+  /// скрытые критерии для открытого ответа
+  rubric      String   @default("")
+  /// easy | medium | hard — стартовая сложность −1 / 0 / +1
+  level       String   @default("medium")
+  /// сложность b_i по Elo
+  difficulty  Float    @default(0)
+  answers     Int      @default(0)
+  placement   Boolean  @default(false)
+  /// active | rejected (по жалобам или решению владельца — больше не выдаётся)
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+
+  @@index([goalId, skillId])
+}
+
+model PathMastery {
+  userId     String
+  skillId    String
+  goalId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill      PathSkill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  /// способность θ_us по Elo
+  theta      Float     @default(0)
+  answers    Int       @default(0)
+  /// σ(θ − медианная сложность навыка)
+  mastery    Float     @default(0)
+  reviewAt   DateTime?
+  /// ступень интервала повторения: 0 → 1 день, 1 → 3, 2 → 7, 3+ → 14
+  reviewStep Int       @default(0)
+  masteredAt DateTime?
+  updatedAt  DateTime  @updatedAt
+
+  @@id([userId, skillId])
+  @@index([userId, goalId])
+}
+
+/// Общая для всех целей способность ученика θ_u — стартовая точка новых навыков.
+model PathLearner {
+  userId  String @id
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  theta   Float  @default(0)
+  answers Int    @default(0)
+}
+
+model PathQuiz {
+  id         String        @id @default(cuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId     String
+  goal       PathGoal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  unitId     String?
+  /// placement | unit | review
+  kind       String
+  skillIds   String[]
+  served     String[]      @default([])
+  current    String?
+  /// сколько подсказок взято по текущему вопросу
+  hints      Int           @default(0)
+  /// active | done
+  status     String        @default("active")
+  createdAt  DateTime      @default(now())
+  finishedAt DateTime?
+  attempts   PathAttempt[]
+
+  @@index([userId, goalId])
+}
+
+model PathAttempt {
+  id          String   @id @default(cuid())
+  quizId      String
+  quiz        PathQuiz @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  userId      String
+  questionId  String
+  skillId     String
+  /// исход y: 0/1 для тестовых, балл/100 для открытых
+  score       Float
+  answer      String
+  p           Float
+  thetaBefore Float
+  thetaAfter  Float
+  bBefore     Float
+  bAfter      Float
+  hints       Int      @default(0)
+  ms          Int      @default(0)
+  /// ключ идемпотентности: повтор того же ответа ничего не меняет
+  key         String   @unique
+  createdAt   DateTime @default(now())
+
+  @@index([quizId])
+  @@index([userId, questionId])
+}
+
+model PathProgress {
+  userId      String
+  unitId      String
+  goalId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  unit        PathUnit  @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  openedAt    DateTime  @default(now())
+  completedAt DateTime?
+  /// день (YYYY-MM-DD), на который юнит отложен — в этот день приоритет ниже
+  postponedOn String    @default("")
+
+  @@id([userId, unitId])
+  @@index([goalId, completedAt])
+}
+
+model PathCheckIn {
+  userId    String
+  day       String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  energy    Int
+  minutes   Int
+  createdAt DateTime @default(now())
+
+  @@id([userId, day])
+}
+
+model PathVideo {
+  id          String          @id @default(cuid())
+  unitId      String
+  unit        PathUnit        @relation(fields: [unitId], references: [id], onDelete: Cascade)
+  unitVersion Int
+  language    String
+  /// queued | running | succeeded | failed | needs_review
+  status      String          @default("queued")
+  script      Json?
+  issues      String[]        @default([])
+  error       String          @default("")
+  attempts    Int             @default(0)
+  seconds     Float           @default(0)
+  createdBy   String
+  startedAt   DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  clips       PathVideoClip[]
+
+  @@unique([unitId, unitVersion, language])
+}
+
+model PathVideoClip {
+  videoId String
+  idx     Int
+  video   PathVideo @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  mime    String
+  seconds Float
+  data    Bytes
+
+  @@id([videoId, idx])
+}
+
+/// Лента круга цели: видна только участникам; баллы — только если человек сам поделился.
+model PathEvent {
+  id        String   @id @default(cuid())
+  goalId    String
+  goal      PathGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// joined | unit_done | skill_mastered | video_ready | placement_done
+  kind      String
+  title     String
+  score     Float?
+  shared    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([goalId, createdAt])
+}
+
+/// Учебная карточка у поста в ленте сообщества (репост цели, юнита или видео).
+model PathShare {
+  postId  String     @id
+  post    SocialPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  goalId  String
+  goal    PathGoal   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  unitId  String?
+  videoId String?
+  /// goal | unit | video
+  kind    String
+  /// код приглашения на момент репоста владельцем; "" — репост участника, вступить по нему нельзя
+  invite  String     @default("")
+}
+
+model PathReport {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId    String
+  goal      PathGoal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  /// unit | question | video
+  target    String
+  targetId  String
+  reason    String
+  snapshot  Json
+  resolved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, target, targetId])
+  @@index([goalId, resolved])
 }

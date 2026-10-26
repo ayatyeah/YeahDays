@@ -1,0 +1,8 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "deploy": {
+    "startCommand": "node --max-old-space-size=256 --max-semi-space-size=2 node_modules/next/dist/bin/next start",
+    "healthcheckPath": "/api/auth/csrf",
+    "healthcheckTimeout": 120
+  }
+}

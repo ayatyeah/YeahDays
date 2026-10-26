@@ -12,6 +12,7 @@ import { diagrams as cc8 } from "./diagrams/cc8";
 import { diagrams as cc9 } from "./diagrams/cc9";
 import { diagrams as cc10 } from "./diagrams/cc10";
 import { diagrams as cn5 } from "./diagrams/cn5";
+import { diagrams as cn7 } from "./diagrams/cn7";
 import { diagrams as pm4 } from "./diagrams/pm4";
 import { diagrams as pm5 } from "./diagrams/pm5";
 import { diagrams as pm6 } from "./diagrams/pm6";
@@ -939,7 +940,7 @@ const DIAGRAMS: Record<string, Draw> = {
   ),
 };
 
-Object.assign(DIAGRAMS, rm1, rm2, rm3, rm4, rm5, rmx, cc6, cc7, cc8, cc9, cc10, cn5, pm4, pm5, pm6, pm7, pm8, pm9, pm10);
+Object.assign(DIAGRAMS, rm1, rm2, rm3, rm4, rm5, rmx, cc6, cc7, cc8, cc9, cc10, cn5, cn7, pm4, pm5, pm6, pm7, pm8, pm9, pm10);
 
 export default function NotesDiagram({ name, lang }: { name: string; lang: string }) {
   const draw = DIAGRAMS[name];

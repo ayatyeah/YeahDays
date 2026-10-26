@@ -265,6 +265,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Звук и видео — мимо воркера: плеер просит файл кусками (Range), а кэш
+  // отдал бы его целиком — Safari такой ответ не проигрывает. Да и кэш
+  // раздувать мегабайтами озвучки незачем.
+  if (request.destination === "audio" || request.destination === "video" || request.headers.has("range")) {
+    return;
+  }
+
   // Сборочные ассеты неизменяемы по контракту Next — только кэш.
   if (url.pathname.startsWith("/_next/static/")) {
     event.respondWith(cacheFirst(request, STATIC));

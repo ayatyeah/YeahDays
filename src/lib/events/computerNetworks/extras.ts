@@ -77,6 +77,21 @@ export const glossary: Term[] = [
   t("RS / RA", "Router Solicitation (a host asks) and Router Advertisement (a router sends the prefix and default gateway).", "Router Solicitation (хост спрашивает) и Router Advertisement (маршрутизатор сообщает префикс и шлюз по умолчанию)."),
   t("Solicited-node multicast", "FF02::1:FF plus the last 24 bits of an IPv6 address; where an NS is sent.", "FF02::1:FF плюс последние 24 бита адреса IPv6; туда отправляется NS."),
   t("ip default-gateway", "Gives a Layer 2 switch a gateway so that it can be managed from other networks.", "Даёт коммутатору уровня 2 шлюз, чтобы им можно было управлять из других сетей."),
+  // Лекция 7: IPv6, ICMP
+  t("Dual stack", "Devices run the IPv4 and IPv6 protocol stacks at the same time; also called native IPv6.", "Устройства одновременно запускают стеки IPv4 и IPv6; ещё называется native IPv6."),
+  t("Tunneling (IPv6 over IPv4)", "An IPv6 packet is encapsulated inside an IPv4 packet to cross an IPv4-only network.", "Пакет IPv6 инкапсулируется в пакет IPv4, чтобы пройти через сеть только с IPv4."),
+  t("NAT64", "Translates IPv6 packets into IPv4 packets and back, so IPv6-only and IPv4-only devices can talk.", "Переводит пакеты IPv6 в IPv4 и обратно, чтобы общались устройства только с IPv6 и только с IPv4."),
+  t("Anycast", "One unicast address on several devices; a packet goes to the nearest of them (one-to-nearest).", "Один unicast-адрес на нескольких устройствах; пакет идёт к ближайшему из них («один к ближайшему»)."),
+  t("GUA (global unicast address)", "A globally unique, internet-routable IPv6 address from 2000::/3, like a public IPv4 address.", "Глобально уникальный, маршрутизируемый в интернете адрес IPv6 из 2000::/3, как публичный IPv4."),
+  t("LLA (link-local address)", "An fe80::/10 address required on every IPv6 interface; works on one link only and is never routed.", "Адрес из fe80::/10, обязательный на каждом интерфейсе IPv6; работает только в своём канале и не маршрутизируется."),
+  t("Unique local address", "fc00::/7, similar to RFC 1918 private addresses; not globally routed or translated.", "fc00::/7, похож на частные адреса RFC 1918; глобально не маршрутизируется и не транслируется."),
+  t("Subnet ID", "The GUA field between the global routing prefix and the interface ID; 16 bits in a /48 site.", "Поле GUA между глобальным префиксом и идентификатором интерфейса; 16 бит у площадки /48."),
+  t("SLAAC", "Stateless Address Autoconfiguration: the host builds its GUA from the RA prefix, without DHCPv6.", "Автонастройка адреса без сохранения состояния: хост строит GUA из префикса в RA, без DHCPv6."),
+  t("Stateless DHCPv6", "Gives only other information, such as DNS and the domain name; the GUA comes from SLAAC (RA method 2).", "Выдаёт только прочие сведения, например DNS и доменное имя; GUA — через SLAAC (метод RA 2)."),
+  t("Stateful DHCPv6", "Assigns the GUA, prefix length and DNS, like DHCP for IPv4; the gateway still comes from the RA (method 3).", "Выдаёт GUA, длину префикса и DNS, как DHCP для IPv4; шлюз всё равно берётся из RA (метод 3)."),
+  t("EUI-64", "Builds a 64-bit interface ID from the MAC: insert fffe in the middle and reverse the 7th bit.", "Строит 64-битный идентификатор интерфейса из MAC: вставить fffe в середину и инвертировать 7-й бит."),
+  t("DAD", "Duplicate address detection: an NS for the device's own address; no NA in reply means the address is unique.", "Обнаружение дублирующихся адресов: NS со своим адресом; если NA не пришёл, адрес уникален."),
+  t("ICMP Time Exceeded", "Sent to the source when TTL (IPv4) or Hop Limit (IPv6) reaches 0; traceroute is built on it.", "Уходит источнику, когда TTL (IPv4) или Hop Limit (IPv6) доходит до 0; на нём построен traceroute."),
 ];
 
 /** Шпаргалка на одну страницу — то, что стоит перечитать за пять минут до мидтерма. */
@@ -131,7 +146,16 @@ export const cheatSheet: Text = {
 - Host: same network — straight to the host; other network — **default gateway**. Routing table: **route print** / **netstat -r**.
 - **show ip route**: **C** connected network, **L** own interface /32, **S** static, S* default, **O** OSPF, **D** EIGRP.
 - **ARP request = broadcast, reply = unicast**; **arp -a** (PC), **show ip arp** (router). IPv6: **NS/NA**, **RS/RA**, solicited-node **FF02::1:FF** + last 24 bits.
-- Router interfaces are **shut down by default** — **no shutdown**. **line vty 0 4**, **transport input ssh**. Switch: **ip default-gateway** for remote management.`,
+- Router interfaces are **shut down by default** — **no shutdown**. **line vty 0 4**, **transport input ssh**. Switch: **ip default-gateway** for remote management.
+## IPv6 addressing and ICMP
+- IPv6: **128 bits**, hex, **8 hextets × 16 bits**. **Rule 1** — drop leading zeros only; **Rule 2** — **::** replaces one run of zero hextets, **only once**.
+- Coexistence: **dual stack**, **tunneling** (IPv6 inside IPv4), **translation NAT64**. Address types: unicast, multicast, **anycast = one-to-nearest**; **no broadcast**.
+- **GUA 2000::/3** (starts with 2 or 3), **LLA fe80::/10** (on every interface, never routed), **ULA fc00::/7**, **multicast ff00::/8**, **::1** loopback, **::** unspecified; **ff02::1** all nodes, **ff02::2** all routers.
+- GUA = **/48 global routing prefix + 16-bit subnet ID + 64-bit interface ID**; a /48 gives **65,536** /64 subnets, counted in hex (…9, a, b…).
+- **ipv6 address 2001:db8:acad:1::1/64**, **ipv6 address fe80::1:1 link-local**, **ipv6 unicast-routing**; check with **show ipv6 interface brief** and **ipconfig**.
+- RA = prefix + **default gateway (the RA source LLA)** + DNS. Methods: **SLAAC**; **SLAAC + stateless DHCPv6** (DNS); **stateful DHCPv6** (GUA). **EUI-64**: fffe in the middle + reverse the 7th bit.
+- ICMP v4 and v6: **echo**, **destination unreachable** (port = code 3 in v4, code 4 in v6), **time exceeded** (TTL / Hop Limit). ND: **RS/RA**, **NS/NA** (DAD, address resolution).
+- Test order: **ping 127.0.0.1 / ::1** → **default gateway** → **remote host**; **traceroute / tracert** raises the TTL 1, 2, 3…; an asterisk means no reply.`,
   ru: `## Уровни OSI и PDU
 - **7 Прикладной, 6 Представления, 5 Сеансовый, 4 Транспортный, 3 Сетевой, 2 Канальный, 1 Физический.**
 - PDU вниз по стеку: **Data, Segment, Packet, Frame, Bits.**
@@ -182,5 +206,14 @@ export const cheatSheet: Text = {
 - Хост: та же сеть — прямо хосту; другая сеть — **шлюзу по умолчанию**. Таблица маршрутизации: **route print** / **netstat -r**.
 - **show ip route**: **C** подключённая сеть, **L** свой адрес интерфейса /32, **S** статический, S* по умолчанию, **O** OSPF, **D** EIGRP.
 - **ARP-запрос = broadcast, ответ = unicast**; **arp -a** (ПК), **show ip arp** (маршрутизатор). IPv6: **NS/NA**, **RS/RA**, solicited-node **FF02::1:FF** + последние 24 бита.
-- Интерфейсы маршрутизатора **по умолчанию выключены** — **no shutdown**. **line vty 0 4**, **transport input ssh**. Коммутатор: **ip default-gateway** для удалённого управления.`,
+- Интерфейсы маршрутизатора **по умолчанию выключены** — **no shutdown**. **line vty 0 4**, **transport input ssh**. Коммутатор: **ip default-gateway** для удалённого управления.
+## Адресация IPv6 и ICMP
+- IPv6: **128 бит**, hex, **8 хекстетов × 16 бит**. **Правило 1** — убираются только ведущие нули; **правило 2** — **::** заменяет одну цепочку нулевых хекстетов, **только один раз**.
+- Сосуществование: **dual stack**, **tunneling** (IPv6 внутри IPv4), **трансляция NAT64**. Типы адресов: unicast, multicast, **anycast = «один к ближайшему»**; **broadcast нет**.
+- **GUA 2000::/3** (начало 2 или 3), **LLA fe80::/10** (на каждом интерфейсе, не маршрутизируется), **ULA fc00::/7**, **multicast ff00::/8**, **::1** loopback, **::** unspecified; **ff02::1** все узлы, **ff02::2** все маршрутизаторы.
+- GUA = **глобальный префикс /48 + 16-битный subnet ID + 64-битный interface ID**; /48 даёт **65 536** подсетей /64, счёт в hex (…9, a, b…).
+- **ipv6 address 2001:db8:acad:1::1/64**, **ipv6 address fe80::1:1 link-local**, **ipv6 unicast-routing**; проверка — **show ipv6 interface brief** и **ipconfig**.
+- RA = префикс + **шлюз по умолчанию (LLA-источник RA)** + DNS. Методы: **SLAAC**; **SLAAC + stateless DHCPv6** (DNS); **stateful DHCPv6** (GUA). **EUI-64**: fffe в середину + инвертировать 7-й бит.
+- ICMP v4 и v6: **echo**, **destination unreachable** (port — код 3 в v4, код 4 в v6), **time exceeded** (TTL / Hop Limit). ND: **RS/RA**, **NS/NA** (DAD, разрешение адресов).
+- Порядок проверки: **ping 127.0.0.1 / ::1** → **шлюз по умолчанию** → **удалённый хост**; **traceroute / tracert** увеличивает TTL 1, 2, 3…; звёздочка — нет ответа.`,
 };

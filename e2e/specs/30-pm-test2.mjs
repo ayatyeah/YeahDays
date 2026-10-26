@@ -92,7 +92,7 @@ test("PM: «Учить вопросами» без конспекта, ошиб�
   await browser.close();
 });
 
-test("PM: «Твой маршрут» — семь лекций и итоговый квиз; лента коротких видео листается, между клипами — быстрый вопрос", async () => {
+test("PM: «Твой маршрут» — семь лекций и итоговый квиз; лента роликов с персонажами листается, после каждого ролика — «Проверь себя»", async () => {
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/learn");
@@ -111,15 +111,22 @@ test("PM: «Твой маршрут» — семь лекций и итогов�
   await page.getByRole("button", { name: "🎬 Лента" }).first().tap();
   const feed = page.getByRole("dialog", { name: "Лента коротких видео" });
   await feed.waitFor({ timeout: 10_000 });
-  await feed.getByText(/Затраты и группы · часть 1/).first().waitFor({ timeout: 10_000 });
-  check(true, "первый клип — первая часть первой лекции");
+  await feed.locator('section[data-kind="video"][data-id="pm-l4-p1-v1"]').waitFor({ timeout: 10_000 });
+  check((await feed.locator("section[data-index]").first().getAttribute("data-kind")) === "video", "лента начинается с ролика с персонажами");
+  await feed.locator('section[data-id="pm-l4-p1-v1"] img[src^="/cast/"]').first().waitFor({ timeout: 10_000 });
+  check(true, "в ролике — персонажи");
   await feed.getByRole("button", { name: "Сохранить" }).first().tap();
   check((await feed.getByRole("button", { name: /♥ 1/ }).count()) === 1, "клип сохранён ♥");
-  await feed.locator("div.snap-y").evaluate((el) => el.scrollTo({ top: el.clientHeight * 3 }));
-  await feed.getByText(/⚡ Быстрый вопрос/).waitFor({ timeout: 10_000 });
-  await feed.locator("button[lang=en]").first().tap();
+  // Сразу после ролика — «Проверь себя»: два вопроса по его теме.
+  check((await feed.locator("section[data-index]").nth(1).getAttribute("data-id")) === "check:pm-l4-p1-v1", "после ролика — карточка «Проверь себя»");
+  await feed.locator("div.snap-y").evaluate((el) => el.scrollTo({ top: el.clientHeight * 1 }));
+  await feed.getByText(/Проверь себя/).first().waitFor({ timeout: 10_000 });
+  await feed.locator('section[data-id="check:pm-l4-p1-v1"] button[lang=en]').first().tap();
   await feed.getByRole("status").filter({ hasText: /Верно|Неверно/ }).waitFor({ timeout: 10_000 });
-  check(true, "быстрый вопрос в ленте отвечается с разбором");
+  await feed.getByRole("button", { name: "Следующий вопрос →" }).tap();
+  await feed.locator('section[data-id="check:pm-l4-p1-v1"] button[lang=en]').first().tap();
+  await feed.getByText(/Итог: \d из 2/).waitFor({ timeout: 10_000 });
+  check(true, "два вопроса по теме ролика отвечаются с разбором, в конце — итог");
   await feed.getByRole("button", { name: "Закрыть ленту" }).tap();
   await route.waitFor({ timeout: 10_000 });
   await browser.close();

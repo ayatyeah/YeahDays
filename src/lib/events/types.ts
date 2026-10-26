@@ -90,6 +90,62 @@ export interface StudyEvent {
    * время, без подсказок по ходу, итог в баллах этого теста.
    */
   exam?: ExamFormat;
+  /** Ролики-объяснения с персонажами и озвучкой (лента «Видео»). */
+  videos?: ExplainerVideo[];
+}
+
+/**
+ * Ролик-объяснение для ленты: диалог двух персонажей (маскот в костюмах ролей)
+ * с озвучкой и картинкой на каждую реплику. Двое — потому что озвучка делается
+ * одним запросом на ролик, а модель держит не больше двух голосов.
+ */
+export type CastRole = "mentor" | "student" | "scrum-master" | "product-owner" | "developer" | "sponsor" | "functional-manager" | "customer" | "tester" | "finance";
+
+/** Позы персонажей — по картинке на каждую (public/cast/<роль>-<поза>.webp). */
+export const CAST_POSES: Record<CastRole, readonly string[]> = {
+  mentor: ["explain", "point", "think", "cheer"],
+  student: ["ask", "confused", "aha", "write"],
+  "scrum-master": ["talk", "react"],
+  "product-owner": ["talk", "react"],
+  developer: ["talk", "react"],
+  sponsor: ["talk", "react"],
+  "functional-manager": ["talk", "react"],
+  customer: ["talk", "react"],
+  tester: ["talk", "react"],
+  finance: ["talk", "react"],
+};
+
+/** Что на экране во время реплики (остаётся до следующей картинки). */
+export type VideoVisual =
+  | { kind: "hook"; text: string }
+  | { kind: "card"; term: string; meaning: string }
+  | { kind: "formula"; lines: string[]; note?: string }
+  | { kind: "diagram"; name: string }
+  | { kind: "list"; title: string; items: string[]; mark?: number }
+  | { kind: "compare"; left: { title: string; items: string[] }; right: { title: string; items: string[] } }
+  | { kind: "example"; title: string; lines: string[] }
+  | { kind: "trap"; wrong: string; right: string }
+  | { kind: "quiz"; q: string; options: string[]; answer: number };
+
+export interface VideoLine {
+  /** Кто говорит: A или B из cast ролика. */
+  who: "A" | "B";
+  pose: string;
+  /** Реплика: по-русски, термины и формулы — по-английски латиницей. */
+  text: string;
+  show?: VideoVisual;
+}
+
+export interface ExplainerVideo {
+  /** «pm-l4-p2-v1». */
+  id: string;
+  /** Часть лекции, к которой ролик: «pm-l4-p2». */
+  partId: string;
+  title: Text;
+  cast: { A: CastRole; B: CastRole };
+  lines: VideoLine[];
+  /** Озвучка (scripts/video-tts.mjs): файл, длительность и начало каждой реплики, с. */
+  audio?: { src: string; duration: number; starts: number[] };
 }
 
 export interface ExamFormat {

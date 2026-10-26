@@ -5,16 +5,22 @@
  * следующего; длинный раздел режется на клипы по CLIP_SCENES сцен, чтобы
  * клип длился около минуты, а не пяти. Между клипами — быстрые вопросы из
  * банка той же части: смотреть — хорошо, а вспомнить сразу после — лучше.
+ *
+ * После каждого ролика с персонажами — карточка «Проверь себя» на
+ * VIDEO_QUESTIONS вопроса именно по его теме: из банка части берутся те, в
+ * которых больше всего тех же терминов, что звучали в ролике.
  */
 
 import { present, shuffle, type QuizQuestion } from "./engine";
 import { scenes, type Scene } from "./scenes";
-import type { StudyEvent, Text } from "./types";
+import type { ExplainerVideo, StudyEvent, Text } from "./types";
 
 /** Сколько сцен в клипе, не больше. */
 export const CLIP_SCENES = 9;
-/** Быстрый вопрос — после каждых стольких клипов. */
+/** Быстрый вопрос — после каждых стольких клипов конспекта. */
 export const QUIZ_EVERY = 3;
+/** Сколько вопросов в карточке после ролика с персонажами. */
+export const VIDEO_QUESTIONS = 2;
 
 export interface Clip {
   kind: "clip";
@@ -35,10 +41,23 @@ export interface QuizCard {
   lecture: number;
   part: number;
   partId: string;
-  question: QuizQuestion;
+  /** Один вопрос после клипов, несколько — после ролика. */
+  questions: QuizQuestion[];
+  /** К какому ролику вопросы («Проверь себя: …»). */
+  about?: Text;
 }
 
-export type FeedItem = Clip | QuizCard;
+/** Ролик с персонажами и озвучкой (StudyEvent.videos) — если он есть у части, он вместо клипов конспекта. */
+export interface VideoItem {
+  kind: "video";
+  id: string;
+  lecture: number;
+  part: number;
+  partId: string;
+  video: ExplainerVideo;
+}
+
+export type FeedItem = Clip | QuizCard | VideoItem;
 
 /** Клипы части: разделы конспекта; вводный кусок до первого «##» — под названием части. */
 export function partClips(event: StudyEvent, lecture: number, part: number): Clip[] {
@@ -74,10 +93,27 @@ export function partClips(event: StudyEvent, lecture: number, part: number): Cli
   return out;
 }
 
+/** Латинские слова (термины) текста — по ним вопрос ищет «свой» ролик. */
+const terms = (text: string) => new Set((text.toLowerCase().match(/[a-z][a-z0-9]{1,}/g) ?? []).filter((w) => w.length > 2 || /^(cv|sv|po|sm|ev|pv|ac)$/.test(w)));
+
+/** Всё, что звучит и показывается в ролике, — одним текстом. */
+function videoText(video: ExplainerVideo): string {
+  return video.lines.map((l) => [l.text, l.show ? JSON.stringify(l.show) : ""].join(" ")).join(" ");
+}
+
+/** Сколько терминов ролика встречается в вопросе (формулировка и верный ответ). */
+export function relevance(video: ExplainerVideo, question: { q: string; options: string[]; answer: number }): number {
+  const mine = terms(videoText(video));
+  let score = 0;
+  for (const w of terms(`${question.q} ${question.options[question.answer]}`)) if (mine.has(w)) score++;
+  return score;
+}
+
 /**
- * Лента: клипы по порядку маршрута, после каждых QUIZ_EVERY клипов — вопрос
- * из банка той части, к которой относится последний клип. Вопросы не
- * повторяются; `avoid` — id вопросов, которые лучше не брать (уже освоенные).
+ * Лента по порядку маршрута. У части с роликами после каждого ролика —
+ * карточка из VIDEO_QUESTIONS самых близких к нему вопросов; у части без
+ * роликов — клипы конспекта и после каждых QUIZ_EVERY клипов один вопрос.
+ * Вопросы не повторяются; `avoid` — освоенные, их берём в последнюю очередь.
  */
 export function buildFeed(event: StudyEvent, rng: () => number = Math.random, avoid: Set<string> = new Set()): FeedItem[] {
   const out: FeedItem[] = [];
@@ -86,14 +122,30 @@ export function buildFeed(event: StudyEvent, rng: () => number = Math.random, av
   event.lectures.forEach((lecture, li) => {
     lecture.parts.forEach((p, pi) => {
       const pool = shuffle(p.questions, rng).sort((a, b) => Number(avoid.has(a.id)) - Number(avoid.has(b.id)));
-      for (const clip of partClips(event, li, pi)) {
+      const videos = (event.videos ?? []).filter((v) => v.partId === p.id);
+      const items: (Clip | VideoItem)[] = videos.length
+        ? videos.map((video) => ({ kind: "video" as const, id: video.id, lecture: li, part: pi, partId: p.id, video }))
+        : partClips(event, li, pi);
+      for (const clip of items) {
         out.push(clip);
+        if (clip.kind === "video") {
+          const ranked = pool
+            .filter((x) => !used.has(x.id))
+            .map((x, order) => ({ x, order, score: relevance(clip.video, x) - (avoid.has(x.id) ? 100 : 0) }))
+            .sort((a, b) => b.score - a.score || a.order - b.order)
+            .slice(0, VIDEO_QUESTIONS)
+            .map((r) => r.x);
+          if (!ranked.length) continue;
+          ranked.forEach((x) => used.add(x.id));
+          out.push({ kind: "quiz", id: `check:${clip.id}`, lecture: li, part: pi, partId: p.id, about: clip.video.title, questions: ranked.map((x) => present(x, li, rng)) });
+          continue;
+        }
         if (++sinceQuiz < QUIZ_EVERY) continue;
         const q = pool.find((x) => !used.has(x.id));
         if (!q) continue;
         used.add(q.id);
         sinceQuiz = 0;
-        out.push({ kind: "quiz", id: `quiz:${q.id}`, lecture: li, part: pi, partId: p.id, question: present(q, li, rng) });
+        out.push({ kind: "quiz", id: `quiz:${q.id}`, lecture: li, part: pi, partId: p.id, questions: [present(q, li, rng)] });
       }
     });
   });

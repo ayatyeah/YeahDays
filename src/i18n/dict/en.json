@@ -3389,5 +3389,14 @@
  "Собираем ленту…": "Building the feed…",
  "Сохранённых клипов пока нет": "No saved clips yet",
  "Стейкхолдеры": "Stakeholders",
- "Ценность": "Value delivery"
+ "Ценность": "Value delivery",
+ "📌 Пример": "📌 Example",
+ "🔊 Нажми, чтобы включить звук": "🔊 Tap to turn on sound",
+ "Без звука": "Muted",
+ "Звук": "Sound",
+ "Итог: {0} из {1}": "Result: {0} of {1}",
+ "Наставник": "Mentor",
+ "Проверь себя · {0}": "Check yourself · {0}",
+ "Следующий вопрос →": "Next question →",
+ "Лекции 1–5 и 7 по частям — от устройства сетей до сетевого уровня, ARP, настройки маршрутизатора, адресации IPv6 и ICMP — и отдельный блок с темами из образцов мидтерма, которых нет в слайдах. Вопросы — в формате настоящего варианта: 25 вопросов с выбором из четырёх. Внутри есть игра: двоичный спринт и «Ты — коммутатор».": "Lectures 1–5 and 7 in parts — from how networks are built to the network layer, ARP, router configuration, IPv6 addressing and ICMP — plus a separate block with topics from midterm samples that aren't in the slides. Questions follow the real test format: 25 multiple-choice questions with four options. There's a game inside: binary sprint and “You are the switch”."
 }

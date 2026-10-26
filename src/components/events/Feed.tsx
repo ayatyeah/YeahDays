@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
+import ExplainerPlayer from "@/components/events/ExplainerPlayer";
 import { MODES, SceneView, type Mode } from "@/components/events/LectureVideo";
 import { cn } from "@/lib/cn";
 import { answer, loadDrill, saveDrill } from "@/lib/events/drill";
@@ -73,6 +74,8 @@ export default function Feed({
   const [canSpeak, setCanSpeak] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   const start = useRef<string | undefined>(undefined);
+  // Один аудиоэлемент на всю ленту: после первого тапа телефон пускает звук и для следующих роликов.
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   // Лента собирается в браузере: вопросы между клипами случайные, а освоенные
   // в «Учить вопросами» — в последнюю очередь.
@@ -164,8 +167,8 @@ export default function Feed({
   }
 
   const lectureLabel = (li: number) => shortTitle(event.lectures[li])[mode === "en" ? "en" : "ru"];
-  const clipsTotal = items?.filter((f) => f.kind === "clip").length ?? 0;
-  const clipNumber = list.slice(0, active + 1).filter((f) => f.kind === "clip").length;
+  const clipsTotal = items?.filter((f) => f.kind !== "quiz").length ?? 0;
+  const clipNumber = list.slice(0, active + 1).filter((f) => f.kind !== "quiz").length;
 
   if (typeof document === "undefined") return null;
   return createPortal(
@@ -173,18 +176,14 @@ export default function Feed({
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-2 bg-gradient-to-b from-black/70 to-transparent p-3 pb-8">
         <button className="pointer-events-auto grid h-10 w-10 place-items-center rounded-full bg-white/10 text-lg backdrop-blur" onClick={onExit} aria-label="Закрыть ленту">✕</button>
         <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-1.5 text-xs">
-          <div className="flex overflow-hidden rounded-full bg-white/10 backdrop-blur" role="group" aria-label="Язык видео">
-            {MODES.map(([m, label]) => (
-              <button key={m} aria-pressed={mode === m} className={cn("px-2.5 py-1.5", mode === m && "bg-white text-black")} onClick={() => { setMode(m); savePref("video-mode", m); }}>
-                {label}
-              </button>
-            ))}
-          </div>
+          <select aria-label="Язык видео" className="h-8 max-w-[7.5rem] rounded-full bg-white/10 px-2 backdrop-blur" value={mode} onChange={(e) => { const m = e.target.value as Mode; setMode(m); savePref("video-mode", m); }}>
+            {MODES.map(([m, label]) => <option key={m} value={m} className="text-black">{label}</option>)}
+          </select>
           <select aria-label="Скорость голоса" className="h-8 rounded-full bg-white/10 px-2 backdrop-blur" value={rate} onChange={(e) => { const r = Number(e.target.value); setRate(r); savePref("voice-rate", String(r)); }}>
             {RATES.map((r) => <option key={r} value={r} className="text-black">{r}×</option>)}
           </select>
-          <button className="h-8 rounded-full bg-white/10 px-3 backdrop-blur" aria-pressed={muted} onClick={() => { setMuted(!muted); savePref("feed-muted", muted ? "off" : "on"); }}>
-            {muted ? "🔇 Без звука" : "🔊 Звук"}
+          <button className="h-8 rounded-full bg-white/10 px-3 backdrop-blur" aria-pressed={muted} aria-label={muted ? "Без звука" : "Звук"} onClick={() => { setMuted(!muted); savePref("feed-muted", muted ? "off" : "on"); }}>
+            {muted ? "🔇" : "🔊"}
           </button>
           <button className={cn("h-8 rounded-full px-3 backdrop-blur", onlySaved ? "bg-white text-black" : "bg-white/10")} aria-pressed={onlySaved} onClick={() => { setOnlySaved(!onlySaved); setActive(0); box.current?.scrollTo({ top: 0 }); }}>
             {`♥ ${memory.saved.length}`}
@@ -203,11 +202,30 @@ export default function Feed({
         </div>
       )}
 
+      <audio ref={setAudio} preload="auto" playsInline className="hidden" />
       <div ref={box} className="h-[100dvh] snap-y snap-mandatory overflow-y-auto overscroll-contain [scrollbar-width:none]">
         {list.map((item, i) => (
-          <section key={item.id} data-index={i} className="relative h-[100dvh] snap-start snap-always overflow-hidden">
+          <section key={item.id} data-index={i} data-kind={item.kind} data-id={item.id} className="relative h-[100dvh] snap-start snap-always overflow-hidden">
             {Math.abs(i - active) <= 1 &&
-              (item.kind === "clip" ? (
+              (item.kind === "video" ? (
+                <>
+                  <ExplainerPlayer
+                    video={item.video}
+                    active={i === active}
+                    audioEl={audio}
+                    muted={muted}
+                    rate={rate}
+                    backdrop={i}
+                    onEnded={() => { if (i + 1 < list.length) scrollTo(i + 1); }}
+                  />
+                  {/* Кнопки — внизу справа, поверх костюма персонажа: картинку и реплику сверху не закрывают. */}
+                  <div className="absolute bottom-[5%] right-1.5 z-30 flex flex-col items-center gap-2.5">
+                    <MiniRail icon={memory.saved.includes(item.id) ? "♥" : "♡"} label={memory.saved.includes(item.id) ? "Сохранено" : "Сохранить"} onClick={() => toggleSave(item.id)} pressed={memory.saved.includes(item.id)} />
+                    <MiniRail icon="📖" label="Конспект" onClick={() => { audio?.pause(); onOpenPart(item.partId); }} />
+                    <MiniRail icon="⚡" label="Квиз" onClick={() => { audio?.pause(); onPartQuiz(item.partId); }} />
+                  </div>
+                </>
+              ) : item.kind === "clip" ? (
                 <ClipView
                   clip={item}
                   active={i === active}
@@ -383,6 +401,15 @@ function ClipView({
   );
 }
 
+/** Кнопка ролика: только значок, подпись — для экранного диктора. */
+function MiniRail({ icon, label, onClick, pressed }: { icon: string; label: string; onClick: () => void; pressed?: boolean }) {
+  return (
+    <button className={cn("grid h-11 w-11 place-items-center rounded-full bg-black/45 text-xl backdrop-blur", pressed && "text-rose-400")} onClick={onClick} aria-pressed={pressed} aria-label={label} title={label}>
+      {icon}
+    </button>
+  );
+}
+
 function Rail({ icon, label, onClick, pressed }: { icon: string; label: string; onClick: () => void; pressed?: boolean }) {
   return (
     <button className="flex flex-col items-center gap-1" onClick={onClick} aria-pressed={pressed}>
@@ -395,39 +422,50 @@ function Rail({ icon, label, onClick, pressed }: { icon: string; label: string; 
 /* ───────── Быстрый вопрос ───────── */
 
 function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: QuizCard; mode: Mode; userId: string; eventId: string; caption: string; onNext: () => void }) {
+  // Несколько вопросов (после ролика) идут по одному: ответ → разбор → следующий.
+  const [index, setIndex] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
-  const q = card.question;
+  const [right, setRight] = useState(0);
+  const q = card.questions[index];
+  const last = index + 1 >= card.questions.length;
   const lang = mode === "en" ? "en" : "ru";
+  const title = card.about ? `Проверь себя · ${card.about[lang]}` : `⚡ Быстрый вопрос · ${caption}`;
 
   function choose(i: number) {
     if (picked !== null) return;
     setPicked(i);
+    if (i === q.correct) setRight((n) => n + 1);
     // Ответ в ленте тоже учит: ошибка вернётся в «Учить вопросами».
     saveDrill(userId, eventId, answer(loadDrill(userId, eventId), q.id, i === q.correct, Date.now()));
   }
 
   return (
-    <div className="absolute inset-0 flex flex-col justify-center overflow-y-auto bg-gradient-to-b from-amber-600/25 via-[#07070b] to-[#07070b] px-5 pb-16 pt-32">
+    <div className="absolute inset-0 flex flex-col justify-center overflow-y-auto bg-gradient-to-b from-amber-600/25 via-[#07070b] to-[#07070b] px-5 pb-16 pt-28">
       <div className="mx-auto w-full max-w-xl">
-        <p className="text-xs font-semibold uppercase tracking-widest text-amber-300">{`⚡ Быстрый вопрос · ${caption}`}</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-amber-300">{card.about ? "✅ " : ""}{title}</p>
+        {card.questions.length > 1 && (
+          <div className="mt-3 flex gap-1.5" aria-hidden>
+            {card.questions.map((_, i) => <span key={i} className={cn("h-1.5 flex-1 rounded-full", i < index || (i === index && picked !== null) ? "bg-amber-300" : "bg-white/20")} />)}
+          </div>
+        )}
         <h2 lang="en" className="mt-3 text-xl font-bold leading-snug">{q.q}</h2>
         <div className="mt-5 space-y-2">
           {q.options.map((option, i) => {
-            const right = picked !== null && i === q.correct;
-            const wrong = picked === i && i !== q.correct;
+            const ok = picked !== null && i === q.correct;
+            const bad = picked === i && i !== q.correct;
             return (
               <button
-                key={i}
+                key={`${index}-${i}`}
                 lang="en"
                 disabled={picked !== null}
                 onClick={() => choose(i)}
                 className={cn(
                   "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
-                  right ? "border-emerald-400 bg-emerald-500/20" : wrong ? "border-red-400 bg-red-500/20" : "border-white/20 bg-white/5",
-                  picked !== null && !right && !wrong && "opacity-50",
+                  ok ? "border-emerald-400 bg-emerald-500/20" : bad ? "border-red-400 bg-red-500/20" : "border-white/20 bg-white/5",
+                  picked !== null && !ok && !bad && "opacity-50",
                 )}
               >
-                {right && "✓ "}{wrong && "✗ "}{option}
+                {ok && "✓ "}{bad && "✗ "}{option}
               </button>
             );
           })}
@@ -437,7 +475,14 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
             <p className="font-semibold">{picked === q.correct ? "Верно" : "Неверно — вопрос вернётся в «Учить вопросами»"}</p>
             <p className="mt-1 text-white/85" lang={lang}>{q.why[lang]}</p>
             {picked !== q.correct && q.wrong?.[picked] && <p className="mt-2 text-white/70" lang={lang}>{q.wrong[picked]![lang]}</p>}
-            <button className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black" onClick={onNext}>Листай дальше ↓</button>
+            {last ? (
+              <>
+                {card.questions.length > 1 && <p className="mt-3 font-semibold">{`Итог: ${right} из ${card.questions.length}`}</p>}
+                <button className="mt-3 rounded-full bg-white px-4 py-2 text-sm font-semibold text-black" onClick={onNext}>Листай дальше ↓</button>
+              </>
+            ) : (
+              <button className="mt-3 rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold text-black" onClick={() => { setIndex(index + 1); setPicked(null); }}>Следующий вопрос →</button>
+            )}
           </div>
         )}
       </div>

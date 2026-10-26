@@ -8,6 +8,7 @@ import { lecture9 as pm9 } from "./l9";
 import { lecture10 as pm10 } from "./l10";
 import { pmFast } from "./fast";
 import { cheatSheet as pmCheatSheet, glossary as pmGlossary } from "./extras";
+import { pmVideos } from "./videos";
 
 // MCQ Test 2 по силлабусу — неделя 9, лекции 4–8, 50 вопросов на 18 баллов.
 // В материалах к тесту лежат лекции 4–10, поэтому здесь все семь. Итоговый
@@ -34,4 +35,5 @@ export const event: StudyEvent = {
   fast: pmFast,
   // Время теста в силлабусе не указано: минута на вопрос — обычный темп MCQ.
   exam: { name: "MCQ Test 2", questions: 50, minutes: 50, points: 18 },
+  videos: pmVideos,
 };

@@ -10,7 +10,8 @@
 // затем к следующей модели: у бесплатного тарифа маленькие суточные квоты.
 //
 // Что получается:
-// - public/events/<папка>/video/<id>.m4a — звук для ленты (AAC 48 кбит/с);
+// - public/events/<папка>/video/<id>.m4a — звук для ленты: голос и фоновая
+//   музыка (scripts/video-audio.mjs), AAC 64 кбит/с, моно;
 // - ~/.cache/yg-video/wav/<id>.wav — без потерь, для рендера MP4;
 // - src/lib/events/<ивент>/videos/audio.json — длительность и время начала
 //   каждой реплики. Модель меток времени не даёт: границы реплик ищем по
@@ -23,6 +24,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
+import { mixArgs } from "./video-audio.mjs";
 
 const EVENT_DIR = process.argv[2] ?? "";
 const ONLY = process.argv[3];
@@ -287,7 +289,7 @@ async function main() {
       writeFileSync(raw, audio.data);
       // WAV приводим к тому же виду, что и сырой PCM: 24 кГц, моно, 16 бит.
       execFileSync("ffmpeg", ["-loglevel", "error", "-y", ...(audio.wav ? [] : ["-f", "s16le", "-ar", "24000", "-ac", "1"]), "-i", raw, "-ar", "24000", "-ac", "1", "-c:a", "pcm_s16le", wav]);
-      execFileSync("ffmpeg", ["-loglevel", "error", "-y", "-i", wav, "-c:a", "aac", "-b:a", "48k", "-movflags", "+faststart", m4a]);
+      execFileSync("ffmpeg", mixArgs({ id: v.id, wav, out: m4a }));
       const duration = Number(execFileSync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", wav], { encoding: "utf8" }).trim());
       const starts = align(v.lines.map((l) => l.text.length), duration, silences(wav), v.lines.map((l) => l.who)).map((t) => Math.round(t * 100) / 100);
       // Перечитать файл перед записью: другие потоки уже могли дописать свои ролики.

@@ -24,8 +24,12 @@ const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading
 const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
 const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
+const FeedPicker = dynamic(() => import("@/components/events/FeedPicker"), { loading: Loading });
+const ScrollStudy = dynamic(() => import("@/components/events/ScrollStudy"), { loading: Loading });
 import { learnFromQuiz, loadDrill, stats as drillStats, type DrillState, type Scope } from "@/lib/events/drill";
 import { examPoints, loadSim, saveSim, type SimRecord } from "@/lib/events/examSim";
+import { videoShelves, type FeedScope } from "@/lib/events/feed";
+import { loadScroll } from "@/lib/events/scrollMemory";
 import { routeStates, routeStops } from "@/lib/events/route";
 import RouteStepper from "@/components/events/RouteStepper";
 import { fastProgress } from "@/lib/events/fastProgress";
@@ -55,6 +59,8 @@ type View =
   | { mode: "cards" }
   | { mode: "game" }
   | { mode: "read"; step: Step }
+  /** Scroll-mode: конспект экранами и тест части одной лентой, дальше — следующие части. */
+  | { mode: "scroll"; step: Step }
   | { mode: "video"; step: Step }
   | { mode: "quiz"; step: Step; quiz: QuizQuestion[]; run: number }
   | { mode: "result"; step: Step; quiz: QuizQuestion[]; answers: number[] }
@@ -64,7 +70,9 @@ type View =
   | { mode: "sandbox" }
   | { mode: "fast" }
   | { mode: "drill"; scope?: Scope }
-  | { mode: "feed" }
+  | { mode: "feeds" }
+  /** back — куда вернуться из ленты: к выбору роликов, к конспекту части или к маршруту. */
+  | { mode: "feed"; scope?: FeedScope; back?: View }
   | { mode: "exam"; quiz: QuizQuestion[]; run: number }
   | { mode: "examResult"; quiz: QuizQuestion[]; answers: number[]; seconds: number };
 
@@ -262,15 +270,33 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
     setView({ mode: "quiz", step, quiz: draw(event, step), run: ++runs.current });
   }
 
+  // Конспект части открывается так, как читали в прошлый раз: обычной страницей или в scroll-mode.
   function open(step: Step) {
-    if (step.kind === "part") setView({ mode: "read", step });
+    if (step.kind === "part") setView({ mode: loadPref("notes-mode", "read") === "scroll" ? "scroll" : "read", step });
     else startQuiz(step);
   }
 
-  function finish(step: Step, quiz: QuizQuestion[], answers: number[]) {
-    save(record(progress, step, quiz, answers));
+  function notesMode(mode: "read" | "scroll", step: Step) {
+    savePref("notes-mode", mode);
+    setView({ mode, step });
+  }
+
+  /** С маршрута — в scroll-mode туда, где остановился; впервые — с первой непройденной части. */
+  function startScroll() {
+    const parts = list.filter((s) => s.kind === "part");
+    const at = loadScroll(userId, event.id).at;
+    notesMode("scroll", parts.find((s) => s.id === at?.step) ?? parts.find((s) => !progress[s.id]) ?? parts[0]);
+  }
+
+  /** Записать квиз: прогресс, синхронизация, ошибки — в «Учить вопросами». */
+  function score(step: Step, quiz: QuizQuestion[], answers: number[]) {
+    save(record(latest.current, step, quiz, answers));
     // «До косточек» — отдельные банки, в «Учить вопросами» их нет.
     if (step.kind !== "deep") learnFromQuiz(userId, event.id, quiz, answers);
+  }
+
+  function finish(step: Step, quiz: QuizQuestion[], answers: number[]) {
+    score(step, quiz, answers);
     setView({ mode: "result", step, quiz, answers });
   }
 
@@ -299,6 +325,12 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   function toMap() {
     setDrill(loadDrill(userId, event.id));
     setView({ mode: "map" });
+  }
+
+  // Есть ролики — сначала выбор: все, лекция или часть; нет — сразу лента по конспектам.
+  const shelves = videoShelves(event);
+  function openFeed() {
+    setView(shelves.count ? { mode: "feeds" } : { mode: "feed" });
   }
 
   const ready = readiness(event, progress);
@@ -335,8 +367,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-            onView={(mode) => setView({ mode })}
+            onView={(mode) => (mode === "feed" ? openFeed() : setView({ mode }))}
             onExam={event.exam ? startExam : undefined}
+            onScroll={startScroll}
           />
           {loaded && (() => {
             const stops = routeStops(event);
@@ -360,7 +393,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               </Button>
             </section>
           )}
-          <NoReading event={event} drill={loaded ? drill : null} sim={sim} onFeed={() => setView({ mode: "feed" })} onDrill={() => setView({ mode: "drill" })} onExam={event.exam ? startExam : undefined} />
+          <NoReading event={event} drill={loaded ? drill : null} sim={sim} onFeed={openFeed} onDrill={() => setView({ mode: "drill" })} onExam={event.exam ? startExam : undefined} />
           {!online && (
             <p role="status" className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm">
               Нет сети. Конспекты и квизы работают, результаты сохраняются на устройстве и отправятся, когда появится интернет.
@@ -402,6 +435,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <section key={lecture.id} id={`route-${lecture.id}`} className={cn(panel, "scroll-mt-4")}>
               <h2 className="text-lg font-bold">{lecture.title[tl]}</h2>
               {tl === "ru" && <p className="text-sm text-[var(--color-muted)]">{lecture.title.en}</p>}
+              {shelves.lectures[li].count > 0 && (
+                <Button size="sm" className="mt-3 h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "lecture", lecture: li }, back: { mode: "map" } })}>
+                  {`🎬 Ролики лекции · ${shelves.lectures[li].count} видео`}
+                </Button>
+              )}
               <ol className="mt-4 space-y-2">
                 {list.filter((s) => s.lecture === li).map((step) => (
                   <StepRow
@@ -545,11 +583,31 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           onExam={event.exam ? startExam : undefined}
         />
       )}
-      {view.mode === "feed" && (
-        <Feed
+      {view.mode === "scroll" && (
+        <ScrollStudy
+          key={view.step.id}
           event={event}
           userId={userId}
+          start={view.step}
+          lang={lang}
+          progress={progress}
+          onLang={switchLang}
+          onQuizDone={score}
+          onNormal={(step) => notesMode("read", step)}
+          onFinal={() => startQuiz(finalStep)}
           onExit={toMap}
+        />
+      )}
+      {view.mode === "feeds" && (
+        <FeedPicker event={event} onExit={toMap} onPick={(scope) => setView({ mode: "feed", scope, back: { mode: "feeds" } })} />
+      )}
+      {view.mode === "feed" && (
+        <Feed
+          key={JSON.stringify(view.scope ?? null)}
+          event={event}
+          userId={userId}
+          scope={view.scope}
+          onExit={() => (view.back && view.back.mode !== "map" ? setView(view.back) : toMap())}
           onOpenPart={(id) => {
             const step = list.find((s) => s.kind === "part" && s.id === id);
             if (step) open(step);
@@ -591,10 +649,16 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               <h1 className="mt-2 text-2xl font-bold">{part.title[lang]}</h1>
             </header>
             <div className="flex flex-wrap gap-2">
+              <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => notesMode("scroll", view.step)}>📜 Scroll-mode</Button>
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
                 {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
               </Button>
               <SpeakButton text={part.notes[lang]} lang={lang} />
+              {shelves.lectures[view.step.lecture!].parts[view.step.part!].count > 0 && (
+                <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "part", lecture: view.step.lecture!, part: view.step.part! }, back: view })}>
+                  {`🎬 Ролики части · ${shelves.lectures[view.step.lecture!].parts[view.step.part!].count} видео`}
+                </Button>
+              )}
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "video", step: view.step })}>▶ Смотреть как видео</Button>
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
@@ -719,8 +783,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
  * Быстрый доступ под заголовком ивента: пробные варианты, практикум,
  * шпаргалка и помощник — чтобы не листать до них мимо всех лекций.
  */
-function QuickLinks({ event, onMocks, onView, onExam }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet" | "fast" | "drill" | "feed") => void; onExam?: () => void }) {
+function QuickLinks({ event, onMocks, onView, onExam, onScroll }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet" | "fast" | "drill" | "feed") => void; onExam?: () => void; onScroll: () => void }) {
   const links: { label: string; go: () => void; accent?: boolean }[] = [];
+  links.push({ label: "📜 Scroll-mode", go: onScroll, accent: true });
   links.push({ label: "🎬 Лента", go: () => onView("feed"), accent: true });
   links.push({ label: "🎯 Учить вопросами", go: () => onView("drill"), accent: true });
   if (onExam && event.exam) links.push({ label: `⏱ Пробный тест · ${event.exam.questions}`, go: onExam, accent: true });

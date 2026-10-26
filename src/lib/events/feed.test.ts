@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildFeed, CLIP_SCENES, partClips, QUIZ_EVERY, relevance, VIDEO_QUESTIONS } from "./feed";
+import { buildFeed, CLIP_SCENES, partClips, QUIZ_EVERY, relevance, scopeLabel, VIDEO_QUESTIONS, videoShelves, wholeFeed } from "./feed";
 import { EVENTS } from "./index";
 import { part, qx, type StudyEvent } from "./types";
 
@@ -81,6 +81,37 @@ describe("лента: клипы", () => {
     expect(relevance(video, bank[1])).toBeGreaterThan(relevance(video, bank[0]));
     const check = buildFeed({ ...themed, videos: [video] }, seeded(5)).find((f) => f.id === "check:l9-p1-v1");
     expect(check && check.kind === "quiz" && check.questions[0].id).toBe("l9-p1-2");
+  });
+
+  it("лента темы: одна часть, одна лекция или только ролики — без чужих частей", () => {
+    const video = { id: "l1-p2-v1", partId: "l1-p2", title: { en: "V", ru: "В" }, cast: { A: "mentor", B: "student" } as const, lines: [{ who: "A" as const, pose: "explain", text: "Привет" }] };
+    const withVideo = { ...event, videos: [video] };
+    const part = buildFeed(withVideo, seeded(6), new Set(), { kind: "part", lecture: 0, part: 1 });
+    expect(part.map((f) => f.kind)).toEqual(["video", "quiz"]);
+    expect(part.every((f) => f.partId === "l1-p2")).toBe(true);
+    expect(buildFeed(withVideo, seeded(6), new Set(), { kind: "videos" }).every((f) => f.partId === "l1-p2")).toBe(true);
+    const lecture = buildFeed(withVideo, seeded(6), new Set(), { kind: "lecture", lecture: 0 });
+    expect(new Set(lecture.map((f) => f.partId))).toEqual(new Set(["l1-p1", "l1-p2"]));
+    expect(wholeFeed({ kind: "videos" }) && !wholeFeed({ kind: "part", lecture: 0, part: 1 })).toBe(true);
+  });
+
+  it("счётчики роликов и подписи лент у настоящих ивентов", () => {
+    const pm = EVENTS.find((e) => e.id === "project-management-test-2")!;
+    const shelves = videoShelves(pm);
+    expect(shelves.count).toBe(78);
+    expect(shelves.lectures.every((l) => l.count === l.parts.length * 3)).toBe(true);
+    expect(shelves.seconds).toBeGreaterThan(78 * 30);
+    expect(scopeLabel(pm, { kind: "lecture", lecture: 0 })).toBe("Лекция 4 · Затраты и группы");
+    expect(scopeLabel(pm, { kind: "part", lecture: 3, part: 1 })).toMatch(/^Лекция 7 · часть 2 · /);
+    const cn = EVENTS.find((e) => e.id === "computer-networks-midterm")!;
+    const net = videoShelves(cn);
+    const l7 = cn.lectures.findIndex((l) => l.id === "cn-l7");
+    expect(net.count).toBe(12);
+    expect(net.lectures.map((l, i) => (l.count ? i : -1)).filter((i) => i >= 0)).toEqual([l7]);
+    expect(scopeLabel(cn, { kind: "lecture", lecture: l7 })).toBe("Лекция 7 · Адресация IPv6. ICMP");
+    const lectureFeed = buildFeed(cn, seeded(7), new Set(), { kind: "lecture", lecture: l7 });
+    expect(lectureFeed.filter((f) => f.kind === "video")).toHaveLength(12);
+    expect(lectureFeed.some((f) => f.kind === "clip")).toBe(false);
   });
 
   it("у настоящих ивентов лента собирается, id клипов уникальны", () => {

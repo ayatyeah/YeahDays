@@ -7,7 +7,7 @@ import ExplainerPlayer from "@/components/events/ExplainerPlayer";
 import { MODES, SceneView, type Mode } from "@/components/events/LectureVideo";
 import { cn } from "@/lib/cn";
 import { answer, loadDrill, saveDrill } from "@/lib/events/drill";
-import { buildFeed, loadFeed, saveFeed, type Clip, type FeedItem, type FeedMemory, type QuizCard } from "@/lib/events/feed";
+import { buildFeed, loadFeed, saveFeed, scopeLabel, wholeFeed, type Clip, type FeedItem, type FeedMemory, type FeedScope, type QuizCard } from "@/lib/events/feed";
 import { shortTitle } from "@/lib/events/route";
 import { holdFor, narration } from "@/lib/events/scenes";
 import { loadPref, savePref } from "@/lib/events/storage";
@@ -21,6 +21,9 @@ import { RATES, clampRate, rankVoices } from "@/lib/events/voice";
  * (как «Смотреть как видео», только короче и подряд). Играет тот клип,
  * что на экране; кончился — лента сама листает дальше. Тап — пауза.
  * Между клипами — быстрые вопросы: ответ идёт в «Учить вопросами».
+ *
+ * Ленту можно открыть на одну лекцию или часть (scope) — тогда в ней только
+ * её ролики, и подпись сверху на пару секунд напомнит, что листаешь.
  *
  * Рисуются только соседние клипы: в ленте их сотни, а держать в DOM
  * анимации и схемы всех сразу телефону тяжело.
@@ -50,15 +53,19 @@ const BACKDROPS = [
   "from-rose-700/40 via-[#07070b] to-indigo-700/30",
 ];
 
+const ALL: FeedScope = { kind: "all" };
+
 export default function Feed({
   event,
   userId,
+  scope = ALL,
   onExit,
   onOpenPart,
   onPartQuiz,
 }: {
   event: StudyEvent;
   userId: string;
+  scope?: FeedScope;
   onExit: () => void;
   onOpenPart: (partId: string) => void;
   onPartQuiz: (partId: string) => void;
@@ -76,6 +83,13 @@ export default function Feed({
   const start = useRef<string | undefined>(undefined);
   // Один аудиоэлемент на всю ленту: после первого тапа телефон пускает звук и для следующих роликов.
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
+  const [showLabel, setShowLabel] = useState(true);
+  const whole = wholeFeed(scope);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowLabel(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Лента собирается в браузере: вопросы между клипами случайные, а освоенные
   // в «Учить вопросами» — в последнюю очередь.
@@ -83,9 +97,9 @@ export default function Feed({
     const mem = loadFeed(userId, event.id);
     const drill = loadDrill(userId, event.id);
     const mastered = new Set(Object.entries(drill).filter(([, c]) => c.level === 2).map(([id]) => id));
-    start.current = mem.at;
+    start.current = whole ? mem.at : undefined;
     setMemory(mem);
-    setItems(buildFeed(event, Math.random, mastered));
+    setItems(buildFeed(event, Math.random, mastered, scope));
     setMode((loadPref("video-mode", "mix") as Mode) || "mix");
     setRate(clampRate(Number(loadPref("voice-rate", "1"))));
     setMuted(loadPref("feed-muted", "off") === "on");
@@ -95,6 +109,8 @@ export default function Feed({
     read();
     window.speechSynthesis.addEventListener?.("voiceschanged", read);
     return () => window.speechSynthesis.removeEventListener?.("voiceschanged", read);
+    // scope — из состояния экрана ивента и пока лента открыта не меняется
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, event]);
 
   // Страница под лентой не прокручивается, пока лента открыта.
@@ -108,7 +124,7 @@ export default function Feed({
   }, []);
 
   const list = useMemo(
-    () => (items && onlySaved ? items.filter((f) => f.kind === "clip" && memory.saved.includes(f.id)) : items ?? []),
+    () => (items && onlySaved ? items.filter((f) => f.kind !== "quiz" && memory.saved.includes(f.id)) : items ?? []),
     [items, onlySaved, memory.saved],
   );
 
@@ -139,13 +155,13 @@ export default function Feed({
 
   useEffect(() => {
     const item = list[active];
-    if (!item || item.kind !== "clip" || onlySaved) return;
+    if (!item || item.kind === "quiz" || onlySaved || !whole) return;
     setMemory((m) => {
       const next = { ...m, at: item.id };
       saveFeed(userId, event.id, next);
       return next;
     });
-  }, [active, list, onlySaved, userId, event.id]);
+  }, [active, list, onlySaved, whole, userId, event.id]);
 
   const voiceFor = useCallback((lang: "ru" | "en") => {
     const ranked = rankVoices(voices, lang);
@@ -191,6 +207,14 @@ export default function Feed({
         </div>
       </div>
 
+      {!whole && (
+        <p
+          className={cn("pointer-events-none absolute inset-x-0 top-16 z-20 mx-auto w-fit max-w-[85%] truncate rounded-full bg-black/70 px-4 py-1.5 text-center text-xs font-semibold backdrop-blur transition-opacity duration-700", showLabel ? "opacity-100" : "opacity-0")}
+          aria-live="polite"
+        >
+          {`🎬 ${scopeLabel(event, scope)}`}
+        </p>
+      )}
       {!items && <p className="grid h-full place-items-center text-sm text-white/70" role="status">Собираем ленту…</p>}
       {items && !list.length && (
         <div className="grid h-full place-items-center p-8 text-center">
@@ -440,8 +464,8 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
   }
 
   return (
-    <div className="absolute inset-0 flex flex-col justify-center overflow-y-auto bg-gradient-to-b from-amber-600/25 via-[#07070b] to-[#07070b] px-5 pb-16 pt-28">
-      <div className="mx-auto w-full max-w-xl">
+    <div className="absolute inset-0 flex flex-col overflow-y-auto bg-gradient-to-b from-amber-600/25 via-[#07070b] to-[#07070b] px-5 pb-16 pt-28">
+      <div className="mx-auto my-auto w-full max-w-xl">
         <p className="text-xs font-semibold uppercase tracking-widest text-amber-300">{card.about ? "✅ " : ""}{title}</p>
         {card.questions.length > 1 && (
           <div className="mt-3 flex gap-1.5" aria-hidden>

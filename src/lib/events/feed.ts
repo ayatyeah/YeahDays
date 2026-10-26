@@ -9,9 +9,14 @@
  * После каждого ролика с персонажами — карточка «Проверь себя» на
  * VIDEO_QUESTIONS вопроса именно по его теме: из банка части берутся те, в
  * которых больше всего тех же терминов, что звучали в ролике.
+ *
+ * Ленту можно открыть не целиком (FeedScope): только ролики, одну лекцию или
+ * одну её часть — чтобы пересмотреть конкретную тему, а не листать все 78.
  */
 
 import { present, shuffle, type QuizQuestion } from "./engine";
+import { timeline } from "./explainer";
+import { shortTitle } from "./route";
 import { scenes, type Scene } from "./scenes";
 import type { ExplainerVideo, StudyEvent, Text } from "./types";
 
@@ -58,6 +63,55 @@ export interface VideoItem {
 }
 
 export type FeedItem = Clip | QuizCard | VideoItem;
+
+/** Какую часть ленты смотреть: всё, только ролики с персонажами, одну лекцию или одну часть лекции. */
+export type FeedScope =
+  | { kind: "all" }
+  | { kind: "videos" }
+  | { kind: "lecture"; lecture: number }
+  | { kind: "part"; lecture: number; part: number };
+
+const videosOf = (event: StudyEvent, partId: string) => (event.videos ?? []).filter((v) => v.partId === partId);
+
+function inScope(event: StudyEvent, scope: FeedScope, li: number, pi: number): boolean {
+  if (scope.kind === "videos") return videosOf(event, event.lectures[li].parts[pi].id).length > 0;
+  if (scope.kind === "lecture") return li === scope.lecture;
+  if (scope.kind === "part") return li === scope.lecture && pi === scope.part;
+  return true;
+}
+
+/** Лента целиком (а не тема): только у неё запоминается, где остановился. */
+export const wholeFeed = (scope: FeedScope) => scope.kind === "all" || scope.kind === "videos";
+
+/** «Лекция 4» из «Лекция 4 — Контроль затрат…»; если номера нет — короткое название. */
+export function lectureNumber(event: StudyEvent, li: number): string {
+  const lecture = event.lectures[li];
+  return /^Лекция \d+/.exec(lecture.title.ru)?.[0] ?? lecture.short?.ru ?? lecture.title.ru;
+}
+
+/** Подпись ленты сверху: что именно сейчас листаешь. */
+export function scopeLabel(event: StudyEvent, scope: FeedScope): string {
+  if (scope.kind === "videos") return "Все ролики";
+  if (scope.kind === "all") return "Вся лента";
+  const lecture = event.lectures[scope.lecture];
+  if (scope.kind === "lecture") return `${lectureNumber(event, scope.lecture)} · ${shortTitle(lecture).ru}`;
+  return `${lectureNumber(event, scope.lecture)} · часть ${scope.part + 1} · ${lecture.parts[scope.part].title.ru}`;
+}
+
+export interface Shelf {
+  count: number;
+  seconds: number;
+}
+
+/** Сколько роликов и минут — всего, по лекциям и по частям (лекции и части без роликов — с нулём). */
+export function videoShelves(event: StudyEvent): Shelf & { lectures: (Shelf & { parts: Shelf[] })[] } {
+  const shelf = (videos: ExplainerVideo[]): Shelf => ({ count: videos.length, seconds: videos.reduce((s, v) => s + timeline(v).duration, 0) });
+  const lectures = event.lectures.map((l) => {
+    const parts = l.parts.map((p) => shelf(videosOf(event, p.id)));
+    return { count: parts.reduce((s, p) => s + p.count, 0), seconds: parts.reduce((s, p) => s + p.seconds, 0), parts };
+  });
+  return { count: lectures.reduce((s, l) => s + l.count, 0), seconds: lectures.reduce((s, l) => s + l.seconds, 0), lectures };
+}
 
 /** Клипы части: разделы конспекта; вводный кусок до первого «##» — под названием части. */
 export function partClips(event: StudyEvent, lecture: number, part: number): Clip[] {
@@ -115,14 +169,15 @@ export function relevance(video: ExplainerVideo, question: { q: string; options:
  * роликов — клипы конспекта и после каждых QUIZ_EVERY клипов один вопрос.
  * Вопросы не повторяются; `avoid` — освоенные, их берём в последнюю очередь.
  */
-export function buildFeed(event: StudyEvent, rng: () => number = Math.random, avoid: Set<string> = new Set()): FeedItem[] {
+export function buildFeed(event: StudyEvent, rng: () => number = Math.random, avoid: Set<string> = new Set(), scope: FeedScope = { kind: "all" }): FeedItem[] {
   const out: FeedItem[] = [];
   const used = new Set<string>();
   let sinceQuiz = 0;
   event.lectures.forEach((lecture, li) => {
     lecture.parts.forEach((p, pi) => {
+      if (!inScope(event, scope, li, pi)) return;
       const pool = shuffle(p.questions, rng).sort((a, b) => Number(avoid.has(a.id)) - Number(avoid.has(b.id)));
-      const videos = (event.videos ?? []).filter((v) => v.partId === p.id);
+      const videos = videosOf(event, p.id);
       const items: (Clip | VideoItem)[] = videos.length
         ? videos.map((video) => ({ kind: "video" as const, id: video.id, lecture: li, part: pi, partId: p.id, video }))
         : partClips(event, li, pi);
@@ -157,7 +212,7 @@ export function buildFeed(event: StudyEvent, rng: () => number = Math.random, av
 const key = (userId: string, eventId: string) => `yg-event-feed:${userId}:${eventId}`;
 
 export interface FeedMemory {
-  /** id последнего клипа на экране. */
+  /** id последнего клипа на экране — во всей ленте (у ленты одной темы не запоминается). */
   at?: string;
   /** Сохранённые клипы (♥). */
   saved: string[];

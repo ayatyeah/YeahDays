@@ -219,3 +219,23 @@ test("Сети: ачивка появляется, когда все шаги п
   check(true, "в списке ивентов стоит отметка о пройденном");
   await browser.close();
 });
+
+test("Сети: отдельная лента роликов лекции 7 — только её 12 роликов", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user });
+  await openSection(page, "/events");
+  await page.getByRole("link", { name: /Computer Networks/ }).tap();
+  await page.getByRole("button", { name: "🎬 Лента" }).first().tap();
+  await page.getByRole("heading", { name: "🎬 Ролики" }).waitFor({ timeout: 15_000 });
+  const lectures = await page.locator('section[aria-label^="Лекция "]').evaluateAll((els) => els.map((el) => el.getAttribute("aria-label")));
+  check(lectures.length === 1 && lectures[0] === "Лекция 7", `в выборе — только лекция 7 (${lectures.join(", ")})`);
+  check(await page.getByRole("button", { name: "Лента по всем лекциям: ролики и клипы по конспекту" }).isVisible(), "лента по конспектам остаётся отдельной кнопкой");
+  await page.locator('section[aria-label="Лекция 7"]').getByRole("button", { name: "▶ Вся лекция" }).tap();
+  const feed = page.getByRole("dialog", { name: "Лента коротких видео" });
+  await feed.locator('section[data-kind="video"]').first().waitFor({ timeout: 10_000 });
+  const kinds = await feed.locator("section[data-index]").evaluateAll((els) => els.map((el) => [el.getAttribute("data-kind"), el.getAttribute("data-id")]));
+  const videos = kinds.filter(([k]) => k === "video");
+  check(videos.length === 12 && videos.every(([, id]) => id?.startsWith("cn-l7-")), `12 роликов лекции 7 (${videos.length})`);
+  check(!kinds.some(([k]) => k === "clip"), "клипов по конспекту в ленте лекции нет");
+  await browser.close();
+});

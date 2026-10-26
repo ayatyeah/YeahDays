@@ -25,6 +25,7 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
+  { id: "scroll-mode-2026-10", icon: "book", title: "Scroll-mode: учись листая", text: "Конспект части — экранами, как лента: листаешь вверх, следом тест по этой части и дальше следующая часть. Плюс ролики с персонажами по лекциям и частям — теперь с музыкой.", href: "/events/project-management-test-2" },
   { id: "pm-test2-2026-10", icon: "book", title: "Ивент: MCQ Test 2 по Project Management", text: "Семь лекций по частям — от earned value и оргструктур до Scrum и стейкхолдеров: квиз на 20 вопросов после каждой части и итоговый на 50, как настоящий тест.", href: "/events/project-management-test-2" },
   { id: "cv-midterm-2026-10", icon: "book", title: "Ивент: мидтерм по Computer Vision", text: "Пять лекций по частям и практика в формате мидтерма: баги в коде OpenCV, расчёты Wx + b и accuracy, своя CV-система — с разобранными ответами.", href: "/events/computer-vision-midterm" },
   { id: "cc-midterm-2026-10", icon: "book", title: "Ивент: мидтерм по Cloud Computing", text: "Пять лекций по частям, конспекты со схемами и квиз на 20 вопросов после каждой части — с разбором неверных вариантов.", href: "/events/cloud-computing-midterm" },

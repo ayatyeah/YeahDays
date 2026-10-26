@@ -1,7 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import NotesDiagram from "@/components/events/NotesDiagram";
 import { cn } from "@/lib/cn";
 import { lineAt, posesAt, termChunks, timeline, visualAt } from "@/lib/events/explainer";
@@ -20,7 +20,25 @@ import type { CastRole, ExplainerVideo, VideoVisual } from "@/lib/events/types";
  * Если звук всё же не пустили — на ролике кнопка «включить звук».
  * Тот же компонент рисует кадры для MP4 (render): там время идёт по часам
  * страницы, которые рендер двигает покадрово.
+ *
+ * Все движения — функция времени ролика t (появление картинки и реплики,
+ * пункты списка по очереди, покачивание говорящего), без анимационной
+ * библиотеки: кадр в момент t всегда один и тот же. С framer-motion в рендере
+ * под нагрузкой смена картинок «застревала» — выход старой картинки не
+ * доигрывал, и новая не появлялась.
  */
+
+/** На сколько секунд отматывать назад, когда снимают с паузы. */
+const RESUME_REWIND = 1;
+
+/** 0…1 за `span` секунд после `from`, с плавным торможением в конце. */
+function appear(t: number, from: number, span: number): number {
+  const x = Math.min(1, Math.max(0, (t - from) / span));
+  return 1 - (1 - x) ** 3;
+}
+
+/** Появление снизу: прозрачность и сдвиг по доле p. */
+const rise = (p: number, dy: number, from = 1): CSSProperties => ({ opacity: p, transform: `translateY(${(1 - p) * dy}px) scale(${from + (1 - from) * p})` });
 
 const ROLE_RU: Record<CastRole, string> = {
   mentor: "Наставник",
@@ -54,7 +72,8 @@ function Panel({ children, tone = "bg-white/10" }: { children: ReactNode; tone?:
   return <div className={cn("w-full rounded-3xl border border-white/15 p-4 shadow-2xl backdrop-blur", tone)}>{children}</div>;
 }
 
-function Visual({ visual, revealed }: { visual: VideoVisual; revealed: boolean }) {
+/** age — сколько секунд картинка на экране: от него — появление строк по очереди. */
+function Visual({ visual, revealed, age }: { visual: VideoVisual; revealed: boolean; age: number }) {
   switch (visual.kind) {
     case "hook":
       return <p className="text-center text-[1.75rem] font-black leading-tight tracking-tight drop-shadow-lg"><Terms text={visual.text} /></p>;
@@ -69,9 +88,9 @@ function Visual({ visual, revealed }: { visual: VideoVisual; revealed: boolean }
       return (
         <Panel tone="bg-black/40">
           {visual.lines.map((l, i) => (
-            <motion.p key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 * i }} lang="en" className="font-mono text-[1.15rem] font-bold leading-relaxed text-emerald-300">
+            <p key={i} lang="en" className="font-mono text-[1.15rem] font-bold leading-relaxed text-emerald-300" style={{ opacity: appear(age, 0.25 * i, 0.35), transform: `translateX(${(1 - appear(age, 0.25 * i, 0.35)) * -20}px)` }}>
               {l}
-            </motion.p>
+            </p>
           ))}
           {visual.note && <p className="mt-2 text-sm text-white/80"><Terms text={visual.note} /></p>}
         </Panel>
@@ -84,9 +103,9 @@ function Visual({ visual, revealed }: { visual: VideoVisual; revealed: boolean }
           <p className="text-base font-bold text-amber-300"><Terms text={visual.title} className="text-amber-300" /></p>
           <ul className="mt-2 space-y-1.5">
             {visual.items.map((item, i) => (
-              <motion.li key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 * i }} lang="en" className={cn("rounded-xl px-3 py-1.5 text-[0.95rem] font-semibold leading-snug", visual.mark === i ? "bg-amber-400 text-black" : "bg-white/10 text-white")}>
+              <li key={i} lang="en" className={cn("rounded-xl px-3 py-1.5 text-[0.95rem] font-semibold leading-snug", visual.mark === i ? "bg-amber-400 text-black" : "bg-white/10 text-white")} style={rise(appear(age, 0.12 * i, 0.3), 10)}>
                 {item}
-              </motion.li>
+              </li>
             ))}
           </ul>
         </Panel>
@@ -114,9 +133,9 @@ function Visual({ visual, revealed }: { visual: VideoVisual; revealed: boolean }
       return (
         <div className="w-full space-y-3">
           <Panel tone="bg-red-500/20"><p className="text-base leading-snug">❌ <Terms text={visual.wrong} /></p></Panel>
-          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+          <div style={rise(appear(age, 0.6, 0.35), 14)}>
             <Panel tone="bg-emerald-500/20"><p className="text-base font-semibold leading-snug">✅ <Terms text={visual.right} /></p></Panel>
-          </motion.div>
+          </div>
         </div>
       );
     case "quiz":
@@ -163,15 +182,20 @@ function FitBox({ children }: { children: ReactNode }) {
   );
 }
 
-function Character({ role, pose, side, speaking }: { role: CastRole; pose: string; side: "left" | "right"; speaking: boolean }) {
+/**
+ * Персонаж: говорящий крупнее и подпрыгивает (`bob`, px), молчащий — меньше и
+ * приглушён. `turn` — доля перехода (0…1) с момента, как сменился говорящий.
+ */
+function Character({ role, pose, side, speaking, turn, bob }: { role: CastRole; pose: string; side: "left" | "right"; speaking: boolean; turn: number; bob: number }) {
   const [broken, setBroken] = useState(false);
   useEffect(() => setBroken(false), [role, pose]);
+  const level = speaking ? turn : 1 - turn; // 1 — говорит, 0 — молчит
+  const scale = 0.92 + 0.14 * level;
+  const opacity = 0.72 + 0.28 * level;
   return (
-    <motion.div
+    <div
       className={cn("absolute bottom-0 flex h-[42%] w-[52%] items-end justify-center", side === "left" ? "left-[-4%]" : "right-[-4%]")}
-      animate={speaking ? { scale: 1.06, opacity: 1, y: [0, -6, 0] } : { scale: 0.92, opacity: 0.72, y: 0 }}
-      transition={speaking ? { y: { repeat: Infinity, duration: 0.9, ease: "easeInOut" }, scale: { duration: 0.3 } } : { duration: 0.3 }}
-      style={{ transformOrigin: "bottom center", zIndex: speaking ? 2 : 1 }}
+      style={{ transformOrigin: "bottom center", zIndex: speaking ? 2 : 1, opacity, transform: `translateY(${speaking ? bob : 0}px) scale(${scale})` }}
     >
       {broken ? (
         <div className="mb-6 grid h-32 w-32 place-items-center rounded-full bg-white/15 text-6xl">{ROLE_EMOJI[role]}</div>
@@ -187,7 +211,7 @@ function Character({ role, pose, side, speaking }: { role: CastRole; pose: strin
         />
       )}
       <span className="absolute bottom-2 rounded-full bg-black/60 px-2.5 py-0.5 text-[11px] font-semibold text-white/90">{ROLE_RU[role]}</span>
-    </motion.div>
+    </div>
   );
 }
 
@@ -243,12 +267,13 @@ export default function ExplainerPlayer({
     if (audioEl && src && audioEl.src.endsWith(src)) audioEl.pause();
   }, [active, audioEl, src]);
 
-  function startAudio(at: number) {
+  /** exact — ставить звук ровно в `at` (после паузы), иначе — только если ушёл больше чем на 0,3 с. */
+  function startAudio(at: number, exact = false) {
     if (!audioEl || !src) return;
     if (!audioEl.src.endsWith(src)) audioEl.src = src;
     audioEl.muted = !!muted;
     audioEl.playbackRate = rate;
-    if (Math.abs(audioEl.currentTime - at) > 0.3) audioEl.currentTime = at;
+    if (Math.abs(audioEl.currentTime - at) > (exact ? 0.05 : 0.3)) audioEl.currentTime = at;
     void audioEl.play().then(
       () => setNeedsTap(false),
       () => setNeedsTap(true), // звук не пустили без тапа — время пока идёт по часам
@@ -275,7 +300,9 @@ export default function ExplainerPlayer({
         if (!clock.current) clock.current = { base: wall, at: t };
         now = clock.current.at + (wall - clock.current.base) * rate;
       }
-      setT(now);
+      // В рендере — синхронно: кадр снимают сразу после шага часов, и он должен уже показывать момент t.
+      if (render) flushSync(() => setT(now));
+      else setT(now);
       onProgress?.(Math.min(1, now / duration));
       if (now >= duration + 0.6 && !done) {
         done = true;
@@ -297,14 +324,37 @@ export default function ExplainerPlayer({
   const poses = posesAt(video, i);
   const revealed = visual?.kind === "quiz" && i > from;
   const speakerSide = line.who === "A" ? "left" : "right";
+  // Говорящий сменился на этой реплике — переход за 0,3 с, иначе всё уже на месте.
+  const turn = i > 0 && video.lines[i - 1].who !== line.who ? appear(t, starts[i], 0.3) : 1;
+  const visualIn = from >= 0 ? appear(t, starts[from], 0.4) : 1;
+  const bubbleIn = appear(t, starts[i], 0.22);
+  // В MP4 между репликами кадр стоит, и рендер его не снимает заново: поэтому там
+  // говорящий подпрыгивает один раз в начале реплики, а полоска шагает по репликам.
+  // В приложении — покачивание всю реплику и плавная полоска.
+  const lineIn = Math.min(1, Math.max(0, (t - starts[i]) / 0.4));
+  const bob = render ? -8 * Math.sin(Math.PI * lineIn) : -6 * Math.abs(Math.sin((Math.PI * t) / 0.9)) * turn;
+  const shown = render ? starts[i] + appear(t, starts[i], 0.3) * ((starts[i + 1] ?? duration) - starts[i]) : t;
 
   return (
     <div
       className={cn("relative h-full w-full overflow-hidden bg-gradient-to-b text-white", BACKDROPS[backdrop % BACKDROPS.length])}
       onClick={render ? undefined : () => {
-        // Тап — это и есть разрешение на звук: запускаем прямо в обработчике.
-        if (needsTap) startAudio(t);
-        else setPaused((p) => !p);
+        // Тап — это и есть разрешение на звук: звук трогаем прямо в обработчике,
+        // а не потом в эффекте — иначе телефон может счесть запуск автоплеем и не пустить.
+        if (needsTap) return startAudio(t);
+        if (!paused) {
+          const at = mine() && !audioEl!.paused ? audioEl!.currentTime : t;
+          if (mine()) audioEl!.pause();
+          setT(at);
+          setPaused(true);
+          return;
+        }
+        // С паузы — на секунду назад, но не раньше начала реплики: наушники и
+        // колонки после тишины просыпаются не сразу и съедают начало звука.
+        const at = Math.max(starts[lineAt(starts, t)] ?? 0, t - RESUME_REWIND, 0);
+        setT(at);
+        startAudio(at, true);
+        setPaused(false);
       }}
       data-no-i18n
     >
@@ -312,46 +362,32 @@ export default function ExplainerPlayer({
       <div aria-hidden className="pointer-events-none absolute -right-20 top-10 h-60 w-60 rounded-full bg-amber-300/10 blur-3xl" />
 
       <div className="absolute inset-x-4 top-3 z-10 h-1 overflow-hidden rounded-full bg-white/20">
-        <div className="h-full bg-white" style={{ width: `${Math.min(100, (t / duration) * 100)}%` }} />
+        <div className="h-full bg-white" style={{ width: `${Math.min(100, (shown / duration) * 100)}%` }} />
       </div>
       <p className="absolute left-4 right-4 top-[3.7rem] z-10 truncate text-center text-[11px] font-bold uppercase tracking-[0.2em] text-white/75">{video.title.ru}</p>
 
       <div className="absolute inset-x-4 top-[14%] z-10 flex h-[34%] items-center justify-center overflow-hidden">
-        <AnimatePresence mode="wait">
-          {visual && (
-            <motion.div
-              key={from}
-              initial={{ opacity: 0, y: 30, scale: 0.94 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -24, scale: 0.97 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="flex h-full w-full justify-center"
-            >
-              <FitBox>
-                <Visual visual={visual} revealed={revealed} />
-              </FitBox>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {visual && (
+          <div key={from} className="flex h-full w-full justify-center" style={rise(visualIn, 30, 0.94)}>
+            <FitBox>
+              <Visual visual={visual} revealed={revealed} age={t - starts[from]} />
+            </FitBox>
+          </div>
+        )}
       </div>
 
       <div className={cn("absolute z-20 max-w-[80%] top-[49%]", speakerSide === "left" ? "left-4" : "right-4")}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 10, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22 }}
-            className={cn("rounded-3xl px-4 py-2.5 text-[0.98rem] font-semibold leading-snug shadow-xl", speakerSide === "left" ? "rounded-bl-md bg-white text-black" : "rounded-br-md bg-black/75 text-white")}
-          >
-            <Terms text={line.text} className={speakerSide === "left" ? "text-indigo-700" : undefined} />
-          </motion.div>
-        </AnimatePresence>
+        <div
+          key={i}
+          className={cn("rounded-3xl px-4 py-2.5 text-[0.98rem] font-semibold leading-snug shadow-xl", speakerSide === "left" ? "rounded-bl-md bg-white text-black" : "rounded-br-md bg-black/75 text-white")}
+          style={rise(bubbleIn, 10, 0.96)}
+        >
+          <Terms text={line.text} className={speakerSide === "left" ? "text-indigo-700" : undefined} />
+        </div>
       </div>
 
-      <Character role={video.cast.A} pose={poses.A} side="left" speaking={line.who === "A"} />
-      <Character role={video.cast.B} pose={poses.B} side="right" speaking={line.who === "B"} />
+      <Character role={video.cast.A} pose={poses.A} side="left" speaking={line.who === "A"} turn={turn} bob={bob} />
+      <Character role={video.cast.B} pose={poses.B} side="right" speaking={line.who === "B"} turn={turn} bob={bob} />
 
       {paused && !render && <div className="absolute inset-0 z-30 grid place-items-center bg-black/30 text-6xl" aria-hidden>▶</div>}
       {needsTap && !paused && !muted && !render && (

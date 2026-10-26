@@ -69,7 +69,8 @@ export default function RouteStepper({
         <h2 className="text-lg font-bold">{title}</h2>
         <span className="shrink-0 text-sm tabular-nums text-[var(--color-muted)]">{`${done} из ${stops.length} завершено`}</span>
       </div>
-      <ol ref={track} className="-mx-1 mt-4 flex w-full min-w-0 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+      {/* Полоса прокручивается вбок, а значит, обрезает и сверху: отступ pt-2 — под ореол текущего шага (7px). */}
+      <ol ref={track} className="-mx-1 mt-2 flex w-full min-w-0 overflow-x-auto px-1 pb-1 pt-2 [scrollbar-width:none]">
         {stops.map((stop, i) => {
           const filled = stop.state !== "todo";
           const circle = cn(

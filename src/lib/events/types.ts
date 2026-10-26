@@ -46,6 +46,8 @@ export interface Part {
 export interface Lecture {
   id: string;
   title: Text;
+  /** Подпись в ленте «Твой маршрут» (2–3 слова); без неё берётся хвост названия после «—». */
+  short?: Text;
   parts: Part[];
 }
 
@@ -82,6 +84,21 @@ export interface StudyEvent {
   fast?: FastTrack;
   /** Практикум к курсу: тренажёр расчётов, «Найди баг», песочница (см. components/events/VisionTrainer и др.). */
   practice?: "vision";
+  /**
+   * Настоящий тест с выбором ответа, к которому готовит ивент: тогда на карте
+   * есть «Пробный тест» — столько же вопросов вперемешку со всех лекций, на
+   * время, без подсказок по ходу, итог в баллах этого теста.
+   */
+  exam?: ExamFormat;
+}
+
+export interface ExamFormat {
+  /** «MCQ Test 2». */
+  name: string;
+  questions: number;
+  minutes: number;
+  /** Сколько баллов курса даёт тест целиком. */
+  points: number;
 }
 
 /**

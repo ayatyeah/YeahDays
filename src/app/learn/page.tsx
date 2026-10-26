@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import LearningPage from "@/components/learning/LearningPage";
 import { EVENTS } from "@/lib/events";
 import { steps } from "@/lib/events/engine";
+import { routeStops } from "@/lib/events/route";
 
 export default function Page() {
   // Only lightweight summaries cross into the browser, not the lecture/question banks.
@@ -21,6 +22,7 @@ export default function Page() {
       ),
       mocks: e.mocks?.length ?? 0,
       practice: e.practice ?? null,
+      route: routeStops(e),
     };
   });
   return (

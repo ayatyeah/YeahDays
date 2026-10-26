@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
 import { cn } from "@/lib/cn";
@@ -8,11 +8,16 @@ import type { Lang, StudyEvent } from "@/lib/events/types";
 import { useContentLang } from "@/i18n/locale";
 import { useTutorDetail } from "@/lib/tutorFocus";
 import { fastKey as storeKey, loadFastRead as loadRead } from "@/lib/events/fastProgress";
+import SpeakButton from "@/components/events/SpeakButton";
 
 /**
  * Фаст-мод: подготовка за несколько часов. Блоки идут по порядку от самых
  * «баллоёмких»; открыт один, «Дальше» отмечает его прочитанным и открывает
  * следующий. Отметки — на этом устройстве, в готовность не идут.
+ *
+ * «Слушать подряд» читает голосом все блоки, начиная с первого непрочитанного,
+ * как подкаст: заголовок блока, затем текст. Таблицы и формулы голос
+ * пропускает (см. SpeakButton) — их потом стоит пробежать глазами.
  */
 
 export default function FastMode({
@@ -39,13 +44,21 @@ export default function FastMode({
   const key = storeKey(userId, event.id);
   const [read, setRead] = useState<string[]>([]);
   const [open, setOpen] = useState<string | null>(null);
+  // С какого блока слушать: фиксируется при открытии, чтобы отметки «прочитано» не обрывали чтение.
+  const [listenFrom, setListenFrom] = useState(0);
   const refs = useRef<Record<string, HTMLElement | null>>({});
 
   useEffect(() => {
     const saved = loadRead(key);
     setRead(saved);
     setOpen(fast.sections.find((s) => !saved.includes(s.id))?.id ?? null);
+    setListenFrom(Math.max(0, fast.sections.findIndex((s) => !saved.includes(s.id))));
   }, [key, fast]);
+
+  const podcast = useMemo(
+    () => fast.sections.slice(listenFrom).map((s) => `## ${s.title[lang]}\n${s.notes[lang]}`).join("\n"),
+    [fast, listenFrom, lang],
+  );
 
   useEffect(() => {
     if (open) refs.current[open]?.scrollIntoView({ block: "start", behavior: "smooth" });
@@ -97,7 +110,11 @@ export default function FastMode({
         <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
           <div className="h-full rounded-full bg-amber-400 transition-[width]" style={{ width: `${(doneCount / fast.sections.length) * 100}%` }} />
         </div>
-        <div className="mt-2 flex justify-end">
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-[var(--color-muted)]">{listenFrom > 0 ? `Слушать подряд с блока ${listenFrom + 1}:` : "Слушать подряд:"}</span>
+            <SpeakButton text={podcast} lang={lang} />
+          </div>
           <Button size="sm" variant="ghost" className="h-auto min-h-8 whitespace-normal" onClick={onLang}>
             {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
           </Button>

@@ -17,6 +17,10 @@ import {
   type LearningEventProgress,
 } from "@/lib/learningEvents";
 import { loadProgress } from "@/lib/events/storage";
+import type { Progress } from "@/lib/events/engine";
+import { routeStates } from "@/lib/events/route";
+import RouteStepper from "@/components/events/RouteStepper";
+import { useContentLang } from "@/i18n/locale";
 import "./learning.css";
 import Button from "@/components/ui/Button";
 import { useLearningStore } from "@/store/useLearningStore";
@@ -48,6 +52,8 @@ export default function LearningPage({
     Record<string, LearningEventProgress>
   >({});
   const [eventVisits, setEventVisits] = useState<Record<string, number>>({});
+  const [eventSteps, setEventSteps] = useState<Record<string, Progress>>({});
+  const tl = useContentLang();
   function navigate(next: string, skillId = "", nextQuest = "") {
     const query = new URLSearchParams();
     if (next !== "hub") query.set("view", next);
@@ -135,20 +141,22 @@ export default function LearningPage({
         /* storage unavailable */
       }
     }
-    if (owner)
+    if (owner) {
+      const raw = Object.fromEntries(events.map((e) => [e.id, loadProgress(owner, e.id)]));
+      setEventSteps(raw);
       setEventProgress(
         Object.fromEntries(
-          events.map((e) => {
-            const progress = loadProgress(owner, e.id);
-            return [e.id, summarizeLearningProgress(e, progress)];
-          }),
+          events.map((e) => [e.id, summarizeLearningProgress(e, raw[e.id])]),
         ),
       );
+    }
   }, [owner, events]);
   const orderedEvents = orderLearningEvents(events, eventProgress);
   const lastStartedEvent = orderedEvents
     .filter((e) => eventProgress[e.id]?.done)
     .sort((a, b) => (eventVisits[b.id] ?? 0) - (eventVisits[a.id] ?? 0))[0];
+  // «Твой маршрут» — ивент, которым занимались последним, а если ни одного — самый свежий.
+  const routeEvent = lastStartedEvent ?? orderedEvents[0];
   const skill =
     data?.skills.find((s) => s.id === selected) ??
     data?.skills.find((s) => s.quests.some((q) => !q.completed)) ??
@@ -572,6 +580,21 @@ export default function LearningPage({
       {view === "hub" && (
         <div className="learning-layout">
           <div className="learning-main">
+            {owner && routeEvent?.route && (() => {
+              const states = routeStates(routeEvent.route, eventSteps[routeEvent.id] ?? {});
+              return (
+                <RouteStepper
+                  eyebrow={routeEvent.course}
+                  stops={routeEvent.route.map((stop, i) => ({ label: stop.label[tl], state: states[i], final: stop.final }))}
+                  footer={
+                    <Link href={`/events/${routeEvent.id}`} className="learning-route-link">
+                      {`${routeEvent.title} · ${states.includes("current") ? "продолжить" : "повторить"}`}
+                      <YgIcon name="chevron" />
+                    </Link>
+                  }
+                />
+              );
+            })()}
             <PathwaysHub />
             {/* Прежние ИИ-маршруты из шести квестов — только у тех, кто их уже начал. */}
             {data && data.skills.length > 0 && (

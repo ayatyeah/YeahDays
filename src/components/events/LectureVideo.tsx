@@ -29,8 +29,8 @@ import { RATES, clampRate, rankVoices } from "@/lib/events/voice";
  * есть за что зацепиться, и внимание не уплывает.
  */
 
-type Mode = "mix" | "ru" | "en";
-const MODES: [Mode, string][] = [["mix", "RU + термины EN"], ["en", "English"], ["ru", "Русский"]];
+export type Mode = "mix" | "ru" | "en";
+export const MODES: [Mode, string][] = [["mix", "RU + термины EN"], ["en", "English"], ["ru", "Русский"]];
 
 /** Варианты переходов — чередуются, чтобы сцены не сливались в одно движение. */
 const TRANSITIONS = [
@@ -228,7 +228,7 @@ function Pair({ ru, en, mode, size = "text-2xl sm:text-3xl" }: { ru: string; en:
   );
 }
 
-function SceneView({ scene, mode, reveal }: { scene: Scene; mode: Mode; reveal: boolean }) {
+export function SceneView({ scene, mode, reveal }: { scene: Scene; mode: Mode; reveal: boolean }) {
   switch (scene.kind) {
     case "title":
       return (

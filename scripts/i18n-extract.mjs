@@ -14,7 +14,7 @@ const root = "src";
 // переключатель EN/RU), юридические тексты (сила — у русской версии),
 // консоль владельца, тесты и сам каталог переводов.
 // Схемы, демонстрации и вопросы самопроверки в конспектах двуязычны сами по себе (ru/en по языку конспекта).
-const SKIP = [/^lib\/events\/(researchMethods|computerNetworks|cloudComputing|projectDefense|computerVision)\/(?!event\.ts$)/, /^components\/events\/(NotesDiagram|NotesDemo|CheckQuestion)\.tsx$/, /^components\/events\/diagrams\//, /^app\/privacy\//, /^app\/terms\//, /^app\/admin\//, /^app\/team\//, /^components\/team\//, /^app\/(rmt|rmt-privacy|rmt-terms|research)\//, /^components\/study\//, /^components\/Owner/, /^i18n\//, /\.test\.tsx?$/, /^app\/api\/(owner|admin|cron|push|assistant|team)\//, /^lib\/(push|notify|telegram|presence)/, /^lib\/path\/(ai|fake|validate|tts)\.ts$/];
+const SKIP = [/^lib\/events\/(researchMethods|computerNetworks|cloudComputing|projectDefense|computerVision|projectManagement)\/(?!event\.ts$)/, /^components\/events\/(NotesDiagram|NotesDemo|CheckQuestion)\.tsx$/, /^components\/events\/diagrams\//, /^app\/privacy\//, /^app\/terms\//, /^app\/admin\//, /^app\/team\//, /^components\/team\//, /^app\/(rmt|rmt-privacy|rmt-terms|research)\//, /^components\/study\//, /^components\/Owner/, /^i18n\//, /\.test\.tsx?$/, /^app\/api\/(owner|admin|cron|push|assistant|team)\//, /^lib\/(push|notify|telegram|presence)/, /^lib\/path\/(ai|fake|validate|tts)\.ts$/];
 const cyr = /[А-Яа-яЁё]/;
 const keys = new Map();
 const add = (raw, file) => {

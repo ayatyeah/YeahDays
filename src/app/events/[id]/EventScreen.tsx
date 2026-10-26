@@ -21,6 +21,13 @@ const VisionTrainer = dynamic(() => import("@/components/events/VisionTrainer"),
 const BugHunt = dynamic(() => import("@/components/events/BugHunt"), { loading: Loading });
 const OpenCVSandbox = dynamic(() => import("@/components/events/OpenCVSandbox"), { loading: Loading });
 const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading: Loading });
+const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
+const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
+const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
+import { learnFromQuiz, loadDrill, stats as drillStats, type DrillState, type Scope } from "@/lib/events/drill";
+import { examPoints, loadSim, saveSim, type SimRecord } from "@/lib/events/examSim";
+import { routeStates, routeStops } from "@/lib/events/route";
+import RouteStepper from "@/components/events/RouteStepper";
 import { fastProgress } from "@/lib/events/fastProgress";
 import type { TrainerKind } from "@/lib/visionTrainer";
 const NetworkGame = dynamic(() => import("@/components/events/NetworkGame"), { loading: Loading });
@@ -55,7 +62,11 @@ type View =
   | { mode: "trainer"; kind?: TrainerKind }
   | { mode: "bughunt" }
   | { mode: "sandbox" }
-  | { mode: "fast" };
+  | { mode: "fast" }
+  | { mode: "drill"; scope?: Scope }
+  | { mode: "feed" }
+  | { mode: "exam"; quiz: QuizQuestion[]; run: number }
+  | { mode: "examResult"; quiz: QuizQuestion[]; answers: number[]; seconds: number };
 
 /** Кто открывал ивент на этом устройстве в последний раз — для работы без сети. */
 const LAST_USER = "yg-event-last-user";
@@ -151,6 +162,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   // Самый свежий прогресс для фоновой синхронизации: ответ сервера может
   // прийти, когда человек уже прошёл следующий квиз.
   const latest = useRef<Progress>({});
+  // «Учить вопросами» и пробный тест живут только на устройстве; перечитываем при возврате к маршруту.
+  const [drill, setDrill] = useState<DrillState>({});
+  const [sim, setSim] = useState<SimRecord | null>(null);
 
   // Прогресс и настройки живут в браузере — читаем после монтирования, чтобы
   // серверная и клиентская разметка совпали.
@@ -160,6 +174,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
     setProgress(local);
     setLang(loadPref("lang", "en") === "ru" ? "ru" : "en");
     setMusic(loadPref("music", "on") !== "off");
+    setDrill(loadDrill(userId, event.id));
+    setSim(loadSim(userId, event.id));
     setLoaded(true);
     void sync();
     const onNetwork = () => {
@@ -252,15 +268,36 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   }
 
   function finish(step: Step, quiz: QuizQuestion[], answers: number[]) {
-    const next = record(progress, step, quiz, answers);
+    save(record(progress, step, quiz, answers));
+    // «До косточек» — отдельные банки, в «Учить вопросами» их нет.
+    if (step.kind !== "deep") learnFromQuiz(userId, event.id, quiz, answers);
+    setView({ mode: "result", step, quiz, answers });
+  }
+
+  function save(next: Progress) {
     latest.current = next;
     setProgress(next);
     saveProgress(userId, event.id, next);
-    setView({ mode: "result", step, quiz, answers });
     void sync(social.share);
   }
 
+  const finalStep = list[list.length - 1];
+
+  function startExam() {
+    if (!event.exam) return;
+    setView({ mode: "exam", quiz: draw(event, { ...finalStep, count: event.exam.questions }), run: ++runs.current });
+  }
+
+  /** Пробный тест засчитывается и как итоговый квиз: те же вопросы со всех лекций. */
+  function finishExam(quiz: QuizQuestion[], answers: number[], seconds: number) {
+    save(record(progress, finalStep, quiz, answers));
+    learnFromQuiz(userId, event.id, quiz, answers);
+    setSim(saveSim(userId, event.id, quiz.filter((item, i) => answers[i] === item.correct).length / quiz.length));
+    setView({ mode: "examResult", quiz, answers, seconds });
+  }
+
   function toMap() {
+    setDrill(loadDrill(userId, event.id));
     setView({ mode: "map" });
   }
 
@@ -299,7 +336,18 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
             onView={(mode) => setView({ mode })}
+            onExam={event.exam ? startExam : undefined}
           />
+          {loaded && (() => {
+            const stops = routeStops(event);
+            const states = routeStates(stops, progress);
+            return (
+              <RouteStepper
+                stops={stops.map((stop, i) => ({ label: stop.label[tl], state: states[i], final: stop.final }))}
+                onSelect={(i) => document.getElementById(i < event.lectures.length ? `route-${event.lectures[i].id}` : "route-final")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              />
+            );
+          })()}
           {event.fast && (
             <section className="rounded-3xl border border-amber-400/40 bg-gradient-to-br from-amber-500/15 via-[var(--color-surface)] to-rose-500/10 p-5">
               <h2 className="text-lg font-bold">⚡ Фаст-мод · ≈ {event.fast.hours.toLocaleString("ru")} ч</h2>
@@ -312,6 +360,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               </Button>
             </section>
           )}
+          <NoReading event={event} drill={loaded ? drill : null} sim={sim} onFeed={() => setView({ mode: "feed" })} onDrill={() => setView({ mode: "drill" })} onExam={event.exam ? startExam : undefined} />
           {!online && (
             <p role="status" className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm">
               Нет сети. Конспекты и квизы работают, результаты сохраняются на устройстве и отправятся, когда появится интернет.
@@ -350,7 +399,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           </section>
 
           {event.lectures.map((lecture, li) => (
-            <section key={lecture.id} className={panel}>
+            <section key={lecture.id} id={`route-${lecture.id}`} className={cn(panel, "scroll-mt-4")}>
               <h2 className="text-lg font-bold">{lecture.title[tl]}</h2>
               {tl === "ru" && <p className="text-sm text-[var(--color-muted)]">{lecture.title.en}</p>}
               <ol className="mt-4 space-y-2">
@@ -369,7 +418,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             </section>
           ))}
 
-          <section className={panel}>
+          <section id="route-final" className={cn(panel, "scroll-mt-4")}>
             <h2 className="text-lg font-bold">Финал</h2>
             <p className="text-sm text-[var(--color-muted)]">Вопросы вперемешку со всех лекций — как на настоящем квизе.</p>
             <ol className="mt-4 space-y-2">
@@ -479,6 +528,53 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           onFinal={() => open(list[list.length - 1])}
           onMocks={event.mocks?.length ? () => { toMap(); window.setTimeout(() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" }), 150); } : undefined}
           onSheet={event.cheatSheet ? () => setView({ mode: "sheet" }) : undefined}
+        />
+      )}
+      {view.mode === "drill" && (
+        <Drill
+          event={event}
+          userId={userId}
+          lang={lang}
+          onLang={switchLang}
+          initialScope={view.scope}
+          onExit={toMap}
+          onOpenPart={(id) => {
+            const step = list.find((s) => s.kind === "part" && s.id === id);
+            if (step) open(step);
+          }}
+          onExam={event.exam ? startExam : undefined}
+        />
+      )}
+      {view.mode === "feed" && (
+        <Feed
+          event={event}
+          userId={userId}
+          onExit={toMap}
+          onOpenPart={(id) => {
+            const step = list.find((s) => s.kind === "part" && s.id === id);
+            if (step) open(step);
+          }}
+          onPartQuiz={(id) => {
+            const step = list.find((s) => s.kind === "part" && s.id === id);
+            if (step) startQuiz(step);
+          }}
+        />
+      )}
+      {view.mode === "exam" && event.exam && (
+        <ExamSim key={view.run} format={event.exam} quiz={view.quiz} onExit={toMap} onFinish={(answers, seconds) => finishExam(view.quiz, answers, seconds)} />
+      )}
+      {view.mode === "examResult" && event.exam && (
+        <ExamResult
+          event={event}
+          quiz={view.quiz}
+          answers={view.answers}
+          seconds={view.seconds}
+          sim={sim}
+          lang={lang}
+          onLang={switchLang}
+          onDrill={(scope) => setView({ mode: "drill", scope })}
+          onRetry={startExam}
+          onMap={toMap}
         />
       )}
       <Tutor event={event} userId={userId} />
@@ -623,8 +719,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
  * Быстрый доступ под заголовком ивента: пробные варианты, практикум,
  * шпаргалка и помощник — чтобы не листать до них мимо всех лекций.
  */
-function QuickLinks({ event, onMocks, onView }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet" | "fast") => void }) {
+function QuickLinks({ event, onMocks, onView, onExam }: { event: StudyEvent; onMocks: () => void; onView: (mode: "trainer" | "bughunt" | "sandbox" | "sheet" | "fast" | "drill" | "feed") => void; onExam?: () => void }) {
   const links: { label: string; go: () => void; accent?: boolean }[] = [];
+  links.push({ label: "🎬 Лента", go: () => onView("feed"), accent: true });
+  links.push({ label: "🎯 Учить вопросами", go: () => onView("drill"), accent: true });
+  if (onExam && event.exam) links.push({ label: `⏱ Пробный тест · ${event.exam.questions}`, go: onExam, accent: true });
   if (event.fast) links.push({ label: `⚡ Фаст-мод · ${event.fast.hours.toLocaleString("ru")} ч`, go: () => onView("fast"), accent: true });
   if (event.mocks?.length) links.push({ label: `Пробные варианты · ${event.mocks.length}`, go: onMocks, accent: true });
   if (event.practice === "vision") {
@@ -881,28 +980,147 @@ function Result({
         <Button variant="ghost" className="h-auto min-h-11 whitespace-normal" onClick={onMap}>К маршруту</Button>
       </div>
 
-      {mistakes.length > 0 && (
-        <section className={panel}>
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-lg font-bold">Разбор ошибок · {mistakes.length}</h2>
-            <button className="text-xs underline" onClick={onLang}>
-              {lang === "en" ? "Объяснения на русском" : "Explanations in English"}
-            </button>
+      <Mistakes eventId={event.id} mistakes={mistakes} lang={lang} onLang={onLang} />
+    </>
+  );
+}
+
+/** Разбор ошибок попытки: вопрос, что выбрал, что верно и почему. Без ответа — picked = -1. */
+function Mistakes({ eventId, mistakes, lang, onLang }: { eventId: string; mistakes: { item: QuizQuestion; picked: number | undefined }[]; lang: Lang; onLang: () => void }) {
+  if (!mistakes.length) return null;
+  return (
+    <section className={panel}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg font-bold">Разбор ошибок · {mistakes.length}</h2>
+        <button className="text-xs underline" onClick={onLang}>
+          {lang === "en" ? "Объяснения на русском" : "Explanations in English"}
+        </button>
+      </div>
+      <ol className="mt-4 space-y-4">
+        {mistakes.map(({ item, picked }) => (
+          <li key={item.id} className="rounded-2xl border border-[var(--color-border)] p-4 text-sm">
+            <p lang="en" className="font-semibold">{item.q}</p>
+            {picked !== undefined && picked >= 0 ? <p lang="en" className="mt-2 text-[var(--color-strength)]">✗ {item.options[picked]}</p> : <p className="mt-2 text-[var(--color-strength)]">Без ответа</p>}
+            <p lang="en" className="mt-1 text-[var(--color-stability)]">✓ {item.options[item.correct]}</p>
+            <p lang={lang} className="mt-2 text-[var(--color-muted)]">{item.why[lang]}</p>
+            {picked !== undefined && picked >= 0 && item.wrong?.[picked] && <p lang={lang} className="mt-1 text-[var(--color-muted)]">Почему не «{item.options[picked]}»: {item.wrong[picked]![lang]}</p>}
+            <ReportQuestion eventId={eventId} questionId={item.id} />
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/**
+ * «Не хочешь читать?» на карте ивента: учить вопросами и пробный тест —
+ * два способа готовиться без конспекта. Цифры — с этого устройства.
+ */
+function NoReading({ event, drill, sim, onFeed, onDrill, onExam }: { event: StudyEvent; drill: DrillState | null; sim: SimRecord | null; onFeed: () => void; onDrill: () => void; onExam?: () => void }) {
+  const st = drill ? drillStats(event, drill) : null;
+  return (
+    <section className="rounded-3xl border border-emerald-400/40 bg-gradient-to-br from-emerald-500/15 via-[var(--color-surface)] to-sky-500/10 p-5">
+      <h2 className="text-lg font-bold">Не хочешь читать конспекты?</h2>
+      <p className="mt-1 text-sm text-[var(--color-muted)]">Тест проверяет то же, что вопросы ивента, — и у каждого есть объяснение. Учи, отвечая: ошибки будут возвращаться, пока не запомнятся.</p>
+      <div className={cn("mt-4 grid gap-3", onExam && event.exam ? "sm:grid-cols-3" : "sm:grid-cols-2")}>
+        <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+          <p className="font-semibold">🎬 Лента</p>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">Листай как в TikTok: тема за темой с голосом, между ними — быстрые вопросы.</p>
+          <Button className="mt-3 h-auto min-h-11 w-full whitespace-normal" onClick={onFeed}>Смотреть ленту</Button>
+        </div>
+        <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+          <p className="font-semibold">🎯 Учить вопросами</p>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">{st ? `Освоено ${st.mastered} из ${st.total} · в работе ${st.learning}` : "…"}</p>
+          {st && (
+            <div className="mt-2 flex h-2 overflow-hidden rounded-full bg-[var(--color-surface-2)]" aria-hidden>
+              <div className="h-full bg-emerald-400" style={{ width: `${st.total ? (st.mastered / st.total) * 100 : 0}%` }} />
+              <div className="h-full bg-amber-400/70" style={{ width: `${st.total ? (st.learning / st.total) * 100 : 0}%` }} />
+            </div>
+          )}
+          <Button variant="primary" className="mt-3 h-auto min-h-11 w-full whitespace-normal" onClick={onDrill}>
+            {st && st.mastered + st.learning > 0 ? "Продолжить" : "Начать · 10 вопросов"}
+          </Button>
+        </div>
+        {onExam && event.exam && (
+          <div className="rounded-2xl bg-[var(--color-bg)] p-4">
+            <p className="font-semibold">⏱ Пробный тест</p>
+            <p className="mt-1 text-xs text-[var(--color-muted)]">
+              {`${event.exam.questions} вопросов · ${event.exam.minutes} мин · итог в баллах из ${event.exam.points}`}
+            </p>
+            {sim && <p className="mt-2 text-sm">{`Лучший: ${examPoints(Math.round(sim.best * event.exam.questions), event.exam.questions, event.exam).toLocaleString("ru")} из ${event.exam.points} · попыток ${sim.attempts}`}</p>}
+            <Button className="mt-3 h-auto min-h-11 w-full whitespace-normal" onClick={onExam}>{sim ? "Пройти ещё раз" : "Начать тест"}</Button>
           </div>
-          <ol className="mt-4 space-y-4">
-            {mistakes.map(({ item, picked }) => (
-              <li key={item.id} className="rounded-2xl border border-[var(--color-border)] p-4 text-sm">
-                <p lang="en" className="font-semibold">{item.q}</p>
-                {picked !== undefined && picked >= 0 && <p lang="en" className="mt-2 text-[var(--color-strength)]">✗ {item.options[picked]}</p>}
-                <p lang="en" className="mt-1 text-[var(--color-stability)]">✓ {item.options[item.correct]}</p>
-                <p lang={lang} className="mt-2 text-[var(--color-muted)]">{item.why[lang]}</p>
-                {picked !== undefined && picked >= 0 && item.wrong?.[picked] && <p lang={lang} className="mt-1 text-[var(--color-muted)]">Почему не «{item.options[picked]}»: {item.wrong[picked]![lang]}</p>}
-                <ReportQuestion eventId={event.id} questionId={item.id} />
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
+        )}
+      </div>
+    </section>
+  );
+}
+
+/** Итог пробного теста: баллы курса, лекции от слабой к сильной, разбор ошибок. */
+function ExamResult({
+  event, quiz, answers, seconds, sim, lang, onLang, onDrill, onRetry, onMap,
+}: {
+  event: StudyEvent;
+  quiz: QuizQuestion[];
+  answers: number[];
+  seconds: number;
+  sim: SimRecord | null;
+  lang: Lang;
+  onLang: () => void;
+  onDrill: (scope: Scope) => void;
+  onRetry: () => void;
+  onMap: () => void;
+}) {
+  const tl = useContentLang();
+  const format = event.exam!;
+  const right = quiz.filter((item, i) => answers[i] === item.correct).length;
+  const points = examPoints(right, quiz.length, format);
+  const mistakes = quiz.map((item, i) => ({ item, picked: answers[i] })).filter(({ item, picked }) => picked !== item.correct);
+  const lectures = event.lectures
+    .map((lecture, li) => {
+      const mine = quiz.map((item, i) => ({ item, ok: answers[i] === item.correct })).filter(({ item }) => item.lecture === li);
+      return { li, title: lecture.title[tl], right: mine.filter((x) => x.ok).length, total: mine.length };
+    })
+    .filter((x) => x.total > 0)
+    .sort((a, b) => a.right / a.total - b.right / b.total);
+  const weak = lectures.filter((x) => x.right / x.total < 0.7);
+  const share = quiz.length ? right / quiz.length : 0;
+
+  return (
+    <>
+      <section className="rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 to-sky-500/10 p-5">
+        <p className="text-xs uppercase tracking-widest">{`Пробный ${format.name}`}</p>
+        <p className="mt-3 text-5xl font-bold tabular-nums">{`${points.toLocaleString("ru")} из ${format.points}`}</p>
+        <p className="mt-2 text-sm">{`Верных ответов: ${right} из ${quiz.length} · время ${Math.floor(seconds / 60)} мин ${seconds % 60} с`}</p>
+        {sim && sim.attempts > 1 && <p className="mt-1 text-sm">{`Лучший результат: ${examPoints(Math.round(sim.best * quiz.length), quiz.length, format).toLocaleString("ru")} из ${format.points}`}</p>}
+        <p className="mt-2 text-sm">
+          {share >= 0.85 ? "Это уровень «отлично». Перед тестом — шпаргалка и ещё один пробный." : share >= 0.7 ? "Хорошо, но баллы теряются на слабых лекциях ниже — доучи их вопросами." : "Пока рано: учи вопросами слабые лекции и пройди тест ещё раз."}
+        </p>
+        <ul className="mt-4 space-y-2 text-sm">
+          {lectures.map((x) => (
+            <li key={x.li} className="rounded-2xl bg-[var(--color-bg)] p-3">
+              <div className="flex justify-between gap-3">
+                <span className="min-w-0 break-words">{x.title}</span>
+                <span className={cn("shrink-0 tabular-nums font-semibold", x.right / x.total < 0.7 && "text-[var(--color-strength)]")}>{`${x.right} из ${x.total}`}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        {weak.length > 0 && (
+          <Button variant="primary" className="h-auto min-h-11 whitespace-normal sm:col-span-2" onClick={() => onDrill(weak[0].li)}>
+            {`Доучить вопросами: ${weak[0].title}`}
+          </Button>
+        )}
+        <Button className="h-auto min-h-11 whitespace-normal" onClick={() => onDrill("all")}>🎯 Учить вопросами</Button>
+        <Button className="h-auto min-h-11 whitespace-normal" onClick={onRetry}>Ещё один пробный тест</Button>
+        <Button variant="ghost" className="h-auto min-h-11 whitespace-normal sm:col-span-2" onClick={onMap}>К маршруту</Button>
+      </div>
+      <p className="text-xs text-[var(--color-muted)]">Ошибки теста уже добавлены в «Учить вопросами» — они вернутся там первыми. Попытка засчитана и как итоговый квиз.</p>
+
+      <Mistakes eventId={event.id} mistakes={mistakes} lang={lang} onLang={onLang} />
     </>
   );
 }

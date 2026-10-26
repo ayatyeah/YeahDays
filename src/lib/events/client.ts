@@ -15,7 +15,7 @@ import type { StudyEvent } from "./types";
  *
  * Новый ивент — строка здесь и в index.ts (тест сверяет оба списка).
  */
-export const EVENT_IDS = ["research-methods-quiz-1", "computer-networks-midterm", "cloud-computing-midterm", "computer-vision-midterm", "yeahtrack-defense"];
+export const EVENT_IDS = ["research-methods-quiz-1", "computer-networks-midterm", "cloud-computing-midterm", "computer-vision-midterm", "yeahtrack-defense", "project-management-test-2"];
 
 const url = (id: string) => `/events-data/${id}?v=${process.env.NEXT_PUBLIC_BUILD_ID ?? "dev"}`;
 const LOADERS: Record<string, () => Promise<StudyEvent>> = Object.fromEntries(

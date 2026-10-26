@@ -145,20 +145,23 @@ export function draw(event: StudyEvent, step: Step, rng: Rng = Math.random): Qui
     picked = roundRobin(event.lectures.map((_, li) => lecturePile(li)), step.count);
   }
 
-  return shuffle(picked, rng).map(({ question, lecture }) => {
-    const order = question.fixed ? question.options.map((_, i) => i) : shuffle(question.options.map((_, i) => i), rng);
-    return {
-      id: question.id,
-      lecture,
-      q: question.q,
-      options: order.map((i) => question.options[i]),
-      correct: order.indexOf(question.answer),
-      why: question.why,
-      ...(question.wrong
-        ? { wrong: order.map((i) => (i === question.answer ? null : question.wrong![i < question.answer ? i : i - 1] ?? null)) }
-        : {}),
-    };
-  });
+  return shuffle(picked, rng).map(({ question, lecture }) => present(question, lecture, rng));
+}
+
+/** Вопрос для экрана: варианты перемешаны (кроме «верно/неверно»), объяснения ловушек — за своими вариантами. */
+export function present(question: Question, lecture: number, rng: Rng = Math.random): QuizQuestion {
+  const order = question.fixed ? question.options.map((_, i) => i) : shuffle(question.options.map((_, i) => i), rng);
+  return {
+    id: question.id,
+    lecture,
+    q: question.q,
+    options: order.map((i) => question.options[i]),
+    correct: order.indexOf(question.answer),
+    why: question.why,
+    ...(question.wrong
+      ? { wrong: order.map((i) => (i === question.answer ? null : question.wrong![i < question.answer ? i : i - 1] ?? null)) }
+      : {}),
+  };
 }
 
 /** Записать попытку: лучший результат не падает от неудачного повтора. */

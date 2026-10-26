@@ -1,4 +1,5 @@
 import type { Progress } from "@/lib/events/engine";
+import type { RouteStop } from "@/lib/events/route";
 export type LearningEventSummary = {
   id: string;
   course: string;
@@ -8,6 +9,8 @@ export type LearningEventSummary = {
   stepWeights: number[];
   mocks: number;
   practice: string | null;
+  /** Остановки «Твоего маршрута» — лекции и итоговый квиз (необязательно: старые сводки без них). */
+  route?: RouteStop[];
 };
 export type LearningEventProgress = { done: number; readiness: number };
 export function summarizeLearningProgress(

@@ -104,3 +104,31 @@ test("Истории: лекция 6 — «Падение QuickBite» откры
   check(frame, "кадр первой сцены загрузился");
   await browser.close();
 });
+
+test("Истории: лекция 7 — «Последний спринт Сары» открывается кнопкой у лекции в ивенте и идёт с первой реплики", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await openSection(page, "/events/project-management-test-2");
+  await page.getByRole("region", { name: "Твой маршрут" }).waitFor({ timeout: 15_000 });
+  // Лекции на карте свёрнуты (раскрыта текущая) — седьмую открываем через строку «Лекции».
+  await page.getByRole("navigation", { name: "Лекции" }).getByRole("button", { name: /^7 · / }).tap();
+  const lecture7 = page.locator('details[id="route-pm-l7"]');
+  await lecture7.getByRole("link", { name: /📖 История лекции/ }).tap();
+  await page.waitForURL(/\/stories\/pm-l7-saras-last-sprint/, { timeout: 15_000 });
+  const player = page.getByRole("dialog", { name: /История: Последний спринт Сары/ });
+  await player.waitFor({ timeout: 15_000 });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await player.getByText(/QuickBite выжил/).waitFor({ timeout: 10_000 });
+  const frame = await page.locator(".story-shot[data-kb] img").first().evaluate((img) => img.complete && img.naturalWidth > 0);
+  check(frame, "кадр первой сцены загрузился");
+  // Пробел ставит на паузу и снимает с неё — даже когда фокус на кнопке плеера.
+  // Сначала дождаться, что звук пошёл: пока он грузится, пробел запускает, а не ставит паузу.
+  await player.getByRole("button", { name: "Пауза" }).last().waitFor({ timeout: 10_000 });
+  await page.keyboard.press("Space");
+  const paused = await player.getByRole("button", { name: "Смотреть дальше" }).last().waitFor({ timeout: 3_000 }).then(() => true).catch(() => false);
+  const at = await page.evaluate(() => document.querySelector("audio")?.paused);
+  await page.keyboard.press("Space");
+  const resumed = await player.getByRole("button", { name: "Пауза" }).last().waitFor({ timeout: 3_000 }).then(() => true).catch(() => false);
+  check(paused && at === true && resumed, "пробел — пауза и снова дальше");
+  await browser.close();
+});

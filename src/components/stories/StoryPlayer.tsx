@@ -183,6 +183,36 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
     else router.push("/learn#learning-stories");
   }
 
+  // Клавиатура: пробел — пауза / дальше (на обложке — «Смотреть»), ← → —
+  // соседняя сцена, Esc — закрыть список сцен. Обработчик в ref: в нём
+  // всегда свежие toggle и состояние без пересоздания слушателя.
+  const onKey = useRef<(e: KeyboardEvent) => void>(() => {});
+  onKey.current = (e) => {
+    if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+    if ((e.target as HTMLElement | null)?.closest?.("input, textarea, select, [contenteditable='true']")) return;
+    if (e.key === " " || e.code === "Space") {
+      if (phase === "end") return;
+      e.preventDefault();
+      // Иначе пробел ещё и «нажмёт» кнопку в фокусе, когда его отпустят.
+      if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      if (phase === "intro") startScene(0);
+      else toggle();
+    } else if (phase === "play" && !chapters && e.key === "ArrowRight") {
+      e.preventDefault();
+      sceneEnded();
+    } else if (phase === "play" && !chapters && e.key === "ArrowLeft") {
+      e.preventDefault();
+      startScene(Math.max(0, scene - 1));
+    } else if (e.key === "Escape" && chapters) {
+      setChapters(false);
+    }
+  };
+  useEffect(() => {
+    const on = (e: KeyboardEvent) => onKey.current(e);
+    window.addEventListener("keydown", on);
+    return () => window.removeEventListener("keydown", on);
+  }, []);
+
   const current = story.scenes[scene];
   const tl = lines[scene];
   let lineIdx = 0;

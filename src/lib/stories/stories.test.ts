@@ -48,5 +48,14 @@ describe("истории: всё, что нужно плееру, на мест�
         expect(term.ru).toMatch(/[А-Яа-яЁё]/);
       }
     });
+
+    it(`${story.id}: подсказки эмоций — теги ElevenLabs, фон сцен — по-английски`, () => {
+      // Иначе голос прочитает подсказку вслух.
+      for (const line of story.scenes.flatMap((s) => s.lines)) if (line.say) expect(line.say).toMatch(/^\[[a-z ,'-]+\]$/);
+      for (const scene of story.scenes) if (scene.ambience) expect(scene.ambience).not.toMatch(/[А-Яа-яЁё]/);
+      // Голоса ElevenLabs — у всех героев или ни у кого: смешанный состав озвучивать нечем.
+      const eleven = Object.values(story.cast).filter((c) => c.eleven).length;
+      expect([0, Object.keys(story.cast).length]).toContain(eleven);
+    });
   }
 });

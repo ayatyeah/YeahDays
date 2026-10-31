@@ -22,14 +22,15 @@ export const pmLecture5Story: Story = {
   subtitle: "Функциональная, проектная и матричная структуры — на одном стартапе, который вырос быстрее своей схемы.",
   lecture: { eventId: "project-management-test-2", lectureId: "pm-l5", label: "Project Management · Лекция 5 — Организационные структуры" },
   cover: "s01_a",
+  // Голоса: voice — Gemini (прежняя озвучка), eleven — ElevenLabs (русская библиотека голосов).
   cast: {
-    narrator: { name: "Рассказчик", voice: "Charon" },
-    sara: { name: "Профессор Сара", role: "Advisor", voice: "Gacrux" },
-    ayat: { name: "Аят", role: "CEO", voice: "Puck" },
-    mira: { name: "Мира", role: "Project Manager", voice: "Leda" },
-    dani: { name: "Дани", role: "Head of Engineering", voice: "Fenrir" },
-    arman: { name: "Арман", role: "Finance Director", voice: "Iapetus" },
-    aigerim: { name: "Айгерим", role: "Client · Green Bazaar", voice: "Despina" },
+    narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
+    sara: { name: "Профессор Сара", role: "Advisor", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
+    ayat: { name: "Аят", role: "CEO", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    mira: { name: "Мира", role: "Project Manager", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
+    dani: { name: "Дани", role: "Head of Engineering", voice: "Fenrir", eleven: "kwajW3Xh5svCeKU5ky2S" },
+    arman: { name: "Арман", role: "Finance Director", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
+    aigerim: { name: "Айгерим", role: "Client · Green Bazaar", voice: "Despina", eleven: "d60rsXo2p0OwikDR5bS7" },
   },
   scenes: [
     {

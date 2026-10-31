@@ -30,13 +30,14 @@ export const pmLecture4Story: Story = {
   subtitle: "Контроль затрат, earned value и стадии развития команды — на одном студенческом стартапе.",
   lecture: { eventId: "project-management-test-2", lectureId: "pm-l4", label: "Project Management · Лекция 4 — Контроль затрат и поведение групп" },
   cover: "s01_key",
+  // Голоса: voice — Gemini (прежняя озвучка), eleven — ElevenLabs (русская библиотека голосов).
   cast: {
-    narrator: { name: "Рассказчик", voice: "Charon" },
-    sara: { name: "Профессор Сара", role: "Mentor", voice: "Gacrux" },
-    ayat: { name: "Аят", role: "Project Leader", voice: "Puck" },
-    mira: { name: "Мира", role: "Designer", voice: "Leda" },
-    dani: { name: "Дани", role: "Developer", voice: "Fenrir" },
-    arman: { name: "Арман", role: "Finance", voice: "Iapetus" },
+    narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
+    sara: { name: "Профессор Сара", role: "Mentor", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
+    ayat: { name: "Аят", role: "Project Leader", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    mira: { name: "Мира", role: "Designer", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
+    dani: { name: "Дани", role: "Developer", voice: "Fenrir", eleven: "kwajW3Xh5svCeKU5ky2S" },
+    arman: { name: "Арман", role: "Finance", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
   },
   scenes: [
     {

@@ -26,24 +26,26 @@ export const pmLecture6Story: Story = {
   subtitle: "Огромный контракт по плану на девять месяцев — и что Agile Manifesto говорит о цене такой ошибки.",
   lecture: { eventId: "project-management-test-2", lectureId: "pm-l6", label: "Project Management · Лекция 6 — Принципы и мышление Agile" },
   cover: "s03_e",
+  // Голоса: voice — Gemini (прежняя озвучка), eleven — ElevenLabs (русская библиотека голосов).
   cast: {
-    narrator: { name: "Рассказчик", voice: "Charon" },
-    sara: { name: "Профессор Сара", role: "Advisor", voice: "Gacrux" },
-    ayat: { name: "Аят", role: "CEO", voice: "Puck" },
-    mira: { name: "Мира", role: "Project Manager", voice: "Leda" },
-    dani: { name: "Дани", role: "Head of Engineering", voice: "Fenrir" },
-    arman: { name: "Арман", role: "Finance Director", voice: "Iapetus" },
-    bekzat: { name: "Бекзат", role: "Client · MegaMart", voice: "Algenib" },
+    narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
+    sara: { name: "Профессор Сара", role: "Advisor", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
+    ayat: { name: "Аят", role: "CEO", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    mira: { name: "Мира", role: "Project Manager", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
+    dani: { name: "Дани", role: "Head of Engineering", voice: "Fenrir", eleven: "kwajW3Xh5svCeKU5ky2S" },
+    arman: { name: "Арман", role: "Finance Director", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
+    bekzat: { name: "Бекзат", role: "Client · MegaMart", voice: "Algenib", eleven: "6A9D8WSMm4rFsg2DWFeE" },
   },
   scenes: [
     {
       id: "s01",
       title: "Слишком большой контракт",
       mood: "hope",
+      ambience: "busy bright startup office, keyboard typing, light chatter far away, no clear voices",
       lines: [
         { who: "narrator", frame: "s01_a", text: "Год спустя. После Green Bazaar к QuickBite приходит гигант — сеть MegaMart. Им нужно суперприложение на всю страну." },
-        { who: "bekzat", frame: "s01_b", text: "Нам нужен полный план на девять месяцев — всё, до последней кнопки. И фиксированный контракт." },
-        { who: "ayat", frame: "s01_c", text: "Сделаем. Двести страниц требований — и ни шагу в сторону." },
+        { who: "bekzat", frame: "s01_b", say: "[confidently]", text: "Нам нужен полный план на девять месяцев — всё, до последней кнопки. И фиксированный контракт." },
+        { who: "ayat", frame: "s01_c", say: "[proudly]", text: "Сделаем. Двести страниц требований — и ни шагу в сторону." },
         {
           who: "sara",
           frame: "s01_d",
@@ -54,13 +56,14 @@ export const pmLecture6Story: Story = {
             { term: "Empirical process", ru: "Итеративный и инкрементальный — для новых и неопределённых проектов. Agile — для knowledge work в быстром и сложном окружении." },
           ],
         },
-        { who: "ayat", frame: "s01_e", text: "Профессор, у нас всё под контролем." },
+        { who: "ayat", frame: "s01_e", say: "[dismissively, confident]", text: "Профессор, у нас всё под контролем." },
       ],
     },
     {
       id: "s02",
       title: "Девять месяцев в темноте",
       mood: "tension",
+      ambience: "late night office, quiet computer fans and a ticking wall clock, no voices",
       lines: [
         {
           who: "narrator",
@@ -83,6 +86,7 @@ export const pmLecture6Story: Story = {
         {
           who: "dani",
           frame: "s02_d",
+          say: "[stressed]",
           text: "Я веду три проекта сразу. Переключаюсь — и всё забываю.",
           terms: [{ term: "Task switching", ru: "Потеря lean: человека держат на нескольких проектах, и каждое переключение контекста стоит времени." }],
         },
@@ -98,11 +102,12 @@ export const pmLecture6Story: Story = {
       id: "s03",
       title: "День запуска",
       mood: "conflict",
+      ambience: "tense launch room, rapid alert notification beeps, servers humming, no voices",
       lines: [
         { who: "narrator", frame: "s03_a", text: "Девять месяцев спустя. Большой запуск — всё и сразу." },
-        { who: "dani", frame: "s03_b", text: "Серверы падают… Интеграция с кассами не работает!" },
-        { who: "bekzat", frame: "s03_c", text: "И главное: рынок изменился. Конкуренты полгода назад запустили похожее. Нам это больше не нужно." },
-        { who: "bekzat", frame: "s03_d", text: "Мы расторгаем контракт." },
+        { who: "dani", frame: "s03_b", say: "[panicking]", text: "Серверы падают… Интеграция с кассами не работает!" },
+        { who: "bekzat", frame: "s03_c", say: "[coldly]", text: "И главное: рынок изменился. Конкуренты полгода назад запустили похожее. Нам это больше не нужно." },
+        { who: "bekzat", frame: "s03_d", say: "[flatly]", text: "Мы расторгаем контракт." },
         {
           who: "sara",
           frame: "s03_e",
@@ -117,13 +122,14 @@ export const pmLecture6Story: Story = {
     {
       id: "s04",
       title: "Потери",
-      mood: "conflict",
+      mood: "grief",
+      ambience: "rain on large office windows, quiet empty office, no voices",
       lines: [
-        { who: "arman", frame: "s04_a", text: "Инвестор уходит. Денег хватит на два месяца. Нам придётся сократить половину команды." },
-        { who: "narrator", frame: "s04_b", text: "Аят сам говорит с каждым. Это самый тяжёлый день в жизни QuickBite." },
-        { who: "dani", frame: "s04_c", text: "Аят, я больше не могу. Я выгорел. Я ухожу." },
-        { who: "ayat", frame: "s04_d", text: "Дани… Ты же со мной с первого курса." },
-        { who: "dani", frame: "s04_e", text: "Поэтому и ухожу. Пока мы ещё друзья." },
+        { who: "arman", frame: "s04_a", say: "[grimly]", text: "Инвестор уходит. Денег хватит на два месяца. Нам придётся сократить половину команды." },
+        { who: "narrator", frame: "s04_b", say: "[quietly]", text: "Аят сам говорит с каждым. Это самый тяжёлый день в жизни QuickBite." },
+        { who: "dani", frame: "s04_c", say: "[exhausted, voice breaking]", text: "Аят, я больше не могу. Я выгорел. Я ухожу." },
+        { who: "ayat", frame: "s04_d", say: "[stunned, quietly]", text: "Дани… Ты же со мной с первого курса." },
+        { who: "dani", frame: "s04_e", say: "[sadly]", text: "Поэтому и ухожу. Пока мы ещё друзья." },
         {
           who: "narrator",
           frame: "s04_f",
@@ -136,6 +142,7 @@ export const pmLecture6Story: Story = {
       id: "s05",
       title: "Манифест",
       mood: "calm",
+      ambience: "calm office meeting room, a marker on a whiteboard now and then, soft ventilation, no voices",
       lines: [
         {
           who: "sara",
@@ -198,8 +205,9 @@ export const pmLecture6Story: Story = {
       id: "s06",
       title: "Заново, но маленькими",
       mood: "strategy",
+      ambience: "small office in the morning, soft keyboard typing, light background hum, no voices",
       lines: [
-        { who: "ayat", frame: "s06_a", text: "Начинаем заново. Маленький клиент, итерации по две недели, демо каждый раз." },
+        { who: "ayat", frame: "s06_a", say: "[determined]", text: "Начинаем заново. Маленький клиент, итерации по две недели, демо каждый раз." },
         {
           who: "sara",
           frame: "s06_b",
@@ -252,6 +260,7 @@ export const pmLecture6Story: Story = {
       id: "s07",
       title: "Лидер, а не начальник",
       mood: "uplift",
+      ambience: "warm friendly office, soft keyboard typing, quiet murmur far away, no clear voices",
       lines: [
         {
           who: "ayat",
@@ -286,18 +295,19 @@ export const pmLecture6Story: Story = {
       id: "s08",
       title: "Не всё радужно",
       mood: "calm",
+      ambience: "quiet evening office, distant city traffic, soft ventilation hum, no voices",
       lines: [
         { who: "narrator", frame: "s08_a", text: "Полгода спустя. QuickBite маленький, но живой: каждые две недели — работающая версия, каждое демо — вместе с клиентом." },
-        { who: "arman", frame: "s08_b", text: "Впервые за год мы в плюсе." },
+        { who: "arman", frame: "s08_b", say: "[relieved, smiling]", text: "Впервые за год мы в плюсе." },
         {
           who: "narrator",
           frame: "s08_c",
           text: "На ретроспективе команда решает, что улучшить в следующей итерации.",
           terms: [{ term: "Reflect and adjust", ru: "Принцип 12: через равные промежутки команда думает, как стать эффективнее, и подстраивает своё поведение." }],
         },
-        { who: "narrator", frame: "s08_d", text: "Стол Дани так и стоит у окна, пустой. От него — одно сообщение." },
-        { who: "dani", frame: "s08_e", text: "Рад за вас. Правда. Но мне нужно время." },
-        { who: "narrator", frame: "s08_f", text: "Планы составляют, когда знают меньше всего. А цена того, что QuickBite этого не понял, — не только деньги." },
+        { who: "narrator", frame: "s08_d", say: "[quietly]", text: "Стол Дани так и стоит у окна, пустой. От него — одно сообщение." },
+        { who: "dani", frame: "s08_e", say: "[softly, distant]", text: "Рад за вас. Правда. Но мне нужно время." },
+        { who: "narrator", frame: "s08_f", say: "[thoughtfully]", text: "Планы составляют, когда знают меньше всего. А цена того, что QuickBite этого не понял, — не только деньги." },
       ],
     },
   ],

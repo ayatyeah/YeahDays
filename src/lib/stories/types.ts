@@ -9,7 +9,8 @@
  * время каждой реплики известно точно.
  */
 
-export type StoryMood = "hope" | "tension" | "calm" | "smart" | "strategy" | "conflict" | "uplift" | "triumph";
+/** Настроение сцены — по нему подбирается фоновая музыка (scripts/story-tts.mjs). */
+export type StoryMood = "hope" | "tension" | "calm" | "smart" | "strategy" | "conflict" | "uplift" | "triumph" | "grief";
 
 export interface StoryCharacter {
   /** Имя в субтитрах. */
@@ -18,6 +19,8 @@ export interface StoryCharacter {
   role?: string;
   /** Голос Gemini TTS. */
   voice: string;
+  /** Голос ElevenLabs (voice_id). Есть у всех героев истории — она озвучивается ElevenLabs. */
+  eleven?: string;
 }
 
 export interface StoryTerm {
@@ -35,12 +38,16 @@ export interface StoryLine {
   /** Кадр — имя файла без расширения в public/stories/<id>/frames. */
   frame: string;
   terms?: StoryTerm[];
+  /** Как сказать — теги эмоций ElevenLabs по-английски: «[crying]», «[shouting]». Только в озвучку, не в субтитры. */
+  say?: string;
 }
 
 export interface StoryScene {
   id: string;
   title: string;
   mood: StoryMood;
+  /** Фоновый звук сцены — описание для генерации эффектов по-английски: «rain on office windows». */
+  ambience?: string;
   lines: StoryLine[];
 }
 

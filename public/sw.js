@@ -170,8 +170,11 @@ async function staleWhileRevalidate(request, cacheName) {
  */
 const INSTANT = new Set(["/app", "/today", "/calendar", "/progress", "/account", "/settings", "/learn", "/events", "/community", "/challenge30", "/chat"]);
 /** Страницы ивентов тоже статичные (контент приходит отдельным чанком), их оболочку — сразу из кэша. */
-// Version selection is server-owned; never serve another mode from cache first.
-const isInstant = () => false;
+// Пока сервер выбирал версию (обычная или для исследования), отдавать
+// оболочку из кэша было нельзя — могла открыться чужая версия, и мгновенный
+// запуск выключили. Выбора больше нет (layout всегда mode="normal"), и
+// запуск с ярлыка снова не ждёт сеть.
+const isInstant = (path) => INSTANT.has(path) || /^\/events\/[a-z0-9-]+$/.test(path);
 
 /** Обновить копию раздела в фоне — к следующему запуску она будет свежей. */
 async function refresh(event, cache, path) {

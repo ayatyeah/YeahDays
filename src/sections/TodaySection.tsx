@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { taskLearningHref } from "@/lib/dayFlow";
 import HomeSection from "./HomeSection";
@@ -91,6 +91,22 @@ export default function TodaySection() {
       haptic("success");
     }
   }
+  /*
+   * «Мой план» раскрывается сам, как только в нём есть незакрытые свои
+   * задачи. Раньше он был свёрнут всегда, и задача, вписанная в онбординге,
+   * пряталась под колодой: «Мой план 0/1» — а самой задачи не видно. Взятое
+   * из колоды не считаем: оно и так стоит сверху как «Сейчас — только это».
+   * Раскрываем один раз и не сворачиваем обратно: иначе последняя
+   * закрытая задача складывала бы список прямо под пальцем.
+   */
+  const planRef = useRef<HTMLDetailsElement>(null);
+  const planOpened = useRef(false);
+  const hasOwnPending = personal.some((t) => !isTodoDone(t, day));
+  useEffect(() => {
+    if (planOpened.current || !hasOwnPending || !planRef.current) return;
+    planRef.current.open = true;
+    planOpened.current = true;
+  }, [hasOwnPending, hydrated]);
   const focused = personal.find(
     (t) => t.id === selectedTask && !isTodoDone(t, day),
   );
@@ -102,7 +118,7 @@ export default function TodaySection() {
     <div className="companion-today">
       <CompanionHeader completed={completed} count={count} compact />
       <HomeSection embedded />
-      <details className="one-action-plan">
+      <details ref={planRef} className="one-action-plan">
         <summary>Мой план <span>{completed}/{count}</span></summary>
       <NextStep
         onTask={(id) => {

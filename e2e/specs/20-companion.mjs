@@ -1,4 +1,4 @@
-import { newUser, session, check, test } from "../harness.mjs";
+import { newUser, session, check, test, openPlan } from "../harness.mjs";
 import assert from "node:assert/strict";
 test("Компаньон: задачи, помощник, таймер и гардероб", async () => {
   const day = new Intl.DateTimeFormat("en-CA", {
@@ -36,7 +36,7 @@ test("Компаньон: задачи, помощник, таймер и гар
     browser = s.browser;
     const p = s.page;
     await p.goto("/today", { waitUntil: "networkidle" });
-    await p.locator(".one-action-plan > summary").click();
+    await openPlan(p);
     await p.getByRole("button", { name: "Открыть помощника" }).waitFor();
     await p.waitForTimeout(700);
 
@@ -92,7 +92,7 @@ test("Компаньон: задачи, помощник, таймер и гар
     for (const width of [320, 390, 1440]) {
       await p.setViewportSize({ width, height: 844 });
       await p.goto("/today", { waitUntil: "networkidle" });
-    await p.locator(".one-action-plan > summary").click();
+    await openPlan(p);
       await p.getByRole("button", { name: "Открыть помощника" }).waitFor();
       await p.waitForTimeout(400);
       const metrics = await p.evaluate(() => ({
@@ -135,7 +135,7 @@ test("Компаньон: пустой план и панель на мален�
   try {
     await page.setViewportSize({ width: 320, height: 568 });
     await page.goto("/today", { waitUntil: "networkidle" });
-    await page.locator(".one-action-plan > summary").click();
+    await openPlan(page);
     await page.getByRole("button", { name: "Открыть помощника" }).waitFor();
     check(
       (await page.locator(".companion-empty").count()) === 1,

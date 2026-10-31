@@ -1,5 +1,5 @@
 import { mkdirSync } from "node:fs";
-import { test, check, newUser, session } from "../harness.mjs";
+import { test, check, newUser, session, openPlan } from "../harness.mjs";
 test("День: следующий шаг, подзадачи, результат и отмена", async () => {
   const day = new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Almaty",
@@ -36,7 +36,7 @@ test("День: следующий шаг, подзадачи, результа�
   mkdirSync("artifacts/day-flow", { recursive: true });
   try {
     await page.goto("/today", { waitUntil: "networkidle" });
-    await page.locator(".one-action-plan > summary").click();
+    await openPlan(page);
     await page
       .getByRole("button", { name: "Начать с этого", exact: true })
       .click();

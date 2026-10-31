@@ -1,5 +1,5 @@
 import { mkdirSync } from 'node:fs';
-import { test, check, newUser, session } from '../harness.mjs';
+import { test, check, newUser, session, openPlan } from '../harness.mjs';
 test('Полировка: плотность, стабильность списка и настройки', async () => {
  const day = new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Almaty'}).format(new Date());
  const user = await newUser({state:{todos:['Прочитать главу','Повторить слова','Прогуляться'].map((title,i)=>({id:`polish-${i}`,title,date:day,duration:10,priority:'normal',subtasks:[],done:false,doneDays:[],createdAt:Date.now()}))}});
@@ -8,7 +8,7 @@ test('Полировка: плотность, стабильность спис�
  try {
   await page.setViewportSize({width:390,height:844});
   await page.goto('/today',{waitUntil:'networkidle'});
-  await page.locator(".one-action-plan > summary").click();
+  await openPlan(page);
   await page.getByRole('button',{name:'Выполнить: Прочитать главу',exact:true}).waitFor();
   await page.getByLabel('Как твоя энергия?',{exact:true}).selectOption('low');
   await page.getByLabel('Сколько времени есть?',{exact:true}).selectOption('15');

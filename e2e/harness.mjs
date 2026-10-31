@@ -229,6 +229,16 @@ export async function openSection(page, path) {
   await page.waitForTimeout(600);
 }
 
+/**
+ * Раскрыть «Мой план» на «Сегодня». Когда в плане есть незакрытые дела, он
+ * открыт сам, и слепой клик по заголовку его бы как раз закрыл.
+ */
+export async function openPlan(scope) {
+  const plan = scope.locator(".one-action-plan");
+  await plan.waitFor();
+  if (!(await plan.evaluate((el) => el.open))) await plan.locator(":scope > summary").click();
+}
+
 /* ────────────────────────  Проверки  ──────────────────────── */
 
 export class Failure extends Error {}

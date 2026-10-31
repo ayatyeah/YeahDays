@@ -18,7 +18,7 @@
  *    серверные проверки идут через ожидание, а не сразу после нажатия.
  */
 
-import { check, checkText, newUser, openSection, session, sql, test } from "../harness.mjs";
+import { check, checkText, newUser, openSection, session, sql, test, openPlan } from "../harness.mjs";
 
 /* ────────────────────────  Время глазами приложения  ──────────────────────── */
 
@@ -120,7 +120,7 @@ async function until(fn, message, timeout = 10_000) {
 async function openToday(page) {
   await openSection(page, "/today");
   const sec = page.locator('[data-section="today"]');
-  await sec.locator(".one-action-plan > summary").click();
+  await openPlan(sec);
   await sec.getByText("Добавить или изменить задачи", { exact: true }).click();
   return sec;
 }

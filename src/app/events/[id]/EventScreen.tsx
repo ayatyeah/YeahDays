@@ -906,7 +906,6 @@ function Quiz({
           </button>
         </div>
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{step.title[tl]}</p>
-        {music && <EventMusic />}
         <div className="flex items-center gap-3">
           <div
             className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"
@@ -976,6 +975,11 @@ function Quiz({
           </div>
         )}
       </section>
+      {/* Плеер — под вопросом, а не над ним. Сверху он занимал на телефоне
+          треть экрана (меньше 200×200 правила YouTube делать не дают), и
+          варианты ответа уезжали за край. Позиция в дереве не меняется от
+          вопроса к вопросу — музыка не перезапускается. */}
+      {music && <EventMusic />}
     </>
   );
 }

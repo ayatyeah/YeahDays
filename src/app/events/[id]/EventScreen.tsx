@@ -488,7 +488,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                 </summary>
                 {storiesForLecture(event.id, lecture.id).map((story) => (
                   <Link key={story.id} href={`/stories/${story.id}`} className="mr-2 mt-3 inline-flex min-h-9 items-center rounded-full bg-[var(--color-fg)] px-4 text-sm font-semibold text-[var(--color-bg)]">
-                    {`📖 История лекции · ${Math.round(storySeconds(story) / 60)} мин`}
+                    {story.finale ? `🏁 Финал сезона · ${Math.round(storySeconds(story) / 60)} мин` : `📖 История лекции · ${Math.round(storySeconds(story) / 60)} мин`}
                   </Link>
                 ))}
                 {shelves.lectures[li].count > 0 && (

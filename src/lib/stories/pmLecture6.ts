@@ -30,7 +30,7 @@ export const pmLecture6Story: Story = {
   cast: {
     narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
     sara: { name: "Профессор Сара", role: "Advisor", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
-    ayat: { name: "Аят", role: "CEO", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    ayat: { name: "Аян", role: "CEO", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
     mira: { name: "Мира", role: "Project Manager", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
     dani: { name: "Дани", role: "Head of Engineering", voice: "Fenrir", eleven: "kwajW3Xh5svCeKU5ky2S" },
     arman: { name: "Арман", role: "Finance Director", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
@@ -49,7 +49,7 @@ export const pmLecture6Story: Story = {
         {
           who: "sara",
           frame: "s01_d",
-          text: "Аят, это работа людей знания. Её нельзя расписать заранее, как стройку. Тут нужен эмпирический процесс — короткими итерациями.",
+          text: "Аян, это работа людей знания. Её нельзя расписать заранее, как стройку. Тут нужен эмпирический процесс — короткими итерациями.",
           terms: [
             { term: "Knowledge worker", ru: "Человек с экспертизой в предметной области, который делится знаниями и участвует в анализе и/или разработке: инженеры, учителя, учёные, врачи." },
             { term: "Defined process", ru: "Все шаги определены заранее — как в строительстве." },
@@ -126,8 +126,8 @@ export const pmLecture6Story: Story = {
       ambience: "rain on large office windows, quiet empty office, no voices",
       lines: [
         { who: "arman", frame: "s04_a", say: "[grimly]", text: "Инвестор уходит. Денег хватит на два месяца. Нам придётся сократить половину команды." },
-        { who: "narrator", frame: "s04_b", say: "[quietly]", text: "Аят сам говорит с каждым. Это самый тяжёлый день в жизни QuickBite." },
-        { who: "dani", frame: "s04_c", say: "[exhausted, voice breaking]", text: "Аят, я больше не могу. Я выгорел. Я ухожу." },
+        { who: "narrator", frame: "s04_b", say: "[quietly]", text: "Аян сам говорит с каждым. Это самый тяжёлый день в жизни QuickBite." },
+        { who: "dani", frame: "s04_c", say: "[exhausted, voice breaking]", text: "Аян, я больше не могу. Я выгорел. Я ухожу." },
         { who: "ayat", frame: "s04_d", say: "[stunned, quietly]", text: "Дани… Ты же со мной с первого курса." },
         { who: "dani", frame: "s04_e", say: "[sadly]", text: "Поэтому и ухожу. Пока мы ещё друзья." },
         {

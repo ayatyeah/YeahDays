@@ -150,6 +150,50 @@ test("Истории: лекция 8 — финал «ХроноЕрнар» о�
   await browser.close();
 });
 
+test("Истории: перекладка — в «Сделке» герои живут на холсте, кадры под ним уходят", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await page.goto("/stories/pm-l8-chronoyernar", { waitUntil: "networkidle" });
+  const player = page.getByRole("dialog", { name: /История: ХроноЕрнар/ });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await player.getByRole("button", { name: "Сцены истории" }).tap();
+  await page.getByRole("dialog", { name: "Сцены" }).getByRole("button", { name: /^7\. Сделка/ }).tap();
+  await page.waitForFunction(() => window.__storyStage?.scene === "s07" && window.__storyStage.ready(), null, { timeout: 30_000 });
+  check((await page.locator(".story-shot").count()) === 0, "готовый холст заменил кадры");
+  // Герои двигаются сами: два момента одной реплики — разные картинки.
+  const [a, b] = await page.evaluate(() => {
+    const shot = (t) => (window.__storyStage.draw(t), document.querySelector(".story-canvas").toDataURL("image/jpeg", 0.8));
+    return [shot(3), shot(3.7)];
+  });
+  check(a.length > 20_000, "на холсте сцена, а не пустота");
+  check(a !== b, "кадр меняется со временем — герои двигаются");
+  await browser.close();
+});
+
+test("Истории: финал сезона — своя кнопка у лекции 8, весь фильм на холсте, бой в движении", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await openSection(page, "/events/project-management-test-2");
+  await page.getByRole("region", { name: "Твой маршрут" }).waitFor({ timeout: 15_000 });
+  await page.getByRole("navigation", { name: "Лекции" }).getByRole("button", { name: /^8 · / }).tap();
+  await page.locator('details[id="route-pm-l8"]').getByRole("link", { name: /🏁 Финал сезона/ }).tap();
+  await page.waitForURL(/\/stories\/pm-finale-ayan-returns/, { timeout: 15_000 });
+  const player = page.getByRole("dialog", { name: /История: Возвращение Аяна/ });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await page.waitForFunction(() => window.__storyStage?.scene === "s01" && window.__storyStage.ready(), null, { timeout: 30_000 });
+  check((await page.locator(".story-shot").count()) === 0, "первая же сцена — на холсте");
+  await player.getByRole("button", { name: "Сцены истории" }).tap();
+  await page.getByRole("dialog", { name: "Сцены" }).getByRole("button", { name: /^8\. / }).tap();
+  await page.waitForFunction(() => window.__storyStage?.scene === "s08" && window.__storyStage.ready(), null, { timeout: 30_000 });
+  // Удар: за доли секунды кадр заметно меняется — выпад, отдача, вспышка.
+  const [a, b] = await page.evaluate(() => {
+    const shot = (t) => (window.__storyStage.draw(t), document.querySelector(".story-canvas").toDataURL("image/jpeg", 0.8));
+    return [shot(0.55), shot(0.8)];
+  });
+  check(a !== b, "бой идёт в движении");
+  await browser.close();
+});
+
 test("Истории: телефон боком — кадр на весь экран, субтитры и кнопки поверх него; стоя — снова 16:9", async () => {
   const user = await newUser();
   const { browser, page } = await session({ user, engine: "chromium" });

@@ -26,7 +26,7 @@ export const pmLecture5Story: Story = {
   cast: {
     narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
     sara: { name: "Профессор Сара", role: "Advisor", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
-    ayat: { name: "Аят", role: "CEO", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    ayat: { name: "Аян", role: "CEO", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
     mira: { name: "Мира", role: "Project Manager", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
     dani: { name: "Дани", role: "Head of Engineering", voice: "Fenrir", eleven: "kwajW3Xh5svCeKU5ky2S" },
     arman: { name: "Арман", role: "Finance Director", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
@@ -258,7 +258,7 @@ export const pmLecture5Story: Story = {
         {
           who: "narrator",
           frame: "s08_b",
-          text: "Пока проектов мало, менеджеры проектов подчиняются прямо генеральному директору, и конфликты между проектами решает Аят. Станет проектов больше — появится директор по управлению проектами. А третья разновидность — project engineering в project office: инженер проекта остаётся «solid» к директору инженерии, чтобы давать инженерам техническое направление.",
+          text: "Пока проектов мало, менеджеры проектов подчиняются прямо генеральному директору, и конфликты между проектами решает Аян. Станет проектов больше — появится директор по управлению проектами. А третья разновидность — project engineering в project office: инженер проекта остаётся «solid» к директору инженерии, чтобы давать инженерам техническое направление.",
           terms: [
             { term: "PMs report directly to the GM", ru: "Первая разновидность матрицы: для небольших компаний с немногими проектами; все конфликты между проектами решает general manager." },
             { term: "Director of project management", ru: "Вторая: когда проектов больше, чем успевает координировать генеральный директор, PM подчиняются директору по управлению проектами." },

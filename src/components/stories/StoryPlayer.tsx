@@ -5,8 +5,9 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { fallbackLine, framePoses, frameSrc, sceneAudioSrc, storySeconds } from "@/lib/stories";
+import { fallbackLine, framePoses, frameSrc, sceneAudioSrc, storyRig, storySeconds } from "@/lib/stories";
 import type { SceneTiming, Story, StoryScene } from "@/lib/stories/types";
+import StoryStage from "./StoryStage";
 import "./stories.css";
 
 /**
@@ -25,7 +26,10 @@ import "./stories.css";
  *
  * Герои двигаются: к кадру реплики дорисованы позы (тот же кадр, другие
  * жесты и эмоции), и плеер сменяет их по кругу 1 → 2 → 3 → 2 → 1, пока
- * идёт реплика, — как в ограниченной анимации мультсериалов.
+ * идёт реплика, — как в ограниченной анимации мультсериалов. Сцена с
+ * постановкой (scene.stage) — перекладка на холсте (StoryStage): герои
+ * дышат, моргают, говорят в такт голосу; кадры остаются под холстом, пока
+ * он грузится, и вместо него, если WebGL 2 нет.
  */
 
 type Timeline = { duration: number; voiced: boolean; lines: { start: number; end: number }[] };
@@ -74,6 +78,10 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
   const audio = useRef<HTMLAudioElement>(null);
   // Часы для сцены без озвучки: с какого времени и когда пошли.
   const timer = useRef({ base: 0, at: 0 });
+  // Время сцены для перекладки — каждый кадр экрана, а не 12 раз в секунду, как t.
+  const now = useRef<() => number>(() => 0);
+  const sceneTime = useCallback(() => now.current(), []);
+  const [staged, setStaged] = useState(false);
   const KEY = `yg-story:${story.id}`;
 
   const colors = useMemo(() => Object.fromEntries(Object.keys(story.cast).map((k, i) => [k, NAME_COLORS[i % NAME_COLORS.length]])), [story]);
@@ -145,7 +153,10 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
 
   // Следующие кадры — заранее, чтобы наплыв не ждал сети.
   useEffect(() => {
-    for (const s of story.scenes.slice(scene, scene + 2)) for (const l of s.lines) for (const f of framePoses(story, l.frame)) new Image().src = frameSrc(story, f);
+    for (const s of story.scenes.slice(scene, scene + 2)) {
+      if (s.stage && storyRig(story.id)) continue; // перекладка грузит свои картинки сама
+      for (const l of s.lines) for (const f of framePoses(story, l.frame)) new Image().src = frameSrc(story, f);
+    }
   }, [story, scene]);
 
   /** Начать сцену. Из нажатия кнопки звук разрешён; дальше тот же <audio> играет сам. */
@@ -270,6 +281,9 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
   const termIdx = terms.length ? Math.min(terms.length - 1, Math.floor(Math.max(0, t - tl.lines[lineIdx].start) / (span / terms.length))) : -1;
   const term = termIdx >= 0 ? terms[termIdx] : null;
   const who = story.cast[line.who];
+  now.current = () =>
+    tl.voiced ? (audio.current?.currentTime ?? 0) : playing ? timer.current.base + (performance.now() - timer.current.at) / 1000 : t;
+  const stage = current.stage && storyRig(story.id) ? current : null;
 
   if (!host) return null;
   return createPortal(
@@ -332,7 +346,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
               aria-label={playing ? "Пауза" : "Смотреть дальше"}
               className="story-stage relative aspect-video w-full max-w-[min(100%,calc((100dvh-300px)*16/9))] shrink-0 overflow-hidden sm:rounded-2xl"
             >
-              {current.lines.map((l, i) => {
+              {!(stage && staged) && current.lines.map((l, i) => {
                 const poses = framePoses(story, l.frame);
                 const active = i === lineIdx;
                 const pose = active ? poseAt(t - tl.lines[i].start, poses.length, i) : 0;
@@ -350,6 +364,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
                   </div>
                 );
               })}
+              {stage && <StoryStage key={stage.id} story={story} scene={stage} timing={tl} clock={sceneTime} onReady={setStaged} />}
               <div className="story-stage-fade pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
               {!playing && (
                 <span className="absolute inset-0 grid place-items-center">

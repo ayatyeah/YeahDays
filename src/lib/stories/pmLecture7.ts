@@ -26,7 +26,7 @@ export const pmLecture7Story: Story = {
   cast: {
     narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
     sara: { name: "Профессор Сара", role: "Scrum Master", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
-    ayat: { name: "Аят", role: "Product Owner", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    ayat: { name: "Аян", role: "Product Owner", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
     mira: { name: "Мира", role: "Developer", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
     arman: { name: "Арман", role: "Developer", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
     aliya: { name: "Алия", role: "Developer", voice: "Aoede", eleven: "dVRDrbP5ULGXB94se4KZ" },
@@ -142,7 +142,7 @@ export const pmLecture7Story: Story = {
         {
           who: "sara",
           frame: "s03_f",
-          text: "Мира, Арман, Алия — вы Developers. А я — Scrum Master. Служу вам, Аяту и всей компании.",
+          text: "Мира, Арман, Алия — вы Developers. А я — Scrum Master. Служу вам, Аяну и всей компании.",
           terms: [
             { term: "Developers", ru: "Создают Increment каждый спринт. Отвечают за: план спринта (Sprint Backlog), качество по Definition of Done, ежедневную подстройку плана к Sprint Goal и взаимную ответственность как профессионалов." },
             { term: "Scrum Master", ru: "Отвечает за то, чтобы Scrum работал как в Scrum Guide, и за эффективность команды. True leader who serves — лидер, который служит команде и организации." },
@@ -254,11 +254,11 @@ export const pmLecture7Story: Story = {
           who: "arman",
           frame: "s06_e",
           say: "[firmly]",
-          text: "Аят, остынь. Отменить спринт можешь только ты, как Product Owner, — и только если Sprint Goal устарела. Она не устарела.",
+          text: "Аян, остынь. Отменить спринт можешь только ты, как Product Owner, — и только если Sprint Goal устарела. Она не устарела.",
           terms: [{ term: "Cancelling a Sprint", ru: "Спринт можно отменить, только если Sprint Goal устарела. Право отменить — только у Product Owner." }],
         },
         { who: "ayat", frame: "s06_f", say: "[angry, voice breaking]", text: "Не учи меня, Арман! Не сегодня!" },
-        { who: "aliya", frame: "s06_g", say: "[quietly, but firmly]", text: "Хватит орать, Аят. Она из больницы звонила в банк — ради этой цели. Давайте хотя бы допишем." },
+        { who: "aliya", frame: "s06_g", say: "[quietly, but firmly]", text: "Хватит орать, Аян. Она из больницы звонила в банк — ради этой цели. Давайте хотя бы допишем." },
       ],
     },
     {
@@ -276,7 +276,7 @@ export const pmLecture7Story: Story = {
           ],
         },
         { who: "gulnara", frame: "s07_b", say: "[cheerful, laughing]", text: "Ой, а можно, чтобы лагман сразу на двоих заказывать? У меня все парами ходят." },
-        { who: "aliya", frame: "s07_c", say: "[softly]", text: "Записала. В Product Backlog — а куда в очереди, решит Аят." },
+        { who: "aliya", frame: "s07_c", say: "[softly]", text: "Записала. В Product Backlog — а куда в очереди, решит Аян." },
         {
           who: "narrator",
           frame: "s07_d",

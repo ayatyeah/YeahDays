@@ -34,7 +34,7 @@ export const pmLecture4Story: Story = {
   cast: {
     narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
     sara: { name: "Профессор Сара", role: "Mentor", voice: "Gacrux", eleven: "ymDCYd8puC7gYjxIamPt" },
-    ayat: { name: "Аят", role: "Project Leader", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    ayat: { name: "Аян", role: "Project Leader", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
     mira: { name: "Мира", role: "Designer", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
     dani: { name: "Дани", role: "Developer", voice: "Fenrir", eleven: "kwajW3Xh5svCeKU5ky2S" },
     arman: { name: "Арман", role: "Finance", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
@@ -51,7 +51,7 @@ export const pmLecture4Story: Story = {
         {
           who: "narrator",
           frame: "s01_d",
-          text: "Пятеро — это уже группа: люди, чьё поведение и работа влияют друг на друга. QuickBite — формальная группа: её собрали под задачу. А то, что Аят и Дани дружат с первого курса, — неформальная.",
+          text: "Пятеро — это уже группа: люди, чьё поведение и работа влияют друг на друга. QuickBite — формальная группа: её собрали под задачу. А то, что Аян и Дани дружат с первого курса, — неформальная.",
           terms: [
             { term: "Group", ru: "Двое и больше сотрудников, которые взаимодействуют так, что поведение и результат одного влияют на других." },
             { term: "Formal groups", full: "command, task", ru: "Создаются решением руководства под цели организации: command (руководитель и подчинённые) и task (под конкретную задачу)." },

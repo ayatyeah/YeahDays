@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { STORIES, framePoses, frameSrc, sceneAudioSrc, storyTimings } from "./index";
+import { STORIES, framePoses, frameSrc, sceneAudioSrc, storyRig, storyTimings } from "./index";
 
 const pub = (src: string) => join(process.cwd(), "public", src);
 
@@ -18,10 +18,18 @@ describe("истории: всё, что нужно плееру, на мест�
       }
     });
 
-    it(`${story.id}: у каждого кадра дорисованы позы — герои двигаются`, () => {
-      const lines = story.scenes.flatMap((s) => s.lines);
+    it(`${story.id}: герои двигаются — у кадров дорисованы позы или сцена в перекладке`, () => {
+      // перекладка: двигает холст, нужны спрайты всех поз из постановки
+      const rig = storyRig(story.id);
+      for (const scene of story.scenes.filter((s) => s.stage)) {
+        expect(rig, `${scene.id}: перекладка без спрайтов`).toBeDefined();
+        const poses = new Set(Object.entries(scene.stage!.cast).map(([who, a]) => `${who}_${a.pose}`));
+        for (const l of scene.lines) for (const [who, pose] of Object.entries(l.act?.pose ?? {})) poses.add(`${who}_${pose}`);
+        for (const pose of poses) expect(rig!.sprites[pose], `${scene.id}: спрайт ${pose}`).toBeDefined();
+      }
+      const lines = story.scenes.filter((s) => !s.stage).flatMap((s) => s.lines);
       const animated = lines.filter((l) => framePoses(story, l.frame).length >= 3);
-      expect(animated.length / lines.length).toBeGreaterThan(0.9);
+      if (lines.length) expect(animated.length / lines.length).toBeGreaterThan(0.9);
     });
 
     it(`${story.id}: озвучка каждой сцены — файл и тайминг на каждую реплику`, () => {

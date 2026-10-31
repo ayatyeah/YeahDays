@@ -1,53 +1,53 @@
 {
  "s01": {
-  "hash": "6fd847844c",
-  "duration": 33.48,
+  "hash": "d6980d9ff9",
+  "duration": 33.37,
   "lines": [
    {
     "start": 0.5,
-    "end": 10.28
+    "end": 10.29
    },
    {
-    "start": 10.98,
-    "end": 15.21
+    "start": 10.99,
+    "end": 15.22
    },
    {
-    "start": 15.91,
-    "end": 24.45
+    "start": 15.92,
+    "end": 24.46
    },
    {
-    "start": 25.15,
-    "end": 31.48
+    "start": 25.16,
+    "end": 31.37
    }
   ]
  },
  "s02": {
-  "hash": "06e9f27c06",
-  "duration": 37.34,
+  "hash": "f27fb93a44",
+  "duration": 37.6,
   "lines": [
    {
     "start": 0.5,
-    "end": 6.97
+    "end": 6.77
    },
    {
-    "start": 7.67,
-    "end": 12.23
+    "start": 7.47,
+    "end": 12.03
    },
    {
-    "start": 12.93,
-    "end": 19.92
+    "start": 12.73,
+    "end": 20.19
    },
    {
-    "start": 20.62,
-    "end": 23.68
+    "start": 20.89,
+    "end": 23.94
    },
    {
-    "start": 24.38,
-    "end": 30
+    "start": 24.64,
+    "end": 30.27
    },
    {
-    "start": 30.7,
-    "end": 35.34
+    "start": 30.97,
+    "end": 35.6
    }
   ]
  },
@@ -96,28 +96,28 @@
   ]
  },
  "s05": {
-  "hash": "cdd5263b73",
-  "duration": 43.99,
+  "hash": "2e942ca8cf",
+  "duration": 43.98,
   "lines": [
    {
     "start": 0.5,
-    "end": 5.02
+    "end": 5.01
    },
    {
-    "start": 6.67,
-    "end": 14.87
+    "start": 6.66,
+    "end": 14.85
    },
    {
-    "start": 16.77,
-    "end": 19.98
+    "start": 16.75,
+    "end": 19.96
    },
    {
-    "start": 20.68,
-    "end": 29.23
+    "start": 20.66,
+    "end": 29.22
    },
    {
-    "start": 30.88,
-    "end": 40.79
+    "start": 30.87,
+    "end": 40.78
    }
   ]
  },
@@ -140,8 +140,8 @@
   ]
  },
  "s07": {
-  "hash": "e58fa7a2ee",
-  "duration": 36.22,
+  "hash": "401652baaa",
+  "duration": 35.97,
   "lines": [
    {
     "start": 0.5,
@@ -153,29 +153,29 @@
    },
    {
     "start": 12.11,
-    "end": 17.98
+    "end": 17.77
    },
    {
-    "start": 18.68,
-    "end": 22.54
+    "start": 18.47,
+    "end": 22.33
    },
    {
-    "start": 23.24,
-    "end": 26.35
+    "start": 23.03,
+    "end": 26.14
    },
    {
-    "start": 27.05,
-    "end": 31.86
+    "start": 26.84,
+    "end": 31.65
    },
    {
-    "start": 32.56,
-    "end": 34.22
+    "start": 32.35,
+    "end": 33.97
    }
   ]
  },
  "s08": {
-  "hash": "30d565bb00",
-  "duration": 25.82,
+  "hash": "d4ec6044f4",
+  "duration": 25.04,
   "lines": [
    {
     "start": 0.5,
@@ -183,21 +183,21 @@
    },
    {
     "start": 7.77,
-    "end": 12.2
+    "end": 12.27
    },
    {
-    "start": 12.9,
-    "end": 20.03
+    "start": 12.97,
+    "end": 19.44
    },
    {
-    "start": 20.73,
-    "end": 23.82
+    "start": 20.14,
+    "end": 23.04
    }
   ]
  },
  "s09": {
-  "hash": "6f12db1cb0",
-  "duration": 36.08,
+  "hash": "0de2e78fdb",
+  "duration": 36.39,
   "lines": [
    {
     "start": 0.5,
@@ -217,7 +217,7 @@
    },
    {
     "start": 27.17,
-    "end": 34.08
+    "end": 34.39
    }
   ]
  }

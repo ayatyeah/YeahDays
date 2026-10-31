@@ -4,11 +4,11 @@ import type { Story } from "./types";
  * «ХроноЕрнар» — финальная история QuickBite, к лекции 8 Project Management
  * (Practices in agile frameworks: Agile Extension to the BABOK® Guide —
  * выбор техники и Table 1, Personas, User Stories). Сюжет пользователя:
- * Ернар, бывший однокурсник Аята, находит в подвале посох Времени и
+ * Ернар, бывший однокурсник Аяна, находит в подвале посох Времени и
  * становится ХроноЕрнаром в красной мантии. Он объясняет команде лекцию 8 —
  * где они ошиблись с самого начала, — и предлагает сделку: Сара жива, Дани
- * не уходит, проект работает, но команда забывает Аята, и тот рассыпается
- * пылью. Аят соглашается. Финал повторяет первую сцену истории 4 — без Аята.
+ * не уходит, проект работает, но команда забывает Аяна, и тот рассыпается
+ * пылью. Аян соглашается. Финал повторяет первую сцену истории 4 — без Аяна.
  *
  * Ернар — реальный друг пользователя, он сам захотел оказаться в истории;
  * внешность на кадрах — по его фотографиям. Все понятия лекции 8 — на
@@ -20,14 +20,14 @@ import type { Story } from "./types";
 export const pmLecture8Story: Story = {
   id: "pm-l8-chronoyernar",
   title: "ХроноЕрнар",
-  subtitle: "Финал. Бывший друг Аята с посохом Времени знает, где команда ошиблась с самого начала, — и предлагает всё исправить. Но у сделки есть цена.",
+  subtitle: "Финал. Бывший друг Аяна с посохом Времени знает, где команда ошиблась с самого начала, — и предлагает всё исправить. Но у сделки есть цена.",
   lecture: { eventId: "project-management-test-2", lectureId: "pm-l8", label: "Project Management · Лекция 8 — Practices in agile frameworks" },
   cover: "s01_c",
   // Голоса: voice — Gemini (про запас), eleven — ElevenLabs (русская библиотека голосов).
   cast: {
     narrator: { name: "Рассказчик", voice: "Charon", eleven: "ogi2DyUAKJb7CEdqqvlU" },
     yernar: { name: "ХроноЕрнар", role: "Time Traveler", voice: "Orus", eleven: "txnCCHHGKmYIwrn7HfHQ" },
-    ayat: { name: "Аят", role: "Product Owner", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
+    ayat: { name: "Аян", role: "Product Owner", voice: "Puck", eleven: "gJEfHTTiifXEDmO687lC" },
     mira: { name: "Мира", role: "Scrum Master", voice: "Leda", eleven: "AB9XsbSA4eLG12t2myjN" },
     arman: { name: "Арман", role: "Developer", voice: "Iapetus", eleven: "rQOBu7YxCDxGiFdTm28w" },
     aliya: { name: "Алия", role: "Developer", voice: "Aoede", eleven: "dVRDrbP5ULGXB94se4KZ" },
@@ -41,10 +41,10 @@ export const pmLecture8Story: Story = {
       mood: "tension",
       ambience: "dusty old basement, a single light bulb buzzing, faint low magical hum, no voices",
       lines: [
-        { who: "narrator", frame: "s01_a", text: "Где-то в Алматы, в подвале старого дома, Ернар разбирает дедовский хлам. Когда-то они с Аятом сидели за одной партой. Потом их пути разошлись." },
+        { who: "narrator", frame: "s01_a", text: "Где-то в Алматы, в подвале старого дома, Ернар разбирает дедовский хлам. Когда-то они с Аяном сидели за одной партой. Потом их пути разошлись." },
         { who: "yernar", frame: "s01_b", say: "[annoyed, then surprised]", text: "Ну и пылища… А это что? Он светится?" },
         { who: "narrator", frame: "s01_c", text: "Ернар берёт посох — и подвал заливает красным светом. На плечах — мантия. Посох Времени выбрал хозяина." },
-        { who: "yernar", frame: "s01_d", say: "[awed, then smug]", text: "ХроноЕрнар… А звучит. Ну что, Аят, посмотрим, как ты там без меня." },
+        { who: "yernar", frame: "s01_d", say: "[awed, then smug]", text: "ХроноЕрнар… А звучит. Ну что, Аян, посмотрим, как ты там без меня." },
       ],
     },
     {
@@ -52,9 +52,9 @@ export const pmLecture8Story: Story = {
       title: "Гость в мантии",
       mood: "tension",
       lines: [
-        { who: "narrator", frame: "s02_a", say: "[quietly]", text: "Неделя после ухода Сары. Ночь. Аят один в офисе — смотрит на её пустой стул." },
+        { who: "narrator", frame: "s02_a", say: "[quietly]", text: "Неделя после ухода Сары. Ночь. Аян один в офисе — смотрит на её пустой стул." },
         { who: "ayat", frame: "s02_b", say: "[startled]", text: "Ернар?! Ты как сюда попал? И что на тебе — халат?" },
-        { who: "yernar", frame: "s02_c", say: "[amused]", text: "Мантия, Аят. И посох Времени. Я видел каждый ваш спринт. Каждую ошибку." },
+        { who: "yernar", frame: "s02_c", say: "[amused]", text: "Мантия, Аян. И посох Времени. Я видел каждый ваш спринт. Каждую ошибку." },
         { who: "ayat", frame: "s02_d", say: "[cold]", text: "Мы пять лет не разговаривали. Чего тебе надо?" },
         { who: "narrator", frame: "s02_e", text: "Ернар бьёт посохом об пол — и вся команда оказывается в офисе. В пижамах." },
         { who: "arman", frame: "s02_f", say: "[outraged]", text: "Я в пижаме. Почему я в пижаме?! Кто это вообще такой?!" },
@@ -133,7 +133,7 @@ export const pmLecture8Story: Story = {
         {
           who: "yernar",
           frame: "s05_a",
-          text: "Помнишь двести страниц для MegaMart, Аят? Надо было одну фразу.",
+          text: "Помнишь двести страниц для MegaMart, Аян? Надо было одну фразу.",
           terms: [
             { term: "User Stories", ru: "Передают команде требование клиента: короткая фраза о фиче, которая даёт ценность. Пишут клиенты, product owner или аналитики; живут в бэклоге; по ним PO определяет объём и приоритеты инкрементов. Не всё в бэклоге — user stories, но они подчёркивают ценность для клиента." },
           ],
@@ -196,14 +196,26 @@ export const pmLecture8Story: Story = {
       id: "s07",
       title: "Сделка",
       mood: "conflict",
+      // Перекладка (пилот): ночной офис без людей, герои — спрайты, их оживляет плеер.
+      stage: {
+        plate: "office_night",
+        cast: {
+          arman: { x: 0.23, y: 1.29, h: 1.1, pose: "idle" },
+          aliya: { x: 0.35, y: 1.32, h: 1.06, pose: "idle" },
+          mira: { x: 0.12, y: 1.32, h: 1.06, pose: "idle" },
+          ayat: { x: 0.46, y: 1.32, h: 1.13, pose: "idle" },
+          yernar: { x: 0.78, y: 1.32, h: 1.2, pose: "talk" },
+        },
+        vision: { src: "vision", x: 0.64, y: 0.3, r: 0.21 },
+      },
       lines: [
-        { who: "yernar", frame: "s07_a", say: "[serious]", text: "Я могу вернуться в прошлое. Сара жива. Дани не уходит. QuickBite работает с первой итерации." },
-        { who: "mira", frame: "s07_b", say: "[hopeful, trembling]", text: "Сара… жива? А цена?" },
-        { who: "yernar", frame: "s07_c", say: "[quietly]", text: "Аят. Его не будет. Никто из вас его не вспомнит. Будто его никогда и не было." },
-        { who: "arman", frame: "s07_d", say: "[furious]", text: "Ты больной? Нет! Никаких сделок с типом в шторе!" },
-        { who: "aliya", frame: "s07_e", say: "[angry]", text: "Это не сделка. Это шантаж в мантии." },
-        { who: "ayat", frame: "s07_f", say: "[quietly, resolved]", text: "Сара жива. Дани с вами. Проект живёт… Я согласен." },
-        { who: "mira", frame: "s07_g", say: "[shouting, crying]", text: "Аят, нет!" },
+        { who: "yernar", frame: "s07_a", say: "[serious]", text: "Я могу вернуться в прошлое. Сара жива. Дани не уходит. QuickBite работает с первой итерации.", act: { shot: "wide", fx: ["vision-in"] } },
+        { who: "mira", frame: "s07_b", say: "[hopeful, trembling]", text: "Сара… жива? А цена?", act: { shot: "close:mira", pose: { mira: "hope" } } },
+        { who: "yernar", frame: "s07_c", say: "[quietly]", text: "Аян. Его не будет. Никто из вас его не вспомнит. Будто его никогда и не было.", act: { pose: { yernar: "guilty" } } },
+        { who: "arman", frame: "s07_d", say: "[furious]", text: "Ты больной? Нет! Никаких сделок с типом в шторе!", act: { pose: { arman: "furious" }, front: ["arman"], fx: ["shake"] } },
+        { who: "aliya", frame: "s07_e", say: "[angry]", text: "Это не сделка. Это шантаж в мантии.", act: { pose: { aliya: "angry", arman: "idle" } } },
+        { who: "ayat", frame: "s07_f", say: "[quietly, resolved]", text: "Сара жива. Дани с вами. Проект живёт… Я согласен.", act: { shot: "close:ayat", pose: { ayat: "resolved" }, move: { ayat: 0.5 } } },
+        { who: "mira", frame: "s07_g", say: "[shouting, crying]", text: "Аян, нет!", act: { shot: "close:mira", pose: { mira: "shout" }, fx: ["vision-out"] } },
       ],
     },
     {
@@ -211,11 +223,21 @@ export const pmLecture8Story: Story = {
       title: "Щелчок",
       mood: "grief",
       ambience: "deep magical whoosh, shimmering golden particles dissolving into silence, no voices",
+      stage: {
+        plate: "office_night",
+        cast: {
+          arman: { x: 0.23, y: 1.29, h: 1.1, pose: "idle" },
+          aliya: { x: 0.35, y: 1.32, h: 1.06, pose: "angry" },
+          mira: { x: 0.12, y: 1.32, h: 1.06, pose: "hope" },
+          ayat: { x: 0.5, y: 1.32, h: 1.13, pose: "farewell" },
+          yernar: { x: 0.78, y: 1.32, h: 1.2, pose: "guilty" },
+        },
+      },
       lines: [
-        { who: "ayat", frame: "s08_a", say: "[softly, smiling through tears]", text: "Начните с людей. С историй. Не с плана. И берегите друг друга." },
-        { who: "yernar", frame: "s08_b", say: "[hesitant, guilty]", text: "Ты всегда решал за всех, Аят. В этот раз — только за себя." },
-        { who: "narrator", frame: "s08_c", say: "[quietly]", text: "Ернар поднимает посох. Аят рассыпается золотой пылью — его стирает из самой истории." },
-        { who: "arman", frame: "s08_d", say: "[confused, whispering]", text: "Аят?.. Кто… кто такой Аят?" },
+        { who: "ayat", frame: "s08_a", say: "[softly, smiling through tears]", text: "Начните с людей. С историй. Не с плана. И берегите друг друга.", act: { shot: "two:ayat,mira" } },
+        { who: "yernar", frame: "s08_b", say: "[hesitant, guilty]", text: "Ты всегда решал за всех, Аян. В этот раз — только за себя.", act: { shot: "close:yernar" } },
+        { who: "narrator", frame: "s08_c", say: "[quietly]", text: "Ернар поднимает посох. Аян рассыпается золотой пылью — его стирает из самой истории.", act: { shot: "wide", pose: { yernar: "cast" }, fx: ["snap:ayat"] } },
+        { who: "arman", frame: "s08_d", say: "[confused, whispering]", text: "Аян?.. Кто… кто такой Аян?", act: { pose: { arman: "confused", mira: "idle", aliya: "idle", yernar: "idle" }, front: ["arman"] } },
       ],
     },
     {
@@ -227,7 +249,7 @@ export const pmLecture8Story: Story = {
         { who: "sara", frame: "s09_b", text: "У вас один месяц. Один шанс. И ограниченный бюджет. Сможете запустить QuickBite?" },
         { who: "dani", frame: "s09_c", say: "[confidently]", text: "Сможем. Только начнём с тех, кто будет этим пользоваться." },
         { who: "mira", frame: "s09_d", say: "[puzzled]", text: "Странно… Мне кажется, за этим столом кого-то не хватает." },
-        { who: "narrator", frame: "s09_e", say: "[quietly]", text: "За окном в красной мантии стоит ХроноЕрнар. Только он помнит Аята — и цену, которую тот заплатил." },
+        { who: "narrator", frame: "s09_e", say: "[quietly]", text: "За окном в красной мантии стоит ХроноЕрнар. Только он помнит Аяна — и цену, которую тот заплатил." },
       ],
     },
   ],

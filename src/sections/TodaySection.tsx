@@ -346,6 +346,10 @@ export default function TodaySection() {
           </div>
         </section>
       )}
+          {/* Просьба включить напоминания — сразу под списком, а не в
+              свёрнутых «Расписании и инструментах»: она появляется, только
+              когда впереди есть дело со временем, и там её никто не видел. */}
+          <ReminderNudge />
           <DaySupport />
           <details ref={planning} className="companion-planning">
             <summary>Добавить или изменить задачи</summary>
@@ -368,7 +372,6 @@ export default function TodaySection() {
           <details className="companion-planning">
             <summary>Расписание и инструменты</summary>
             <ClassesSetup />
-            <ReminderNudge />
             <div className="companion-quick-links">
               <Link href="/calendar">Календарь</Link>
               <Link href="/chat">ИИ-помощник</Link>

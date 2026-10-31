@@ -43,7 +43,7 @@ export default function EventsList({ events }: { events: EventSummary[] }) {
   }, [userId, events]);
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-5 pb-6">
+    <div className="yg-stagger mx-auto w-full max-w-3xl space-y-5 pb-6">
       <header>
         <Link href="/learn" className="text-sm underline">← Учёба</Link>
         <h1 className="ios-title mt-3">Ивенты</h1>

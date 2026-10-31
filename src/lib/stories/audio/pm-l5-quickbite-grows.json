@@ -186,8 +186,8 @@
   ]
  },
  "s08": {
-  "hash": "6bb0203672",
-  "duration": 71.98,
+  "hash": "2b84a360e5",
+  "duration": 72.3,
   "lines": [
    {
     "start": 0.5,
@@ -195,21 +195,19 @@
    },
    {
     "start": 8.76,
-    "end": 34.12,
-    "silent": true
+    "end": 33.26
    },
    {
-    "start": 36.02,
-    "end": 41.64
+    "start": 35.16,
+    "end": 40.78
    },
    {
-    "start": 43.54,
-    "end": 60.61,
-    "silent": true
+    "start": 42.68,
+    "end": 60.93
    },
    {
-    "start": 62.51,
-    "end": 69.98
+    "start": 62.83,
+    "end": 70.3
    }
   ]
  }

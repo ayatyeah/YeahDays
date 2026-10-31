@@ -48,6 +48,7 @@ const TONE = {
   mira: "живо и эмоционально, как увлечённая дизайнер",
   dani: "горячо и немного нервно, как разработчик под дедлайном",
   arman: "собранно и чётко, как финансист, который любит цифры",
+  bekzat: "уверенно и напористо, как требовательный крупный заказчик",
 };
 
 /** Паузы, с: перед первой репликой, между репликами, при смене говорящего, после реплики с терминами (дочитать карточку), в конце сцены. */
@@ -199,8 +200,8 @@ async function main() {
   for (const scene of story.scenes) {
     const files = scene.lines.map((line, i) => wavOf(scene, i, line));
     const silentLines = files.map((f) => !existsSync(f));
+    // Сцена без единого голоса тоже собирается: паузы по тексту под музыку.
     if (silentLines.some(Boolean)) missing++;
-    if (silentLines.every(Boolean)) continue;
     const hash = sha([files, silentLines]);
     const m4a = join(out, `${scene.id}.m4a`);
     if (timings[scene.id]?.hash === hash && existsSync(m4a)) continue;

@@ -223,7 +223,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
                 <button onClick={() => startScene(saved)} className="h-12 rounded-2xl border border-white/25 font-semibold">{`Продолжить: сцена ${saved + 1}`}</button>
               )}
             </div>
-            <ol className="mt-6 space-y-1.5">
+            <ol className="yg-stagger mt-6 space-y-1.5">
               {story.scenes.map((s, i) => (
                 <li key={s.id}>
                   <button onClick={() => startScene(i)} className="flex w-full items-center justify-between gap-3 rounded-2xl bg-white/5 px-4 py-3 text-left text-sm hover:bg-white/10">
@@ -323,7 +323,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
                 <p className="font-semibold">Сцены</p>
                 <button onClick={() => setChapters(false)} className="grid h-10 w-10 place-items-center rounded-full bg-white/10" aria-label="Закрыть список сцен">✕</button>
               </div>
-              <ol className="flex-1 space-y-1.5 overflow-y-auto p-4">
+              <ol className="yg-stagger flex-1 space-y-1.5 overflow-y-auto p-4">
                 {story.scenes.map((s, i) => (
                   <li key={s.id}>
                     <button onClick={() => startScene(i)} aria-current={i === scene ? "true" : undefined} className={cn("flex w-full items-center justify-between gap-3 rounded-2xl px-4 py-3 text-left text-sm", i === scene ? "bg-white text-black" : "bg-white/5")}>

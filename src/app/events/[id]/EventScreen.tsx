@@ -249,6 +249,8 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
 
   const stepKey = "step" in view ? `${view.mode}:${view.step.id}` : view.mode === "extra" ? `extra:${view.lecture}:${view.part}` : view.mode;
   const firstView = useRef(true);
+  // Новый экран (карта, конспект, квиз, итог…) проявляется: имя анимации чередуется, и она перезапускается без пересоздания дерева.
+  const [enter, setEnter] = useState(false);
   useEffect(() => {
     // При открытии ивента страница и так наверху; scrollIntoView здесь
     // заставлял браузер разметить весь длинный маршрут (~0,1 с на телефоне).
@@ -256,6 +258,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
       firstView.current = false;
       return;
     }
+    setEnter((v) => !v);
     top.current?.scrollIntoView({ block: "start" });
   }, [stepKey]);
 
@@ -369,7 +372,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   }, [baseKey]);
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-5 pb-24">
+    <div className={cn("mx-auto w-full max-w-3xl space-y-5 pb-24", enter ? "yg-view-a" : "yg-view-b")}>
       <div ref={top} />
       {view.mode === "map" && (
         <>
@@ -473,7 +476,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                   const now = e.currentTarget.open;
                   if (now !== isOpen(id, li)) setOpened((o) => ({ ...o, [id]: now }));
                 }}
-                className={cn(panel, "group scroll-mt-16")}
+                className={cn(panel, "yg-fold group scroll-mt-16")}
               >
                 <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
                   <span className="min-w-0">
@@ -541,7 +544,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                 const now = e.currentTarget.open;
                 if (now !== isOpen("route-extra")) setOpened((o) => ({ ...o, "route-extra": now }));
               }}
-              className={cn(panel, "group scroll-mt-16 border-dashed")}
+              className={cn(panel, "yg-fold group scroll-mt-16 border-dashed")}
             >
               <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
                 <span className="min-w-0">
@@ -1095,7 +1098,7 @@ function Quiz({
                 onClick={() => setAnswers([...answers, i])}
                 className={cn(
                   "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
-                  right ? "border-emerald-400 bg-emerald-500/15" : wrong ? "border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
+                  right ? "yg-pop border-emerald-400 bg-emerald-500/15" : wrong ? "yg-shake border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
                   !answered && "hover:bg-[var(--color-surface-2)]",
                   answered && !right && !wrong && "opacity-60",
                 )}
@@ -1107,7 +1110,7 @@ function Quiz({
         </div>
 
         {answered && (
-          <div ref={feedback} className="mt-4 scroll-mb-28 space-y-3">
+          <div ref={feedback} className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
               <p className="font-semibold">{picked === item.correct ? "Верно" : "Неверно"}</p>
               <p className="mt-1" lang={lang}>{item.why[lang]}</p>

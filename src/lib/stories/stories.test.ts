@@ -43,7 +43,7 @@ describe("истории: всё, что нужно плееру, на мест�
       const terms = story.scenes.flatMap((s) => s.lines.flatMap((l) => l.terms ?? []));
       expect(terms.length).toBeGreaterThan(10);
       for (const term of terms) {
-        expect(term.term).toMatch(/^[A-Za-z]/);
+        expect(term.term).toMatch(/^[A-Za-z0-9]/);
         expect(term.term).not.toMatch(/[А-Яа-яЁё]/);
         expect(term.ru).toMatch(/[А-Яа-яЁё]/);
       }

@@ -711,7 +711,7 @@ export default function LearningPage({
                   Все ивенты <YgIcon name="chevron" />
                 </Link>
               </div>
-              <div className="learning-events">
+              <div className="learning-events yg-stagger">
                 {orderedEvents.map((e, i) => (
                   <Link
                     href={`/events/${e.id}`}
@@ -771,7 +771,7 @@ export default function LearningPage({
               <div className="learning-section-title">
                 <h2 id="learning-stories" className="scroll-mt-4">Истории</h2>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="yg-stagger grid gap-3 sm:grid-cols-2">
                 {STORIES.map((story) => (
                   <Link key={story.id} href={`/stories/${story.id}`} className="group overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]">
                     <span className="relative block aspect-video overflow-hidden bg-[var(--color-surface-2)]">

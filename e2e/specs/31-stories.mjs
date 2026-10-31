@@ -88,3 +88,19 @@ test("Истории: лекция 5 в списке, и герои двигаю
   check(moved, "по ходу реплики сменилась поза героев");
   await browser.close();
 });
+
+test("Истории: лекция 6 — «Падение QuickBite» открывается из «Учёбы» и идёт с первой реплики", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await openSection(page, "/learn");
+  await page.locator("#learning-stories").waitFor({ timeout: 15_000 });
+  check((await page.getByRole("link", { name: /QuickBite/ }).count()) >= 3, "в «Историях» — истории лекций 4, 5 и 6");
+  await page.getByRole("link", { name: /Падение QuickBite/ }).first().tap();
+  const player = page.getByRole("dialog", { name: /История: Падение QuickBite/ });
+  await player.waitFor({ timeout: 15_000 });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await player.getByText(/сеть MegaMart/).waitFor({ timeout: 10_000 });
+  const frame = await page.locator(".story-shot[data-kb] img").first().evaluate((img) => img.complete && img.naturalWidth > 0);
+  check(frame, "кадр первой сцены загрузился");
+  await browser.close();
+});

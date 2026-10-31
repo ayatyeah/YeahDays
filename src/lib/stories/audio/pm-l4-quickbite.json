@@ -1,7 +1,7 @@
 {
  "s01": {
-  "hash": "bb11e5cb18",
-  "duration": 49.81,
+  "hash": "626878db44",
+  "duration": 51.94,
   "lines": [
    {
     "start": 0.5,
@@ -17,13 +17,11 @@
    },
    {
     "start": 24.67,
-    "end": 38.24,
-    "silent": true
+    "end": 39.83
    },
    {
-    "start": 39.89,
-    "end": 46.61,
-    "silent": true
+    "start": 41.48,
+    "end": 48.74
    }
   ]
  },
@@ -58,8 +56,8 @@
   ]
  },
  "s03": {
-  "hash": "373673d8bf",
-  "duration": 90.61,
+  "hash": "ab9199b00e",
+  "duration": 89.43,
   "lines": [
    {
     "start": 0.5,
@@ -87,14 +85,13 @@
    },
    {
     "start": 71.84,
-    "end": 87.41,
-    "silent": true
+    "end": 86.23
    }
   ]
  },
  "s04": {
-  "hash": "c1da12ca47",
-  "duration": 115.37,
+  "hash": "0668efd911",
+  "duration": 126.3,
   "lines": [
    {
     "start": 0.5,
@@ -126,18 +123,15 @@
    },
    {
     "start": 67.9,
-    "end": 78.83,
-    "silent": true
+    "end": 83.5
    },
    {
-    "start": 80.48,
-    "end": 92.84,
-    "silent": true
+    "start": 85.15,
+    "end": 103.14
    },
    {
-    "start": 94.74,
-    "end": 112.17,
-    "silent": true
+    "start": 105.04,
+    "end": 123.1
    }
   ]
  },
@@ -164,8 +158,8 @@
   ]
  },
  "s06": {
-  "hash": "2da95125fc",
-  "duration": 47.67,
+  "hash": "3385394afe",
+  "duration": 50.19,
   "lines": [
    {
     "start": 0.5,
@@ -189,14 +183,13 @@
    },
    {
     "start": 29.9,
-    "end": 44.47,
-    "silent": true
+    "end": 46.99
    }
   ]
  },
  "s07": {
-  "hash": "4cddc74772",
-  "duration": 68.05,
+  "hash": "c34ad2266d",
+  "duration": 70.94,
   "lines": [
    {
     "start": 0.5,
@@ -224,13 +217,11 @@
    },
    {
     "start": 38.3,
-    "end": 47.3,
-    "silent": true
+    "end": 48.95
    },
    {
-    "start": 49.2,
-    "end": 64.85,
-    "silent": true
+    "start": 50.85,
+    "end": 67.74
    }
   ]
  },

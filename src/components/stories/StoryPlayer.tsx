@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { fallbackLine, frameSrc, sceneAudioSrc, storySeconds } from "@/lib/stories";
+import { fallbackLine, framePoses, frameSrc, sceneAudioSrc, storySeconds } from "@/lib/stories";
 import type { SceneTiming, Story, StoryScene } from "@/lib/stories/types";
 import "./stories.css";
 
@@ -22,6 +22,10 @@ import "./stories.css";
  *
  * Выводится порталом в body: внутри оболочки приложения нижнее меню,
  * сайдбар и баннер установки рисовались поверх плеера.
+ *
+ * Герои двигаются: к кадру реплики дорисованы позы (тот же кадр, другие
+ * жесты и эмоции), и плеер сменяет их по кругу 1 → 2 → 3 → 2 → 1, пока
+ * идёт реплика, — как в ограниченной анимации мультсериалов.
  */
 
 type Timeline = { duration: number; voiced: boolean; lines: { start: number; end: number }[] };
@@ -41,6 +45,15 @@ function timeline(scene: StoryScene, timing?: SceneTiming): Timeline {
 const NAME_COLORS = ["text-amber-300", "text-sky-300", "text-rose-300", "text-violet-300", "text-emerald-300", "text-orange-300"];
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+/** Какая поза сейчас: по кругу туда-обратно, у соседних реплик чуть разный темп — чтобы не тикало как метроном. */
+function poseAt(elapsed: number, count: number, line: number): number {
+  if (count < 2) return 0;
+  const step = 1.6 + (line % 3) * 0.25;
+  const period = 2 * (count - 1);
+  const k = Math.floor(Math.max(0, elapsed) / step) % period;
+  return k < count ? k : period - k;
+}
 
 export default function StoryPlayer({ story, timings }: { story: Story; timings: Record<string, SceneTiming> }) {
   const router = useRouter();
@@ -89,7 +102,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
 
   // Следующие кадры — заранее, чтобы наплыв не ждал сети.
   useEffect(() => {
-    for (const s of story.scenes.slice(scene, scene + 2)) for (const l of s.lines) new Image().src = frameSrc(story, l.frame);
+    for (const s of story.scenes.slice(scene, scene + 2)) for (const l of s.lines) for (const f of framePoses(story, l.frame)) new Image().src = frameSrc(story, f);
   }, [story, scene]);
 
   /** Начать сцену. Из нажатия кнопки звук разрешён; дальше тот же <audio> играет сам. */
@@ -192,8 +205,10 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
       {phase === "intro" && (
         <div className="flex flex-1 flex-col overflow-y-auto">
           <div className="relative aspect-video w-full shrink-0 overflow-hidden sm:mx-auto sm:mt-6 sm:max-w-3xl sm:rounded-3xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={frameSrc(story, story.cover)} alt="" className="story-frame" data-kb="0" style={{ animationDuration: "18s" }} />
+            <div className="story-shot" data-kb="0" style={{ animationDuration: "18s" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={frameSrc(story, story.cover)} alt="" className="story-pose" />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0c] via-transparent to-transparent" />
             <button onClick={exit} className="absolute left-3 top-[max(0.75rem,env(safe-area-inset-top))] grid h-10 w-10 place-items-center rounded-full bg-black/50 text-lg backdrop-blur" aria-label="Закрыть историю">✕</button>
           </div>
@@ -240,21 +255,24 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
               aria-label={playing ? "Пауза" : "Смотреть дальше"}
               className="relative aspect-video w-full max-w-[min(100%,calc((100dvh-300px)*16/9))] overflow-hidden sm:rounded-2xl"
             >
-              {current.lines.map((l, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={l.frame}
-                  src={frameSrc(story, l.frame)}
-                  alt=""
-                  className="story-frame"
-                  data-kb={i === lineIdx ? String((scene + i) % 4) : undefined}
-                  style={{
-                    opacity: i === lineIdx ? 1 : 0,
-                    animationDuration: `${span + 1}s`,
-                    animationPlayState: playing ? "running" : "paused",
-                  }}
-                />
-              ))}
+              {current.lines.map((l, i) => {
+                const poses = framePoses(story, l.frame);
+                const active = i === lineIdx;
+                const pose = active ? poseAt(t - tl.lines[i].start, poses.length, i) : 0;
+                return (
+                  <div
+                    key={l.frame}
+                    className="story-shot"
+                    data-kb={active ? String((scene + i) % 4) : undefined}
+                    style={{ opacity: active ? 1 : 0, animationDuration: `${span + 1}s`, animationPlayState: playing ? "running" : "paused" }}
+                  >
+                    {poses.map((src, j) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={src} src={frameSrc(story, src)} alt="" className="story-pose" data-pose={j} style={{ opacity: j === 0 || j === pose ? 1 : 0 }} />
+                    ))}
+                  </div>
+                );
+              })}
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
               {!playing && (
                 <span className="absolute inset-0 grid place-items-center">
@@ -277,6 +295,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
                   {who?.role && <span className="ml-1.5 normal-case tracking-normal text-white/40" lang="en">{who.role}</span>}
                 </p>
                 <p className="mt-1 text-[17px] leading-snug" lang="ru">{line.text}</p>
+                {tl.voiced && timings[current.id]?.lines[lineIdx]?.silent && <p className="mt-1 text-xs text-white/40">Эта реплика пока без голоса — озвучка появится позже.</p>}
               </div>
             </div>
           </div>

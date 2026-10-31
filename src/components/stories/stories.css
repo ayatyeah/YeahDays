@@ -8,21 +8,29 @@
 @keyframes story-kb-2 { from { transform: scale(1.04) translate3d(0, 1%, 0); } to { transform: scale(1.12) translate3d(0, -1.2%, 0); } }
 @keyframes story-kb-3 { from { transform: scale(1.12) translate3d(-1%, -1%, 0); } to { transform: scale(1.04) translate3d(1%, 0.6%, 0); } }
 
-.story-frame {
+/* Кадр реплики: камера едет по всей группе поз сразу, позы сменяются внутри. */
+.story-shot {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   transition: opacity 700ms ease;
   will-change: transform, opacity;
   animation-timing-function: linear;
   animation-fill-mode: both;
 }
-.story-frame[data-kb="0"] { animation-name: story-kb-0; }
-.story-frame[data-kb="1"] { animation-name: story-kb-1; }
-.story-frame[data-kb="2"] { animation-name: story-kb-2; }
-.story-frame[data-kb="3"] { animation-name: story-kb-3; }
+.story-shot[data-kb="0"] { animation-name: story-kb-0; }
+.story-shot[data-kb="1"] { animation-name: story-kb-1; }
+.story-shot[data-kb="2"] { animation-name: story-kb-2; }
+.story-shot[data-kb="3"] { animation-name: story-kb-3; }
+/* Поза: основной кадр всегда снизу и непрозрачен, остальные проявляются поверх —
+   при смене поз экран не темнеет, как при встречном наплыве двух картинок. */
+.story-pose {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 260ms ease;
+}
 
 .story-term {
   animation: story-term-in 320ms ease both;
@@ -30,6 +38,7 @@
 @keyframes story-term-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .story-frame { animation: none !important; transition: none; }
+  .story-shot { animation: none !important; transition: none; }
+  .story-pose { transition: none; }
   .story-term { animation: none; }
 }

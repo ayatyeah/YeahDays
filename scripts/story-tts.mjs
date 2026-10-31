@@ -16,6 +16,11 @@
 // - ~/.cache/yg-stories/<id>/wav/<сцена>-<n>-<хеш>.wav — реплики без потерь;
 // - public/stories/<id>/audio/<сцена>.m4a — сцена: реплики с паузами и музыка;
 // - src/lib/stories/audio/<id>.json — длина сцены и начало/конец каждой реплики.
+//
+// Квоты кончились посреди сцены — сцена всё равно собирается: на месте
+// неозвученной реплики пауза длиной по тексту, в таймингах у неё silent,
+// плеер показывает субтитр под музыку. Следующий запуск доозвучит и
+// пересоберёт (хеш сцены включает, какие реплики без голоса).
 
 import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
@@ -193,8 +198,10 @@ async function main() {
   let missing = 0;
   for (const scene of story.scenes) {
     const files = scene.lines.map((line, i) => wavOf(scene, i, line));
-    if (files.some((f) => !existsSync(f))) { missing++; continue; }
-    const hash = sha(files);
+    const silentLines = files.map((f) => !existsSync(f));
+    if (silentLines.some(Boolean)) missing++;
+    if (silentLines.every(Boolean)) continue;
+    const hash = sha([files, silentLines]);
     const m4a = join(out, `${scene.id}.m4a`);
     if (timings[scene.id]?.hash === hash && existsSync(m4a)) continue;
     const parts = [];
@@ -204,9 +211,16 @@ async function main() {
     silence(lead, LEAD);
     parts.push(lead);
     scene.lines.forEach((line, i) => {
-      const d = seconds(files[i]);
-      lines.push({ start: Math.round(t * 100) / 100, end: Math.round((t + d) * 100) / 100 });
-      parts.push(files[i]);
+      let file = files[i];
+      if (silentLines[i]) {
+        // Как в плеере (fallbackLine): по длине текста, не меньше 2,5 с.
+        const want = Math.max(2.5, line.text.length / 14);
+        file = join(cache, `silent-${want.toFixed(2)}.wav`);
+        if (!existsSync(file)) silence(file, want);
+      }
+      const d = seconds(file);
+      lines.push({ start: Math.round(t * 100) / 100, end: Math.round((t + d) * 100) / 100, ...(silentLines[i] ? { silent: true } : {}) });
+      parts.push(file);
       t += d;
       const next = scene.lines[i + 1];
       const gap = (next ? (next.who === line.who ? GAP : TURN) : END) + (line.terms?.length ? TERMS_HOLD : 0);
@@ -225,7 +239,7 @@ async function main() {
   }
   writeFileSync(timingsFile, JSON.stringify(timings, null, 1) + "\n");
   const total = Object.values(timings).reduce((s, v) => s + v.duration, 0);
-  console.log(`итого: ${(total / 60).toFixed(1)} мин; сцен без озвучки: ${missing}`);
+  console.log(`итого: ${(total / 60).toFixed(1)} мин; сцен с неозвученными репликами: ${missing}`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();

@@ -1,7 +1,7 @@
 {
  "s01": {
-  "hash": "ac273a3cbc",
-  "duration": 35.79,
+  "hash": "bb11e5cb18",
+  "duration": 49.81,
   "lines": [
    {
     "start": 0.5,
@@ -17,12 +17,18 @@
    },
    {
     "start": 24.67,
-    "end": 32.59
+    "end": 38.24,
+    "silent": true
+   },
+   {
+    "start": 39.89,
+    "end": 46.61,
+    "silent": true
    }
   ]
  },
  "s02": {
-  "hash": "ef69efb8dc",
+  "hash": "7168d2bd25",
   "duration": 40.36,
   "lines": [
    {
@@ -52,8 +58,8 @@
   ]
  },
  "s03": {
-  "hash": "b8d0b47962",
-  "duration": 73.14,
+  "hash": "373673d8bf",
+  "duration": 90.61,
   "lines": [
    {
     "start": 0.5,
@@ -78,12 +84,17 @@
    {
     "start": 57.9,
     "end": 69.94
+   },
+   {
+    "start": 71.84,
+    "end": 87.41,
+    "silent": true
    }
   ]
  },
  "s04": {
-  "hash": "46c4c45fae",
-  "duration": 84.32,
+  "hash": "c1da12ca47",
+  "duration": 115.37,
   "lines": [
    {
     "start": 0.5,
@@ -115,12 +126,23 @@
    },
    {
     "start": 67.9,
-    "end": 81.12
+    "end": 78.83,
+    "silent": true
+   },
+   {
+    "start": 80.48,
+    "end": 92.84,
+    "silent": true
+   },
+   {
+    "start": 94.74,
+    "end": 112.17,
+    "silent": true
    }
   ]
  },
  "s05": {
-  "hash": "f2931fdbbf",
+  "hash": "e406a958e5",
   "duration": 31.83,
   "lines": [
    {
@@ -142,8 +164,8 @@
   ]
  },
  "s06": {
-  "hash": "e5ea5fc6f8",
-  "duration": 31.45,
+  "hash": "2da95125fc",
+  "duration": 47.67,
   "lines": [
    {
     "start": 0.5,
@@ -164,12 +186,17 @@
    {
     "start": 17.63,
     "end": 28.25
+   },
+   {
+    "start": 29.9,
+    "end": 44.47,
+    "silent": true
    }
   ]
  },
  "s07": {
-  "hash": "8795c3e8ae",
-  "duration": 39.6,
+  "hash": "4cddc74772",
+  "duration": 68.05,
   "lines": [
    {
     "start": 0.5,
@@ -194,11 +221,21 @@
    {
     "start": 35.36,
     "end": 37.6
+   },
+   {
+    "start": 38.3,
+    "end": 47.3,
+    "silent": true
+   },
+   {
+    "start": 49.2,
+    "end": 64.85,
+    "silent": true
    }
   ]
  },
  "s08": {
-  "hash": "cedde6aef6",
+  "hash": "48b5635c9e",
   "duration": 30.48,
   "lines": [
    {

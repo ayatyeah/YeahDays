@@ -1,16 +1,27 @@
 import type { SceneTiming, Story } from "./types";
 import { pmLecture4Story } from "./pmLecture4";
+import { pmLecture5Story } from "./pmLecture5";
 import pmLecture4Audio from "./audio/pm-l4-quickbite.json";
+import pmLecture5Audio from "./audio/pm-l5-quickbite-grows.json";
+import pmLecture4Poses from "./poses/pm-l4-quickbite.json";
+import pmLecture5Poses from "./poses/pm-l5-quickbite-grows.json";
 
 /**
  * Все истории. Новая история — файл сценария рядом, озвучка
  * (scripts/story-tts.mjs) и кадры в public/stories/<id>/frames
  * (scripts/story-frames.mjs), плюс строка здесь.
  */
-export const STORIES: Story[] = [pmLecture4Story];
+export const STORIES: Story[] = [pmLecture4Story, pmLecture5Story];
 
 const TIMINGS: Record<string, Record<string, SceneTiming>> = {
   [pmLecture4Story.id]: pmLecture4Audio as Record<string, SceneTiming>,
+  [pmLecture5Story.id]: pmLecture5Audio as Record<string, SceneTiming>,
+};
+
+/** Сколько поз дорисовано к кадру (scripts/story-frames.mjs): кадр-2, кадр-3… */
+const POSES: Record<string, Record<string, number>> = {
+  [pmLecture4Story.id]: pmLecture4Poses,
+  [pmLecture5Story.id]: pmLecture5Poses,
 };
 
 export function storyById(id: string): Story | undefined {
@@ -40,4 +51,10 @@ export function storySeconds(story: Story): number {
 }
 
 export const frameSrc = (story: Story, frame: string) => `/stories/${story.id}/frames/${frame}.webp`;
+
+/** Кадр и его позы по порядку: [кадр, кадр-2, кадр-3]. Плеер сменяет их по ходу реплики. */
+export function framePoses(story: Story, frame: string): string[] {
+  const extra = POSES[story.id]?.[frame] ?? 0;
+  return [frame, ...Array.from({ length: extra }, (_, i) => `${frame}-${i + 2}`)];
+}
 export const sceneAudioSrc = (story: Story, scene: string) => `/stories/${story.id}/audio/${scene}.m4a`;

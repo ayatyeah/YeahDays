@@ -33,7 +33,7 @@ test("Истории: из «Учёбы» смотрю историю лекци
   // Сцена «Earned value»: первая же реплика — с карточкой BCWS.
   await player.getByRole("button", { name: "Сцены истории" }).tap();
   await page.getByRole("dialog", { name: "Сцены" }).getByRole("button", { name: /^4\. Earned value/ }).tap();
-  await player.getByText("Budgeted Cost of Work Scheduled").waitFor({ timeout: 10_000 });
+  await player.getByText("Budgeted Cost for Work Scheduled").waitFor({ timeout: 10_000 });
   const card = player.locator(".story-term");
   check((await card.locator('[lang="en"]').first().innerText()).trim() === "BCWS", "термин — по-английски, как в тесте");
   check(/[А-Яа-я]/.test(await card.locator('[lang="ru"]').innerText()), "пояснение — по-русски");
@@ -62,5 +62,29 @@ test("Истории: у лекции 4 в ивенте PM — кнопка её
   await page.waitForURL(/\/stories\/pm-l4-quickbite/, { timeout: 15_000 });
   await page.getByRole("dialog", { name: /История: QuickBite/ }).waitFor({ timeout: 15_000 });
   check(true, "кнопка у лекции открывает её историю");
+  await browser.close();
+});
+
+test("Истории: лекция 5 в списке, и герои двигаются — позы сменяются по ходу реплики", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await openSection(page, "/learn");
+  await page.locator("#learning-stories").waitFor({ timeout: 15_000 });
+  check((await page.getByRole("link", { name: /QuickBite/ }).count()) >= 2, "в «Историях» — истории лекций 4 и 5");
+  await page.getByRole("link", { name: /QuickBite растёт/ }).first().tap();
+  const player = page.getByRole("dialog", { name: /История: QuickBite растёт/ });
+  await player.waitFor({ timeout: 15_000 });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await player.getByText(/Полгода после Demo Day/).waitFor({ timeout: 10_000 });
+  // За несколько секунд реплики поверх основного кадра должна проявиться другая поза.
+  const moved = await page
+    .waitForFunction(
+      () => [...document.querySelectorAll(".story-shot[data-kb] img[data-pose]")].some((img) => img.getAttribute("data-pose") !== "0" && getComputedStyle(img).opacity === "1"),
+      null,
+      { timeout: 8_000 },
+    )
+    .then(() => true)
+    .catch(() => false);
+  check(moved, "по ходу реплики сменилась поза героев");
   await browser.close();
 });

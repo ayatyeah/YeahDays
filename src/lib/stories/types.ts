@@ -58,8 +58,8 @@ export interface Story {
   moral: string;
 }
 
-/** Время реплик в озвучке сцены (scripts/story-tts.mjs): начало и длина, с. */
+/** Время реплик в озвучке сцены (scripts/story-tts.mjs): начало и конец, с. silent — реплика ещё без голоса (кончилась квота TTS): на её месте пауза, плеер показывает субтитр. */
 export interface SceneTiming {
   duration: number;
-  lines: { start: number; end: number }[];
+  lines: { start: number; end: number; silent?: boolean }[];
 }

@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { STORIES, frameSrc, sceneAudioSrc, storyTimings } from "./index";
+import { STORIES, framePoses, frameSrc, sceneAudioSrc, storyTimings } from "./index";
 
 const pub = (src: string) => join(process.cwd(), "public", src);
 
@@ -13,9 +13,15 @@ describe("истории: всё, что нужно плееру, на мест�
         expect(scene.lines.length).toBeGreaterThan(0);
         for (const line of scene.lines) {
           expect(story.cast[line.who], `${scene.id}: герой ${line.who}`).toBeDefined();
-          expect(existsSync(pub(frameSrc(story, line.frame))), `${scene.id}: кадр ${line.frame}`).toBe(true);
+          for (const pose of framePoses(story, line.frame)) expect(existsSync(pub(frameSrc(story, pose))), `${scene.id}: кадр ${pose}`).toBe(true);
         }
       }
+    });
+
+    it(`${story.id}: у каждого кадра дорисованы позы — герои двигаются`, () => {
+      const lines = story.scenes.flatMap((s) => s.lines);
+      const animated = lines.filter((l) => framePoses(story, l.frame).length >= 3);
+      expect(animated.length / lines.length).toBeGreaterThan(0.9);
     });
 
     it(`${story.id}: озвучка каждой сцены — файл и тайминг на каждую реплику`, () => {

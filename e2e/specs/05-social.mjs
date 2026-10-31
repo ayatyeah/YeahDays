@@ -6,7 +6,7 @@
  * экране всё выглядит правильно, а у друга ничего не произошло.
  */
 
-import { check, checkText, newUser, openSection, session, sql, test } from "../harness.mjs";
+import { check, checkText, newUser, openSection, session, sql, test, openPlan } from "../harness.mjs";
 
 test("Друзья: приглашение по ссылке доходит от одного к другому", async () => {
   const alice = await newUser();
@@ -198,6 +198,9 @@ test("Пары: расписание на неделю заводится одн
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/today");
+  // С 10 октября настройка пар живёт в «Мой план → Расписание и инструменты».
+  await openPlan(page);
+  await page.getByText("Расписание и инструменты", { exact: true }).click();
 
   await checkVisibleText(page, "Добавь свои пары", "новому человеку предлагают завести расписание");
   await page.getByRole("button", { name: "Добавить расписание" }).tap();

@@ -6,7 +6,7 @@
  * час выглядел свободным, будто ничего и не планировалось.
  */
 
-import { check, newUser, openSection, session, sql, test } from "../harness.mjs";
+import { check, newUser, openPlan, openSection, session, sql, test } from "../harness.mjs";
 
 const day = () => new Date().toISOString().slice(0, 10);
 
@@ -38,11 +38,14 @@ test("Расписание: просроченное дело видно на «
   await openSection(page, "/today");
 
   const today = page.locator('[data-section="today"]');
+  // Сетка часов — в «Мой план → Расписание и инструменты».
+  await openPlan(today);
+  await today.getByText("Расписание и инструменты", { exact: true }).click();
   const show = today.getByRole("button", { name: "показать" });
   if (await show.isVisible()) await show.tap();
   await page.waitForTimeout(500);
 
-  await today.getByText("Просрочено: 1").waitFor({ timeout: 10_000 });
+  await today.getByText("Просрочено: 1").first().waitFor({ timeout: 10_000 });
   check(true, "просроченное подписано на «Сегодня»");
   // Карточка стоит в строке своего часа — проверяем именно сетку.
   const row = today.locator(`[data-hour="${hour - 2}"]`);
@@ -62,11 +65,13 @@ test("Расписание: «Разобрать всё» на «Сегодня�
   await openSection(page, "/today");
 
   const today = page.locator('[data-section="today"]');
+  await openPlan(today);
+  await today.getByText("Расписание и инструменты", { exact: true }).click();
   const show = today.getByRole("button", { name: "показать" });
   if (await show.isVisible()) await show.tap();
   await page.waitForTimeout(500);
 
-  await today.getByRole("button", { name: /Разобрать всё \(2\)/ }).tap();
+  await today.getByRole("button", { name: /Разобрать всё \(2\)/ }).first().tap();
   await page.waitForTimeout(4000);
 
   const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10);

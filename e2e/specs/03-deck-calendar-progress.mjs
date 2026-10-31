@@ -575,7 +575,7 @@ test("Прогресс: видны уровень с опытом, свод по
     "в графике по столбику на каждый час суток",
   );
 
-  await checkText(section, "Характеристики", "видны характеристики персонажа");
+  await checkText(section, "Твои навыки", "видны характеристики персонажа");
 
   await browser.close();
 });
@@ -589,7 +589,7 @@ test("Прогресс: закрытое из колоды действие по
   const before = (await section.innerText()).match(/(\d+)\s*XP/);
   check(before !== null && Number(before[1]) === 0, `на старте опыта нет (${before?.[0]})`);
 
-  await goTab(page, "Главная");
+  await goTab(page, "Сегодня");
   await waitForDeck(page);
   const taken = await topTitle(page);
   await swipe(page, "right");

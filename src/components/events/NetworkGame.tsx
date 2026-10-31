@@ -76,7 +76,10 @@ function BinarySprint({ userId, onExit }: { userId: string; onExit: () => void }
   const [streak, setStreak] = useState(0);
   const [solved, setSolved] = useState(0);
   const [flash, setFlash] = useState<"good" | "bad" | null>(null);
-  const [record, setRecord] = useState(false);
+  // Рекорд на начало забега. Итог сравнивает счёт с ним прямо при отрисовке:
+  // раньше «Новый рекорд!» ставил эффект после первого кадра итога, и на
+  // мгновение было видно «Рекорд: 0» — прежнее значение до записи.
+  const [prevBest, setPrevBest] = useState(0);
   // Момент окончания, а не счётчик «минус секунда»: так таймер не отстаёт,
   // когда вкладку свернули или телефон притормозил.
   const deadline = useRef(0);
@@ -92,7 +95,7 @@ function BinarySprint({ userId, onExit }: { userId: string; onExit: () => void }
     setScore(0);
     setStreak(0);
     setSolved(0);
-    setRecord(false);
+    setPrevBest(best(userId, "binary"));
     setPhase("play");
     next(0);
   }
@@ -108,7 +111,7 @@ function BinarySprint({ userId, onExit }: { userId: string; onExit: () => void }
   }, [phase]);
 
   useEffect(() => {
-    if (phase === "over") setRecord(submit(userId, "binary", score));
+    if (phase === "over") submit(userId, "binary", score);
     // Рекорд записывается один раз — в момент окончания, а не при каждом изменении счёта.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -164,7 +167,7 @@ function BinarySprint({ userId, onExit }: { userId: string; onExit: () => void }
         <p className="text-sm uppercase tracking-widest text-[var(--color-muted)]">Время вышло</p>
         <p className="text-6xl font-bold tabular-nums">{score}</p>
         <p className="text-sm text-[var(--color-fg-dim)]">Верных ответов: <span className="tabular-nums">{solved}</span></p>
-        {record ? <p className="font-semibold text-emerald-400">Новый рекорд!</p> : <p className="text-sm">Рекорд: <span className="tabular-nums">{best(userId, "binary")}</span></p>}
+        {score > prevBest ? <p className="font-semibold text-emerald-400">Новый рекорд!</p> : <p className="text-sm">Рекорд: <span className="tabular-nums">{prevBest}</span></p>}
         <div className="flex flex-wrap justify-center gap-2 pt-2">
           <Button variant="primary" onClick={start}>Ещё раз</Button>
           <Button onClick={onExit}>К играм</Button>
@@ -252,7 +255,8 @@ function SwitchIt({ userId, onExit }: { userId: string; onExit: () => void }) {
   const [score, setScore] = useState(0);
   const [number, setNumber] = useState(1);
   const [notice, setNotice] = useState("");
-  const [record, setRecord] = useState(false);
+  // Рекорд на начало смены — см. то же в BinarySprint.
+  const [prevBest, setPrevBest] = useState(() => best(userId, "switch"));
 
   // Шаг «запись устарела» игрок не решает: убираем запись и идём к следующему кадру.
   useEffect(() => {
@@ -268,7 +272,7 @@ function SwitchIt({ userId, onExit }: { userId: string; onExit: () => void }) {
   const answer = useMemo(() => (step?.kind === "frame" ? decide(table, step.frame) : null), [step, table]);
 
   useEffect(() => {
-    if (over) setRecord(submit(userId, "switch", score));
+    if (over) submit(userId, "switch", score);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [over]);
 
@@ -281,7 +285,7 @@ function SwitchIt({ userId, onExit }: { userId: string; onExit: () => void }) {
     setScore(0);
     setNumber(1);
     setNotice("");
-    setRecord(false);
+    setPrevBest(best(userId, "switch"));
   }
 
   function send(ports: number[]) {
@@ -307,7 +311,7 @@ function SwitchIt({ userId, onExit }: { userId: string; onExit: () => void }) {
         <p className="text-sm uppercase tracking-widest text-[var(--color-muted)]">Смена окончена</p>
         <p className="text-6xl font-bold tabular-nums">{score}<span className="text-2xl text-[var(--color-muted)]"> / {FRAMES}</span></p>
         <p className="text-sm text-[var(--color-fg-dim)]">{score === FRAMES ? "Ни одного кадра не туда. Так и работает настоящий коммутатор." : score >= 9 ? "Почти без потерь. Перечитай правило про неизвестный адрес и тот же порт." : "Главное правило: учимся по источнику, пересылаем по назначению; не знаем — всем, кроме входящего."}</p>
-        {record ? <p className="font-semibold text-emerald-400">Новый рекорд!</p> : <p className="text-sm">Рекорд: <span className="tabular-nums">{best(userId, "switch")}</span> из {FRAMES}</p>}
+        {score > prevBest ? <p className="font-semibold text-emerald-400">Новый рекорд!</p> : <p className="text-sm">Рекорд: <span className="tabular-nums">{prevBest}</span> из {FRAMES}</p>}
         <div className="flex flex-wrap justify-center gap-2 pt-2">
           <Button variant="primary" onClick={restart}>Ещё раз</Button>
           <Button onClick={onExit}>К играм</Button>

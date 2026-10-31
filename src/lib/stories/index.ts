@@ -3,27 +3,31 @@ import { pmLecture4Story } from "./pmLecture4";
 import { pmLecture5Story } from "./pmLecture5";
 import { pmLecture6Story } from "./pmLecture6";
 import { pmLecture7Story } from "./pmLecture7";
+import { pmLecture8Story } from "./pmLecture8";
 import pmLecture4Audio from "./audio/pm-l4-quickbite.json";
 import pmLecture5Audio from "./audio/pm-l5-quickbite-grows.json";
 import pmLecture6Audio from "./audio/pm-l6-quickbite-falls.json";
 import pmLecture7Audio from "./audio/pm-l7-saras-last-sprint.json";
+import pmLecture8Audio from "./audio/pm-l8-chronoyernar.json";
 import pmLecture4Poses from "./poses/pm-l4-quickbite.json";
 import pmLecture5Poses from "./poses/pm-l5-quickbite-grows.json";
 import pmLecture6Poses from "./poses/pm-l6-quickbite-falls.json";
 import pmLecture7Poses from "./poses/pm-l7-saras-last-sprint.json";
+import pmLecture8Poses from "./poses/pm-l8-chronoyernar.json";
 
 /**
  * Все истории. Новая история — файл сценария рядом, озвучка
  * (scripts/story-tts.mjs) и кадры в public/stories/<id>/frames
  * (scripts/story-frames.mjs), плюс строка здесь.
  */
-export const STORIES: Story[] = [pmLecture4Story, pmLecture5Story, pmLecture6Story, pmLecture7Story];
+export const STORIES: Story[] = [pmLecture4Story, pmLecture5Story, pmLecture6Story, pmLecture7Story, pmLecture8Story];
 
 const TIMINGS: Record<string, Record<string, SceneTiming>> = {
   [pmLecture4Story.id]: pmLecture4Audio as Record<string, SceneTiming>,
   [pmLecture5Story.id]: pmLecture5Audio as Record<string, SceneTiming>,
   [pmLecture6Story.id]: pmLecture6Audio as Record<string, SceneTiming>,
   [pmLecture7Story.id]: pmLecture7Audio as Record<string, SceneTiming>,
+  [pmLecture8Story.id]: pmLecture8Audio as Record<string, SceneTiming>,
 };
 
 /** Сколько поз дорисовано к кадру (scripts/story-frames.mjs): кадр-2, кадр-3… */
@@ -32,6 +36,7 @@ const POSES: Record<string, Record<string, number>> = {
   [pmLecture5Story.id]: pmLecture5Poses,
   [pmLecture6Story.id]: pmLecture6Poses,
   [pmLecture7Story.id]: pmLecture7Poses,
+  [pmLecture8Story.id]: pmLecture8Poses,
 };
 
 export function storyById(id: string): Story | undefined {

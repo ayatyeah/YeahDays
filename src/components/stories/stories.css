@@ -42,3 +42,58 @@
   .story-pose { transition: none; }
   .story-term { animation: none; }
 }
+
+/*
+ * Телефон боком (низкий экран): кинорежим. Кадр на весь экран целиком
+ * (по бокам — поля), шапка, субтитры, карточка термина и кнопки — поверх
+ * него с затемнением. Свои классы, а не утилиты: эти правила вне слоёв
+ * Tailwind и перебивают обычную вертикальную раскладку.
+ */
+@media (orientation: landscape) and (max-height: 540px) {
+  .story-play { position: relative; display: block; }
+  .story-bar {
+    position: absolute; inset-inline: 0; top: 0; z-index: 3;
+    padding-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
+    background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent);
+  }
+  .story-main { position: absolute; inset: 0; display: block; }
+  .story-stage { position: absolute; inset: 0; width: 100%; max-width: none; height: 100%; aspect-ratio: auto; border-radius: 0; }
+  .story-stage .story-pose { object-fit: contain; }
+  .story-stage-fade { height: 60%; background: linear-gradient(to top, rgb(0 0 0 / 0.85), transparent); }
+  .story-below { position: absolute; inset: 0; z-index: 2; max-width: none; margin: 0; padding: 0; pointer-events: none; }
+  .story-term-box {
+    position: absolute; top: 3.5rem; right: max(0.75rem, env(safe-area-inset-right));
+    width: min(40%, 22rem); max-height: calc(100% - 3.5rem - 9rem); overflow-y: auto;
+    margin: 0; padding: 0.6rem 0.75rem; pointer-events: auto;
+    background: rgb(11 11 12 / 0.8); backdrop-filter: blur(8px);
+  }
+  .story-term-box .story-term-ru { font-size: 12.5px; }
+  .story-sub {
+    position: absolute; bottom: 4.6rem;
+    left: max(1rem, env(safe-area-inset-left)); right: max(1rem, env(safe-area-inset-right));
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.95);
+  }
+  .story-sub .story-line-text { font-size: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .story-controls {
+    position: absolute; inset-inline: 0; bottom: 0; z-index: 3;
+    padding: 1.25rem max(1rem, env(safe-area-inset-right)) max(0.4rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+    background: linear-gradient(to top, rgb(0 0 0 / 0.8), transparent);
+  }
+  .story-controls-row { margin-top: 0.35rem; }
+  .story-controls .story-btn { width: 2.25rem; height: 2.25rem; }
+  .story-controls .story-btn-main { width: 2.75rem; height: 2.75rem; font-size: 1rem; }
+
+  /* Обложка: кадр слева, описание справа — кнопка «Смотреть» сразу на экране. */
+  .story-intro { flex-direction: row; overflow: hidden; }
+  .story-intro-cover { width: 50%; height: 100%; aspect-ratio: auto; margin: 0; border-radius: 0; }
+  .story-intro-info { width: 50%; overflow-y: auto; padding-top: max(0.5rem, env(safe-area-inset-top)); padding-right: max(1.25rem, env(safe-area-inset-right)); }
+}
+
+/* Невысокий телефон стоя (iPhone SE): кадр держит 16:9, текст помельче и листается;
+   реплика — сразу под кадром, карточка термина — под ней (реплика важнее). */
+@media (orientation: portrait) and (max-height: 700px) {
+  .story-below { display: flex; flex-direction: column; }
+  .story-sub { order: -1; margin-bottom: 0.75rem; }
+  .story-term-box .story-term-ru { font-size: 13px; }
+  .story-sub .story-line-text { font-size: 15px; }
+}

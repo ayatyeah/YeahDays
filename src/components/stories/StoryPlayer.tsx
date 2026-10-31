@@ -55,6 +55,12 @@ function poseAt(elapsed: number, count: number, line: number): number {
   return k < count ? k : period - k;
 }
 
+/** Ориентация экрана: lock/unlock есть не везде, а в типах DOM их уже нет. */
+function orientation() {
+  if (typeof screen === "undefined") return undefined;
+  return screen.orientation as (ScreenOrientation & { lock?: (type: string) => Promise<void>; unlock?: () => void }) | undefined;
+}
+
 export default function StoryPlayer({ story, timings }: { story: Story; timings: Record<string, SceneTiming> }) {
   const router = useRouter();
   const lines = useMemo(() => story.scenes.map((s) => timeline(s, timings[s.id])), [story, timings]);
@@ -99,6 +105,43 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
       document.body.style.overflow = prev;
     };
   }, []);
+
+  // Пока открыт плеер, экран может поворачиваться: установленное приложение
+  // манифест держит стоя, а историю удобно смотреть и боком. Где lock не
+  // умеют (Safari, обычная вкладка браузера), промис отклоняется — это норма.
+  useEffect(() => {
+    const o = orientation();
+    o?.lock?.("any").catch(() => {});
+    return () => {
+      try {
+        o?.unlock?.();
+      } catch {
+        /* нечего возвращать */
+      }
+    };
+  }, []);
+
+  // Во весь экран — где браузер умеет показывать так не только видео (Android, компьютер; на iPhone — нет).
+  const root = useRef<HTMLDivElement>(null);
+  const [canFull, setCanFull] = useState(false);
+  const [full, setFull] = useState(false);
+  useEffect(() => {
+    setCanFull(Boolean(document.fullscreenEnabled && root.current?.requestFullscreen));
+    const sync = () => setFull(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, [host]);
+  async function fullscreen() {
+    const o = orientation();
+    if (document.fullscreenElement) {
+      await document.exitFullscreen().catch(() => {});
+      o?.lock?.("any").catch(() => {});
+      return;
+    }
+    await root.current?.requestFullscreen?.({ navigationUI: "hide" }).catch(() => {});
+    // В полноэкранном режиме Android разрешает развернуть экран боком.
+    o?.lock?.("landscape").catch(() => {});
+  }
 
   // Следующие кадры — заранее, чтобы наплыв не ждал сети.
   useEffect(() => {
@@ -179,6 +222,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
 
   function exit() {
     audio.current?.pause();
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     if (window.history.length > 1) router.back();
     else router.push("/learn#learning-stories");
   }
@@ -229,12 +273,12 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
 
   if (!host) return null;
   return createPortal(
-    <div className="fixed inset-0 z-[200] flex flex-col bg-[#0b0b0c] text-white" role="dialog" aria-modal="true" aria-label={`История: ${story.title}`}>
+    <div ref={root} className="fixed inset-0 z-[200] flex flex-col bg-[#0b0b0c] text-white" role="dialog" aria-modal="true" aria-label={`История: ${story.title}`}>
       <audio ref={audio} preload="auto" onEnded={sceneEnded} />
 
       {phase === "intro" && (
-        <div className="flex flex-1 flex-col overflow-y-auto">
-          <div className="relative aspect-video w-full shrink-0 overflow-hidden sm:mx-auto sm:mt-6 sm:max-w-3xl sm:rounded-3xl">
+        <div className="story-intro flex flex-1 flex-col overflow-y-auto">
+          <div className="story-intro-cover relative aspect-video w-full shrink-0 overflow-hidden sm:mx-auto sm:mt-6 sm:max-w-3xl sm:rounded-3xl">
             <div className="story-shot" data-kb="0" style={{ animationDuration: "18s" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={frameSrc(story, story.cover)} alt="" className="story-pose" />
@@ -242,7 +286,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
             <div className="absolute inset-0 bg-gradient-to-t from-[#0b0b0c] via-transparent to-transparent" />
             <button onClick={exit} className="absolute left-3 top-[max(0.75rem,env(safe-area-inset-top))] grid h-10 w-10 place-items-center rounded-full bg-black/50 text-lg backdrop-blur" aria-label="Закрыть историю">✕</button>
           </div>
-          <div className="mx-auto w-full max-w-3xl px-5 pb-10">
+          <div className="story-intro-info mx-auto w-full max-w-3xl px-5 pb-10">
             <p className="mt-4 text-xs font-semibold uppercase tracking-widest text-white/60">{story.lecture.label}</p>
             <h1 className="mt-2 text-3xl font-bold leading-tight" lang="ru">{story.title}</h1>
             <p className="mt-2 text-white/70" lang="ru">{story.subtitle}</p>
@@ -268,22 +312,25 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
       )}
 
       {phase === "play" && (
-        <>
-          <header className="flex items-center gap-2 px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <div className="story-play flex min-h-0 flex-1 flex-col">
+          <header className="story-bar flex items-center gap-2 px-3 pb-2 pt-[max(0.75rem,env(safe-area-inset-top))]">
             <button onClick={exit} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 text-lg" aria-label="Закрыть историю">✕</button>
             <p className="min-w-0 flex-1 truncate text-center text-xs font-semibold text-white/70">
               <span>{`Сцена ${scene + 1} из ${story.scenes.length} · `}</span>
               <span lang="ru">{current.title}</span>
             </p>
+            {canFull && (
+              <button onClick={fullscreen} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 text-base" aria-label={full ? "Выйти из полноэкранного режима" : "Во весь экран"}>{full ? "⤡" : "⤢"}</button>
+            )}
             <button onClick={() => setChapters(true)} className="h-10 shrink-0 rounded-full bg-white/10 px-3 text-xs font-semibold" aria-label="Сцены истории">☰ Сцены</button>
           </header>
 
-          <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+          <div className="story-main flex min-h-0 flex-1 flex-col items-center justify-center">
             <button
               type="button"
               onClick={toggle}
               aria-label={playing ? "Пауза" : "Смотреть дальше"}
-              className="relative aspect-video w-full max-w-[min(100%,calc((100dvh-300px)*16/9))] overflow-hidden sm:rounded-2xl"
+              className="story-stage relative aspect-video w-full max-w-[min(100%,calc((100dvh-300px)*16/9))] shrink-0 overflow-hidden sm:rounded-2xl"
             >
               {current.lines.map((l, i) => {
                 const poses = framePoses(story, l.frame);
@@ -303,7 +350,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
                   </div>
                 );
               })}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
+              <div className="story-stage-fade pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
               {!playing && (
                 <span className="absolute inset-0 grid place-items-center">
                   <span className="grid h-16 w-16 place-items-center rounded-full bg-black/55 text-3xl backdrop-blur">▶</span>
@@ -311,36 +358,36 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
               )}
             </button>
 
-            <div className="mt-3 w-full max-w-3xl flex-1 px-4">
+            <div className="story-below mt-3 min-h-0 w-full max-w-3xl flex-1 overflow-y-auto px-4">
               {term && (
-                <div key={`${scene}-${lineIdx}-${termIdx}`} className="story-term mb-3 rounded-2xl border border-amber-300/40 bg-amber-300/10 p-3">
+                <div key={`${scene}-${lineIdx}-${termIdx}`} className="story-term story-term-box mb-3 rounded-2xl border border-amber-300/40 bg-amber-300/10 p-3">
                   <p className="text-lg font-bold leading-tight text-amber-200" lang="en">{term.term}</p>
                   {term.full && <p className="text-sm text-amber-100/80" lang="en">{term.full}</p>}
-                  <p className="mt-1 text-sm leading-snug text-white/90" lang="ru">{term.ru}</p>
+                  <p className="story-term-ru mt-1 text-sm leading-snug text-white/90" lang="ru">{term.ru}</p>
                 </div>
               )}
-              <div aria-live="polite">
+              <div className="story-sub" aria-live="polite">
                 <p className={cn("text-xs font-semibold uppercase tracking-wider", colors[line.who])}>
                   <span lang="ru">{who?.name}</span>
                   {who?.role && <span className="ml-1.5 normal-case tracking-normal text-white/40" lang="en">{who.role}</span>}
                 </p>
-                <p className="mt-1 text-[17px] leading-snug" lang="ru">{line.text}</p>
+                <p className="story-line-text mt-1 text-[17px] leading-snug" lang="ru">{line.text}</p>
                 {tl.voiced && timings[current.id]?.lines[lineIdx]?.silent && <p className="mt-1 text-xs text-white/40">Эта реплика пока без голоса — озвучка появится позже.</p>}
               </div>
             </div>
           </div>
 
-          <footer className="px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
+          <footer className="story-controls px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
             <div className="mx-auto max-w-3xl">
               <div className="h-1 overflow-hidden rounded-full bg-white/15" role="progressbar" aria-label="Прогресс истории" aria-valuemin={0} aria-valuemax={Math.round(total)} aria-valuenow={Math.round(before + t)}>
                 <div className="h-full rounded-full bg-white" style={{ width: `${Math.min(100, ((before + t) / total) * 100)}%` }} />
               </div>
-              <div className="mt-3 flex items-center justify-between gap-3">
+              <div className="story-controls-row mt-3 flex items-center justify-between gap-3">
                 <span className="w-14 text-xs tabular-nums text-white/50">{clock(before + t)}</span>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => startScene(Math.max(0, scene - 1))} disabled={scene === 0} className="grid h-11 w-11 place-items-center rounded-full bg-white/10 disabled:opacity-30" aria-label="Предыдущая сцена">⏮</button>
-                  <button onClick={toggle} className="grid h-14 w-14 place-items-center rounded-full bg-white text-xl text-black" aria-label={playing ? "Пауза" : "Смотреть дальше"}>{playing ? "❚❚" : "▶"}</button>
-                  <button onClick={sceneEnded} className="grid h-11 w-11 place-items-center rounded-full bg-white/10" aria-label="Следующая сцена">⏭</button>
+                  <button onClick={() => startScene(Math.max(0, scene - 1))} disabled={scene === 0} className="story-btn grid h-11 w-11 place-items-center rounded-full bg-white/10 disabled:opacity-30" aria-label="Предыдущая сцена">⏮</button>
+                  <button onClick={toggle} className="story-btn-main grid h-14 w-14 place-items-center rounded-full bg-white text-xl text-black" aria-label={playing ? "Пауза" : "Смотреть дальше"}>{playing ? "❚❚" : "▶"}</button>
+                  <button onClick={sceneEnded} className="story-btn grid h-11 w-11 place-items-center rounded-full bg-white/10" aria-label="Следующая сцена">⏭</button>
                 </div>
                 <span className="w-14 text-right text-xs tabular-nums text-white/50">{clock(total)}</span>
               </div>
@@ -365,7 +412,7 @@ export default function StoryPlayer({ story, timings }: { story: Story; timings:
               </ol>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {phase === "end" && (

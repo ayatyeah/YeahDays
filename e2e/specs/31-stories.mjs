@@ -132,3 +132,44 @@ test("Истории: лекция 7 — «Последний спринт Са�
   check(paused && at === true && resumed, "пробел — пауза и снова дальше");
   await browser.close();
 });
+
+test("Истории: лекция 8 — финал «ХроноЕрнар» открывается кнопкой у лекции в ивенте и идёт с первой реплики", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await openSection(page, "/events/project-management-test-2");
+  await page.getByRole("region", { name: "Твой маршрут" }).waitFor({ timeout: 15_000 });
+  await page.getByRole("navigation", { name: "Лекции" }).getByRole("button", { name: /^8 · / }).tap();
+  await page.locator('details[id="route-pm-l8"]').getByRole("link", { name: /📖 История лекции/ }).tap();
+  await page.waitForURL(/\/stories\/pm-l8-chronoyernar/, { timeout: 15_000 });
+  const player = page.getByRole("dialog", { name: /История: ХроноЕрнар/ });
+  await player.waitFor({ timeout: 15_000 });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await player.getByText(/Где-то в Алматы/).waitFor({ timeout: 10_000 });
+  const frame = await page.locator(".story-shot[data-kb] img").first().evaluate((img) => img.complete && img.naturalWidth > 0);
+  check(frame, "кадр подвала загрузился");
+  await browser.close();
+});
+
+test("Истории: телефон боком — кадр на весь экран, субтитры и кнопки поверх него; стоя — снова 16:9", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user, engine: "chromium" });
+  await openSection(page, "/stories/pm-l4-quickbite");
+  const player = page.getByRole("dialog", { name: /История: QuickBite/ });
+  await player.waitFor({ timeout: 15_000 });
+  await player.getByRole("button", { name: "▶ Смотреть" }).tap();
+  await player.getByText(/Это история команды QuickBite/).waitFor({ timeout: 10_000 });
+  // Поворот: размеры iPhone 13 боком.
+  await page.setViewportSize({ width: 844, height: 390 });
+  await page.waitForTimeout(500);
+  const land = await page.evaluate(() => {
+    const r = (sel) => document.querySelector(sel)?.getBoundingClientRect();
+    const stage = r(".story-stage"), sub = r(".story-sub"), controls = r(".story-controls");
+    return { stage: stage && stage.height >= innerHeight - 2 && stage.width >= innerWidth - 2, sub: sub && sub.bottom <= innerHeight && sub.top > innerHeight / 2, controls: controls && controls.bottom <= innerHeight + 1 };
+  });
+  check(land.stage && land.sub && land.controls, `боком: кадр на весь экран, субтитры и кнопки на экране (${JSON.stringify(land)})`);
+  await page.setViewportSize({ width: 390, height: 664 });
+  await page.waitForTimeout(500);
+  const ratio = await page.evaluate(() => { const r = document.querySelector(".story-stage").getBoundingClientRect(); return r.width / r.height; });
+  check(Math.abs(ratio - 16 / 9) < 0.05, `стоя кадр снова 16:9 (${ratio.toFixed(2)})`);
+  await browser.close();
+});

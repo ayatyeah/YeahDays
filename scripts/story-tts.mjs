@@ -148,8 +148,10 @@ async function elevenSpeak(line, cast, key) {
     if (r.ok) return { data: Buffer.from(await r.arrayBuffer()), wav: true };
     const t = await r.text();
     if (/quota_exceeded|insufficient|exceeds your/i.test(t)) throw new Exhausted("кредиты ElevenLabs кончились");
-    // 429 — слишком много запросов разом, 5xx и сеть — подождать и повторить.
-    if (r.status === 429 || r.status >= 500 || r.status === 0) {
+    // 429 — слишком много запросов разом, 409 — голос из библиотеки ещё
+    // подключается к аккаунту (первые запросы новым голосом параллельно),
+    // 5xx и сеть — подождать и повторить.
+    if (r.status === 429 || r.status === 409 || r.status >= 500 || r.status === 0) {
       await new Promise((ok) => setTimeout(ok, 4000 * (attempt + 1)));
       continue;
     }

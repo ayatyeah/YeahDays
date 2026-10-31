@@ -53,8 +53,43 @@ export function tabIndex(tab: TabKey): number {
   return i < 0 ? 0 : i;
 }
 
-/** Соседний раздел в направлении свайпа (null — край). */
-export function neighbourTab(tab: TabKey, dir: 1 | -1): TabKey | null {
-  const next = tabIndex(tab) + dir;
-  return TABS[next] ?? null;
+
+/**
+ * Пункты нижнего меню по порядку. «Учёба» и «Вместе» — отдельные страницы,
+ * остальные — разделы оболочки.
+ */
+export const NAV_ORDER = ["today", "learn", "community", "progress", "account"] as const;
+
+export type NavKey = (typeof NAV_ORDER)[number];
+
+/**
+ * Какой пункт меню горит, когда открыт раздел оболочки.
+ *
+ * «Колода» (/app — туда ведут регистрация, вход и ярлык приложения) и
+ * календарь в меню своих пунктов не имеют: их открывают из «Сегодня».
+ * Раньше на них не горело ничего, и человек сразу после регистрации
+ * оказывался на экране «ниоткуда», а «Сегодня» выглядел вторым, другим
+ * главным экраном.
+ */
+export function navKeyForTab(tab: TabKey): NavKey {
+  return tab === "home" || tab === "calendar" ? "today" : tab;
+}
+
+export type SwipeTarget = { tab: TabKey } | { href: string };
+
+/**
+ * Куда ведёт горизонтальный свайп по разделу — строго в порядке меню.
+ *
+ * Раньше свайп ходил по внутреннему списку разделов (колода → сегодня →
+ * календарь → прогресс → профиль): из «Сегодня» влево открывался
+ * календарь, хотя в меню следующей стоит «Учёба». Теперь соседи те же, что
+ * в меню; «Учёба» и «Вместе» открываются переходом на страницу. С колоды
+ * и календаря свайпа нет — это подэкраны «Сегодня», а не пункты меню.
+ */
+export function swipeTarget(tab: TabKey, dir: 1 | -1): SwipeTarget | null {
+  const i = (NAV_ORDER as readonly string[]).indexOf(tab);
+  if (i < 0) return null;
+  const next = NAV_ORDER[i + dir];
+  if (!next) return null;
+  return next === "learn" || next === "community" ? { href: `/${next}` } : { tab: next };
 }

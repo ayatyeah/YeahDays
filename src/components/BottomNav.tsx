@@ -5,7 +5,7 @@ import { haptic } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 import { useUserStore, useHydrated, selectToday } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
-import { TAB_PATH, tabFromPath } from "@/lib/nav";
+import { TAB_PATH, navKeyForTab, tabFromPath } from "@/lib/nav";
 import { useEffect, useMemo } from "react";
 import { useKeyboardInset } from "@/lib/useKeyboardInset";
 import {
@@ -87,7 +87,7 @@ export default function BottomNav() {
                   )
                 : key === "community"
                   ? pathname === "/community"
-                  : section !== null && tab === key;
+                  : section !== null && navKeyForTab(tab) === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
             return (
               <button

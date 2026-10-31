@@ -18,15 +18,15 @@ import { check, checkText, checkVisible, newUser, openSection, session, sql, tes
 
 /** Все пять вкладок в том же порядке, что и в панели. */
 const TABS = [
-  { label: "Главная", path: "/app" },
   { label: "Сегодня", path: "/today" },
-  { label: "Календарь", path: "/calendar" },
+  { label: "Учёба", path: "/learn" },
+  { label: "Вместе", path: "/community" },
   { label: "Прогресс", path: "/progress" },
   { label: "Профиль", path: "/account" },
 ];
 
-/** Нижняя панель. Боковая навигация на телефоне скрыта, берём видимую. */
-const bottomNav = (page) => page.locator("nav:visible").first();
+/** Нижняя панель. Не «первый видимый nav»: у «Учёбы» и «Вместе» свои вкладки-навигации выше по странице. */
+const bottomNav = (page) => page.locator("nav.yg-bottom-nav");
 
 /** Открытая шторка целиком (портал в body): затемнение + лист. */
 const sheet = (page) => page.locator("div.fixed.inset-0.z-50").last();
@@ -133,17 +133,28 @@ test("Навигация: пять вкладок переключаются, а
   await checkVisible(nav, "нижняя панель на месте");
 
   for (const { label, path } of TABS) {
-    await nav.getByRole("button", { name: label, exact: true }).tap();
+    // Перед «Учёбой» и «Вместе» панель перерисовывается вместе со страницей.
+    await bottomNav(page).getByRole("button", { name: label, exact: true }).tap();
     await page.waitForURL((u) => u.pathname === path, { timeout: 10_000 });
     check(new URL(page.url()).pathname === path, `«${label}» открывает ${path}`);
 
-    const active = nav.locator('button[aria-current="page"]');
+    const active = bottomNav(page).locator('button[aria-current="page"]');
     check((await active.count()) === 1, `подсвечена ровно одна вкладка на ${path}`);
     check(
-      (await active.getAttribute("aria-label")) === label,
+      (await active.getAttribute("aria-label"))?.startsWith(label),
       `подсвечена именно «${label}»`,
     );
   }
+
+  // Колода (/app — сюда ведут регистрация и ярлык) — подэкран «Сегодня»:
+  // раньше на ней не горел ни один пункт.
+  await openSection(page, "/app");
+  const onDeck = bottomNav(page).locator('button[aria-current="page"]');
+  check((await onDeck.count()) === 1, "на колоде подсвечен пункт меню");
+  check((await onDeck.getAttribute("aria-label"))?.startsWith("Сегодня"), "колода считается частью «Сегодня»");
+  await onDeck.tap();
+  await page.waitForURL((u) => u.pathname === "/today", { timeout: 10_000 });
+  check(true, "«Сегодня» с колоды открывает план дня");
 
   await browser.close();
 });
@@ -151,7 +162,7 @@ test("Навигация: пять вкладок переключаются, а
 test("Навигация: горизонтальный свайп по экрану меняет раздел", async () => {
   const user = await newUser();
   const { browser, page } = await session({ user });
-  // «Прогресс» стоит между «Календарём» и «Профилем» — с него проверяются
+  // «Прогресс» стоит между «Вместе» и «Профилем» — с него проверяются
   // оба направления, и на нём нет колоды, которая забирает жест себе.
   await openSection(page, "/progress");
 
@@ -171,6 +182,12 @@ test("Навигация: горизонтальный свайп по экра�
     "Прогресс",
     "панель внизу догнала свайп",
   );
+
+  // Ещё вправо — «Вместе», как в меню. Раньше свайп ходил по своему
+  // списку и из «Прогресса» уводил в календарь, которого в меню нет.
+  await swipe(page.locator("[data-section-active]"), [80, 420], [300, 416]);
+  await page.waitForURL((u) => u.pathname === "/community", { timeout: 10_000 });
+  check(true, "свайп вправо с «Прогресса» открыл «Вместе» — соседа по меню");
 
   await browser.close();
 });
@@ -243,22 +260,23 @@ test("Профиль: переключатель тёмной темы реал�
   const themeAttr = () => page.evaluate(() => document.documentElement.dataset.theme ?? "");
 
   const before = await bg();
-  check((await themeAttr()) !== "light", "по умолчанию тема тёмная");
+  // С монохромного редизайна приложение по умолчанию светлое.
+  check((await themeAttr()) === "light", "по умолчанию тема светлая");
 
   await page.getByRole("button", { name: "Настройки" }).tap();
   await sheetPanel(page).waitFor({ state: "visible", timeout: 10_000 });
   const toggle = sheetPanel(page).getByRole("switch", { name: "Тёмная тема" });
-  check((await toggle.getAttribute("aria-checked")) === "true", "переключатель стоит на тёмной");
+  check((await toggle.getAttribute("aria-checked")) === "false", "переключатель тёмной темы выключен");
 
   await toggle.tap();
-  await until(async () => (await themeAttr()) === "light", "html переоделся в светлую тему");
+  await until(async () => (await themeAttr()) !== "light", "html переоделся в тёмную тему");
   const after = await bg();
   check(after !== before, `фон страницы поменялся (${before} → ${after})`);
-  check((await toggle.getAttribute("aria-checked")) === "false", "переключатель погас");
+  check((await toggle.getAttribute("aria-checked")) === "true", "переключатель загорелся");
 
   // И обратно — переключение работает в обе стороны.
   await toggle.tap();
-  await until(async () => (await themeAttr()) !== "light", "вернулись к тёмной теме");
+  await until(async () => (await themeAttr()) === "light", "вернулись к светлой теме");
   check((await bg()) === before, "фон вернулся к исходному");
 
   await browser.close();

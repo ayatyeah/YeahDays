@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import TodaySkeleton from "@/components/dayflow/TodaySkeleton";
 import { LogoLoader } from "@/components/Logo";
 import MascotGuide from "@/components/MascotGuide";
@@ -17,7 +17,7 @@ import { useNavStore } from "@/store/useNavStore";
 import { useUserStore, useHydrated } from "@/store/useUserStore";
 import { haptic } from "@/lib/motion";
 import { cn } from "@/lib/cn";
-import { TABS, neighbourTab, type TabKey } from "@/lib/nav";
+import { TABS, swipeTarget, type TabKey } from "@/lib/nav";
 
 /**
  * Оболочка приложения: пять разделов в одном экране.
@@ -70,6 +70,7 @@ const EDGE_GUARD = 20;
 
 export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   const pathname = usePathname();
+  const router = useRouter();
   const hydrated = useHydrated();
   const onboarded = useUserStore((s) => s.onboarded);
   const tab = useNavStore((s) => s.tab);
@@ -200,7 +201,7 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       const el = activeEl();
       if (!el) return;
       // у края списка разделов тянется вязко — граница ощущается, а не молчит
-      const edge = !neighbourTab(useNavStore.getState().tab, dx < 0 ? 1 : -1);
+      const edge = !swipeTarget(useNavStore.getState().tab, dx < 0 ? 1 : -1);
       const shift = dx * (edge ? 0.18 : 0.42);
       el.style.transform = `translate3d(${shift}px, 0, 0)`;
       el.style.willChange = "transform";
@@ -221,12 +222,13 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
       }
 
       if (Math.abs(dx) < SWIPE_DISTANCE) return;
-      const next = neighbourTab(useNavStore.getState().tab, dx < 0 ? 1 : -1);
+      const next = swipeTarget(useNavStore.getState().tab, dx < 0 ? 1 : -1);
       if (!next) return;
       haptic("select");
-      go(next);
+      if ("tab" in next) go(next.tab);
+      else router.push(next.href);
     },
-    [activeEl, go],
+    [activeEl, go, router],
   );
 
   const onTouchEnd = useCallback(

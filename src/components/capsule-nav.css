@@ -108,6 +108,20 @@
   outline: 2px solid var(--color-fg);
   outline-offset: 3px;
 }
+/* Узкие телефоны (320–360): активная подпись не влезала — «Прогресс»
+   обрезался до «Прогре». Неактивные вкладки упираются в минимум 44px, так
+   что место берём у полей капсулы, а не у областей нажатия. */
+@media (max-width: 360px) {
+  .yg-app .yg-bottom-nav.yg-capsule {
+    padding-inline: 6px;
+  }
+  .yg-capsule-bar {
+    padding: 3px;
+  }
+  .yg-capsule-items {
+    gap: 0;
+  }
+}
 @media (hover: hover) {
   .yg-app .yg-capsule-tab:not([aria-current]):hover {
     background: var(--color-surface-2);

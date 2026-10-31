@@ -24,6 +24,10 @@ import type { Lang, StudyEvent } from "@/lib/events/types";
  *
  * Рисуются только соседние экраны: в ленте всех частей их сотни.
  * Выводится порталом в body — как лента роликов, поверх нижней навигации.
+ *
+ * В ленте все части ивента, открывается она на выбранной. «☰» — оглавление:
+ * любая лекция и часть одним нажатием. Раньше лента начиналась с выбранной
+ * части и шла только вперёд, и до лекции 8 листали сотни экранов.
  */
 
 type Item =
@@ -72,10 +76,8 @@ export default function ScrollStudy({
   onFinal: () => void;
   onExit: () => void;
 }) {
-  const parts = useMemo(() => {
-    const all = steps(event).filter((s) => s.kind === "part");
-    return all.slice(Math.max(0, all.findIndex((s) => s.id === start.id)));
-  }, [event, start.id]);
+  const parts = useMemo(() => steps(event).filter((s) => s.kind === "part"), [event]);
+  const [contents, setContents] = useState(false);
 
   const items = useMemo(() => {
     const out: Item[] = [];
@@ -96,8 +98,9 @@ export default function ScrollStudy({
     memory.current = loadScroll(userId, event.id);
     const { at, places, tests } = memory.current;
     const place = at?.step === start.id ? at : places[start.id];
-    const index = place ? items.findIndex((it) => matches(it, place)) : -1;
-    return { index: Math.max(0, index), tests };
+    const found = place ? items.findIndex((it) => matches(it, place)) : -1;
+    const cover = items.findIndex((it) => it.kind === "cover" && it.step.id === start.id);
+    return { index: found >= 0 ? found : Math.max(0, cover), resumed: found >= 0 && found !== cover, tests };
   });
   // Вопросы части тянутся при первом подходе к ней и живут, пока тест не начат заново.
   const [quizzes, setQuizzes] = useState<Record<string, QuizQuestion[]>>(() => Object.fromEntries(Object.entries(restored.tests).map(([id, t]) => [id, t.quiz])));
@@ -105,7 +108,7 @@ export default function ScrollStudy({
   const sent = useRef(new Set<string>());
   // Сразу с сохранённого места: иначе первым делом запомнилась бы обложка части.
   const [active, setActive] = useState(restored.index);
-  const [resumed, setResumed] = useState(restored.index > 0);
+  const [resumed, setResumed] = useState(restored.resumed);
   const box = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -187,6 +190,17 @@ export default function ScrollStudy({
   function scrollTo(index: number) {
     const root = box.current;
     if (root) root.scrollTo({ top: index * root.clientHeight, behavior: "smooth" });
+  }
+  /** Из оглавления — сразу на обложку части, без плавной прокрутки через сотни экранов. */
+  function jumpTo(step: Step) {
+    const index = items.findIndex((it) => it.kind === "cover" && it.step.id === step.id);
+    const root = box.current;
+    setContents(false);
+    setResumed(false);
+    if (root && index >= 0) {
+      root.scrollTop = index * root.clientHeight;
+      setActive(index);
+    }
   }
   const indexOf = (match: (item: Item) => boolean) => items.findIndex(match);
 
@@ -388,6 +402,7 @@ export default function ScrollStudy({
         <button className="pointer-events-auto grid h-10 w-10 place-items-center rounded-full bg-[var(--color-surface-2)] text-lg" onClick={onExit} aria-label="Закрыть scroll-mode">✕</button>
         <p className="min-w-0 flex-1 truncate text-center text-xs font-semibold text-[var(--color-muted)]">{currentStep ? where(currentStep) : ""}</p>
         <div className="pointer-events-auto flex gap-1.5 text-xs">
+          <button className="h-8 rounded-full bg-[var(--color-surface-2)] px-3 font-semibold" onClick={() => setContents(true)} aria-label="Оглавление: лекции и части">☰ Части</button>
           <button className="h-8 rounded-full bg-[var(--color-surface-2)] px-3" onClick={onLang}>{lang === "en" ? "RU" : "EN"}</button>
           <button className="h-8 rounded-full bg-[var(--color-surface-2)] px-3" onClick={() => currentStep && onNormal(currentStep)}>📖 Обычный</button>
         </div>
@@ -404,6 +419,38 @@ export default function ScrollStudy({
           >
             С начала части
           </button>
+        </div>
+      )}
+      {contents && (
+        <div className="absolute inset-0 z-40 flex flex-col bg-[var(--color-bg)]" role="dialog" aria-modal="true" aria-label="Оглавление">
+          <div className="flex items-center justify-between gap-2 border-b border-[var(--color-border)] p-3">
+            <p className="font-semibold">Лекции и части</p>
+            <button className="grid h-10 w-10 place-items-center rounded-full bg-[var(--color-surface-2)] text-lg" onClick={() => setContents(false)} aria-label="Закрыть оглавление">✕</button>
+          </div>
+          <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-10">
+            {event.lectures.map((lecture, li) => (
+              <section key={lecture.id} className="mt-5">
+                <h2 className="text-sm font-bold">{lecture.title[lang]}</h2>
+                <ol className="mt-2 space-y-1.5">
+                  {parts.filter((p) => p.lecture === li).map((step) => (
+                    <li key={step.id}>
+                      <button
+                        onClick={() => jumpTo(step)}
+                        aria-current={currentStep?.id === step.id ? "true" : undefined}
+                        className={cn(
+                          "flex w-full items-center justify-between gap-3 rounded-2xl border p-3 text-left text-sm",
+                          currentStep?.id === step.id ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]" : "border-[var(--color-border)]",
+                        )}
+                      >
+                        <span className="min-w-0 break-words">{`${step.part! + 1}. ${step.title[lang]}`}</span>
+                        <span className="shrink-0 text-xs tabular-nums text-[var(--color-muted)]">{progress[step.id] ? percent(progress[step.id].best) : currentStep?.id === step.id ? "сейчас" : ""}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+          </div>
         </div>
       )}
       <div ref={box} className="h-[100dvh] snap-y snap-mandatory overflow-y-auto overscroll-contain [scrollbar-width:none]">

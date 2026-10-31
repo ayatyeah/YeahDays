@@ -1,12 +1,13 @@
 import type { Term, Text } from "../types";
 
 /*
- * Глоссарий и шпаргалка ивента «Project Management — MCQ Test 2» (лекции 4–10).
- * Формулировки — как в конспектах l4–l10.ts и на слайдах. Где слайды расходятся
+ * Глоссарий и шпаргалка ивента «Project Management — MCQ Test 2» (лекции 4–8:
+ * так в описании теста; конспекты лекций 9–10 лежат в ивенте отдельным
+ * блоком «вне теста», и их термины и строки шпаргалки отсюда убраны).
+ * Формулировки — как в конспектах l4–l8.ts и на слайдах. Где слайды расходятся
  * с общепринятым, держимся решений конспектов: Scrum — по Scrum Guide 2020
- * (лекция 7), EAC = BAC / CPI, INVEST — «Sized Appropriately», MoSCoW —
- * «Would like to have, but not this time», в таблице 7 потерь lean на слайде
- * шесть строк (нет Waiting).
+ * (лекция 7), EAC = BAC / CPI, INVEST — «Sized Appropriately», в таблице
+ * 7 потерь lean на слайде шесть строк (нет Waiting).
  */
 
 const t = (term: string, en: string, ru: string): Term => ({ term, def: { en, ru } });
@@ -84,38 +85,12 @@ export const glossary: Term[] = [
   t("INVEST", "Quality criteria for user stories: Independent, Negotiable, Valuable, Estimable, Sized Appropriately (completed in one iteration), Testable (validated objectively by a stakeholder).", "Критерии качества историй INVEST: Independent (независимая), Negotiable (обсуждаемая), Valuable (ценная), Estimable (оцениваемая), Sized Appropriately (подходящего размера — на одну итерацию), Testable (проверяемая объективно стейкхолдером)."),
   t("3Cs", "The elements of a user story: Card (an optional title and the WHO / WHAT / WHY format), Conversation (the story intentionally does not capture everything and invokes discussion), Confirmation (acceptance criteria).", "Три C пользовательской истории: Card (карточка — необязательный заголовок и формат WHO / WHAT / WHY), Conversation (разговор — история намеренно неполна и вызывает обсуждение), Confirmation (подтверждение — критерии приёмки)."),
   t("Acceptance criteria", "Define the boundaries of a user story and help verify and validate that the solution met the need; identify the minimum amount of function; used primarily by the product owner and stakeholders; a basis for acceptance, regression and exploratory tests.", "Критерии приёмки (acceptance criteria): задают границы истории и помогают проверить, что решение закрыло потребность; определяют минимально нужную функциональность; используются в первую очередь владельцем продукта и стейкхолдерами; основа для приёмочных, регрессионных и исследовательских тестов."),
-  // Лекция 9: поставка ценности (Griffiths)
-  t("Return on investment (ROI)", "Measures the profitability of an investment by calculating the ratio of benefits received to the money invested, expressed as a percentage.", "Возврат инвестиций (ROI): измеряет прибыльность вложения как отношение полученных выгод к вложенным деньгам, в процентах."),
-  t("Net present value (NPV)", "The present value of a revenue stream (income minus costs) over a series of time periods. Present value is the value of a future amount in today's terms.", "Чистая приведённая стоимость (NPV): приведённая стоимость потока доходов (доходы минус затраты) за несколько периодов. Приведённая стоимость (present value) — ценность будущей суммы в сегодняшних деньгах."),
-  t("Internal rate of return (IRR)", "The discount rate at which the project inflows (revenues) and project outflows (costs) are equal.", "Внутренняя норма доходности (IRR): ставка дисконтирования, при которой притоки проекта (доходы) и оттоки (затраты) равны."),
-  t("Minimal viable product (MVP)", "A package of functionality that is complete enough to be useful to the users or market, but small enough that it doesn't represent the entire project; allows early return on investment and field-testing.", "Минимально жизнеспособный продукт (MVP): набор функций, достаточно полный, чтобы быть полезным пользователям или рынку, но достаточно малый, чтобы не быть всем проектом; даёт ранний возврат инвестиций и проверку в реальных условиях."),
-  t("Anti-value", "How agile sees negative project risks (threats): factors that have the potential to erode, remove, or reduce value if they occur. Agile teams plan risk avoidance and mitigation early.", "Антиценность (anti-value): так agile видит негативные риски (угрозы) — факторы, которые могут подорвать, убрать или уменьшить ценность, если случатся. Agile-команды заранее планируют избегание и снижение рисков."),
-  t("MoSCoW", "A prioritization scheme: Must have, Should have, Could have, Would like to have, but not this time (the slide's wording for W).", "MoSCoW — схема приоритизации: Must have (обязательно), Should have (желательно), Could have (можно), Would like to have, but not this time (хотелось бы, но не в этот раз — формулировка слайда для W)."),
-  t("Kano analysis", "Classifies customer preferences into categories: Delighters/Exciters, Satisfiers, Dissatisfiers, Indifferent.", "Анализ Кано (Kano analysis): делит предпочтения заказчика на категории — восхищающие (Delighters/Exciters), удовлетворяющие (Satisfiers), вызывающие недовольство при отсутствии (Dissatisfiers), безразличные (Indifferent)."),
-  t("100-point method", "Each stakeholder is given 100 points to vote for the most important requirements. Related schemes: Monopoly money (money equal to the project budget distributed among features) and dot voting.", "Метод 100 баллов: каждый стейкхолдер получает 100 баллов и голосует ими за самые важные требования. Родственные схемы: Monopoly money (игровые деньги на сумму бюджета распределяют по функциям) и голосование точками (dot voting)."),
-  t("WIP limits", "Limits on work in progress — work started but not yet completed. Kanban boards with WIP limits restrict the amount of work in the system at one time to optimize throughput and help identify and remove bottlenecks.", "Лимиты WIP: ограничения незавершённой работы (начатой, но не законченной). Канбан-доска с лимитами WIP ограничивает объём работы в системе одновременно, чтобы оптимизировать пропускную способность и находить узкие места."),
-  t("Little's Law", "Cycle time: the duration of a queue (how long it will take to complete the work) is proportional to its size (how much work is in progress): cycle time = WIP / throughput.", "Закон Литтла (Little's Law): время цикла — длительность очереди (сколько займёт выполнение работы) пропорциональна её размеру (сколько работы в процессе): cycle time = WIP / throughput."),
-  t("Theory of Constraints", "A tool to optimize a system around its bottleneck: identify the constraint, exploit it, subordinate all other processes to it, elevate it if more capacity is needed, and go back to step 1 without letting inertia become the constraint.", "Теория ограничений (Theory of Constraints): оптимизация системы вокруг узкого места — найти ограничение, использовать его по максимуму, подчинить ему остальные процессы, расширить его, если мощности мало, и вернуться к шагу 1, не давая инерции стать ограничением."),
-  t("Money for nothing and change for free", "Change for free: the customer may make changes at the end of an iteration if the total contracted work doesn't change and the customer works with the team on every iteration. Money for nothing: the customer may terminate early if there is not sufficient ROI in the backlog. Both require active business user involvement.", "«Деньги ни за что» и «изменения бесплатно»: change for free — заказчик меняет работу в конце итерации, если общий объём по контракту не меняется и заказчик работает с командой каждую итерацию; money for nothing — может досрочно завершить проект, если в бэклоге мало ROI. Оба варианта — только при активном участии бизнес-пользователей."),
-  t("Graduated fixed-price contract", "An agile contract in which both parties share some of the risk and reward associated with schedule variance.", "Ступенчатый контракт с фиксированной ценой (graduated fixed-price): обе стороны делят часть риска и выгоды, связанных с отклонением по срокам (schedule variance)."),
-  t("Test-driven development (TDD)", "Short test and feedback cycles; tests are written before the code. Red, Green, Refactor: write a test that initially fails, add code until the test passes, refactor the code.", "Разработка через тестирование (TDD): короткие циклы тестов и обратной связи; тест пишут до кода. Red, Green, Refactor: написать падающий тест, дописывать код, пока тест не пройдёт, затем рефакторинг."),
-  // Лекция 10: вовлечение стейкхолдеров (Griffiths)
-  t("Stakeholder stewardship", "Safeguards the project stakeholders and makes sure they have everything they need to succeed — as opposed to stakeholder management, which treats people as resources.", "Забота о стейкхолдерах (stakeholder stewardship): оберегает стейкхолдеров и следит, чтобы у них было всё нужное для успеха, — в отличие от управления стейкхолдерами (stakeholder management), где люди — ресурсы."),
-  t("Agile charter", "The first document produced for a project: describes its goal, purpose, composition and approach and provides authorization from the sponsor. Shorter and less detailed than a non-agile charter; focuses on how the project will be run; acknowledges that scope may change.", "Agile-устав (agile charter): первый документ проекта — цель, назначение, состав и подход; даёт разрешение спонсора. Короче и менее детален, чем традиционный; фокус на том, как будет вестись проект; признаёт, что объём может меняться."),
-  t("Information radiator", "A highly visible display of information: features delivered vs remaining, who is working on what, the current iteration's features, velocity and defect metrics, retrospective findings, threats and issues, story maps, burn charts.", "Информационный радиатор (information radiator): хорошо заметное отображение информации — поставленные и оставшиеся функции, кто чем занят, функции текущей итерации, скорость и дефекты, выводы ретроспектив, угрозы и проблемы, карты историй, burn-графики."),
-  t("Green zone / red zone", "A person in the green zone takes responsibility, responds non-defensively, is not easily threatened and attempts to build mutual success; a person in the red zone blames others, responds defensively, feels threatened and triggers defensiveness in others.", "Зелёная и красная зона: человек в зелёной зоне берёт ответственность на себя, реагирует без защитной позиции, его нелегко задеть, он строит общий успех; в красной — винит других, защищается, чувствует угрозу и провоцирует защитную реакцию у других."),
-  t("Emotional intelligence", "Our ability to identify, assess and influence the emotions of ourselves, other individuals and groups. Quadrants: self-awareness, self-management, social awareness, social skills; start by recognizing our own feelings.", "Эмоциональный интеллект: способность распознавать, оценивать и влиять на эмоции — свои, других людей и групп. Квадранты: самосознание, самоуправление, социальная осведомлённость, социальные навыки; начинать — с распознавания своих чувств."),
-  t("Active listening", "Hearing what someone is really trying to convey, rather than just the meaning of the words. Three levels: 1 internal listening, 2 focused listening, 3 global listening.", "Активное слушание: слышать то, что человек на самом деле хочет донести, а не только смысл слов. Три уровня: 1 — внутреннее (internal), 2 — сфокусированное (focused), 3 — глобальное (global) слушание."),
-  t("Levels of conflict", "Level 1 Problem to Solve, Level 2 Disagreement, Level 3 Contest, Level 4 Crusade, Level 5 World War. Some conflict is healthy; escalated conflict creates a negative and repressive environment.", "Уровни конфликта: 1 — задача для решения (Problem to Solve), 2 — разногласие (Disagreement), 3 — состязание (Contest), 4 — крестовый поход (Crusade), 5 — мировая война (World War). Немного конфликта полезно; эскалация создаёт негативную, подавляющую среду."),
-  t("Fist-of-five voting", "A participatory decision model that has the advantage of speed while allowing people to indicate their degree of agreement.", "Голосование «кулак — пять пальцев» (fist-of-five): модель совместного решения, быстрая и при этом позволяющая показать степень согласия."),
-  t("Highsmith's decision spectrum", "A participatory decision model that allows people to both indicate their support and express reservations at the same time.", "Спектр решений Хайсмита (Highsmith's decision spectrum): модель совместного решения, позволяющая одновременно выразить поддержку и высказать оговорки."),
-  t("Collaboration games", "Facilitated workshop techniques that give stakeholders a better understanding of complex issues: Remember the Future (vision), Prune the Product Tree (requirements), Speedboat (risks), Buy a Feature (prioritization), Bang-for-the-Buck (value vs cost).", "Игры для совместной работы (collaboration games): фасилитируемые техники воркшопов, помогающие стейкхолдерам понять сложные вопросы: Remember the Future (видение), Prune the Product Tree (требования), Speedboat (риски), Buy a Feature (приоритизация), Bang-for-the-Buck (ценность против стоимости)."),
 ];
 
-/** Шпаргалка «на одну страницу» по всему MCQ Test 2. */
+/** Шпаргалка «на одну страницу» по всему MCQ Test 2 (лекции 4–8). */
 export const cheatSheet: Text = {
   en: `## MCQ Test 2 on one page
-- **50 multiple-choice questions, 18 points**, Lectures 4–10 — about 7 questions per lecture. Answer with the slide wording.
+- **50 multiple-choice questions, 18 points**, Lectures 4–8 — about 10 questions per lecture. Answer with the slide wording.
 - Scrum: if Lecture 6 (Griffiths overview) and Lecture 7 (Scrum Guide 2020) disagree, **Lecture 7 wins**.
 ## L4 — Earned value (Kerzner)
 = CV = BCWP - ACWP
@@ -189,25 +164,9 @@ export const cheatSheet: Text = {
 ## L8 — Personas and user stories (BABOK Agile Extension)
 - Persona elements: long and short template, name and image, traits and characteristics, motivations, needs, differentiators.
 - **INVEST**: Independent, Negotiable, Valuable, Estimable, **Sized Appropriately**, Testable. **3Cs**: Card, Conversation, Confirmation.
-= As a <role>, I need to <feature> so that <goal or value>.
-## L9 — Value-driven delivery (Griffiths)
-- ROI = benefits / money invested, %; PV = future amount in today's terms; NPV = PV of a revenue stream; IRR = discount rate where inflows = outflows.
-- KPIs: rate of progress, remaining work, likely completion date = remaining work / rate, likely costs remaining = burn rate x remaining weeks.
-- MoSCoW: Must, Should, Could, **Would like to have, but not this time**. Also simple, Monopoly money, 100-point, dot voting, Kano (delighters/exciters, satisfiers, dissatisfiers, indifferent), requirements prioritization model (benefit, penalty, cost, risk, 1–9).
-- WIP: no ROI until accepted, hidden bottlenecks, rework risk. Little's Law: cycle time = WIP / throughput. CFD: in progress, remaining, completed.
-- Theory of Constraints: identify → exploit → subordinate → elevate → back to step 1.
-- Contracts: DSDM (fit for business purpose), money for nothing / change for free, graduated fixed-price (share schedule-variance risk and reward), fixed-price work packages, customized.
-- CI: source control, build tools, test tools, scheduler or trigger, notifications. TDD: red, green, refactor. ATDD: discuss, distill, develop, demo.
-## L10 — Stakeholder engagement (Griffiths)
-- Stewardship safeguards stakeholders; management treats people as resources. Scrum and XP share **respect** and **courage**.
-- Principles: right stakeholders, cement involvement, manage interest, discuss "done", show progress, candid estimates.
-- Shared vision: agile charters, definition of done, workshops, modeling, wireframes, personas.
-- Communication: face-to-face (highest bandwidth), two-way, knowledge sharing, information radiators, social media.
-- Brainstorming: quiet writing (5–7 minutes), round-robin, free-for-all. Games: Remember the Future, Prune the Product Tree, Speedboat, Buy a Feature, Bang-for-the-Buck.
-- Listening: 1 internal, 2 focused, 3 global. Conflict: 1 problem to solve, 2 disagreement, 3 contest, 4 crusade, 5 world war.
-- Decisions: simple voting, thumbs up/down/sideways, fist-of-five, Highsmith's decision spectrum.`,
+= As a <role>, I need to <feature> so that <goal or value>.`,
   ru: `## MCQ Test 2 на одной странице
-- **50 вопросов с выбором ответа, 18 баллов**, лекции 4–10 — примерно по 7 вопросов на лекцию. Отвечать формулировками слайдов.
+- **50 вопросов с выбором ответа, 18 баллов**, лекции 4–8 — примерно по 10 вопросов на лекцию. Отвечать формулировками слайдов.
 - Scrum: если лекция 6 (обзор по Griffiths) и лекция 7 (Scrum Guide 2020) расходятся, **права лекция 7**.
 ## Л4 — Освоенный объём (Kerzner)
 = CV = BCWP - ACWP
@@ -281,21 +240,5 @@ export const cheatSheet: Text = {
 ## Л8 — Персоны и пользовательские истории (BABOK Agile Extension)
 - Элементы персоны: длинный и короткий шаблон, имя и изображение, черты и характеристики, мотивация, потребности, отличия.
 - **INVEST**: Independent, Negotiable, Valuable, Estimable, **Sized Appropriately**, Testable. **3C**: Card, Conversation, Confirmation.
-= As a <role>, I need to <feature> so that <goal or value>.
-## Л9 — Поставка ценности (Griffiths)
-- ROI = выгоды / вложенные деньги, в %; PV — будущая сумма в сегодняшних деньгах; NPV — PV потока доходов; IRR — ставка дисконтирования, при которой притоки = оттокам.
-- KPI: темп прогресса, оставшаяся работа, вероятная дата завершения = оставшаяся работа / темп, вероятные оставшиеся затраты = burn rate x оставшиеся недели.
-- MoSCoW: Must, Should, Could, **Would like to have, but not this time**. Ещё: простая схема, Monopoly money, 100 баллов, dot voting, Kano (delighters/exciters, satisfiers, dissatisfiers, indifferent), requirements prioritization model (benefit, penalty, cost, risk, 1–9).
-- WIP: нет ROI до приёмки, скрытые узкие места, риск переделок. Закон Литтла: время цикла = WIP / throughput. CFD: в работе, осталось, готово.
-- Теория ограничений: найти → использовать → подчинить → расширить → снова к шагу 1.
-- Контракты: DSDM («fit for business purpose»), money for nothing / change for free, graduated fixed-price (делят риск и выгоду отклонения по срокам), fixed-price work packages, customized.
-- CI: контроль версий, сборка, тесты, планировщик или триггер, уведомления. TDD: red, green, refactor. ATDD: discuss, distill, develop, demo.
-## Л10 — Вовлечение стейкхолдеров (Griffiths)
-- Stewardship оберегает стейкхолдеров; management видит в людях ресурсы. Общие ценности Scrum и XP — **respect** и **courage**.
-- Принципы: нужные стейкхолдеры, закрепить участие, управлять интересом, обсуждать «done», показывать прогресс, честные оценки.
-- Общее видение: agile-уставы, definition of done, воркшопы, моделирование, вайрфреймы, персоны.
-- Коммуникация: лицом к лицу (самая широкая полоса), двусторонняя, обмен знаниями, информационные радиаторы, соцсети.
-- Мозговой штурм: quiet writing (5–7 минут), round-robin, free-for-all. Игры: Remember the Future, Prune the Product Tree, Speedboat, Buy a Feature, Bang-for-the-Buck.
-- Слушание: 1 внутреннее, 2 сфокусированное, 3 глобальное. Конфликт: 1 задача, 2 разногласие, 3 состязание, 4 крестовый поход, 5 мировая война.
-- Решения: простое голосование, большой палец вверх/вниз/вбок, fist-of-five, спектр решений Хайсмита.`,
+= As a <role>, I need to <feature> so that <goal or value>.`,
 };

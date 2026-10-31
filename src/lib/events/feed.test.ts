@@ -98,9 +98,11 @@ describe("лента: клипы", () => {
   it("счётчики роликов и подписи лент у настоящих ивентов", () => {
     const pm = EVENTS.find((e) => e.id === "project-management-test-2")!;
     const shelves = videoShelves(pm);
-    expect(shelves.count).toBe(78);
+    // В ленте — только лекции теста (4–8); ролики лекций 9–10 сняты вместе с ними.
+    expect(shelves.count).toBe(57);
+    expect(pm.videos!.length).toBe(57);
     expect(shelves.lectures.every((l) => l.count === l.parts.length * 3)).toBe(true);
-    expect(shelves.seconds).toBeGreaterThan(78 * 30);
+    expect(shelves.seconds).toBeGreaterThan(57 * 30);
     expect(scopeLabel(pm, { kind: "lecture", lecture: 0 })).toBe("Лекция 4 · Затраты и группы");
     expect(scopeLabel(pm, { kind: "part", lecture: 3, part: 1 })).toMatch(/^Лекция 7 · часть 2 · /);
     const cn = EVENTS.find((e) => e.id === "computer-networks-midterm")!;

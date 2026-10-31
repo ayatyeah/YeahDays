@@ -1,12 +1,16 @@
 import type { FastTrack } from "../types";
 
 /*
- * Фаст-мод PM: подготовка к MCQ Test 2 (50 вопросов, 18 баллов, лекции 4–10)
- * за 3 часа. Блоки идут от самых предсказуемых баллов (таймбоксы Scrum,
+ * Фаст-мод PM: подготовка к MCQ Test 2 (50 вопросов, 18 баллов, лекции 4–8)
+ * за 2,5 часа. Блоки идут от самых предсказуемых баллов (таймбоксы Scrum,
  * формулы EVM) к остальному; последний — чек-лист на 15 минут до теста.
- * Формулировки и числа — как в l4–l10.ts; Scrum — по Scrum Guide 2020
- * (лекция 7), EAC = BAC / CPI, INVEST — «Sized Appropriately», MoSCoW —
- * «Would like to have, but not this time».
+ * Формулировки и числа — как в l4–l8.ts; Scrum — по Scrum Guide 2020
+ * (лекция 7), EAC = BAC / CPI, INVEST — «Sized Appropriately».
+ *
+ * Лекции 9–10 в тест не входят (описание теста: «materials of lectures
+ * 4-8»): их блоки, MoSCoW со слайда 9, уровни конфликта, слушание и
+ * принципы вовлечения стейкхолдеров отсюда убраны. MoSCoW в лекции 6 —
+ * только «сверх слайда», при DSDM.
  */
 
 type Section = FastTrack["sections"][number];
@@ -17,7 +21,7 @@ const s1: Section = {
   minutes: 10,
   notes: {
     en: `## What MCQ Test 2 is
-- **50 multiple-choice questions, 18 points**, written at the practice session, in English. It covers **Lectures 4–10**: about **7 questions per lecture**, so no lecture can be skipped.
+- **50 multiple-choice questions, 18 points**, written at the practice session, in English. It covers **Lectures 4–8**: about **10 questions per lecture**, so no lecture can be skipped.
 - One question is worth about **0.36 points**: three careless mistakes cost more than a whole point.
 - Questions come from the slides: definitions, lists ("Which is NOT…"), formulas, timeboxes, "who is accountable for what", and short cases about IT teams.
 ## How to spend the time
@@ -32,17 +36,17 @@ const s1: Section = {
 - **Trap words.** "Always", "never", "only", "must", "all" usually make an agile option false. Real absolutes from the slides: **only the Product Owner** cancels a Sprint; the Daily Scrum is **15 minutes**; the Product Owner is **one person, not a committee**.
 - **"Which is NOT…"** — circle the NOT, then mark every option true or false against the list; the single false one is the answer.
 - **Neighbour swaps.** Wrong options are usually neighbouring concepts: CV vs SV, task force vs liaison department, Sprint Review vs Retrospective, MoSCoW vs Kano, responsibility vs accountability, intrarole vs interrole.
-- **Slide wording beats general knowledge**: S in INVEST = Sized Appropriately; W in MoSCoW = "Would like to have, but not this time"; EAC = BAC / CPI; Scrum by the 2020 Guide (Developers, accountabilities, self-managing).
+- **Slide wording beats general knowledge**: S in INVEST = Sized Appropriately; EAC = BAC / CPI; Scrum by the 2020 Guide (Developers, accountabilities, self-managing).
 - **Calculations**: write the formula first, then the numbers; check the sign (negative CV = over budget) and that CPI and SPI are ratios, not dollars.
 ## How this fast mode is built
-- Blocks 2–10 go from the most predictable points (Scrum timeboxes, EVM formulas) to the rest. Each ends with self-check questions: answer aloud before opening the answer.
-- Block 11 is the checklist for the last 15 minutes before the test.
+- Blocks 2–8 go from the most predictable points (Scrum timeboxes, EVM formulas) to the rest. Each ends with self-check questions: answer aloud before opening the answer.
+- Block 9 is the checklist for the last 15 minutes before the test.
 ?? An option says "Agile teams never write documentation". What is suspicious, and is it true?
 ?= The absolute "never". It is false: the Manifesto values working software over comprehensive documentation — the items on the right still have value.
 ?? "Which is NOT a Scrum event?" Options: Sprint Planning, Backlog Refinement, Daily Scrum, Sprint Review.
 ?= Backlog Refinement — in the 2020 Guide refinement is an ongoing activity, not an event.`,
     ru: `## Что такое MCQ Test 2
-- **50 вопросов с выбором ответа, 18 баллов**, пишется на практике, на английском. Охватывает **лекции 4–10**: примерно **по 7 вопросов на лекцию**, так что пропустить нельзя ни одну.
+- **50 вопросов с выбором ответа, 18 баллов**, пишется на практике, на английском. Охватывает **лекции 4–8**: примерно **по 10 вопросов на лекцию**, так что пропустить нельзя ни одну.
 - Один вопрос стоит около **0.36 балла**: три ошибки по невнимательности — это больше целого балла.
 - Вопросы берутся со слайдов: определения, списки («Which is NOT…»), формулы, таймбоксы, «кто за что отвечает» и короткие кейсы про IT-команды.
 ## Как распределить время
@@ -57,11 +61,11 @@ const s1: Section = {
 - **Слова-ловушки.** «Always», «never», «only», «must», «all» обычно делают agile-вариант неверным. Настоящие абсолюты слайдов: **только Product Owner** отменяет спринт; Daily Scrum — **15 минут**; Product Owner — **один человек, а не комитет**.
 - **«Which is NOT…»** — обведи NOT, затем отметь каждый вариант «верно/неверно» по списку; единственный неверный — ответ.
 - **Подмены соседями.** Неверные варианты — обычно соседние понятия: CV и SV, task force и liaison department, Sprint Review и Retrospective, MoSCoW и Kano, responsibility и accountability, intrarole и interrole.
-- **Формулировка слайда важнее общих знаний**: S в INVEST — Sized Appropriately; W в MoSCoW — «Would like to have, but not this time»; EAC = BAC / CPI; Scrum — по Guide 2020 (Developers, accountabilities, self-managing).
+- **Формулировка слайда важнее общих знаний**: S в INVEST — Sized Appropriately; EAC = BAC / CPI; Scrum — по Guide 2020 (Developers, accountabilities, self-managing).
 - **Расчёты**: сначала формула, потом числа; проверь знак (отрицательное CV — перерасход) и что CPI и SPI — отношения, а не доллары.
 ## Как устроен фаст-мод
-- Блоки 2–10 идут от самых предсказуемых баллов (таймбоксы Scrum, формулы EVM) к остальному. В конце каждого — вопросы самопроверки: отвечай вслух, прежде чем открыть ответ.
-- Блок 11 — чек-лист на последние 15 минут перед тестом.
+- Блоки 2–8 идут от самых предсказуемых баллов (таймбоксы Scrum, формулы EVM) к остальному. В конце каждого — вопросы самопроверки: отвечай вслух, прежде чем открыть ответ.
+- Блок 9 — чек-лист на последние 15 минут перед тестом.
 ?? Вариант гласит: «Agile teams never write documentation». Что подозрительно и верно ли это?
 ?= Абсолют «never». Утверждение неверно: манифест ценит работающий софт выше исчерпывающей документации — правая часть тоже ценна.
 ?? «Which is NOT a Scrum event?» Варианты: Sprint Planning, Backlog Refinement, Daily Scrum, Sprint Review.
@@ -661,180 +665,6 @@ const s8: Section = {
   },
 };
 
-const s9: Section = {
-  id: "pm-fast-9",
-  title: { en: "Lecture 9 — Value-driven delivery", ru: "Лекция 9 — поставка ценности" },
-  minutes: 20,
-  notes: {
-    en: `## Value first
-- Value-driven delivery drives all activities and decisions: ask "Which choice would add the most value for the business or customer?"
-- Deliver value early ("eat your dessert first"): a longer project increases the chances of failure; early value raises stakeholder confidence. Minimize waste.
-## Financial metrics
-| Metric | Slide definition |
-|---|---|
-| ROI | the ratio of benefits received to the money invested, expressed as a percentage |
-| Present value | the value of a future amount in today's terms |
-| NPV | the present value of a revenue stream (income minus costs) over a series of time periods |
-| IRR | the discount rate at which project inflows (revenues) and outflows (costs) are equal |
-- Business value is usually assessed in **financial terms**, by looking at the financial ramifications of **not doing** the project.
-- EVM on agile projects — pros: leading indicators, intuitive visual graphs; cons: the quality of the baseline is critical, the basis erodes as plans evolve, it doesn't show whether value is being delivered.
-## KPIs
-= Likely completion (weeks) = remaining work / rate of progress
-= Likely costs remaining = burn rate per week x remaining weeks
-- Rate of progress counts only work **completed and accepted by the product owner**. Example: 300 points remain, the team completes 25 per week → 12 weeks; at 15,000 per week → 180,000 remaining.
-## Prioritization schemes
-| Scheme | Key words |
-|---|---|
-| Simple | Priority 1, Priority 2… |
-| MoSCoW | Must have, Should have, Could have, Would like to have, but not this time |
-| Monopoly money | money equal to the project budget distributed among features |
-| 100-point method | each stakeholder gets 100 points to vote |
-| Dot voting | a predetermined number of dots per stakeholder |
-| Kano analysis | delighters/exciters, satisfiers, dissatisfiers, indifferent |
-| Requirements prioritization model | benefit, penalty, cost and risk rated 1–9, a weighted formula |
-@diagram pm9-kano
-## Flow
-- MVP: complete enough to be useful, small enough not to be the whole project; early ROI and field-testing. Delivering it fast gives early benefits, incremental funding, less economic value at stake, de-escalated disputes and agile contract models.
-- Excessive WIP: no ROI until it becomes an accepted product; hidden bottlenecks; risk of rework. WIP limits optimize throughput and expose bottlenecks.
-@diagram pm9-cfd
-- Little's Law: cycle time (the duration of a queue) is **proportional to** the amount of work in progress (its size).
-= Cycle time = WIP / throughput
-- Theory of Constraints: identify → exploit → subordinate → elevate → back to step 1 (don't let inertia become the constraint).
-## Contracts and testing
-- DSDM contract: "fit for business purpose" and passing tests, not matching a specification. Money for nothing (terminate early) and change for free (swap work, same total) — only with active business user involvement.
-- Graduated fixed-price: both parties share some of the risk and reward of schedule variance. Fixed-price work packages: the customer reprioritizes remaining work as costs evolve.
-- CI components: source code control, build tools, test tools, scheduler or trigger, notifications. TDD: red, green, refactor. ATDD: discuss, distill, develop, demo.
-@diagram pm9-tdd
-?? What does W stand for in MoSCoW on the slide?
-?= "Would like to have, but not this time".
-?? 400 points remain, the team completes 40 per week, the burn rate is 10,000 per week. Likely completion and remaining costs?
-?= 400 / 40 = 10 weeks; 10,000 x 10 = 100,000.`,
-    ru: `## Сначала ценность
-- Поставка ценности (value-driven delivery) определяет всю работу и решения: спрашивай «какой вариант даст больше всего ценности бизнесу или заказчику?».
-- Поставляй ценность рано («eat your dessert first»): чем длиннее проект, тем выше шанс провала; ранняя ценность повышает доверие стейкхолдеров. Сокращай потери.
-## Финансовые метрики
-| Метрика | Определение слайда |
-|---|---|
-| ROI | отношение полученных выгод к вложенным деньгам, в процентах |
-| Present value | ценность будущей суммы в сегодняшних деньгах |
-| NPV | приведённая стоимость потока доходов (доходы минус затраты) за несколько периодов |
-| IRR | ставка дисконтирования, при которой притоки (доходы) и оттоки (затраты) проекта равны |
-- Бизнес-ценность обычно оценивают в **финансовых показателях**, глядя на финансовые последствия того, что проект **не будет сделан**.
-- EVM в agile — плюсы: опережающие индикаторы, наглядные графики; минусы: критично качество базового плана, основа размывается по мере изменения планов, не показывает, поставляется ли ценность.
-## KPI
-= Likely completion (weeks) = remaining work / rate of progress
-= Likely costs remaining = burn rate per week x remaining weeks
-- Темп прогресса считает только работу, **завершённую и принятую владельцем продукта**. Пример: осталось 300 пунктов, команда делает 25 в неделю → 12 недель; при 15 000 в неделю → осталось потратить 180 000.
-## Схемы приоритизации
-| Схема | Ключевые слова |
-|---|---|
-| Простая | Priority 1, Priority 2… |
-| MoSCoW | Must have, Should have, Could have, Would like to have, but not this time |
-| Monopoly money | игровые деньги на сумму бюджета распределяют по функциям |
-| Метод 100 баллов | у каждого стейкхолдера 100 баллов для голосования |
-| Dot voting | заданное число точек на каждого стейкхолдера |
-| Анализ Кано | delighters/exciters, satisfiers, dissatisfiers, indifferent |
-| Requirements prioritization model | выгода, штраф, стоимость и риск по шкале 1–9, взвешенная формула |
-@diagram pm9-kano
-## Поток
-- MVP: достаточно полный, чтобы быть полезным, достаточно малый, чтобы не быть всем проектом; ранний ROI и проверка в реальных условиях. Быстрая поставка MVP даёт ранние выгоды, поэтапное финансирование, меньшую ценность под риском, смягчение споров и agile-модели контрактов.
-- Избыточный WIP: нет ROI, пока работа не стала принятым продуктом; скрытые узкие места; риск переделок. Лимиты WIP оптимизируют пропускную способность и вскрывают узкие места.
-@diagram pm9-cfd
-- Закон Литтла: время цикла (длительность очереди) **пропорционально** объёму незавершённой работы (размеру очереди).
-= Cycle time = WIP / throughput
-- Теория ограничений: найти → использовать → подчинить → расширить → снова к шагу 1 (не дать инерции стать ограничением).
-## Контракты и тестирование
-- Контракт DSDM: «fit for business purpose» и пройденные тесты, а не соответствие спецификации. Money for nothing (досрочное завершение) и change for free (замена работы при том же объёме) — только при активном участии бизнес-пользователей.
-- Graduated fixed-price: обе стороны делят часть риска и выгоды отклонения по срокам. Fixed-price work packages: заказчик заново расставляет приоритеты оставшейся работы по мере уточнения затрат.
-- Компоненты CI: контроль версий исходного кода, инструменты сборки, инструменты тестирования, планировщик или триггер, уведомления. TDD: red, green, refactor. ATDD: discuss, distill, develop, demo.
-@diagram pm9-tdd
-?? Что означает W в MoSCoW на слайде?
-?= «Would like to have, but not this time».
-?? Осталось 400 пунктов, команда делает 40 в неделю, burn rate — 10 000 в неделю. Вероятный срок и оставшиеся затраты?
-?= 400 / 40 = 10 недель; 10 000 x 10 = 100 000.`,
-  },
-};
-
-const s10: Section = {
-  id: "pm-fast-10",
-  title: { en: "Lecture 10 — Stakeholder engagement", ru: "Лекция 10 — вовлечение стейкхолдеров" },
-  minutes: 16,
-  notes: {
-    en: `## Stakeholders
-- Any people or groups who will be impacted by or have an impact on the project: customer, sponsor, business representatives, project manager, development team, vendors, others in the organization, end users.
-- **Stewardship** safeguards stakeholders and makes sure they have everything they need to succeed; **management** treats people as resources.
-| Group | Typical concern about agile |
-|---|---|
-| Executives and sponsors | risk of failure from new practices and counterintuitive planning |
-| Managers | loss of control or erosion of their role |
-| Development team | the approach is forced upon them |
-| User community | they will not get the features they want |
-| Other groups | lack of control, continual requests for involvement, no clear end point |
-- Keeping stakeholders engaged: short iterations, ongoing dialogue, stakeholder values, community values (**respect and courage** — shared by Scrum and XP).
-- 6 principles: get the right stakeholders; cement stakeholder involvement; actively manage stakeholder interest; frequently discuss what "done" looks like; show progress and capabilities; candidly discuss estimates and projections.
-## Shared vision
-- Tools: agile charters, the definition of done, workshops, modeling, wireframes, personas.
-- Agile charter: the first document; goal, purpose, composition, approach; authorization from the sponsor; shorter and focused on how the project will be run; who, what, where, when, why, how; a project elevator statement.
-- The definition of done is needed at every level: user stories, releases, final project deliverables.
-## Communication and collaboration
-@diagram pm10-comm-channels
-- Face-to-face = the highest bandwidth (the top of the chart: face-to-face at a whiteboard); two-way communication; knowledge sharing (reward team, not individual, accomplishments); information radiators; social media.
-- Benefits of collaboration: wiser decisions, problem solving, action, social capital, ownership of collective problems.
-- Green zone (takes responsibility, non-defensive) vs red zone (blames others, defensive).
-- Brainstorming: quiet writing (five to seven minutes alone), round-robin (a token is passed), free-for-all.
-- Collaboration games: Remember the Future (vision), Prune the Product Tree (requirements), Speedboat (risks), Buy a Feature (prioritization), Bang-for-the-Buck (value vs cost).
-## Interpersonal skills
-@diagram pm10-conflict-levels
-| List | Items in order |
-|---|---|
-| Listening levels | 1 internal, 2 focused, 3 global |
-| Conflict levels | 1 problem to solve, 2 disagreement, 3 contest, 4 crusade, 5 world war |
-| Facilitation | goals, rules, timing, assisting |
-| EI quadrants | self-awareness, self-management, social awareness, social skills |
-| Decision models | simple voting, thumbs up/down/sideways, fist-of-five, Highsmith's decision spectrum |
-?? Which decision model lets people support a decision and express reservations at the same time?
-?= Highsmith's decision spectrum.
-?? Which brainstorming method gives five to seven minutes to write ideas alone?
-?= Quiet writing.`,
-    ru: `## Стейкхолдеры
-- Любые люди или группы, на которых проект влияет или которые влияют на проект: заказчик, спонсор, представители бизнеса, менеджер проекта, команда разработки, поставщики, другие сотрудники организации, конечные пользователи.
-- **Забота (stewardship)** оберегает стейкхолдеров и следит, чтобы у них было всё нужное для успеха; **управление (management)** видит в людях ресурсы.
-| Группа | Типичное опасение насчёт agile |
-|---|---|
-| Руководство и спонсоры | риск провала из-за новых практик и непривычного планирования |
-| Менеджеры | потеря контроля или размывание их роли |
-| Команда разработки | подход навязан сверху |
-| Пользователи | не получат нужных функций |
-| Другие группы | нет контроля, постоянные просьбы участвовать, нет ясного конца |
-- Как удержать вовлечённость: короткие итерации, постоянный диалог, ценности стейкхолдеров, ценности сообщества (**respect и courage** — общие для Scrum и XP).
-- 6 принципов: привлечь нужных стейкхолдеров; закрепить их участие; активно управлять их интересом; часто обсуждать, как выглядит «done»; показывать прогресс и возможности; честно обсуждать оценки и прогнозы.
-## Общее видение
-- Инструменты: agile-уставы, definition of done, воркшопы, моделирование, вайрфреймы, персоны.
-- Agile-устав (agile charter): первый документ; цель, назначение, состав, подход; разрешение спонсора; короче, с фокусом на том, как будет вестись проект; кто, что, где, когда, зачем, как; project elevator statement.
-- Definition of done нужен на каждом уровне: истории, релизы, итоговые результаты проекта.
-## Коммуникация и совместная работа
-@diagram pm10-comm-channels
-- Лицом к лицу — самая широкая полоса (highest bandwidth; вершина графика — разговор у доски); двусторонняя коммуникация; обмен знаниями (поощрять достижения команды, а не отдельных людей); информационные радиаторы; соцсети.
-- Польза совместной работы: более мудрые решения, решение проблем, действие, социальный капитал, общая ответственность за общие проблемы.
-- Зелёная зона (берёт ответственность, без защитной реакции) против красной (винит других, защищается).
-- Мозговой штурм: quiet writing (пять-семь минут поодиночке), round-robin (по кругу, с передачей жетона), free-for-all.
-- Игры: Remember the Future (видение), Prune the Product Tree (требования), Speedboat (риски), Buy a Feature (приоритизация), Bang-for-the-Buck (ценность против стоимости).
-## Навыки общения
-@diagram pm10-conflict-levels
-| Список | Элементы по порядку |
-|---|---|
-| Уровни слушания | 1 internal, 2 focused, 3 global |
-| Уровни конфликта | 1 problem to solve, 2 disagreement, 3 contest, 4 crusade, 5 world war |
-| Фасилитация | goals, rules, timing, assisting |
-| Квадранты EI | self-awareness, self-management, social awareness, social skills |
-| Модели решений | simple voting, thumbs up/down/sideways, fist-of-five, Highsmith's decision spectrum |
-?? Какая модель решений позволяет одновременно поддержать решение и высказать оговорки?
-?= Highsmith's decision spectrum (спектр решений Хайсмита).
-?? Какой метод мозгового штурма даёт пять-семь минут писать идеи поодиночке?
-?= Quiet writing.`,
-  },
-};
-
 const s11: Section = {
   id: "pm-fast-11",
   title: { en: "Final checklist: the last 15 minutes", ru: "Финальный чек-лист: последние 15 минут" },
@@ -847,12 +677,10 @@ const s11: Section = {
 | one month or less | Sprint length |
 | 10 or fewer | Scrum Team size (typically) |
 | 4 and 12 | Manifesto values and principles |
-| 5 | Scrum values; Kanban principles; group stages; conflict levels; TOC steps |
-| 3 | Scrum pillars, artifacts, commitments, accountabilities; PEM phases; listening levels |
+| 5 | Scrum values; Kanban principles; group stages |
+| 3 | Scrum pillars, artifacts, commitments, accountabilities; PEM phases |
 | 7 | lean concepts and wastes; group characteristics; cost-management elements |
-| 6 | INVEST letters; persona elements; stakeholder engagement principles |
-| 1–9 | scale of the requirements prioritization model |
-| 5–7 minutes | quiet writing |
+| 6 | INVEST letters; persona elements |
 ## Formulas
 = CV = BCWP - ACWP
 = SV = BCWP - BCWS
@@ -870,12 +698,9 @@ const s11: Section = {
 | Weak vs strong matrix | the line manager vs the PM has more influence over daily work |
 | Intrarole vs interrole | contradictions inside one role vs two roles of one person |
 | Collective vs individual code ownership | XP vs FDD |
-| MoSCoW vs Kano | must, should, could, would vs delighters, satisfiers, dissatisfiers, indifferent |
-| Stewardship vs management | safeguards stakeholders vs treats people as resources |
 | Product Goal vs Sprint Goal | the long-term objective in the Product Backlog vs the single objective of one Sprint |
 ## Slide wording to trust
 - INVEST S = **Sized Appropriately**; a user story is "As a <role>, I need to <feature> so that <goal or value>".
-- MoSCoW W = **Would like to have, but not this time**.
 - Scrum: **Developers**, **accountabilities**, **self-managing**; refinement is not an event; the Daily Scrum may have any structure.
 - Lean is closely aligned with agile, not an agile methodology; the slide's wastes table has six rows (waiting is the seventh).
 - The operating cycle has four phases (II–V); the slide's EAC "ratio" is BAC / CPI.
@@ -893,12 +718,10 @@ const s11: Section = {
 | месяц или меньше | длина спринта |
 | 10 или меньше | размер Scrum-команды (обычно) |
 | 4 и 12 | ценности и принципы манифеста |
-| 5 | ценности Scrum; принципы канбана; стадии группы; уровни конфликта; шаги TOC |
-| 3 | столпы, артефакты, обязательства, зоны ответственности Scrum; фазы PEM; уровни слушания |
+| 5 | ценности Scrum; принципы канбана; стадии группы |
+| 3 | столпы, артефакты, обязательства, зоны ответственности Scrum; фазы PEM |
 | 7 | концепции и потери lean; характеристики групп; элементы управления затратами |
-| 6 | буквы INVEST; элементы персоны; принципы вовлечения стейкхолдеров |
-| 1–9 | шкала requirements prioritization model |
-| 5–7 минут | quiet writing |
+| 6 | буквы INVEST; элементы персоны |
 ## Формулы
 = CV = BCWP - ACWP
 = SV = BCWP - BCWS
@@ -916,12 +739,9 @@ const s11: Section = {
 | Слабая и сильная матрица | больше влияния на ежедневную работу у линейного руководителя против у PM |
 | Intrarole и interrole | противоречия внутри одной роли против двух ролей одного человека |
 | Коллективное и индивидуальное владение кодом | XP против FDD |
-| MoSCoW и Kano | must, should, could, would против delighters, satisfiers, dissatisfiers, indifferent |
-| Stewardship и management | оберегает стейкхолдеров против видит в людях ресурсы |
 | Product Goal и Sprint Goal | долгосрочная цель в Product Backlog против единственной цели одного спринта |
 ## Формулировки слайдов, которым верить
 - S в INVEST — **Sized Appropriately**; история — «As a <role>, I need to <feature> so that <goal or value>».
-- W в MoSCoW — **Would like to have, but not this time**.
 - Scrum: **Developers**, **accountabilities**, **self-managing**; refinement — не событие; у Daily Scrum любая структура.
 - Lean близок к agile, но не agile-методология; в таблице потерь на слайде шесть строк (ожидание — седьмая).
 - В операционном цикле четыре фазы (II–V); «ratio» EAC со слайда — это BAC / CPI.
@@ -936,10 +756,10 @@ const s11: Section = {
 };
 
 export const pmFast: FastTrack = {
-  hours: 3,
+  hours: 2.5,
   intro: {
-    en: "The last three hours before MCQ Test 2: only what the questions check, from the most predictable points to the rest. Read the blocks in order and answer each self-check question aloud before opening the answer; then take the event's 50-question final quiz against the clock and reread the blocks where you lost points.",
-    ru: "Последние три часа перед MCQ Test 2: только то, что проверяют вопросы, от самых предсказуемых баллов к остальному. Читай блоки по порядку и на каждый вопрос самопроверки отвечай вслух, прежде чем открыть ответ; потом пройди итоговый квиз ивента на 50 вопросов на время и перечитай блоки, где потерял баллы.",
+    en: "The last two and a half hours before MCQ Test 2: only what the questions check, from the most predictable points to the rest. Read the blocks in order and answer each self-check question aloud before opening the answer; then take the event's 50-question final quiz against the clock and reread the blocks where you lost points.",
+    ru: "Последние два с половиной часа перед MCQ Test 2: только то, что проверяют вопросы, от самых предсказуемых баллов к остальному. Читай блоки по порядку и на каждый вопрос самопроверки отвечай вслух, прежде чем открыть ответ; потом пройди итоговый квиз ивента на 50 вопросов на время и перечитай блоки, где потерял баллы.",
   },
-  sections: [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11],
+  sections: [s1, s2, s3, s4, s5, s6, s7, s8, s11],
 };

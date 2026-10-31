@@ -9,15 +9,16 @@
 
 import { check, newUser, openSection, session, test } from "../harness.mjs";
 
-test("PM: ивент в списке, семь лекций, конспект со схемой переводится, квиз по части — 20 вопросов с разбором", async () => {
+test("PM: ивент в списке, лекции 4–8, конспект со схемой переводится, квиз по части — 20 вопросов с разбором", async () => {
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/events");
   await page.getByRole("link", { name: /Project Management/ }).tap();
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
   const map = await page.locator("body").innerText();
-  check(/Lecture 10|Лекция 10/.test(map), "в маршруте есть лекция 10");
-  check(/Lecture 4|Лекция 4/.test(map), "в маршруте есть лекция 4");
+  check((await page.locator('details[id^="route-pm-l"]').count()) === 5, "в маршруте пять лекций — те, что в тесте");
+  check(/Lecture 4|Лекция 4/.test(map) && /Lecture 8|Лекция 8/.test(map), "в маршруте лекции 4 и 8");
+  check(map.includes("в Test 2 не входят"), "лекции 9–10 — отдельным блоком вне теста");
   check(map.includes("50 вопросов"), "итоговый квиз — 50 вопросов");
 
   await page.getByRole("button", { name: "Начать с первой части" }).tap();
@@ -92,20 +93,20 @@ test("PM: «Учить вопросами» без конспекта, ошиб�
   await browser.close();
 });
 
-test("PM: «Твой маршрут» — семь лекций и итоговый квиз; лента роликов с персонажами листается, после каждого ролика — «Проверь себя»", async () => {
+test("PM: «Твой маршрут» — пять лекций и итоговый квиз; лента роликов с персонажами листается, после каждого ролика — «Проверь себя»", async () => {
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/learn");
   const hubRoute = page.getByRole("region", { name: "Твой маршрут" });
   await hubRoute.waitFor({ timeout: 15_000 });
-  check((await hubRoute.innerText()).includes("0 из 8 завершено"), "в «Учёбе» — маршрут ивента: 8 остановок");
+  check((await hubRoute.innerText()).includes("0 из 6 завершено"), "в «Учёбе» — маршрут ивента: 6 остановок");
   check(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "лента маршрута не растягивает «Учёбу» вбок");
 
   await openSection(page, "/events");
   await page.getByRole("link", { name: /Project Management/ }).tap();
   const route = page.getByRole("region", { name: "Твой маршрут" });
   await route.waitFor({ timeout: 15_000 });
-  check((await route.locator("li").count()) === 8, "в маршруте ивента 8 остановок");
+  check((await route.locator("li").count()) === 6, "в маршруте ивента 6 остановок");
   check((await route.locator('li[aria-current="step"]').innerText()).includes("Затраты и группы"), "текущая остановка — первая лекция");
 
   await page.getByRole("button", { name: "🎬 Лента" }).first().tap();
@@ -150,11 +151,11 @@ test("PM: ролики по лекциям и частям; scroll-mode — ко
   await page.getByRole("link", { name: /Project Management/ }).tap();
   await page.getByRole("region", { name: "Твой маршрут" }).waitFor({ timeout: 15_000 });
 
-  // Выбор роликов: все 78, семь лекций, у каждой части — свои.
+  // Выбор роликов: все 57, пять лекций теста, у каждой части — свои.
   await page.getByRole("button", { name: "🎬 Лента" }).first().tap();
   await page.getByRole("heading", { name: "🎬 Ролики" }).waitFor({ timeout: 15_000 });
-  check(await page.getByText(/^78 видео · \d+ мин$/).isVisible(), "всего 78 роликов");
-  check((await page.locator('section[aria-label^="Лекция "]').count()) === 7, "семь лекций с роликами");
+  check(await page.getByText(/^57 видео · \d+ мин$/).isVisible(), "всего 57 роликов");
+  check((await page.locator('section[aria-label^="Лекция "]').count()) === 5, "пять лекций с роликами");
   const l5 = page.locator('section[aria-label="Лекция 5"]');
   await l5.getByRole("button", { name: /Часть 2/ }).tap();
   const feed = page.getByRole("dialog", { name: "Лента коротких видео" });
@@ -190,7 +191,7 @@ test("PM: ролики по лекциям и частям; scroll-mode — ко
   await scroll.locator(`section[data-index="${first + 20}"]`).getByText(/^\d+ из 20$/).waitFor({ timeout: 10_000 });
   check(true, "все 20 вопросов отвечены — итог теста");
   await scroll.getByRole("button", { name: "Закрыть scroll-mode" }).tap();
-  const partRow = page.locator('section[id="route-pm-l4"] li').first();
+  const partRow = page.locator('[id="route-pm-l4"] li').first();
   await partRow.waitFor({ timeout: 10_000 });
   check(/\d+%/.test(await partRow.innerText()), "результат теста засчитан в маршрут части");
 
@@ -253,5 +254,53 @@ test("PM: scroll-mode запоминает место — экран консп�
   const back = scroll.locator(`section[data-index="${first}"]`);
   check((await back.locator("h2").innerText({ timeout: 10_000 })) === asked[0], "тот же вопрос, что был");
   check(await back.getByRole("status").isVisible(), "данный ответ сохранился");
+  await browser.close();
+});
+
+test("PM: до лекции 8 — одним нажатием: строка лекций, соседние части, оглавление scroll-mode; лекции 9–10 — отдельно", async () => {
+  const user = await newUser();
+  const { browser, page } = await session({ user });
+  await openSection(page, "/events");
+  await page.getByRole("link", { name: /Project Management/ }).tap();
+  await page.getByRole("region", { name: "Твой маршрут" }).waitFor({ timeout: 15_000 });
+
+  // Раскрыта только лекция со следующим шагом — остальные свёрнуты.
+  check((await page.locator('details[id^="route-pm-l"][open]').count()) === 1, "раскрыта одна лекция, а не все пять");
+  const bar = page.getByRole("navigation", { name: "Лекции" });
+  await bar.getByRole("button", { name: /^8 · / }).tap();
+  const l8 = page.locator('details[id="route-pm-l8"]');
+  await page.waitForFunction(() => document.querySelector('details[id="route-pm-l8"]')?.open === true, null, { timeout: 10_000 });
+  await page.waitForTimeout(900);
+  const top = (await l8.boundingBox()).y;
+  check(top >= 0 && top < 200, `лекция 8 раскрылась и встала под строку лекций (верх на ${Math.round(top)} px)`);
+  check((await bar.boundingBox()).y < 60, "строка лекций приклеена к верху экрана");
+
+  // Конспект: внизу — соседние части, без возврата на маршрут.
+  await l8.getByRole("button", { name: /^Часть 1\./ }).tap();
+  await page.locator("article").waitFor({ timeout: 10_000 });
+  await page.getByRole("navigation", { name: "Соседние части" }).getByRole("button", { name: /Следующая часть/ }).tap();
+  await page.getByText(/часть 2 из \d/).first().waitFor({ timeout: 10_000 });
+  check(true, "«Следующая часть» открывает вторую часть лекции 8");
+  await page.getByRole("button", { name: "← К маршруту" }).tap();
+
+  // Scroll-mode: оглавление переносит сразу к лекции 8.
+  await page.getByRole("button", { name: "📜 Scroll-mode" }).first().tap();
+  const scroll = page.getByRole("dialog", { name: "Scroll-mode" });
+  await scroll.locator('section[data-kind="cover"]').first().waitFor({ timeout: 15_000 });
+  await scroll.getByRole("button", { name: "Оглавление: лекции и части" }).tap();
+  const contents = page.getByRole("dialog", { name: "Оглавление" });
+  await contents.locator("section").filter({ has: page.getByRole("heading", { name: /Lecture 8/ }) }).getByRole("button").first().tap();
+  await scroll.getByText(/^Лекция 8 · часть 1 из \d+$/).first().waitFor({ timeout: 10_000 });
+  check(true, "из оглавления — сразу первая часть лекции 8");
+  await scroll.getByRole("button", { name: "Закрыть scroll-mode" }).tap();
+
+  // Лекции 9–10: свёрнутый блок «вне теста», конспект открывается.
+  await bar.getByRole("button", { name: "Вне теста" }).tap();
+  const extra = page.locator('details[id="route-extra"]');
+  await page.waitForFunction(() => document.querySelector('details[id="route-extra"]')?.open === true, null, { timeout: 10_000 });
+  await extra.getByRole("button", { name: /^Часть 1\./ }).first().tap();
+  await page.locator("article").waitFor({ timeout: 10_000 });
+  check((await page.locator("body").innerText()).includes("в Test 2 не входят"), "в конспекте лекции 9 видно, что она вне теста");
+  check((await page.getByRole("button", { name: /Начать квиз/ }).count()) === 0, "у лекций вне теста нет квизов — только чтение");
   await browser.close();
 });

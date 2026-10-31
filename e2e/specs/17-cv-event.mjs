@@ -38,6 +38,8 @@ test("Зрение: ивент в списке, конспект перевод�
   await page.getByText(/Шагов пройдено:\s*1 из/).waitFor({ timeout: 10_000 });
   check(true, "квиз части засчитан в маршрут");
 
+  // Практика на карте свёрнута — раскрываем её из строки лекций, как человек.
+  await page.getByRole("navigation", { name: "Лекции" }).getByRole("button", { name: /мидтерм|midterm/i }).tap();
   await page.getByText(/OpenCV basics and bug hunting|Основы OpenCV/).first().tap();
   await page.locator("article").waitFor({ timeout: 10_000 });
   check((await page.locator("article").innerText()).includes("cv2."), "в практике разобран код OpenCV");

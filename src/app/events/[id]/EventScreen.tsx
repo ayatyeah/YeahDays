@@ -30,8 +30,9 @@ import { learnFromQuiz, loadDrill, stats as drillStats, type DrillState, type Sc
 import { examPoints, loadSim, saveSim, type SimRecord } from "@/lib/events/examSim";
 import { videoShelves, type FeedScope } from "@/lib/events/feed";
 import { loadScroll } from "@/lib/events/scrollMemory";
-import { routeStates, routeStops } from "@/lib/events/route";
+import { routeStates, routeStops, shortTitle } from "@/lib/events/route";
 import RouteStepper from "@/components/events/RouteStepper";
+import LectureBar from "@/components/events/LectureBar";
 import { fastProgress } from "@/lib/events/fastProgress";
 import type { TrainerKind } from "@/lib/visionTrainer";
 const NetworkGame = dynamic(() => import("@/components/events/NetworkGame"), { loading: Loading });
@@ -59,6 +60,8 @@ type View =
   | { mode: "cards" }
   | { mode: "game" }
   | { mode: "read"; step: Step }
+  /** Конспект лекции «вне теста» (event.extra): только чтение. */
+  | { mode: "extra"; lecture: number; part: number }
   /** Scroll-mode: конспект экранами и тест части одной лентой, дальше — следующие части. */
   | { mode: "scroll"; step: Step }
   | { mode: "video"; step: Step }
@@ -173,6 +176,9 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   // «Учить вопросами» и пробный тест живут только на устройстве; перечитываем при возврате к маршруту.
   const [drill, setDrill] = useState<DrillState>({});
   const [sim, setSim] = useState<SimRecord | null>(null);
+  // Какие лекции на карте раскрыты. По умолчанию — только та, где следующий шаг:
+  // раньше все семь были развёрнуты, и до последней листали восемь экранов.
+  const [opened, setOpened] = useState<Record<string, boolean>>({});
 
   // Прогресс и настройки живут в браузере — читаем после монтирования, чтобы
   // серверная и клиентская разметка совпали.
@@ -240,7 +246,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
     }
   }
 
-  const stepKey = "step" in view ? `${view.mode}:${view.step.id}` : view.mode;
+  const stepKey = "step" in view ? `${view.mode}:${view.step.id}` : view.mode === "extra" ? `extra:${view.lecture}:${view.part}` : view.mode;
   const firstView = useRef(true);
   useEffect(() => {
     // При открытии ивента страница и так наверху; scrollIntoView здесь
@@ -308,6 +314,14 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
   }
 
   const finalStep = list[list.length - 1];
+  const nextLecture = loaded ? nextStep(event, progress)?.lecture : 0;
+  const isOpen = (id: string, li?: number) => opened[id] ?? (li !== undefined && li === nextLecture);
+
+  /** Из строки лекций и маршрута: раскрыть секцию и показать её под строкой. */
+  function jump(target: string) {
+    setOpened((o) => ({ ...o, [target]: true }));
+    requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
 
   function startExam() {
     if (!event.exam) return;
@@ -377,7 +391,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             return (
               <RouteStepper
                 stops={stops.map((stop, i) => ({ label: stop.label[tl], state: states[i], final: stop.final }))}
-                onSelect={(i) => document.getElementById(i < event.lectures.length ? `route-${event.lectures[i].id}` : "route-final")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                onSelect={(i) => jump(i < event.lectures.length ? `route-${event.lectures[i].id}` : "route-final")}
               />
             );
           })()}
@@ -431,32 +445,66 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             )}
           </section>
 
-          {event.lectures.map((lecture, li) => (
-            <section key={lecture.id} id={`route-${lecture.id}`} className={cn(panel, "scroll-mt-4")}>
-              <h2 className="text-lg font-bold">{lecture.title[tl]}</h2>
-              {tl === "ru" && <p className="text-sm text-[var(--color-muted)]">{lecture.title.en}</p>}
-              {shelves.lectures[li].count > 0 && (
-                <Button size="sm" className="mt-3 h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "lecture", lecture: li }, back: { mode: "map" } })}>
-                  {`🎬 Ролики лекции · ${shelves.lectures[li].count} видео`}
-                </Button>
-              )}
-              <ol className="mt-4 space-y-2">
-                {list.filter((s) => s.lecture === li).map((step) => (
-                  <StepRow
-                    key={step.id}
-                    step={step}
-                    result={progress[step.id]}
-                    onOpen={() => open(step)}
-                    deep={step.kind === "part" ? deepStep(event, li, step.part!) : null}
-                    deepResult={step.kind === "part" ? progress[`${step.id}-deep`] : undefined}
-                    onDeep={() => { const d = deepStep(event, li, step.part!); if (d) startQuiz(d); }}
-                  />
-                ))}
-              </ol>
-            </section>
-          ))}
+          <LectureBar
+            items={[
+              ...event.lectures.map((lecture, li) => ({
+                target: `route-${lecture.id}`,
+                // «Практика — формат мидтерма» номера не имеет — тогда без него.
+                label: (/\d+/.exec(lecture.title.en)?.[0] ? `${/\d+/.exec(lecture.title.en)![0]} · ` : "") + shortTitle(lecture)[tl],
+                done: Boolean(progress[`${lecture.id}-quiz`]),
+              })),
+              { target: "route-final", label: "🏆 Финал", done: Boolean(progress[finalStep.id]) },
+              ...(event.extra ? [{ target: "route-extra", label: "Вне теста" }] : []),
+            ]}
+            onJump={jump}
+          />
 
-          <section id="route-final" className={cn(panel, "scroll-mt-4")}>
+          {event.lectures.map((lecture, li) => {
+            const own = list.filter((s) => s.lecture === li);
+            const done = own.filter((s) => progress[s.id]).length;
+            const id = `route-${lecture.id}`;
+            return (
+              <details
+                key={lecture.id}
+                id={id}
+                open={isOpen(id, li)}
+                onToggle={(e) => {
+                  const now = e.currentTarget.open;
+                  if (now !== isOpen(id, li)) setOpened((o) => ({ ...o, [id]: now }));
+                }}
+                className={cn(panel, "group scroll-mt-16")}
+              >
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
+                  <span className="min-w-0">
+                    <span className="block text-lg font-bold">{lecture.title[tl]}</span>
+                    {tl === "ru" && <span className="block text-sm text-[var(--color-muted)]">{lecture.title.en}</span>}
+                    <span className="mt-1 block text-xs tabular-nums text-[var(--color-muted)]">{`Пройдено шагов: ${done} из ${own.length}`}</span>
+                  </span>
+                  <span aria-hidden className="mt-1 shrink-0 text-xl leading-none text-[var(--color-muted)] transition group-open:rotate-180">⌄</span>
+                </summary>
+                {shelves.lectures[li].count > 0 && (
+                  <Button size="sm" className="mt-3 h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "lecture", lecture: li }, back: { mode: "map" } })}>
+                    {`🎬 Ролики лекции · ${shelves.lectures[li].count} видео`}
+                  </Button>
+                )}
+                <ol className="mt-4 space-y-2">
+                  {own.map((step) => (
+                    <StepRow
+                      key={step.id}
+                      step={step}
+                      result={progress[step.id]}
+                      onOpen={() => open(step)}
+                      deep={step.kind === "part" ? deepStep(event, li, step.part!) : null}
+                      deepResult={step.kind === "part" ? progress[`${step.id}-deep`] : undefined}
+                      onDeep={() => { const d = deepStep(event, li, step.part!); if (d) startQuiz(d); }}
+                    />
+                  ))}
+                </ol>
+              </details>
+            );
+          })}
+
+          <section id="route-final" className={cn(panel, "scroll-mt-16")}>
             <h2 className="text-lg font-bold">Финал</h2>
             <p className="text-sm text-[var(--color-muted)]">Вопросы вперемешку со всех лекций — как на настоящем квизе.</p>
             <ol className="mt-4 space-y-2">
@@ -477,6 +525,44 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                 {event.glossary && <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cards" })}>{event.cards === "questions" ? "Вопросы комиссии" : "Карточки терминов"} · {event.glossary.length}</Button>}
               </div>
             </section>
+          )}
+
+          {event.extra && (
+            <details
+              id="route-extra"
+              open={isOpen("route-extra")}
+              onToggle={(e) => {
+                const now = e.currentTarget.open;
+                if (now !== isOpen("route-extra")) setOpened((o) => ({ ...o, "route-extra": now }));
+              }}
+              className={cn(panel, "group scroll-mt-16 border-dashed")}
+            >
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-3 [&::-webkit-details-marker]:hidden">
+                <span className="min-w-0">
+                  <span className="block text-lg font-bold">{event.extra.title[tl]}</span>
+                  <span className="mt-1 block text-sm text-[var(--color-muted)]">{event.extra.note[tl]}</span>
+                </span>
+                <span aria-hidden className="mt-1 shrink-0 text-xl leading-none text-[var(--color-muted)] transition group-open:rotate-180">⌄</span>
+              </summary>
+              {event.extra.lectures.map((lecture, li) => (
+                <div key={lecture.id} className="mt-4">
+                  <h3 className="font-semibold">{lecture.title[tl]}</h3>
+                  <ol className="mt-2 space-y-2">
+                    {lecture.parts.map((part, pi) => (
+                      <li key={part.id}>
+                        <button
+                          onClick={() => setView({ mode: "extra", lecture: li, part: pi })}
+                          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-[var(--color-border)] p-3 text-left text-sm transition hover:bg-[var(--color-surface-2)]"
+                        >
+                          <span className="min-w-0 break-words">{`Часть ${pi + 1}. ${part.title[tl]}`}</span>
+                          <span className="shrink-0 text-xs text-[var(--color-muted)]">конспект</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ))}
+            </details>
           )}
 
           {event.practice === "vision" && (
@@ -679,6 +765,53 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                 </section>
               ) : null;
             })()}
+            {(() => {
+              // Соседние части — без возврата на маршрут: читать подряд или вернуться на шаг.
+              const parts = list.filter((s) => s.kind === "part");
+              const at = parts.findIndex((s) => s.id === view.step.id);
+              const where = (s: Step) => `Лекция ${/\d+/.exec(event.lectures[s.lecture!].title.en)?.[0] ?? s.lecture! + 1} · часть ${s.part! + 1}`;
+              return (
+                <PartNav
+                  prev={parts[at - 1] && { label: where(parts[at - 1]), go: () => setView({ mode: "read", step: parts[at - 1] }) }}
+                  next={parts[at + 1] && { label: where(parts[at + 1]), go: () => setView({ mode: "read", step: parts[at + 1] }) }}
+                />
+              );
+            })()}
+          </>
+        );
+      })()}
+
+      {view.mode === "extra" && event.extra && (() => {
+        const lectures = event.extra.lectures;
+        const lecture = lectures[view.lecture];
+        const part = lecture.parts[view.part];
+        const flat = lectures.flatMap((l, li) => l.parts.map((_, pi) => ({ lecture: li, part: pi })));
+        const at = flat.findIndex((p) => p.lecture === view.lecture && p.part === view.part);
+        const where = (p: { lecture: number; part: number }) => `Лекция ${/\d+/.exec(lectures[p.lecture].title.en)?.[0] ?? p.lecture + 1} · часть ${p.part + 1}`;
+        return (
+          <>
+            <header>
+              <button className="text-sm underline" onClick={() => { setOpened((o) => ({ ...o, "route-extra": true })); toMap(); }}>← К маршруту</button>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
+                {lecture.title[lang]} · часть {view.part + 1} из {lecture.parts.length}
+              </p>
+              <h1 className="mt-2 text-2xl font-bold">{part.title[lang]}</h1>
+              <p className="mt-2 rounded-2xl border border-dashed border-[var(--color-border-strong)] px-3 py-2 text-sm text-[var(--color-muted)]">{event.extra.title.ru}. {event.extra.note.ru}</p>
+            </header>
+            <div className="flex flex-wrap gap-2">
+              <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
+                {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
+              </Button>
+              <SpeakButton text={part.notes[lang]} lang={lang} />
+              <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
+            </div>
+            <article className={panel}>
+              <EventNotes text={part.notes[lang]} lang={lang} />
+            </article>
+            <PartNav
+              prev={flat[at - 1] && { label: where(flat[at - 1]), go: () => setView({ mode: "extra", ...flat[at - 1] }) }}
+              next={flat[at + 1] && { label: where(flat[at + 1]), go: () => setView({ mode: "extra", ...flat[at + 1] }) }}
+            />
           </>
         );
       })()}
@@ -775,6 +908,27 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
         />
       )}
     </div>
+  );
+}
+
+/** Внизу конспекта: соседние части, чтобы читать подряд без возврата на маршрут. */
+function PartNav({ prev, next }: { prev?: { label: string; go: () => void }; next?: { label: string; go: () => void } }) {
+  if (!prev && !next) return null;
+  return (
+    <nav aria-label="Соседние части" className="grid grid-cols-2 gap-2">
+      {prev ? (
+        <button onClick={prev.go} className="rounded-2xl border border-[var(--color-border)] p-3 text-left text-sm transition hover:bg-[var(--color-surface-2)]">
+          <span className="block text-xs text-[var(--color-muted)]">← Предыдущая часть</span>
+          <span className="block font-semibold">{prev.label}</span>
+        </button>
+      ) : <span />}
+      {next ? (
+        <button onClick={next.go} className="rounded-2xl border border-[var(--color-border)] p-3 text-right text-sm transition hover:bg-[var(--color-surface-2)]">
+          <span className="block text-xs text-[var(--color-muted)]">Следующая часть →</span>
+          <span className="block font-semibold">{next.label}</span>
+        </button>
+      ) : <span />}
+    </nav>
   );
 }
 

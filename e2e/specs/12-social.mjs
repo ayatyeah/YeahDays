@@ -234,7 +234,9 @@ test("Посещения: открытый раздел попадает в сч
   check(after > before, "просмотр раздела «Учёба» посчитан");
   const visitor = sql(`select hash, authed from "SiteVisitor" order by day desc limit 1`);
   check(/^[\w-]{22}\|t$/.test(visitor), `посетитель записан хешем и отметкой «вошёл», без адреса и имени (увидел: ${visitor})`);
-  const cookies = (await context.cookies()).map((c) => c.name).filter((n) => !/authjs|next-auth/.test(n));
+  // yg-version ставит не счётчик, а /api/app-mode каждому вошедшему: по ней
+  // прокси решает, вести гостя на вход или на регистрацию.
+  const cookies = (await context.cookies()).map((c) => c.name).filter((n) => !/authjs|next-auth/.test(n) && n !== "yg-version");
   check(cookies.length === 0, `счётчик не ставит своих cookie (лишние: ${cookies.join(", ") || "нет"})`);
   await browser.close();
 });

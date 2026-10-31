@@ -2,9 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { STAT_LIST, dateKey, type StatKey } from "@/lib/domain";
 import { useUserStore } from "@/store/useUserStore";
 import { useNavStore } from "@/store/useNavStore";
+import { usePersonalizationStore } from "@/store/usePersonalizationStore";
+import { POLICY_VERSION } from "@/lib/personalization";
 import { cn } from "@/lib/cn";
 import Logo from "@/components/Logo";
 import { YgIcon, type YgIconName } from "@/components/yg-icons";
@@ -17,7 +21,9 @@ import { YgIcon, type YgIconName } from "@/components/yg-icons";
  * успевал ничего написать сам, прежде чем увидеть чужой контент.
  */
 
-const STEPS = 4;
+/** Шагов без согласия; шаг согласия добавляется, только если его ещё нет. */
+const BASE_STEPS = 4;
+const CONSENT_STEP = BASE_STEPS;
 
 const VALUE_PROPS: { icon: YgIconName; title: string; text: string }[] = [
   { icon: "cards", title: "Колода, а не список", text: "Свайпай действия под своё состояние — берёшь или пропускаешь." },
@@ -32,6 +38,22 @@ export default function Onboarding() {
   const addTodo = useUserStore((s) => s.addTodo);
   const completeOnboarding = useUserStore((s) => s.completeOnboarding);
   const go = useNavStore((s) => s.go);
+
+  /*
+   * Согласие — последним шагом онбординга. Раньше новичок после регистрации
+   * видел на каждом экране плашку «Обновлена политика», а пока не находил
+   * её, сообщество было только для чтения и ИИ спрашивал разрешение в
+   * каждом разделе. Шаг нужен и тем, кто вошёл через Google или Microsoft:
+   * формы регистрации они не видели. Кто уже принял текущую версию — шага
+   * не видит.
+   */
+  const { data: session } = useSession();
+  const owner = session?.user?.id;
+  const consent = usePersonalizationStore((s) => (owner && s.owner === owner ? s.data : null));
+  const requestConsent = usePersonalizationStore((s) => s.request);
+  const askConsent = Boolean(owner) && consent?.version !== POLICY_VERSION;
+  const STEPS = askConsent ? BASE_STEPS + 1 : BASE_STEPS;
+  const [consentBusy, setConsentBusy] = useState(false);
 
   const [step, setStep] = useState(0);
   const [name, setNameDraft] = useState(
@@ -96,14 +118,42 @@ export default function Onboarding() {
   useEffect(() => {
     busyRef.current = false;
   }, [step]);
+  // Согласие могли принять с другого устройства, пока человек на последнем
+  // шаге: шаг исчезает, и экран не должен остаться пустым.
+  useEffect(() => {
+    if (step > STEPS - 1) setStep(STEPS - 1);
+  }, [step, STEPS]);
 
   function next() {
     if (busyRef.current) return;
     busyRef.current = true;
     // finish уводит на главную: замок оставляем закрытым, чтобы повторное
     // касание не записало задачи онбординга второй раз
-    if (step >= STEPS - 1) finish();
+    if (step === CONSENT_STEP && askConsent) void acceptAndFinish();
+    else if (step >= STEPS - 1) finish();
     else setStep(step + 1);
+  }
+
+  /** Принять всё одним нажатием. Сеть подвела — всё равно пускаем дальше:
+      плашка в приложении напомнит, а задачи онбординга терять нельзя. */
+  async function acceptAndFinish() {
+    if (owner) {
+      setConsentBusy(true);
+      await requestConsent(owner, {
+        action: "consent",
+        version: POLICY_VERSION,
+        enabled: true,
+        ai: true,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+    }
+    finish();
+  }
+
+  function later() {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    finish();
   }
 
   function back() {
@@ -301,6 +351,51 @@ export default function Onboarding() {
               </div>
             </Step>
           )}
+
+          {step === CONSENT_STEP && askConsent && (
+            <Step key="consent">
+              <div className="flex flex-1 flex-col overflow-y-auto">
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
+                  Последнее — про данные
+                </h1>
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
+                  Одно согласие вместо вопросов в каждом разделе. Нажимая
+                  «Принять и начать», ты:
+                </p>
+                <ul className="mt-5 space-y-2.5 text-[15px] leading-snug">
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
+                    принимаешь{" "}
+                    <Link href="/privacy" target="_blank" rel="noopener" className="underline">
+                      политику конфиденциальности
+                    </Link>
+                  </li>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
+                    появляешься в сообществе с именем, персонажем и уровнем —
+                    скрыться можно одним переключателем
+                  </li>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
+                    разрешаешь ИИ-функциям отправлять в OpenAI то, что нужно для
+                    ответа: запрос, план, учебный прогресс и цели
+                  </li>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
+                    разрешаешь учёт активности для твоей статистики и достижений
+                  </li>
+                </ul>
+                <p className="mt-4 text-[13px] leading-snug text-[var(--color-muted)]">
+                  Любую часть можно выключить в профиле, в разделе «Мой ритм и
+                  достижения».
+                </p>
+                <button
+                  type="button"
+                  onClick={later}
+                  disabled={consentBusy}
+                  className="mt-3 self-start pb-2 text-[14px] text-[var(--color-muted)] underline underline-offset-4"
+                >
+                  Решу позже
+                </button>
+              </div>
+            </Step>
+          )}
         </>
       </div>
 
@@ -318,11 +413,19 @@ export default function Onboarding() {
         )}
         <motion.button
           whileTap={{ scale: 0.97 }}
-          disabled={!canNext}
+          disabled={!canNext || consentBusy}
           onClick={next}
           className="h-14 flex-1 rounded-2xl bg-[var(--color-fg)] text-[16px] font-semibold text-[var(--color-bg)] transition hover:opacity-90 disabled:opacity-40"
         >
-          {step === 0 ? "Начать" : step === STEPS - 1 ? "Погнали" : "Далее"}
+          {step === 0
+            ? "Начать"
+            : step === CONSENT_STEP && askConsent
+              ? consentBusy
+                ? "Сохраняем…"
+                : "Принять и начать"
+              : step === STEPS - 1
+                ? "Погнали"
+                : "Далее"}
         </motion.button>
       </div>
 

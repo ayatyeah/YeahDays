@@ -26,15 +26,25 @@ test("новый человек: регистрация → онбординг �
   await page.waitForURL(/\/app/, { timeout: 30_000 });
   check(sql(`select count(*) from "User" where email='${email}'`) === "1", "аккаунт создан");
 
-  // Онбординг: «Начать», имя, ещё два шага, «Погнали».
+  // Пока идёт онбординг, плашки о политике нет: её место занял последний шаг.
+  // Пауза — чтобы успел прийти ответ /api/personalization: раньше плашка
+  // появлялась именно после него.
+  await page.waitForTimeout(1500);
+  check(!(await page.locator("body").innerText()).includes("политик"), "новичка не встречает плашка о политике");
+
+  // Онбординг: «Начать», имя, ещё два шага, согласие — «Принять и начать».
   await page.getByRole("button", { name: "Начать" }).tap();
   await page.fill('input[placeholder="Твоё имя"]', "Айгерим");
   await page.getByRole("button", { name: "Далее" }).tap();
   await page.getByRole("button", { name: "Далее" }).tap();
   await page.fill('input[placeholder="Например: позвонить в банк"]', "Сдать лабу");
-  await page.getByRole("button", { name: "Погнали" }).tap();
-  await page.waitForTimeout(800);
-  check(!(await page.getByRole("button", { name: "Погнали" }).isVisible()), "онбординг завершился");
+  await page.getByRole("button", { name: "Далее" }).tap();
+  await page.getByRole("button", { name: "Принять и начать" }).tap();
+  await page.waitForTimeout(1200);
+  check(!(await page.getByRole("button", { name: "Принять и начать" }).isVisible()), "онбординг завершился");
+  const consent = JSON.parse(sql(`select p.data from "PersonalizationProfile" p join "User" u on u.id = p."userId" where u.email='${email}'`) || "{}");
+  check(consent.ai === true && consent.enabled === true && Boolean(consent.version), "шаг онбординга записал согласие");
+  check(!(await page.locator("body").innerText()).includes("Прочитать и принять"), "после онбординга плашки о политике нет");
 
   // Гайд по приложению.
   const guide = page.getByRole("button", { name: "Понятно" });
@@ -73,7 +83,8 @@ test("быстрые нажатия «Далее» не выбрасывают �
   check(text.trim().length > 40, "экран не опустел после серии быстрых нажатий");
   check(
     (await page.getByRole("button", { name: "Далее" }).isVisible()) ||
-      (await page.getByRole("button", { name: "Погнали" }).isVisible()),
+      (await page.getByRole("button", { name: "Погнали" }).isVisible()) ||
+      (await page.getByRole("button", { name: "Принять и начать" }).isVisible()),
     "онбординг остался управляемым",
   );
   await browser.close();
@@ -167,19 +178,28 @@ test("выход из аккаунта возвращает на витрину"
   await browser.close();
 });
 
-test("закрытые страницы просят войти и возвращают обратно", async () => {
-  const { browser, page } = await session();
+test("закрытые страницы: новичка ведут на регистрацию, вернувшегося — на вход, и обратно в раздел", async () => {
+  const { browser, context, page } = await session();
+  // Первый визит — как с кнопки «Начать» на витрине: «С возвращением» тут не к месту.
+  await page.goto("/progress", { waitUntil: "networkidle" });
+  check(
+    decodeURIComponent(page.url()).includes(`${BASE}/register?callbackUrl=/progress`),
+    `новичку — регистрация, после неё вернёт на /progress (сейчас ${page.url()})`,
+  );
+  // С этого браузера уже входили — значит, вход.
+  await context.addCookies([{ name: "yg-version", value: "normal", url: BASE }]);
   await page.goto("/progress", { waitUntil: "networkidle" });
   check(
     decodeURIComponent(page.url()).includes(`${BASE}/login?callbackUrl=/progress`),
-    `после входа вернёт на /progress (сейчас ${page.url()})`,
+    `вернувшемуся — вход, после него вернёт на /progress (сейчас ${page.url()})`,
   );
   await browser.close();
 });
 
 test("вход: один запрос вместо четырёх, раздел открывается сам, чужой адрес возврата не уводит с сайта", async () => {
   const user = await newUser();
-  const { browser, page } = await session();
+  const { browser, context, page } = await session();
+  await context.addCookies([{ name: "yg-version", value: "normal", url: BASE }]);
   const auth = [];
   page.on("request", (r) => r.url().includes("/api/auth/") && auth.push(`${r.method()} ${new URL(r.url()).pathname}`));
 
@@ -189,7 +209,8 @@ test("вход: один запрос вместо четырёх, раздел 
   await page.fill('input[name="password"]', user.password);
   await page.tap('button[type=submit]');
   await page.waitForURL(/\/progress/, { timeout: 30_000 });
-  await page.waitForLoadState("networkidle");
+  // В Chromium приложение держит фоновые запросы, и «сеть затихла» может не наступить.
+  await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
   check((await page.locator('input[name="identifier"]').count()) === 0, "после входа открылся сам раздел, а не снова форма входа — перезагружать не нужно");
   const before = auth.slice(0, auth.indexOf("POST /api/auth/callback/credentials") + 1);
   check(before.filter((r) => r.startsWith("POST")).length === 1 && !auth.includes("GET /api/auth/providers"), `вход — один запрос, без лишних служебных (было: ${auth.slice(0, 6).join(", ")})`);

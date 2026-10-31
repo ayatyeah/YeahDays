@@ -3435,5 +3435,15 @@
  "🎬 Ролики части · {0} видео": "🎬 Part videos · {0}",
  "📖 Обычный": "📖 Regular",
  "Продолжаешь с места, где остановился": "Picking up where you left off",
- "С начала части": "From the start of the part"
+ "С начала части": "From the start of the part",
+ "Любую часть можно выключить в профиле, в разделе «Мой ритм и достижения».": "You can turn off any part later in your profile, under “My rhythm and achievements”.",
+ "Одно согласие вместо вопросов в каждом разделе. Нажимая «Принять и начать», ты:": "One consent instead of questions in every section. By tapping “Accept and start”, you:",
+ "Остался один шаг.": "One step left.",
+ "Последнее — про данные": "Last thing — your data",
+ "Прими политику конфиденциальности — откроются сообщество и ИИ-помощник.": "Accept the privacy policy to unlock the community and the AI assistant.",
+ "Принять и начать": "Accept and start",
+ "Решу позже": "Decide later",
+ "появляешься в сообществе с именем, персонажем и уровнем — скрыться можно одним переключателем": "appear in the community with your name, character and level — you can hide with one switch",
+ "разрешаешь ИИ-функциям отправлять в OpenAI то, что нужно для ответа: запрос, план, учебный прогресс и цели": "allow AI features to send OpenAI what they need to answer: your request, plan, study progress and goals",
+ "разрешаешь учёт активности для твоей статистики и достижений": "allow activity tracking for your stats and achievements"
 }

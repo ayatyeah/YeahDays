@@ -1,0 +1,35 @@
+/*
+ * Плеер «Историй». Камера по кадру — медленный наезд и проезд (Ken Burns):
+ * четыре варианта по кругу, чтобы соседние кадры не двигались одинаково.
+ * Длительность задаёт плеер — столько, сколько кадр на экране.
+ */
+@keyframes story-kb-0 { from { transform: scale(1.02) translate3d(-1.2%, 0, 0); } to { transform: scale(1.1) translate3d(1.2%, -0.8%, 0); } }
+@keyframes story-kb-1 { from { transform: scale(1.1) translate3d(1.4%, 0.6%, 0); } to { transform: scale(1.03) translate3d(-1%, 0, 0); } }
+@keyframes story-kb-2 { from { transform: scale(1.04) translate3d(0, 1%, 0); } to { transform: scale(1.12) translate3d(0, -1.2%, 0); } }
+@keyframes story-kb-3 { from { transform: scale(1.12) translate3d(-1%, -1%, 0); } to { transform: scale(1.04) translate3d(1%, 0.6%, 0); } }
+
+.story-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 700ms ease;
+  will-change: transform, opacity;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.story-frame[data-kb="0"] { animation-name: story-kb-0; }
+.story-frame[data-kb="1"] { animation-name: story-kb-1; }
+.story-frame[data-kb="2"] { animation-name: story-kb-2; }
+.story-frame[data-kb="3"] { animation-name: story-kb-3; }
+
+.story-term {
+  animation: story-term-in 320ms ease both;
+}
+@keyframes story-term-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .story-frame { animation: none !important; transition: none; }
+  .story-term { animation: none; }
+}

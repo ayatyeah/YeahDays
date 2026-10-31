@@ -1,0 +1,46 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import { STORIES, frameSrc, sceneAudioSrc, storyTimings } from "./index";
+
+const pub = (src: string) => join(process.cwd(), "public", src);
+
+describe("истории: всё, что нужно плееру, на месте", () => {
+  for (const story of STORIES) {
+    it(`${story.id}: у каждой реплики есть герой и кадр`, () => {
+      expect(existsSync(pub(frameSrc(story, story.cover)))).toBe(true);
+      for (const scene of story.scenes) {
+        expect(scene.lines.length).toBeGreaterThan(0);
+        for (const line of scene.lines) {
+          expect(story.cast[line.who], `${scene.id}: герой ${line.who}`).toBeDefined();
+          expect(existsSync(pub(frameSrc(story, line.frame))), `${scene.id}: кадр ${line.frame}`).toBe(true);
+        }
+      }
+    });
+
+    it(`${story.id}: озвучка каждой сцены — файл и тайминг на каждую реплику`, () => {
+      const timings = storyTimings(story.id);
+      for (const scene of story.scenes) {
+        const t = timings[scene.id];
+        expect(t, `озвучка сцены ${scene.id}`).toBeDefined();
+        expect(t.lines).toHaveLength(scene.lines.length);
+        expect(existsSync(pub(sceneAudioSrc(story, scene.id)))).toBe(true);
+        t.lines.forEach((l, i) => {
+          expect(l.end).toBeGreaterThan(l.start);
+          if (i) expect(l.start).toBeGreaterThan(t.lines[i - 1].end);
+        });
+        expect(t.duration).toBeGreaterThan(t.lines.at(-1)!.end);
+      }
+    });
+
+    it(`${story.id}: термины — по-английски, пояснения — по-русски`, () => {
+      const terms = story.scenes.flatMap((s) => s.lines.flatMap((l) => l.terms ?? []));
+      expect(terms.length).toBeGreaterThan(10);
+      for (const term of terms) {
+        expect(term.term).toMatch(/^[A-Za-z]/);
+        expect(term.term).not.toMatch(/[А-Яа-яЁё]/);
+        expect(term.ru).toMatch(/[А-Яа-яЁё]/);
+      }
+    });
+  }
+});

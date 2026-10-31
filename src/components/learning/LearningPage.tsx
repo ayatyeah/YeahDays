@@ -30,6 +30,7 @@ import { dateKey } from "@/lib/domain";
 import { isTodoOnDay, isTodoDone, useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
 import PathwaysHub from "@/components/path/PathwaysHub";
+import { STORIES, frameSrc, storySeconds } from "@/lib/stories";
 
 const field =
   "mt-2 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-3 text-[16px]";
@@ -575,6 +576,7 @@ export default function LearningPage({
           <a href="#path-hub-title">Траектории</a>
           {!!data?.skills.length && <a href="#learning-subjects">Мои предметы</a>}
           <a href="#learning-exams">Подготовка к экзаменам</a>
+          <a href="#learning-stories">Истории</a>
         </nav>
       )}
       {view === "hub" && (
@@ -760,6 +762,28 @@ export default function LearningPage({
                       max={e.stepIds.length || 1}
                       aria-label={`Пройденные проверки: ${e.course}`}
                     />
+                  </Link>
+                ))}
+              </div>
+            </section>
+            {/* Истории — мультфильмы по лекциям: сюжет, где понятия лекции нужны героям. */}
+            <section>
+              <div className="learning-section-title">
+                <h2 id="learning-stories" className="scroll-mt-4">Истории</h2>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {STORIES.map((story) => (
+                  <Link key={story.id} href={`/stories/${story.id}`} className="group overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+                    <span className="relative block aspect-video overflow-hidden bg-[var(--color-surface-2)]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={frameSrc(story, story.cover)} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                      <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white">{`▶ ${Math.round(storySeconds(story) / 60)} мин`}</span>
+                    </span>
+                    <span className="block p-4">
+                      <span className="learning-eyebrow" lang="ru">{story.lecture.label}</span>
+                      <span className="mt-1 block text-lg font-bold leading-tight" lang="ru">{story.title}</span>
+                      <span className="mt-1 block text-sm text-[var(--color-muted)]" lang="ru">{story.subtitle}</span>
+                    </span>
                   </Link>
                 ))}
               </div>

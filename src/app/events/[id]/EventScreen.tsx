@@ -33,6 +33,7 @@ import { loadScroll } from "@/lib/events/scrollMemory";
 import { routeStates, routeStops, shortTitle } from "@/lib/events/route";
 import RouteStepper from "@/components/events/RouteStepper";
 import LectureBar from "@/components/events/LectureBar";
+import { storiesForLecture, storySeconds } from "@/lib/stories";
 import { fastProgress } from "@/lib/events/fastProgress";
 import type { TrainerKind } from "@/lib/visionTrainer";
 const NetworkGame = dynamic(() => import("@/components/events/NetworkGame"), { loading: Loading });
@@ -482,6 +483,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
                   </span>
                   <span aria-hidden className="mt-1 shrink-0 text-xl leading-none text-[var(--color-muted)] transition group-open:rotate-180">⌄</span>
                 </summary>
+                {storiesForLecture(event.id, lecture.id).map((story) => (
+                  <Link key={story.id} href={`/stories/${story.id}`} className="mr-2 mt-3 inline-flex min-h-9 items-center rounded-full bg-[var(--color-fg)] px-4 text-sm font-semibold text-[var(--color-bg)]">
+                    {`📖 История лекции · ${Math.round(storySeconds(story) / 60)} мин`}
+                  </Link>
+                ))}
                 {shelves.lectures[li].count > 0 && (
                   <Button size="sm" className="mt-3 h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "lecture", lecture: li }, back: { mode: "map" } })}>
                     {`🎬 Ролики лекции · ${shelves.lectures[li].count} видео`}

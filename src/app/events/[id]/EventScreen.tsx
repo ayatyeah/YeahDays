@@ -22,6 +22,8 @@ const BugHunt = dynamic(() => import("@/components/events/BugHunt"), { loading: 
 const OpenCVSandbox = dynamic(() => import("@/components/events/OpenCVSandbox"), { loading: Loading });
 const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading: Loading });
 const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
+import { PM_QUIZ2_TITLE } from "@/lib/events/projectManagement/quiz2";
+const PMQuiz2 = dynamic(() => import("@/components/events/PMQuiz2"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
 const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
 const FeedPicker = dynamic(() => import("@/components/events/FeedPicker"), { loading: Loading });
@@ -57,6 +59,7 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
 
 type View =
   | { mode: "map" }
+  | { mode: "pmQuiz2" }
   | { mode: "sheet" }
   | { mode: "cards" }
   | { mode: "game" }
@@ -382,6 +385,14 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <h1 className="ios-title mt-2">{event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>
           </header>
+          {event.id === "project-management-test-2" && (
+            <section className="space-y-3 rounded-3xl border border-lime-400/40 bg-lime-500/5 p-5" data-no-i18n>
+              <p className="text-xs font-semibold uppercase tracking-widest">Отдельный квиз · Practice / Simulated</p>
+              <h2 className="break-words text-xl font-black">{PM_QUIZ2_TITLE}</h2>
+              <p className="text-sm">50 новых сценарных вопросов по лекциям 4–8 · A–E · 60 минут на тренировку. Разбор каждого варианта и ошибок по темам — после сдачи.</p>
+              <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "pmQuiz2" })}>Открыть Квиз 2</Button>
+            </section>
+          )}
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -635,6 +646,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
         </>
       )}
 
+      {view.mode === "pmQuiz2" && event.id === "project-management-test-2" && <PMQuiz2 userId={userId} onExit={toMap} />}
       {view.mode === "mock" && (
         <MockExamView
           event={event}
@@ -730,7 +742,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
           onMap={toMap}
         />
       )}
-      <Tutor event={event} userId={userId} />
+      {view.mode !== "pmQuiz2" && <Tutor event={event} userId={userId} />}
 
       {view.mode === "read" && (() => {
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];

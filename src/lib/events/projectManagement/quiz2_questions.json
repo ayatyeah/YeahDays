@@ -1,0 +1,1453 @@
+[
+  {
+    "lecture": 4,
+    "source_page": 13,
+    "topic": "CV and SV",
+    "scenario": "At a reporting date, BCWS is $1,000, BCWP is $800, and ACWP is $900.",
+    "question": "Which interpretation is correct?",
+    "options": [
+      "Over budget and ahead of schedule.",
+      "Over budget and behind schedule.",
+      "Under budget and ahead of schedule.",
+      "Under budget and behind schedule.",
+      "Exactly on budget and schedule."
+    ],
+    "per_option_explanations": [
+      "Перерасход верен, но SV отрицателен: есть отставание.",
+      "CV = 800 − 900 = −100; SV = 800 − 1000 = −200: перерасход и отставание.",
+      "Оба знака отрицательные, а не положительные.",
+      "Отставание верно, но CV отрицателен: есть перерасход.",
+      "Ни CV, ни SV не равны нулю."
+    ],
+    "id": "pm-quiz2-v1-01",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "CV = 800 − 900 = −100; SV = 800 − 1000 = −200: перерасход и отставание.",
+    "source_pages": [
+      13
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 17,
+    "topic": "CPI and SPI",
+    "scenario": "A project reports BCWP = $1,200, ACWP = $1,000 and BCWS = $1,500.",
+    "question": "Which pair of indices follows the lecture formulas?",
+    "options": [
+      "CPI = 0.83; SPI = 1.25.",
+      "CPI = 1.20; SPI = 1.25.",
+      "CPI = 1.20; SPI = 0.80.",
+      "CPI = 0.80; SPI = 1.20.",
+      "CPI = 1.50; SPI = 1.20."
+    ],
+    "per_option_explanations": [
+      "В обеих дробях перепутаны числитель и знаменатель.",
+      "CPI верен, но SPI обращён: нужно BCWP/BCWS.",
+      "CPI = 1200/1000 = 1.2; SPI = 1200/1500 = 0.8.",
+      "Переставлены индексы затрат и расписания.",
+      "BCWS/ACWP не является CPI; SPI также рассчитан неверно."
+    ],
+    "id": "pm-quiz2-v1-02",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "CPI = 1200/1000 = 1.2; SPI = 1200/1500 = 0.8.",
+    "source_pages": [
+      17
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 20,
+    "topic": "Earned value",
+    "scenario": "The budget at completion is $2,000. The applicable completion measure shows 40% of the work complete.",
+    "question": "What is BCWP using the lecture approximation?",
+    "options": [
+      "$800.",
+      "$1,200.",
+      "$40.",
+      "$5,000.",
+      "$2,000."
+    ],
+    "per_option_explanations": [
+      "BCWP = 0.40 × BAC = 0.40 × 2000 = 800.",
+      "1200 — бюджетная стоимость оставшихся 60%, а не выполненных работ.",
+      "Процент нужно умножить на бюджет, а не считать суммой денег.",
+      "Деление BAC на долю выполнения не даёт BCWP.",
+      "BAC — бюджет всего проекта, выполнено только 40%."
+    ],
+    "id": "pm-quiz2-v1-03",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "BCWP = 0.40 × BAC = 0.40 × 2000 = 800.",
+    "source_pages": [
+      20
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 22,
+    "topic": "EAC and VAC",
+    "scenario": "BAC is $4,000 and CPI is 0.80. Assume the same cost efficiency continues.",
+    "question": "Which forecast follows EAC = BAC/CPI and VAC = BAC − EAC?",
+    "options": [
+      "EAC = $4,000; VAC = $0.",
+      "EAC = $1,000; VAC = $3,000.",
+      "EAC = $5,000; VAC = $1,000.",
+      "EAC = $5,000; VAC = −$1,000.",
+      "EAC = $3,200; VAC = $800."
+    ],
+    "per_option_explanations": [
+      "CPI ниже 1, поэтому прогноз не совпадает с исходным бюджетом.",
+      "1000 — величина прогнозируемого перерасхода, не общая стоимость.",
+      "EAC верен, но VAC имеет отрицательный знак.",
+      "4000/0.8 = 5000; 4000 − 5000 = −1000. Ожидается перерасход.",
+      "Для EAC нужно делить на CPI, а не умножать."
+    ],
+    "id": "pm-quiz2-v1-04",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "4000/0.8 = 5000; 4000 − 5000 = −1000. Ожидается перерасход.",
+    "source_pages": [
+      22
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 14,
+    "topic": "Variance percentages",
+    "scenario": "BCWP is $800, ACWP is $1,000, and BCWS is $1,000.",
+    "question": "What are CVP and SVP using the denominators specified in Lecture 4?",
+    "options": [
+      "CVP = −25%; SVP = −25%.",
+      "CVP = −25%; SVP = −20%.",
+      "CVP = 25%; SVP = 20%.",
+      "CVP = −20%; SVP = −20%.",
+      "CVP = −20%; SVP = −25%."
+    ],
+    "per_option_explanations": [
+      "В SVP знаменатель BCWS, а не BCWP.",
+      "CV = SV = −200, но CVP = −200/800 = −25%, SVP = −200/1000 = −20%.",
+      "Обе разницы отрицательные, поэтому проценты тоже отрицательные.",
+      "В CVP знаменатель BCWP, а не ACWP.",
+      "Переставлены знаменатели двух формул."
+    ],
+    "id": "pm-quiz2-v1-05",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "CV = SV = −200, но CVP = −200/800 = −25%, SVP = −200/1000 = −20%.",
+    "source_pages": [
+      14
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 7,
+    "topic": "MCCS operating cycle",
+    "scenario": "Planning is complete. A controller is describing the operating cycle of MCCS.",
+    "question": "Which sequence matches the lecture?",
+    "options": [
+      "Reporting → cost analysis → planning → work authorization.",
+      "Work authorization → cost data collection → cost analysis → reporting.",
+      "Work authorization → cost analysis → cost data collection → reporting.",
+      "Planning → reporting → work authorization → cost analysis.",
+      "Cost analysis → work authorization → reporting → cost data collection."
+    ],
+    "per_option_explanations": [
+      "Planning относится к фазе I, а перечисленный порядок не соответствует циклу.",
+      "Фазы II–V: разрешение работ, сбор данных, анализ, отчётность.",
+      "Сначала собирают данные, затем анализируют их.",
+      "Planning — отдельный planning cycle; здесь также пропущен сбор данных.",
+      "Анализ опирается на собранные данные и не предшествует разрешению работ."
+    ],
+    "id": "pm-quiz2-v1-06",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "Фазы II–V: разрешение работ, сбор данных, анализ, отчётность.",
+    "source_pages": [
+      7
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 9,
+    "topic": "Undistributed budget",
+    "scenario": "A contract change has been approved, but time constraints prevent the planning needed to incorporate it into the performance budget.",
+    "question": "Which budget category is described?",
+    "options": [
+      "Unallocated budget.",
+      "Distributed performance budget.",
+      "Actual cost for work performed.",
+      "Undistributed budget.",
+      "Management reserve."
+    ],
+    "per_option_explanations": [
+      "Unallocated budget относится к задачам, ещё не определённым или не авторизованным.",
+      "Изменение ещё не распределено в performance budget.",
+      "ACWP — фактические затраты, а не категория бюджета изменения.",
+      "Undistributed budget связан с изменением контракта, ещё не включённым в performance budget из-за нехватки времени.",
+      "Описано конкретное изменение контракта, а не резерв управления."
+    ],
+    "id": "pm-quiz2-v1-07",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "Undistributed budget связан с изменением контракта, ещё не включённым в performance budget из-за нехватки времени.",
+    "source_pages": [
+      9
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 24,
+    "topic": "Group classification",
+    "scenario": "Management appoints engineers from several departments to complete a specified assignment.",
+    "question": "How should this deliberately created group be classified?",
+    "options": [
+      "A formal task group.",
+      "A group defined only by physical proximity.",
+      "An informal friendship group.",
+      "A formal command group based solely on the reporting line.",
+      "An informal interest group."
+    ],
+    "per_option_explanations": [
+      "Группа создана решением руководства для задачи: formal task group.",
+      "Близость может способствовать группам, но здесь определяющий признак — назначенная задача.",
+      "Friendship group основана на дружбе.",
+      "Условие описывает общую задачу разных подразделений, а не одну линию подчинения.",
+      "Interest group возникает из общих интересов, а не управленческого назначения."
+    ],
+    "id": "pm-quiz2-v1-08",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "Группа создана решением руководства для задачи: formal task group.",
+    "source_pages": [
+      24
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 26,
+    "topic": "Group development",
+    "scenario": "Members debate who should lead, challenge each other’s advice, and experiment with competing roles.",
+    "question": "Which stage best matches these signals?",
+    "options": [
+      "Adjourning.",
+      "Performing.",
+      "Forming.",
+      "Norming.",
+      "Storming."
+    ],
+    "per_option_explanations": [
+      "Adjourning — завершение работы и распад группы.",
+      "Performing — зрелая работа на результат при сложившейся структуре.",
+      "Forming — знакомство и начальные правила, не описанная борьба за лидерство.",
+      "Norming — возникновение сплочённости и общих ожиданий.",
+      "Конфликты и борьба за роли характерны для storming."
+    ],
+    "id": "pm-quiz2-v1-09",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "Конфликты и борьба за роли характерны для storming.",
+    "source_pages": [
+      26
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 31,
+    "topic": "Groupthink",
+    "scenario": "A cohesive team suppresses doubts about a proposal because members want unanimous agreement.",
+    "question": "Which risk is most directly illustrated?",
+    "options": [
+      "Formal work authorization.",
+      "Adjourning.",
+      "Cross-functional specialization.",
+      "Punctuated equilibrium.",
+      "Groupthink."
+    ],
+    "per_option_explanations": [
+      "Разрешение работ — элемент контроля, а не описанное поведение группы.",
+      "Группа не готовится расформироваться.",
+      "Разные специализации не объясняют подавление сомнений.",
+      "Punctuated equilibrium описывает изменение темпа и подхода под давлением времени.",
+      "Желание согласия вытесняет рассмотрение спорных альтернатив: groupthink."
+    ],
+    "id": "pm-quiz2-v1-10",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "Желание согласия вытесняет рассмотрение спорных альтернатив: groupthink.",
+    "source_pages": [
+      31
+    ]
+  },
+  {
+    "lecture": 4,
+    "source_page": 32,
+    "topic": "Role conflict",
+    "scenario": "An employee must perform two simultaneous role requirements, and meeting one prevents meeting the other.",
+    "question": "Which concept is directly established by this information?",
+    "options": [
+      "Status hierarchy.",
+      "Role conflict.",
+      "Group norm.",
+      "Groupthink.",
+      "Group cohesiveness."
+    ],
+    "per_option_explanations": [
+      "Иерархия статусов сама по себе не означает невозможность выполнить роли.",
+      "Лекция определяет role conflict через несовместимые одновременные требования ролей; данных для конкретного подтипа здесь нет.",
+      "Norm — ожидание поведения, но здесь ключевое — конфликт двух требований.",
+      "Groupthink требует стремления к согласию, которого в условии нет.",
+      "Сплочённость — привлекательность группы, не несовместимость требований."
+    ],
+    "id": "pm-quiz2-v1-11",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 4 Cost Control and Group Behavior (2).pdf",
+    "detailed_russian_explanation": "Лекция определяет role conflict через несовместимые одновременные требования ролей; данных для конкретного подтипа здесь нет.",
+    "source_pages": [
+      32
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 12,
+    "topic": "Functional organization",
+    "scenario": "Specialists are grouped by discipline, communication is vertical, and each employee reports to one functional boss.",
+    "question": "Which structure is described?",
+    "options": [
+      "Balanced matrix.",
+      "Pure projectized.",
+      "Traditional functional.",
+      "Strong matrix.",
+      "Weak matrix with dual reporting."
+    ],
+    "per_option_explanations": [
+      "Balanced matrix также сочетает два направления ответственности.",
+      "Projectized объединяет людей вокруг проекта под полномочиями PM.",
+      "Функциональная структура: специализация, вертикальная коммуникация и один руководитель.",
+      "Strong matrix предполагает сочетание проектного и функционального управления.",
+      "Weak matrix всё ещё матрица; в условии описана только функциональная линия."
+    ],
+    "id": "pm-quiz2-v1-12",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Функциональная структура: специализация, вертикальная коммуникация и один руководитель.",
+    "source_pages": [
+      12
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 28,
+    "topic": "Projectized authority",
+    "scenario": "One program manager assigns work and conducts merit reviews for the entire project team.",
+    "question": "Which organizational form gives this manager complete line authority?",
+    "options": [
+      "Weak matrix.",
+      "Departmental project coordination.",
+      "A task force without formal project authority.",
+      "Pure product / projectized.",
+      "Traditional functional."
+    ],
+    "per_option_explanations": [
+      "В weak matrix больше влияния у line manager.",
+      "Координатор не получает описанные полные линейные полномочия.",
+      "Вариант прямо не имеет формальной проектной власти.",
+      "В pure product/projectized один program manager имеет complete line authority.",
+      "В functional полномочия распределены по функциональным руководителям."
+    ],
+    "id": "pm-quiz2-v1-13",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "В pure product/projectized один program manager имеет complete line authority.",
+    "source_pages": [
+      28
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 29,
+    "topic": "Projectized costs",
+    "scenario": "Several projects retain dedicated specialists even after their main work is finished, because managers fear they cannot get them back.",
+    "question": "Which disadvantage is illustrated?",
+    "options": [
+      "Excessive reliance on a single functional reporting line.",
+      "Elimination of resource duplication across projects.",
+      "Loss of all project accountability.",
+      "An inability of the project manager to assign work.",
+      "High cost of maintaining separate project organizations."
+    ],
+    "per_option_explanations": [
+      "Ситуация относится к отдельным проектным командам, а не одному функциональному отделу.",
+      "Дублирование ресурсов здесь сохраняется, а не устраняется.",
+      "В projectized ответственность за проект как раз сосредоточена у PM.",
+      "PM имеет полномочия назначать работу.",
+      "Закрепление людей и невозможность делиться ими повышают стоимость projectized organization."
+    ],
+    "id": "pm-quiz2-v1-14",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Закрепление людей и невозможность делиться ими повышают стоимость projectized organization.",
+    "source_pages": [
+      29
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 44,
+    "topic": "Strong matrix",
+    "scenario": "Employees have both project and functional relationships, but the project manager has greater influence over their daily work.",
+    "question": "Which matrix type is this from the project manager’s perspective?",
+    "options": [
+      "Balanced matrix.",
+      "Pure functional structure.",
+      "Strong matrix.",
+      "Pure product structure.",
+      "Weak matrix."
+    ],
+    "per_option_explanations": [
+      "Balanced не соответствует указанному перевесу PM.",
+      "Два направления управления показывают матрицу, не чистую functional.",
+      "Больше ежедневного влияния у PM — strong matrix.",
+      "Полная projectized структура не сохраняет описанное матричное сочетание.",
+      "Weak означает больше влияния у line manager."
+    ],
+    "id": "pm-quiz2-v1-15",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Больше ежедневного влияния у PM — strong matrix.",
+    "source_pages": [
+      44
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 44,
+    "topic": "Weak matrix",
+    "scenario": "A project coordinator negotiates priorities, but functional line managers exert greater influence on workers’ daily performance.",
+    "question": "Which classification best fits?",
+    "options": [
+      "Strong matrix.",
+      "Balanced matrix.",
+      "A liaison department with complete authority over all projects.",
+      "Pure projectized organization.",
+      "Weak matrix."
+    ],
+    "per_option_explanations": [
+      "Strong требовал бы перевеса project manager.",
+      "Условие явно указывает неравное влияние.",
+      "Полной власти liaison department в условии нет.",
+      "В projectized полная линейная власть у program manager.",
+      "Перевес line managers означает weak matrix."
+    ],
+    "id": "pm-quiz2-v1-16",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Перевес line managers означает weak matrix.",
+    "source_pages": [
+      44
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 7,
+    "topic": "Authority",
+    "scenario": "A role gives a manager the power to make final decisions on an assignment.",
+    "question": "Which term names that power?",
+    "options": [
+      "Interface management.",
+      "Authority.",
+      "Responsibility.",
+      "Accountability.",
+      "Technical specialization."
+    ],
+    "per_option_explanations": [
+      "Interface management — координация взаимодействия подразделений.",
+      "Authority — предоставленная человеку власть принимать окончательные решения.",
+      "Responsibility — обязанность эффективно выполнять поручение.",
+      "Accountability — обязанность отвечать за завершение; это не только право решения.",
+      "Специализация — область знаний, не полномочие."
+    ],
+    "id": "pm-quiz2-v1-17",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Authority — предоставленная человеку власть принимать окончательные решения.",
+    "source_pages": [
+      7
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 7,
+    "topic": "Accountability",
+    "scenario": "A manager has both decision-making authority and responsibility for completing an assignment.",
+    "question": "Which lecture formulation describes being answerable for satisfactory completion?",
+    "options": [
+      "Accountability = responsibility without authority.",
+      "Authority = accountability + specialization.",
+      "Authority and responsibility remove accountability.",
+      "Accountability = authority + responsibility.",
+      "Responsibility = authority − accountability."
+    ],
+    "per_option_explanations": [
+      "Формула лекции включает authority, а не исключает её.",
+      "Такого равенства в лекции нет; specialization здесь не компонент формулы.",
+      "Оба компонента формируют accountability, а не устраняют её.",
+      "Именно так сформулировано на слайде 7: Accountability = authority + responsibility.",
+      "Лекция не определяет responsibility через вычитание."
+    ],
+    "id": "pm-quiz2-v1-18",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Именно так сформулировано на слайде 7: Accountability = authority + responsibility.",
+    "source_pages": [
+      7
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 21,
+    "topic": "Task force",
+    "scenario": "Each functional unit sends a representative to a group that jointly solves integration problems within budget limits.",
+    "question": "Which integration mechanism matches this arrangement?",
+    "options": [
+      "Liaison department handling divisional transactions.",
+      "Pure product division.",
+      "A single departmental project leader.",
+      "Hierarchical referral of every issue to top management.",
+      "Task force."
+    ],
+    "per_option_explanations": [
+      "Liaison department — отдельное подразделение связи, не описанная группа представителей.",
+      "Pure product требует иной структуры полномочий.",
+      "Здесь несколько представителей, а не один лидер внутри отдела.",
+      "Задача — принимать решения на более низком уровне, не передавать каждое наверх.",
+      "Task force объединяет представителей функциональных единиц для совместного решения проблем."
+    ],
+    "id": "pm-quiz2-v1-19",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Task force объединяет представителей функциональных единиц для совместного решения проблем.",
+    "source_pages": [
+      21
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 23,
+    "topic": "Liaison department",
+    "scenario": "An engineering division creates a dedicated unit to handle transactions between its functional units, including engineering changes and design problems.",
+    "question": "Which mechanism is described?",
+    "options": [
+      "Liaison department.",
+      "Temporary leader inside a single functional section.",
+      "Pure product project team.",
+      "Customer steering committee.",
+      "Informal friendship group."
+    ],
+    "per_option_explanations": [
+      "Слайд 23 описывает именно liaison department в engineering division.",
+      "Выделено отдельное подразделение, не лидер одной секции.",
+      "Она координирует функциональные подразделения, а не заменяет их проектной командой.",
+      "Речь о внутренних инженерных связях, не клиентском комитете.",
+      "Это формальная созданная единица, не дружеская группа."
+    ],
+    "id": "pm-quiz2-v1-20",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Слайд 23 описывает именно liaison department в engineering division.",
+    "source_pages": [
+      23
+    ]
+  },
+  {
+    "lecture": 5,
+    "source_page": 4,
+    "topic": "Contingent structure",
+    "scenario": "An executive wants to impose one permanently ideal structure on every organization and every stage of growth.",
+    "question": "Which response is consistent with Sadler’s argument?",
+    "options": [
+      "The appropriate structure depends on changing sociotechnical circumstances.",
+      "The functional form is ideal for every stage.",
+      "The strong matrix is universally ideal regardless of tasks.",
+      "Structure depends only on the number of current projects.",
+      "The projectized form removes all environmental constraints."
+    ],
+    "per_option_explanations": [
+      "Sadler отрицает универсальную идеальную структуру: влияние факторов меняется.",
+      "Лекция не объявляет functional универсальным решением.",
+      "Strong matrix также не универсальна.",
+      "Факторы включают задачи, социальную среду и окружение, а не только число проектов.",
+      "Projectized не отменяет влияние среды."
+    ],
+    "id": "pm-quiz2-v1-21",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 5 Organizational Structures.pdf",
+    "detailed_russian_explanation": "Sadler отрицает универсальную идеальную структуру: влияние факторов меняется.",
+    "source_pages": [
+      4
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 11,
+    "topic": "Agile values",
+    "scenario": "A team must choose a policy that accurately preserves the direction of all four Agile Manifesto preferences.",
+    "question": "Which policy is consistent with the lecture?",
+    "options": [
+      "Favor interactions, working software, customer collaboration and following the original plan over their counterparts.",
+      "Favor interactions, working software, customer collaboration and response to change, while recognizing value in the alternatives.",
+      "Favor tools, working software, customer collaboration and response to change over their counterparts.",
+      "Favor interactions, comprehensive documentation, customer collaboration and response to change over their counterparts.",
+      "Favor interactions, working software, contract negotiation and response to change over their counterparts."
+    ],
+    "per_option_explanations": [
+      "Четвёртая ставит responding to change выше following a plan.",
+      "Все четыре предпочтения указаны верно; правые элементы тоже имеют ценность.",
+      "Первая ценность ставит individuals and interactions выше processes and tools.",
+      "Вторая ставит working software выше comprehensive documentation.",
+      "Третья ставит customer collaboration выше contract negotiation."
+    ],
+    "id": "pm-quiz2-v1-22",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Все четыре предпочтения указаны верно; правые элементы тоже имеют ценность.",
+    "source_pages": [
+      11
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 15,
+    "topic": "Sustainable pace",
+    "scenario": "A sponsor proposes permanent overtime for every iteration to maintain delivery speed.",
+    "question": "Which Agile principle most directly challenges this policy?",
+    "options": [
+      "Progress should be measured primarily by completed documents.",
+      "Business representatives should interact only at release boundaries.",
+      "Working software should be delivered only after all requirements stabilize.",
+      "Sponsors, developers and users should be able to maintain a constant pace indefinitely.",
+      "Teams should avoid reflecting on their working practices."
+    ],
+    "per_option_explanations": [
+      "Основная мера прогресса — working software.",
+      "Принцип требует ежедневного сотрудничества бизнеса и разработчиков.",
+      "Частая поставка не требует полной стабилизации требований.",
+      "Sustainable development означает устойчивый темп, а не постоянные переработки.",
+      "Регулярная рефлексия и улучшение прямо входят в принципы."
+    ],
+    "id": "pm-quiz2-v1-23",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Sustainable development означает устойчивый темп, а не постоянные переработки.",
+    "source_pages": [
+      15
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 14,
+    "topic": "Changing requirements",
+    "scenario": "Late feedback reveals that a changed requirement would improve the customer’s competitive position.",
+    "question": "Which response best follows the Agile principles?",
+    "options": [
+      "Accept it only after eliminating all future planning.",
+      "Delay all working software until no further changes are possible.",
+      "Treat the original contract as a substitute for collaboration.",
+      "Welcome the change and use it to improve customer value.",
+      "Reject it solely because it arrived late in development."
+    ],
+    "per_option_explanations": [
+      "Agile не отменяет планирование.",
+      "Ожидание полной неизменности противоречит частым поставкам.",
+      "Сотрудничество ценится выше контрактного торга.",
+      "Принцип 2 приветствует изменения даже поздно ради конкурентного преимущества клиента.",
+      "Позднее поступление само по себе не повод отвергнуть изменение."
+    ],
+    "id": "pm-quiz2-v1-24",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Принцип 2 приветствует изменения даже поздно ради конкурентного преимущества клиента.",
+    "source_pages": [
+      14
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 8,
+    "topic": "Agile triangle",
+    "scenario": "A knowledge-work project fixes its budget and delivery date but expects learning to alter the feature set.",
+    "question": "Which variable is flexible in the lecture’s inverted triangle?",
+    "options": [
+      "Cost, while scope and time stay fixed.",
+      "Quality by default instead of scope.",
+      "Time, while scope and cost stay fixed.",
+      "All three constraints must remain fixed.",
+      "Scope."
+    ],
+    "per_option_explanations": [
+      "Стоимость по условию и модели фиксирована.",
+      "Модель описывает гибкий scope, а не снижение качества.",
+      "Время по условию и модели фиксировано.",
+      "Это противоречит flexible scope в inverted triangle.",
+      "В показанной модели time и cost фиксированы, scope меняется."
+    ],
+    "id": "pm-quiz2-v1-25",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "В показанной модели time и cost фиксированы, scope меняется.",
+    "source_pages": [
+      8
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 4,
+    "topic": "Empirical process",
+    "scenario": "A team explores an uncertain new product through repeated increments and uses observed results to decide its next steps.",
+    "question": "Which process approach fits?",
+    "options": [
+      "Empirical.",
+      "A fixed contract budget category.",
+      "A purely functional reporting hierarchy.",
+      "A one-time final inspection without iteration.",
+      "Defined with all constituent steps established in advance."
+    ],
+    "per_option_explanations": [
+      "Empirical process в лекции итеративен и инкрементален, подходит неопределённости.",
+      "Бюджетная категория не описывает процесс работы.",
+      "Иерархия — организационная структура, не подход к получению знания.",
+      "Однократная проверка не соответствует повторяющимся инкрементам.",
+      "Defined process заранее определяет шаги; это противоположный сигнал."
+    ],
+    "id": "pm-quiz2-v1-26",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Empirical process в лекции итеративен и инкрементален, подходит неопределённости.",
+    "source_pages": [
+      4
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 30,
+    "topic": "XP practices",
+    "scenario": "A pair writes a failing test before implementation, then improves the code structure without changing its external behavior.",
+    "question": "Which two practices describe the test-first and restructuring steps?",
+    "options": [
+      "Refactoring and test-driven development, respectively.",
+      "Collective code ownership and release planning.",
+      "Test-driven development and refactoring.",
+      "Customer tests and adding new functionality, respectively.",
+      "Continuous integration and small releases."
+    ],
+    "per_option_explanations": [
+      "Практики названы в обратном порядке.",
+      "Ownership и planning не описывают последовательность теста и реструктуризации.",
+      "Tests before code — TDD; улучшение структуры без изменения поведения — refactoring.",
+      "Второй шаг не добавляет функциональность: поведение сохраняется.",
+      "CI проверяет совместимость кода, small releases — поставки, не эти два шага."
+    ],
+    "id": "pm-quiz2-v1-27",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Tests before code — TDD; улучшение структуры без изменения поведения — refactoring.",
+    "source_pages": [
+      30
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 35,
+    "topic": "Lean waste",
+    "scenario": "Developers repeatedly switch between several projects and lose time rebuilding the context for each one.",
+    "question": "Which listed Lean waste is most directly illustrated?",
+    "options": [
+      "Motion caused by information handoffs.",
+      "Defects.",
+      "Task switching.",
+      "Extra processes.",
+      "Extra features."
+    ],
+    "per_option_explanations": [
+      "Motion относится к передаче информации между группами, не к личному переключению задач.",
+      "Defects — ошибки, требующие исправления.",
+      "Task switching — потери контекста при переключении между проектами; это явная строка таблицы.",
+      "Extra processes — действия без ценности, например лишние согласования; здесь конкретнее switching.",
+      "Extra features — ненужные возможности продукта."
+    ],
+    "id": "pm-quiz2-v1-28",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Task switching — потери контекста при переключении между проектами; это явная строка таблицы.",
+    "source_pages": [
+      35
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 37,
+    "topic": "Kanban WIP",
+    "scenario": "A team starts many items, finishes few, and cannot see where work is blocked.",
+    "question": "Which Kanban action most directly limits concurrent unfinished work?",
+    "options": [
+      "Set explicit work-in-progress limits.",
+      "Increase the number of items started each day.",
+      "Replace flow measurements with a final deadline only.",
+      "Make process policies implicit to reduce discussion.",
+      "Hide blocked items until they are complete."
+    ],
+    "per_option_explanations": [
+      "Limit WIP ограничивает незавершённую работу и делает узкие места видимыми.",
+      "Увеличение стартов усугубляет проблему.",
+      "Manage flow требует наблюдения потока, не только финального срока.",
+      "Политики должны быть explicit, не implicit.",
+      "Kanban визуализирует работу и блокировки."
+    ],
+    "id": "pm-quiz2-v1-29",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Limit WIP ограничивает незавершённую работу и делает узкие места видимыми.",
+    "source_pages": [
+      37
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 45,
+    "topic": "Leadership duties",
+    "scenario": "Unplanned requests interrupt a team, and missing access to a test environment blocks progress.",
+    "question": "Which response best matches the leadership duties in the lecture?",
+    "options": [
+      "Keep all project goals private until the team completes its tasks.",
+      "Treat every interruption as a higher priority than the project vision.",
+      "Replace team resources with more frequent status reports.",
+      "Increase task monitoring while leaving the access problem to resolve itself.",
+      "Shield the team from unnecessary interruptions and secure the resources needed to remove the impediment."
+    ],
+    "per_option_explanations": [
+      "Vision нужно сообщать и повторять.",
+      "Необходима защита от ненужных отвлечений.",
+      "Отчёты не заменяют необходимую среду и доступ.",
+      "Контроль не устраняет блокирующий доступ.",
+      "Лидер защищает от помех, убирает препятствия, сообщает vision и обеспечивает ресурсы."
+    ],
+    "id": "pm-quiz2-v1-30",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Лидер защищает от помех, убирает препятствия, сообщает vision и обеспечивает ресурсы.",
+    "source_pages": [
+      45
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 49,
+    "topic": "Safe experimentation",
+    "scenario": "A team has an unproven improvement idea and fears punishment if a measured trial fails.",
+    "question": "Which leadership action best supports learning?",
+    "options": [
+      "Assign blame before discussing what was learned.",
+      "Create a safe environment for experimentation and share the trial’s findings.",
+      "Conceal setbacks so the trial appears successful.",
+      "Forbid new techniques until the project ends.",
+      "Require proof of success before allowing any experiment."
+    ],
+    "per_option_explanations": [
+      "Страх обвинения препятствует экспериментам.",
+      "Слайд 49 связывает безопасную среду, эксперименты, прозрачность и обмен знаниями.",
+      "Скрытие неудач нарушает transparency.",
+      "Запрет блокирует обучение и улучшение.",
+      "Эксперимент как раз нужен для проверки неопределённого результата."
+    ],
+    "id": "pm-quiz2-v1-31",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Слайд 49 связывает безопасную среду, эксперименты, прозрачность и обмен знаниями.",
+    "source_pages": [
+      49
+    ]
+  },
+  {
+    "lecture": 6,
+    "source_page": 40,
+    "topic": "Crystal",
+    "scenario": "A consultant selects a situationally tailored family of methods using project criticality and team size.",
+    "question": "Which framework family matches these selection factors?",
+    "options": [
+      "Crystal.",
+      "Feature-Driven Development.",
+      "Dynamic Systems Development Method.",
+      "Extreme Programming.",
+      "Kanban."
+    ],
+    "per_option_explanations": [
+      "Crystal — family of methods, классификация по criticality и team size.",
+      "FDD выделяет разработку по features и domain modeling.",
+      "DSDM описан через восемь принципов, не данную классификацию семейства.",
+      "XP фокусируется на практиках разработки ПО.",
+      "Kanban фокусируется на потоке и WIP."
+    ],
+    "id": "pm-quiz2-v1-32",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 6 Agile Principles and Mindset (2).pdf",
+    "detailed_russian_explanation": "Crystal — family of methods, классификация по criticality и team size.",
+    "source_pages": [
+      40
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 17,
+    "topic": "Product Owner",
+    "scenario": "Stakeholders disagree on the order of Product Backlog items and ask who remains accountable for maximizing product value.",
+    "question": "Which accountability answers both concerns?",
+    "options": [
+      "A committee of all stakeholders replacing the Product Owner.",
+      "Developers acting as a technical estimation group.",
+      "Product Owner.",
+      "The functional line manager by default.",
+      "Scrum Master."
+    ],
+    "per_option_explanations": [
+      "PO — один человек, не комитет.",
+      "Developers оценивают размер и планируют работу; порядок — ответственность PO.",
+      "Product Owner отвечает за максимизацию ценности и эффективное управление порядком backlog.",
+      "Scrum не назначает эту ответственность line manager по умолчанию.",
+      "SM отвечает за Scrum и эффективность команды, не порядок backlog."
+    ],
+    "id": "pm-quiz2-v1-33",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Product Owner отвечает за максимизацию ценности и эффективное управление порядком backlog.",
+    "source_pages": [
+      17
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 21,
+    "topic": "Scrum Master",
+    "scenario": "A team needs coaching in self-management and help causing the removal of persistent organizational impediments.",
+    "question": "Which accountability most directly provides this service?",
+    "options": [
+      "A stakeholder review committee.",
+      "A functional manager who must assign every Sprint task.",
+      "Product Owner as the sole estimator.",
+      "Scrum Master.",
+      "The customer as owner of the Sprint Backlog."
+    ],
+    "per_option_explanations": [
+      "Review committee не является такой Scrum accountability.",
+      "Назначение каждой задачи внешним руководителем противоречит self-management.",
+      "PO не единственный оценщик; sizing делают Developers.",
+      "Scrum Master обучает self-management и способствует устранению impediments.",
+      "Sprint Backlog — план Developers, не клиента."
+    ],
+    "id": "pm-quiz2-v1-34",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Scrum Master обучает self-management и способствует устранению impediments.",
+    "source_pages": [
+      21
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 38,
+    "topic": "Developers and sizing",
+    "scenario": "The Product Owner explains trade-offs for several backlog items before Sprint Planning.",
+    "question": "Who is responsible for sizing the items?",
+    "options": [
+      "All stakeholders by majority vote.",
+      "The Developers who will do the work.",
+      "The Product Owner alone because ordering and sizing are the same responsibility.",
+      "The Scrum Master alone because they manage the timebox.",
+      "The functional manager regardless of who performs the work."
+    ],
+    "per_option_explanations": [
+      "Голосование stakeholders не заменяет оценки исполнителей.",
+      "Слайд 38 прямо поручает sizing Developers, которые будут выполнять работу.",
+      "Ordering принадлежит PO, но sizing — Developers.",
+      "Организация timebox не даёт SM единоличную ответственность за оценки.",
+      "Функциональная должность не является основанием для этой Scrum ответственности."
+    ],
+    "id": "pm-quiz2-v1-35",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Слайд 38 прямо поручает sizing Developers, которые будут выполнять работу.",
+    "source_pages": [
+      38
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 31,
+    "topic": "Sprint Planning timebox",
+    "scenario": "A Scrum Team runs a one-month Sprint and schedules its Sprint Planning.",
+    "question": "What is the maximum timebox stated in Lecture 7?",
+    "options": [
+      "Three hours.",
+      "Four hours.",
+      "One full month.",
+      "Eight hours.",
+      "Fifteen minutes."
+    ],
+    "per_option_explanations": [
+      "3 часа — Retrospective для месячного Sprint.",
+      "4 часа — Sprint Review для месячного Sprint.",
+      "Месяц — максимальная длина Sprint, не Planning.",
+      "Для one-month Sprint максимум Sprint Planning — 8 часов.",
+      "15 минут — Daily Scrum."
+    ],
+    "id": "pm-quiz2-v1-36",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Для one-month Sprint максимум Sprint Planning — 8 часов.",
+    "source_pages": [
+      31
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 33,
+    "topic": "Daily Scrum",
+    "scenario": "Developers meet each working day to inspect progress toward the Sprint Goal and adapt upcoming work.",
+    "question": "Which event and timebox match?",
+    "options": [
+      "Backlog refinement — a mandatory 15-minute Scrum event.",
+      "Sprint Review — 15 minutes.",
+      "Sprint Retrospective — eight hours.",
+      "Sprint Planning — 15 minutes.",
+      "Daily Scrum — 15 minutes."
+    ],
+    "per_option_explanations": [
+      "Refinement — ongoing activity, не обязательное событие с таким timebox.",
+      "Review инспектирует итог Sprint со stakeholders.",
+      "Retrospective улучшает процессы и имеет иной timebox.",
+      "Planning инициирует Sprint, а не проходит ежедневно с этой целью.",
+      "Это Daily Scrum: 15 минут для Developers, чтобы проверить прогресс и адаптировать план."
+    ],
+    "id": "pm-quiz2-v1-37",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Это Daily Scrum: 15 минут для Developers, чтобы проверить прогресс и адаптировать план.",
+    "source_pages": [
+      33
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 35,
+    "topic": "Review and Retrospective",
+    "scenario": "At the end of a one-month Sprint, the team first inspects product outcomes with stakeholders, then examines its own interactions and process.",
+    "question": "Which event/timebox pair is correct for these two activities?",
+    "options": [
+      "Daily Scrum: up to four hours; Sprint Planning: up to three hours.",
+      "Sprint Review: up to three hours; Sprint Retrospective: up to four hours.",
+      "Sprint Planning: up to eight hours; Daily Scrum: up to fifteen minutes.",
+      "Sprint Review: up to four hours; Sprint Retrospective: up to three hours.",
+      "Sprint Retrospective: up to four hours; Sprint Review: up to three hours."
+    ],
+    "per_option_explanations": [
+      "Цели и timeboxes не соответствуют Daily Scrum и Planning.",
+      "Переставлены timeboxes двух событий.",
+      "Эти timeboxes реальны, но относятся к другим событиям.",
+      "Review — результат и stakeholders, ≤4 ч (слайд 35); Retrospective — процесс и эффективность, ≤3 ч (слайд 36).",
+      "Переставлены события: обсуждение продукта со stakeholders — Review."
+    ],
+    "id": "pm-quiz2-v1-38",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Review — результат и stakeholders, ≤4 ч (слайд 35); Retrospective — процесс и эффективность, ≤3 ч (слайд 36).",
+    "source_pages": [
+      35,
+      36
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 37,
+    "topic": "Artifacts and commitments",
+    "scenario": "A team labels each Scrum artifact with its associated commitment.",
+    "question": "Which complete mapping is correct?",
+    "options": [
+      "Product Backlog → Product Goal; Sprint Backlog → Definition of Done; Increment → Sprint Goal.",
+      "Product Backlog → Product Goal; Sprint Backlog → Sprint Goal; Increment → Definition of Done.",
+      "Product Backlog → Definition of Done; Sprint Backlog → Sprint Goal; Increment → Product Goal.",
+      "Product Backlog → Sprint Review; Sprint Backlog → Daily Scrum; Increment → Retrospective.",
+      "Product Backlog → Sprint Goal; Sprint Backlog → Product Goal; Increment → Definition of Done."
+    ],
+    "per_option_explanations": [
+      "Переставлены Sprint Goal и DoD.",
+      "Это три точные пары artifact → commitment со слайда 37.",
+      "DoD относится к Increment, Product Goal — к Product Backlog.",
+      "В правой части указаны события, а не commitments.",
+      "Переставлены долгосрочная цель продукта и цель Sprint."
+    ],
+    "id": "pm-quiz2-v1-39",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Это три точные пары artifact → commitment со слайда 37.",
+    "source_pages": [
+      37
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 40,
+    "topic": "Sprint Backlog",
+    "scenario": "A developer shows the Sprint Goal, selected Product Backlog items and the actionable plan for delivering them.",
+    "question": "What is this combined artifact?",
+    "options": [
+      "Definition of Done.",
+      "Product Backlog in its entirety.",
+      "Sprint Backlog.",
+      "Product Goal alone.",
+      "Sprint Review minutes."
+    ],
+    "per_option_explanations": [
+      "DoD — стандарт качества завершённого Increment.",
+      "Product Backlog шире выбранных на Sprint элементов и плана.",
+      "Sprint Backlog = why (Sprint Goal) + what (selected items) + how (plan).",
+      "Product Goal — долгосрочная цель, не этот набор.",
+      "Протокол встречи не является описанным Scrum artifact."
+    ],
+    "id": "pm-quiz2-v1-40",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Sprint Backlog = why (Sprint Goal) + what (selected items) + how (plan).",
+    "source_pages": [
+      40
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 42,
+    "topic": "Increment release",
+    "scenario": "An Increment meets the Definition of Done before the scheduled Sprint Review.",
+    "question": "Which statement is consistent with Lecture 7?",
+    "options": [
+      "It may be released only after the next Sprint Planning.",
+      "It must wait for the Review because the Review creates the Definition of Done.",
+      "It must remain unfinished until the Sprint ends.",
+      "It cannot be an Increment until a stakeholder presentation occurs.",
+      "It may be delivered before the Review; the Review is not a release gate."
+    ],
+    "per_option_explanations": [
+      "Следующий Planning не является условием выпуска.",
+      "DoD не возникает на Review; соответствие ему определяет Increment.",
+      "Окончание Sprint не нужно для признания работы Done.",
+      "Usable Done Increment существует до презентации.",
+      "Done Increment можно поставить раньше; Review не gate для выпуска ценности."
+    ],
+    "id": "pm-quiz2-v1-41",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Done Increment можно поставить раньше; Review не gate для выпуска ценности.",
+    "source_pages": [
+      42
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 27,
+    "topic": "Sprint cancellation",
+    "scenario": "A market change makes the Sprint Goal obsolete.",
+    "question": "Who alone has authority to cancel the Sprint?",
+    "options": [
+      "Developers by a technical majority vote.",
+      "Product Owner.",
+      "Scrum Master.",
+      "Any stakeholder who requests a new feature.",
+      "The team member who facilitates the Daily Scrum."
+    ],
+    "per_option_explanations": [
+      "Developers управляют планом, но не имеют указанного права отмены.",
+      "На слайде 27: только Product Owner может отменить Sprint, когда цель устарела.",
+      "SM не получает единоличное право отмены.",
+      "Запрос stakeholder не даёт такого полномочия.",
+      "Фасилитация Daily Scrum не определяет authority to cancel."
+    ],
+    "id": "pm-quiz2-v1-42",
+    "difficulty": "medium",
+    "correct_option": "B",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "На слайде 27: только Product Owner может отменить Sprint, когда цель устарела.",
+    "source_pages": [
+      27
+    ]
+  },
+  {
+    "lecture": 7,
+    "source_page": 11,
+    "topic": "Pillars and values",
+    "scenario": "A facilitator separates Scrum’s empirical pillars from the five values that support the team’s behavior.",
+    "question": "Which classification is correct?",
+    "options": [
+      "Pillars: transparency, inspection, adaptation. Values: commitment, focus, openness, respect, courage.",
+      "Pillars: transparency, inspection, adaptation. Values: simplicity, communication, feedback, courage, respect.",
+      "Pillars: commitment, focus, courage. Values: transparency, inspection, adaptation, respect, openness.",
+      "Pillars: Product Goal, Sprint Goal, Definition of Done. Values: commitment, focus, openness, respect, courage.",
+      "Pillars: planning, reporting, control. Values: commitment, focus, openness, respect, courage."
+    ],
+    "per_option_explanations": [
+      "Слайды 10–11 перечисляют пять values и три empirical pillars именно так.",
+      "Этот набор values относится к XP из L6, не Scrum.",
+      "Значения values и pillars смешаны.",
+      "Это commitments, а не pillars.",
+      "Planning/reporting/control не три Scrum pillars."
+    ],
+    "id": "pm-quiz2-v1-43",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 7 Scrum framework (1).pdf",
+    "detailed_russian_explanation": "Слайды 10–11 перечисляют пять values и три empirical pillars именно так.",
+    "source_pages": [
+      11
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 4,
+    "topic": "Persona purpose",
+    "scenario": "A team creates fictional user archetypes to understand the needs and behaviors of different user groups.",
+    "question": "Which technique is being used?",
+    "options": [
+      "User stories.",
+      "Product Backlog estimates.",
+      "Personas.",
+      "Acceptance criteria.",
+      "Sprint Goals."
+    ],
+    "per_option_explanations": [
+      "User story выражает потребность и ценность функции, не портрет группы пользователей.",
+      "Оценка backlog описывает размер работы, не пользователя.",
+      "Persona — вымышленный архетип пользователей, помогает понять потребности и поведение.",
+      "Acceptance criteria определяют условия принятия истории.",
+      "Sprint Goal — цель одного Sprint."
+    ],
+    "id": "pm-quiz2-v1-44",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "Persona — вымышленный архетип пользователей, помогает понять потребности и поведение.",
+    "source_pages": [
+      4
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 15,
+    "topic": "Persona limitations",
+    "scenario": "A team builds one generic persona with traits common to almost everyone and stops talking to actual users.",
+    "question": "What is the most relevant limitation?",
+    "options": [
+      "A longer template automatically removes the need for user research.",
+      "Personas must never be reviewed after creation.",
+      "Personas prevent any prioritization of features.",
+      "A persona is valid only if it is a real individual rather than an archetype.",
+      "Generic fictional personas may be unrealistic and cannot fully substitute for real users."
+    ],
+    "per_option_explanations": [
+      "Длина шаблона не заменяет исследование пользователей.",
+      "Их нужно регулярно пересматривать и обновлять.",
+      "Personas могут помогать приоритизации; проблема не в самом методе.",
+      "Personas по определению fictional, это не требует реального индивида.",
+      "Слайд 15 предупреждает о generic user и дистанцировании от реального сообщества."
+    ],
+    "id": "pm-quiz2-v1-45",
+    "difficulty": "medium",
+    "correct_option": "E",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "Слайд 15 предупреждает о generic user и дистанцировании от реального сообщества.",
+    "source_pages": [
+      15
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 18,
+    "topic": "INVEST Negotiable",
+    "scenario": "A story states the user’s desired outcome but deliberately leaves the implementation open for team discussion.",
+    "question": "Which INVEST criterion does this most directly illustrate?",
+    "options": [
+      "Testable.",
+      "Independent.",
+      "Sized Appropriately.",
+      "Negotiable.",
+      "Estimable."
+    ],
+    "per_option_explanations": [
+      "Testable — объективная проверка результата.",
+      "Independent — независимая поставка относительно других features.",
+      "Sized Appropriately — размер для завершения за итерацию.",
+      "Negotiable: команда может обсуждать, как реализовать историю.",
+      "Estimable — возможность оценить усилия."
+    ],
+    "id": "pm-quiz2-v1-46",
+    "difficulty": "medium",
+    "correct_option": "D",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "Negotiable: команда может обсуждать, как реализовать историю.",
+    "source_pages": [
+      18
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 18,
+    "topic": "INVEST Sized Appropriately",
+    "scenario": "A valuable, testable story is too large to complete in one iteration.",
+    "question": "Which INVEST criterion, using the exact Lecture 8 wording, requires attention?",
+    "options": [
+      "Sized Appropriately.",
+      "Independent.",
+      "Estimable.",
+      "Negotiable.",
+      "Valuable."
+    ],
+    "per_option_explanations": [
+      "Вариант лекции для S — Sized Appropriately: команда завершает историю за одну итерацию.",
+      "Независимость от других features не гарантирует подходящий размер.",
+      "Большую историю можно оценить, но оценимость не делает её достаточно маленькой.",
+      "В условии проблема размера, не свободы обсуждения реализации.",
+      "Ценность уже задана в условии."
+    ],
+    "id": "pm-quiz2-v1-47",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "Вариант лекции для S — Sized Appropriately: команда завершает историю за одну итерацию.",
+    "source_pages": [
+      18
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 22,
+    "topic": "WHO WHAT WHY",
+    "scenario": "A story reads: As a commuter, I need saved routes so that I can plan my journey faster.",
+    "question": "Which phrase expresses WHY?",
+    "options": [
+      "I need saved routes.",
+      "The estimated effort to implement saved routes.",
+      "So that I can plan my journey faster.",
+      "As a commuter.",
+      "The story title, if supplied."
+    ],
+    "per_option_explanations": [
+      "Это WHAT — нужная функция.",
+      "Оценка трудоёмкости не равна пользовательской ценности.",
+      "WHY — польза/ценность: быстрее планировать путь.",
+      "Это WHO — роль пользователя.",
+      "Название не обязательно и само по себе не определяет WHY."
+    ],
+    "id": "pm-quiz2-v1-48",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "WHY — польза/ценность: быстрее планировать путь.",
+    "source_pages": [
+      22
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 24,
+    "topic": "3Cs Conversation",
+    "scenario": "A short story card intentionally omits many details, prompting stakeholders and developers to discuss the need together.",
+    "question": "Which of the 3Cs is illustrated by this discussion?",
+    "options": [
+      "Conversation.",
+      "Confirmation.",
+      "Card.",
+      "Control.",
+      "Contract."
+    ],
+    "per_option_explanations": [
+      "Conversation раскрывает потребность через общение; story не исчерпывает все детали.",
+      "Confirmation проверяет соответствие результата, обычно через acceptance criteria.",
+      "Card — краткая запись, а вопрос о последующем обсуждении.",
+      "Control не входит в 3Cs.",
+      "Contract не входит в 3Cs."
+    ],
+    "id": "pm-quiz2-v1-49",
+    "difficulty": "medium",
+    "correct_option": "A",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "Conversation раскрывает потребность через общение; story не исчерпывает все детали.",
+    "source_pages": [
+      24
+    ]
+  },
+  {
+    "lecture": 8,
+    "source_page": 25,
+    "topic": "Confirmation and acceptance criteria",
+    "scenario": "Stakeholders define observable conditions that bound a user story and will be used to verify the delivered item meets the intended need.",
+    "question": "What are these conditions, and which C do they support?",
+    "options": [
+      "A feature title proving that acceptance has already occurred.",
+      "A persona name supporting Card.",
+      "Acceptance criteria supporting Confirmation.",
+      "A Product Goal replacing all story-level checks.",
+      "A development estimate supporting Conversation."
+    ],
+    "per_option_explanations": [
+      "Название не является доказательством принятия результата.",
+      "Имя persona не задаёт проверяемые условия истории.",
+      "Acceptance criteria задают границы и основу проверки, поддерживая Confirmation.",
+      "Product Goal не заменяет критерии конкретной истории.",
+      "Оценка усилий не подтверждает удовлетворение потребности."
+    ],
+    "id": "pm-quiz2-v1-50",
+    "difficulty": "medium",
+    "correct_option": "C",
+    "source_pdf": "Lecture 8 Practices in agile frameworks.pdf",
+    "detailed_russian_explanation": "Acceptance criteria задают границы и основу проверки, поддерживая Confirmation.",
+    "source_pages": [
+      25
+    ]
+  }
+]

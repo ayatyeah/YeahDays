@@ -8,6 +8,8 @@ import StandaloneRedirect from "@/components/StandaloneRedirect";
 import CookieConsent from "@/components/CookieConsent";
 import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 import styles from "./landing.module.css";
+import PrimeHero from "./PrimeHero";
+import primeStyles from "./prime-hero.module.css";
 
 function Arrow({ up = false }: { up?: boolean }) {
   return (
@@ -44,6 +46,7 @@ function Spark() {
 }
 
 const actions = [
+  { name: "Разобраться с SQL JOIN", category: "УЧЁБА", icon: "book" as YgIconName, text: "Один понятный учебный шаг.", minutes: 25, xp: 14 },
   {
     name: "Выйди на прогулку",
     category: "ЗДОРОВЬЕ",
@@ -229,14 +232,14 @@ export default function Landing() {
       <a className={styles.skip} href="#main">
         Перейти к содержимому
       </a>
-      <header className={styles.header}>
+      <header className={`${styles.header} ${primeStyles.header}`}>
         <Link
           href="/"
           className={styles.brand}
           aria-label="YeahGrind — главная"
         >
           <Image src="/logo.webp" alt="" width={31} height={29} />
-          yeahgrind<span>®</span>
+          YeahGrind
         </Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
           <a href="#product">Возможности</a>
@@ -314,144 +317,7 @@ export default function Landing() {
         )}
       </header>
       <main id="main" className={styles.main}>
-        <section className={styles.hero}>
-          <div className={styles.heroCopy}>
-            <div className={styles.eyebrow}>
-              <span className={styles.liveDot} /> МАЛЕНЬКИЕ ШАГИ. БОЛЬШИЕ
-              ПЕРЕМЕНЫ.
-            </div>
-            <div className={styles.heroEdition}>
-              ЖИЗНЬ В РЕЖИМЕ{" "}
-              <span>
-                «МОГУ» <Arrow />
-              </span>
-            </div>
-            <h1>
-              Не идеальнее.
-              <br />
-              <span>Живее.</span>
-            </h1>
-            <p className={styles.heroText}>
-              Не нужно менять жизнь за понедельник.
-              <br />
-              Начни с одного действия — мы поможем
-              <br className={styles.desktopBreak} /> выбрать то, на что сегодня
-              хватит сил.
-            </p>
-            <div className={styles.heroButtons}>
-              <Link href="/today" className={styles.primary}>
-                Начать свой путь{" "}
-                <span>
-                  <Arrow />
-                </span>
-              </Link>
-              <a href="#how" className={styles.secondary}>
-                <span className={styles.play}>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path d="m9 6 9 6-9 6Z" />
-                  </svg>
-                </span>{" "}
-                Как это работает
-              </a>
-            </div>
-            <p className={styles.free}>
-              <span>✓</span> Бесплатно <i /> Без карты <i /> В твоём ритме
-            </p>
-          </div>
-          <div className={styles.heroVisual}>
-            <span className={styles.heroWord} aria-hidden>
-              YEAH!
-            </span>
-            <Outfit name="streetwear" className={styles.heroOutfit} priority />
-            <span className={styles.heroSticker}>100% ТВОЙ ТЕМП</span>
-            <div className={styles.orbit} />
-            <div className={styles.visualLabel}>
-              МЕНЬШЕ ПЛАНИРУЙ. БОЛЬШЕ ЖИВИ.
-            </div>
-            <div className={styles.streak}>
-              <span className={styles.streakIcon}>
-                <YgIcon name="flame" className="h-[23px] w-[23px]" />
-              </span>
-              <div>
-                <strong>7 дней подряд</strong>
-                <small>Ты в отличном ритме</small>
-              </div>
-              <span className={styles.streakDots}>•••</span>
-            </div>
-            <div className={styles.cardStack}>
-              <div className={styles.actionCard}>
-                <div className={styles.cardTop}>
-                  <span>ТВОЁ ДЕЙСТВИЕ НА СЕГОДНЯ</span>
-                  <span>{String(actionIndex + 1).padStart(2, "0")} / 03</span>
-                </div>
-                <div className={styles.actionArt}>
-                  <div className={styles.artCircle} />
-                  <Mascot
-                    className={styles.cardMascot}
-                    pose={
-                      done
-                        ? "win"
-                        : actionIndex === 1
-                          ? "read"
-                          : actionIndex === 2
-                            ? "guide"
-                            : "wave"
-                    }
-                    priority
-                  />
-                  <span className={styles.sparkOne}>
-                    <Spark />
-                  </span>
-                  <span className={styles.sparkTwo}>+</span>
-                </div>
-                <span className={styles.category}>{action.category}</span>
-                <h2>{action.name}</h2>
-                <p>{action.text}</p>
-                <div className={styles.cardMeta}>
-                  <span>
-                    <YgIcon name="clock" className="h-[15px] w-[15px]" />{" "}
-                    {action.minutes} минут
-                  </span>
-                  <span>
-                    +{action.xp} XP{" "}
-                    <YgIcon name="bolt" className="h-[14px] w-[14px]" />
-                  </span>
-                </div>
-                <div className={styles.demoButtons}>
-                  <button onClick={next} aria-label="Следующее действие">
-                    ↻
-                  </button>
-                  <button onClick={() => (done ? next() : setDone(true))}>
-                    {done ? "Ещё одно действие" : "Попробовать в демо"}
-                    <span>{done ? <Arrow /> : "+"}</span>
-                  </button>
-                </div>
-                <span className={styles.demoStatus} aria-live="polite">
-                  {done
-                    ? `Отлично! +${action.xp} XP в демо`
-                    : "Демо колоды · попробуй нажать"}
-                </span>
-              </div>
-            </div>
-            <div className={styles.progressFloat}>
-              <span className={styles.mascotAvatar}>
-                <Mascot />
-              </span>
-              <div>
-                <strong>Маленький шаг — уже победа</strong>
-                <small>Становись лучше, а не идеальнее</small>
-              </div>
-            </div>
-          </div>
-        </section>
+        <PrimeHero action={action} done={done} onNext={next} onComplete={() => done ? next() : setDone(true)} />
         <section className={styles.numbers} aria-label="YeahGrind в цифрах">
           {[
             ["159", "действий в колоде"],
@@ -922,7 +788,7 @@ export default function Landing() {
         <div className={styles.footerTop}>
           <Link href="/" className={styles.brand}>
             <Image src="/logo.webp" alt="" width={28} height={26} />
-            yeahgrind<span>®</span>
+            YeahGrind
           </Link>
           <p className={styles.footerMascot}>
             <span className={styles.mascotAvatar}>

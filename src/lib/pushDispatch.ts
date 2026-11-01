@@ -136,94 +136,101 @@ function todoStartAt(day: string, hour: number, minute: number, tzOffsetMinutes:
 
 /** Досчитать и завести в очередь то, что ещё никто не запланировал. */
 async function scheduleProactive(now: Date) {
-  const users = await prisma.user.findMany({
-    where: { ...ordinaryUsers, pushSubs: { some: { enabled: true } } },
-    select: {
-      id: true,
-      pushSubs: { where: { enabled: true }, select: { tzOffset: true }, take: 1 },
-      state: { select: { data: true } },
-    },
-  });
+  let after: string | undefined;
+  let scheduled = 0;
+  for (;;) {
+    const users = await prisma.user.findMany({
+      where: { ...ordinaryUsers, pushSubs: { some: { enabled: true } }, ...(after ? { id: { gt: after } } : {}) },
+      orderBy: { id: "asc" }, take: 25,
+      select: {
+        id: true,
+        pushSubs: { where: { enabled: true }, select: { tzOffset: true }, take: 1 },
+        state: { select: { data: true } },
+      },
+    });
 
-  const rows: {
-    userId: string;
-    key: string;
-    fireAt: Date;
-    title: string;
-    body: string;
-    url: string;
-    kind: string;
-    taskId: string | null;
-  }[] = [];
+    if (!users.length) break;
+    after = users[users.length - 1].id;
+    const rows: {
+      userId: string;
+      key: string;
+      fireAt: Date;
+      title: string;
+      body: string;
+      url: string;
+      kind: string;
+      taskId: string | null;
+    }[] = [];
 
-  for (const u of users) {
-    try {
-      const tzOffset = u.pushSubs[0]?.tzOffset ?? 0;
-      const day = localDateKey(tzOffset, now);
-      const data = (u.state?.data ?? {}) as StateSnap;
-      const prefs = prefsOf(u.state?.data);
+    for (const u of users) {
+      try {
+        const tzOffset = u.pushSubs[0]?.tzOffset ?? 0;
+        const day = localDateKey(tzOffset, now);
+        const data = (u.state?.data ?? {}) as StateSnap;
+        const prefs = prefsOf(u.state?.data);
 
-      const plan = Array.isArray(data.plan) ? data.plan : [];
-      const activeTask = plan.find((p) => p.date === day && !p.completed);
-      const active: ActiveTaskInput | null = activeTask
-        ? {
-            id: activeTask.id,
-            title: activeTask.snapshot?.title ?? "Задача",
-            duration: activeTask.snapshot?.duration ?? 0,
-            acceptedAt: activeTask.acceptedAt,
-          }
-        : null;
+        const plan = Array.isArray(data.plan) ? data.plan : [];
+        const activeTask = plan.find((p) => p.date === day && !p.completed);
+        const active: ActiveTaskInput | null = activeTask
+          ? {
+              id: activeTask.id,
+              title: activeTask.snapshot?.title ?? "Задача",
+              duration: activeTask.snapshot?.duration ?? 0,
+              acceptedAt: activeTask.acceptedAt,
+            }
+          : null;
 
-      const todosRaw = Array.isArray(data.todos) ? data.todos : [];
-      const todos: TodoInput[] = todosRaw
-        .filter(
-          (t) => typeof t.hour === "number" && isTodoOnDay(t, day) && !isTodoDone(t, day),
-        )
-        .map((t) => ({
-          id: t.id,
-          title: t.title,
-          day,
-          hour: t.hour as number,
-          minute: t.minute ?? 0,
-          duration: t.duration,
-          startAt: todoStartAt(day, t.hour as number, t.minute ?? 0, tzOffset),
-        }));
+        const todosRaw = Array.isArray(data.todos) ? data.todos : [];
+        const todos: TodoInput[] = todosRaw
+          .filter(
+            (t) => typeof t.hour === "number" && isTodoOnDay(t, day) && !isTodoDone(t, day),
+          )
+          .map((t) => ({
+            id: t.id,
+            title: t.title,
+            day,
+            hour: t.hour as number,
+            minute: t.minute ?? 0,
+            duration: t.duration,
+            startAt: todoStartAt(day, t.hour as number, t.minute ?? 0, tzOffset),
+          }));
 
-      if (!active && todos.length === 0) continue;
+        if (!active && todos.length === 0) continue;
 
-      // Тихие часы здесь не применяем: buildSchedule считает их по часам
-      // сервера (UTC), и у человека в UTC+5 «23–7» превращались в 4–12 —
-      // напоминание о паре в 9:00 уезжало на полдень. При отправке ниже
-      // тихие часы проверяются по времени каждого устройства — этого хватает.
-      const items = buildSchedule({
-        active,
-        todos,
-        prefs: { ...prefs, quietFrom: 0, quietTo: 0 },
-        now: now.getTime(),
-      });
-      for (const item of items) {
-        rows.push({
-          userId: u.id,
-          key: item.key,
-          fireAt: new Date(item.at),
-          title: item.title,
-          body: item.body,
-          url: item.url,
-          kind: item.kind,
-          taskId: item.taskId ?? null,
+        // Тихие часы здесь не применяем: buildSchedule считает их по часам
+        // сервера (UTC), и у человека в UTC+5 «23–7» превращались в 4–12 —
+        // напоминание о паре в 9:00 уезжало на полдень. При отправке ниже
+        // тихие часы проверяются по времени каждого устройства — этого хватает.
+        const items = buildSchedule({
+          active,
+          todos,
+          prefs: { ...prefs, quietFrom: 0, quietTo: 0 },
+          now: now.getTime(),
         });
+        for (const item of items) {
+          rows.push({
+            userId: u.id,
+            key: item.key,
+            fireAt: new Date(item.at),
+            title: item.title,
+            body: item.body,
+            url: item.url,
+            kind: item.kind,
+            taskId: item.taskId ?? null,
+          });
+        }
+      } catch (e) {
+        console.error("scheduleProactive: skip user", u.id, e);
       }
-    } catch (e) {
-      console.error("scheduleProactive: skip user", u.id, e);
     }
-  }
 
-  if (rows.length === 0) return 0;
-  const res = await prisma.scheduledNotification.createMany({
-    data: rows,
-    skipDuplicates: true,
-  });
-  return res.count;
+    if (rows.length) {
+      const res = await prisma.scheduledNotification.createMany({ data: rows, skipDuplicates: true });
+      scheduled += res.count;
+    }
+    if (users.length < 25) break;
+  }
+  return scheduled;
 }
 
 export async function runDispatch(now: Date = new Date()) {
@@ -235,96 +242,100 @@ export async function runDispatch(now: Date = new Date()) {
   let expired = 0;
   const scheduled = await scheduleProactive(now);
 
-  const due = await prisma.scheduledNotification.findMany({
-    where: {
-      user: ordinaryUsers,
-      sentAt: null,
-      fireAt: { lte: now, gte: new Date(now.getTime() - GRACE_MS) },
-    },
-    orderBy: { fireAt: "asc" },
-    take: BATCH,
-    include: {
-      user: {
-        select: {
-          state: { select: { data: true } },
-          pushSubs: { where: { enabled: true } },
+  for (let processed = 0; processed < BATCH; processed += 25) {
+    const due = await prisma.scheduledNotification.findMany({
+      where: {
+        user: ordinaryUsers,
+        sentAt: null,
+        fireAt: { lte: now, gte: new Date(now.getTime() - GRACE_MS) },
+      },
+      orderBy: { fireAt: "asc" },
+      take: Math.min(25, BATCH - processed),
+      include: {
+        user: {
+          select: {
+            state: { select: { data: true } },
+            pushSubs: { where: { enabled: true } },
+          },
         },
       },
-    },
-  });
-
-  for (const item of due) {
-    const subs = item.user?.pushSubs ?? [];
-    if (subs.length === 0) {
-      // подписок нет — строка мертва, держать её незачем
-      await prisma.scheduledNotification
-        .delete({ where: { id: item.id } })
-        .catch(() => {});
-      skipped++;
-      continue;
-    }
-
-    // Забираем строку себе ДО отправки: встроенный планировщик и внешний
-    // крон могут выбрать одну и ту же строку в одну минуту, и тогда
-    // «через 5 минут пара» приходило бы дважды. Кто первым проставил
-    // sentAt, тот и шлёт.
-    const claimed = await prisma.scheduledNotification.updateMany({
-      where: { id: item.id, sentAt: null },
-      data: { sentAt: now },
     });
-    if (claimed.count === 0) continue;
 
-    const prefs = prefsOf(item.user?.state?.data);
-    // тип уведомления выключен уже после планирования — молчим
-    if (
-      (item.kind === "task" && !prefs.tasks) ||
-      (item.kind === "todo" && !prefs.todos) ||
-      (item.kind === "day" && !prefs.daily)
-    ) {
-      skipped++;
-      continue;
-    }
-
-    let delivered = false;
-
-    for (const sub of subs) {
-      // тихие часы считаем по времени КОНКРЕТНОГО устройства: телефон и
-      // ноутбук могут стоять в разных зонах
-      if (
-        inQuietHours(
-          localHour(sub.tzOffset, now),
-          prefs.quietFrom,
-          prefs.quietTo,
-        )
-      ) {
-        continue;
-      }
-
-      const res = await sendPush(
-        { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
-        {
-          title: item.title,
-          body: item.body,
-          url: item.url,
-          tag: item.key,
-          kind: item.kind,
-          taskId: item.taskId ?? undefined,
-        },
-      );
-
-      if (res === "expired") {
-        await prisma.pushSubscription
-          .delete({ where: { id: sub.id } })
+    for (const item of due) {
+      const subs = item.user?.pushSubs ?? [];
+      if (subs.length === 0) {
+        // подписок нет — строка мертва, держать её незачем
+        await prisma.scheduledNotification
+          .delete({ where: { id: item.id } })
           .catch(() => {});
-        expired++;
+        skipped++;
         continue;
       }
-      if (res === "failed") failed++;
-      if (res === "sent") delivered = true;
+
+      // Забираем строку себе ДО отправки: встроенный планировщик и внешний
+      // крон могут выбрать одну и ту же строку в одну минуту, и тогда
+      // «через 5 минут пара» приходило бы дважды. Кто первым проставил
+      // sentAt, тот и шлёт.
+      const claimed = await prisma.scheduledNotification.updateMany({
+        where: { id: item.id, sentAt: null },
+        data: { sentAt: now },
+      });
+      if (claimed.count === 0) continue;
+
+      const prefs = prefsOf(item.user?.state?.data);
+      // тип уведомления выключен уже после планирования — молчим
+      if (
+        (item.kind === "task" && !prefs.tasks) ||
+        (item.kind === "todo" && !prefs.todos) ||
+        (item.kind === "day" && !prefs.daily)
+      ) {
+        skipped++;
+        continue;
+      }
+
+      let delivered = false;
+
+      for (const sub of subs) {
+        // тихие часы считаем по времени КОНКРЕТНОГО устройства: телефон и
+        // ноутбук могут стоять в разных зонах
+        if (
+          inQuietHours(
+            localHour(sub.tzOffset, now),
+            prefs.quietFrom,
+            prefs.quietTo,
+          )
+        ) {
+          continue;
+        }
+
+        const res = await sendPush(
+          { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
+          {
+            title: item.title,
+            body: item.body,
+            url: item.url,
+            tag: item.key,
+            kind: item.kind,
+            taskId: item.taskId ?? undefined,
+          },
+        );
+
+        if (res === "expired") {
+          await prisma.pushSubscription
+            .delete({ where: { id: sub.id } })
+            .catch(() => {});
+          expired++;
+          continue;
+        }
+        if (res === "failed") failed++;
+        if (res === "sent") delivered = true;
+      }
+
+      if (delivered) sent++;
+      else skipped++;
     }
 
-    if (delivered) sent++;
-    else skipped++;
+    if (due.length < 25) break;
   }
 
   // Уборка старого — раз в прогон, дёшево и держит таблицу маленькой.

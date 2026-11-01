@@ -19,3 +19,12 @@ it('does not delete when no deadline has expired', async () => {
   m.find.mockResolvedValue([{ participantId: 'pilot', data: {} }]);
   expect(await purgeExpiredResearch(now)).toBe(0); expect(m.remove).not.toHaveBeenCalled();
 });
+
+it('continues past a full batch even when that batch is deleted', async () => {
+  const expired = Array.from({ length: 25 }, (_, i) => ({ participantId: `p${String(i).padStart(2, '0')}`, data: { consentInformation: { deleteAt: new Date(now).toISOString() } } }));
+  m.find.mockResolvedValueOnce(expired).mockResolvedValueOnce([{ participantId: 'p25', data: {} }]);
+  m.remove.mockResolvedValue({ count: 25 });
+  expect(await purgeExpiredResearch(now)).toBe(25);
+  expect(m.find.mock.calls[1][0].where).toEqual({ participantId: { gt: 'p24' } });
+  expect(m.remove).toHaveBeenCalledOnce();
+});

@@ -99,82 +99,89 @@ export async function runDigest(now: Date = new Date()) {
   let skipped = 0;
   let expired = 0;
 
-  const subs = await prisma.pushSubscription.findMany({
-    where: { enabled: true, user: ordinaryUsers },
-    include: { user: { select: { state: { select: { data: true } } } } },
-    take: 5000,
-  });
+  let after: string | undefined;
+  for (;;) {
+    const subs = await prisma.pushSubscription.findMany({
+      where: { enabled: true, user: ordinaryUsers, ...(after ? { id: { gt: after } } : {}) },
+      orderBy: { id: "asc" },
+      include: { user: { select: { state: { select: { data: true } } } } },
+      take: 25,
+    });
 
-  for (const sub of subs) {
-    const hour = localHour(sub.tzOffset, now);
-    const today = localDateKey(sub.tzOffset, now);
+    if (!subs.length) break;
+    after = subs[subs.length - 1].id;
+    for (const sub of subs) {
+      const hour = localHour(sub.tzOffset, now);
+      const today = localDateKey(sub.tzOffset, now);
 
-    const prefs = prefsOf(sub.user?.state?.data);
-    // человек выключил ритм дня или спит — ничего не шлём
-    if (!prefs.daily || inQuietHours(hour, prefs.quietFrom, prefs.quietTo)) {
-      skipped++;
-      continue;
-    }
-
-    const kind =
-      hour === sub.morningHour
-        ? "morning"
-        : hour === sub.eveningHour
-          ? "evening"
-          : null;
-    if (!kind) {
-      skipped++;
-      continue;
-    }
-
-    // уже слали такое сегодня — не дублируем
-    if (sub.lastSentAt && sub.lastKind === kind) {
-      const lastDay = localDateKey(sub.tzOffset, sub.lastSentAt);
-      if (lastDay === today) {
+      const prefs = prefsOf(sub.user?.state?.data);
+      // человек выключил ритм дня или спит — ничего не шлём
+      if (!prefs.daily || inQuietHours(hour, prefs.quietFrom, prefs.quietTo)) {
         skipped++;
         continue;
       }
-    }
 
-    const ctx = dayContext(sub.user?.state?.data, today);
+      const kind =
+        hour === sub.morningHour
+          ? "morning"
+          : hour === sub.eveningHour
+            ? "evening"
+            : null;
+      if (!kind) {
+        skipped++;
+        continue;
+      }
 
-    // вечером не дёргаем тех, кто уже закрыл норму дня
-    if (kind === "evening" && ctx.doneToday >= 3) {
-      skipped++;
-      continue;
-    }
+      // уже слали такое сегодня — не дублируем
+      if (sub.lastSentAt && sub.lastKind === kind) {
+        const lastDay = localDateKey(sub.tzOffset, sub.lastSentAt);
+        if (lastDay === today) {
+          skipped++;
+          continue;
+        }
+      }
 
-    // Захватываем отправку ДО отправки и только если с момента чтения никто
-    // не успел: встроенный планировщик и внешний крон могут прийти в одну
-    // минуту, и без этого утреннее уведомление приходило бы дважды.
-    const claimed = await prisma.pushSubscription.updateMany({
-      where: { id: sub.id, lastSentAt: sub.lastSentAt, lastKind: sub.lastKind },
-      data: { lastSentAt: now, lastKind: kind },
-    });
-    if (claimed.count === 0) {
-      skipped++;
-      continue;
-    }
+      const ctx = dayContext(sub.user?.state?.data, today);
 
-    const payload: PushPayload =
-      kind === "morning" ? morningMessage(ctx) : eveningMessage(ctx);
+      // вечером не дёргаем тех, кто уже закрыл норму дня
+      if (kind === "evening" && ctx.doneToday >= 3) {
+        skipped++;
+        continue;
+      }
 
-    const res = await sendPush(
-      { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
-      payload,
-    );
+      // Захватываем отправку ДО отправки и только если с момента чтения никто
+      // не успел: встроенный планировщик и внешний крон могут прийти в одну
+      // минуту, и без этого утреннее уведомление приходило бы дважды.
+      const claimed = await prisma.pushSubscription.updateMany({
+        where: { id: sub.id, lastSentAt: sub.lastSentAt, lastKind: sub.lastKind },
+        data: { lastSentAt: now, lastKind: kind },
+      });
+      if (claimed.count === 0) {
+        skipped++;
+        continue;
+      }
 
-    if (res === "expired") {
-      await prisma.pushSubscription
-        .delete({ where: { id: sub.id } })
-        .catch(() => {});
-      expired++;
-      continue;
-    }
-    if (res === "failed") failed++;
+      const payload: PushPayload =
+        kind === "morning" ? morningMessage(ctx) : eveningMessage(ctx);
+
+      const res = await sendPush(
+        { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
+        payload,
+      );
+
+      if (res === "expired") {
+        await prisma.pushSubscription
+          .delete({ where: { id: sub.id } })
+          .catch(() => {});
+        expired++;
+        continue;
+      }
+      if (res === "failed") failed++;
       if (res === "sent") sent++;
-    else skipped++;
-  }
+      else skipped++;
+    }
 
+    if (subs.length < 25) break;
+  }
   return { ok: failed === 0, failed, sent, skipped, expired };
 }

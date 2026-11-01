@@ -6,12 +6,24 @@ export function researchExpired(data: unknown, now: number): boolean {
 }
 
 export async function purgeExpiredResearch(now = Date.now()) {
-  const rows = await prisma.researchParticipant.findMany({ select: { participantId: true, data: true } });
-  const ids = rows.filter(row => researchExpired(row.data, now)).map(row => row.participantId);
-  if (!ids.length) return 0;
-  // Pseudonyms cannot be reused by a newly enrolled account during concurrent purges.
-  const result = await prisma.researchParticipant.deleteMany({ where: { participantId: { in: ids } } });
-  return result.count;
+  let after: string | undefined;
+  let deleted = 0;
+  for (;;) {
+    const rows = await prisma.researchParticipant.findMany({
+      where: after ? { participantId: { gt: after } } : undefined,
+      orderBy: { participantId: "asc" }, take: 25,
+      select: { participantId: true, data: true },
+    });
+    if (!rows.length) break;
+    after = rows[rows.length - 1].participantId;
+    const ids = rows.filter(row => researchExpired(row.data, now)).map(row => row.participantId);
+    if (ids.length) {
+      const result = await prisma.researchParticipant.deleteMany({ where: { participantId: { in: ids } } });
+      deleted += result.count;
+    }
+    if (rows.length < 25) break;
+  }
+  return deleted;
 }
 
 declare global { var __ygResearchRetention: boolean | undefined; }

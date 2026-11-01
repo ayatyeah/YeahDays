@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
 import { dailyLimit } from "@/lib/aiLimit";
 import { aiSchema, parseAiResult, validDate } from "@/lib/aiPlanner";
-import sharp from "sharp";
+import sharp from "@/lib/serverImage";
 import { recordAiUsage } from "@/lib/aiUsage";
 
 export const runtime = "nodejs";

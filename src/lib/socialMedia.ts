@@ -12,7 +12,8 @@
  * произвольный файл с расширением .jpg.
  */
 
-import sharp, { type OutputInfo } from "sharp";
+import sharp from "@/lib/serverImage";
+import type { OutputInfo } from "sharp";
 import { prisma } from "@/lib/db";
 import { CommunityError } from "./community";
 

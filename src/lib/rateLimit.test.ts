@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { failureLimit, rateLimit } from "./rateLimit";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { failureLimit, rateLimit, SlidingWindowLimiter } from "./rateLimit";
 
 const WINDOW = 60_000;
 
@@ -43,4 +43,36 @@ describe("failureLimit", () => {
       }, 45),
     );
   });
+});
+
+
+afterEach(() => vi.useRealTimers());
+it("bounds noisy keys and recovers after the accepted window", () => {
+  vi.useFakeTimers(); vi.setSystemTime(10000);
+  const limiter = new SlidingWindowLimiter(2);
+  expect(limiter.allow("busy", 2, 1000)).toBe(true);
+  expect(limiter.allow("busy", 2, 1000)).toBe(true);
+  for (let n = 0; n < 10000; n++) expect(limiter.allow("busy", 2, 1000)).toBe(false);
+  vi.advanceTimersByTime(1001);
+  expect(limiter.allow("busy", 2, 1000)).toBe(true);
+});
+it("does not evict live login limits when new keys flood capacity", () => {
+  vi.useFakeTimers(); vi.setSystemTime(10000);
+  const limiter = new SlidingWindowLimiter(2);
+  expect(limiter.allow("long", 1, 60000)).toBe(true);
+  expect(limiter.allow("short", 1, 1000)).toBe(true);
+  expect(limiter.allow("new", 1, 1000)).toBe(false);
+  expect(limiter.allow("long", 1, 60000)).toBe(false);
+  vi.advanceTimersByTime(1001);
+  expect(limiter.allow("new", 1, 1000)).toBe(true);
+  expect(limiter.allow("long", 1, 60000)).toBe(false);
+});
+it("counts concurrent asynchronous failures together and each callback once", () => {
+  const limiter = new SlidingWindowLimiter();
+  const first = limiter.failures("login", 2, 60000);
+  const second = limiter.failures("login", 2, 60000);
+  first.fail(); first.fail();
+  expect(limiter.failures("login", 2, 60000).allowed).toBe(true);
+  second.fail();
+  expect(limiter.failures("login", 2, 60000).allowed).toBe(false);
 });

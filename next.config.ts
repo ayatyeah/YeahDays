@@ -13,6 +13,8 @@ const BUILD_ID =
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Keep hot responses in a small LRU; the disk cache remains available.
+  cacheMaxMemorySize: 8 * 1024 * 1024,
 
   // Круглая кнопка «N» dev-режима сидит в левом нижнем углу страницы — и на
   // телефонной ширине садится ровно на первый пункт нижней навигации,

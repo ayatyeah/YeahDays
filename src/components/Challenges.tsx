@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useMemo } from "react";
 import {
@@ -26,6 +28,7 @@ const SLOT_LABEL: Record<string, string> = {
  * зелёный. Отсюда и цвета в календаре.
  */
 export default function Challenges() {
+  const tx = useCopy();
   const challenges = useUserStore((s) => s.challenges);
   const logChallenge = useUserStore((s) => s.logChallenge);
 
@@ -39,9 +42,7 @@ export default function Challenges() {
 
   return (
     <section className="mt-5">
-      <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
-        Челленджи
-      </h2>
+      <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">{tx("Челленджи")}</h2>
       <div className="space-y-2.5">
         {active.map((c) => (
           <ChallengeRow
@@ -65,6 +66,7 @@ function ChallengeRow({
   today: string;
   onLog: (delta: number) => void;
 }) {
+  const tx = useCopy();
   const done = c.log[today] ?? 0;
   const level = challengeDayLevel(c, today);
   const left = challengeDaysLeft(c);
@@ -93,16 +95,16 @@ function ChallengeRow({
         <div className="min-w-0 flex-1">
           <p className="truncate text-[16px] font-semibold">{c.title}</p>
           <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
-            {done} из {c.green} {c.unit}
+            {done}{tx(" из ")}{c.green} {c.unit}
             {level === "green"
-              ? " · день зелёный"
+              ? tx(" · день зелёный")
               : level === "yellow"
-                ? ` · жёлтый, до зелёного ${c.green - done}`
-                : ` · до жёлтого ${Math.max(0, c.yellow - done)}`}
+                ? tx(" · жёлтый, до зелёного {0}", {"0": c.green - done})
+                : tx(" · до жёлтого {0}", {"0": Math.max(0, c.yellow - done)})}
           </p>
         </div>
         <span className="shrink-0 text-[12px] tabular-nums text-[var(--color-muted)]">
-          {left >= 0 ? `${left} дн` : "финиш"}
+          {left >= 0 ? tx("{0} дн", {"0": left}) : tx("финиш")}
         </span>
       </div>
 
@@ -157,7 +159,7 @@ function ChallengeRow({
         <button
           onClick={() => onLog(-(steps[0] ?? 1))}
           disabled={done === 0}
-          aria-label="Убрать"
+          aria-label={tx("Убрать")}
           className="rounded-xl border border-[var(--color-border)] px-3 py-2 text-[15px] text-[var(--color-muted)] transition disabled:opacity-40"
         >
           −

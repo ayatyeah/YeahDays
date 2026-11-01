@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import Image from "next/image";
 import Link from "next/link";
@@ -82,7 +84,8 @@ export function AuthDivider({ children }: { children: React.ReactNode }) {
 }
 
 export function AuthError({ children }: { children: React.ReactNode }) {
-  return <p role="alert" className="rounded-2xl border border-red-400/30 bg-red-500/10 px-3.5 py-2.5 text-[14px] text-red-200">{children}</p>;
+  const tx = useCopy();
+  return <p role="alert" className="rounded-2xl border border-red-400/30 bg-red-500/10 px-3.5 py-2.5 text-[14px] text-red-200">{typeof children === "string" ? tx(children) : children}</p>;
 }
 
 export function MicrosoftIcon() {
@@ -111,6 +114,7 @@ export default function AuthShell({
   tabs?: boolean;
   children: React.ReactNode;
 }) {
+  const tx = useCopy();
   const panel = PANEL[mode];
   const keep = callbackUrl && callbackUrl !== "/today" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : "";
   return (
@@ -121,53 +125,47 @@ export default function AuthShell({
       <div className="relative mx-auto grid min-h-dvh w-full max-w-7xl items-center gap-6 px-4 pb-10 pt-[calc(max(0.75rem,env(safe-area-inset-top))+3.25rem)] sm:px-6 lg:grid-cols-[1.3fr_1fr] lg:gap-10 lg:px-8 lg:py-12">
         {/* Панель смысла: на широком экране — во всю высоту, на телефоне — шапка с маскотом */}
         <aside className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-[#1c201a] via-[#171a15] to-[#12140f] p-5 sm:p-7 lg:flex lg:min-h-[640px] lg:flex-col lg:p-10">
-          <Link href="/" aria-label="YeahGrind — на главную" className="inline-flex">
+          <Link prefetch={false} href="/" aria-label={tx("YeahGrind — на главную")} className="inline-flex">
             <Logo className="h-8 w-auto lg:h-9" />
           </Link>
-          <div className="relative z-10 mt-5 max-w-[66%] lg:mt-12 lg:max-w-[58%]">
+          <div className="relative z-10 mt-5 max-w-[70%] lg:mt-12 lg:max-w-none">
             <p className="flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.18em] text-[#b4b8ae]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#d3f693]" />
-              {panel.eyebrow}
+              {tx(panel.eyebrow)}
             </p>
-            <h2 className="mt-3 text-[25px] font-bold leading-[1.04] tracking-tight [overflow-wrap:anywhere] sm:text-[38px] lg:text-[40px] xl:text-[46px] 2xl:text-[52px]">
-              {panel.title} <em className="block font-semibold italic text-[#d3f693]">{panel.accent}</em>
+            <h2 className="mt-3 text-[clamp(20px,5.5vw,28px)] font-bold leading-[1.12] tracking-tight [overflow-wrap:normal] sm:text-[32px] lg:text-[36px] xl:text-[40px]">
+              {tx(panel.title)} <em className="block font-semibold italic text-[#d3f693]">{tx(panel.accent)}</em>
             </h2>
-            <p className="mt-3 hidden text-[15px] leading-relaxed text-[#b4b8ae] sm:block lg:mt-5 lg:text-[16px]">{panel.text}</p>
-            <ul className="mt-7 hidden space-y-2.5 lg:block">
+            <p className="mt-3 hidden text-[15px] leading-relaxed text-[#b4b8ae] sm:block lg:mt-5 lg:max-w-[60%] lg:text-[16px]">{tx(panel.text)}</p>
+            <ul className="mt-7 hidden space-y-2.5 lg:block lg:max-w-[60%]">
               {panel.points.map((p) => (
                 <li key={p} className="flex items-center gap-2.5 text-[15px]">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#d3f693]/15 text-[11px] text-[#d3f693]">✓</span>
-                  {p}
+                  {tx(p)}
                 </li>
               ))}
             </ul>
           </div>
           <div className="pointer-events-none absolute -bottom-6 right-0 h-[200px] w-[150px] sm:h-[250px] sm:w-[190px] lg:bottom-0 lg:right-6 lg:h-[440px] lg:w-[230px] xl:h-[480px] xl:w-[260px]">
-            <span className="absolute -left-8 top-[46%] z-10 hidden h-20 w-20 rotate-[-12deg] items-center justify-center rounded-full bg-[#c9b6ff] text-center text-[10px] font-bold uppercase leading-tight text-[#10120f] xl:flex">
-              100% твой<br />темп
-            </span>
-            <Image src={panel.image} alt={panel.alt} fill priority sizes="(min-width: 1024px) 300px, 190px" className="object-contain object-bottom drop-shadow-[0_24px_40px_rgba(0,0,0,0.45)]" />
+            <span className="absolute -left-8 top-[46%] z-10 hidden h-20 w-20 rotate-[-12deg] items-center justify-center rounded-full bg-[#c9b6ff] text-center text-[10px] font-bold uppercase leading-tight text-[#10120f] xl:flex">{tx("100% твой")}<br />{tx("темп")}</span>
+            <Image src={panel.image} alt={tx(panel.alt)} fill priority sizes="(min-width: 1024px) 300px, 190px" className="object-contain object-bottom drop-shadow-[0_24px_40px_rgba(0,0,0,0.45)]" />
           </div>
         </aside>
 
         {/* Карточка формы */}
         <main className="w-full rounded-[28px] border border-white/10 bg-[#161914]/90 p-5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)] backdrop-blur sm:p-8 lg:mx-auto lg:max-w-[460px]">
           {tabs && mode !== "neutral" && (
-            <nav aria-label="Вход или регистрация" className="mb-6 grid grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.03] p-1 text-[15px] font-semibold">
-              <Link
+            <nav aria-label={tx("Вход или регистрация")} className="mb-6 grid grid-cols-2 rounded-2xl border border-white/10 bg-white/[0.03] p-1 text-[15px] font-semibold">
+              <Link prefetch={false}
                 href={`/login${keep}`}
                 aria-current={mode === "login" ? "page" : undefined}
                 className={cn("rounded-xl py-2.5 text-center transition", mode === "login" ? "bg-[#d3f693] text-[#10120f]" : "text-[#b4b8ae] hover:text-[#f2f3ed]")}
-              >
-                Вход
-              </Link>
-              <Link
+              >{tx("Вход")}</Link>
+              <Link prefetch={false}
                 href={`/register${keep}`}
                 aria-current={mode === "register" ? "page" : undefined}
                 className={cn("rounded-xl py-2.5 text-center transition", mode === "register" ? "bg-[#d3f693] text-[#10120f]" : "text-[#b4b8ae] hover:text-[#f2f3ed]")}
-              >
-                Регистрация
-              </Link>
+              >{tx("Регистрация")}</Link>
             </nav>
           )}
           <h1 className="text-[26px] font-bold tracking-tight">{title}</h1>

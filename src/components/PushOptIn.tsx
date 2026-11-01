@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useCallback, useEffect, useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
@@ -39,6 +41,7 @@ type State =
  * уведомление выключает всё разом и навсегда.
  */
 export default function PushOptIn() {
+  const tx = useCopy();
   const [state, setState] = useState<State>("busy");
   const [tested, setTested] = useState(false);
   /**
@@ -106,8 +109,8 @@ export default function PushOptIn() {
 
   const test = useCallback(async () => {
     const ok = await showNow({
-      title: "Так это выглядит",
-      body: "Настоящие напоминания приходят по ходу задачи и по плану дня.",
+      title: tx("Так это выглядит"),
+      body: tx("Настоящие напоминания приходят по ходу задачи и по плану дня."),
       tag: "yd-test",
     });
     if (ok) {
@@ -115,7 +118,7 @@ export default function PushOptIn() {
       track("notification_test_sent");
       window.setTimeout(() => setTested(false), 2500);
     }
-  }, []);
+  }, [tx]);
 
   if (state === "unsupported") {
     if (!iosNeedsInstall) return null;
@@ -126,14 +129,12 @@ export default function PushOptIn() {
             <YgIcon name="bell" className="h-6 w-6" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-semibold">Напоминания на iPhone</p>
-            <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
-              Работают только в приложении с экрана «Домой» — так устроен iOS.
-            </p>
+            <p className="text-[15px] font-semibold">{tx("Напоминания на iPhone")}</p>
+            <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">{tx("Работают только в приложении с экрана «Домой» — так устроен iOS.")}</p>
             <ol className="mt-3 space-y-1.5 text-[13px] text-[var(--color-fg-dim)]">
-              <li>1. Открой сайт в Safari</li>
-              <li>2. «Поделиться» → «На экран Домой»</li>
-              <li>3. Запусти с домашнего экрана и включи напоминания здесь</li>
+              <li>{tx("1. Открой сайт в Safari")}</li>
+              <li>{tx("2. «Поделиться» → «На экран Домой»")}</li>
+              <li>{tx("3. Запусти с домашнего экрана и включи напоминания здесь")}</li>
             </ol>
           </div>
         </div>
@@ -151,25 +152,19 @@ export default function PushOptIn() {
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-semibold">
-            {on ? "Напоминания включены" : "Напоминания"}
+            {on ? tx("Напоминания включены") : tx("Напоминания")}
           </p>
           <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
             {state === "denied" ? (
               iosNeedsInstall ? (
-                <>Открой приложение с экрана «Домой» — в Safari напоминаний нет</>
+                <>{tx("Открой приложение с экрана «Домой» — в Safari напоминаний нет")}</>
               ) : (
-                <>Запрещены. Разреши уведомления для сайта в настройках браузера</>
+                <>{tx("Запрещены. Разреши уведомления для сайта в настройках браузера")}</>
               )
             ) : on ? (
-              <>
-                По плану дня и за {TODO_LEAD_MIN} минут до дел
-              </>
+              <>{tx("По плану дня и за ")}{TODO_LEAD_MIN}{tx(" минут до дел")}</>
             ) : (
-              <>
-                Напоминание в момент, когда оно нужно: время задачи вышло, до
-                дела осталось {TODO_LEAD_MIN} минут, день ещё не закрыт. Без
-                спама и не когда попало.
-              </>
+              <>{tx("Напоминание в момент, когда оно нужно: время задачи вышло, до дела осталось ")}{TODO_LEAD_MIN}{tx(" минут, день ещё не закрыт. Без спама и не когда попало.")}</>
             )}
           </p>
         </div>
@@ -180,8 +175,7 @@ export default function PushOptIn() {
           {/* Час утреннего напоминания. Вечерний подбирается автоматически
               по тому, когда человек реально закрывает действия. */}
           <div className="mt-4">
-            <p className="mb-2 text-[13px] text-[var(--color-muted)]">
-              Утром в{" "}
+            <p className="mb-2 text-[13px] text-[var(--color-muted)]">{tx("Утром в")}{" "}
               <span className="font-semibold text-[var(--color-fg)]">
                 {String(reminderHour).padStart(2, "0")}:00
               </span>
@@ -212,20 +206,20 @@ export default function PushOptIn() {
           {/* Что именно присылать */}
           <div className="mt-4 flex flex-col gap-1">
             <Toggle
-              label="Ритм дня"
-              hint="Утром — колода, вечером — если день не закрыт"
+              label={tx("Ритм дня")}
+              hint={tx("Утром — колода, вечером — если день не закрыт")}
               value={notify.daily}
               onChange={(v) => setNotify({ daily: v })}
             />
             <Toggle
-              label="Ход задачи"
-              hint="Половина времени, время вышло, задача застряла"
+              label={tx("Ход задачи")}
+              hint={tx("Половина времени, время вышло, задача застряла")}
               value={notify.tasks}
               onChange={(v) => setNotify({ tasks: v })}
             />
             <Toggle
-              label="Дела со временем"
-              hint={`За ${TODO_LEAD_MIN} минут до начала`}
+              label={tx("Дела со временем")}
+              hint={tx("За {0} минут до начала", {"0": TODO_LEAD_MIN})}
               value={notify.todos}
               onChange={(v) => setNotify({ todos: v })}
             />
@@ -233,19 +227,16 @@ export default function PushOptIn() {
 
           {/* Тихие часы */}
           <div className="mt-4 rounded-2xl bg-[var(--color-surface-2)] p-3">
-            <p className="text-[13px] font-semibold">Не беспокоить</p>
-            <p className="mt-0.5 text-[12px] leading-snug text-[var(--color-muted)]">
-              Ночные напоминания о задачах отменяются, дела со временем
-              переносятся на утро.
-            </p>
+            <p className="text-[13px] font-semibold">{tx("Не беспокоить")}</p>
+            <p className="mt-0.5 text-[12px] leading-snug text-[var(--color-muted)]">{tx("Ночные напоминания о задачах отменяются, дела со временем переносятся на утро.")}</p>
             <div className="mt-2.5 flex items-center gap-2">
               <HourSelect
-                label="с"
+                label={tx("с")}
                 value={notify.quietFrom}
                 onChange={(v) => setNotify({ quietFrom: v })}
               />
               <HourSelect
-                label="до"
+                label={tx("до")}
                 value={notify.quietTo}
                 onChange={(v) => setNotify({ quietTo: v })}
               />
@@ -264,7 +255,7 @@ export default function PushOptIn() {
                   : "bg-[var(--color-fg)] text-[var(--color-bg)]",
               )}
             >
-              {state === "busy" ? "…" : on ? "Выключить" : "Включить напоминания"}
+              {state === "busy" ? "…" : on ? tx("Выключить") : tx("Включить напоминания")}
             </button>
 
             {on && (
@@ -276,17 +267,13 @@ export default function PushOptIn() {
                 onClick={test}
                 className="h-11 shrink-0 rounded-2xl border border-[var(--color-border)] px-4 text-[15px] font-medium text-[var(--color-fg-dim)] transition active:scale-[0.99]"
               >
-                {tested ? "Отправлено" : "Проверить"}
+                {tested ? tx("Отправлено") : tx("Проверить")}
               </button>
             )}
           </div>
 
           {on && !triggersSupported() && (
-            <p className="mt-2.5 text-[12px] leading-snug text-[var(--color-muted)]">
-              На этом устройстве напоминания приходят через сервер: если
-              приложение установлено на домашний экран, они работают и когда
-              оно закрыто.
-            </p>
+            <p className="mt-2.5 text-[12px] leading-snug text-[var(--color-muted)]">{tx("На этом устройстве напоминания приходят через сервер: если приложение установлено на домашний экран, они работают и когда оно закрыто.")}</p>
           )}
         </>
       )}

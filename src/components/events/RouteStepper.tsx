@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
@@ -50,6 +52,7 @@ export default function RouteStepper({
   onSelect?: (index: number) => void;
   footer?: ReactNode;
 }) {
+  const tx = useCopy();
   const track = useRef<HTMLOListElement>(null);
   const done = stops.filter((s) => s.state === "done").length;
   const current = stops.findIndex((s) => s.state === "current");
@@ -63,11 +66,11 @@ export default function RouteStepper({
 
   return (
     // min-w-0: в сетке (хаб «Учёба») карточка иначе растягивается по ширине всех остановок и сдвигает страницу вбок.
-    <section className="min-w-0 max-w-full rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-5" aria-label={title}>
+    <section className="min-w-0 max-w-full rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-5" aria-label={tx(title)}>
       {eyebrow && <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{eyebrow}</p>}
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-lg font-bold">{title}</h2>
-        <span className="shrink-0 text-sm tabular-nums text-[var(--color-muted)]">{`${done} из ${stops.length} завершено`}</span>
+        <h2 className="text-lg font-bold">{tx(title)}</h2>
+        <span className="shrink-0 text-sm tabular-nums text-[var(--color-muted)]">{tx("{0} из {1} завершено", {"0": done, "1": stops.length})}</span>
       </div>
       {/* Полоса прокручивается вбок, а значит, обрезает и сверху: отступ pt-2 — под ореол текущего шага (7px). */}
       <ol ref={track} className="-mx-1 mt-2 flex w-full min-w-0 overflow-x-auto px-1 pb-1 pt-2 [scrollbar-width:none]">
@@ -93,7 +96,7 @@ export default function RouteStepper({
                 <span className={circle} aria-hidden>{mark}</span>
               )}
               <span className={cn("mt-2 text-xs tabular-nums", stop.state === "current" ? "font-bold" : "text-[var(--color-muted)]")}>{i + 1}</span>
-              <span className={cn("line-clamp-2 max-w-[92px] text-center text-xs leading-snug", stop.state === "current" ? "font-bold" : "text-[var(--color-muted)]")}>{stop.label}</span>
+              <span className={cn("line-clamp-2 max-w-[92px] text-center text-xs leading-snug", stop.state === "current" ? "font-bold" : "text-[var(--color-muted)]")}>{tx(stop.label)}</span>
             </li>
           );
         })}

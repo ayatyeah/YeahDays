@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
@@ -17,6 +19,7 @@ export default function RegisterPage() {
 }
 
 function RegisterForm() {
+  const tx = useCopy();
   const router = useRouter();
   const params = useSearchParams();
   const callbackUrl = safeCallbackUrl(params.get("callbackUrl"));
@@ -39,7 +42,7 @@ function RegisterForm() {
     setError(null);
 
     if (password !== confirm) {
-      setError("Пароли не совпадают");
+      setError(tx("Пароли не совпадают"));
       return;
     }
 
@@ -52,7 +55,7 @@ function RegisterForm() {
       });
       const json = (await res.json()) as { ok?: boolean; error?: string };
       if (!res.ok || !json.ok) {
-        setError(json.error ?? "Не получилось зарегистрироваться");
+        setError(json.error ?? tx("Не получилось зарегистрироваться"));
         setBusy(false);
         return;
       }
@@ -64,67 +67,61 @@ function RegisterForm() {
       }
       enterApp(callbackUrl);
     } catch {
-      setError("Сеть недоступна, попробуй ещё раз");
+      setError(tx("Сеть недоступна, попробуй ещё раз"));
       setBusy(false);
     }
   }
 
   return (
-    <AuthShell mode="register" title="Создать аккаунт" subtitle="Меньше минуты. Быстрее всего — через Google, в одно нажатие." callbackUrl={callbackUrl}>
+    <AuthShell mode="register" title={tx("Создать аккаунт")} subtitle={tx("Меньше минуты. Быстрее всего — через Google, в одно нажатие.")} callbackUrl={callbackUrl}>
       {/* Самый короткий путь — сверху: одно нажатие, без пароля и анкеты. */}
       <div className="flex flex-col gap-3">
         <GoogleButton callbackUrl={callbackUrl} disabled={busy} className="h-12" />
         <Link href={`/login/lms?callbackUrl=${encodeURIComponent(callbackUrl)}`} className={authSecondary}>
-          <MicrosoftIcon />
-          Через Microsoft AITU
-        </Link>
+          <MicrosoftIcon />{tx("Через Microsoft AITU")}</Link>
       </div>
 
-      <AuthDivider>или по почте</AuthDivider>
+      <AuthDivider>{tx("или по почте")}</AuthDivider>
 
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <AuthField label="Как тебя зовут">
-          <input name="name" placeholder="Имя" autoComplete="given-name" maxLength={40} required className={authInput} />
+        <AuthField label={tx("Как тебя зовут")}>
+          <input name="name" placeholder={tx("Имя")} autoComplete="given-name" maxLength={40} required className={authInput} />
         </AuthField>
         <AuthField label="Email">
           <input type="email" name="email" placeholder="you@example.com" autoComplete="email" required className={authInput} />
         </AuthField>
         <div className="grid grid-cols-2 gap-3">
-          <AuthField label="Логин">
+          <AuthField label={tx("Логин")}>
             <input name="username" placeholder="nickname" autoComplete="username" maxLength={20} required className={authInput} />
           </AuthField>
-          <AuthField label="Год рождения">
+          <AuthField label={tx("Год рождения")}>
             <input type="number" inputMode="numeric" name="birthYear" placeholder="2006" required className={authInput} />
           </AuthField>
         </div>
-        <AuthField label="Пароль" hint="Минимум 8 символов">
+        <AuthField label={tx("Пароль")} hint={tx("Минимум 8 символов")}>
           <PasswordInput name="password" placeholder="••••••••" autoComplete="new-password" required minLength={8} className={authInput} />
         </AuthField>
-        <AuthField label="Повтори пароль">
+        <AuthField label={tx("Повтори пароль")}>
           <PasswordInput name="confirm" placeholder="••••••••" autoComplete="new-password" required minLength={8} className={authInput} />
         </AuthField>
 
         {error && <AuthError>{error}</AuthError>}
 
         <button type="submit" disabled={busy} className={authPrimary}>
-          {busy ? "Создаём…" : <>Создать аккаунт <span aria-hidden>↗</span></>}
+          {busy ? tx("Создаём…") : <>{tx("Создать аккаунт ")}<span aria-hidden>↗</span></>}
         </button>
-        <p className="text-center text-[12px] leading-relaxed text-[#a0a39c]">
-          Что мы храним и зачем — в{" "}
-          <Link href="/privacy" className="underline underline-offset-2 hover:text-[#f2f3ed]">политике конфиденциальности</Link>
-          {" "}и{" "}
-          <Link href="/terms" className="underline underline-offset-2 hover:text-[#f2f3ed]">условиях</Link>.
+        <p className="text-center text-[12px] leading-relaxed text-[#a0a39c]">{tx("Что мы храним и зачем — в")}{" "}
+          <Link href="/privacy" className="underline underline-offset-2 hover:text-[#f2f3ed]">{tx("политике конфиденциальности")}</Link>
+          {" "}{tx("и")}{" "}
+          <Link href="/terms" className="underline underline-offset-2 hover:text-[#f2f3ed]">{tx("условиях")}</Link>.
         </p>
       </form>
 
-      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">
-        Уже есть аккаунт?{" "}
+      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">{tx("Уже есть аккаунт?")}{" "}
         <Link
           href={callbackUrl === "/app" ? "/login" : `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
           className="font-semibold text-[#d3f693] underline-offset-2 hover:underline"
-        >
-          Войти
-        </Link>
+        >{tx("Войти")}</Link>
       </p>
     </AuthShell>
   );

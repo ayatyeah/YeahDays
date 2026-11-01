@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -25,6 +27,7 @@ import { YgIcon } from "@/components/yg-icons";
  * не прокручивался, а кнопка «Понятно» оставалась за краем экрана.
  */
 export default function WhatsNew() {
+  const tx = useCopy();
   const onboarded = useUserStore((s) => s.onboarded);
   const seenGuide = useUserStore((s) => s.seenGuide);
   const seen = useUserStore((s) => s.seenFeatures);
@@ -51,13 +54,9 @@ export default function WhatsNew() {
 
   return (
     <Modal open={!!items && items.length > 0} onClose={close}>
-      <div role="dialog" aria-label="Что нового">
-        <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-          Пока тебя не было
-        </p>
-        <h2 className="mt-1.5 text-[28px] font-bold leading-tight">
-          В приложении появилось новое
-        </h2>
+      <div role="dialog" aria-label={tx("Что нового")}>
+        <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{tx("Пока тебя не было")}</p>
+        <h2 className="mt-1.5 text-[28px] font-bold leading-tight">{tx("В приложении появилось новое")}</h2>
 
         <ul className="mt-5 flex flex-col gap-3">
           {(items ?? []).map((f) => (
@@ -76,9 +75,7 @@ export default function WhatsNew() {
                     href={f.href}
                     onClick={close}
                     className="mt-2 inline-block text-[13px] font-semibold text-[var(--color-stability)] underline underline-offset-4"
-                  >
-                    Открыть
-                  </Link>
+                  >{tx("Открыть")}</Link>
                 )}
               </div>
             </li>
@@ -91,9 +88,7 @@ export default function WhatsNew() {
             type="button"
             onClick={close}
             className="press h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[16px] font-bold text-[var(--color-bg)]"
-          >
-            Понятно
-          </button>
+          >{tx("Понятно")}</button>
         </div>
       </div>
     </Modal>

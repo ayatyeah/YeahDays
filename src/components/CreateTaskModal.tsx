@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useState } from "react";
 import Modal from "./ui/Modal";
@@ -31,6 +33,7 @@ const DURATIONS = [5, 10, 20, 30, 45, 60];
  * а не живут отдельным «списком задач».
  */
 export default function CreateTaskModal() {
+  const tx = useCopy();
   const open = useUiStore((s) => s.createOpen);
   const close = useUiStore((s) => s.closeCreate);
   const addCustomAction = useUserStore((s) => s.addCustomAction);
@@ -62,7 +65,7 @@ export default function CreateTaskModal() {
     const action = {
       id: `custom-${Date.now().toString(36)}`,
       title: t,
-      why: "Твоё собственное действие",
+      why: tx("Твоё собственное действие"),
       category,
       difficulty,
       duration,
@@ -78,12 +81,12 @@ export default function CreateTaskModal() {
   }
 
   return (
-    <Modal open={open} onClose={close} title="Своё действие">
+    <Modal open={open} onClose={close} title={tx("Своё действие")}>
       <div className="space-y-4">
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Например: 30 минут гитары"
+          placeholder={tx("Например: 30 минут гитары")}
           maxLength={70}
           autoFocus
           className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
@@ -91,7 +94,7 @@ export default function CreateTaskModal() {
 
         {/* Категория */}
         <div>
-          <Label>Категория</Label>
+          <Label>{tx("Категория")}</Label>
           <div className="flex flex-wrap gap-1.5">
             {CATEGORY_LIST.map((c) => (
               <button
@@ -105,7 +108,7 @@ export default function CreateTaskModal() {
                 )}
               >
                 <YgIcon name={c.icon} className="h-4 w-4" />
-                {c.label}
+                {tx(c.label)}
               </button>
             ))}
           </div>
@@ -113,7 +116,7 @@ export default function CreateTaskModal() {
 
         {/* Сложность */}
         <div>
-          <Label>Сложность · {DIFFICULTY_LABEL[difficulty]}</Label>
+          <Label>{tx("Сложность · ")}{tx(DIFFICULTY_LABEL[difficulty])}</Label>
           <div className="grid grid-cols-5 gap-1.5">
             {DIFFICULTIES.map((d) => (
               <button
@@ -134,7 +137,7 @@ export default function CreateTaskModal() {
 
         {/* Длительность */}
         <div>
-          <Label>Длительность</Label>
+          <Label>{tx("Длительность")}</Label>
           <div className="grid grid-cols-6 gap-1.5">
             {DURATIONS.map((m) => (
               <button
@@ -155,7 +158,7 @@ export default function CreateTaskModal() {
 
         {/* Энергия */}
         <div>
-          <Label>Сколько сил нужно</Label>
+          <Label>{tx("Сколько сил нужно")}</Label>
           <div className="grid grid-cols-3 gap-1.5">
             {ENERGIES.map((e) => (
               <button
@@ -168,7 +171,7 @@ export default function CreateTaskModal() {
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                {ENERGY_LABEL[e]}
+                {tx(ENERGY_LABEL[e])}
               </button>
             ))}
           </div>
@@ -181,7 +184,7 @@ export default function CreateTaskModal() {
         >
           <span className="inline-flex items-center gap-1.5 text-[15px] font-medium" style={{ color: stat.hex }}>
             <YgIcon name={stat.icon} className="h-4 w-4" />
-      {stat.label}
+      {tx(stat.label)}
           </span>
           <span className="text-[16px] font-bold tabular-nums" style={{ color: stat.hex }}>
             +{xp} XP
@@ -195,23 +198,17 @@ export default function CreateTaskModal() {
             onChange={(e) => setAddToToday(e.target.checked)}
             className="h-4 w-4 rounded accent-[var(--color-fg)]"
           />
-          <span className="text-[15px] text-[var(--color-fg-dim)]">
-            Сразу добавить в план на сегодня
-          </span>
+          <span className="text-[15px] text-[var(--color-fg-dim)]">{tx("Сразу добавить в план на сегодня")}</span>
         </label>
 
         <div className="flex gap-2.5 pt-1">
-          <Button className="flex-1" onClick={close}>
-            Отмена
-          </Button>
+          <Button className="flex-1" onClick={close}>{tx("Отмена")}</Button>
           <Button
             variant="primary"
             className="flex-1"
             disabled={!title.trim()}
             onClick={submit}
-          >
-            Создать
-          </Button>
+          >{tx("Создать")}</Button>
         </div>
       </div>
     </Modal>

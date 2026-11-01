@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useMemo, useState } from "react";
@@ -51,6 +53,7 @@ const DURATIONS = [50, 60, 90, 120].map((m) => ({ key: m, label: String(m), sub:
  * повторяющаяся задача со временем, или по крестику — навсегда.
  */
 export default function ClassesSetup() {
+  const tx = useCopy();
   const todos = useUserStore((s) => s.todos);
   const addTodo = useUserStore((s) => s.addTodo);
 
@@ -122,7 +125,7 @@ export default function ClassesSetup() {
         <button
           type="button"
           onClick={dismiss}
-          aria-label="Скрыть"
+          aria-label={tx("Скрыть")}
           className="press absolute right-3 top-3 p-2 text-[var(--color-muted)]"
         >
           <YgIcon name="close" className="h-4 w-4" />
@@ -130,37 +133,33 @@ export default function ClassesSetup() {
         <div className="flex items-start gap-3 pr-6">
           <YgIcon name="lecture" className="mt-0.5 h-6 w-6 shrink-0" />
           <div className="min-w-0">
-            <p className="text-[16px] font-semibold">Добавь свои пары</p>
-            <p className="mt-1 text-[14px] leading-snug text-[var(--color-muted)]">
-              Я покажу свободные окна между ними и напомню за 5 минут до начала.
-            </p>
+            <p className="text-[16px] font-semibold">{tx("Добавь свои пары")}</p>
+            <p className="mt-1 text-[14px] leading-snug text-[var(--color-muted)]">{tx("Я покажу свободные окна между ними и напомню за 5 минут до начала.")}</p>
           </div>
         </div>
-        <Button variant="primary" className="mt-4 w-full" onClick={() => setOpen(true)}>
-          Добавить расписание
-        </Button>
+        <Button variant="primary" className="mt-4 w-full" onClick={() => setOpen(true)}>{tx("Добавить расписание")}</Button>
       </section>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Расписание пар">
+      <Modal open={open} onClose={() => setOpen(false)} title={tx("Расписание пар")}>
         <div className="space-y-4">
           <div>
-            <p className="inset-title">Предмет</p>
+            <p className="inset-title">{tx("Предмет")}</p>
             <input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="Например: Матанализ"
+              placeholder={tx("Например: Матанализ")}
               maxLength={60}
               className="h-11 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none"
             />
           </div>
 
           <div>
-            <p className="inset-title">Формат</p>
+            <p className="inset-title">{tx("Формат")}</p>
             <Segmented id="class-format" options={[...FORMATS]} value={format} onChange={setFormat} />
           </div>
 
           <div>
-            <p className="inset-title">Дни</p>
+            <p className="inset-title">{tx("Дни")}</p>
             <div className="flex gap-1.5">
               {WEEKDAYS.map((w) => {
                 const on = days.includes(w.day);
@@ -179,7 +178,7 @@ export default function ClassesSetup() {
                         : "bg-[var(--color-surface-2)] text-[var(--color-fg-dim)]",
                     )}
                   >
-                    {w.label}
+                    {tx(w.label)}
                   </button>
                 );
               })}
@@ -188,7 +187,7 @@ export default function ClassesSetup() {
 
           <div className="flex gap-3">
             <div className="w-[38%] shrink-0">
-              <p className="inset-title">Начало</p>
+              <p className="inset-title">{tx("Начало")}</p>
               <input
                 type="time"
                 value={time}
@@ -197,7 +196,7 @@ export default function ClassesSetup() {
               />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="inset-title">Длится</p>
+              <p className="inset-title">{tx("Длится")}</p>
               <Segmented id="class-duration" options={DURATIONS} value={duration} onChange={setDuration} />
             </div>
           </div>
@@ -216,12 +215,10 @@ export default function ClassesSetup() {
 
         <div className="mt-5 flex gap-2.5">
           {added.length > 0 && (
-            <Button className="flex-1" onClick={() => setOpen(false)}>
-              Готово
-            </Button>
+            <Button className="flex-1" onClick={() => setOpen(false)}>{tx("Готово")}</Button>
           )}
           <Button variant="primary" className="flex-1" disabled={!valid} onClick={save}>
-            {added.length > 0 ? "Добавить ещё" : "Добавить"}
+            {added.length > 0 ? tx("Добавить ещё") : tx("Добавить")}
           </Button>
         </div>
       </Modal>

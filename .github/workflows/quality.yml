@@ -36,3 +36,23 @@ jobs:
         env:
           SYNC_DB_TEST: "1"
       - run: npm run db:restore-check
+      - run: npx playwright install --with-deps chromium
+      - name: Browser checks for sync, privacy, and mobile controls
+        env:
+          AUTH_URL: http://localhost:3100
+          AUTH_TRUST_HOST: "true"
+          E2E_BASE: http://localhost:3100
+          E2E_DB: yeahgrind_test
+          E2E_ENGINE: chromium
+          PGHOST: localhost
+          PGUSER: yg_test
+          PGPASSWORD: local_test_only
+        run: |
+          npm run start -- -p 3100 > /tmp/yeahgrind-browser-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3100/api/auth/csrf > /dev/null; then break; fi
+            sleep 1
+          done
+          node e2e/run.mjs Качество
+          node e2e/run.mjs Надёжность
+          node e2e/run.mjs Языки

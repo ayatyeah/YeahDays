@@ -1,17 +1,20 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 import { useT } from "@/i18n/useT";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { taskLearningHref } from "@/lib/dayFlow";
-import HomeSection from "./HomeSection";
+import dynamic from "next/dynamic";
+const HomeSection = dynamic(() => import("./HomeSection"), { ssr: false });
 import NextStep from "@/components/dayflow/NextStep";
 import { haptic } from "@/lib/motion";
 import DaySupport from "@/components/mono/DaySupport";
 import CompanionHeader from "@/components/companion/CompanionHeader";
 import TodoList from "@/components/TodoList";
 import PlanItem from "@/components/PlanItem";
-import TimelineSchedule from "@/components/TimelineSchedule";
-import ClassesSetup from "@/components/ClassesSetup";
+const TimelineSchedule = dynamic(() => import("@/components/TimelineSchedule"), { ssr: false });
+const ClassesSetup = dynamic(() => import("@/components/ClassesSetup"), { ssr: false });
 import ReminderNudge from "@/components/ReminderNudge";
 import Challenges from "@/components/Challenges";
 import EveningRetro from "@/components/EveningRetro";
@@ -33,11 +36,13 @@ import { track } from "@/lib/analytics";
 import { useNavStore } from "@/store/useNavStore";
 
 export default function TodaySection() {
+  const tx = useCopy();
   const t = useT();
   const hydrated = useHydrated();
   const store = useUserStore();
   const go = useNavStore((s) => s.go);
   const planning = useRef<HTMLDetailsElement>(null);
+  const [toolsReady, setToolsReady] = useState(false);
   const [discoveryReady, setDiscoveryReady] = useState(false);
   function openPlanning() {
     if (planRef.current) planRef.current.open = true;
@@ -135,7 +140,7 @@ export default function TodaySection() {
         onCreate={openPlanning}
       />
       <details ref={planRef} className="one-action-plan">
-        <summary>Мой план <span>{completed}/{count}</span></summary>
+        <summary>{tx("Мой план ")}<span>{completed}/{count}</span></summary>
 
       {focusedPlan && (
         <section id="flow-task" className="flow-task-detail">
@@ -148,12 +153,8 @@ export default function TodaySection() {
                 togglePlan(focusedPlan.id);
                 setSelectedTask(null);
               }}
-            >
-              Дело выполнено
-            </button>
-            <button onClick={() => setSelectedTask(null)}>
-              Вернуться к плану
-            </button>
+            >{tx("Дело выполнено")}</button>
+            <button onClick={() => setSelectedTask(null)}>{tx("Вернуться к плану")}</button>
           </div>
         </section>
       )}
@@ -161,18 +162,16 @@ export default function TodaySection() {
         <section
           id="flow-task"
           className="flow-task-detail"
-          aria-label="Один шаг за раз"
+          aria-label={tx("Один шаг за раз")}
         >
           <h2>{focused.title}</h2>
           {taskLearningHref(focused.note) && (
             <Link
               className="flow-primary"
               href={taskLearningHref(focused.note)!}
-            >
-              Продолжить учёбу
-            </Link>
+            >{tx("Продолжить учёбу")}</Link>
           )}
-          <p>Слишком большое дело? Запиши только первый маленький шаг.</p>
+          <p>{tx("Слишком большое дело? Запиши только первый маленький шаг.")}</p>
           {focused.subtasks.map((sub) => (
             <label key={sub.id}>
               <input
@@ -208,35 +207,31 @@ export default function TodaySection() {
           >
             <input
               type="text"
-              aria-label="Первый маленький шаг"
-              placeholder="Что можно сделать за пару минут?"
+              aria-label={tx("Первый маленький шаг")}
+              placeholder={tx("Что можно сделать за пару минут?")}
               maxLength={200}
               value={smallStep}
               onChange={(e) => setSmallStep(e.target.value)}
             />
-            <button type="submit">Добавить шаг</button>
+            <button type="submit">{tx("Добавить шаг")}</button>
           </form>
           <div className="flow-actions">
             <button
               className="flow-primary"
               onClick={() => togglePersonal(focused.id)}
-            >
-              Дело выполнено
-            </button>
-            <button onClick={() => setSelectedTask(null)}>
-              Вернуться к плану
-            </button>
+            >{tx("Дело выполнено")}</button>
+            <button onClick={() => setSelectedTask(null)}>{tx("Вернуться к плану")}</button>
           </div>
         </section>
       )}
       <div className="companion-day-layout">
         <div>
           <header className="companion-today-heading">
-            <h2>Мой план</h2>
+            <h2>{tx("Мой план")}</h2>
             <button
               className="mono-add"
               onClick={openPlanning}
-              aria-label="Добавить задачу"
+              aria-label={tx("Добавить задачу")}
             >
               +
             </button>
@@ -248,7 +243,7 @@ export default function TodaySection() {
                 <div className={`companion-task tone-${i % 3}`} key={t.id}>
                   <button
                     className="companion-check"
-                    aria-label={`${isTodoDone(t, day) ? "Вернуть" : "Выполнить"}: ${t.title}`}
+                    aria-label={tx("{0}: {1}", {"0": isTodoDone(t, day) ? tx("Вернуть") : tx("Выполнить"), "1": t.title})}
                     aria-pressed={isTodoDone(t, day)}
                     onClick={() => togglePersonal(t.id)}
                   >
@@ -259,11 +254,11 @@ export default function TodaySection() {
                   >
                     <b>{t.title}</b>
                     <small>
-                      {isTodoOverdue(t, day) ? "Просрочено · " : ""}
-                      {t.duration ? `${t.duration} мин · ` : ""}
+                      {isTodoOverdue(t, day) ? tx("Просрочено · ") : ""}
+                      {t.duration ? tx("{0} мин · ", {"0": t.duration}) : ""}
                       {t.subtasks.length
-                        ? `${t.subtasks.filter((s) => s.done).length}/${t.subtasks.length} шагов`
-                        : "Твой маленький шаг"}
+                        ? tx("{0}/{1} шагов", {"0": t.subtasks.filter((s) => s.done).length, "1": t.subtasks.length})
+                        : tx("Твой маленький шаг")}
                     </small>
                   </span>
                 </div>
@@ -277,7 +272,7 @@ export default function TodaySection() {
                 >
                   <button
                     className="companion-check"
-                    aria-label={`${t.completed ? "Вернуть" : "Выполнить"}: ${t.snapshot.title}`}
+                    aria-label={tx("{0}: {1}", {"0": t.completed ? tx("Вернуть") : tx("Выполнить"), "1": t.snapshot.title})}
                     aria-pressed={t.completed}
                     onClick={() => togglePlan(t.id)}
                   >
@@ -285,50 +280,48 @@ export default function TodaySection() {
                   </button>
                   <span className={t.completed ? "companion-task-done" : ""}>
                     <b>{t.snapshot.title}</b>
-                    <small>{t.xp} XP · из колоды</small>
+                    <small>{t.xp}{tx(" XP · из колоды")}</small>
                   </span>
                 </div>
               ))}
             {count === 0 && (
               <button className="companion-empty" onClick={() => go("home")}>
                 <YgIcon name="cards" />
-                <b>С чего начнём?</b>
-                <span>Подбери первое действие под свою энергию</span>
+                <b>{tx("С чего начнём?")}</b>
+                <span>{tx("Подбери первое действие под свою энергию")}</span>
               </button>
             )}
             {count > 0 && completed === count && !showDone && (
-              <p className="companion-success">
-                Всё на сегодня сделано. Можно выдохнуть.
-              </p>
+              <p className="companion-success">{tx("Всё на сегодня сделано. Можно выдохнуть.")}</p>
             )}
           </div>
           <section className="companion-day-meter">
             <div>
-              <b>Твой день</b>
+              <b>{tx("Твой день")}</b>
               <span>
-                {completed} из {count}
+                {completed}{tx(" из ")}{count}
               </span>
             </div>
             <progress
-              aria-label="Выполнение плана дня"
+              aria-label={tx("Выполнение плана дня")}
               value={completed}
               max={count || 1}
             />
             {completed > 0 && (
               <button onClick={() => setShowDone((v) => !v)}>
-                {showDone ? "Скрыть выполненное" : "Показать выполненное"}
+                {showDone ? tx("Скрыть выполненное") : tx("Показать выполненное")}
               </button>
             )}
           </section>
       {receipt && (
-        <section className="flow-result" aria-label="Результат действия">
+        <section className="flow-result" aria-label={tx("Результат действия")}>
           <div role="status">
-            <h2>Ещё один шаг готов</h2>
+            <h2>{tx("Ещё один шаг готов")}</h2>
             <p>{receipt.title}</p>
             <p>
               {completed === count
-                ? "На сегодня достаточно. Можно отдохнуть."
-                : "Можно продолжить или сделать паузу — результат уже в плане."}
+                ? tx("На сегодня достаточно. Можно отдохнуть.")
+                : tx("Можно продолжить или сделать паузу — результат уже в плане.")}
             </p>
           </div>
           <div className="flow-actions">
@@ -344,10 +337,8 @@ export default function TodaySection() {
                   store.toggleTask(receipt.id);
                 setReceipt(null);
               }}
-            >
-              Отменить выполнение
-            </button>
-            <button onClick={() => setReceipt(null)}>Продолжить день</button>
+            >{tx("Отменить выполнение")}</button>
+            <button onClick={() => setReceipt(null)}>{tx("Продолжить день")}</button>
           </div>
         </section>
       )}
@@ -357,7 +348,7 @@ export default function TodaySection() {
           <ReminderNudge />
           <DaySupport />
           <details ref={planning} className="companion-planning">
-            <summary>Добавить или изменить задачи</summary>
+            <summary>{tx("Добавить или изменить задачи")}</summary>
             <TodoList />
             {planned.length > 0 && (
               <div className="space-y-2">
@@ -374,15 +365,15 @@ export default function TodaySection() {
           </details>
         </div>
         <aside className="companion-day-aside">
-          <details className="companion-planning">
-            <summary>Расписание и инструменты</summary>
-            <ClassesSetup />
+          <details className="companion-planning" onToggle={e => { if (e.currentTarget.open) setToolsReady(true); }}>
+            <summary>{tx("Расписание и инструменты")}</summary>
+            {toolsReady && <ClassesSetup />}
             <div className="companion-quick-links">
-              <Link href="/calendar">Календарь</Link>
-              <Link href="/chat">ИИ-помощник</Link>
-              <Link href="/app">Колода действий</Link>
+              <Link prefetch={false} href="/calendar">{tx("Календарь")}</Link>
+              <Link prefetch={false} href="/chat">{tx("ИИ-помощник")}</Link>
+              <Link prefetch={false} href="/app">{tx("Колода действий")}</Link>
             </div>
-            <TimelineSchedule compact />
+            {toolsReady && <TimelineSchedule compact />}
           </details>
           <Challenges />
           <EveningRetro />

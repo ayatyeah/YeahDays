@@ -106,7 +106,7 @@ export default function BottomNav() {
                 }}
                 aria-current={active ? "page" : undefined}
                 aria-label={
-                  badge ? `${t(label)}, незавершённых дел: ${badge}` : label
+                  badge ? t("nav.pending", { label: t(label), count: badge }) : t(label)
                 }
                 title={t(label)}
                 className={cn("yg-capsule-tab", active && "is-active")}

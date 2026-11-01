@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +21,7 @@ import Avatar3D from "./AvatarLazy";
  * Это момент эмоциональной награды — здесь показываем 3D-персонажа крупно.
  */
 export default function LevelUpOverlay() {
+  const tx = useCopy();
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
   const todos = useUserStore((s) => s.todos);
@@ -95,9 +98,7 @@ export default function LevelUpOverlay() {
             transition={{ type: "spring", stiffness: 220, damping: 20 }}
             className="relative flex flex-col items-center px-8 text-center"
           >
-            <p className="text-[13px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">
-              Новый уровень
-            </p>
+            <p className="text-[13px] font-semibold uppercase tracking-[0.22em] text-[var(--color-muted)]">{tx("Новый уровень")}</p>
             <p className="mt-1 text-[68px] font-black leading-none tabular-nums">
               {state.level}
             </p>
@@ -118,22 +119,16 @@ export default function LevelUpOverlay() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
                 className="rounded-full bg-[var(--color-surface)] px-4 py-2 text-[15px] font-bold"
-              >
-                Форма: {state.milestone}
+              >{tx("Форма: ")}{state.milestone}
               </motion.p>
             )}
 
-            <p className="mt-3 max-w-[260px] text-[15px] leading-snug text-[var(--color-fg-dim)]">
-              Твой персонаж стал сильнее. Так выглядит накопленный
-              результат маленьких действий.
-            </p>
+            <p className="mt-3 max-w-[260px] text-[15px] leading-snug text-[var(--color-fg-dim)]">{tx("Твой персонаж стал сильнее. Так выглядит накопленный результат маленьких действий.")}</p>
 
             <button
               onClick={close}
               className="press mt-6 h-12 rounded-2xl bg-[var(--color-fg)] px-7 text-[16px] font-semibold text-[var(--color-bg)] shadow-[var(--shadow-2)]"
-            >
-              Продолжить
-            </button>
+            >{tx("Продолжить")}</button>
           </motion.div>
         </motion.div>
       )}

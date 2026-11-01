@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useState } from "react";
 import Modal from "@/components/ui/Modal";
@@ -32,6 +34,7 @@ const GUIDE: { label: string; icon: YgIconName; text: string }[] = [
  * иначе — прокрутка), а кнопка теперь прилипает к низу листа.
  */
 export default function AppGuide() {
+  const tx = useCopy();
   const onboarded = useUserStore((s) => s.onboarded);
   const seenGuide = useUserStore((s) => s.seenGuide);
   const completeGuide = useUserStore((s) => s.completeGuide);
@@ -52,11 +55,9 @@ export default function AppGuide() {
 
   return (
     <Modal open={open} onClose={close}>
-      <div role="dialog" aria-label="Как это устроено">
-        <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">
-          Коротко
-        </p>
-        <h2 className="mt-1.5 text-[28px] font-bold leading-tight">Как это устроено</h2>
+      <div role="dialog" aria-label={tx("Как это устроено")}>
+        <p className="text-[12px] font-semibold uppercase tracking-wider text-[var(--color-muted)]">{tx("Коротко")}</p>
+        <h2 className="mt-1.5 text-[28px] font-bold leading-tight">{tx("Как это устроено")}</h2>
 
         <ul className="mt-5 flex flex-col gap-3">
           {GUIDE.map((item) => (
@@ -88,9 +89,7 @@ export default function AppGuide() {
             type="button"
             onClick={close}
             className="press h-12 w-full rounded-2xl bg-[var(--color-fg)] text-[16px] font-bold text-[var(--color-bg)]"
-          >
-            Понятно
-          </button>
+          >{tx("Понятно")}</button>
         </div>
       </div>
     </Modal>

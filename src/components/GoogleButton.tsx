@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
@@ -20,6 +22,7 @@ function GoogleIcon({ className }: { className?: string }) {
  * src/auth.ts). Поэтому кнопка одинаковая на /login и /register.
  */
 export default function GoogleButton({ callbackUrl, disabled = false, className = "" }: { callbackUrl: string; disabled?: boolean; className?: string }) {
+  const tx = useCopy();
   const [busy, setBusy] = useState(false);
   return (
     <button
@@ -32,7 +35,7 @@ export default function GoogleButton({ callbackUrl, disabled = false, className 
       className={`flex h-13 w-full items-center justify-center gap-2.5 rounded-2xl bg-white text-[15px] font-semibold text-[#1f1f1f] transition active:scale-[0.99] disabled:opacity-60 ${className}`}
     >
       <GoogleIcon className="h-5 w-5" />
-      {busy ? "Открываем Google…" : "Продолжить с Google"}
+      {busy ? tx("Открываем Google…") : tx("Продолжить с Google")}
     </button>
   );
 }

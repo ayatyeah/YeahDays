@@ -1,6 +1,7 @@
 export const messages = {
   "ru": {
     "nav.today": "Сегодня",
+    "nav.pending": "{label}, незавершённых дел: {count}",
     "nav.learn": "Учёба",
     "nav.community": "Вместе",
     "nav.progress": "Прогресс",
@@ -100,6 +101,7 @@ export const messages = {
   },
   "en": {
     "nav.today": "Today",
+    "nav.pending": "{label}, unfinished tasks: {count}",
     "nav.learn": "Learn",
     "nav.community": "Together",
     "nav.progress": "Progress",
@@ -199,6 +201,7 @@ export const messages = {
   },
   "kk": {
     "nav.today": "Бүгін",
+    "nav.pending": "{label}, аяқталмаған істер: {count}",
     "nav.learn": "Оқу",
     "nav.community": "Бірге",
     "nav.progress": "Ілгерілеу",

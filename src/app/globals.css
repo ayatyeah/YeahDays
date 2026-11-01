@@ -850,3 +850,16 @@ details[open] > :not(summary) {
 }
 .yg-pop { animation: yg-pop 360ms var(--ease-out); }
 .yg-shake { animation: yg-shake 380ms ease-in-out; }
+
+/* A normal-flow status row never covers tasks or the mobile keyboard. */
+.sync-indicator { display:flex; align-items:center; justify-content:flex-end; gap:.6rem; min-height:28px; flex-shrink:0; font-size:12px; color:var(--color-muted); overflow-wrap:anywhere; }
+.sync-indicator button { min-height:44px; padding:0 .5rem; text-decoration:underline; }
+.sync-indicator[data-sync-state="offline"], .sync-indicator[data-sync-state="error"] { color:var(--color-fg); }
+input, textarea { scroll-margin-block:90px; }
+
+@media (max-width: 1023px) {
+  html[data-editing] .yg-bottom-nav, html[data-editing] .yg-install-prompt,
+  body[data-modal-open="1"] .yg-install-prompt { display:none; }
+  html[data-editing] { --install-offset:0px !important; }
+  .one-action-plan input, .one-action-plan textarea { min-width:0; max-width:100%; }
+}

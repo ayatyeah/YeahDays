@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
@@ -13,6 +15,7 @@ import Button from "./ui/Button";
  * который можно удалить, ни надёжного способа подтвердить, что данные его.
  */
 export default function DataControls() {
+  const tx = useCopy();
   const { data: session } = useSession();
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -34,7 +37,7 @@ export default function DataControls() {
       a.click();
       URL.revokeObjectURL(href);
     } catch {
-      setError("Не удалось выгрузить. Попробуй ещё раз.");
+      setError(tx("Не удалось выгрузить. Попробуй ещё раз."));
     } finally {
       setBusy(false);
     }
@@ -54,7 +57,7 @@ export default function DataControls() {
       } catch {}
       await signOut({ callbackUrl: "/" });
     } catch {
-      setError("Не удалось удалить. Попробуй ещё раз.");
+      setError(tx("Не удалось удалить. Попробуй ещё раз."));
       setBusy(false);
     }
   }
@@ -66,16 +69,12 @@ export default function DataControls() {
           onClick={exportData}
           disabled={busy}
           className="h-11 w-full rounded-2xl surface text-[16px] font-medium transition active:scale-[0.99] disabled:opacity-60"
-        >
-          Выгрузить данные
-        </button>
+        >{tx("Выгрузить данные")}</button>
         <button
           onClick={() => setConfirming(true)}
           disabled={busy}
           className="h-11 w-full rounded-2xl border border-[var(--color-border)] text-[16px] font-medium text-[var(--color-strength)] transition active:scale-[0.99] disabled:opacity-60"
-        >
-          Удалить аккаунт
-        </button>
+        >{tx("Удалить аккаунт")}</button>
       </div>
 
       {error && (
@@ -87,25 +86,18 @@ export default function DataControls() {
       <Modal
         open={confirming}
         onClose={() => setConfirming(false)}
-        title="Удалить аккаунт?"
+        title={tx("Удалить аккаунт?")}
       >
-        <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">
-          Будут стёрты профиль, весь прогресс, история действий и подписки на
-          уведомления — на сервере и на этом устройстве. Это нельзя отменить.
-        </p>
-        <p className="mt-2 text-[15px] leading-snug text-[var(--color-muted)]">
-          Хочешь сохранить копию — сначала выгрузи данные.
-        </p>
+        <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">{tx("Будут стёрты профиль, весь прогресс, история действий и подписки на уведомления — на сервере и на этом устройстве. Это нельзя отменить.")}</p>
+        <p className="mt-2 text-[15px] leading-snug text-[var(--color-muted)]">{tx("Хочешь сохранить копию — сначала выгрузи данные.")}</p>
         <div className="mt-5 flex gap-2.5">
-          <Button className="flex-1" onClick={() => setConfirming(false)}>
-            Отмена
-          </Button>
+          <Button className="flex-1" onClick={() => setConfirming(false)}>{tx("Отмена")}</Button>
           <Button
             variant="danger"
             className="flex-1"
             onClick={deleteAccount}
           >
-            {busy ? "Удаляю…" : "Удалить"}
+            {busy ? tx("Удаляю…") : tx("Удалить")}
           </Button>
         </div>
       </Modal>

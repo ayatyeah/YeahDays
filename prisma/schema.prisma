@@ -1166,3 +1166,17 @@ model BackgroundJob {
   lastFailureAt DateTime?
   consecutiveFailures Int @default(0)
 }
+
+// Hourly operational counts only: no user IDs, IPs, messages, stacks or task text.
+model RuntimeSignal {
+  hour DateTime
+  build String
+  route String
+  kind String
+  code String
+  status Int
+  duration String
+  count Int @default(1)
+  @@id([hour, build, route, kind, code, status, duration])
+  @@index([hour])
+}

@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -30,6 +32,7 @@ import { cn } from "@/lib/cn";
 import { YgIcon } from "@/components/yg-icons";
 
 export default function AccountSection() {
+  const tx = useCopy();
   const hydrated = useHydrated();
   const name = useUserStore((s) => s.name);
   const setName = useUserStore((s) => s.setName);
@@ -69,14 +72,14 @@ export default function AccountSection() {
           Профиль остался про «кто я и как расту»: без уведомлений, сброса
           и интеграций он перестал читаться как свалка. */}
       <header className="flex items-center justify-between">
-        <h1 className="ios-title text-[28px] font-bold tracking-tight">Профиль</h1>
+        <h1 className="ios-title text-[28px] font-bold tracking-tight">{tx("Профиль")}</h1>
         {/* Настройки открываются панелью поверх профиля, а не отдельной
             страницей: настроил — и ты там же, где был. Шестерёнка
             проворачивается на пол-оборота при открытии. */}
         <motion.button
           type="button"
           onClick={() => setSettingsOpen(true)}
-          aria-label="Настройки"
+          aria-label={tx("Настройки")}
           aria-expanded={settingsOpen}
           whileTap={{ scale: 0.92 }}
           className="press flex h-10 w-10 items-center justify-center rounded-xl surface text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
@@ -112,12 +115,10 @@ export default function AccountSection() {
             ширину, и «Уровень 4 · 745 XP» ломалось на четыре строки. */}
         <div className="min-w-0 flex-1">
           <p className="truncate text-[20px] font-bold">{name}</p>
-          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
-            Уровень {level} · {totalXp} XP
+          <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">{tx("Уровень ")}{level} · {totalXp} XP
           </p>
           <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
-            {days} {days === 1 ? "день" : "дн."} в YeahGrind
-          </p>
+            {days} {days === 1 ? tx("день") : tx("дн.")}{tx(" в YeahGrind")}</p>
           <button
             type="button"
             onClick={() => {
@@ -125,17 +126,15 @@ export default function AccountSection() {
               setEditing(true);
             }}
             className="press mt-2 text-[14px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
-          >
-            Изменить имя
-          </button>
+          >{tx("Изменить имя")}</button>
         </div>
       </section>
 
       {/* Метрики */}
       <section className="mt-3 grid grid-cols-3 gap-2.5">
-        <Stat value={completed.length} label="Выполнено" />
-        <Stat value={streak} label="Стрик" />
-        <Stat value={level} label="Уровень" />
+        <Stat value={completed.length} label={tx("Выполнено")} />
+        <Stat value={streak} label={tx("Стрик")} />
+        <Stat value={level} label={tx("Уровень")} />
       </section>
 
       {/*
@@ -162,13 +161,12 @@ export default function AccountSection() {
           <YgIcon name="snowflake" className="h-6 w-6 text-[var(--color-muted)]" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-semibold">
-            Заморозки: {freezes.left} из {FREEZES_PER_MONTH}
+          <p className="text-[15px] font-semibold">{tx("Заморозки: ")}{freezes.left}{tx(" из ")}{FREEZES_PER_MONTH}
           </p>
           <p className="mt-0.5 text-[13px] leading-snug text-[var(--color-muted)]">
             {freezes.left > 0
-              ? "Пропущенный день не сломает серию"
-              : "Закончились до первого числа"}
+              ? tx("Пропущенный день не сломает серию")
+              : tx("Закончились до первого числа")}
           </p>
         </div>
       </section>
@@ -193,9 +191,7 @@ export default function AccountSection() {
 
       {/* Приоритеты — напрямую кормят движок */}
       <section className="mt-6">
-        <h2 className="mb-3.5 text-[15px] font-semibold text-[var(--color-fg-dim)]">
-          Приоритеты
-        </h2>
+        <h2 className="mb-3.5 text-[15px] font-semibold text-[var(--color-fg-dim)]">{tx("Приоритеты")}</h2>
         <div className="space-y-4">
           {STAT_LIST.map((s) => (
             <div key={s.key}>
@@ -216,7 +212,7 @@ export default function AccountSection() {
                 onChange={(e) => setGoal(s.key, Number(e.target.value) / 100)}
                 className="w-full accent-[var(--color-fg)]"
                 style={{ accentColor: s.hex }}
-                aria-label={`Приоритет: ${s.label}`}
+                aria-label={tx("Приоритет: {0}", {"0": s.label})}
               />
             </div>
           ))}
@@ -225,9 +221,7 @@ export default function AccountSection() {
 
       {/* Настройки дня */}
       <section className="mt-6">
-        <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">
-          Состояние на сегодня
-        </h2>
+        <h2 className="mb-3 text-[15px] font-semibold text-[var(--color-fg-dim)]">{tx("Состояние на сегодня")}</h2>
         <div className="grid grid-cols-3 gap-2">
           {(["low", "medium", "high"] as EnergyLevel[]).map((e) => (
             <button
@@ -256,8 +250,7 @@ export default function AccountSection() {
                   : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted)]",
               )}
             >
-              {m} мин
-            </button>
+              {m}{tx(" мин")}</button>
           ))}
         </div>
       </section>
@@ -268,17 +261,15 @@ export default function AccountSection() {
       {/* Бренд */}
       <div className="mt-8 mb-1 flex flex-col items-center gap-1.5 opacity-55">
         <Logo variant="white" className="h-4 w-auto" />
-        <p className="text-[12px] text-[var(--color-muted)]">
-          Одно действие в день
-        </p>
+        <p className="text-[12px] text-[var(--color-muted)]">{tx("Одно действие в день")}</p>
       </div>
 
       {/* Модалка имени */}
-      <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)} title="Настройки">
+      <Modal open={settingsOpen} onClose={() => setSettingsOpen(false)} title={tx("Настройки")}>
         <SettingsContent compact />
       </Modal>
 
-      <Modal open={editing} onClose={() => setEditing(false)} title="Как тебя звать?">
+      <Modal open={editing} onClose={() => setEditing(false)} title={tx("Как тебя звать?")}>
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -287,9 +278,7 @@ export default function AccountSection() {
           className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none focus:border-[var(--color-fg-dim)]"
         />
         <div className="mt-4 flex gap-2.5">
-          <Button className="flex-1" onClick={() => setEditing(false)}>
-            Отмена
-          </Button>
+          <Button className="flex-1" onClick={() => setEditing(false)}>{tx("Отмена")}</Button>
           <Button
             variant="primary"
             className="flex-1"
@@ -297,9 +286,7 @@ export default function AccountSection() {
               setName(draft);
               setEditing(false);
             }}
-          >
-            Сохранить
-          </Button>
+          >{tx("Сохранить")}</Button>
         </div>
       </Modal>
 

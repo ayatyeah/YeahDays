@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useState } from "react";
 import { YgIcon } from "@/components/yg-icons";
@@ -21,6 +23,7 @@ export default function PasswordInput({
   className,
   ...props
 }: Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">) {
+  const tx = useCopy();
   const [shown, setShown] = useState(false);
 
   return (
@@ -34,7 +37,7 @@ export default function PasswordInput({
       <button
         type="button"
         onClick={() => setShown((v) => !v)}
-        aria-label={shown ? "Скрыть пароль" : "Показать пароль"}
+        aria-label={shown ? tx("Скрыть пароль") : tx("Показать пароль")}
         aria-pressed={shown}
         // tabIndex={-1}: при переходе по Tab от пароля ждут кнопку «Войти»,
         // а не глазок

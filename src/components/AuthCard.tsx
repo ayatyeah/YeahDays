@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
@@ -44,6 +46,7 @@ function GoogleIcon({ className }: { className?: string }) {
  * в понятное «прогресс лежит в аккаунте, вот когда он туда уехал».
  */
 function SyncRow() {
+  const tx = useCopy();
   const state = useSyncStatus((s) => s.state);
   const lastSyncedAt = useSyncStatus((s) => s.lastSyncedAt);
   const syncNow = useSyncStatus((s) => s.syncNow);
@@ -61,12 +64,12 @@ function SyncRow() {
   // Коротко: «Синхронизировано · 13 сек назад» рядом с кнопкой «Обновить»
   // не помещалось и обрезалось многоточием на середине слова.
   const label = busy
-    ? "Синхронизация…"
+    ? tx("Синхронизация…")
     : failed
-      ? "Нет связи"
+      ? tx("Нет связи")
       : lastSyncedAt
-        ? `Обновлено ${timeAgo(lastSyncedAt)}`
-        : "Синхронизировано";
+        ? tx("Обновлено {0}", {"0": timeAgo(lastSyncedAt)})
+        : tx("Синхронизировано");
 
   return (
     <div className="mt-3 flex items-center gap-2.5 border-t border-[var(--color-border)] pt-3">
@@ -87,13 +90,14 @@ function SyncRow() {
         disabled={busy || !syncNow}
         className="shrink-0 rounded-lg px-2 py-1 text-[13px] font-medium text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)] disabled:opacity-40"
       >
-        {failed ? "Повторить" : "Обновить"}
+        {failed ? tx("Повторить") : tx("Обновить")}
       </button>
     </div>
   );
 }
 
 function LinkGoogleRow() {
+  const tx = useCopy();
   const [hasGoogle, setHasGoogle] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -121,13 +125,12 @@ function LinkGoogleRow() {
       }}
       className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)] disabled:opacity-60"
     >
-      <GoogleIcon className="h-4 w-4" />
-      Привязать Google — входить можно будет и так
-    </button>
+      <GoogleIcon className="h-4 w-4" />{tx("Привязать Google — входить можно будет и так")}</button>
   );
 }
 
 function ChangePasswordRow() {
+  const tx = useCopy();
   const [hasPassword, setHasPassword] = useState<boolean | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -150,7 +153,7 @@ function ChangePasswordRow() {
         onClick={() => setOpen(true)}
         className="mt-3 flex items-center gap-2 border-t border-[var(--color-border)] pt-3 text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
       >
-        {hasPassword ? "Сменить пароль" : "Задать пароль — входить можно будет и так"}
+        {hasPassword ? tx("Сменить пароль") : tx("Задать пароль — входить можно будет и так")}
       </button>
       <ChangePasswordModal open={open} onClose={() => setOpen(false)} hasPassword={hasPassword} />
     </>
@@ -169,6 +172,7 @@ function ChangePasswordModal({
   onClose: () => void;
   hasPassword: boolean | null;
 }) {
+  const tx = useCopy();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -187,7 +191,7 @@ function ChangePasswordModal({
 
   const submit = async () => {
     if (next !== confirm) {
-      setError("Пароли не совпадают");
+      setError(tx("Пароли не совпадают"));
       return;
     }
     setBusy(true);
@@ -200,7 +204,7 @@ function ChangePasswordModal({
       });
       const json = (await res.json()) as { error?: string };
       if (!res.ok) {
-        setError(json.error ?? "Не получилось");
+        setError(json.error ?? tx("Не получилось"));
         return;
       }
       setDone(true);
@@ -210,13 +214,11 @@ function ChangePasswordModal({
   };
 
   return (
-    <Modal open={open} onClose={onClose} title={hasPassword ? "Сменить пароль" : "Задать пароль"}>
+    <Modal open={open} onClose={onClose} title={hasPassword ? tx("Сменить пароль") : tx("Задать пароль")}>
       {done ? (
         <div className="space-y-3">
-          <p className="text-[16px] text-[var(--color-fg-dim)]">Пароль обновлён.</p>
-          <Button variant="primary" className="w-full" onClick={onClose}>
-            Готово
-          </Button>
+          <p className="text-[16px] text-[var(--color-fg-dim)]">{tx("Пароль обновлён.")}</p>
+          <Button variant="primary" className="w-full" onClick={onClose}>{tx("Готово")}</Button>
         </div>
       ) : (
         <div className="space-y-3">
@@ -224,7 +226,7 @@ function ChangePasswordModal({
             <PasswordInput
               value={current}
               onChange={(e) => setCurrent(e.target.value)}
-              placeholder="Текущий пароль"
+              placeholder={tx("Текущий пароль")}
               autoFocus
               className={passwordInputClass}
             />
@@ -232,28 +234,26 @@ function ChangePasswordModal({
           <PasswordInput
             value={next}
             onChange={(e) => setNext(e.target.value)}
-            placeholder="Новый пароль (минимум 8 символов)"
+            placeholder={tx("Новый пароль (минимум 8 символов)")}
             autoFocus={!hasPassword}
             className={passwordInputClass}
           />
           <PasswordInput
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            placeholder="Повтори новый пароль"
+            placeholder={tx("Повтори новый пароль")}
             className={passwordInputClass}
           />
           {error && <p className="text-[15px] text-[var(--color-strength)]">{error}</p>}
           <div className="flex gap-2.5">
-            <Button className="flex-1" onClick={onClose}>
-              Отмена
-            </Button>
+            <Button className="flex-1" onClick={onClose}>{tx("Отмена")}</Button>
             <Button
               variant="primary"
               className="flex-1"
               disabled={busy || next.length < 8 || (!!hasPassword && !current)}
               onClick={() => void submit()}
             >
-              {busy ? "Сохраняю…" : "Сохранить"}
+              {busy ? tx("Сохраняю…") : tx("Сохранить")}
             </Button>
           </div>
         </div>
@@ -263,6 +263,7 @@ function ChangePasswordModal({
 }
 
 export default function AuthCard() {
+  const tx = useCopy();
   const { data: session, status } = useSession();
   const [busy, setBusy] = useState(false);
 
@@ -300,7 +301,7 @@ export default function AuthCard() {
           )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] font-semibold">
-              {u.name ?? "Аккаунт"}
+              {u.name ?? tx("Аккаунт")}
             </p>
             <p className="truncate text-[13px] text-[var(--color-muted)]">
               {u.email}
@@ -309,9 +310,7 @@ export default function AuthCard() {
           <button
             onClick={() => signOut()}
             className="shrink-0 rounded-xl px-3 py-2 text-[15px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
-          >
-            Выйти
-          </button>
+          >{tx("Выйти")}</button>
         </div>
 
         <SyncRow />
@@ -321,17 +320,12 @@ export default function AuthCard() {
         {/* Разовые подтверждения, что вход реально что-то сделал */}
         {movedEvents ? (
           <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
-            <YgIcon name="check" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" strokeWidth={2.2} />
-            Перенесли {movedEvents}{" "}
-            {plural(movedEvents, "действие", "действия", "действий")} с этого
-            устройства в аккаунт
-          </p>
+            <YgIcon name="check" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" strokeWidth={2.2} />{tx("Перенесли ")}{movedEvents}{" "}
+            {plural(movedEvents, tx("действие"), tx("действия"), tx("действий"))}{tx(" с этого устройства в аккаунт")}</p>
         ) : null}
         {pulledRemote ? (
           <p className="mt-2 text-[13px] leading-snug text-[var(--color-fg-dim)]">
-            <YgIcon name="check" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" strokeWidth={2.2} />
-            Загрузили прогресс с другого устройства
-          </p>
+            <YgIcon name="check" className="mr-1 inline h-3.5 w-3.5 align-[-2px]" strokeWidth={2.2} />{tx("Загрузили прогресс с другого устройства")}</p>
         ) : null}
       </section>
     );
@@ -343,22 +337,16 @@ export default function AuthCard() {
   return (
     <section className="press rounded-3xl surface p-5">
       <p className="text-[15px] font-semibold">
-        {hasProgress ? "Прогресс только в этом браузере" : "Сохрани прогресс"}
+        {hasProgress ? tx("Прогресс только в этом браузере") : tx("Сохрани прогресс")}
       </p>
       <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
         {hasProgress ? (
           <>
-            {done} {plural(done, "выполненное", "выполненных", "выполненных")}{" "}
-            {plural(done, "действие", "действия", "действий")}
-            {streak > 0 ? ` и стрик ${streak}` : ""} хранятся только здесь —
-            почистишь кэш или сменишь устройство, и всё пропадёт. Войди, и они
-            переедут в аккаунт.
-          </>
+            {done} {plural(done, tx("выполненное"), tx("выполненных"), tx("выполненных"))}{" "}
+            {plural(done, tx("действие"), tx("действия"), tx("действий"))}
+            {streak > 0 ? tx(" и стрик {0}", {"0": streak}) : ""}{tx(" хранятся только здесь — почистишь кэш или сменишь устройство, и всё пропадёт. Войди, и они переедут в аккаунт.")}</>
         ) : (
-          <>
-            Войди — и твои действия, стрик и персонаж будут доступны на любом
-            устройстве.
-          </>
+          <>{tx("Войди — и твои действия, стрик и персонаж будут доступны на любом устройстве.")}</>
         )}
       </p>
       <button
@@ -369,9 +357,7 @@ export default function AuthCard() {
         }}
         className="mt-3 flex h-11 w-full items-center justify-center gap-2.5 rounded-2xl bg-white text-[15px] font-semibold text-[#1f1f1f] transition active:scale-[0.99] disabled:opacity-60"
       >
-        <GoogleIcon className="h-5 w-5" />
-        Войти через Google
-      </button>
+        <GoogleIcon className="h-5 w-5" />{tx("Войти через Google")}</button>
     </section>
   );
 }

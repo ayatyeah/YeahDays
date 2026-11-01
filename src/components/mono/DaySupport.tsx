@@ -1,10 +1,13 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 import { useState } from "react";
 import Image from "next/image";
 import CompanionAssistant from "@/components/companion/CompanionAssistant";
 import { YgIcon } from "@/components/yg-icons";
 import { useCompanionStore } from "@/store/useCompanionStore";
 export default function DaySupport() {
+  const tx = useCopy();
   const [mode, setMode] = useState<"menu" | "focus" | null>(null);
   const started = useCompanionStore((s) => s.started);
   return (
@@ -12,9 +15,9 @@ export default function DaySupport() {
       <button className="mono-focus-strip" onClick={() => setMode("focus")}>
         <YgIcon name="clock" />
         <span>
-          <b>Время для фокуса</b>
+          <b>{tx("Время для фокуса")}</b>
           <small>
-            {started ? "Вернуться к таймеру" : "25 минут для одного дела"}
+            {started ? tx("Вернуться к таймеру") : tx("25 минут для одного дела")}
           </small>
         </span>
         <span className="mono-play" aria-hidden="true">
@@ -26,7 +29,7 @@ export default function DaySupport() {
       <button
         className="mono-helper-row"
         onClick={() => setMode("menu")}
-        aria-label="Открыть помощника"
+        aria-label={tx("Открыть помощника")}
       >
         <Image
           src="/companion/portrait.webp"
@@ -36,8 +39,8 @@ export default function DaySupport() {
           alt=""
         />
         <span>
-          <b>Разобрать день?</b>
-          <small>Помогу выбрать следующий шаг</small>
+          <b>{tx("Разобрать день?")}</b>
+          <small>{tx("Помогу выбрать следующий шаг")}</small>
         </span>
         <YgIcon name="chevron" />
       </button>

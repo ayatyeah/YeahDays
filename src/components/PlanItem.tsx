@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
@@ -14,6 +16,7 @@ interface PlanItemProps {
 }
 
 export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
+  const tx = useCopy();
   const cat = CATEGORIES[task.snapshot.category];
   const stat = STATS[cat.stat];
   const [floats, setFloats] = useState<number[]>([]);
@@ -50,9 +53,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
           className="inline-flex items-center gap-1 text-[15px] font-bold"
           style={{ color: stat.hex }}
         >
-          <YgIcon name="check" className="h-4 w-4" strokeWidth={2.4} />
-          Выполнено
-        </span>
+          <YgIcon name="check" className="h-4 w-4" strokeWidth={2.4} />{tx("Выполнено")}</span>
       </motion.div>
 
       <motion.div
@@ -76,7 +77,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
           <motion.button
             onClick={handleToggle}
             whileTap={{ scale: 0.85 }}
-            aria-label={task.completed ? "Отменить" : "Выполнить"}
+            aria-label={task.completed ? tx("Отменить") : tx("Выполнить")}
             className={cn(
               "tap flex h-8 w-8 items-center justify-center rounded-full border-2 transition",
               task.completed
@@ -140,7 +141,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
             <YgIcon name={task.snapshot.icon ?? cat.icon} className="h-3.5 w-3.5" />
             <span>{cat.label}</span>
             <span>·</span>
-            <span>{task.snapshot.duration} мин</span>
+            <span>{task.snapshot.duration}{tx(" мин")}</span>
             <span>·</span>
             <span style={{ color: stat.hex }}>+{task.xp} XP</span>
           </p>
@@ -148,7 +149,7 @@ export default function PlanItem({ task, onToggle, onRemove }: PlanItemProps) {
 
         <button
           onClick={() => onRemove(task.id)}
-          aria-label="Убрать из плана"
+          aria-label={tx("Убрать из плана")}
           className="shrink-0 rounded-lg p-1.5 text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">

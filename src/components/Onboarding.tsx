@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
@@ -32,6 +34,7 @@ const VALUE_PROPS: { icon: YgIconName; title: string; text: string }[] = [
 ];
 
 export default function Onboarding() {
+  const tx = useCopy();
   const storedName = useUserStore((s) => s.name);
   const setName = useUserStore((s) => s.setName);
   const setGoal = useUserStore((s) => s.setGoal);
@@ -57,7 +60,7 @@ export default function Onboarding() {
 
   const [step, setStep] = useState(0);
   const [name, setNameDraft] = useState(
-    storedName === "Странник" ? "" : storedName,
+    storedName === tx("Странник") ? "" : storedName,
   );
   const [focus, setFocus] = useState<Set<StatKey>>(new Set());
   const [tasks, setTasks] = useState<string[]>([]);
@@ -199,22 +202,19 @@ export default function Onboarding() {
                 <h1 className="mt-5 text-[34px] font-black leading-none tracking-tight">
                   YeahGrind
                 </h1>
-                <p className="mt-3 max-w-[300px] text-[17px] leading-snug text-[var(--color-fg-dim)]">
-                  Одно небольшое действие в день делает тебя лучшей версией
-                  себя.
-                </p>
+                <p className="mt-3 max-w-[300px] text-[17px] leading-snug text-[var(--color-fg-dim)]">{tx("Одно небольшое действие в день делает тебя лучшей версией себя.")}</p>
               </div>
               <div className="space-y-2.5 pb-2">
                 {VALUE_PROPS.map((v) => (
                   <div
-                    key={v.title}
+                    key={tx(v.title)}
                     className="flex items-center gap-3.5 rounded-2xl bg-[var(--color-surface)] px-4 py-3"
                   >
                     <YgIcon name={v.icon} className="h-7 w-7" />
                     <div className="min-w-0">
-                      <p className="text-[16px] font-semibold">{v.title}</p>
+                      <p className="text-[16px] font-semibold">{tx(v.title)}</p>
                       <p className="text-[13px] leading-snug text-[var(--color-muted)]">
-                        {v.text}
+                        {tx(v.text)}
                       </p>
                     </div>
                   </div>
@@ -226,18 +226,14 @@ export default function Onboarding() {
           {step === 1 && (
             <Step key="name">
               <div className="flex flex-1 flex-col justify-center">
-                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
-                  Как тебя называть?
-                </h1>
-                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
-                  Чтобы обращаться по-человечески, а не «пользователь».
-                </p>
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">{tx("Как тебя называть?")}</h1>
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">{tx("Чтобы обращаться по-человечески, а не «пользователь».")}</p>
                 <input
                   autoFocus
                   value={name}
                   onChange={(e) => setNameDraft(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && canNext && next()}
-                  placeholder="Твоё имя"
+                  placeholder={tx("Твоё имя")}
                   maxLength={24}
                   className="mt-7 h-14 w-full rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-5 text-[17px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
                 />
@@ -248,13 +244,8 @@ export default function Onboarding() {
           {step === 2 && (
             <Step key="focus">
               <div className="flex flex-1 flex-col justify-center">
-                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
-                  Что качаем в первую очередь?
-                </h1>
-                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
-                  Можно выбрать несколько — подстрою колоду. Всегда можно
-                  поменять в профиле.
-                </p>
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">{tx("Что качаем в первую очередь?")}</h1>
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">{tx("Можно выбрать несколько — подстрою колоду. Всегда можно поменять в профиле.")}</p>
                 <div className="mt-7 grid grid-cols-2 gap-2.5">
                   {STAT_LIST.map((s) => {
                     const active = focus.has(s.key);
@@ -278,7 +269,7 @@ export default function Onboarding() {
                           <YgIcon name={s.icon} className="h-5 w-5" />
                         </span>
                         <span className="mt-1 text-[15px] font-semibold">
-                          {s.label}
+                          {tx(s.label)}
                         </span>
                         <span className="text-[12px] leading-tight text-[var(--color-muted)]">
                           {s.hint}
@@ -294,13 +285,8 @@ export default function Onboarding() {
           {step === 3 && (
             <Step key="tasks">
               <div className="flex flex-1 flex-col">
-                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
-                  Что нужно сделать?
-                </h1>
-                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
-                  Впиши свои задачи сам — хоть одну, хоть все на сегодня.
-                  Можно и пропустить, добавишь позже.
-                </p>
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">{tx("Что нужно сделать?")}</h1>
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">{tx("Впиши свои задачи сам — хоть одну, хоть все на сегодня. Можно и пропустить, добавишь позже.")}</p>
                 <div className="mt-6 flex gap-2.5">
                   <input
                     autoFocus
@@ -311,7 +297,7 @@ export default function Onboarding() {
                       e.preventDefault();
                       addTask();
                     }}
-                    placeholder="Например: позвонить в банк"
+                    placeholder={tx("Например: позвонить в банк")}
                     maxLength={120}
                     className="h-14 min-w-0 flex-1 rounded-2xl border-2 border-[var(--color-border)] bg-[var(--color-surface-2)] px-5 text-[16px] outline-none transition placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
                   />
@@ -320,7 +306,7 @@ export default function Onboarding() {
                     onClick={addTask}
                     disabled={!taskDraft.trim()}
                     className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-fg)] text-[22px] font-bold text-[var(--color-bg)] transition disabled:opacity-40"
-                    aria-label="Добавить задачу"
+                    aria-label={tx("Добавить задачу")}
                   >
                     +
                   </motion.button>
@@ -340,7 +326,7 @@ export default function Onboarding() {
                         <button
                           onClick={() => removeTask(i)}
                           className="shrink-0 text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-strength)]"
-                          aria-label="Убрать"
+                          aria-label={tx("Убрать")}
                         >
                           <YgIcon name="close" className="h-4 w-4" />
                         </button>
@@ -355,44 +341,23 @@ export default function Onboarding() {
           {step === CONSENT_STEP && askConsent && (
             <Step key="consent">
               <div className="flex flex-1 flex-col overflow-y-auto">
-                <h1 className="text-[34px] font-bold leading-tight tracking-tight">
-                  Последнее — про данные
-                </h1>
-                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">
-                  Одно согласие вместо вопросов в каждом разделе. Нажимая
-                  «Принять и начать», ты:
-                </p>
+                <h1 className="text-[34px] font-bold leading-tight tracking-tight">{tx("Последнее — про данные")}</h1>
+                <p className="mt-2 text-[16px] leading-snug text-[var(--color-fg-dim)]">{tx("Одно согласие вместо вопросов в каждом разделе. Нажимая «Принять и начать», ты:")}</p>
                 <ul className="mt-5 space-y-2.5 text-[15px] leading-snug">
-                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
-                    принимаешь{" "}
-                    <Link href="/privacy" target="_blank" rel="noopener" className="underline">
-                      политику конфиденциальности
-                    </Link>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">{tx("принимаешь")}{" "}
+                    <Link href="/privacy" target="_blank" rel="noopener" className="underline">{tx("политику конфиденциальности")}</Link>
                   </li>
-                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
-                    появляешься в сообществе с именем, персонажем и уровнем —
-                    скрыться можно одним переключателем
-                  </li>
-                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
-                    разрешаешь ИИ-функциям отправлять в OpenAI то, что нужно для
-                    ответа: запрос, план, учебный прогресс и цели
-                  </li>
-                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">
-                    разрешаешь учёт активности для твоей статистики и достижений
-                  </li>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">{tx("появляешься в сообществе с именем, персонажем и уровнем — скрыться можно одним переключателем")}</li>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">{tx("разрешаешь ИИ-функциям отправлять в OpenAI то, что нужно для ответа: запрос, план, учебный прогресс и цели")}</li>
+                  <li className="rounded-2xl bg-[var(--color-surface)] px-4 py-3">{tx("разрешаешь учёт активности для твоей статистики и достижений")}</li>
                 </ul>
-                <p className="mt-4 text-[13px] leading-snug text-[var(--color-muted)]">
-                  Любую часть можно выключить в профиле, в разделе «Мой ритм и
-                  достижения».
-                </p>
+                <p className="mt-4 text-[13px] leading-snug text-[var(--color-muted)]">{tx("Любую часть можно выключить в профиле, в разделе «Мой ритм и достижения».")}</p>
                 <button
                   type="button"
                   onClick={later}
                   disabled={consentBusy}
                   className="mt-3 self-start pb-2 text-[14px] text-[var(--color-muted)] underline underline-offset-4"
-                >
-                  Решу позже
-                </button>
+                >{tx("Решу позже")}</button>
               </div>
             </Step>
           )}
@@ -406,7 +371,7 @@ export default function Onboarding() {
             whileTap={{ scale: 0.95 }}
             onClick={back}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-surface)] text-[var(--color-fg-dim)] transition hover:text-[var(--color-fg)]"
-            aria-label="Назад"
+            aria-label={tx("Назад")}
           >
             ‹
           </motion.button>
@@ -418,14 +383,14 @@ export default function Onboarding() {
           className="h-14 flex-1 rounded-2xl bg-[var(--color-fg)] text-[16px] font-semibold text-[var(--color-bg)] transition hover:opacity-90 disabled:opacity-40"
         >
           {step === 0
-            ? "Начать"
+            ? tx("Начать")
             : step === CONSENT_STEP && askConsent
               ? consentBusy
-                ? "Сохраняем…"
-                : "Принять и начать"
+                ? tx("Сохраняем…")
+                : tx("Принять и начать")
               : step === STEPS - 1
-                ? "Погнали"
-                : "Далее"}
+                ? tx("Погнали")
+                : tx("Далее")}
         </motion.button>
       </div>
 

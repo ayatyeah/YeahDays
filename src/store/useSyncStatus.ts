@@ -10,10 +10,19 @@ import { create } from "zustand";
  *
  * Не персистится: это состояние текущей сессии, а не данные пользователя.
  */
-export type SyncState = "idle" | "syncing" | "synced" | "error";
+export type SyncState = "idle" | "queued" | "syncing" | "synced" | "error";
 
 interface SyncStatusStore {
   state: SyncState;
+  online: boolean;
+  writes: number;
+  writeError: boolean;
+  beginWrite: () => void;
+  endWrite: (ok: boolean) => void;
+  storageError: boolean;
+  setOnline: (online: boolean) => void;
+  setStorageError: (error: boolean) => void;
+  queue: () => void;
   /** когда последний раз успешно синхронизировались (мс) */
   lastSyncedAt: number | null;
   /** сколько событий перенесено с анонимного устройства при первом входе */
@@ -33,6 +42,15 @@ interface SyncStatusStore {
 
 export const useSyncStatus = create<SyncStatusStore>((set) => ({
   state: "idle",
+  online: true,
+  writes: 0,
+  writeError: false,
+  beginWrite: () => set(s => ({ writes: s.writes + 1, writeError: s.writes > 0 && s.writeError })),
+  endWrite: (ok) => set(s => ({ writes: Math.max(0, s.writes - 1), writeError: s.writeError || !ok })),
+  storageError: false,
+  setOnline: (online) => set({ online }),
+  setStorageError: (storageError) => set({ storageError }),
+  queue: () => set({ state: "queued" }),
   lastSyncedAt: null,
   movedEvents: null,
   pulledRemote: false,

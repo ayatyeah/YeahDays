@@ -1,8 +1,11 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 import { useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useLearningStore } from "@/store/useLearningStore";
 export function useLearningActions() {
+  const tx = useCopy();
   const { data: session } = useSession();
   const owner = session?.user?.id;
   const current = useRef(owner); current.current = owner;
@@ -16,10 +19,10 @@ export function useLearningActions() {
       const response = await fetch("/api/learning", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const result = await response.json();
       if (current.current !== owner) return null;
-      if (!response.ok) throw new Error(result.error || "Не удалось выполнить действие");
+      if (!response.ok) throw new Error(result.error || tx("Не удалось выполнить действие"));
       useLearningStore.getState().receive(owner, result.state);
       return result;
-    } catch (e) { if (current.current === owner) setError(e instanceof Error ? e.message : "Нет связи с сервером"); return null; }
+    } catch (e) { if (current.current === owner) setError(e instanceof Error ? e.message : tx("Нет связи с сервером")); return null; }
     finally { lock.current = false; setBusy(false); }
   }
   return { owner, busy, error, action };

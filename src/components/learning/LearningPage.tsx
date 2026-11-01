@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 import { useT } from "@/i18n/useT";
 import { useReadingPosition } from "./useReadingPosition";
 import { lessonDraftKey, lessonVisitKey } from "@/lib/dayFlow";
@@ -40,6 +42,7 @@ export default function LearningPage({
 }: {
   events: LearningEventSummary[];
 }) {
+  const tx = useCopy();
   const t = useT();
   const router = useRouter();
   const params = useSearchParams();
@@ -98,7 +101,7 @@ export default function LearningPage({
       .then(async (response) => {
         const body = await response.json();
         if (!response.ok)
-          throw new Error(body.error || "Не удалось загрузить предметы");
+          throw new Error(body.error || tx("Не удалось загрузить предметы"));
         return body;
       })
       .then((body) => {
@@ -116,7 +119,7 @@ export default function LearningPage({
         if (!controller.signal.aborted) setLoadingSubjects(false);
       });
     return () => controller.abort();
-  }, [owner, mode, reloadSubjects]);
+  }, [owner, mode, reloadSubjects, tx]);
   const mySubjects = subjects?.owner === owner ? subjects : null;
   const [minutes, setMinutes] = useState(20);
   const [answer, setAnswer] = useState("");
@@ -228,16 +231,17 @@ export default function LearningPage({
     const date = new Date();
     date.setDate(date.getDate() + 1);
     const day = dateKey(date);
-    const title = `Учёба: ${next.title}`;
+    const title = tx("Учёба: {0}", {"0": next.title});
+    const note = `/learn?view=lesson&skill=${encodeURIComponent(skill.id)}&quest=${encodeURIComponent(next.id)}`;
     const store = useUserStore.getState();
-    if (!store.todos.some((t) => t.title === title && t.date === day))
+    if (!store.todos.some((t) => t.note === note && t.date === day))
       store.addTodo({
         title,
         date: day,
         duration: skill.minutes,
-        note: `/learn?view=lesson&skill=${encodeURIComponent(skill.id)}&quest=${encodeURIComponent(next.id)}`,
+        note,
       });
-    setMessage("Следующий квест добавлен в план на завтра.");
+    setMessage(tx("Следующий квест добавлен в план на завтра."));
     await useSyncStatus.getState().syncNow?.();
   }
   const complete = skill?.quests.filter((q) => q.completed).length ?? 0;
@@ -246,7 +250,7 @@ export default function LearningPage({
     setMessage("");
     const result = await action({
       action: "create",
-      goal: goal.trim() || `Разобрать основы предмета «${subjectName.trim()}»`,
+      goal: goal.trim() || tx("Разобрать основы предмета «{0}»", {"0": subjectName.trim()}),
       minutes,
       requestId: crypto.randomUUID(),
       ...(mode === "subject"
@@ -257,7 +261,7 @@ export default function LearningPage({
       navigate("route", result.skillId);
       setAnswer("");
       setGoal("");
-      setMessage("Маршрут готов. Начни с первого квеста.");
+      setMessage(tx("Маршрут готов. Начни с первого квеста."));
     }
   }
   async function submit(event: React.FormEvent) {
@@ -290,19 +294,19 @@ export default function LearningPage({
     if (result)
       setMessage(
         result.result.awarded
-          ? `Квест пройден! +${result.result.xp} XP · +${result.result.coins} монет`
+          ? tx("Квест пройден! +{0} XP · +{1} монет", {"0": result.result.xp, "1": result.result.coins})
           : result.result.passed
-            ? "Этот квест уже пройден — награда сохранена."
-            : "Пока не зачтено. Посмотри подсказку и попробуй ещё раз — монеты не теряются.",
+            ? tx("Этот квест уже пройден — награда сохранена.")
+            : tx("Пока не зачтено. Посмотри подсказку и попробуй ещё раз — монеты не теряются."),
       );
   }
   async function schedule() {
     if (!skill || !quest) return;
     const day = dateKey();
     const store = useUserStore.getState();
-    const title = `Учёба: ${quest.title}`;
+    const title = tx("Учёба: {0}", {"0": quest.title});
     if (store.todos.some((t) => t.title === title && t.date === day)) {
-      setMessage("Этот квест уже есть в сегодняшнем плане.");
+      setMessage(tx("Этот квест уже есть в сегодняшнем плане."));
       return;
     }
     const now = new Date();
@@ -339,8 +343,8 @@ export default function LearningPage({
     });
     setMessage(
       slot === undefined
-        ? "Квест добавлен в список на сегодня без времени: свободного окна до 22:00 нет."
-        : "Квест добавлен в свободное окно сегодняшнего расписания.",
+        ? tx("Квест добавлен в список на сегодня без времени: свободного окна до 22:00 нет.")
+        : tx("Квест добавлен в свободное окно сегодняшнего расписания."),
     );
     await useSyncStatus.getState().syncNow?.();
   }
@@ -351,12 +355,12 @@ export default function LearningPage({
         <div
           className="flex flex-wrap gap-2"
           role="group"
-          aria-label="Тип обучения"
+          aria-label={tx("Тип обучения")}
         >
           {(
             [
-              ["subject", "Предмет из универа"],
-              ["goal", "Своя цель"],
+              ["subject", tx("Предмет из универа")],
+              ["goal", tx("Своя цель")],
             ] as const
           ).map(([value, label]) => (
             <Button
@@ -373,9 +377,7 @@ export default function LearningPage({
         </div>
         {mode === "subject" && (
           <div className="space-y-3 rounded-2xl border border-[var(--color-border)] p-4">
-            <label className="block text-sm">
-              Предмет
-              <input
+            <label className="block text-sm">{tx("Предмет")}<input
                 className={field}
                 list="university-subjects"
                 value={subjectName}
@@ -384,7 +386,7 @@ export default function LearningPage({
                 minLength={2}
                 maxLength={180}
                 disabled={busy}
-                placeholder="Выбери из списка или введи, например Computer Networks"
+                placeholder={tx("Выбери из списка или введи, например Computer Networks")}
               />
               <datalist id="university-subjects">
                 {mySubjects?.names.map((name) => (
@@ -408,13 +410,13 @@ export default function LearningPage({
             </div>
             <p role="status" className="text-xs text-[var(--color-muted)]">
               {loadingSubjects
-                ? "Ищем предметы в твоём календаре LMS…"
-                : subjectsError ||
+                ? tx("Ищем предметы в твоём календаре LMS…")
+                : tx(subjectsError) ||
                   (mySubjects?.connected
                     ? mySubjects.names.length
-                      ? "Это предметы с событиями в календаре LMS. Список может быть неполным; любой предмет можно вписать вручную."
-                      : "В календаре пока нет названий предметов. Введи свой вручную."
-                    : "Подключи личный календарь LMS в настройках для загрузки предметов или введи название вручную.")}
+                      ? tx("Это предметы с событиями в календаре LMS. Список может быть неполным; любой предмет можно вписать вручную.")
+                      : tx("В календаре пока нет названий предметов. Введи свой вручную.")
+                    : tx("Подключи личный календарь LMS в настройках для загрузки предметов или введи название вручную."))}
             </p>
             <div className="flex gap-3 text-xs">
               <button
@@ -422,36 +424,26 @@ export default function LearningPage({
                 className="underline"
                 disabled={loadingSubjects || busy}
                 onClick={() => setReloadSubjects((v) => v + 1)}
-              >
-                Обновить предметы
-              </button>
-              <Link href="/settings" className="underline">
-                Настройки LMS
-              </Link>
+              >{tx("Обновить предметы")}</button>
+              <Link prefetch={false} href="/settings" className="underline">{tx("Настройки LMS")}</Link>
             </div>
-            <label className="block text-sm">
-              Конспект или темы из силлабуса · необязательно
-              <textarea
+            <label className="block text-sm">{tx("Конспект или темы из силлабуса · необязательно")}<textarea
                 className={field}
                 rows={4}
                 maxLength={4000}
                 value={materials}
                 disabled={busy}
                 onChange={(e) => setMaterials(e.target.value)}
-                placeholder="Вставь нужный фрагмент лекции, список тем или требования к знаниям…"
+                placeholder={tx("Вставь нужный фрагмент лекции, список тем или требования к знаниям…")}
               />
             </label>
-            <p className="text-xs text-[var(--color-muted)]">
-              Лекции из LMS автоматически не загружаются. С конспектом задания
-              опираются на твой материал; без него — на общие знания по
-              предмету.
-            </p>
+            <p className="text-xs text-[var(--color-muted)]">{tx("Лекции из LMS автоматически не загружаются. С конспектом задания опираются на твой материал; без него — на общие знания по предмету.")}</p>
           </div>
         )}
         <label className="block text-sm">
           {mode === "subject"
-            ? "Какую тему разобрать? · необязательно"
-            : "Чему хочешь научиться?"}
+            ? tx("Какую тему разобрать? · необязательно")
+            : tx("Чему хочешь научиться?")}
           <textarea
             className={field}
             rows={3}
@@ -463,15 +455,13 @@ export default function LearningPage({
             onChange={(e) => setGoal(e.target.value)}
             placeholder={
               mode === "subject"
-                ? "Например: подготовиться к теме TCP/IP, разобраться в адресации и подсетях. Если оставить пустым — начнём с основ."
-                : "Хочу освоить циклы Python с нуля. Или: хочу увереннее говорить по-английски, уровень A2."
+                ? tx("Например: подготовиться к теме TCP/IP, разобраться в адресации и подсетях. Если оставить пустым — начнём с основ.")
+                : tx("Хочу освоить циклы Python с нуля. Или: хочу увереннее говорить по-английски, уровень A2.")
             }
           />
         </label>
-        <label className="block text-sm">
-          Время на квест
-          <select
-            aria-label="Время на квест"
+        <label className="block text-sm">{tx("Время на квест")}<select
+            aria-label={tx("Время на квест")}
             className={field}
             value={minutes}
             disabled={busy}
@@ -479,22 +469,17 @@ export default function LearningPage({
           >
             {[10, 20, 30].map((m) => (
               <option key={m} value={m}>
-                {m} минут
-              </option>
+                {m}{tx(" минут")}</option>
             ))}
           </select>
         </label>
-        <p className="text-xs text-[var(--color-muted)]">
-          Предмет, цель, добавленные материалы и ответы отправляются в OpenAI
-          для подготовки заданий и проверки. ИИ может ошибаться; код оценивается
-          без запуска.
-        </p>
+        <p className="text-xs text-[var(--color-muted)]">{tx("Предмет, цель, добавленные материалы и ответы отправляются в OpenAI для подготовки заданий и проверки. ИИ может ошибаться; код оценивается без запуска.")}</p>
         <Button
           type="submit"
           variant="primary"
           disabled={busy || !data?.available}
         >
-          {busy ? "ИИ работает…" : "Создать маршрут"}
+          {busy ? tx("ИИ работает…") : tx("Создать маршрут")}
         </Button>
       </form>
     </>
@@ -530,25 +515,25 @@ export default function LearningPage({
               }
             >
               <YgIcon name="chevron" />{" "}
-              {view === "lesson" ? "К маршруту" : "Учёба"}
+              {view === "lesson" ? tx("К маршруту") : tx("Учёба")}
             </button>
           )}
           <h1>
             {view === "hub"
-              ? "Учёба"
+              ? tx("Учёба")
               : view === "create"
-                ? "Новый маршрут"
+                ? tx("Новый маршрут")
                 : view === "lesson"
-                  ? "Твоё занятие"
-                  : (skill?.subject?.name ?? skill?.title ?? "Твой маршрут")}
+                  ? tx("Твоё занятие")
+                  : (skill?.subject?.name ?? skill?.title ?? tx("Твой маршрут"))}
           </h1>
-          {view === "hub" && <p>Понимать. Пробовать. Расти.</p>}
+          {view === "hub" && <p>{tx("Понимать. Пробовать. Расти.")}</p>}
         </div>
         {view !== "lesson" && (
-          <Link
+          <Link prefetch={false}
             href="/shop"
             className="learning-wallet"
-            aria-label={`Магазин, ${data?.coins ?? 0} монет`}
+            aria-label={tx("Магазин, {0} монет", {"0": data?.coins ?? 0})}
           >
             <YgIcon name="coin" />
             {data?.coins ?? "…"}
@@ -557,28 +542,23 @@ export default function LearningPage({
       </header>
       {!data && (
         <div className="learning-notice" role="status">
-          {loadError || "Загружаем учебный прогресс…"}
+          {(loadError && tx(loadError)) || tx("Загружаем учебный прогресс…")}
           {loadError && owner && (
             <Button
               onClick={() => void useLearningStore.getState().load(owner)}
-            >
-              Повторить
-            </Button>
+            >{tx("Повторить")}</Button>
           )}
         </div>
       )}
       {data && !data?.available && (
-        <p className="learning-notice" role="status">
-          Подготовка новых ИИ-маршрутов и проверка ответов пока недоступны.
-          Сохранённые материалы и учебные ивенты можно открывать.
-        </p>
+        <p className="learning-notice" role="status">{tx("Подготовка новых ИИ-маршрутов и проверка ответов пока недоступны. Сохранённые материалы и учебные ивенты можно открывать.")}</p>
       )}
       {view === "hub" && (
-        <nav className="mono-learning-links" aria-label="Разделы учёбы">
-          <a href="#path-hub-title">Траектории</a>
-          {!!data?.skills.length && <a href="#learning-subjects">Мои предметы</a>}
-          <a href="#learning-exams">Подготовка к экзаменам</a>
-          <a href="#learning-stories">Истории</a>
+        <nav className="mono-learning-links" aria-label={tx("Разделы учёбы")}>
+          <a href="#path-hub-title">{tx("Траектории")}</a>
+          {!!data?.skills.length && <a href="#learning-subjects">{tx("Мои предметы")}</a>}
+          <a href="#learning-exams">{tx("Подготовка к экзаменам")}</a>
+          <a href="#learning-stories">{tx("Истории")}</a>
         </nav>
       )}
       {view === "hub" && (
@@ -591,8 +571,8 @@ export default function LearningPage({
                   eyebrow={routeEvent.course}
                   stops={routeEvent.route.map((stop, i) => ({ label: stop.label[tl], state: states[i], final: stop.final }))}
                   footer={
-                    <Link href={`/events/${routeEvent.id}`} className="learning-route-link">
-                      {`${routeEvent.title} · ${states.includes("current") ? "продолжить" : "повторить"}`}
+                    <Link prefetch={false} href={`/events/${routeEvent.id}`} className="learning-route-link">
+                      {tx("{0} · {1}", {"0": tx(routeEvent.title), "1": states.includes("current") ? tx("продолжить") : tx("повторить")})}
                       <YgIcon name="chevron" />
                     </Link>
                   }
@@ -607,29 +587,27 @@ export default function LearningPage({
                   <span className="learning-eyebrow">
                     {skill
                       ? complete === total
-                        ? "МОЖНО ПОВТОРИТЬ"
-                        : "ПРОДОЛЖИТЬ"
-                      : "ТВОЙ ПЕРВЫЙ ШАГ"}
+                        ? tx("МОЖНО ПОВТОРИТЬ")
+                        : tx("ПРОДОЛЖИТЬ")
+                      : tx("ТВОЙ ПЕРВЫЙ ШАГ")}
                   </span>
                   <h2>
                     {skill?.subject?.name ??
                       skill?.title ??
-                      "Чему научимся сегодня?"}
+                      tx("Чему научимся сегодня?")}
                   </h2>
                   <p>
                     {nextQuest?.title ??
-                      "Выбери предмет или свою цель. Разберём её за шесть небольших квестов."}
+                      tx("Выбери предмет или свою цель. Разберём её за шесть небольших квестов.")}
                   </p>
                   {skill && (
                     <>
                       <small>
-                        {complete} из {total} квестов · {skill.minutes} минут на
-                        занятие
-                      </small>
+                        {complete}{tx(" из ")}{total}{tx(" квестов · ")}{skill.minutes}{tx(" минут на занятие")}</small>
                       <progress
                         value={complete}
                         max={total || 1}
-                        aria-label="Прогресс текущего маршрута"
+                        aria-label={tx("Прогресс текущего маршрута")}
                       />
                     </>
                   )}
@@ -643,9 +621,9 @@ export default function LearningPage({
                   >
                     {skill
                       ? complete === total
-                        ? "Повторить"
-                        : "Продолжить"
-                      : "Создать маршрут"}
+                        ? tx("Повторить")
+                        : tx("Продолжить")
+                      : tx("Создать маршрут")}
                     <YgIcon name="chevron" />
                   </button>
                 </div>
@@ -653,7 +631,7 @@ export default function LearningPage({
                   <ProgressRing
                     value={complete}
                     max={total}
-                    label={`Прогресс: ${complete} из ${total}`}
+                    label={tx("Прогресс: {0} из {1}", {"0": complete, "1": total})}
                     tone="sage"
                   >
                     {complete}/{total}
@@ -663,7 +641,7 @@ export default function LearningPage({
             )}
             {!!data?.skills.length && <section>
               <div className="learning-section-title">
-                <h2 id="learning-subjects">Мои предметы</h2>
+                <h2 id="learning-subjects">{tx("Мои предметы")}</h2>
               </div>
               <div className="learning-subjects">
                 {data?.skills.map((s, i) => {
@@ -688,16 +666,15 @@ export default function LearningPage({
                       <span className="learning-subject-content">
                         <b>{s.subject?.name ?? s.title}</b>
                         <small>
-                          {done} из {s.quests.length} квестов
-                        </small>
+                          {done}{tx(" из ")}{s.quests.length}{tx(" квестов")}</small>
                         <progress
-                          aria-label={`Прогресс: ${s.title}`}
+                          aria-label={tx("Прогресс: {0}", {"0": s.title})}
                           value={done}
                           max={s.quests.length || 1}
                         />
                         <span className="learning-next">
                           {s.quests.find((q) => !q.completed)?.title ??
-                            "Маршрут пройден"}
+                            tx("Маршрут пройден")}
                         </span>
                       </span>
                       <YgIcon name="chevron" />
@@ -708,37 +685,35 @@ export default function LearningPage({
             </section>}
             <section>
               <div className="learning-section-title">
-                <h2 id="learning-exams">Подготовка к экзаменам</h2>
-                <Link href="/events">
-                  Все ивенты <YgIcon name="chevron" />
+                <h2 id="learning-exams">{tx("Подготовка к экзаменам")}</h2>
+                <Link prefetch={false} href="/events">{tx("Все ивенты ")}<YgIcon name="chevron" />
                 </Link>
               </div>
               <div className="learning-events yg-stagger">
                 {orderedEvents.map((e, i) => (
-                  <Link
+                  <Link prefetch={false}
                     href={`/events/${e.id}`}
                     key={e.id}
                     className="learning-event"
                   >
                     <span className="learning-eyebrow">{e.course}</span>
-                    <h3>{e.title}</h3>
-                    <p>{`${e.lectures} ${plural(e.lectures, "лекция", "лекции", "лекций")} · Конспекты и квизы`}</p>
+                    <h3>{tx(e.title)}</h3>
+                    <p>{tx("{0} {1} · Конспекты и квизы", {"0": e.lectures, "1": tx(plural(e.lectures, "лекция", "лекции", "лекций"))})}</p>
                     <div className="learning-event-badges">
                       {e.mocks > 0 && (
                         <span>
                           {e.mocks}{" "}
                           {plural(
                             e.mocks,
-                            "пробный вариант",
-                            "пробных варианта",
-                            "пробных вариантов",
+                            tx("пробный вариант"),
+                            tx("пробных варианта"),
+                            tx("пробных вариантов"),
                           )}
                         </span>
                       )}
-                      {e.practice && <span>Практикум</span>}
+                      {e.practice && <span>{tx("Практикум")}</span>}
                       <span>
-                        <YgIcon name="bulb" /> ИИ-помощник
-                      </span>
+                        <YgIcon name="bulb" />{tx(" ИИ-помощник")}</span>
                     </div>
                     <div className="learning-event-progress">
                       <small>
@@ -748,13 +723,13 @@ export default function LearningPage({
                             {e.stepIds.length}{" "}
                             {plural(
                               e.stepIds.length,
-                              "проверка",
-                              "проверки",
-                              "проверок",
+                              tx("проверка"),
+                              tx("проверки"),
+                              tx("проверок"),
                             )}
                           </>
                         ) : (
-                          "Учебная программа"
+                          tx("Учебная программа")
                         )}
                       </small>
                       <YgIcon name="chevron" />
@@ -762,7 +737,7 @@ export default function LearningPage({
                     <progress
                       value={eventProgress[e.id]?.done ?? 0}
                       max={e.stepIds.length || 1}
-                      aria-label={`Пройденные проверки: ${e.course}`}
+                      aria-label={tx("Пройденные проверки: {0}", {"0": e.course})}
                     />
                   </Link>
                 ))}
@@ -771,20 +746,20 @@ export default function LearningPage({
             {/* Истории — мультфильмы по лекциям: сюжет, где понятия лекции нужны героям. */}
             <section>
               <div className="learning-section-title">
-                <h2 id="learning-stories" className="scroll-mt-4">Истории</h2>
+                <h2 id="learning-stories" className="scroll-mt-4">{tx("Истории")}</h2>
               </div>
               <div className="yg-stagger grid gap-3 sm:grid-cols-2">
                 {STORIES.map((story) => (
-                  <Link key={story.id} href={`/stories/${story.id}`} className="group overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+                  <Link prefetch={false} key={story.id} href={`/stories/${story.id}`} className="group overflow-hidden rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)]">
                     <span className="relative block aspect-video overflow-hidden bg-[var(--color-surface-2)]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={frameSrc(story, story.cover)} alt="" loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                      <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white">{`▶ ${Math.round(storySeconds(story) / 60)} мин`}</span>
+                      <span className="absolute bottom-2 left-2 rounded-full bg-black/60 px-2.5 py-1 text-xs font-semibold text-white">{tx("▶ {0} мин", {"0": Math.round(storySeconds(story) / 60)})}</span>
                     </span>
                     <span className="block p-4">
-                      <span className="learning-eyebrow" lang="ru">{story.lecture.label}</span>
-                      <span className="mt-1 block text-lg font-bold leading-tight" lang="ru">{story.title}</span>
-                      <span className="mt-1 block text-sm text-[var(--color-muted)]" lang="ru">{story.subtitle}</span>
+                      <span className="learning-eyebrow" >{tx(story.lecture.label)}</span>
+                      <span className="mt-1 block text-lg font-bold leading-tight" >{tx(story.title)}</span>
+                      <span className="mt-1 block text-sm text-[var(--color-muted)]" >{tx(story.subtitle)}</span>
                     </span>
                   </Link>
                 ))}
@@ -793,50 +768,45 @@ export default function LearningPage({
           </div>
           <aside className="learning-aside">
             <section className="learning-rhythm">
-              <span className="learning-eyebrow">ТВОЙ УЧЕБНЫЙ РИТМ</span>
-              <h2>За 7 дней: {weekCount}</h2>
-              <p>Каждое разобранное задание — ещё один шаг к пониманию.</p>
+              <span className="learning-eyebrow">{tx("ТВОЙ УЧЕБНЫЙ РИТМ")}</span>
+              <h2>{tx("За 7 дней: ")}{weekCount}</h2>
+              <p>{tx("Каждое разобранное задание — ещё один шаг к пониманию.")}</p>
               <div className="learning-metrics">
                 <span>
-                  <b>{data?.xp ?? 0}</b>учебного XP
-                </span>
+                  <b>{data?.xp ?? 0}</b>{tx("учебного XP")}</span>
                 <span>
-                  <b>{completedQuests.length}</b>квестов пройдено
-                </span>
+                  <b>{completedQuests.length}</b>{tx("квестов пройдено")}</span>
               </div>
             </section>
             <section className="learning-help-card">
-              <h2>Разберём сложное</h2>
-              <p>
-                Готовишься к экзамену? В ивенте помощник видит твой конспект и
-                вариант.
-              </p>
-              <Link
+              <h2>{tx("Разберём сложное")}</h2>
+              <p>{tx("Готовишься к экзамену? В ивенте помощник видит твой конспект и вариант.")}</p>
+              <Link prefetch={false}
                 href={
                   lastStartedEvent
                     ? `/events/${lastStartedEvent.id}`
                     : "/events"
                 }
               >
-                <YgIcon name="book" /> Помощник по экзамену{" "}
+                <YgIcon name="book" />{tx(" Помощник по экзамену")}{" "}
                 <YgIcon name="chevron" />
               </Link>
-              <Link href="/chat">
-                <YgIcon name="bulb" /> ИИ-помощник <YgIcon name="chevron" />
+              <Link prefetch={false} href="/chat">
+                <YgIcon name="bulb" />{tx(" ИИ-помощник ")}<YgIcon name="chevron" />
               </Link>
               {skill && (
                 <button
                   onClick={() => navigate("lesson", skill.id, nextQuest?.id)}
                 >
-                  <YgIcon name="book" /> К занятию <YgIcon name="chevron" />
+                  <YgIcon name="book" />{tx(" К занятию ")}<YgIcon name="chevron" />
                 </button>
               )}
             </section>
-            <Link href="/challenge30" className="learning-challenge">
+            <Link prefetch={false} href="/challenge30" className="learning-challenge">
               <YgIcon name="flame" />
               <span>
-                <b>Челлендж 30</b>
-                <small>Учёба в своём ритме, день за днём</small>
+                <b>{tx("Челлендж 30")}</b>
+                <small>{tx("Учёба в своём ритме, день за днём")}</small>
               </span>
               <YgIcon name="chevron" />
             </Link>
@@ -845,9 +815,7 @@ export default function LearningPage({
       )}
       {view === "create" && data && (
         <section className="learning-create">
-          <p className="learning-subtitle">
-            Предмет или личная цель → шесть квестов → практика и обратная связь.
-          </p>
+          <p className="learning-subtitle">{tx("Предмет или личная цель → шесть квестов → практика и обратная связь.")}</p>
           {createForm}
         </section>
       )}
@@ -856,8 +824,7 @@ export default function LearningPage({
           <section>
             <div className="learning-route-progress">
               <span>
-                {complete} из {total} квестов
-              </span>
+                {complete}{tx(" из ")}{total}{tx(" квестов")}</span>
               <progress value={complete} max={total || 1} />
               <b>{percent}%</b>
             </div>
@@ -885,40 +852,32 @@ export default function LearningPage({
                     >
                       <b>{q.title}</b>
                       <small>
-                        {q.boss ? "Финальный проект" : "Учебный квест"} ·{" "}
-                        {skill.minutes} мин
-                      </small>
+                        {q.boss ? tx("Финальный проект") : tx("Учебный квест")} ·{" "}
+                        {skill.minutes}{tx(" мин")}</small>
                       {q.id === nextQuest?.id && !q.completed && (
-                        <span className="learning-start">
-                          Начать <YgIcon name="chevron" />
+                        <span className="learning-start">{tx("Начать ")}<YgIcon name="chevron" />
                         </span>
                       )}
-                      {blocked && <small>После предыдущего квеста</small>}
+                      {blocked && <small>{tx("После предыдущего квеста")}</small>}
                     </button>
                   </li>
                 );
               })}
             </ol>
             {complete === total && (
-              <p className="learning-notice">
-                Маршрут пройден! Любое занятие можно повторить.
-              </p>
+              <p className="learning-notice">{tx("Маршрут пройден! Любое занятие можно повторить.")}</p>
             )}
           </section>
           <aside className="learning-route-note">
-            <h2>Один шаг за раз</h2>
+            <h2>{tx("Один шаг за раз")}</h2>
             <p>{skill.goal}</p>
-            <p>
-              Читай объяснение, пробуй самостоятельно и проверяй ответ. Ошибки
-              не отнимают XP и монеты.
-            </p>
+            <p>{tx("Читай объяснение, пробуй самостоятельно и проверяй ответ. Ошибки не отнимают XP и монеты.")}</p>
             <button
               className="learning-secondary"
               disabled={busy}
               onClick={() => void schedule()}
             >
-              <YgIcon name="calendar" /> Добавить в план
-            </button>
+              <YgIcon name="calendar" />{tx(" Добавить в план")}</button>
           </aside>
         </div>
       )}
@@ -926,14 +885,13 @@ export default function LearningPage({
         <LearningLesson {...{ skill, quest, nextQuest, total, draftStatus, locked, lessonTab, busy, answer, help, tomorrow, navigate, changeTab, submit, setAnswer, saveDraft, schedule, openLesson, setHelp }} available={!!data?.available} />
       )}
       {data && (view === "route" || view === "lesson") && !skill && (
-        <div className="learning-notice">
-          Маршрут не найден.{" "}
-          <button onClick={() => navigate("hub")}>К предметам</button>
+        <div className="learning-notice">{tx("Маршрут не найден.")}{" "}
+          <button onClick={() => navigate("hub")}>{tx("К предметам")}</button>
         </div>
       )}
       {error && (
         <p role="alert" className="learning-notice learning-error">
-          {error}
+          {tx(error)}
         </p>
       )}
       {message && (

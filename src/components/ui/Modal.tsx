@@ -1,8 +1,9 @@
 "use client";
 
 import { AnimatePresence, animate, motion, useMotionValue } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useCopy } from "@/i18n/useCopy";
 import { useKeyboardInset } from "@/lib/useKeyboardInset";
 
 interface ModalProps {
@@ -44,6 +45,8 @@ const MOUSE_SLOP = 4;
  * протяжка выделяла слова вместо того, чтобы тянуть лист.
  */
 export default function Modal({ open, onClose, title, headerAction, children }: ModalProps) {
+  const tx = useCopy();
+  const titleId = useId();
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -112,6 +115,24 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
       delete document.body.dataset.modalOpen;
     };
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open || !mounted) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const frame = requestAnimationFrame(() => {
+      if (!panelRef.current?.contains(document.activeElement)) panelRef.current?.focus({ preventScroll: true });
+    });
+    const trap = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || !panelRef.current) return;
+      const nodes = [...panelRef.current.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), select:not(:disabled), a[href], [tabindex="0"]')].filter(el => el.getClientRects().length > 0);
+      const first = nodes[0], last = nodes[nodes.length - 1];
+      if (!first) { event.preventDefault(); panelRef.current.focus(); }
+      else if (event.shiftKey && (document.activeElement === first || document.activeElement === panelRef.current)) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", trap);
+    return () => { cancelAnimationFrame(frame); document.removeEventListener("keydown", trap); if (previous?.isConnected) previous.focus({ preventScroll: true }); };
+  }, [open, mounted]);
 
   /* ── жест вниз: палец и мышь ── */
   useEffect(() => {
@@ -241,6 +262,11 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
           />
           <motion.div
             ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? titleId : undefined}
+            aria-label={title ? undefined : tx("Диалог")}
+            tabIndex={-1}
             // при открытой клавиатуре лист должен помещаться в остаток
             // экрана, иначе его нижняя часть снова окажется недосягаемой
             className="relative z-10 w-full max-w-md overflow-y-auto overscroll-contain rounded-t-[14px] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 pb-8 shadow-2xl sm:rounded-3xl safe-b"
@@ -265,18 +291,11 @@ export default function Modal({ open, onClose, title, headerAction, children }: 
                 рядом с ручкой, а не только за саму полоску в 40px. */}
             <div ref={grabRef} className="-mx-5 -mt-5 cursor-grab px-5 pt-5">
               <div className="mx-auto mb-3 h-[5px] w-9 rounded-full bg-[var(--color-border-strong)]" />
-              {(title || headerAction) && (
-                <div className="mb-4 flex items-center gap-3">
-                  {title && (
-                    <h2 className="text-[20px] font-semibold tracking-tight">{title}</h2>
-                  )}
-                  {/* ml-auto, а не justify-between на родителе — иначе при
-                      отсутствующем title единственный ребёнок (headerAction)
-                      уезжал к левому краю: justify-between нечего распределять
-                      между одним элементом. */}
-                  {headerAction && <div className="ml-auto">{headerAction}</div>}
-                </div>
-              )}
+              <div className="mb-4 flex items-start gap-3">
+                {title && <h2 id={titleId} className="min-w-0 flex-1 break-words text-[20px] font-semibold tracking-tight">{title}</h2>}
+                {headerAction && <div className="ml-auto">{headerAction}</div>}
+                <button type="button" onClick={onClose} aria-label={tx("Закрыть")} className="ml-auto grid h-11 w-11 shrink-0 place-items-center rounded-xl text-2xl hover:bg-[var(--color-surface-2)]">×</button>
+              </div>
             </div>
             {children}
             {/* Хром игнорирует padding-bottom на конце скролл-контейнера —

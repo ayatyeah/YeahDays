@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useState } from "react";
 import Link from "next/link";
@@ -28,6 +30,7 @@ import LanguageSwitcher from "@/i18n/LanguageSwitcher";
  * потоком, как и должно быть в листе.
  */
 export default function SettingsContent({ compact = false }: { compact?: boolean }) {
+  const tx = useCopy();
   const resetAll = useUserStore((s) => s.resetAll);
   const theme = useThemeStore((s) => s.theme);
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
@@ -54,38 +57,38 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
     <>
       <div className={compact ? "" : "desk"}>
         <div className={compact ? "" : "desk-main"}>
-          <Group title="Уведомления">
+          <Group title={tx("Уведомления")}>
             <PushOptIn />
             <div className="mt-3">
               <DeviceList />
             </div>
           </Group>
 
-          <Group title="Внешний вид">
+          <Group title={tx("Внешний вид")}>
             <div className="inset-group">
               <div className="inset-row py-2">
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[16px]">Тёмная тема</span>
+                  <span className="block text-[16px]">{tx("Тёмная тема")}</span>
                 </span>
                 <Switch
                   checked={theme !== "light"}
                   onChange={() => toggleTheme()}
-                  label="Тёмная тема"
+                  label={tx("Тёмная тема")}
                 />
               </div>
               {/* Переключатель под подписью, а не справа: три названия
                   языков на телефоне сжимали подпись в столбик по слову. */}
               <div className="inset-row py-3">
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[16px]">Язык интерфейса</span>
-                  <span className="block text-[13px] text-[var(--color-muted)]">Казахский и английский — перевод в бета-версии: часть текстов и ответы ИИ остаются на русском.</span>
+                  <span className="block text-[16px]">{tx("Язык интерфейса")}</span>
+                  <span className="block text-[13px] text-[var(--color-muted)]">{tx("Казахский и английский — перевод в бета-версии: часть текстов и ответы ИИ остаются на русском.")}</span>
                   <LanguageSwitcher className="mt-3" />
                 </span>
               </div>
             </div>
           </Group>
 
-          <Group title="Расписание">
+          <Group title={tx("Расписание")}>
             <div className="inset-group">
               <button
                 type="button"
@@ -93,43 +96,39 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
                 className="inset-row inset-row-press py-2 text-left"
               >
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[16px]">Выгрузить в календарь</span>
-                  <span className="mt-0.5 block text-[13px] text-[var(--color-muted)]">
-                    Файл с парами на три недели — откроется в календаре телефона
-                  </span>
+                  <span className="block text-[16px]">{tx("Выгрузить в календарь")}</span>
+                  <span className="mt-0.5 block text-[13px] text-[var(--color-muted)]">{tx("Файл с парами на три недели — откроется в календаре телефона")}</span>
                 </span>
                 <YgIcon name="calendar" className="h-4 w-4 text-[var(--color-muted)]" />
               </button>
             </div>
           </Group>
 
-          <Group title="Данные">
+          <Group title={tx("Данные")}>
             <DataControls />
             <div className="mt-3">
               <Button
                 variant="danger"
                 className="w-full"
                 onClick={() => setConfirmReset(true)}
-              >
-                Сбросить прогресс
-              </Button>
+              >{tx("Сбросить прогресс")}</Button>
             </div>
           </Group>
         </div>
 
         <div className={compact ? "" : "desk-aside"}>
-          <Group title="Управление">
+          <Group title={tx("Управление")}>
             <div className="inset-group">
               <Link href="/manage" className="inset-row inset-row-press py-2">
                 <span className="min-w-0 flex-1">
-                  <span className="block text-[16px]">Действия и расписание</span>
+                  <span className="block text-[16px]">{tx("Действия и расписание")}</span>
                 </span>
                 <YgIcon name="chevron" className="h-4 w-4 text-[var(--color-muted)]" strokeWidth={2} />
               </Link>
             </div>
           </Group>
 
-          <Group title="Интеграции">
+          <Group title={tx("Интеграции")}>
             <LmsCard />
             <PairingCodeCard />
           </Group>
@@ -139,16 +138,11 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
       <Modal
         open={confirmReset}
         onClose={() => setConfirmReset(false)}
-        title="Сбросить прогресс?"
+        title={tx("Сбросить прогресс?")}
       >
-        <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">
-          Все выполненные действия, уровень и история свайпов будут удалены.
-          Это нельзя отменить.
-        </p>
+        <p className="text-[15px] leading-snug text-[var(--color-fg-dim)]">{tx("Все выполненные действия, уровень и история свайпов будут удалены. Это нельзя отменить.")}</p>
         <div className="mt-5 flex gap-2.5">
-          <Button className="flex-1" onClick={() => setConfirmReset(false)}>
-            Отмена
-          </Button>
+          <Button className="flex-1" onClick={() => setConfirmReset(false)}>{tx("Отмена")}</Button>
           <Button
             variant="danger"
             className="flex-1"
@@ -156,9 +150,7 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
               resetAll();
               setConfirmReset(false);
             }}
-          >
-            Сбросить
-          </Button>
+          >{tx("Сбросить")}</Button>
         </div>
       </Modal>
     </>

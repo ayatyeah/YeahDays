@@ -5,6 +5,7 @@ import Link from "next/link";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Logo from "@/components/Logo";
+import RuntimeSignalStatus from "@/components/RuntimeSignalStatus";
 import BackgroundJobStatus from "@/components/BackgroundJobStatus";
 import OwnerAnalytics from "@/components/OwnerAnalytics";
 import { cn } from "@/lib/cn";
@@ -417,7 +418,7 @@ export default function OwnerConsole({
 
       {/* Аналитика грузится только когда вкладку открыли: это полтора десятка
           запросов к базе, а в консоль чаще заходят сменить кому-то пароль. */}
-      {tab === "analytics" && <><BackgroundJobStatus /><OwnerAnalytics /></>}
+      {tab === "analytics" && <><BackgroundJobStatus /><RuntimeSignalStatus /><OwnerAnalytics /></>}
 
       {tab === "devices" && (
         <div className="space-y-1.5">

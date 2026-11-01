@@ -50,7 +50,7 @@ export default function Sidebar() {
 
   return (
     <nav data-no-i18n aria-label={t("nav.label")}  className="yg-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">
-      <Link href="/today" className="flex items-center gap-2.5 px-2">
+      <Link prefetch={false} href="/today" className="flex items-center gap-2.5 px-2">
         <Logo variant="color" className="h-7 w-auto" />
         <span className="text-[16px] font-bold tracking-tight">YeahGrind</span>
       </Link>
@@ -95,7 +95,7 @@ export default function Sidebar() {
         })}
       </div>
 
-      <div className="yg-sidebar-links mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">{t("nav.calendar")}</Link><Link href="/chat">{t("nav.chat")}</Link><Link href="/events">{t("nav.events")}</Link><Link href="/challenge30">{t("nav.challenge")}</Link><Link href="/app">{t("nav.character")}</Link></div>
+      <div className="yg-sidebar-links mt-6 grid gap-3 px-3 text-sm"><Link prefetch={false} href="/calendar">{t("nav.calendar")}</Link><Link prefetch={false} href="/chat">{t("nav.chat")}</Link><Link prefetch={false} href="/events">{t("nav.events")}</Link><Link prefetch={false} href="/challenge30">{t("nav.challenge")}</Link><Link prefetch={false} href="/app">{t("nav.character")}</Link></div>
       <div className="mt-auto px-2 text-[12px] text-[var(--color-muted)]">
         {t("nav.motto")}
       </div>

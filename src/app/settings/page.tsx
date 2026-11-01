@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import Link from "next/link";
 import SettingsContent from "@/components/SettingsContent";
@@ -15,6 +17,7 @@ import { useHydrated } from "@/store/useUserStore";
  * и не в PUBLIC_PATHS (proxy требует вход) — тот же принцип, что у /manage.
  */
 export default function SettingsPage() {
+  const tx = useCopy();
   const hydrated = useHydrated();
   if (!hydrated) return <LogoLoader />;
 
@@ -25,10 +28,8 @@ export default function SettingsPage() {
           href="/account"
           className="press -ml-1.5 inline-flex h-9 items-center gap-0.5 pr-2 text-[17px] text-[var(--color-fg-dim)]"
         >
-          <YgIcon name="chevron" className="h-5 w-5 rotate-180" strokeWidth={2} />
-          Профиль
-        </Link>
-        <h1 className="ios-title mt-1">Настройки</h1>
+          <YgIcon name="chevron" className="h-5 w-5 rotate-180" strokeWidth={2} />{tx("Профиль")}</Link>
+        <h1 className="ios-title mt-1">{tx("Настройки")}</h1>
       </header>
       <SettingsContent />
     </div>

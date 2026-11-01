@@ -33,9 +33,9 @@ const variants: Record<Variant, string> = {
 
 const sizes: Record<Size, string> = {
   // высоты 36/44/50 и кегли 15/16/17 — как у системных кнопок iOS
-  sm: "h-9 px-4 text-[16px] rounded-xl",
-  md: "h-11 px-5 text-[17px] rounded-2xl",
-  lg: "h-[50px] px-6 text-[17px] rounded-2xl",
+  sm: "min-h-11 sm:min-h-9 px-4 py-2 text-[16px] rounded-xl",
+  md: "min-h-11 px-5 py-2 text-[17px] rounded-2xl",
+  lg: "min-h-[50px] px-6 py-2 text-[17px] rounded-2xl",
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -37,6 +39,7 @@ function shiftDay(day: string, n: number): string {
  * перенос и отмена удаления.
  */
 export default function TodoList({ day = dateKey() }: { day?: string }) {
+  const tx = useCopy();
   const todos = useUserStore((s) => s.todos);
   const addTodo = useUserStore((s) => s.addTodo);
   const toggleTodo = useUserStore((s) => s.toggleTodo);
@@ -112,15 +115,14 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
       {/* Заголовок и фильтры в одной строке, поиск — отдельной. Втиснутый
           между ними, он ломал «Мои задачи · 9» на две строки. */}
       <div className="mb-2 flex items-baseline justify-between gap-3">
-        <h2 className="shrink-0 text-[15px] font-semibold text-[var(--color-fg-dim)]">
-          Мои задачи{activeCount > 0 ? ` · ${activeCount}` : ""}
+        <h2 className="shrink-0 text-[15px] font-semibold text-[var(--color-fg-dim)]">{tx("Мои задачи")}{activeCount > 0 ? ` · ${activeCount}` : ""}
         </h2>
         <div className="flex items-center gap-2">
           {(
             [
-              ["active", "активные"],
-              ["all", "все"],
-              ["done", "готовы"],
+              ["active", tx("активные")],
+              ["all", tx("все")],
+              ["done", tx("готовы")],
             ] as [Filter, string][]
           ).map(([k, label]) => (
             <button
@@ -143,7 +145,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Поиск по всем задачам"
+        placeholder={tx("Поиск по всем задачам")}
         className="mb-2.5 h-9 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[15px] outline-none focus:border-[var(--color-border-strong)]"
       />
 
@@ -160,7 +162,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Что нужно сделать?"
+          placeholder={tx("Что нужно сделать?")}
           data-quick-todo
           maxLength={120}
           className="h-11 min-w-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none focus:border-[var(--color-fg-dim)]"
@@ -176,7 +178,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
 
       {list.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-4 text-center text-[13px] text-[var(--color-muted)]">
-          {filter === "done" ? "Пока ничего не закрыто" : "Задач нет"}
+          {filter === "done" ? tx("Пока ничего не закрыто") : tx("Задач нет")}
         </p>
       ) : (
         <motion.div
@@ -211,8 +213,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
             exit={{ opacity: 0, y: 8 }}
             className="mt-2 flex items-center justify-between rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-2.5"
           >
-            <span className="min-w-0 truncate text-[13px] text-[var(--color-muted)]">
-              Удалено: {undo.title}
+            <span className="min-w-0 truncate text-[13px] text-[var(--color-muted)]">{tx("Удалено: ")}{undo.title}
             </span>
             <button
               onClick={() => {
@@ -220,9 +221,7 @@ export default function TodoList({ day = dateKey() }: { day?: string }) {
                 setUndo(null);
               }}
               className="shrink-0 text-[13px] font-semibold"
-            >
-              Вернуть
-            </button>
+            >{tx("Вернуть")}</button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -247,6 +246,7 @@ function TodoRow({
   onRemove: () => void;
   onTomorrow: () => void;
 }) {
+  const tx = useCopy();
   const updateTodo = useUserStore((s) => s.updateTodo);
   const addSubtask = useUserStore((s) => s.addSubtask);
   const toggleSubtask = useUserStore((s) => s.toggleSubtask);
@@ -270,7 +270,7 @@ function TodoRow({
       <div className="flex items-center gap-2.5 px-3 py-2.5">
         <button
           onClick={onToggle}
-          aria-label={done ? "снять отметку" : "выполнить"}
+          aria-label={done ? tx("снять отметку") : tx("выполнить")}
           className={cn(
             "tap h-6 w-6 shrink-0 rounded-lg border text-[13px] transition",
             done
@@ -295,15 +295,15 @@ function TodoRow({
           </span>
           <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[12px] text-[var(--color-muted)]">
             {overdue && (
-              <span className="text-[var(--color-strength)]">просрочено</span>
+              <span className="text-[var(--color-strength)]">{tx("просрочено")}</span>
             )}
             {t.hour !== undefined && (
               <span>{String(t.hour).padStart(2, "0")}:00</span>
             )}
-            {t.duration ? <span>{t.duration} мин</span> : null}
-            {t.priority !== "normal" && <span>{PRIORITY_LABEL[t.priority]}</span>}
+            {t.duration ? <span>{t.duration}{tx(" мин")}</span> : null}
+            {t.priority !== "normal" && <span>{tx(PRIORITY_LABEL[t.priority])}</span>}
             {t.repeat && (
-              <YgIcon name="refresh" className="h-3 w-3" title={REPEAT_LABEL[t.repeat.kind]} />
+              <YgIcon name="refresh" className="h-3 w-3" title={tx(REPEAT_LABEL[t.repeat.kind])} />
             )}
             {t.subtasks.length > 0 && (
               <span>
@@ -316,7 +316,7 @@ function TodoRow({
 
         <button
           onClick={onOpen}
-          aria-label="подробнее"
+          aria-label={tx("подробнее")}
           className="press shrink-0 px-1 text-[13px] text-[var(--color-muted)]"
         >
           {open ? "▴" : "▾"}
@@ -338,7 +338,7 @@ function TodoRow({
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                {PRIORITY_LABEL[p]}
+                {tx(PRIORITY_LABEL[p])}
               </button>
             ))}
           </div>
@@ -353,9 +353,9 @@ function TodoRow({
                 })
               }
               className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[13px] outline-none"
-              aria-label="Час"
+              aria-label={tx("Час")}
             >
-              <option value="">без времени</option>
+              <option value="">{tx("без времени")}</option>
               {Array.from({ length: 24 }, (_, h) => (
                 <option key={h} value={h}>
                   {String(h).padStart(2, "0")}:00
@@ -371,13 +371,12 @@ function TodoRow({
                 })
               }
               className="h-9 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-2 text-[13px] outline-none"
-              aria-label="Длительность"
+              aria-label={tx("Длительность")}
             >
-              <option value="">без длительности</option>
+              <option value="">{tx("без длительности")}</option>
               {[5, 10, 15, 30, 45, 60, 90, 120].map((m) => (
                 <option key={m} value={m}>
-                  {m} мин
-                </option>
+                  {m}{tx(" мин")}</option>
               ))}
             </select>
           </div>
@@ -392,9 +391,7 @@ function TodoRow({
                   ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                   : "border-[var(--color-border)] text-[var(--color-muted)]",
               )}
-            >
-              разово
-            </button>
+            >{tx("разово")}</button>
             {(
               ["daily", "weekdays", "weekends", "weekly", "everyOther"] as RepeatKind[]
             ).map((k) => (
@@ -408,7 +405,7 @@ function TodoRow({
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
               >
-                {REPEAT_LABEL[k]}
+                {tx(REPEAT_LABEL[k])}
               </button>
             ))}
           </div>
@@ -417,7 +414,7 @@ function TodoRow({
           <textarea
             value={t.note ?? ""}
             onChange={(e) => updateTodo(t.id, { note: e.target.value })}
-            placeholder="Заметка…"
+            placeholder={tx("Заметка…")}
             rows={2}
             className="mb-2 w-full resize-none rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2 text-[15px] outline-none"
           />
@@ -435,7 +432,7 @@ function TodoRow({
                         ? "border-transparent bg-[var(--color-stability)] text-[var(--color-bg)]"
                         : "border-[var(--color-border)]",
                     )}
-                    aria-label="подзадача"
+                    aria-label={tx("подзадача")}
                   >
                     {x.done ? <YgIcon name="check" className="h-3.5 w-3.5" strokeWidth={2.4} /> : null}
                   </button>
@@ -450,7 +447,7 @@ function TodoRow({
                   <button
                     onClick={() => removeSubtask(t.id, x.id)}
                     className="press shrink-0 px-1 text-[12px] text-[var(--color-muted)]"
-                    aria-label="удалить подзадачу"
+                    aria-label={tx("удалить подзадачу")}
                   >
                     <YgIcon name="close" className="h-3.5 w-3.5" />
                   </button>
@@ -471,7 +468,7 @@ function TodoRow({
             <input
               value={sub}
               onChange={(e) => setSub(e.target.value)}
-              placeholder="+ подзадача"
+              placeholder={tx("+ подзадача")}
               className="h-9 min-w-0 flex-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 text-[15px] outline-none"
             />
           </form>
@@ -481,15 +478,11 @@ function TodoRow({
               onClick={onTomorrow}
               disabled={Boolean(t.repeat)}
               className="press flex-1 rounded-xl border border-[var(--color-border)] py-2 text-[13px] text-[var(--color-muted)] disabled:opacity-40"
-            >
-              на завтра →
-            </button>
+            >{tx("на завтра →")}</button>
             <button
               onClick={onRemove}
               className="press rounded-xl border border-[var(--color-border)] px-3 py-2 text-[13px] text-[var(--color-strength)]"
-            >
-              удалить
-            </button>
+            >{tx("удалить")}</button>
           </div>
         </div>
       )}

@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
@@ -34,6 +36,7 @@ function timeAgo(ms: number): string {
  * (при включении напоминаний или смене часа).
  */
 export default function DeviceList() {
+  const tx = useCopy();
   const [devices, setDevices] = useState<Device[] | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
@@ -74,12 +77,9 @@ export default function DeviceList() {
 
   return (
     <section className="rounded-3xl surface p-5">
-      <p className="text-[15px] font-semibold">
-        Ваши устройства ({devices.length})
+      <p className="text-[15px] font-semibold">{tx("Ваши устройства (")}{devices.length})
       </p>
-      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
-        Уведомления приходят на все включённые ниже.
-      </p>
+      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">{tx("Уведомления приходят на все включённые ниже.")}</p>
       <div className="inset-group mt-3">
         {devices.map((d) => (
           <div
@@ -89,7 +89,7 @@ export default function DeviceList() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-[15px] font-medium">{d.label}</p>
               <p className="mt-0.5 text-[12px] text-[var(--color-muted)]">
-                {d.enabled ? "включено" : "выключено"} · {timeAgo(d.updatedAt)}
+                {d.enabled ? tx("включено") : tx("выключено")} · {timeAgo(d.updatedAt)}
               </p>
             </div>
             {confirmId === d.id ? (
@@ -98,22 +98,18 @@ export default function DeviceList() {
                   type="button"
                   onClick={() => void remove(d.id)}
                   className="rounded-xl bg-[var(--color-strength)] px-2.5 py-1.5 text-[12px] font-semibold text-white"
-                >
-                  Удалить
-                </button>
+                >{tx("Удалить")}</button>
                 <button
                   type="button"
                   onClick={() => setConfirmId(null)}
                   className="rounded-xl px-2.5 py-1.5 text-[12px] text-[var(--color-muted)]"
-                >
-                  Отмена
-                </button>
+                >{tx("Отмена")}</button>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={() => setConfirmId(d.id)}
-                aria-label={`Удалить устройство ${d.label}`}
+                aria-label={tx("Удалить устройство {0}", {"0": d.label})}
                 className={cn(
                   "shrink-0 rounded-xl px-2 py-1.5 text-[17px] text-[var(--color-muted)] transition active:scale-90",
                 )}

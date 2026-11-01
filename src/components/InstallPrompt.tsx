@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,6 +29,7 @@ function isStandalone() {
  * Для iOS (нет beforeinstallprompt) — короткая подсказка «Поделиться → на экран».
  */
 export default function InstallPrompt() {
+  const tx = useCopy();
   const hydrated = useHydrated();
   const onboarded = useUserStore((s) => s.onboarded);
 
@@ -97,31 +100,29 @@ export default function InstallPrompt() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 90, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="fixed inset-x-0 bottom-[86px] z-40 px-4"
+          className="yg-install-prompt fixed inset-x-0 bottom-[86px] z-40 px-4"
         >
           <div className="marble mx-auto flex max-w-md items-center gap-3 rounded-2xl p-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-surface-2)] text-[22px]">
               <YgIcon name="install" className="h-6 w-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-semibold">Установи YeahGrind</p>
+              <p className="text-[15px] font-semibold">{tx("Установи YeahGrind")}</p>
               <p className="truncate text-[13px] text-[var(--color-muted)]">
                 {ios && !evt
-                  ? "Поделиться → «На экран «Домой»"
-                  : "Запускай как приложение, работает офлайн"}
+                  ? tx("Поделиться → «На экран «Домой»")
+                  : tx("Запускай как приложение, работает офлайн")}
               </p>
             </div>
             {evt ? (
               <button
                 onClick={install}
                 className="press h-9 shrink-0 rounded-xl bg-[var(--color-fg)] px-3.5 text-[15px] font-semibold text-[var(--color-bg)]"
-              >
-                Установить
-              </button>
+              >{tx("Установить")}</button>
             ) : null}
             <button
               onClick={dismiss}
-              aria-label="Закрыть"
+              aria-label={tx("Закрыть")}
               className="tap press flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[var(--color-muted)] hover:text-[var(--color-fg)]"
             >
               <YgIcon name="close" className="h-4 w-4" />

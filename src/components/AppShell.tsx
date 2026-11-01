@@ -30,9 +30,8 @@ import { TABS, swipeTarget, type TabKey } from "@/lib/nav";
  * через History API, поэтому deep-link из пуша, ярлыки и «назад» работают
  * как раньше.
  *
- * Разделы грузятся отдельными чанками и прогреваются в простое: первый
- * экран не тащит на себе код остальных четырёх, но к моменту, когда
- * человек до них дойдёт, они уже в памяти.
+ * Разделы грузятся отдельными чанками при первом открытии. Уже открытые
+ * вкладки остаются в памяти, но первый экран не монтирует остальные.
  */
 
 const SECTIONS: Record<TabKey, React.ComponentType> = {
@@ -76,7 +75,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
   const tab = useNavStore((s) => s.tab);
   const mounted = useNavStore((s) => s.mounted);
   const go = useNavStore((s) => s.go);
-  const warm = useNavStore((s) => s.warm);
   const syncFromPath = useNavStore((s) => s.syncFromPath);
   const setScroll = useNavStore((s) => s.setScroll);
 
@@ -123,29 +121,6 @@ export default function AppShell({ initialTab }: { initialTab: TabKey }) {
 
   // Вкладки остаются смонтированы; короткое CSS-проявление активной
   // панели не меняет её геометрию и учитывает reduced-motion.
-
-  /* ── Прогрев остальных разделов в простое ── */
-  useEffect(() => {
-    const conn = (
-      navigator as Navigator & { connection?: { saveData?: boolean } }
-    ).connection;
-    if (conn?.saveData) return;
-
-    const w = window as Window & {
-      requestIdleCallback?: (cb: () => void) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    const warmAll = () => {
-      for (const t of TABS) warm(t);
-    };
-
-    if (w.requestIdleCallback) {
-      const id = w.requestIdleCallback(warmAll);
-      return () => w.cancelIdleCallback?.(id);
-    }
-    const id = window.setTimeout(warmAll, 1500);
-    return () => window.clearTimeout(id);
-  }, [warm]);
 
   /* ── Свайп между разделами ── */
   const drag = useRef<{

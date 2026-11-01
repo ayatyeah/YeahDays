@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useEffect, useState } from "react";
 import { getUserId } from "@/lib/userId";
@@ -14,6 +16,7 @@ import Button from "@/components/ui/Button";
  * с точки зрения стороннего сервиса.
  */
 export default function PairingCodeCard() {
+  const tx = useCopy();
   const [pair, setPair] = useState<{ code: string; expiresAt: number } | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [loading, setLoading] = useState(false);
@@ -41,13 +44,13 @@ export default function PairingCodeCard() {
       });
       const json = (await res.json()) as { code?: string; expiresAt?: number; error?: string };
       if (!res.ok || !json.code || !json.expiresAt) {
-        setError(json.error ?? "Не получилось получить код");
+        setError(json.error ?? tx("Не получилось получить код"));
         return;
       }
       setNow(Date.now());
       setPair({ code: json.code, expiresAt: json.expiresAt });
     } catch {
-      setError("Нет связи с сервером");
+      setError(tx("Нет связи с сервером"));
     } finally {
       setLoading(false);
     }
@@ -69,8 +72,8 @@ export default function PairingCodeCard() {
 
   return (
     <section className="mt-6 rounded-3xl surface p-5">
-      <p className="text-[15px] font-semibold">Код для внешнего сервиса</p>
-      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">Код на 10 минут для привязки стороннего сервиса</p>
+      <p className="text-[15px] font-semibold">{tx("Код для внешнего сервиса")}</p>
+      <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">{tx("Код на 10 минут для привязки стороннего сервиса")}</p>
 
       {pair && !expired ? (
         <div className="mt-3 flex items-center gap-2">
@@ -78,20 +81,19 @@ export default function PairingCodeCard() {
             {pair.code}
           </code>
           <Button size="sm" onClick={() => void copy()}>
-            {copied ? "Скопировано" : "Копировать"}
+            {copied ? tx("Скопировано") : tx("Копировать")}
           </Button>
         </div>
       ) : (
         <div className="mt-3">
           <Button size="sm" onClick={() => void generate()} disabled={loading}>
-            {loading ? "Получаю…" : expired ? "Получить новый код" : "Получить код"}
+            {loading ? tx("Получаю…") : expired ? tx("Получить новый код") : tx("Получить код")}
           </Button>
         </div>
       )}
 
       {pair && !expired && (
-        <p className="mt-2 text-[12px] tabular-nums text-[var(--color-muted)]">
-          Истекает через {mm}:{String(ss).padStart(2, "0")}
+        <p className="mt-2 text-[12px] tabular-nums text-[var(--color-muted)]">{tx("Истекает через ")}{mm}:{String(ss).padStart(2, "0")}
         </p>
       )}
       {error && (

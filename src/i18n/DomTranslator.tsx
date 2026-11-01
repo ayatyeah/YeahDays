@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { useLocaleStore, type Locale } from "./locale";
 import { createTranslator, type Dictionary, type Translate } from "./translate";
@@ -113,11 +114,13 @@ const loaders: Record<Exclude<Locale, "ru">, () => Promise<{ default: Dictionary
 const reveal = () => document.documentElement.removeAttribute("data-i18n-pending");
 
 export default function DomTranslator() {
+  const pathname = usePathname();
+  const reactTranslated = ["/login", "/login/lms", "/register", "/forgot-password", "/today", "/settings"].includes(pathname) || pathname.startsWith("/learn");
   const locale = useLocaleStore((s) => s.locale);
 
   useEffect(() => {
     document.documentElement.lang = locale;
-    if (locale === "ru") {
+    if (locale === "ru" || reactTranslated) {
       reveal();
       return;
     }
@@ -153,7 +156,7 @@ export default function DomTranslator() {
       observer?.disconnect();
       restore();
     };
-  }, [locale]);
+  }, [locale, reactTranslated]);
 
   return null;
 }

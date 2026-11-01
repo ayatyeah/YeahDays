@@ -1,5 +1,6 @@
 "use client";
 
+import { reportDiagnostic } from "@/lib/clientDiagnostics";
 import { Component, type ReactNode } from "react";
 import { YgIcon } from "@/components/yg-icons";
 
@@ -23,7 +24,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: unknown) {
-    // В проде здесь была бы отправка в Sentry/аналитику.
+    reportDiagnostic("browser_error", "render");
     console.error("YeahGrind crash:", error);
   }
 

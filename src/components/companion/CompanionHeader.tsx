@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 import { useUserStore } from "@/store/useUserStore";
 import { currentSlot, type EnergyLevel } from "@/lib/domain";
 import { useLocaleStore } from "@/i18n/locale";
@@ -14,6 +16,7 @@ export default function CompanionHeader({
   count: number;
   compact?: boolean;
 }) {
+  const tx = useCopy();
   const slot = currentSlot();
   const energy = useUserStore((s) => s.energyProfile[slot]);
   const setEnergy = useUserStore((s) => s.setSlotEnergy);
@@ -25,7 +28,7 @@ export default function CompanionHeader({
     <div className={`companion-header${compact ? " polish-header" : ""}`}>
       <AppBrand />
       <header className="mono-page-heading">
-        <h1>Сегодня</h1>
+        <h1>{tx("Сегодня")}</h1>
         <p>
           {now.toLocaleDateString(locale, {
             weekday: "long",
@@ -39,7 +42,7 @@ export default function CompanionHeader({
           <ProgressRing
             value={completed}
             max={count}
-            label={`Выполнение плана дня: ${completed} из ${count}`}
+            label={tx("Выполнение плана дня: {0} из {1}", {"0": completed, "1": count})}
             tone="sage"
           >
             {completed}/{count}
@@ -47,31 +50,30 @@ export default function CompanionHeader({
           <div>
             <h2>
               {count > 0 && completed === count
-                ? "Всё на сегодня сделано"
-                : "Хороший ритм"}
+                ? tx("Всё на сегодня сделано")
+                : tx("Хороший ритм")}
             </h2>
             <p>
               {count
-                ? `Выполнено: ${completed} из ${count}`
-                : "Начни с одного небольшого дела"}
+                ? tx("Выполнено: {0} из {1}", {"0": completed, "1": count})
+                : tx("Начни с одного небольшого дела")}
             </p>
           </div>
         </section>
       )}
       {compact && count > 0 && (
         <div className="flow-compact-progress">
-          <span>
-            Выполнено: {completed} из {count}
+          <span>{tx("Выполнено: ")}{completed}{tx(" из ")}{count}
           </span>
           <progress
             value={completed}
             max={count}
-            aria-label="Выполнение плана дня"
+            aria-label={tx("Выполнение плана дня")}
           />
         </div>
       )}
       {!compact && (
-        <div className="mono-week" aria-label="Текущая неделя">
+        <div className="mono-week" aria-label={tx("Текущая неделя")}>
           {Array.from({ length: 7 }, (_, i) => {
             const date = new Date(monday);
             date.setDate(monday.getDate() + i);
@@ -94,14 +96,14 @@ export default function CompanionHeader({
       {!compact && (
         <>
           <div className="companion-energy-label">
-            <b>Как твоя энергия?</b>
+            <b>{tx("Как твоя энергия?")}</b>
           </div>
           <div className="companion-energy">
             {(
               [
-                ["low", "Спокойно"],
-                ["medium", "Нормально"],
-                ["high", "Много сил"],
+                ["low", tx("Спокойно")],
+                ["medium", tx("Нормально")],
+                ["high", tx("Много сил")],
               ] as [EnergyLevel, string][]
             ).map(([value, label]) => (
               <button

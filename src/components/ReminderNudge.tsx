@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useMemo, useState } from "react";
@@ -33,6 +35,7 @@ const DISMISS_KEY = "yg-reminder-nudge-dismissed";
  * «Домой»), если разрешение уже дано или запрещено, и после крестика.
  */
 export default function ReminderNudge() {
+  const tx = useCopy();
   const todos = useUserStore((s) => s.todos);
   const reminderHour = useUserStore((s) => s.reminderHour);
   const [eligible, setEligible] = useState(false);
@@ -73,7 +76,7 @@ export default function ReminderNudge() {
     return (
       <section className="mb-5 flex items-center gap-3 rounded-3xl surface p-4 lg:mb-0">
         <YgIcon name="check" className="h-5 w-5 shrink-0 text-[var(--color-stability)]" />
-        <p className="text-[14px]">Напомню за {TODO_LEAD_MIN} минут до начала.</p>
+        <p className="text-[14px]">{tx("Напомню за ")}{TODO_LEAD_MIN}{tx(" минут до начала.")}</p>
       </section>
     );
   }
@@ -113,7 +116,7 @@ export default function ReminderNudge() {
       <button
         type="button"
         onClick={dismiss}
-        aria-label="Не напоминать"
+        aria-label={tx("Не напоминать")}
         className="press absolute right-3 top-3 p-2 text-[var(--color-muted)]"
       >
         <YgIcon name="close" className="h-4 w-4" />
@@ -121,20 +124,16 @@ export default function ReminderNudge() {
       <div className="flex items-start gap-3 pr-6">
         <YgIcon name="bell" className="mt-0.5 h-6 w-6 shrink-0" />
         <div className="min-w-0">
-          <p className="text-[16px] font-semibold">Напомнить перед началом?</p>
+          <p className="text-[16px] font-semibold">{tx("Напомнить перед началом?")}</p>
           <p className="mt-1 text-[14px] leading-snug text-[var(--color-muted)]">
-            «{next.title}» в {at}. Пришлю уведомление за {TODO_LEAD_MIN} минут — и так
-            с каждой задачей со временем.
-          </p>
+            «{next.title}{tx("» в ")}{at}{tx(". Пришлю уведомление за ")}{TODO_LEAD_MIN}{tx(" минут — и так с каждой задачей со временем.")}</p>
         </div>
       </div>
       {result === "fail" && (
-        <p className="mt-3 text-[13px] text-[var(--color-strength)]">
-          Не получилось включить. Попробуй ещё раз или в настройках.
-        </p>
+        <p className="mt-3 text-[13px] text-[var(--color-strength)]">{tx("Не получилось включить. Попробуй ещё раз или в настройках.")}</p>
       )}
       <Button variant="primary" className="mt-4 w-full" disabled={busy} onClick={() => void enable()}>
-        {busy ? "Включаю…" : "Включить напоминания"}
+        {busy ? tx("Включаю…") : tx("Включить напоминания")}
       </Button>
     </section>
   );

@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -34,6 +36,7 @@ const PIECES = Array.from({ length: 34 }).map((_, i) => ({
  * конфетти + плашка со стриком, авто-исчезает.
  */
 export default function DayCompleteOverlay() {
+  const tx = useCopy();
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
   const todos = useUserStore((s) => s.todos);
@@ -138,13 +141,11 @@ export default function DayCompleteOverlay() {
                 прикрывала тень, на светлой сквозь «День закрыт!» читался заголовок. */}
             <div className="flex flex-col items-center rounded-3xl surface px-7 py-5 text-center shadow-[var(--shadow-3)]">
               <YgIcon name="flame" className="h-12 w-12 text-[var(--color-strength)]" />
-              <p className="mt-2 text-[20px] font-black tracking-tight">
-                День закрыт!
-              </p>
+              <p className="mt-2 text-[20px] font-black tracking-tight">{tx("День закрыт!")}</p>
               <p className="mt-1 text-[16px] text-[var(--color-fg-dim)]">
                 {streak > 1
-                  ? `${streak} дней подряд — так и растут`
-                  : "Отличное начало серии"}
+                  ? tx("{0} дней подряд — так и растут", {"0": streak})
+                  : tx("Отличное начало серии")}
               </p>
             </div>
           </motion.div>

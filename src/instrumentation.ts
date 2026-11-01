@@ -11,3 +11,9 @@ export async function register() {
   const { startResearchRetention } = await import("@/lib/researchRetention");
   startResearchRetention();
 }
+
+export async function onRequestError(_error: unknown, request: { path: string }) {
+  if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  const { recordSignal } = await import("@/lib/diagnostics");
+  await recordSignal({ kind: "server_error", route: request.path, code: "error", status: 500 });
+}

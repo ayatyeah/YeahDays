@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,6 +20,7 @@ export default function LoginPage() {
 }
 
 function LoginForm() {
+  const tx = useCopy();
   const params = useSearchParams();
   const callbackUrl = safeCallbackUrl(params.get("callbackUrl"));
   const providerError = oauthErrorMessage(params.get("error"));
@@ -44,12 +47,12 @@ function LoginForm() {
 
     try {
       if (!(await credentialsSignIn(identifier, password))) {
-        setError("Неверный логин или пароль");
+        setError(tx("Неверный логин или пароль"));
         setBusy(false);
         return;
       }
     } catch {
-      setError("Сеть недоступна, попробуй ещё раз");
+      setError(tx("Сеть недоступна, попробуй ещё раз"));
       setBusy(false);
       return;
     }
@@ -58,16 +61,16 @@ function LoginForm() {
   }
 
   return (
-    <AuthShell mode="login" title="Войти в YeahGrind" subtitle="Рады видеть снова — план на сегодня уже ждёт." callbackUrl={callbackUrl}>
+    <AuthShell mode="login" title={tx("Войти в YeahGrind")} subtitle={tx("Рады видеть снова — план на сегодня уже ждёт.")} callbackUrl={callbackUrl}>
       {providerError && <div className="mb-4"><AuthError>{providerError}</AuthError></div>}
 
       <form onSubmit={submit} className="flex flex-col gap-4">
-        <AuthField label="Email или логин">
+        <AuthField label={tx("Email или логин")}>
           <input name="identifier" placeholder="you@example.com" autoComplete="username" required autoFocus className={authInput} />
         </AuthField>
         <AuthField
-          label="Пароль"
-          aside={<Link href="/forgot-password" className="font-normal text-[#a0a39c] underline-offset-2 transition hover:text-[#d3f693] hover:underline">Забыли пароль?</Link>}
+          label={tx("Пароль")}
+          aside={<Link href="/forgot-password" className="font-normal text-[#a0a39c] underline-offset-2 transition hover:text-[#d3f693] hover:underline">{tx("Забыли пароль?")}</Link>}
         >
           <PasswordInput name="password" placeholder="••••••••" autoComplete="current-password" required className={authInput} />
         </AuthField>
@@ -75,11 +78,11 @@ function LoginForm() {
         {error && <AuthError>{error}</AuthError>}
 
         <button type="submit" disabled={busy} className={authPrimary}>
-          {busy ? "Входим…" : <>Войти <span aria-hidden>↗</span></>}
+          {busy ? tx("Входим…") : <>{tx("Войти ")}<span aria-hidden>↗</span></>}
         </button>
       </form>
 
-      <AuthDivider>или</AuthDivider>
+      <AuthDivider>{tx("или")}</AuthDivider>
 
       <div className="flex flex-col gap-3">
         <GoogleButton callbackUrl={callbackUrl} disabled={busy} className="h-12" />
@@ -89,14 +92,11 @@ function LoginForm() {
         </Link>
       </div>
 
-      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">
-        Ещё нет аккаунта?{" "}
+      <p className="mt-6 text-center text-[15px] text-[#a0a39c]">{tx("Ещё нет аккаунта?")}{" "}
         <Link
           href={callbackUrl === "/today" ? "/register" : `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
           className="font-semibold text-[#d3f693] underline-offset-2 hover:underline"
-        >
-          Создать за минуту
-        </Link>
+        >{tx("Создать за минуту")}</Link>
       </p>
     </AuthShell>
   );

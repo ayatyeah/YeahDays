@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -28,6 +30,7 @@ const RETRO_HOUR = 20;
  * дни ощущаются хорошими.
  */
 export default function EveningRetro() {
+  const tx = useCopy();
   const hydrated = useHydrated();
   const plan = useUserStore((s) => s.plan);
   const retros = useUserStore((s) => s.retros);
@@ -57,23 +60,21 @@ export default function EveningRetro() {
           className="press rounded-3xl surface p-5"
         >
           {saved ? (
-            <p className="py-2 text-center text-[15px] font-medium">
-              Записал. До завтра
-            </p>
+            <p className="py-2 text-center text-[15px] font-medium">{tx("Записал. До завтра")}</p>
           ) : (
             <>
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-[15px] font-semibold">Как прошёл день?</p>
+                  <p className="text-[15px] font-semibold">{tx("Как прошёл день?")}</p>
                   <p className="mt-1 text-[13px] leading-snug text-[var(--color-muted)]">
                     {doneToday > 0
-                      ? `Закрыто сегодня: ${doneToday}. Одно касание — и день записан.`
-                      : "Даже если ничего не вышло — отметить честно полезнее, чем пропустить."}
+                      ? tx("Закрыто сегодня: {0}. Одно касание — и день записан.", {"0": doneToday})
+                      : tx("Даже если ничего не вышло — отметить честно полезнее, чем пропустить.")}
                   </p>
                 </div>
                 <button
                   onClick={() => setDismissed(true)}
-                  aria-label="Закрыть"
+                  aria-label={tx("Закрыть")}
                   className="shrink-0 rounded-lg px-2 py-1 text-[13px] text-[var(--color-muted)]"
                 >
                   <YgIcon name="close" className="h-4 w-4" />

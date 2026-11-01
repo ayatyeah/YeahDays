@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 
 import { isLmsDeadline } from "@/lib/lmsEventKind";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -69,6 +71,7 @@ export default function TimelineSchedule({
   day?: string;
   compact?: boolean;
 }) {
+  const tx = useCopy();
   const todos = useUserStore((s) => s.todos);
   const plan = useUserStore((s) => s.plan);
   const addTodo = useUserStore((s) => s.addTodo);
@@ -398,23 +401,23 @@ export default function TimelineSchedule({
             В компактном виде («Сегодня») — короткая строка-переключатель. */}
         {compact && (
           <>
-            <h2 className="text-[15px] font-semibold text-[var(--color-fg-dim)]">Расписание</h2>
+            <h2 className="text-[15px] font-semibold text-[var(--color-fg-dim)]">{tx("Расписание")}</h2>
             <button
               onClick={() => setExpanded((v) => !v)}
               className="text-[13px] font-medium text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
             >
-              {expanded ? "свернуть" : "показать"}
+              {expanded ? tx("свернуть") : tx("показать")}
             </button>
           </>
         )}
       </div>
 
-      {deadlines.length > 0 && <section className="mb-4 rounded-2xl border border-[var(--color-border)] p-3" aria-label="Дедлайны LMS">
-        <h3 className="text-sm font-semibold">Дедлайны: задания и лабораторные</h3>
-        <p className="mb-2 mt-1 text-xs text-[var(--color-muted)]">Срок сдачи на этот день. Не занимает время в дневном плане.</p>
+      {deadlines.length > 0 && <section className="mb-4 rounded-2xl border border-[var(--color-border)] p-3" aria-label={tx("Дедлайны LMS")}>
+        <h3 className="text-sm font-semibold">{tx("Дедлайны: задания и лабораторные")}</h3>
+        <p className="mb-2 mt-1 text-xs text-[var(--color-muted)]">{tx("Срок сдачи на этот день. Не занимает время в дневном плане.")}</p>
         <div className="space-y-2">{deadlines.map(t => <button key={t.id} type="button" onClick={() => openSheet(t)} className="flex w-full items-start justify-between gap-3 rounded-xl bg-[var(--color-surface-2)] p-3 text-left text-sm">
           <span className={isTodoDone(t, day) ? "line-through opacity-60" : ""}>{isTodoDone(t, day) ? "✓ " : ""}{t.title}</span>
-          <span className="shrink-0 text-xs text-[var(--color-muted)]">{t.hour == null ? "Без времени" : `до ${fmtMin(t.hour * 60 + (t.minute ?? 0))}`}</span>
+          <span className="shrink-0 text-xs text-[var(--color-muted)]">{t.hour == null ? tx("Без времени") : tx("до {0}", {"0": fmtMin(t.hour * 60 + (t.minute ?? 0))})}</span>
         </button>)}</div>
       </section>}
 
@@ -423,8 +426,7 @@ export default function TimelineSchedule({
       {compact && expanded && overdue.length > 0 && (
         <div className="mb-2 flex items-center justify-between gap-3">
           <p className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-strength)]">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
-            Просрочено: {overdue.length}
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />{tx("Просрочено: ")}{overdue.length}
           </p>
           <button
             onClick={() => {
@@ -432,8 +434,7 @@ export default function TimelineSchedule({
               haptic("success");
             }}
             className="press shrink-0 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
-          >
-            Разобрать всё ({overdue.length})
+          >{tx("Разобрать всё (")}{overdue.length})
           </button>
         </div>
       )}
@@ -441,9 +442,7 @@ export default function TimelineSchedule({
       {!compact && overdue.length > 0 && (
         <div className="mb-3">
           <p className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-strength)]">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />
-            Просрочено
-          </p>
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--color-strength)]" />{tx("Просрочено")}</p>
           {overdue.length > 1 && (
             <button
               onClick={() => {
@@ -453,8 +452,7 @@ export default function TimelineSchedule({
                 haptic("success");
               }}
               className="press mb-2 text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg)]"
-            >
-              Разобрать всё ({overdue.length})
+            >{tx("Разобрать всё (")}{overdue.length})
             </button>
           )}
           <div className="flex flex-wrap gap-2">
@@ -469,14 +467,12 @@ export default function TimelineSchedule({
           пустая пунктирная плашка с подсказкой была шумом на каждом дне. */}
       {!compact && unscheduled.length > 0 && (
         <div className="mb-3">
-          <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">Без часа</p>
+          <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">{tx("Без часа")}</p>
           {unscheduled.length === 0 ? (
             <button
               onClick={() => openSheet(null)}
               className="w-full rounded-2xl border border-dashed border-[var(--color-border)] px-4 py-3 text-left text-[15px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
-            >
-              Добавь задачу — время можно назначить позже
-            </button>
+            >{tx("Добавь задачу — время можно назначить позже")}</button>
           ) : (
             <div className="flex flex-wrap gap-2">
               {unscheduled.map((t) => (
@@ -494,7 +490,7 @@ export default function TimelineSchedule({
 
       {!compact && freeSlots.length > 0 && (
         <div className="mb-3">
-          <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">Свободно</p>
+          <p className="mb-1.5 text-[13px] font-semibold text-[var(--color-fg-dim)]">{tx("Свободно")}</p>
           <div className="flex flex-wrap gap-2">
             {freeSlots.map((g) => (
               <button
@@ -504,8 +500,7 @@ export default function TimelineSchedule({
               >
                 {fmtMin(g.from)}–{fmtMin(g.to)}
                 <span className="ml-1.5 text-[var(--color-muted)]">
-                  {Math.round((g.to - g.from) / 60 * 10) / 10} ч
-                </span>
+                  {Math.round((g.to - g.from) / 60 * 10) / 10}{tx(" ч")}</span>
               </button>
             ))}
           </div>
@@ -581,7 +576,7 @@ export default function TimelineSchedule({
                         {/* На телефоне пустой час молчит: тап по строке и так
                             добавляет задачу, а серая надпись в каждом часу
                             была главным шумом экрана. На десктопе — под курсором. */}
-                        {routine ?? <span className="hidden lg:inline">Добавить задачу</span>}
+                        {routine ?? <span className="hidden lg:inline">{tx("Добавить задачу")}</span>}
                       </button>
                     ) : (
                       rows.map((t) => (
@@ -607,7 +602,7 @@ export default function TimelineSchedule({
           onClick={() => setShowNight((v) => !v)}
           className="mt-2 w-full text-center text-[13px] text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
         >
-          {showNight ? "скрыть ночные часы" : "показать все 24 часа"}
+          {showNight ? tx("скрыть ночные часы") : tx("показать все 24 часа")}
         </button>
       )}
 
@@ -628,7 +623,7 @@ export default function TimelineSchedule({
       {!compact && fabVisible && keyboard === 0 && createPortal(
         <button
           onClick={() => openSheet(null)}
-          aria-label="Добавить задачу"
+          aria-label={tx("Добавить задачу")}
           className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-5 z-30 flex h-14 w-14 items-center justify-center rounded-full font-semibold text-white shadow-[0_10px_24px_-4px_rgba(0,0,0,0.5)] lg:bottom-8"
           style={{ background: "linear-gradient(155deg, var(--color-intelligence), color-mix(in srgb, var(--color-intelligence) 70%, black))" }}
         >
@@ -644,16 +639,14 @@ export default function TimelineSchedule({
       <Modal
         open={sheetOpen}
         onClose={closeSheet}
-        title={mode === "edit" ? (editingId ? "Задача" : "Новая задача") : undefined}
+        title={mode === "edit" ? (editingId ? tx("Задача") : tx("Новая задача")) : undefined}
         headerAction={
           mode === "view" && (
             <button
               type="button"
               onClick={() => setMode("edit")}
               className="press shrink-0 rounded-xl bg-[var(--color-surface-2)] px-3.5 py-2 text-[15px] font-semibold transition hover:bg-[var(--color-border)]"
-            >
-              Изменить
-            </button>
+            >{tx("Изменить")}</button>
           )
         }
       >
@@ -682,7 +675,7 @@ export default function TimelineSchedule({
                   className="mt-0.5 text-[12px] font-bold uppercase tracking-wide"
                   style={{ color: STATS[viewCategory.stat].color }}
                 >
-                  {STATS[viewCategory.stat].label}
+                  {tx(STATS[viewCategory.stat].label)}
                   {viewCategory.subLabel ? ` · ${viewCategory.subLabel}` : ""}
                 </p>
               </div>
@@ -696,7 +689,7 @@ export default function TimelineSchedule({
 
             <div className="grid grid-cols-3 gap-2">
               <ViewMeta
-                label="Час"
+                label={tx("Час")}
                 value={
                   viewingTodo.hour != null
                     ? `${String(viewingTodo.hour).padStart(2, "0")}:${String(viewingTodo.minute ?? 0).padStart(2, "0")}`
@@ -704,8 +697,8 @@ export default function TimelineSchedule({
                 }
               />
               {/* «Длится», а не «Длительность»: длинная подпись вылезала из плитки на 390px. */}
-              <ViewMeta label="Длится" value={fmtDuration(viewingTodo.duration ?? 60)} />
-              <ViewMeta label="Важность" value={PRIORITY_LABEL[viewingTodo.priority]} />
+              <ViewMeta label={tx("Длится")} value={fmtDuration(viewingTodo.duration ?? 60)} />
+              <ViewMeta label={tx("Важность")} value={tx(PRIORITY_LABEL[viewingTodo.priority])} />
             </div>
 
             <div
@@ -721,8 +714,7 @@ export default function TimelineSchedule({
                 <p className="text-[16px] font-bold" style={{ color: STATS[viewCategory.stat].color }}>
                   +{viewXp} XP
                 </p>
-                <p className="text-[13px] text-[var(--color-fg-dim)]">
-                  в {STATS[viewCategory.stat].label.toLowerCase()}
+                <p className="text-[13px] text-[var(--color-fg-dim)]">{tx("в ")}{tx(STATS[viewCategory.stat].label.toLowerCase())}
                 </p>
               </div>
             </div>
@@ -732,15 +724,13 @@ export default function TimelineSchedule({
                 <YgIcon name="flame" className="h-4 w-4 text-[var(--color-strength)]" />
               </span>
               <p className="text-[15px] font-medium text-[var(--color-fg-dim)]">
-                {dayActive ? "Этот день уже в серии" : "Выполнение закроет этот день в серию"}
+                {dayActive ? tx("Этот день уже в серии") : tx("Выполнение закроет этот день в серию")}
               </p>
             </div>
 
             <div>
               <div className="mb-1.5 flex items-baseline justify-between">
-                <span className="text-[13px] font-semibold text-[var(--color-fg-dim)]">
-                  Покрытие дня
-                </span>
+                <span className="text-[13px] font-semibold text-[var(--color-fg-dim)]">{tx("Покрытие дня")}</span>
                 <span className="text-[13px] font-bold tabular-nums">{viewPercent}%</span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
@@ -749,9 +739,7 @@ export default function TimelineSchedule({
                   style={{ width: `${viewPercent}%`, background: STATS[viewCategory.stat].color }}
                 />
               </div>
-              <p className="mt-1.5 text-[12px] leading-snug text-[var(--color-muted)]">
-                Чем важнее задача, тем больше её вклад в закрытие дня.
-              </p>
+              <p className="mt-1.5 text-[12px] leading-snug text-[var(--color-muted)]">{tx("Чем важнее задача, тем больше её вклад в закрытие дня.")}</p>
             </div>
 
             <Button
@@ -759,7 +747,7 @@ export default function TimelineSchedule({
               className="w-full"
               onClick={() => toggleTodo(viewingTodo.id, day)}
             >
-              {isTodoDone(viewingTodo, day) ? "Снять отметку" : "Отметить выполненным"}
+              {isTodoDone(viewingTodo, day) ? tx("Снять отметку") : tx("Отметить выполненным")}
             </Button>
             {/* Отмена одного дня повтора: пару сняли на этой неделе, но
                 ритм и история выполнений должны остаться. */}
@@ -770,9 +758,7 @@ export default function TimelineSchedule({
                   skipTodoDay(viewingTodo.id, day, true);
                   closeSheet();
                 }}
-              >
-                Отменить в этот день
-              </Button>
+              >{tx("Отменить в этот день")}</Button>
             )}
           </div>
         ) : (
@@ -780,7 +766,7 @@ export default function TimelineSchedule({
           <input
             value={fTitle}
             onChange={(e) => setFTitle(e.target.value)}
-            placeholder="Например: созвон с командой"
+            placeholder={tx("Например: созвон с командой")}
             maxLength={80}
             autoFocus
             className="h-12 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 text-[16px] outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
@@ -790,7 +776,7 @@ export default function TimelineSchedule({
             <div>
               {/* Связка колоды с планом: взятое действие ставится на час
                   одним нажатием, а не переписывается руками. */}
-              <SheetLabel>Из взятого сегодня</SheetLabel>
+              <SheetLabel>{tx("Из взятого сегодня")}</SheetLabel>
               <div className="flex flex-wrap gap-2">
                 {takenActions.map((title) => (
                   <button
@@ -807,11 +793,11 @@ export default function TimelineSchedule({
           )}
 
           <div>
-            <SheetLabel>Заметка (необязательно)</SheetLabel>
+            <SheetLabel>{tx("Заметка (необязательно)")}</SheetLabel>
             <textarea
               value={fNote}
               onChange={(e) => setFNote(e.target.value)}
-              placeholder="Подробности, которые не влезли в название"
+              placeholder={tx("Подробности, которые не влезли в название")}
               maxLength={1000}
               rows={3}
               className="w-full resize-none rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-4 py-3 text-[15px] leading-snug outline-none placeholder:text-[var(--color-muted)] focus:border-[var(--color-fg-dim)]"
@@ -819,7 +805,7 @@ export default function TimelineSchedule({
           </div>
 
           <div>
-            <SheetLabel>Важность</SheetLabel>
+            <SheetLabel>{tx("Важность")}</SheetLabel>
             <div className="grid grid-cols-3 gap-1.5">
               {PRIORITY_ORDER.map((p) => (
                 <button
@@ -836,14 +822,14 @@ export default function TimelineSchedule({
                     className="h-3 w-3 rounded-full"
                     style={{ background: PRIORITY_COLOR[p] }}
                   />
-                  {PRIORITY_LABEL[p]}
+                  {tx(PRIORITY_LABEL[p])}
                 </button>
               ))}
             </div>
           </div>
 
           <div>
-            <SheetLabel>Час</SheetLabel>
+            <SheetLabel>{tx("Час")}</SheetLabel>
             <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
               <button
                 onClick={() => setFHour(undefined)}
@@ -853,9 +839,7 @@ export default function TimelineSchedule({
                     ? "border-[var(--color-fg)] bg-[var(--color-surface-2)]"
                     : "border-[var(--color-border)] text-[var(--color-muted)]",
                 )}
-              >
-                Без часа
-              </button>
+              >{tx("Без часа")}</button>
               {ALL_HOURS.map((h) => (
                 <button
                   key={h}
@@ -875,7 +859,7 @@ export default function TimelineSchedule({
 
           {fHour !== undefined && (
             <div>
-              <SheetLabel>Минуты</SheetLabel>
+              <SheetLabel>{tx("Минуты")}</SheetLabel>
               <div className="grid grid-cols-6 gap-1.5">
                 {MINUTE_OPTIONS.map((m) => (
                   <button
@@ -896,7 +880,7 @@ export default function TimelineSchedule({
           )}
 
           <div>
-            <SheetLabel>Длительность</SheetLabel>
+            <SheetLabel>{tx("Длительность")}</SheetLabel>
             <div className="grid grid-cols-4 gap-1.5">
               {DURATION_OPTIONS.map((d) => (
                 <button
@@ -922,26 +906,20 @@ export default function TimelineSchedule({
               onChange={(e) => setFDone(e.target.checked)}
               className="h-4 w-4 rounded accent-[var(--color-fg)]"
             />
-            <span className="text-[15px] text-[var(--color-fg-dim)]">Выполнено</span>
+            <span className="text-[15px] text-[var(--color-fg-dim)]">{tx("Выполнено")}</span>
           </label>
 
           <div className="flex gap-2.5 pt-1">
             {editingId && (
-              <Button variant="danger" onClick={deleteSheet}>
-                Удалить
-              </Button>
+              <Button variant="danger" onClick={deleteSheet}>{tx("Удалить")}</Button>
             )}
-            <Button className="flex-1" onClick={closeSheet}>
-              Отмена
-            </Button>
+            <Button className="flex-1" onClick={closeSheet}>{tx("Отмена")}</Button>
             <Button
               variant="primary"
               className="flex-1"
               disabled={!fTitle.trim()}
               onClick={saveSheet}
-            >
-              Сохранить
-            </Button>
+            >{tx("Сохранить")}</Button>
           </div>
         </div>
         )}
@@ -1011,6 +989,7 @@ function TimelineChip({
   onToggleDone: () => void;
   onOpen: () => void;
 }) {
+  const tx = useCopy();
   const cat = categorizeTodo(todo.title);
   const statColor = STATS[cat.stat].color;
   // onTap стреляет по времени нажатия, а не по расстоянию — быстрый свайп
@@ -1095,7 +1074,7 @@ function TimelineChip({
           className="mt-0.5 truncate text-[13px] font-bold uppercase tracking-wide"
           style={{ color: statColor }}
         >
-          {STATS[cat.stat].label}
+          {tx(STATS[cat.stat].label)}
           {cat.subLabel ? ` · ${cat.subLabel}` : ""}
         </p>
       </div>
@@ -1107,7 +1086,7 @@ function TimelineChip({
           e.stopPropagation();
           onToggleDone();
         }}
-        aria-label={done ? "Снять отметку о выполнении" : "Отметить выполненным"}
+        aria-label={done ? tx("Снять отметку о выполнении") : tx("Отметить выполненным")}
         className="relative -m-2 flex h-11 w-11 shrink-0 items-center justify-center"
       >
         <span

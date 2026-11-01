@@ -1,4 +1,6 @@
 "use client";
+import { useCopy } from "@/i18n/useCopy";
+
 /**
  * Плеер короткого видео: вертикальный кадр 9:16 рисуется на canvas по
  * сценарию и времени озвучки. Та же функция кадра пишет ролик в файл
@@ -135,6 +137,7 @@ const pickMime = () =>
   ["video/mp4;codecs=avc1,mp4a.40.2", "video/mp4", "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"].find((m) => typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(m));
 
 export default function VideoPlayer({ view, title }: { view: VideoView; title: string }) {
+  const tx = useCopy();
   const canvas = useRef<HTMLCanvasElement>(null);
   const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -190,7 +193,7 @@ export default function VideoPlayer({ view, title }: { view: VideoView; title: s
     if (e.key === " " || e.key === "k") { e.preventDefault(); toggle(); }
     else if (e.key === "ArrowRight") { e.preventDefault(); seek(time + 5); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); seek(time - 5); }
-    else if (e.key === "c" || e.key === "с") setCaptions((v) => !v);
+    else if (e.key === "c" || e.key === tx("с")) setCaptions((v) => !v);
   };
 
   const current = view.cues.findIndex((c) => time >= c.start && time < c.end);
@@ -199,7 +202,7 @@ export default function VideoPlayer({ view, title }: { view: VideoView; title: s
   async function exportVideo() {
     setExportError("");
     const mime = pickMime();
-    if (!mime || !src) return setExportError("Этот браузер не умеет записывать видео. Попробуй Chrome или Safari.");
+    if (!mime || !src) return setExportError(tx("Этот браузер не умеет записывать видео. Попробуй Chrome или Safari."));
     const out = document.createElement("canvas");
     out.width = 720;
     out.height = 1280;
@@ -244,7 +247,7 @@ export default function VideoPlayer({ view, title }: { view: VideoView; title: s
         setTimeout(() => URL.revokeObjectURL(a.href), 30_000);
       }
     } catch {
-      setExportError("Не удалось записать видео. Попробуй ещё раз или скачай субтитры отдельно.");
+      setExportError(tx("Не удалось записать видео. Попробуй ещё раз или скачай субтитры отдельно."));
     } finally {
       setRecording(null);
       void ac.close();
@@ -254,40 +257,40 @@ export default function VideoPlayer({ view, title }: { view: VideoView; title: s
   return (
     <div className="path-video" onKeyDown={onKey}>
       <div className="path-stack">
-        <canvas ref={canvas} width={720} height={1280} tabIndex={0} role="img" aria-label={`Видео: ${title}. Пробел — пауза, стрелки — перемотка, C — субтитры`} onClick={toggle} />
+        <canvas ref={canvas} width={720} height={1280} tabIndex={0} role="img" aria-label={tx("Видео: {0}. Пробел — пауза, стрелки — перемотка, C — субтитры", {"0": title})} onClick={toggle} />
         <audio ref={audio} src={src} preload="auto" onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)} onEnded={() => setPlaying(false)} onSeeked={render} onLoadedData={render} />
-        <input type="range" min={0} max={view.seconds} step={0.1} value={time} onChange={(e) => seek(Number(e.target.value))} aria-label="Перемотка" />
+        <input type="range" min={0} max={view.seconds} step={0.1} value={time} onChange={(e) => seek(Number(e.target.value))} aria-label={tx("Перемотка")} />
         <div className="path-video-controls">
-          <button className="path-btn small" onClick={toggle}>{playing ? "Пауза" : "Смотреть"}</button>
-          <button className="path-btn ghost small" onClick={() => seek(time - 5)} aria-label="Назад на 5 секунд">−5 с</button>
-          <button className="path-btn ghost small" onClick={() => seek(time + 5)} aria-label="Вперёд на 5 секунд">+5 с</button>
-          <select className="path-btn ghost small" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} aria-label="Скорость">
+          <button className="path-btn small" onClick={toggle}>{playing ? tx("Пауза") : tx("Смотреть")}</button>
+          <button className="path-btn ghost small" onClick={() => seek(time - 5)} aria-label={tx("Назад на 5 секунд")}>{tx("−5 с")}</button>
+          <button className="path-btn ghost small" onClick={() => seek(time + 5)} aria-label={tx("Вперёд на 5 секунд")}>{tx("+5 с")}</button>
+          <select className="path-btn ghost small" value={speed} onChange={(e) => setSpeed(Number(e.target.value))} aria-label={tx("Скорость")}>
             {SPEEDS.map((s) => <option key={s} value={s}>{s}×</option>)}
           </select>
-          <button className="path-btn ghost small" aria-pressed={captions} onClick={() => setCaptions((v) => !v)}>{captions ? "Субтитры: вкл" : "Субтитры: выкл"}</button>
+          <button className="path-btn ghost small" aria-pressed={captions} onClick={() => setCaptions((v) => !v)}>{captions ? tx("Субтитры: вкл") : tx("Субтитры: выкл")}</button>
         </div>
-        <span className="path-muted">{Math.floor(time)} / {Math.round(view.seconds)} с · голос сгенерирован ИИ</span>
+        <span className="path-muted">{Math.floor(time)} / {Math.round(view.seconds)}{tx(" с · голос сгенерирован ИИ")}</span>
       </div>
       <div className="path-stack">
         <div className="path-tabs" role="tablist">
-          <button role="tab" aria-selected={panel === "transcript"} onClick={() => setPanel("transcript")}>Расшифровка</button>
-          <button role="tab" aria-selected={panel === "sources"} onClick={() => setPanel("sources")}>Источники</button>
+          <button role="tab" aria-selected={panel === "transcript"} onClick={() => setPanel("transcript")}>{tx("Расшифровка")}</button>
+          <button role="tab" aria-selected={panel === "sources"} onClick={() => setPanel("sources")}>{tx("Источники")}</button>
         </div>
         {panel === "transcript" ? (
           <>
-            <input className="path-field" style={{ marginTop: 0 }} value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Поиск по расшифровке" aria-label="Поиск по расшифровке" />
+            <input className="path-field" style={{ marginTop: 0 }} value={query} onChange={(e) => setQuery(e.target.value)} placeholder={tx("Поиск по расшифровке")} aria-label={tx("Поиск по расшифровке")} />
             <div className="path-transcript" data-no-i18n>
               {shown.map((c) => (
                 <button key={c.i} aria-current={c.i === current} onClick={() => seek(c.start + 0.01)}>
                   <span className="path-muted">{Math.floor(c.start / 60)}:{String(Math.floor(c.start % 60)).padStart(2, "0")} </span>{c.text}
                 </button>
               ))}
-              {!shown.length && <p className="path-muted">Ничего не нашлось</p>}
+              {!shown.length && <p className="path-muted">{tx("Ничего не нашлось")}</p>}
             </div>
           </>
         ) : (
           <div className="path-transcript">
-            <p className="path-muted">Каждое предложение видео опирается на абзац юнита. Сценарий сверен с ними до озвучки.</p>
+            <p className="path-muted">{tx("Каждое предложение видео опирается на абзац юнита. Сценарий сверен с ними до озвучки.")}</p>
             {view.sources.map((p, i) => (
               <p key={i} data-no-i18n style={{ padding: 6, borderRadius: 10, background: view.cues[current]?.ref === i ? "var(--companion-blue)" : undefined }}>
                 <b>¶{i + 1}</b> {p.replace(/\*\*/g, "")}
@@ -296,18 +299,18 @@ export default function VideoPlayer({ view, title }: { view: VideoView; title: s
           </div>
         )}
         <div className="path-row">
-          <a className="path-btn ghost small" href={`/api/path/videos/${view.id}/captions`} download={`${title.slice(0, 40)}.vtt`}>Субтитры .vtt</a>
+          <a className="path-btn ghost small" href={`/api/path/videos/${view.id}/captions`} download={`${title.slice(0, 40)}.vtt`}>{tx("Субтитры .vtt")}</a>
           {recording === null ? (
-            <button className="path-btn ghost small" onClick={exportVideo}>Скачать видео</button>
+            <button className="path-btn ghost small" onClick={exportVideo}>{tx("Скачать видео")}</button>
           ) : (
             <>
-              <span className="path-muted" role="status">Записываем видео… {recording}%</span>
-              <button className="path-btn ghost small" onClick={() => (cancel.current = true)}>Отмена</button>
+              <span className="path-muted" role="status">{tx("Записываем видео… ")}{recording}%</span>
+              <button className="path-btn ghost small" onClick={() => (cancel.current = true)}>{tx("Отмена")}</button>
             </>
           )}
         </div>
         {exportError && <p className="path-error" role="alert">{exportError}</p>}
-        {recording !== null && <p className="path-muted">Запись идёт в реальном времени — не закрывай вкладку.</p>}
+        {recording !== null && <p className="path-muted">{tx("Запись идёт в реальном времени — не закрывай вкладку.")}</p>}
       </div>
     </div>
   );

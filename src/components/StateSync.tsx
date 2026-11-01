@@ -1,5 +1,6 @@
 "use client";
 
+import { reportDiagnostic } from "@/lib/clientDiagnostics";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { getUserId } from "@/lib/userId";
@@ -55,7 +56,9 @@ export default function StateSync() {
       again = !sameSnapshot(merged, next.data);
       syncStatus.markPulled();
     }
+    const settled = () => again ? syncStatus.queue() : syncStatus.markSynced();
     async function exchange() {
+      if (!navigator.onLine) { syncStatus.setOnline(false); return; }
       syncStatus.begin();
       try {
         let local = pickSync(useUserStore.getState());
@@ -67,11 +70,11 @@ export default function StateSync() {
           local = pickSync(useUserStore.getState());
           if (remote.data && !hasProgress(local)) {
             accept(remote, local);
-            syncStatus.markSynced();
+            settled();
             return;
           }
           // No base: merge conservatively on the server; never assume a missing task was deleted.
-          if (!remote.data && !hasProgress(local)) { syncStatus.markSynced(); return; }
+          if (!remote.data && !hasProgress(local)) { settled(); return; }
         } else if (sameSnapshot(local, checkpoint.data)) {
           const response = await request(`/api/state?userId=${encodeURIComponent(userId!)}&revision=${checkpoint.revision}`);
           if (!response.ok) throw new Error("Read failed");
@@ -79,10 +82,10 @@ export default function StateSync() {
           if (controller.signal.aborted) return;
           if (remote.unchanged) {
             again = !sameSnapshot(pickSync(useUserStore.getState()), checkpoint.data);
-            syncStatus.markSynced(); return;
+            settled(); return;
           }
           if (remote.data) {
-            accept(remote, local); syncStatus.markSynced(); return;
+            accept(remote, local); settled(); return;
           }
           // Server was restored/reset: re-upload the local snapshot.
           checkpoint = null;
@@ -96,14 +99,14 @@ export default function StateSync() {
         if (!remote.data || !Number.isSafeInteger(remote.revision)) throw new Error("Invalid response");
         if (controller.signal.aborted) return;
         accept(remote, local);
-        syncStatus.markSynced();
+        settled();
         const s = useUserStore.getState();
         if (s.onboarded) {
           const xp = selectTotalXp(s.plan, s.todos);
           void request("/api/social", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: s.name, xp, level: getLevelProgress(xp).level, streak: selectStreak(s.plan, s.freezes.days, s.todos) }) }).catch(() => {});
         }
       } catch {
-        if (!controller.signal.aborted) syncStatus.fail();
+        if (!controller.signal.aborted) { syncStatus.fail(); reportDiagnostic("sync_failure", "network", "/api/state"); }
         // No tight retry loop during an outage. Online/focus/poll or edits retry.
         again = false;
       }
@@ -118,11 +121,18 @@ export default function StateSync() {
     }
     const unsubscribe = useUserStore.subscribe((s, prev) => {
       if (applying || s.updatedAt === prev.updatedAt) return;
+      syncStatus.queue();
+      queueMicrotask(() => {
+        try { const saved = JSON.parse(localStorage.getItem("yeahdays-store") ?? "null"); syncStatus.setStorageError(saved?.state?.updatedAt !== useUserStore.getState().updatedAt); } catch { syncStatus.setStorageError(true); }
+      });
       clearTimeout(timer);
       timer = setTimeout(() => void sync(), 1500);
     });
     const visible = () => { if (document.visibilityState === "visible") void sync(); };
-    const online = () => { void sync(); };
+    const online = () => { syncStatus.setOnline(true); void sync(); };
+    const offline = () => { syncStatus.setOnline(false); };
+    syncStatus.setOnline(navigator.onLine);
+    window.addEventListener("offline", offline);
     const poll = setInterval(visible, 45_000);
     window.addEventListener("online", online);
     document.addEventListener("visibilitychange", visible);
@@ -131,6 +141,7 @@ export default function StateSync() {
     return () => {
       controller.abort(); unsubscribe(); clearTimeout(timer); clearInterval(poll);
       window.removeEventListener("online", online);
+      window.removeEventListener("offline", offline);
       document.removeEventListener("visibilitychange", visible);
       syncStatus.setSyncNow(null);
     };

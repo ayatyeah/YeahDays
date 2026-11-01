@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
 import { dailyLimit } from "@/lib/aiLimit";
 import { aiSchema, parseAiResult, validDate } from "@/lib/aiPlanner";
+import { withImageWork, ImageBusyError } from "@/lib/imageWork";
 import sharp from "@/lib/serverImage";
 import { recordAiUsage } from "@/lib/aiUsage";
 
@@ -38,12 +39,12 @@ export async function POST(req: Request) {
       if (typeof body.image !== "string" || !/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(body.image)) throw new Error("Нужен скрин PNG, JPEG или WebP");
       const buffer = Buffer.from(body.image.split(",")[1], "base64");
       if (buffer.length > 5_000_000) throw new Error("Максимальный размер скрина — 5 МБ");
-      const normalized = await sharp(buffer, { limitInputPixels: 20_000_000 }).rotate().resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true }).png().toBuffer();
+      const normalized = await withImageWork(() => sharp(buffer, { limitInputPixels: 20_000_000 }).rotate().resize({ width: 2400, height: 2400, fit: "inside", withoutEnlargement: true }).png().toBuffer());
       image = `data:image/png;base64,${normalized.toString("base64")}`;
     }
     if (body.mode === "schedule" && !image && !body.text.trim()) throw new Error("Добавь скрин или текст расписания");
     if (body.mode === "tasks" && !body.text.trim()) throw new Error("Напиши, какие задачи добавить");
-  } catch (e) { return NextResponse.json({ error: e instanceof Error && !e.message.includes("JSON") ? e.message.slice(0, 160) : "Не удалось прочитать запрос" }, { status: 400 }); }
+  } catch (e) { if (e instanceof ImageBusyError) return NextResponse.json({ error: e.message }, { status: 503, headers: { "Retry-After": "5" } }); return NextResponse.json({ error: e instanceof Error && !e.message.includes("JSON") ? e.message.slice(0, 160) : "Не удалось прочитать запрос" }, { status: 400 }); }
   try {
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST", signal: AbortSignal.timeout(60_000),

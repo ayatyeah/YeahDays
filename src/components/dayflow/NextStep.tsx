@@ -19,6 +19,8 @@ import {
   taskLearningHref,
   type StudyChoice,
 } from "@/lib/dayFlow";
+import { TODO_PRIORITY_XP } from "@/lib/todoCategory";
+import { YgIcon } from "@/components/yg-icons";
 import { learningVisitKey } from "@/lib/learningEvents";
 import { useNavStore } from "@/store/useNavStore";
 import "./dayflow.css";
@@ -122,35 +124,13 @@ export default function NextStep({
       .every((t) => isTodoDone(t, ctx.day));
   const lessonHref = taskLearningHref(ctx.current?.note ?? task?.note);
   const occupied = !!ctx.current || ctx.budget < 5;
+  const duration = task ? task.duration : study ? study.minutes : deckTask?.snapshot.duration;
   const waiting = learningLoading && !task && !deckTask && !study && !occupied;
   return (
     <section data-no-i18n className="flow-next" aria-label={t("flow.next")} >
-      <div className="flow-topline">
-        <span>{t("flow.now")}</span>
-        <Link href="/calendar">{t("flow.schedule")}</Link>
-      </div>
-      <div className="polish-settings">
-        <select aria-label={t("flow.energy")}  value={energy}
-          onChange={(e) => useUserStore.getState().setSlotEnergy(currentSlot(), e.target.value as EnergyLevel)}>
-          <option value="low">{t("flow.low")}</option>
-          <option value="medium">{t("flow.medium")}</option>
-          <option value="high">{t("flow.high")}</option>
-        </select>
-        <select aria-label={t("flow.time")}  value={minutes}
-          onChange={(e) => setMinutes(Number(e.target.value))}>
-          {[5, 15, 25].map((n) => <option key={n} value={n}>{t("flow.minutes", { count: n })}</option>)}
-        </select>
-      </div>
-      <div className="flow-suggestion" aria-live="polite">
-        <small>
-          {occupied
-            ? t("flow.occupied")
-            : energy === "low"
-              ? t("flow.pace")
-              : ctx.next
-                ? t("flow.window")
-                : t("flow.one")}
-        </small>
+      <div className="flow-suggestion prime-hero" aria-live="polite">
+        <div className="prime-hero-copy">
+        <span className="prime-eyebrow">{t("prime.next")}</span>
         <h2>
           {waiting
             ? t("flow.loading")
@@ -166,7 +146,7 @@ export default function NextStep({
                       ? t("flow.done")
                       : t("flow.begin")}
         </h2>
-        <p>
+        {(occupied || !task || urgent || (task.duration ?? 0) > ctx.budget) && <p>
           {occupied
             ? t("flow.rest")
             : task
@@ -174,7 +154,7 @@ export default function NextStep({
                 ? t("flow.large")
                 : urgent
                   ? t("flow.urgent")
-                  : t("flow.chosen")
+                  : t("prime.fromPlan")
               : study
                 ? study.detail
                 : deckTask
@@ -182,13 +162,23 @@ export default function NextStep({
                   : allDone
                     ? t("flow.enough")
                     : t("flow.addHint")}
-        </p>
+        </p>}
         {ctx.next && !occupied && (
           <p className="flow-context">
             {ctx.next.title} · {String(ctx.next.hour).padStart(2, "0")}:
             {String(ctx.next.minute ?? 0).padStart(2, "0")}
           </p>
         )}
+        {!occupied && !!duration && <span className="prime-task-meta">
+          {t("flow.minutes", { count: duration! })}
+        </span>}
+        {!occupied && (task || deckTask) && <span className="prime-reward"><YgIcon name="star" />+{task ? TODO_PRIORITY_XP[task.priority] : deckTask!.xp} XP</span>}
+        </div>
+        <div className="prime-hero-art" aria-hidden="true">
+          {/* Existing 47 KB WebP, no image transformation or extra API request. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/characters/skins/scholar.webp" alt="" width={1024} height={1536} fetchPriority="high" />
+        </div>
         {waiting ? (
           <button className="flow-primary" disabled aria-busy="true">
             {t("flow.loading")}
@@ -230,6 +220,21 @@ export default function NextStep({
           </small>
         )}
       </div>
+      <details className="prime-step-settings">
+        <summary>{t("prime.settings")}</summary>
+      <div className="polish-settings">
+        <select aria-label={t("flow.energy")}  value={energy}
+          onChange={(e) => useUserStore.getState().setSlotEnergy(currentSlot(), e.target.value as EnergyLevel)}>
+          <option value="low">{t("flow.low")}</option>
+          <option value="medium">{t("flow.medium")}</option>
+          <option value="high">{t("flow.high")}</option>
+        </select>
+        <select aria-label={t("flow.time")}  value={minutes}
+          onChange={(e) => setMinutes(Number(e.target.value))}>
+          {[5, 15, 25].map((n) => <option key={n} value={n}>{t("flow.minutes", { count: n })}</option>)}
+        </select>
+      </div>
+      </details>
       {ctx.deadline && (
         <Link className="flow-deadline" href="/calendar">
           <span>{t("flow.deadline")}</span>

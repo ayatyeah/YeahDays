@@ -1,5 +1,19 @@
 export const messages = {
   "ru": {
+    "prime.streak": "Серия: {count} дн.",
+    "prime.completed": "{done} из {total} задач",
+    "prime.dayProgress": "Выполнение плана дня",
+    "prime.level": "Уровень {level}",
+    "prime.remaining": "До уровня — {xp} XP",
+    "prime.levelProgress": "Прогресс уровня",
+    "prime.quest": "Тема {current} из {total}",
+    "prime.chooseSubject": "Выбери предмет и свой следующий шаг",
+    "prime.plan": "План на день",
+    "prime.settings": "Настроить шаг",
+    "prime.next": "ТВОЙ СЛЕДУЮЩИЙ ШАГ",
+    "prime.fromPlan": "Из твоего плана",
+    "prime.openTask": "Открыть задачу: {title}",
+
     "nav.today": "Сегодня",
     "nav.pending": "{label}, незавершённых дел: {count}",
     "nav.learn": "Учёба",
@@ -100,6 +114,20 @@ export const messages = {
     "jobs.empty": "нет данных"
   },
   "en": {
+    "prime.streak": "Streak: {count} days",
+    "prime.completed": "{done} of {total} tasks",
+    "prime.dayProgress": "Daily plan progress",
+    "prime.level": "Level {level}",
+    "prime.remaining": "Next level — {xp} XP",
+    "prime.levelProgress": "Level progress",
+    "prime.quest": "Topic {current} of {total}",
+    "prime.chooseSubject": "Choose a subject and your next step",
+    "prime.plan": "Today’s plan",
+    "prime.settings": "Adjust next step",
+    "prime.next": "YOUR NEXT STEP",
+    "prime.fromPlan": "From your plan",
+    "prime.openTask": "Open task: {title}",
+
     "nav.today": "Today",
     "nav.pending": "{label}, unfinished tasks: {count}",
     "nav.learn": "Learn",
@@ -200,6 +228,20 @@ export const messages = {
     "jobs.empty": "no data"
   },
   "kk": {
+    "prime.streak": "Қатарынан: {count} күн",
+    "prime.completed": "{total} тапсырманың {done}-і",
+    "prime.dayProgress": "Күн жоспарының орындалуы",
+    "prime.level": "{level}-деңгей",
+    "prime.remaining": "Келесі деңгейге — {xp} XP",
+    "prime.levelProgress": "Деңгей ілгерілеуі",
+    "prime.quest": "{total} тақырыптың {current}-і",
+    "prime.chooseSubject": "Пән мен келесі қадамыңды таңда",
+    "prime.plan": "Күн жоспары",
+    "prime.settings": "Қадамды баптау",
+    "prime.next": "КЕЛЕСІ ҚАДАМЫҢ",
+    "prime.fromPlan": "Сенің жоспарыңнан",
+    "prime.openTask": "Тапсырманы ашу: {title}",
+
     "nav.today": "Бүгін",
     "nav.pending": "{label}, аяқталмаған істер: {count}",
     "nav.learn": "Оқу",

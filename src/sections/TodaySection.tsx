@@ -2,7 +2,7 @@
 import { useCopy } from "@/i18n/useCopy";
 
 import { useT } from "@/i18n/useT";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { taskLearningHref } from "@/lib/dayFlow";
 import dynamic from "next/dynamic";
@@ -10,7 +10,7 @@ const HomeSection = dynamic(() => import("./HomeSection"), { ssr: false });
 import NextStep from "@/components/dayflow/NextStep";
 import { haptic } from "@/lib/motion";
 import DaySupport from "@/components/mono/DaySupport";
-import CompanionHeader from "@/components/companion/CompanionHeader";
+import { TodayPrimeHeader, TodayPrimeLevel, TodayPrimeLearning } from "@/components/dayflow/TodayPrime";
 import TodoList from "@/components/TodoList";
 import PlanItem from "@/components/PlanItem";
 const TimelineSchedule = dynamic(() => import("@/components/TimelineSchedule"), { ssr: false });
@@ -37,7 +37,7 @@ import { useNavStore } from "@/store/useNavStore";
 
 export default function TodaySection() {
   const tx = useCopy();
-  const t = useT();
+  const msg = useT();
   const hydrated = useHydrated();
   const store = useUserStore();
   const go = useNavStore((s) => s.go);
@@ -45,7 +45,6 @@ export default function TodaySection() {
   const [toolsReady, setToolsReady] = useState(false);
   const [discoveryReady, setDiscoveryReady] = useState(false);
   function openPlanning() {
-    if (planRef.current) planRef.current.open = true;
     if (!planning.current) return;
     planning.current.open = true;
     planning.current
@@ -100,22 +99,13 @@ export default function TodaySection() {
       haptic("success");
     }
   }
-  /*
-   * «Мой план» раскрывается сам, как только в нём есть незакрытые свои
-   * задачи. Раньше он был свёрнут всегда, и задача, вписанная в онбординге,
-   * пряталась под колодой: «Мой план 0/1» — а самой задачи не видно. Взятое
-   * из колоды не считаем: оно и так стоит сверху как «Сейчас — только это».
-   * Раскрываем один раз и не сворачиваем обратно: иначе последняя
-   * закрытая задача складывала бы список прямо под пальцем.
-   */
-  const planRef = useRef<HTMLDetailsElement>(null);
-  const planOpened = useRef(false);
-  const hasOwnPending = personal.some((t) => !isTodoDone(t, day));
-  useEffect(() => {
-    if (planOpened.current || !hasOwnPending || !planRef.current) return;
-    planRef.current.open = true;
-    planOpened.current = true;
-  }, [hasOwnPending, hydrated]);
+  function openTask(id: string) {
+    setSelectedTask(id);
+    setSmallStep("");
+    requestAnimationFrame(() => document.getElementById("flow-task")?.scrollIntoView({
+      block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    }));
+  }
   const focused = personal.find(
     (t) => t.id === selectedTask && !isTodoDone(t, day),
   );
@@ -124,24 +114,11 @@ export default function TodaySection() {
   );
   if (!hydrated) return <TodaySkeleton />;
   return (
-    <div className="companion-today">
-      <CompanionHeader completed={completed} count={count} compact />
-      <NextStep
-        onTask={(id) => {
-          if (planRef.current) planRef.current.open = true;
-          setSelectedTask(id);
-          setSmallStep("");
-          requestAnimationFrame(() =>
-            document
-              .getElementById("flow-task")
-              ?.scrollIntoView({ block: "nearest", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" }),
-          );
-        }}
-        onCreate={openPlanning}
-      />
-      <details ref={planRef} className="one-action-plan">
-        <summary>{tx("Мой план ")}<span>{completed}/{count}</span></summary>
-
+    <div className="companion-today prime-today">
+      <TodayPrimeHeader completed={completed} count={count} />
+      <NextStep onTask={openTask} onCreate={openPlanning} />
+      <TodayPrimeLevel />
+      <section className="prime-plan" aria-label={msg("prime.plan")}>
       {focusedPlan && (
         <section id="flow-task" className="flow-task-detail">
           <h2>{focusedPlan.snapshot.title}</h2>
@@ -227,7 +204,7 @@ export default function TodaySection() {
       <div className="companion-day-layout">
         <div>
           <header className="companion-today-heading">
-            <h2>{tx("Мой план")}</h2>
+            <h2 data-no-i18n>{msg("prime.plan")}</h2>
             <button
               className="mono-add"
               onClick={openPlanning}
@@ -261,6 +238,7 @@ export default function TodaySection() {
                         : tx("Твой маленький шаг")}
                     </small>
                   </span>
+                  {!isTodoDone(t, day) && <button className="prime-task-open" aria-label={msg("prime.openTask", { title: t.title })} onClick={() => openTask(t.id)}><YgIcon name="chevron" /></button>}
                 </div>
               ))}
             {planned
@@ -282,6 +260,7 @@ export default function TodaySection() {
                     <b>{t.snapshot.title}</b>
                     <small>{t.xp}{tx(" XP · из колоды")}</small>
                   </span>
+                  {!t.completed && <button className="prime-task-open" aria-label={msg("prime.openTask", { title: t.snapshot.title })} onClick={() => openTask(t.id)}><YgIcon name="chevron" /></button>}
                 </div>
               ))}
             {count === 0 && (
@@ -342,6 +321,8 @@ export default function TodaySection() {
           </div>
         </section>
       )}
+          <TodayPrimeLearning />
+          <Link prefetch={false} className="prime-community" href="/community" data-no-i18n><YgIcon name="chat" />{msg("nav.community")}<YgIcon name="chevron" /></Link>
           {/* Просьба включить напоминания — сразу под списком, а не в
               свёрнутых «Расписании и инструментах»: она появляется, только
               когда впереди есть дело со временем, и там её никто не видел. */}
@@ -379,9 +360,9 @@ export default function TodaySection() {
           <EveningRetro />
         </aside>
       </div>
-      </details>
+      </section>
       <details className="one-action-discovery" onToggle={e => { if (e.currentTarget.open) setDiscoveryReady(true); }}>
-        <summary data-no-i18n>{t("flow.discover")}</summary>
+        <summary data-no-i18n>{msg("flow.discover")}</summary>
         {discoveryReady && <HomeSection embedded />}
       </details>
       <LevelUpOverlay />

@@ -11,7 +11,7 @@ export default function SyncIndicator() {
   const storageError = useSyncStatus(s => s.storageError);
   const retry = useSyncStatus(s => s.syncNow);
   const label = writeError ? "Не удалось сохранить — повтори действие" : storageError ? "Не удалось сохранить на устройстве" : !online ? "Нет сети — изменения на устройстве" : state === "error" ? "Не удалось отправить — повторить" : state === "synced" ? "Сохранено" : state === "idle" ? "Проверяем сохранение" : "Синхронизируем";
-  return <div className="sync-indicator" data-ui-i18n data-sync-state={!online ? "offline" : state}>
+  return <div className="sync-indicator" data-ui-i18n data-sync-state={writeError || storageError ? "error" : !online ? "offline" : state}>
     <span role="status" aria-live="polite" aria-atomic="true">{tx(label)}</span>
     {!writeError && state === "error" && online && <button type="button" onClick={() => void retry?.()}>{tx("Повторить")}</button>}
   </div>;

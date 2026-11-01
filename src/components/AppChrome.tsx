@@ -11,6 +11,7 @@ import "./mono/mono.css";
 import "./dayflow/dayflow.css";
 import "./capsule-nav.css";
 import "@/components/dayflow/polish.css";
+import "@/components/dayflow/prime.css";
 import StandaloneViewportFix from "./StandaloneViewportFix";
 import SyncIndicator from "./SyncIndicator";
 import BottomNav from "./BottomNav";
@@ -123,7 +124,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
               : "min-h-dvh pb-[calc(6rem+var(--install-offset,0px))] lg:pb-10",
           )}
         >
-          <SyncIndicator />
+          {pathname !== "/today" && <SyncIndicator />}
           {isSection ? (
             children
           ) : (

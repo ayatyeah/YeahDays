@@ -11,7 +11,6 @@ import { useEffect, useMemo } from "react";
 import { useKeyboardInset } from "@/lib/useKeyboardInset";
 import {
   LearnIcon,
-  CommunityIcon,
   HomeIcon,
   ProgressIcon,
   AccountIcon,
@@ -20,7 +19,6 @@ import {
 const NAV = [
   { tab: "today", label: "nav.today", Icon: HomeIcon },
   { tab: "learn", label: "nav.learn", Icon: LearnIcon },
-  { tab: "community", label: "nav.community", Icon: CommunityIcon },
   { tab: "progress", label: "nav.progress", Icon: ProgressIcon },
   { tab: "account", label: "nav.account", Icon: AccountIcon },
 ] as const;
@@ -87,9 +85,7 @@ export default function BottomNav() {
                 ? LEARN_PATHS.some(
                     (p) => pathname === p || pathname.startsWith(`${p}/`),
                   )
-                : key === "community"
-                  ? pathname === "/community"
-                  : section !== null && navKeyForTab(tab) === key;
+                : section !== null && navKeyForTab(tab) === key;
             const badge = key === "today" && pending > 0 ? pending : 0;
             return (
               <button
@@ -99,7 +95,7 @@ export default function BottomNav() {
                 // страниц возвращаемся через роутер Next.
                 onClick={() => {
                   if (!active) haptic("select");
-                  if (key === "learn" || key === "community")
+                  if (key === "learn")
                     router.push(`/${key}`);
                   else if (section === null) router.push(TAB_PATH[key]);
                   else go(key);

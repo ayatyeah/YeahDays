@@ -15,6 +15,8 @@ test('Надёжность: статус офлайн, повтор сохран
   await page.setViewportSize({ width: 320, height: 420 });
   check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'на узком экране с уменьшенной высотой нет переполнения');
   await page.getByRole('button', { name: '+', exact: true }).click();
+  await page.waitForFunction(title => JSON.parse(localStorage.getItem('yeahdays-store')).state.todos.some(t => t.title === title), title);
+  check(true, 'баннер после потери фокуса не перехватывает нажатие Добавить');
   await page.route('**/api/state', route => route.request().method() === 'PUT' ? route.fulfill({ status: 503, json: { error: 'temporary' } }) : route.continue());
   await context.setOffline(false);
   await page.locator('.sync-indicator').getByRole('button', { name: 'Повторить', exact: true }).waitFor();

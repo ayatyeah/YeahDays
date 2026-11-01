@@ -1,0 +1,100 @@
+/* Mobile Today: real progress, one clear action, quiet supporting controls. */
+.prime-today { --prime-plum: #70425f; --prime-soft: color-mix(in srgb, var(--color-surface), #b1799c 10%); max-width: 1080px; margin-inline: auto; }
+:root:not([data-theme="light"]) .prime-today { --prime-plum: #c294b2; }
+.prime-header { margin-bottom: 18px; }
+.prime-brand-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; margin-bottom: 22px; }
+.yg-app .prime-brand-row .mono-brand { margin: 0; font-size: 20px; gap: 8px; }
+.prime-brand-row .sync-indicator { flex: 0 1 auto; max-width: 100%; text-align: right; margin-left: auto; font-size: 11px; }
+.prime-brand-row .sync-indicator[data-sync-state="synced"] > span::before { content: '✓'; display: inline-grid; place-items: center; width: 17px; height: 17px; margin-right: 5px; border-radius: 50%; background: #669e7a; color: white; font-size: 11px; }
+.prime-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+.prime-title-row h1 { font-size: clamp(32px, 7vw, 40px); font-weight: 780; letter-spacing: -.045em; line-height: 1.1; }
+.prime-title-row p { color: var(--color-muted); font-size: 14px; margin-top: 5px; text-transform: capitalize; }
+.prime-calendar { display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 44px; border-radius: 12px; }
+.prime-calendar svg { width: 27px; height: 27px; }
+.prime-day-summary { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--color-border); border-radius: 15px; font-size: 12px; }
+.prime-day-summary > span { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.prime-day-summary b { font-weight: 550; }
+.prime-day-summary svg { width: 23px; height: 23px; flex-shrink: 0; color: #c86e38; fill: #edaf6730; }
+.prime-day-count { flex: 1; border-left: 1px solid var(--color-border); padding-left: 12px; flex-wrap: wrap; }
+.prime-today progress { appearance: none; border: 0; height: 6px; border-radius: 99px; overflow: hidden; background: var(--color-surface-2); }
+.prime-today progress::-webkit-progress-bar { background: var(--color-surface-2); border-radius: 99px; }
+.prime-today progress::-webkit-progress-value { background: var(--prime-plum); border-radius: 99px; }
+.prime-today progress::-moz-progress-bar { background: var(--prime-plum); border-radius: 99px; }
+.prime-day-count progress { flex: 1 1 35px; min-width: 35px; width: 45px; }
+.yg-app .prime-today .flow-next { margin-bottom: 12px; }
+.yg-app .prime-today .prime-hero { position: relative; isolation: isolate; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; gap: 14px; padding: 18px; overflow: hidden; border-radius: 24px; background: radial-gradient(ellipse at 90% 60%, #59364f, #211b22 65%); min-height: 220px; }
+.prime-hero-copy { width: 65%; min-width: 0; position: relative; z-index: 1; }
+.prime-eyebrow { display: block; font-size: 9px; letter-spacing: .08em; color: #d2c7d0; margin-bottom: 12px; }
+.yg-app .prime-today .prime-hero h2 { font-size: clamp(23px, 5.8vw, 29px); font-weight: 750; line-height: 1.12; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.yg-app .prime-today .prime-hero p { font-size: 12px; line-height: 1.5; margin-top: 9px; color: #d2c7d0; }
+.prime-task-meta { display: block; margin-top: 8px; color: #d2c7d0; font-size: 12px; }
+.prime-reward { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; border: 1px solid #a877954d; border-radius: 99px; padding: 4px 9px; background: #a877952b; color: #f6e5f0; font-size: 12px; }
+.prime-reward svg { width: 16px; height: 16px; color: #f1c577; fill: #f1c577; }
+.prime-hero-art { position: absolute; z-index: 0; width: 49%; height: calc(100% - 64px); right: -4%; bottom: 64px; overflow: hidden; pointer-events: none; }
+.prime-hero-art img { position: absolute; top: 10px; left: -25%; width: 150%; height: auto; max-width: none; }
+.yg-app .prime-today .prime-hero .flow-primary { z-index: 1; position: relative; width: 100%; min-height: 48px; justify-self: stretch; border-radius: 14px; background: #fcfafb; color: #231b22; font-size: 15px; }
+.prime-hero > small { position: relative; z-index: 1; }
+.prime-step-settings > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; justify-content: flex-end; color: var(--color-muted); font-size: 11px; gap: 6px; list-style: none; }
+.prime-step-settings > summary::after { content: '+'; font-size: 17px; }
+.prime-step-settings[open] > summary::after { content: '−'; }
+.prime-step-settings > summary::-webkit-details-marker { display: none; }
+.prime-level { display: block; border: 1px solid var(--color-border); padding: 13px 14px; border-radius: 15px; margin-bottom: 22px; }
+.prime-level > div { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.prime-level b { font-size: 15px; font-weight: 700; }
+.prime-level span { font-size: 11px; color: var(--color-muted); }
+.prime-level progress { display: block; width: 100%; }
+.yg-app .prime-today .companion-today-heading { margin: 0; min-height: 52px; display: flex; align-items: center; justify-content: space-between; }
+.yg-app .prime-today .companion-today-heading h2 { font-size: 23px; font-weight: 750; letter-spacing: -.03em; }
+.yg-app .prime-today .mono-add { border: 1px solid var(--color-border); background: var(--color-surface-2); color: var(--color-fg); border-radius: 50%; width: 44px; height: 44px; }
+.yg-app .prime-today .companion-task { padding: 10px 0; gap: 6px; min-height: 68px; }
+.yg-app .prime-today .companion-task b { font-size: 15px; font-weight: 550; }
+.yg-app .prime-today .companion-check:before { inset: 8px; border: 1.6px solid var(--color-fg); }
+.yg-app .prime-today .companion-check[aria-pressed="true"]:before { border-color: var(--prime-plum); background: var(--prime-plum); }
+.yg-app .prime-today .companion-check[aria-pressed="true"] svg { color: white; }
+.prime-task-open { width: 44px; min-height: 44px; flex: 0 0 44px; display: grid; place-items: center; color: var(--color-muted); border-radius: 10px; }
+.prime-task-open svg { width: 18px; height: 18px; }
+.yg-app .prime-today .companion-day-meter { padding: 8px 0; margin: 0; border: 0; background: transparent; }
+.prime-today .companion-day-meter > div, .prime-today .companion-day-meter > progress { display: none; }
+.prime-learning { display: flex; align-items: center; gap: 12px; border-radius: 17px; background: var(--prime-soft); padding: 14px; margin-top: 18px; min-height: 76px; }
+.prime-learning > span:nth-child(2) { min-width: 0; flex: 1; }
+.prime-learning b { display: block; font-size: 15px; font-weight: 700; }
+.prime-learning small { display: block; font-size: 12px; line-height: 1.4; color: var(--color-muted); margin-top: 4px; overflow-wrap: anywhere; }
+.prime-learning-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; flex-shrink: 0; background: color-mix(in srgb, var(--prime-plum), transparent 90%); color: var(--prime-plum); }
+.prime-learning-icon svg { width: 25px; height: 25px; }
+.prime-learning > svg { width: 18px; height: 18px; flex-shrink: 0; }
+.prime-community { display: flex; align-items: center; gap: 8px; min-height: 44px; color: var(--color-muted); font-size: 13px; margin-top: 8px; }
+.prime-community svg { width: 18px; height: 18px; }
+.prime-community svg:last-child { margin-left: auto; }
+/* Four labelled destinations remain readable on small phones. */
+.yg-app .yg-capsule .yg-capsule-tab { flex-direction: column; gap: 3px; height: 58px; padding: 5px 4px; }
+.yg-capsule-items { height: 58px; gap: 4px; }
+.yg-app .yg-capsule .yg-capsule-tab[aria-current="page"] { flex-grow: 1.25; }
+.yg-capsule-label, .yg-capsule-tab[aria-current="page"] .yg-capsule-label { display: block; opacity: 1; margin: 0; font-size: 10px; }
+.yg-capsule-label > span { white-space: normal; overflow-wrap: anywhere; }
+.yg-capsule-bar { border-radius: 32px; padding: 5px; }
+@media (max-width: 360px) {
+  .prime-brand-row { margin-bottom: 18px; }
+  .yg-app .prime-brand-row .mono-brand { font-size: 18px; }
+  .prime-day-summary { gap: 8px; padding: 10px; font-size: 11px; }
+  .prime-day-count { padding-left: 8px; }
+  .prime-day-count progress { display: none; }
+  .yg-app .prime-today .prime-hero { padding: 16px; }
+  .prime-hero-copy { width: 69%; }
+  .prime-hero-art { right: -10%; opacity: .8; }
+}
+@media (min-width: 1024px) {
+  .prime-header { margin-bottom: 24px; }
+  .prime-brand-row { margin-bottom: 28px; }
+  .prime-day-summary { max-width: 520px; font-size: 14px; padding: 14px 18px; }
+  .prime-title-row h1 { font-size: 42px; }
+  .yg-app .prime-today .prime-hero { min-height: 300px; padding: 30px; }
+  .yg-app .prime-today .prime-hero h2 { font-size: 38px; max-width: 24ch; }
+  .yg-app .prime-today .prime-hero p { font-size: 15px; max-width: 45ch; }
+  .prime-hero-art { width: 270px; right: 30px; height: calc(100% - 80px); bottom: 80px; }
+  .prime-hero-art img { top: 14px; left: 0; width: 100%; }
+  .prime-eyebrow { font-size: 11px; }
+  .prime-level { padding: 18px 22px; }
+  .prime-level span { font-size: 13px; }
+  .prime-level b { font-size: 18px; }
+  .yg-app .prime-today .companion-day-layout { grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr); gap: 32px; }
+}

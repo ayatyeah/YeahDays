@@ -235,6 +235,8 @@ export async function openSection(page, path) {
  * открыт сам, и слепой клик по заголовку его бы как раз закрыл.
  */
 export async function openPlan(scope) {
+  // Prime Today keeps the plan visible; legacy shells still use details.
+  if (await scope.locator(".prime-plan").isVisible()) return;
   const plan = scope.locator(".one-action-plan");
   await plan.waitFor();
   if (!(await plan.evaluate((el) => el.open))) await plan.locator(":scope > summary").click();

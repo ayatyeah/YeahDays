@@ -56,3 +56,4 @@ jobs:
           node e2e/run.mjs Качество
           node e2e/run.mjs Надёжность
           node e2e/run.mjs Языки
+          node e2e/run.mjs Прайм

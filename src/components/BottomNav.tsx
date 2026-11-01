@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/useT";
 
 import { usePathname, useRouter } from "next/navigation";
 import { haptic } from "@/lib/motion";
@@ -17,17 +18,18 @@ import {
 } from "@/components/nav-icons";
 
 const NAV = [
-  { tab: "today", label: "Сегодня", Icon: HomeIcon },
-  { tab: "learn", label: "Учёба", Icon: LearnIcon },
-  { tab: "community", label: "Вместе", Icon: CommunityIcon },
-  { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
-  { tab: "account", label: "Профиль", Icon: AccountIcon },
+  { tab: "today", label: "nav.today", Icon: HomeIcon },
+  { tab: "learn", label: "nav.learn", Icon: LearnIcon },
+  { tab: "community", label: "nav.community", Icon: CommunityIcon },
+  { tab: "progress", label: "nav.progress", Icon: ProgressIcon },
+  { tab: "account", label: "nav.account", Icon: AccountIcon },
 ] as const;
 
 /** Подразделы «Учёбы»: вкладка остаётся подсвеченной и внутри них. */
 const LEARN_PATHS = ["/learn", "/events", "/challenge30"];
 
 export default function BottomNav() {
+  const t = useT();
   const pathname = usePathname();
   const router = useRouter();
   const section = tabFromPath(pathname);
@@ -53,7 +55,7 @@ export default function BottomNav() {
       clearAppBadge?: () => Promise<void>;
     };
     if (!n.setAppBadge) return;
-    void (pending > 0 ? n.setAppBadge(pending) : n.clearAppBadge?.()).catch(
+    void (pending > 0 ? n.setAppBadge(pending) : n.clearAppBadge?.())?.catch(
       () => {},
     );
   }, [pending]);
@@ -72,9 +74,9 @@ export default function BottomNav() {
   if (keyboard > 0) return null;
 
   return (
-    <nav
+    <nav data-no-i18n
       className="yg-bottom-nav yg-capsule pointer-events-none fixed inset-x-0 z-40 lg:hidden"
-      aria-label="Основная навигация"
+      aria-label={t("nav.main")}
       style={{ top: "var(--app-bottom, 100dvh)", bottom: "auto", transform: "translateY(-100%)" }}
     >
       <div className="pointer-events-auto yg-capsule-bar">
@@ -104,9 +106,9 @@ export default function BottomNav() {
                 }}
                 aria-current={active ? "page" : undefined}
                 aria-label={
-                  badge ? `${label}, незавершённых дел: ${badge}` : label
+                  badge ? `${t(label)}, незавершённых дел: ${badge}` : label
                 }
-                title={label}
+                title={t(label)}
                 className={cn("yg-capsule-tab", active && "is-active")}
               >
                 <span className="yg-capsule-icon" aria-hidden="true">
@@ -118,7 +120,7 @@ export default function BottomNav() {
                   )}
                 </span>
                 <span className="yg-capsule-label" aria-hidden="true">
-                  <span>{label}</span>
+                  <span>{t(label)}</span>
                 </span>
               </button>
             );

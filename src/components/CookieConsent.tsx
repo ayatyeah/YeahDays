@@ -21,7 +21,7 @@ export default function CookieConsent() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    let accepted = false;
+    let accepted: boolean;
     try {
       accepted = localStorage.getItem(KEY) === "1";
     } catch {

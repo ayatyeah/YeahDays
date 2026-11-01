@@ -7,6 +7,7 @@
  * запасной вход и для ручной проверки. Логика — в lib/pushDispatch.ts.
  */
 
+import { runTrackedJob } from "@/lib/backgroundJobs";
 import { NextResponse } from "next/server";
 import { cronAuthorized } from "@/lib/cronAuth";
 import { runDispatch } from "@/lib/pushDispatch";
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const res = await runDispatch();
+    const res = await runTrackedJob("push-dispatch", () => runDispatch());
     return NextResponse.json(res, { status: res.ok ? 200 : 503 });
   } catch (e) {
     console.error("dispatch failed:", e);

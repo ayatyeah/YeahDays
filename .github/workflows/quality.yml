@@ -1,0 +1,38 @@
+name: Quality
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: yg_test
+          POSTGRES_PASSWORD: local_test_only
+          POSTGRES_DB: yeahgrind_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql://yg_test:local_test_only@localhost:5432/yeahgrind_test
+      AUTH_SECRET: ci-only-non-production-secret-for-build
+      PUSH_SCHEDULER: off
+      RESEARCH_RETENTION_ENABLED: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run db:deploy
+      - run: npm run check
+      - run: npx vitest run src/lib/userState.db.test.ts
+        env:
+          SYNC_DB_TEST: "1"
+      - run: npm run db:restore-check

@@ -1,3 +1,4 @@
+import { runTrackedJob } from "@/lib/backgroundJobs";
 import { NextResponse } from "next/server";
 import { ordinaryUsers } from "@/lib/ordinaryUsers";
 import { prisma } from "@/lib/db";
@@ -15,6 +16,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const dry = new URL(req.url).searchParams.get("dry") === "1";
+  try {
+    const result = dry ? await sync(true) : await runTrackedJob("lms-sync", () => sync(false));
+    return NextResponse.json(result, { status: result.ok ? 200 : 503 });
+  } catch {
+    return NextResponse.json({ ok: false, error: "LMS sync unavailable" }, { status: 503 });
+  }
+}
+async function sync(dry: boolean) {
   const connections = await prisma.lmsConnection.findMany({ where: { user: { ...ordinaryUsers, banned: false } } });
   const results: { userId: string; ok: boolean; created?: number; error?: string }[] = [];
   for (const connection of connections) {
@@ -40,5 +49,5 @@ export async function POST(req: Request) {
       catch { results.push({ userId: legacyId, ok: false, error: "Legacy LMS sync failed" }); }
     }
   }
-  return NextResponse.json({ ok: results.every((r) => r.ok), dry, users: results.length, results });
+  return { ok: results.every((r) => r.ok), dry, users: results.length, results };
 }

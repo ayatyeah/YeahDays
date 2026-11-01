@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/useT";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -16,15 +17,15 @@ import {
   AccountIcon,
   type IconProps,
 } from "@/components/nav-icons";
-import { TAB_PATH, tabFromPath } from "@/lib/nav";
+import { TAB_PATH, tabFromPath, navKeyForTab } from "@/lib/nav";
 import { usePathname, useRouter } from "next/navigation";
 
 const NAV = [
-  { tab: "today", label: "Сегодня", Icon: HomeIcon },
-  { tab: "learn", label: "Учёба", Icon: LearnIcon },
-  { tab: "community", label: "Вместе", Icon: CommunityIcon },
-  { tab: "progress", label: "Прогресс", Icon: ProgressIcon },
-  { tab: "account", label: "Профиль", Icon: AccountIcon },
+  { tab: "today", label: "nav.today", Icon: HomeIcon },
+  { tab: "learn", label: "nav.learn", Icon: LearnIcon },
+  { tab: "community", label: "nav.community", Icon: CommunityIcon },
+  { tab: "progress", label: "nav.progress", Icon: ProgressIcon },
+  { tab: "account", label: "nav.account", Icon: AccountIcon },
 ] as const;
 
 /**
@@ -36,6 +37,7 @@ const NAV = [
  * рендером, чтобы не было расхождения между сервером и клиентом на ресайзе.
  */
 export default function Sidebar() {
+  const t = useT();
   const pathname = usePathname();
   const router = useRouter();
   const section = tabFromPath(pathname);
@@ -47,15 +49,15 @@ export default function Sidebar() {
   if (hydrated && !onboarded && section !== null) return null;
 
   return (
-    <nav aria-label="Навигация приложения" className="yg-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">
+    <nav data-no-i18n aria-label={t("nav.label")}  className="yg-sidebar fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-6 lg:flex">
       <Link href="/today" className="flex items-center gap-2.5 px-2">
-        <Logo variant="white" className="h-7 w-auto" />
+        <Logo variant="color" className="h-7 w-auto" />
         <span className="text-[16px] font-bold tracking-tight">YeahGrind</span>
       </Link>
 
       <div className="mt-8 flex flex-col gap-1">
         {NAV.map(({ tab: key, label, Icon }) => {
-          const active = key === "learn" ? ["/learn", "/events", "/challenge30"].some((p) => pathname === p || pathname.startsWith(`${p}/`)) : key === "community" ? pathname === "/community" : section !== null && tab === key;
+          const active = key === "learn" ? ["/learn", "/events", "/challenge30"].some((p) => pathname === p || pathname.startsWith(`${p}/`)) : key === "community" ? pathname === "/community" : section !== null && navKeyForTab(tab) === key;
           return (
             <button
               key={key}
@@ -87,15 +89,15 @@ export default function Sidebar() {
                 />
               )}
               <Icon className="h-[19px] w-[19px] shrink-0" />
-              {label}
+              {t(label)}
             </button>
           );
         })}
       </div>
 
-      <div className="yg-sidebar-links mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">Календарь</Link><Link href="/chat">ИИ-помощник</Link><Link href="/events">Ивенты</Link><Link href="/challenge30">Челлендж 30</Link><Link href="/app">Мой персонаж</Link></div>
+      <div className="yg-sidebar-links mt-6 grid gap-3 px-3 text-sm"><Link href="/calendar">{t("nav.calendar")}</Link><Link href="/chat">{t("nav.chat")}</Link><Link href="/events">{t("nav.events")}</Link><Link href="/challenge30">{t("nav.challenge")}</Link><Link href="/app">{t("nav.character")}</Link></div>
       <div className="mt-auto px-2 text-[12px] text-[var(--color-muted)]">
-        Одно действие в день
+        {t("nav.motto")}
       </div>
     </nav>
   );

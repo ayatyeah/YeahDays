@@ -238,13 +238,14 @@ model ScheduledNotification {
 
 // Снимок клиентского состояния (план/цели/настроение/история) для
 // кросс-девайс синхронизации. Одна строка на пользователя. Разрешение
-// конфликтов — last-write-wins по clientAt (время изменения на клиенте).
+// конфликтов — трёхстороннее объединение, версия назначается сервером.
 model UserState {
+  revision  Int      @default(1)
   userId    String   @id
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   /// весь persist-слой Zustand как есть (включая updatedAt)
   data      Json
-  /// время последнего изменения на клиенте (мс → Date) — для LWW
+  /// время серверного сохранения; старые интеграции также используют это поле
   clientAt  DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -489,14 +490,14 @@ model LearningProfile {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   data      Json
   revision  Int      @default(0)
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model PersonalizationProfile {
   userId    String   @id
   data      Json
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model AiChat {
@@ -645,7 +646,7 @@ model Challenge30 {
   aiCount Int @default(0)
   pendingId String?
   pendingAt DateTime?
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 // Study-event progress, synced across devices. `share` opts the row into the
@@ -657,7 +658,7 @@ model EventProgress {
   data Json
   percent Int @default(0)
   share Boolean @default(false)
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   @@id([userId, eventId])
   @@index([eventId, share])
 }
@@ -789,7 +790,7 @@ model SocialMedia {
 // Assignment 3: isolated, versioned four-week comparison.
 model ResearchParticipant {
   userId String @id
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   participantId String @unique
   condition String
   pilot Boolean @default(false)
@@ -1155,4 +1156,13 @@ model PathReport {
 
   @@unique([userId, target, targetId])
   @@index([goalId, resolved])
+}
+
+// Operational status only; no user payloads or credentials.
+model BackgroundJob {
+  name String @id
+  lastRunAt DateTime
+  lastSuccessAt DateTime?
+  lastFailureAt DateTime?
+  consecutiveFailures Int @default(0)
 }

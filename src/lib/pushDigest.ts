@@ -94,6 +94,7 @@ function dayContext(data: unknown, today: string): DayContext {
 export async function runDigest(now: Date = new Date()) {
   if (!pushConfigured) return { ok: false as const, reason: "VAPID keys not set" };
 
+  let failed = 0;
   let sent = 0;
   let skipped = 0;
   let expired = 0;
@@ -170,9 +171,10 @@ export async function runDigest(now: Date = new Date()) {
       expired++;
       continue;
     }
-    if (res === "sent") sent++;
+    if (res === "failed") failed++;
+      if (res === "sent") sent++;
     else skipped++;
   }
 
-  return { ok: true as const, sent, skipped, expired };
+  return { ok: failed === 0, failed, sent, skipped, expired };
 }

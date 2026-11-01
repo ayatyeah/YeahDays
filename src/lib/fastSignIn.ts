@@ -62,7 +62,7 @@ export async function credentialsSignIn(identifier: string, password: string): P
 }
 
 /** Адрес после входа — только путь внутри сайта: чужой адрес в ссылке увёл бы человека на посторонний сайт. */
-export function safeCallbackUrl(value: string | null | undefined, fallback = "/app") {
+export function safeCallbackUrl(value: string | null | undefined, fallback = "/today") {
   return value && value.startsWith("/") && !value.startsWith("//") && !value.includes("\\") ? value : fallback;
 }
 

@@ -1,24 +1,10 @@
-/**
- * /api/state — кросс-девайс синхронизация клиентского состояния.
- *
- * GET  ?userId=…   → { data, updatedAt } — снимок пользователя (или null).
- *      &since=<ms> → если на сервере не свежее since, отвечаем
- *                  { unchanged: true } одним лёгким запросом без блоба —
- *                  так фоновый опрос почти ничего не стоит ни базе, ни сети.
- * PUT  { userId, data } → сохранить снимок. Разрешение конфликтов —
- *                  last-write-wins по data.updatedAt (время изменения
- *                  на клиенте). Если на сервере уже свежее — не затираем,
- *                  а возвращаем серверный снимок (клиент его примет).
- *
- * userId: у вошедшего — из сессии (нельзя подделать); иначе device-id из тела.
- */
-
+/** State protocol 2: server revisions and three-way per-task merges. */
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { resolveAnonymousUserId } from "@/lib/anonymousUser";
-import { upsertUserStateIfNewer } from "@/lib/userState";
-import { mergeServerTodos } from "@/lib/mergeServerTodos";
+import { mergeUserState } from "@/lib/userState";
+
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -37,7 +23,7 @@ async function resolveUserId(fallback?: unknown): Promise<string> {
     session = await auth();
   } catch (e) {
     console.error("state: auth() failed:", e);
-    throw new Error("AUTH_UNAVAILABLE");
+    throw new Error("AUTH_UNAVAILABLE", { cause: e });
   }
   if (session?.user?.id) return session.user.id;
   return resolveAnonymousUserId(fallback);
@@ -53,37 +39,25 @@ export async function GET(req: Request) {
   }
   if (!userId) return NextResponse.json({ data: null, updatedAt: null });
 
-  const since = Number(url.searchParams.get("since") ?? 0);
-
   try {
-    if (Number.isFinite(since) && since > 0) {
-      // Условие прямо в SQL: при «ничего нового» база не читает и не
-      // отдаёт 30-килобайтный jsonb, а мы не гоняем его по сети.
-      const rows = await prisma.$queryRaw<{ data: unknown; clientAt: Date }[]>`
-        SELECT "data", "clientAt" FROM "UserState"
-        WHERE "userId" = ${userId} AND "clientAt" > to_timestamp(${since / 1000}) AT TIME ZONE 'UTC'
-        LIMIT 1
-      `;
-      if (rows.length === 0) return NextResponse.json({ unchanged: true, updatedAt: since });
-      return NextResponse.json({ data: rows[0].data, updatedAt: rows[0].clientAt.getTime() });
-    }
-
     const row = await prisma.userState.findUnique({ where: { userId } });
-    if (!row) return NextResponse.json({ data: null, updatedAt: null });
-    return NextResponse.json({
-      data: row.data,
-      updatedAt: row.clientAt.getTime(),
-    });
+    if (!row) return NextResponse.json({ data: null, revision: 0 });
+    if (url.searchParams.get("revision") === String(row.revision))
+      return NextResponse.json({ unchanged: true, revision: row.revision });
+    return NextResponse.json({ data: row.data, revision: row.revision });
   } catch (e) {
     console.error("state GET failed:", e);
-    return NextResponse.json({ data: null, updatedAt: null });
+    return NextResponse.json({ error: "State temporarily unavailable" }, { status: 503 });
   }
 }
 
 export async function PUT(req: Request) {
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
+    const text = await req.text();
+    if (text.length > 2_000_000) return NextResponse.json({ error: "State too large" }, { status: 413 });
+    body = JSON.parse(text);
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("Invalid body");
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
@@ -98,52 +72,22 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "userId required" }, { status: 400 });
   }
 
+  if (body.protocol !== 2) return NextResponse.json({ error: "Обнови приложение для безопасной синхронизации" }, { status: 409 });
   const data = body.data;
-  const clientAt =
-    data && typeof data === "object"
-      ? Number((data as Record<string, unknown>).updatedAt)
-      : NaN;
-  if (!data || typeof data !== "object" || !Number.isFinite(clientAt)) {
-    return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+  const record = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
+  if (!record(data) || !Number.isFinite(data.updatedAt) ||
+      !(body.base === null || record(body.base)) ||
+      !Number.isSafeInteger(body.baseRevision) || Number(body.baseRevision) < 0 ||
+      JSON.stringify(body).length > 2_000_000 ||
+      !["todos", "plan", "customActions", "quests", "challenges"].every(k =>
+        Array.isArray(data[k]) && (data[k] as unknown[]).every(v => record(v) && typeof v.id === "string"))) {
+    return NextResponse.json({ error: "Invalid state" }, { status: 400 });
   }
-
   try {
-    // Возвращаем в снимок серверные задачи, которых клиент не мог видеть
-    // (созданы позже его updatedAt) — иначе дедлайны из /api/cron/lms-sync
-    // и импортированное скриптами исчезают при первом же push из браузера.
-    // См. src/lib/mergeServerTodos.ts.
-    const existing = await prisma.userState.findUnique({
-      where: { userId },
-      select: { data: true, clientAt: true },
-    });
-    // Сервер уже свежее — отвечаем его снимком сразу, без записи и без
-    // слияния: экономит поход в базу в самом частом случае гонки.
-    if (existing && existing.clientAt.getTime() > clientAt) {
-      return NextResponse.json({
-        ok: true,
-        applied: false,
-        data: existing.data,
-        updatedAt: existing.clientAt.getTime(),
-      });
-    }
-    const merged = mergeServerTodos(data, existing?.data, clientAt);
-    if (merged.restored > 0) {
-      console.log(`state PUT: вернули ${merged.restored} серверных задач для ${userId}`);
-    }
-
-    const result = await upsertUserStateIfNewer(userId, merged.data, clientAt);
-    if (!result.applied) {
-      // На сервере уже не старше — не затираем, отдаём серверный снимок.
-      return NextResponse.json({
-        ok: true,
-        applied: false,
-        data: result.data,
-        updatedAt: result.clientAt,
-      });
-    }
-    return NextResponse.json({ ok: true, applied: true });
+    const result = await mergeUserState(userId, body.base as Record<string, unknown> | null, data);
+    return NextResponse.json({ ok: true, ...result });
   } catch (e) {
     console.error("state PUT failed:", e);
-    return NextResponse.json({ error: "DB error" }, { status: 500 });
+    return NextResponse.json({ error: "State temporarily unavailable" }, { status: 503 });
   }
 }

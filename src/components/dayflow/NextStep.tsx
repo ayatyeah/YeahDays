@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/useT";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -28,6 +29,7 @@ export default function NextStep({
   onTask: (id: string) => void;
   onCreate: () => void;
 }) {
+  const t = useT();
   const owner = useSession().data?.user?.id;
   const todos = useUserStore((s) => s.todos),
     energy = useUserStore((s) => s.energyProfile[currentSlot()]);
@@ -122,36 +124,36 @@ export default function NextStep({
   const occupied = !!ctx.current || ctx.budget < 5;
   const waiting = learningLoading && !task && !deckTask && !study && !occupied;
   return (
-    <section className="flow-next" aria-label="Следующий шаг">
+    <section data-no-i18n className="flow-next" aria-label={t("flow.next")} >
       <div className="flow-topline">
-        <span>СЕЙЧАС ДЛЯ ТЕБЯ</span>
-        <Link href="/calendar">Расписание</Link>
+        <span>{t("flow.now")}</span>
+        <Link href="/calendar">{t("flow.schedule")}</Link>
       </div>
       <div className="polish-settings">
-        <select aria-label="Как твоя энергия?" value={energy}
+        <select aria-label={t("flow.energy")}  value={energy}
           onChange={(e) => useUserStore.getState().setSlotEnergy(currentSlot(), e.target.value as EnergyLevel)}>
-          <option value="low">Спокойно</option>
-          <option value="medium">Нормально</option>
-          <option value="high">Много сил</option>
+          <option value="low">{t("flow.low")}</option>
+          <option value="medium">{t("flow.medium")}</option>
+          <option value="high">{t("flow.high")}</option>
         </select>
-        <select aria-label="Сколько времени есть?" value={minutes}
+        <select aria-label={t("flow.time")}  value={minutes}
           onChange={(e) => setMinutes(Number(e.target.value))}>
-          {[5, 15, 25].map((n) => <option key={n} value={n}>{n} мин</option>)}
+          {[5, 15, 25].map((n) => <option key={n} value={n}>{t("flow.minutes", { count: n })}</option>)}
         </select>
       </div>
       <div className="flow-suggestion" aria-live="polite">
         <small>
           {occupied
-            ? "В расписании сейчас занятие"
+            ? t("flow.occupied")
             : energy === "low"
-              ? "Спокойный темп — короткий шаг"
+              ? t("flow.pace")
               : ctx.next
-                ? "До следующего дела есть окно"
-                : "Один понятный шаг"}
+                ? t("flow.window")
+                : t("flow.one")}
         </small>
         <h2>
           {waiting
-            ? "Загружаем учебный прогресс…"
+            ? t("flow.loading")
             : occupied
               ? (ctx.current?.title ?? ctx.next?.title)
               : task
@@ -161,76 +163,76 @@ export default function NextStep({
                   : deckTask
                     ? deckTask.snapshot.title
                     : allDone
-                      ? "На сегодня достаточно"
-                      : "Начнём с одного дела"}
+                      ? t("flow.done")
+                      : t("flow.begin")}
         </h2>
         <p>
           {occupied
-            ? "Не добавляем новую нагрузку. Вернись после занятия."
+            ? t("flow.rest")
             : task
               ? task.duration && task.duration > ctx.budget
-                ? "Слишком большое дело? Запиши только первый маленький шаг."
+                ? t("flow.large")
                 : urgent
-                  ? "Это дело требует внимания. Начни с первого небольшого шага."
-                  : "Выбрано из твоего плана с учётом доступного времени."
+                  ? t("flow.urgent")
+                  : t("flow.chosen")
               : study
                 ? study.detail
                 : deckTask
-                  ? "Начни с одного небольшого дела"
+                  ? t("flow.small")
                   : allDone
-                    ? "На сегодня достаточно. Можно отдохнуть."
-                    : "Добавь то, что действительно хочешь сделать сегодня. Одного дела достаточно."}
+                    ? t("flow.enough")
+                    : t("flow.addHint")}
         </p>
         {ctx.next && !occupied && (
           <p className="flow-context">
-            Далее: {ctx.next.title} · {String(ctx.next.hour).padStart(2, "0")}:
+            {ctx.next.title} · {String(ctx.next.hour).padStart(2, "0")}:
             {String(ctx.next.minute ?? 0).padStart(2, "0")}
           </p>
         )}
         {waiting ? (
           <button className="flow-primary" disabled aria-busy="true">
-            Загружаем учебный прогресс…
+            {t("flow.loading")}
           </button>
         ) : lessonHref ? (
           <Link className="flow-primary" href={lessonHref}>
-            Продолжить учёбу
+            {t("flow.continue")}
           </Link>
         ) : occupied ? (
           <Link className="flow-primary" href="/calendar">
-            Открыть расписание
+            {t("flow.openSchedule")}
           </Link>
         ) : task ? (
           <button className="flow-primary" onClick={() => onTask(task.id)}>
-            Начать с этого
+            {t("flow.start")}
           </button>
         ) : study ? (
           <Link className="flow-primary" href={study.href}>
-            Продолжить учёбу
+            {t("flow.continue")}
           </Link>
         ) : deckTask ? (
           <button className="flow-primary" onClick={() => onTask(deckTask.id)}>
-            Начать с этого
+            {t("flow.start")}
           </button>
         ) : allDone ? (
           <Link className="flow-primary" href="/progress">
-            Посмотреть прогресс
+            {t("flow.seeProgress")}
           </Link>
         ) : (
           <button className="flow-primary" onClick={onCreate}>
-            Добавить первое дело
+            {t("flow.add")}
           </button>
         )}
         {study && !task && !occupied && (
           <small>
             {study.href.startsWith("/events/")
-              ? "Откроем твой учебный маршрут"
-              : "Продолжим с незавершённого квеста"}
+              ? t("flow.route")
+              : t("flow.resume")}
           </small>
         )}
       </div>
       {ctx.deadline && (
         <Link className="flow-deadline" href="/calendar">
-          <span>Ближайший срок</span>
+          <span>{t("flow.deadline")}</span>
           <b>{ctx.deadline.title}</b>
           <time>{ctx.deadline.date}</time>
         </Link>

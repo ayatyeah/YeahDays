@@ -294,6 +294,8 @@ function shapeTask(r: R, seed: number): TrainerTask {
     lines.push(`crop = ${v}[${y1}:${y1 + ch}, ${x1}:${x1 + cw}]`);
     v = "crop"; h = ch; w = cw;
     notes.push(`slice [rows, columns] = [${y1}:${y1 + ch}, ${x1}:${x1 + cw}] → ${ch} rows × ${cw} columns → ${shape()}`);
+  // RNG calls are independent draws, not a duplicated predicate.
+  // eslint-disable-next-line no-dupe-else-if
   } else if (c === 1 && r() < 0.6) {
     lines.push(`edges = cv2.Canny(cv2.GaussianBlur(${v}, (5, 5), 0), 100, 200)`);
     v = "edges";

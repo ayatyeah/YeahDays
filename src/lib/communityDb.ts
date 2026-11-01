@@ -106,7 +106,7 @@ export async function communityAction(userId: string, body: Record<string, unkno
       const roomId = textField(body.roomId, 100); const now = new Date();
       const room = await tx.studyRoom.findFirst({ where: { id: roomId, teamId } }); if (!room) throw new CommunityError('Комната не найдена', 404);
       const key = { roomId_userId: { roomId, userId } };
-      let p = await tx.studyAttendance.findUnique({ where: key });
+      const p = await tx.studyAttendance.findUnique({ where: key });
       if (action === 'enter') {
         if (now >= room.endsAt) throw new CommunityError('Занятие уже завершено');
         if (await tx.studyAttendance.findFirst({ where: { userId, roomId: { not: roomId }, lastSeenAt: { gt: new Date(Date.now()-90000) }, room: { endsAt: { gt: now } } } })) throw new CommunityError('Сначала заверши занятие в другой комнате');

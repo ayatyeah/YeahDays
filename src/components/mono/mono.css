@@ -63,12 +63,6 @@
   color: var(--color-fg);
   background: var(--color-surface-2);
 }
-.yg-app .yg-sidebar img {
-  filter: grayscale(1) brightness(0);
-}
-:root:not([data-theme="light"]) .yg-app .yg-sidebar img {
-  filter: grayscale(1) brightness(0) invert(1);
-}
 .yg-app .yg-bottom-nav button[aria-current="page"] {
   color: var(--color-fg);
 }
@@ -89,10 +83,6 @@
   width: 34px;
   height: 27px;
   object-fit: contain;
-  filter: brightness(0);
-}
-:root:not([data-theme="light"]) .mono-brand img {
-  filter: none;
 }
 .mono-page-heading {
   margin-bottom: 18px;

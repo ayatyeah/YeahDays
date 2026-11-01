@@ -9,7 +9,7 @@ describe("адрес возврата после входа", () => {
   });
   it("не уводит на чужой сайт — полная загрузка страницы превратила бы такую ссылку в ловушку", () => {
     for (const bad of ["https://evil.example", "//evil.example", "/\\evil.example", "javascript:alert(1)", "", null, undefined]) {
-      expect(safeCallbackUrl(bad)).toBe("/app");
+      expect(safeCallbackUrl(bad)).toBe("/today");
     }
   });
 });

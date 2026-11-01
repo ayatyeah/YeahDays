@@ -112,7 +112,7 @@ export default function AuthShell({
   children: React.ReactNode;
 }) {
   const panel = PANEL[mode];
-  const keep = callbackUrl && callbackUrl !== "/app" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : "";
+  const keep = callbackUrl && callbackUrl !== "/today" ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : "";
   return (
     <div className="relative min-h-dvh overflow-hidden bg-[#10120f] text-[#f2f3ed]">
       <div aria-hidden className="pointer-events-none absolute -left-48 -top-48 h-[520px] w-[520px] rounded-full bg-[#d3f693]/[0.08] blur-3xl" />

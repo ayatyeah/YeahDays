@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/useT";
 import { useReadingPosition } from "./useReadingPosition";
 import { lessonDraftKey, lessonVisitKey } from "@/lib/dayFlow";
 import { isLmsDeadline } from "@/lib/lmsEventKind";
@@ -25,7 +26,7 @@ import "./learning.css";
 import Button from "@/components/ui/Button";
 import { useLearningStore } from "@/store/useLearningStore";
 import { useLearningActions } from "@/components/useLearningActions";
-import { rewardFor } from "@/lib/learning";
+import LearningLesson from "./LearningLesson";
 import { dateKey } from "@/lib/domain";
 import { isTodoOnDay, isTodoDone, useUserStore } from "@/store/useUserStore";
 import { useSyncStatus } from "@/store/useSyncStatus";
@@ -39,6 +40,7 @@ export default function LearningPage({
 }: {
   events: LearningEventSummary[];
 }) {
+  const t = useT();
   const router = useRouter();
   const params = useSearchParams();
   const requestedView = params.get("view") ?? "hub";
@@ -192,7 +194,7 @@ export default function LearningPage({
           typeof saved.answer === "string" ? saved.answer.slice(0, 6000) : "",
         );
         setLessonTab(saved.tab === "practice" ? "practice" : "lesson");
-        setDraftStatus("Место и черновик восстановлены на этом устройстве.");
+        setDraftStatus(t("lesson.draftRestored"));
       }
     } catch {
       /* No storage: keep the lesson usable. */
@@ -210,9 +212,9 @@ export default function LearningPage({
         lessonDraftKey(owner, skill.id, quest.id),
         JSON.stringify({ answer: nextAnswer, tab: nextTab }),
       );
-      setDraftStatus("Черновик сохранён на этом устройстве.");
+      setDraftStatus(t("lesson.draftSaved"));
     } catch {
-      setDraftStatus("Не удалось сохранить черновик на устройстве.");
+      setDraftStatus(t("lesson.draftFailed"));
     }
   }
   function changeTab(tab: "lesson" | "practice") {
@@ -921,174 +923,7 @@ export default function LearningPage({
         </div>
       )}
       {view === "lesson" && skill && quest && (
-        <section className="learning-lesson">
-          <div className="learning-lesson-meta">
-            <span>
-              Квест {skill.quests.findIndex((q) => q.id === quest.id) + 1} /{" "}
-              {total} · {skill.minutes} мин
-            </span>
-            <span>+{rewardFor(quest.boss).xp} XP</span>
-          </div>
-          <h2>{quest.title}</h2>
-          <Link href="/today" className="flow-return">
-            Вернуться к своему дню
-          </Link>
-          {draftStatus && !quest.completed && (
-            <p className="flow-draft" role="status">
-              {draftStatus}
-            </p>
-          )}
-          {quest.completed && (
-            <section className="flow-result" aria-label="Результат занятия">
-              <h2>Занятие завершено</h2>
-              <p>Разобрано: {quest.title}</p>
-              <p>Результат сохранён. Продолжить можно сейчас или завтра.</p>
-              <div className="flow-actions">
-                <Link href="/today">На сегодня достаточно</Link>
-                {skill.quests.some((q) => !q.completed) && (
-                  <button onClick={() => void tomorrow()}>
-                    Следующий шаг на завтра
-                  </button>
-                )}
-              </div>
-            </section>
-          )}
-          {locked ? (
-            <div className="learning-notice">
-              Сначала заверши предыдущий квест.
-              <button
-                className="learning-primary"
-                onClick={() => navigate("route", skill.id)}
-              >
-                К маршруту
-              </button>
-            </div>
-          ) : (
-            <>
-              <div
-                className="learning-tabs"
-                role="tablist"
-                aria-label="Материалы занятия"
-              >
-                <button
-                  role="tab"
-                  id="lesson-tab"
-                  aria-controls="lesson-panel"
-                  aria-selected={lessonTab === "lesson"}
-                  onClick={() => changeTab("lesson")}
-                >
-                  Разобраться
-                </button>
-                <button
-                  role="tab"
-                  id="practice-tab"
-                  aria-controls="practice-panel"
-                  aria-selected={lessonTab === "practice"}
-                  onClick={() => changeTab("practice")}
-                >
-                  Практика
-                </button>
-              </div>
-              <div
-                id={lessonTab === "lesson" ? "lesson-panel" : "practice-panel"}
-                role="tabpanel"
-                aria-labelledby={
-                  lessonTab === "lesson" ? "lesson-tab" : "practice-tab"
-                }
-                className="learning-reading"
-              >
-                {lessonTab === "lesson" ? quest.lesson : quest.exercise}
-              </div>
-              {lessonTab === "lesson" && (
-                <button
-                  className="learning-secondary"
-                  onClick={() => changeTab("practice")}
-                >
-                  Попробовать на практике <YgIcon name="chevron" />
-                </button>
-              )}
-              {quest.feedback && (
-                <div role="status" className="learning-feedback">
-                  <b>{quest.completed ? "Зачтено" : "Разбор ответа"}</b>
-                  <p>{quest.feedback}</p>
-                </div>
-              )}
-              {lessonTab === "practice" && !quest.completed && (
-                <form onSubmit={submit} className="learning-answer">
-                  <label htmlFor="learning-answer">Твой ответ</label>
-                  <textarea
-                    id="learning-answer"
-                    className={field}
-                    rows={5}
-                    required
-                    maxLength={6000}
-                    value={answer}
-                    disabled={busy}
-                    onChange={(e) => {
-                      setAnswer(e.target.value);
-                      saveDraft(e.target.value, lessonTab);
-                    }}
-                    placeholder="Объясни своими словами или вставь свой код…"
-                  />
-                  <div className="learning-answer-actions">
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      disabled={busy || !data?.available}
-                    >
-                      {busy ? "Проверяем…" : "Проверить ответ"}
-                    </Button>
-                    <button
-                      type="button"
-                      className="learning-secondary"
-                      disabled={busy}
-                      onClick={() => void schedule()}
-                    >
-                      В план на сегодня
-                    </button>
-                  </div>
-                  <small>
-                    Награда за решение — один раз. Ошибки не отнимают XP.
-                  </small>
-                </form>
-              )}
-              {quest.completed && (
-                <button
-                  className="learning-primary"
-                  onClick={() =>
-                    nextQuest && !nextQuest.completed
-                      ? openLesson(nextQuest.id)
-                      : navigate("route", skill.id)
-                  }
-                >
-                  {nextQuest && !nextQuest.completed
-                    ? "Следующий квест"
-                    : "К маршруту"}
-                  <YgIcon name="chevron" />
-                </button>
-              )}
-              <button
-                className="learning-help-toggle"
-                aria-expanded={help}
-                onClick={() => setHelp((v) => !v)}
-              >
-                <YgIcon name="bulb" /> Нужна помощь с темой?{" "}
-                <YgIcon name="chevron" />
-              </button>
-              {help && (
-                <div className="learning-help-expanded">
-                  <div>
-                    <p>
-                      Начни с одного вопроса: какая часть объяснения непонятна?
-                      Открой помощника и укажи тему «{quest.title}».
-                    </p>
-                    <Link href="/chat">Задать вопрос в ИИ-помощнике</Link>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </section>
+        <LearningLesson {...{ skill, quest, nextQuest, total, draftStatus, locked, lessonTab, busy, answer, help, tomorrow, navigate, changeTab, submit, setAnswer, saveDraft, schedule, openLesson, setHelp }} available={!!data?.available} />
       )}
       {data && (view === "route" || view === "lesson") && !skill && (
         <div className="learning-notice">

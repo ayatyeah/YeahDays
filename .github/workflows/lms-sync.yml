@@ -1,15 +1,7 @@
 name: LMS calendar sync
 
-# Дедлайны из календаря Moodle (AITU LMS) в задачи. Отдельный workflow, а
-# не шаг в push-cron.yml, именно из-за расписания: тот бегает каждые 5
-# минут ради уведомлений, а тут это было бы 288 запросов в день к чужому
-# серверу вместо трёх. Веб-сервисы Moodle в AITU и так закрыты на nginx —
-# долбить оставшийся живым ical-экспорт незачем.
-#
-# Три раза в день с запасом: дедлайны выставляют за дни и недели вперёд,
-# и даже одного прогона в сутки хватило бы. Время в cron — UTC, Алматы
-# UTC+5, то есть 08:00 / 16:00 / 22:00 по местному — рабочий день, когда
-# дедлайны и проставляют.
+# Дедлайны Moodle обновляются три раза в день: 08:00 / 16:00 / 22:00
+# по Алматы (UTC+5). Отдельно от hourly fallback уведомлений ordinary-push.yml.
 on:
   schedule:
     - cron: "0 3,11,17 * * *"
@@ -21,5 +13,5 @@ jobs:
     steps:
       - name: Pull deadlines from LMS calendar
         run: |
-          curl -sf -X POST "https://yeahgrind.site/api/cron/lms-sync" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" || echo "lms-sync failed (non-fatal)"
+          curl --fail --silent --show-error --max-time 90 -X POST "https://yeahgrind.site/api/cron/lms-sync" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

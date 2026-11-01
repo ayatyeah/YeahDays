@@ -187,9 +187,9 @@ export default function VideoPlayer({ view, title }: { view: VideoView; title: s
   };
   const onKey = (e: React.KeyboardEvent) => {
     if ((e.target as HTMLElement).tagName === "INPUT") return;
-    if (e.key === " " || e.key === "k") (e.preventDefault(), toggle());
-    else if (e.key === "ArrowRight") (e.preventDefault(), seek(time + 5));
-    else if (e.key === "ArrowLeft") (e.preventDefault(), seek(time - 5));
+    if (e.key === " " || e.key === "k") { e.preventDefault(); toggle(); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); seek(time + 5); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); seek(time - 5); }
     else if (e.key === "c" || e.key === "с") setCaptions((v) => !v);
   };
 

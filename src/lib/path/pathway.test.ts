@@ -130,9 +130,8 @@ describe("spaced review", () => {
     state = scheduleReview(state, { mastery: 0.9, answers: 3 }, now);
     expect(state.reviewAt!.getTime() - now.getTime()).toBe(day);
     const steps = [3, 7, 14, 14];
-    let t = now;
     for (const gap of steps) {
-      t = new Date(state.reviewAt!.getTime() + 1000);
+      const t = new Date(state.reviewAt!.getTime() + 1000);
       state = scheduleReview(state, { mastery: 0.9, answers: 6 }, t);
       expect(Math.round((state.reviewAt!.getTime() - t.getTime()) / day)).toBe(gap);
     }

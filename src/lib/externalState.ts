@@ -10,7 +10,7 @@
  */
 
 import { prisma } from "@/lib/db";
-import { upsertUserStateIfNewer } from "@/lib/userState";
+import { mergeUserState } from "@/lib/userState";
 
 export interface Todo {
   id: string;
@@ -102,21 +102,26 @@ export function isTodoDone(t: Todo, day: string): boolean {
 }
 
 /** Читаем строку состояния (или пустую заготовку, если пользователь ещё не синхронизировался). */
+const bases = new WeakMap<StateShape, Record<string, unknown>>();
+
 export async function loadState(userId: string): Promise<StateShape> {
   const row = await prisma.userState.findUnique({ where: { userId } });
   const data = (row?.data as StateShape) ?? {};
-  return {
+  const state = {
     ...data,
     todos: Array.isArray(data.todos) ? data.todos : [],
     plan: Array.isArray(data.plan) ? data.plan : [],
     moods: data.moods && typeof data.moods === "object" ? data.moods : {},
   };
+  bases.set(state, structuredClone(state) as Record<string, unknown>);
+  return state;
 }
 
 /** Пишем обратно с бампом updatedAt — эквивалент touch() в сторе. */
 export async function saveState(userId: string, data: StateShape) {
   const updatedAt = Date.now();
   const next = { ...data, updatedAt };
-  await upsertUserStateIfNewer(userId, next, updatedAt);
-  return next;
+  const result = await mergeUserState(userId, bases.get(data) ?? null, next);
+  bases.set(data, result.data as Record<string, unknown>);
+  return result.data as unknown as StateShape;
 }

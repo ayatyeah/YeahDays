@@ -2,8 +2,8 @@
   "id": "/app",
   "name": "YeahGrind — одно действие в день",
   "short_name": "YeahGrind",
-  "description": "Выберите обычный YeahGrind с персонажем и планированием или версию для РМТ.",
-  "start_url": "/?source=pwa",
+  "description": "План на сегодня, учебные маршруты и прогресс персонажа.",
+  "start_url": "/today",
   "scope": "/",
   "display": "standalone",
   "display_override": [

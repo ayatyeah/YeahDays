@@ -92,7 +92,7 @@ function LoginForm() {
       <p className="mt-6 text-center text-[15px] text-[#a0a39c]">
         Ещё нет аккаунта?{" "}
         <Link
-          href={callbackUrl === "/app" ? "/register" : `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          href={callbackUrl === "/today" ? "/register" : `/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
           className="font-semibold text-[#d3f693] underline-offset-2 hover:underline"
         >
           Создать за минуту

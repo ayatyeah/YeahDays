@@ -23,7 +23,7 @@ export default function StandaloneRedirect() {
       // iOS Safari до сих пор использует своё нестандартное свойство
       (window.navigator as { standalone?: boolean }).standalone === true;
 
-    if (standalone) router.replace("/app");
+    if (standalone) router.replace("/today");
   }, [router]);
 
   return null;

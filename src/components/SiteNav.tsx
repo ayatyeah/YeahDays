@@ -57,7 +57,7 @@ export default function SiteNav() {
       <div className="marble-bar border-b border-[var(--color-border)]">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3 sm:px-8">
           <Link href="/ordinary" className="flex shrink-0 items-center gap-2.5">
-            <Logo variant="white" className="h-7 w-auto" />
+            <Logo variant="color" className="h-7 w-auto" />
             <span className="text-[17px] font-extrabold tracking-tight">
               YeahGrind
             </span>

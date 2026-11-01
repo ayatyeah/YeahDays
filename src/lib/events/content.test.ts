@@ -55,9 +55,9 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
   it("банка хватает на квизы нужного размера: по части 5–10 (или вся часть, до 20), 15–20 по лекции, 40–50 итоговый", () => {
     const list = steps(event);
     // Квиз по части — либо выборка 5–10, либо весь банк части целиком (до 20 вопросов), как в облачном ивенте.
-    for (const s of list.filter((s) => s.kind === "part")) expect(s.count, s.id).toBeGreaterThanOrEqual(5), expect(s.count).toBeLessThanOrEqual(event.counts.part > 10 ? 20 : 10);
+    for (const s of list.filter((s) => s.kind === "part")) { expect(s.count, s.id).toBeGreaterThanOrEqual(5); expect(s.count).toBeLessThanOrEqual(event.counts.part > 10 ? 20 : 10); }
     if (event.counts.part > 10) for (const l of event.lectures) for (const p of l.parts) expect(p.questions.length, `${p.id}: банк части должен быть ровно квизом`).toBe(event.counts.part);
-    for (const s of list.filter((s) => s.kind === "lecture")) expect(s.count, s.id).toBeGreaterThanOrEqual(15), expect(s.count).toBeLessThanOrEqual(20);
+    for (const s of list.filter((s) => s.kind === "lecture")) { expect(s.count, s.id).toBeGreaterThanOrEqual(15); expect(s.count).toBeLessThanOrEqual(20); }
     const final = list.at(-1)!;
     expect(final.count).toBeGreaterThanOrEqual(40);
     expect(final.count).toBeLessThanOrEqual(50);

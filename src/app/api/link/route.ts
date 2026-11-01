@@ -1,57 +1,20 @@
-/**
- * POST /api/link  { deviceId }
- *
- * При входе переносит данные анонимного устройства на аккаунт, чтобы
- * прогресс не терялся. Идемпотентно; переносит только с реально
- * анонимного пользователя (без email/аккаунта).
- *
- * ВАЖНО: раньше переносился только Event (для аналитики/истории), а
- * UserState — единственное место, где реально живут задачи, расписание,
- * XP — нет. UserState висит на User с onDelete: Cascade, так что
- * следующее за этим prisma.user.delete() тихо УНИЧТОЖАЛО весь прогресс
- * анонимного устройства, ничего не перенеся на аккаунт. Порядок здесь
- * принципиален: сначала переносим состояние, потом уже удаляем строку User.
- */
-
+/** Import guest progress before transferring events/subscriptions. A failed
+ * response is retryable; account data is merged rather than overwritten. */
 import { NextResponse } from "next/server";
-import { Prisma } from "@prisma/client";
+import { mergeUserState as mergeState } from "@/lib/userState";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-/**
- * У кого данные свежее — того и берём (тот же контракт LWW, что в
- * /api/state): свежий анонимный прогресс не должен затираться пустым
- * новым аккаунтом, а реальный прогресс аккаунта — затираться старым
- * анонимным слепком.
- */
+/** Import new guest records without replacing existing account progress. */
 async function mergeUserState(deviceId: string, accountId: string) {
-  const [deviceState, accountState] = await Promise.all([
-    prisma.userState.findUnique({ where: { userId: deviceId } }),
-    prisma.userState.findUnique({ where: { userId: accountId } }),
-  ]);
+  const deviceState = await prisma.userState.findUnique({ where: { userId: deviceId } });
   if (!deviceState) return;
-
-  const deviceIsNewer = !accountState || deviceState.clientAt > accountState.clientAt;
-  if (deviceIsNewer) {
-    await prisma.userState.upsert({
-      where: { userId: accountId },
-      create: {
-        userId: accountId,
-        data: deviceState.data as Prisma.InputJsonValue,
-        clientAt: deviceState.clientAt,
-      },
-      update: {
-        data: deviceState.data as Prisma.InputJsonValue,
-        clientAt: deviceState.clientAt,
-      },
-    });
-  }
-  // строка анонимного устройства в любом случае больше не нужна —
-  // либо уже перенесена, либо проиграла более свежему состоянию аккаунта
-  await prisma.userState.delete({ where: { userId: deviceId } }).catch(() => {});
+  await mergeState(accountId, null, deviceState.data as Record<string, unknown>);
+  // Delete only the exact snapshot transferred; a concurrent guest edit survives.
+  await prisma.userState.deleteMany({ where: { userId: deviceId, revision: deviceState.revision } });
 }
 
 export async function POST(req: Request) {
@@ -94,7 +57,8 @@ export async function POST(req: Request) {
       where: { userId: deviceId },
       data: { userId: accountId },
     });
-    await prisma.user.delete({ where: { id: deviceId } }).catch(() => {});
+    // Keep the anonymous identity: a request already in flight may still be
+    // writing to it. Deleting it here could cascade-delete untransferred data.
     return NextResponse.json({ ok: true, moved: moved.count });
   } catch (e) {
     console.error("link failed:", e);

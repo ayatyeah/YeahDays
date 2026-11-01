@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/i18n/useT";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { taskLearningHref } from "@/lib/dayFlow";
@@ -32,11 +33,14 @@ import { track } from "@/lib/analytics";
 import { useNavStore } from "@/store/useNavStore";
 
 export default function TodaySection() {
+  const t = useT();
   const hydrated = useHydrated();
   const store = useUserStore();
   const go = useNavStore((s) => s.go);
   const planning = useRef<HTMLDetailsElement>(null);
+  const [discoveryReady, setDiscoveryReady] = useState(false);
   function openPlanning() {
+    if (planRef.current) planRef.current.open = true;
     if (!planning.current) return;
     planning.current.open = true;
     planning.current
@@ -117,11 +121,9 @@ export default function TodaySection() {
   return (
     <div className="companion-today">
       <CompanionHeader completed={completed} count={count} compact />
-      <HomeSection embedded />
-      <details ref={planRef} className="one-action-plan">
-        <summary>Мой план <span>{completed}/{count}</span></summary>
       <NextStep
         onTask={(id) => {
+          if (planRef.current) planRef.current.open = true;
           setSelectedTask(id);
           setSmallStep("");
           requestAnimationFrame(() =>
@@ -132,6 +134,9 @@ export default function TodaySection() {
         }}
         onCreate={openPlanning}
       />
+      <details ref={planRef} className="one-action-plan">
+        <summary>Мой план <span>{completed}/{count}</span></summary>
+
       {focusedPlan && (
         <section id="flow-task" className="flow-task-detail">
           <h2>{focusedPlan.snapshot.title}</h2>
@@ -383,6 +388,10 @@ export default function TodaySection() {
           <EveningRetro />
         </aside>
       </div>
+      </details>
+      <details className="one-action-discovery" onToggle={e => { if (e.currentTarget.open) setDiscoveryReady(true); }}>
+        <summary data-no-i18n>{t("flow.discover")}</summary>
+        {discoveryReady && <HomeSection embedded />}
       </details>
       <LevelUpOverlay />
       <DayCompleteOverlay />

@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   if (!rateLimit(`chat:${userId}`, 8, 60000)) return json({ error: "Подожди минуту перед следующим сообщением" }, 429);
   if (!available()) return json({ error: "ИИ пока не подключён на сервере" }, 503);
   let body: any;
-  let scopes: AiScope[] = [];
+  let scopes: AiScope[];
   try {
     const reader = req.body?.getReader(); if (!reader) throw new Error(); let size = 0; const chunks = [];
     while (true) { const item = await reader.read(); if (item.done) break; size += item.value.length; if (size > 26000) { await reader.cancel(); throw new Error(); } chunks.push(item.value); }

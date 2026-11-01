@@ -801,3 +801,9 @@
   height: 18px;
   flex-shrink: 0;
 }
+
+.learning-stages { display: flex; flex-wrap: wrap; gap: .5rem 1rem; list-style: none; padding: 0; margin: 1.25rem 0; color: var(--color-muted); font-size: .85rem; }
+.learning-stages [aria-current="step"] { color: var(--color-fg); font-weight: 700; text-decoration: underline; text-underline-offset: .3rem; }
+.learning-review { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--color-border); }
+.learning-review h3 { font-weight: 600; }
+.learning-review button { margin-top: .75rem; text-decoration: underline; text-underline-offset: .2rem; }

@@ -235,7 +235,7 @@ export default function Landing() {
           className={styles.brand}
           aria-label="YeahGrind — главная"
         >
-          <Image src="/logo-white.webp" alt="" width={31} height={29} />
+          <Image src="/logo.webp" alt="" width={31} height={29} />
           yeahgrind<span>®</span>
         </Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
@@ -247,7 +247,7 @@ export default function Landing() {
           <Link href="/login" className={styles.login}>
             Войти
           </Link>
-          <Link className={styles.navCta} href="/app">
+          <Link className={styles.navCta} href="/today">
             Начать{" "}
             <span>
               <Arrow />
@@ -339,7 +339,7 @@ export default function Landing() {
               хватит сил.
             </p>
             <div className={styles.heroButtons}>
-              <Link href="/app" className={styles.primary}>
+              <Link href="/today" className={styles.primary}>
                 Начать свой путь{" "}
                 <span>
                   <Arrow />
@@ -490,7 +490,7 @@ export default function Landing() {
                 <h3>{look.title}</h3>
                 <p>{look.text}</p>
               </div>
-              <Link href="/app" className={styles.darkCta}>
+              <Link href="/today" className={styles.darkCta}>
                 Найти своё действие{" "}
                 <span>
                   <Arrow />
@@ -680,7 +680,7 @@ export default function Landing() {
                 <span>Прокачивай то, что важно.</span>
               </h2>
             </div>
-            <Link href="/app" className={styles.textLink}>
+            <Link href="/today" className={styles.textLink}>
               Заглянуть внутрь{" "}
               <span>
                 <Arrow />
@@ -905,7 +905,7 @@ export default function Landing() {
               <span>С одного действия.</span>
             </h2>
             <p>Пять минут сегодня — уже начало чего-то большего.</p>
-            <Link href="/app" className={styles.primary}>
+            <Link href="/today" className={styles.primary}>
               Начать бесплатно{" "}
               <span>
                 <Arrow />
@@ -921,7 +921,7 @@ export default function Landing() {
       <footer className={styles.footer}>
         <div className={styles.footerTop}>
           <Link href="/" className={styles.brand}>
-            <Image src="/logo-white.webp" alt="" width={28} height={26} />
+            <Image src="/logo.webp" alt="" width={28} height={26} />
             yeahgrind<span>®</span>
           </Link>
           <p className={styles.footerMascot}>

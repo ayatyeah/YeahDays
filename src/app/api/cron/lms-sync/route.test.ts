@@ -1,3 +1,4 @@
+vi.mock("@/lib/backgroundJobs", () => ({ runTrackedJob: (_name: string, run: () => Promise<unknown>) => run() }));
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   sync: vi.fn(), connections: { findMany: vi.fn(), updateMany: vi.fn() }, user: { findUnique: vi.fn() },

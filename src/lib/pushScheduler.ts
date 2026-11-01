@@ -15,6 +15,7 @@
  * станет несколько и таймер нужен только в одном.
  */
 
+import { runTrackedJob } from "@/lib/backgroundJobs";
 import { pushConfigured } from "@/lib/push";
 
 const MINUTE = 60_000;
@@ -45,12 +46,12 @@ export function startPushScheduler() {
     const now = new Date();
     try {
       const { runDispatch } = await import("@/lib/pushDispatch");
-      await runDispatch(now);
+      await runTrackedJob("push-dispatch", () => runDispatch(now));
       // утро/вечер считаются по часам — хватает одного прогона в час
       if (now.getUTCHours() !== lastDigestHour) {
         const { runDigest } = await import("@/lib/pushDigest");
-        await runDigest(now);
-        lastDigestHour = now.getUTCHours();
+        const result = await runTrackedJob("push-digest", () => runDigest(now));
+        if (result.ok) lastDigestHour = now.getUTCHours();
       }
     } catch (e) {
       console.error("push scheduler tick failed:", e);

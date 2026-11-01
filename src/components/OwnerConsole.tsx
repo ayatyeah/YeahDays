@@ -5,6 +5,7 @@ import Link from "next/link";
 import Modal from "@/components/ui/Modal";
 import Button from "@/components/ui/Button";
 import Logo from "@/components/Logo";
+import BackgroundJobStatus from "@/components/BackgroundJobStatus";
 import OwnerAnalytics from "@/components/OwnerAnalytics";
 import { cn } from "@/lib/cn";
 import { agoLabel, type Presence } from "@/lib/presence";
@@ -416,7 +417,7 @@ export default function OwnerConsole({
 
       {/* Аналитика грузится только когда вкладку открыли: это полтора десятка
           запросов к базе, а в консоль чаще заходят сменить кому-то пароль. */}
-      {tab === "analytics" && <OwnerAnalytics />}
+      {tab === "analytics" && <><BackgroundJobStatus /><OwnerAnalytics /></>}
 
       {tab === "devices" && (
         <div className="space-y-1.5">

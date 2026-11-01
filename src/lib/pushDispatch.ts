@@ -229,12 +229,11 @@ async function scheduleProactive(now: Date) {
 export async function runDispatch(now: Date = new Date()) {
   if (!pushConfigured) return { ok: false as const, reason: "VAPID keys not set" };
 
+  let failed = 0;
   let sent = 0;
   let skipped = 0;
   let expired = 0;
-  let scheduled = 0;
-
-  scheduled = await scheduleProactive(now);
+  const scheduled = await scheduleProactive(now);
 
   const due = await prisma.scheduledNotification.findMany({
     where: {
@@ -320,6 +319,7 @@ export async function runDispatch(now: Date = new Date()) {
         expired++;
         continue;
       }
+      if (res === "failed") failed++;
       if (res === "sent") delivered = true;
     }
 
@@ -332,5 +332,5 @@ export async function runDispatch(now: Date = new Date()) {
     where: { fireAt: { lt: new Date(now.getTime() - 24 * 3600_000) } },
   });
 
-  return { ok: true as const, sent, skipped, expired, scheduled };
+  return { ok: failed === 0, failed, sent, skipped, expired, scheduled };
 }

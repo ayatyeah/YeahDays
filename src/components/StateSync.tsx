@@ -1,255 +1,139 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { getUserId } from "@/lib/userId";
-import {
-  useUserStore,
-  useHydrated,
-  pickSync,
-  hasProgress,
-  selectTotalXp,
-  selectStreak,
-  type SyncData,
-} from "@/store/useUserStore";
+import { useUserStore, useHydrated, pickSync, hasProgress, selectTotalXp, selectStreak, type SyncData } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
 import { useSyncStatus } from "@/store/useSyncStatus";
+import { mergeSnapshots, sameSnapshot } from "@/lib/syncMerge";
 
-/**
- * Кросс-девайс синхронизация всего прогресса (план/цели/настроение/история).
- *
- * — pull при загрузке и при смене статуса входа (вошёл/вышел);
- * — push с дебаунсом на каждое изменение стора;
- * — поллинг pull() пока вкладка/PWA видима — задача, добавленная на ноуте
- *   (или голосом через СалемАй — та тоже просто пишет в UserState.data),
- *   должна появиться на телефоне без ручной перезагрузки;
- * — разрешение конфликтов last-write-wins по updatedAt (то же правило и
- *   для поллинга: применяется только если сервер реально свежее локального).
- *
- * Работает и для анонимного устройства (device-id), и для Google-аккаунта:
- * сервер сам выбирает ключ (сессия → device-id). При входе локальный
- * прогресс уезжает в аккаунт, на другом устройстве — приезжает обратно.
- */
-const DEBOUNCE_MS = 1500;
-/**
- * Раз в 45 секунд, а не раз в 5: изменения с другого устройства — редкость,
- * а каждый тик стоил похода в базу и будил радио телефона. Мгновенность
- * даёт не интервал, а pull() при возврате на вкладку и при появлении сети.
- * Сам запрос с since= дешёвый: сервер отвечает «без изменений» без блоба.
- */
-const POLL_MS = 45_000;
-/** чей аккаунт сейчас лежит в локальном сторе этого браузера (см. эффект ниже) */
 const ACTIVE_ACCOUNT_KEY = "yd-active-account";
+type Checkpoint = { data: SyncData; revision: number };
 
+/** One serialized exchange per account. A durable acknowledged base preserves
+ * offline edits across reloads; late responses cannot cross account boundaries. */
 export default function StateSync() {
   const hydrated = useHydrated();
   const { data: session, status } = useSession();
-  const applyingRemote = useRef(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /**
-   * Принять серверный снимок.
-   *
-   * По умолчанию — только если он свежее локального (last-write-wins).
-   * force обходит это правило: он нужен на свежем устройстве, где локальный
-   * updatedAt новее лишь из-за онбординга, а реальной работы нет — тогда
-   * аккаунт с историей должен победить, иначе он был бы затёрт пустышкой.
-   */
-  const applyRemote = useCallback((data: SyncData, force = false) => {
-    if (!data || typeof data.updatedAt !== "number") return;
-    if (!force && data.updatedAt <= useUserStore.getState().updatedAt) return;
-    applyingRemote.current = true;
-    useUserStore.getState().hydrateFromRemote(data);
-    // прогресс реально приехал с другого устройства — это и есть польза входа
-    useSyncStatus.getState().markPulled();
-    // отпускаем флаг после синхронного оповещения подписчиков
-    queueMicrotask(() => {
-      applyingRemote.current = false;
-    });
-  }, []);
-
-  const push = useCallback(async () => {
-    const userId = getUserId();
-    if (!userId) return;
-    const data = pickSync(useUserStore.getState());
-    const status = useSyncStatus.getState();
-    status.begin();
-    try {
-      const res = await fetch("/api/state", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, data }),
-        keepalive: true,
-      });
-      if (!res.ok) return status.fail();
-      const json = (await res.json()) as {
-        applied?: boolean;
-        data?: SyncData;
-      };
-      // сервер оказался свежее (гонка с другим устройством) — принимаем его
-      if (json.applied === false && json.data) applyRemote(json.data);
-      status.markSynced();
-      void publishStats();
-    } catch {
-      // офлайн — состояние всё равно в localStorage, синхронизируем позже
-      status.fail();
-    }
-  }, [applyRemote]);
-
-  /**
-   * Публичная сводка для друзей: имя, уровень, опыт, серия. Считается на
-   * клиенте (стрик знает только он — там заморозки и задачи), поэтому и
-   * публикуется отсюда, следом за успешным сохранением. Молча падает:
-   * список друзей не настолько важен, чтобы мешать синхронизации.
-   */
-  const publishStats = useCallback(async () => {
-    const s = useUserStore.getState();
-    if (!s.onboarded) return;
-    const xp = selectTotalXp(s.plan, s.todos);
-    try {
-      await fetch("/api/social", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: s.name,
-          xp,
-          level: getLevelProgress(xp).level,
-          streak: selectStreak(s.plan, s.freezes.days, s.todos),
-        }),
-      });
-    } catch {
-      /* не критично */
-    }
-  }, []);
-
-  const pull = useCallback(async () => {
-    const userId = getUserId();
-    if (!userId) return;
-    const status = useSyncStatus.getState();
-    status.begin();
-    try {
-      const localNow = useUserStore.getState();
-      // Пустой стор (свежее устройство) просит полный снимок: правило
-      // adoptAccount ниже должно увидеть серверные данные целиком.
-      const since = hasProgress(localNow) ? localNow.updatedAt : 0;
-      const res = await fetch(
-        `/api/state?userId=${encodeURIComponent(userId)}&since=${since}`,
-        { method: "GET", cache: "no-store" },
-      );
-      if (!res.ok) return status.fail();
-      const json = (await res.json()) as { data?: SyncData | null; unchanged?: boolean };
-      if (json.unchanged) {
-        status.markSynced();
-        return;
-      }
-      const remote = json.data ?? null;
-      const local = useUserStore.getState();
-
-      // Свежее устройство: аккаунт с историей побеждает пустой локальный стор,
-      // даже если тот формально новее (онбординг успел бампнуть updatedAt).
-      const adoptAccount =
-        !!remote && hasProgress(remote) && !hasProgress(local);
-
-      if (remote && (remote.updatedAt > local.updatedAt || adoptAccount)) {
-        applyRemote(remote, adoptAccount);
-        status.markSynced();
-      } else {
-        // сервер пуст или устарел — заливаем локальный прогресс наверх
-        await push();
-      }
-    } catch {
-      // офлайн — попробуем в следующий раз
-      status.fail();
-    }
-  }, [applyRemote, push]);
-
-  // push с дебаунсом на каждое реальное изменение (updatedAt меняется)
-  useEffect(() => {
-    if (!hydrated) return;
-    const unsub = useUserStore.subscribe((state, prev) => {
-      if (applyingRemote.current) return;
-      if (state.updatedAt === prev.updatedAt) return;
-      if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(() => void push(), DEBOUNCE_MS);
-    });
-    return () => {
-      unsub();
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [hydrated, push]);
-
-  /*
-   * Смена аккаунта в этом браузере (A вышел, вошёл B — или наоборот) не
-   * должна тащить за собой то, что осталось от предыдущего юзера в
-   * localStorage: иначе pull() ниже сравнит чужие устаревшие данные с
-   * реальным состоянием нового юзера и в худшем случае push() их поверх
-   * затрёт. Помним, чей аккаунт сейчас в сторе, и при расхождении чистим
-   * его перед pull() — пустой стор безопасен (updatedAt: 0 всегда проигрывает
-   * LWW), а анонимный след ("" → аккаунт при первом входе) намеренно не
-   * трогаем, чтобы не потерять донный перенос через /api/link.
-   */
+  const account = session?.user?.id;
   useEffect(() => {
     if (!hydrated || status === "loading") return;
-    const currentKey = session?.user?.id ?? "";
-    let lastKey: string | null = null;
+    const userId = getUserId();
+    if (!userId) return;
+    const owner = account ?? `device:${userId}`;
+    const key = `yg-sync-v2:${owner}`;
+    const controller = new AbortController();
+    let checkpoint: Checkpoint | null = null;
     try {
-      lastKey = localStorage.getItem(ACTIVE_ACCOUNT_KEY);
-    } catch {}
-    if (lastKey && lastKey !== currentKey) {
-      useUserStore.getState().hardResetLocal();
-    }
-    try {
-      localStorage.setItem(ACTIVE_ACCOUNT_KEY, currentKey);
-    } catch {}
-    void pull();
-  }, [hydrated, status, session?.user?.id, pull]);
-
-  // отдаём наружу принудительную синхронизацию (кнопка в профиле)
-  useEffect(() => {
-    useSyncStatus.getState().setSyncNow(() => pull());
-    return () => useSyncStatus.getState().setSyncNow(null);
-  }, [pull]);
-
-  /*
-   * Поллинг pull() пока страница видима — свёрнутая вкладка/фон на телефоне
-   * не должны молотить сеть и батарею впустую. При возврате на вкладку
-   * дёргаем pull() сразу же, а не ждём следующий тик интервала — иначе
-   * можно было простоять в фоне минуту и всё равно ждать до 5с после
-   * возврата, что и выглядело бы как "не мгновенно".
-   */
-  useEffect(() => {
-    if (!hydrated || status === "loading") return;
-
-    let interval: ReturnType<typeof setInterval> | null = null;
-    const startPolling = () => {
-      if (interval) return;
-      interval = setInterval(() => void pull(), POLL_MS);
-    };
-    const stopPolling = () => {
-      if (interval) clearInterval(interval);
-      interval = null;
-    };
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        void pull();
-        startPolling();
-      } else {
-        stopPolling();
+      const previous = localStorage.getItem(ACTIVE_ACCOUNT_KEY);
+      if (previous && previous !== (account ?? "")) useUserStore.getState().hardResetLocal();
+      localStorage.setItem(ACTIVE_ACCOUNT_KEY, account ?? "");
+      const saved = JSON.parse(localStorage.getItem(key) ?? "null");
+      if (saved?.data && Number.isSafeInteger(saved.revision)) checkpoint = saved;
+    } catch { /* local state still works without storage */ }
+    let applying = false;
+    let pending: Promise<void> | null = null;
+    let again = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const syncStatus = useSyncStatus.getState();
+    const request = (url: string, init?: RequestInit) => fetch(url, {
+      ...init, cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(20_000)]),
+    });
+    function accept(next: Checkpoint, sent: SyncData) {
+      if (controller.signal.aborted) return;
+      const current = pickSync(useUserStore.getState());
+      // Preserve edits made after request dispatch; send them in the next pass.
+      const merged = mergeSnapshots(sent, current, next.data);
+      checkpoint = next;
+      try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* retry next session conservatively */ }
+      if (!sameSnapshot(current, merged)) {
+        applying = true;
+        useUserStore.getState().hydrateFromRemote(merged);
+        applying = false;
       }
-    };
-
-    // вернулась сеть — сразу сверяемся, не дожидаясь тика
-    const handleOnline = () => void pull();
-
-    if (document.visibilityState === "visible") startPolling();
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("online", handleOnline);
+      again = !sameSnapshot(merged, next.data);
+      syncStatus.markPulled();
+    }
+    async function exchange() {
+      syncStatus.begin();
+      try {
+        let local = pickSync(useUserStore.getState());
+        if (!checkpoint) {
+          const response = await request(`/api/state?userId=${encodeURIComponent(userId!)}`);
+          if (!response.ok) throw new Error("Read failed");
+          const remote = await response.json();
+          if (controller.signal.aborted) return;
+          local = pickSync(useUserStore.getState());
+          if (remote.data && !hasProgress(local)) {
+            accept(remote, local);
+            syncStatus.markSynced();
+            return;
+          }
+          // No base: merge conservatively on the server; never assume a missing task was deleted.
+          if (!remote.data && !hasProgress(local)) { syncStatus.markSynced(); return; }
+        } else if (sameSnapshot(local, checkpoint.data)) {
+          const response = await request(`/api/state?userId=${encodeURIComponent(userId!)}&revision=${checkpoint.revision}`);
+          if (!response.ok) throw new Error("Read failed");
+          const remote = await response.json();
+          if (controller.signal.aborted) return;
+          if (remote.unchanged) {
+            again = !sameSnapshot(pickSync(useUserStore.getState()), checkpoint.data);
+            syncStatus.markSynced(); return;
+          }
+          if (remote.data) {
+            accept(remote, local); syncStatus.markSynced(); return;
+          }
+          // Server was restored/reset: re-upload the local snapshot.
+          checkpoint = null;
+        }
+        local = pickSync(useUserStore.getState());
+        const response = await request("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ protocol: 2, userId, data: local, base: checkpoint?.data ?? null, baseRevision: checkpoint?.revision ?? 0 }),
+        });
+        if (!response.ok) throw new Error("Save failed");
+        const remote: Checkpoint = await response.json();
+        if (!remote.data || !Number.isSafeInteger(remote.revision)) throw new Error("Invalid response");
+        if (controller.signal.aborted) return;
+        accept(remote, local);
+        syncStatus.markSynced();
+        const s = useUserStore.getState();
+        if (s.onboarded) {
+          const xp = selectTotalXp(s.plan, s.todos);
+          void request("/api/social", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: s.name, xp, level: getLevelProgress(xp).level, streak: selectStreak(s.plan, s.freezes.days, s.todos) }) }).catch(() => {});
+        }
+      } catch {
+        if (!controller.signal.aborted) syncStatus.fail();
+        // No tight retry loop during an outage. Online/focus/poll or edits retry.
+        again = false;
+      }
+    }
+    function sync(): Promise<void> {
+      if (controller.signal.aborted) return Promise.resolve();
+      if (pending) { again = true; return pending; }
+      pending = (async () => {
+        do { again = false; await exchange(); } while (again && !controller.signal.aborted);
+      })().finally(() => { pending = null; });
+      return pending;
+    }
+    const unsubscribe = useUserStore.subscribe((s, prev) => {
+      if (applying || s.updatedAt === prev.updatedAt) return;
+      clearTimeout(timer);
+      timer = setTimeout(() => void sync(), 1500);
+    });
+    const visible = () => { if (document.visibilityState === "visible") void sync(); };
+    const online = () => { void sync(); };
+    const poll = setInterval(visible, 45_000);
+    window.addEventListener("online", online);
+    document.addEventListener("visibilitychange", visible);
+    syncStatus.setSyncNow(sync);
+    void sync();
     return () => {
-      stopPolling();
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("online", handleOnline);
+      controller.abort(); unsubscribe(); clearTimeout(timer); clearInterval(poll);
+      window.removeEventListener("online", online);
+      document.removeEventListener("visibilitychange", visible);
+      syncStatus.setSyncNow(null);
     };
-  }, [hydrated, status, pull]);
-
+  }, [hydrated, status, account]);
   return null;
 }

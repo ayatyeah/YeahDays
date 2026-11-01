@@ -28,14 +28,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_BUILD_ID: BUILD_ID,
   },
 
-  // Next 16 встроенный тайп-чек пока несовместим с нативным TypeScript 7
-  // (падает на детекте пакета). Проверяем типы отдельно: `npm run typecheck`
-  // (tsc --noEmit проходит чисто). Так сборка не падает, а типобезопасность
-  // сохраняется через CI/локальный скрипт.
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-
   experimental: {
     /**
      * Точечные импорты вместо целых пакетов. framer-motion и lucide-подобные

@@ -94,7 +94,8 @@ export function acceptPolicy(user, extra = {}) {
  * про само согласие просят `policy: false`.
  */
 export async function newUser({ fresh = false, state = {}, policy = !fresh } = {}) {
-  const id = `${Date.now().toString(36)}${seq++}`;
+  const id = randomUUID().replaceAll("-", "").slice(0, 16);
+  seq++;
   const user = {
     name: `Тест ${seq}`,
     email: `e2e-${id}@test.local`,

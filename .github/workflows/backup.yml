@@ -27,7 +27,7 @@ jobs:
         run: apt-get update -qq && apt-get install -y --no-install-recommends gnupg
       - name: Back up, encrypt and verify recovery
         shell: bash
-        run: scripts/backup-production.sh
+        run: bash scripts/backup-production.sh
         env:
           BACKUP_DATABASE_URL: ${{ secrets.BACKUP_DATABASE_URL }}
           BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}

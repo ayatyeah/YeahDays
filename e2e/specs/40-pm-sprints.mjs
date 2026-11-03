@@ -8,7 +8,7 @@ test('Спринты ПМ: отдельная версия, необратимы
     await openSection(page, '/events/project-management-quiz-2-real');
     await page.getByTestId('pm-quiz-version').selectOption('sprints');
     const root = page.getByTestId('pm-sprints');
-    check(await root.getByLabel('Вариант спринта').locator('option').count() === 5, 'пять отдельных подборок');
+    check(await root.getByLabel('Вариант спринта').locator('option').count() === 7, 'пять фото-подборок и два дополнения');
     await root.getByLabel('Количество вопросов').fill('51');
     check(await root.getByRole('button', { name: 'Начать спринт', exact: true }).isDisabled(), 'нельзя больше 50');
     await root.getByLabel('Количество вопросов').fill('2');
@@ -22,6 +22,8 @@ test('Спринты ПМ: отдельная версия, необратимы
     await options.first().click();
     check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'первый выбор блокирует все варианты');
     check((await root.getByTestId('pm-sprint-feedback').innerText()).includes('✓ Верно'), 'верный ответ показан сразу');
+    check((await root.getByTestId('pm-sprint-explanation').innerText()).includes('Undistributed'), 'объяснение открыто сразу после ответа');
+    await root.getByRole('button', { name: 'Разбор ↓' }).click();
     mkdirSync('artifacts/pm-sprints', { recursive: true });
     await page.screenshot({ path: 'artifacts/pm-sprints/feedback-mobile.png' });
     await page.setViewportSize({ width: 1280, height: 800 });
@@ -67,6 +69,18 @@ test('Спринты ПМ: отдельная версия, необратимы
     await root.getByLabel('Количество вопросов').fill('9');
     await root.getByRole('button', { name: 'Начать спринт', exact: true }).click();
     check((await question.innerText()).includes('Дополнительный 2 · Случайно'), 'выбрана случайная дополнительная подборка');
+    await question.getByRole('button', { name: 'Выбрать другой спринт' }).click();
+    await root.getByLabel('Вариант спринта').selectOption('supplement-docx');
+    await root.getByLabel('Порядок вопросов').selectOption('ordered');
+    await root.getByLabel('Количество вопросов').fill('1');
+    await root.getByRole('button', { name: 'Начать спринт', exact: true }).click();
+    check((await question.innerText()).includes('не оригинальные A–E'), 'авторское дополнение явно отмечено');
+    check(await root.getByTestId('pm-sprint-explanation').count() === 0, 'разбор не раскрывает ответ заранее');
+    await options.nth(2).click();
+    check((await root.getByTestId('pm-sprint-explanation').innerText()).includes('Unallocated budget'), 'объяснение дополнения доступно сразу');
+    await page.reload({ waitUntil: 'networkidle' });
+    await question.waitFor();
+    check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'ответ дополнения сохранён и заблокирован');
     const footer = await root.locator('footer').boundingBox();
     check(footer.y + footer.height <= page.viewportSize().height + 1, 'кнопки помещаются на мобильном экране');
   } finally { await browser.close(); }

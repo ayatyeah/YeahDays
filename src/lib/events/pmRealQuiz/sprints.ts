@@ -1,4 +1,7 @@
-import { availableQuestions } from "./model";
+import { availableQuestions, type RealQuestion } from "./model";
+import supplement from "./supplement.json";
+
+export const sprintQuestions: RealQuestion[] = [...availableQuestions, ...supplement];
 
 export type SprintRecord = Record<string, { attempts: number; correct: number; lastAnswer: number }>;
 export type SprintOrder = "ordered" | "random";
@@ -7,11 +10,12 @@ export const sprintGroups = [
   ...["1", "4", "5"].map(id => ({ id, label: `Вариант ${id}`, ids: availableQuestions.filter(q => q.variant === id).sort((a, b) => a.number - b.number).map(q => q.id) })),
   ...Array.from({ length: Math.ceil(extra.length / 50) }, (_, i) => ({ id: `extra-${i + 1}`, label: `Дополнительный ${i + 1}`, ids: extra.slice(i * 50, (i + 1) * 50).map(q => q.id) })),
 ];
+sprintGroups.push(...["html", "docx"].map(source => ({ id: `supplement-${source}`, label: `Дополнение · ${source.toUpperCase()}`, ids: supplement.filter(q => q.sourceType === source).map(q => q.id) })));
 export type Sprint = { group?: string; order?: SprintOrder; ids: string[]; answers: Record<string, number>; index: number; finished: boolean };
 export type SprintState = { record: SprintRecord; sprint: Sprint | null };
 export const emptySprintState = (): SprintState => ({ record: {}, sprint: null });
 export const sprintKey = (userId: string) => `yg-pm-sprints:v1:${userId}`;
-const byId = new Map(availableQuestions.map(q => [q.id, q]));
+const byId = new Map(sprintQuestions.map(q => [q.id, q]));
 const validAnswer = (a: unknown): a is number => Number.isInteger(a) && Number(a) >= 0 && Number(a) < 5;
 
 export function parseSprintState(raw: string | null): SprintState {

@@ -6,6 +6,7 @@ import Image from "next/image";
 import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
 import bank from "@/lib/events/pmRealQuiz/questions.json";
+import alternativeBank from "@/lib/events/pmRealQuiz/alternatives.json";
 import notes from "@/lib/events/pmRealQuiz/notes.json";
 import sources from "@/lib/events/pmRealQuiz/sources.json";
 import { answerStats, availableQuestions, parseAnswers, realProgress, realQuizKey, REAL_PM_ID, REAL_PM_TITLE, variants, type Answers } from "@/lib/events/pmRealQuiz/model";
@@ -14,6 +15,7 @@ import { saveProgress } from "@/lib/events/storage";
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6";
 const field = "min-h-12 w-full min-w-0 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-base";
 const letters = "ABCDE";
+const alternatives: Record<string, { answer: number; mode: string; question: string; explanation: string }[]> = alternativeBank;
 type Tab = "questions" | "brief" | "full" | "sources";
 const tabs: [Tab, string][] = [["questions", "Вопросы"], ["brief", "Краткий конспект"], ["full", "Развёрнутый конспект"], ["sources", "Источники"]];
 const label = (v: string) => variants.find(x => x.id === v)?.label ?? v;
@@ -73,7 +75,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
       <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-muted)]">Project Management · Лекции 4–8</p>
       <h1 className="break-words text-3xl font-black leading-tight sm:text-4xl">{REAL_PM_TITLE}</h1>
       <p className="text-sm leading-relaxed">Подготовка к квизу 4 ноября 2026. По твоей информации — 50% эндтерма. Здесь собраны присланные вопросы, исходные ответы A–E и объяснения, чтобы узнавать принцип даже в новом сценарии.</p>
-      <div className="flex flex-wrap gap-2 text-sm font-semibold"><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">151 вопрос</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">4 группы материалов</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">2 конспекта</span></div>
+      <div className="flex flex-wrap gap-2 text-sm font-semibold"><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">151 вопрос</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">604 переформулировки</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">4 группы материалов</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">2 конспекта</span></div>
       <p className="text-xs leading-relaxed text-[var(--color-muted)]">Вопросы из присланных фото и Word. Ответы и разборы составлены по лекциям, это не официальный ключ. Наличие этих же вопросов в твоём квизе не подтверждено. Исходные номера и порядок A–E сохранены.</p>
     </header>
     <div className="grid grid-cols-3 gap-2 text-center" aria-live="polite">
@@ -123,7 +125,19 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
           <p className="text-xs text-[var(--color-muted)]">Учебный ключ по Lecture {q.lecture}; не официальный ответ преподавателя.</p>
           <div className="flex flex-wrap gap-2">{notes.filter(n => n.examples.includes(`${q.variant}:${q.number}`)).map(n => <button key={n.id} className="min-h-11 text-left text-sm underline" onClick={() => { setTab("full"); requestAnimationFrame(() => document.getElementById(`note-${n.id}`)?.scrollIntoView({ behavior: "smooth" })); }}>Разобраться: {n.title} →</button>)}</div>
         </div>}
-        <details key={`source-${q.id}`}><summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Сверить оригинал · {q.sources.length} фото</summary><p className="mb-3 text-xs text-[var(--color-muted)]">Фото могут включать соседние вопросы. Пометки на бланках не используются как ключ ответов.</p><div className="space-y-4">{q.sources.map(i => <SourcePhoto key={i} index={i} />)}</div></details>
+        {showAnswer && <section key={`alternatives-${q.id}`} className="space-y-3" data-testid="pm-real-alternatives">
+          <h3 className="text-lg font-bold">А если правильный ответ — другой?</h3>
+          <p className="text-sm leading-relaxed text-[var(--color-muted)]">Четыре учебные переформулировки, не вопросы с реального теста. Варианты A–E остаются теми же: меняется условие. Раскрой букву, чтобы увидеть, когда подходит этот ответ.</p>
+          {alternatives[q.id].map(alt => <details key={alt.answer} className="rounded-2xl border border-[var(--color-border)] p-3 sm:p-4" data-testid="pm-real-alternative">
+            <summary className="min-h-11 cursor-pointer break-words py-2 text-sm font-semibold"><span className="text-violet-500">Если ответ {letters[alt.answer]}</span> · <span lang="en">{q.options[alt.answer]}</span></summary>
+            <div className="space-y-3 border-t border-[var(--color-border)] pt-3">
+              <p className="text-xs font-bold text-[var(--color-muted)]">{alt.mode === "misconception" ? "Найди ошибочное утверждение" : "Новое условие"}</p>
+              <p lang="en" className="whitespace-pre-line text-base leading-relaxed">{alt.question}</p>
+              <p className="text-sm leading-relaxed"><b>Почему {letters[alt.answer]}:</b> {alt.explanation}</p>
+              {alt.mode === "misconception" && <p className="text-xs leading-relaxed text-[var(--color-muted)]">Здесь нужно выбрать указанную ошибку. Само утверждение в ответе не становится верным правилом.</p>}
+            </div>
+          </details>)}
+        </section>}
         <div className="flex flex-wrap justify-between gap-2"><Button variant="ghost" disabled={position <= 0} onClick={() => move(position - 1)}>← Предыдущий</Button><Button disabled={position >= filtered.length - 1} onClick={() => move(position + 1)}>Следующий →</Button></div>
       </section>}
       <section className={`${panel} space-y-3`}><h2 className="font-bold">Что повторить по лекциям</h2>{[4,5,6,7,8].map(n => {

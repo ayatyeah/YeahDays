@@ -15,6 +15,7 @@ test('Реальный квиз ПМ: варианты, разборы, конс
     await question.getByRole('radio').first().waitFor();
     check(await question.getByRole('radio').count() === 5, 'оригинальные A–E');
     check(await page.getByTestId('pm-real-explanation').count() === 0, 'ответ скрыт до проверки');
+    check(await page.getByTestId('pm-real-alternatives').count() === 0, 'переформулировки не подсказывают ответ до проверки');
     await question.getByRole('radio').nth(2).check();
     await question.getByRole('button', { name: 'Проверить ответ', exact: true }).click();
     check((await page.getByTestId('pm-real-explanation').innerText()).includes('Есть ошибка. Ответ: A'), 'проверяется по лекции, а не пометкам на фото');
@@ -40,17 +41,27 @@ test('Реальный квиз ПМ: варианты, разборы, конс
     check((await question.innerText()).includes('Вариант 1 · №18'), 'переход из конспекта к оригинальному вопросу');
     await question.getByRole('button', { name: 'Показать разбор без ответа', exact: true }).click();
     check((await page.getByTestId('pm-real-explanation').innerText()).includes('без зачёта ответа'), 'просмотр не засчитывается как решение');
-    await question.getByText(/Сверить оригинал/).click();
-    const photo = question.locator('img').first();
-    await photo.waitFor();
-    await page.waitForFunction(() => { const img = document.querySelector('[data-testid="pm-real-question"] img'); return img?.complete && img.naturalWidth > 0; });
-    check(await photo.evaluate(img => img.complete && img.naturalWidth > 0), 'исходное фото загружается');
+    check(await question.getByText(/Сверить оригинал/).count() === 0, 'сверка оригиналов убрана из карточки');
+    const alternatives = page.getByTestId('pm-real-alternative');
+    check(await alternatives.count() === 4, 'четыре переформулировки у вопроса');
+    const summaries = await alternatives.locator('summary').allTextContents();
+    check(['A','C','D','E'].every((letter, i) => summaries[i].includes(`Если ответ ${letter}`)), 'альтернативы исключают исходный верный B');
+    for (const item of await alternatives.all()) await item.locator('summary').click();
+    check((await alternatives.first().innerText()).includes('Почему A:'), 'объяснение связано с новой правильной буквой');
+    check((await alternatives.first().innerText()).includes('500'), 'показано изменённое числовое условие');
     mkdirSync('artifacts/pm-real-quiz', { recursive: true });
     for (const width of [320,390,1440]) {
       await page.setViewportSize({ width, height:900 });
       check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `нет горизонтального переполнения ${width}`);
       await page.screenshot({ path: `artifacts/pm-real-quiz/questions-${width}.png` });
     }
+    await question.getByRole('button', { name:'Решить ещё раз', exact:true }).click();
+    check(await page.getByTestId('pm-real-alternatives').count() === 0, 'повторное решение скрывает все подсказки');
+    await root.getByText('Перейти к номеру вопроса', { exact:true }).click();
+    await root.getByRole('button', { name:'Вариант 1, вопрос 41', exact:true }).click();
+    await question.getByRole('button', { name:'Показать разбор без ответа', exact:true }).click();
+    await page.getByTestId('pm-real-alternative').first().locator('summary').click();
+    check((await page.getByTestId('pm-real-alternative').first().innerText()).includes('Само утверждение в ответе не становится верным правилом'), 'ложное правило явно обозначено как поиск ошибки');
     await root.getByRole('button', { name:'Источники', exact:true }).click();
     check(await root.locator('details').count() === 41, 'все 41 фото доступны');
     await root.getByRole('button', { name:'Развёрнутый конспект', exact:true }).click();

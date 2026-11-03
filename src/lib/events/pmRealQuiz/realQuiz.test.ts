@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { existsSync } from "node:fs";
+import alternatives from "./alternatives.json";
 import bank from "./questions.json";
 import sources from "./sources.json";
 import notes from "./notes.json";
@@ -47,6 +48,32 @@ describe("PM real quiz source coverage and learning", () => {
       for (const ref of note.examples) expect(availableQuestions.some(q => `${q.variant}:${q.number}` === ref)).toBe(true);
     }
     for (const q of availableQuestions) expect(notes.some(n => n.lecture === q.lecture && n.examples.includes(`${q.variant}:${q.number}`))).toBe(true);
+  });
+  it("offers exactly four distinct counterfactuals per available question without changing original answers", () => {
+    const entries: Record<string, typeof alternatives["pm-real-1-1"]> = alternatives;
+    expect(Object.keys(entries).sort()).toEqual(availableQuestions.map(q => q.id).sort());
+    expect(Object.values(entries).flat()).toHaveLength(604);
+    for (const q of availableQuestions) {
+      const variants = entries[q.id];
+      expect(variants.map(v => v.answer)).toEqual([0,1,2,3,4].filter(i => i !== q.answer));
+      expect(new Set(variants.map(v => v.question)).size).toBe(4);
+      for (const v of variants) {
+        expect(["scenario", "misconception"]).toContain(v.mode);
+        expect(v.question.trim()).not.toBe("");
+        expect(v.question).not.toBe(q.text);
+        expect(v.explanation.trim()).not.toBe("");
+      }
+    }
+    // Regression: changing scope communication must not accidentally reuse a budget-authorization explanation.
+    expect(entries["pm-real-5-16"].find(v => v.answer === 3)!.question).toContain("scope");
+    expect(entries["pm-real-5-16"].find(v => v.answer === 4)!.question).toContain("vendor");
+    // Verify the authored VAC scenarios against the original numeric choices.
+    const q = availableQuestions.find(q => q.id === "pm-real-5-20")!;
+    for (const [answer, actualCost] of [[0,350], [2,525], [3,300], [4,450]]) {
+      const v = entries[q.id].find(v => v.answer === answer)!;
+      expect(v.question).toContain(`ACWP = ${actualCost}`);
+      expect(800 - 800 * actualCost / 400).toBe(Number(q.options[answer].replace(/\.$/, "")));
+    }
   });
   it("isolates users, rejects damaged answers and excludes unseen questions from error counts", () => {
     expect(realQuizKey("alice")).not.toBe(realQuizKey("bob"));

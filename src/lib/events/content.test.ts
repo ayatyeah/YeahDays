@@ -65,6 +65,8 @@ describe.each(EVENTS.map((e) => [e.id, e] as const))("содержимое ив�
 
   it("верный ответ не выдаёт себя длиной", () => {
     const choice = all.filter((q) => !q.fixed);
+    // Original source banks preserve their answer choices; authoring balance applies only to generated choices.
+    if (!choice.length) return;
     const longest = choice.filter((q) => q.options.every((o, i) => i === q.answer || o.length < q.options[q.answer].length));
     const shortest = choice.filter((q) => q.options.every((o, i) => i === q.answer || o.length > q.options[q.answer].length));
     expect(longest.length / choice.length).toBeLessThan(0.33);

@@ -1,0 +1,688 @@
+[
+  {
+    "id": 0,
+    "src": "/study/pm-quiz2/source-01.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-17-35.jpg",
+    "questions": [
+      "pm-real-1-1",
+      "pm-real-1-2",
+      "pm-real-1-3",
+      "pm-real-1-4",
+      "pm-real-1-5",
+      "pm-real-1-6",
+      "pm-real-1-7",
+      "pm-real-1-8",
+      "pm-real-1-9"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": 1,
+    "src": "/study/pm-quiz2/source-02.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-17-57.jpg",
+    "questions": [
+      "pm-real-1-10",
+      "pm-real-1-11",
+      "pm-real-1-12",
+      "pm-real-1-13",
+      "pm-real-1-14",
+      "pm-real-1-15",
+      "pm-real-1-16",
+      "pm-real-1-17",
+      "pm-real-1-18",
+      "pm-real-1-19"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": 2,
+    "src": "/study/pm-quiz2/source-03.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-00.jpg",
+    "questions": [
+      "pm-real-1-19",
+      "pm-real-1-20",
+      "pm-real-1-21",
+      "pm-real-1-22",
+      "pm-real-1-23",
+      "pm-real-1-24",
+      "pm-real-1-25",
+      "pm-real-1-26",
+      "pm-real-1-27"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": 3,
+    "src": "/study/pm-quiz2/source-04.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-03.jpg",
+    "questions": [
+      "pm-real-1-27",
+      "pm-real-1-28",
+      "pm-real-1-29",
+      "pm-real-1-30",
+      "pm-real-1-31",
+      "pm-real-1-32",
+      "pm-real-1-33",
+      "pm-real-1-34",
+      "pm-real-1-35"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": 4,
+    "src": "/study/pm-quiz2/source-05.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-05.jpg",
+    "questions": [
+      "pm-real-1-36",
+      "pm-real-1-37",
+      "pm-real-1-38",
+      "pm-real-1-39",
+      "pm-real-1-40",
+      "pm-real-1-41",
+      "pm-real-1-42",
+      "pm-real-1-43"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": 5,
+    "src": "/study/pm-quiz2/source-06.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-13.jpg",
+    "questions": [
+      "pm-real-1-43",
+      "pm-real-1-44",
+      "pm-real-1-45",
+      "pm-real-1-46",
+      "pm-real-1-47",
+      "pm-real-1-48",
+      "pm-real-1-49",
+      "pm-real-1-50"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 720
+  },
+  {
+    "id": 6,
+    "src": "/study/pm-quiz2/source-07.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-16.jpg",
+    "questions": [
+      "pm-real-1-43",
+      "pm-real-1-44",
+      "pm-real-1-45",
+      "pm-real-1-46",
+      "pm-real-1-47",
+      "pm-real-1-48",
+      "pm-real-1-49",
+      "pm-real-1-50"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 7,
+    "src": "/study/pm-quiz2/source-08.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-18.jpg",
+    "questions": [
+      "pm-real-1-27",
+      "pm-real-1-28",
+      "pm-real-1-29",
+      "pm-real-1-30",
+      "pm-real-1-31",
+      "pm-real-1-32",
+      "pm-real-1-33",
+      "pm-real-1-34",
+      "pm-real-1-35"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 8,
+    "src": "/study/pm-quiz2/source-09.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-21.jpg",
+    "questions": [
+      "pm-real-1-27",
+      "pm-real-1-28",
+      "pm-real-1-29",
+      "pm-real-1-30",
+      "pm-real-1-31",
+      "pm-real-1-32",
+      "pm-real-1-33",
+      "pm-real-1-34",
+      "pm-real-1-35"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 9,
+    "src": "/study/pm-quiz2/source-10.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-23.jpg",
+    "questions": [
+      "pm-real-1-10",
+      "pm-real-1-11",
+      "pm-real-1-12",
+      "pm-real-1-13",
+      "pm-real-1-14",
+      "pm-real-1-15",
+      "pm-real-1-16",
+      "pm-real-1-17",
+      "pm-real-1-18",
+      "pm-real-1-19"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 10,
+    "src": "/study/pm-quiz2/source-11.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-26.jpg",
+    "questions": [
+      "pm-real-1-1",
+      "pm-real-1-2",
+      "pm-real-1-3",
+      "pm-real-1-4",
+      "pm-real-1-5",
+      "pm-real-1-6",
+      "pm-real-1-7",
+      "pm-real-1-8",
+      "pm-real-1-9"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 11,
+    "src": "/study/pm-quiz2/source-12.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-28.jpg",
+    "questions": [
+      "pm-real-5-11",
+      "pm-real-5-12",
+      "pm-real-5-13",
+      "pm-real-5-14",
+      "pm-real-5-15"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 12,
+    "src": "/study/pm-quiz2/source-13.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-31.jpg",
+    "questions": [
+      "pm-real-5-16",
+      "pm-real-5-17",
+      "pm-real-5-18",
+      "pm-real-5-19"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 13,
+    "src": "/study/pm-quiz2/source-14.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-33.jpg",
+    "questions": [
+      "pm-real-5-20",
+      "pm-real-5-21",
+      "pm-real-5-22",
+      "pm-real-5-23",
+      "pm-real-5-24",
+      "pm-real-5-25",
+      "pm-real-5-26",
+      "pm-real-5-27"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 14,
+    "src": "/study/pm-quiz2/source-15.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-35.jpg",
+    "questions": [
+      "pm-real-5-28",
+      "pm-real-5-29",
+      "pm-real-5-30",
+      "pm-real-5-31",
+      "pm-real-5-32",
+      "pm-real-5-33",
+      "pm-real-5-34",
+      "pm-real-5-35"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 15,
+    "src": "/study/pm-quiz2/source-16.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-37.jpg",
+    "questions": [
+      "pm-real-5-36",
+      "pm-real-5-37",
+      "pm-real-5-38",
+      "pm-real-5-39",
+      "pm-real-5-40",
+      "pm-real-5-41",
+      "pm-real-5-42"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 16,
+    "src": "/study/pm-quiz2/source-17.jpg",
+    "name": "1ый варик оба кажется/photo_2026-11-03_08-18-39.jpg",
+    "questions": [
+      "pm-real-5-43",
+      "pm-real-5-44",
+      "pm-real-5-45",
+      "pm-real-5-46",
+      "pm-real-5-47",
+      "pm-real-5-48",
+      "pm-real-5-49",
+      "pm-real-5-50"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 17,
+    "src": "/study/pm-quiz2/source-18.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-15-04.jpg",
+    "questions": [
+      "pm-real-4-1",
+      "pm-real-4-2",
+      "pm-real-4-3",
+      "pm-real-4-4",
+      "pm-real-4-5"
+    ],
+    "rotation": 90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 18,
+    "src": "/study/pm-quiz2/source-19.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-15-29.jpg",
+    "questions": [
+      "pm-real-4-6",
+      "pm-real-4-7",
+      "pm-real-4-8",
+      "pm-real-4-9",
+      "pm-real-4-10",
+      "pm-real-4-11",
+      "pm-real-4-12"
+    ],
+    "rotation": 90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 19,
+    "src": "/study/pm-quiz2/source-20.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-15-35.jpg",
+    "questions": [
+      "pm-real-4-13",
+      "pm-real-4-14",
+      "pm-real-4-15",
+      "pm-real-4-16",
+      "pm-real-4-17"
+    ],
+    "rotation": 90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 20,
+    "src": "/study/pm-quiz2/source-21.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-15-38.jpg",
+    "questions": [
+      "pm-real-4-18",
+      "pm-real-4-19",
+      "pm-real-4-20",
+      "pm-real-4-21",
+      "pm-real-4-22"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 21,
+    "src": "/study/pm-quiz2/source-22.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-15-42.jpg",
+    "questions": [
+      "pm-real-4-23",
+      "pm-real-4-24",
+      "pm-real-4-25",
+      "pm-real-4-26",
+      "pm-real-4-27"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 22,
+    "src": "/study/pm-quiz2/source-23.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-15-52.jpg",
+    "questions": [
+      "pm-real-4-33",
+      "pm-real-4-34",
+      "pm-real-4-35",
+      "pm-real-4-36",
+      "pm-real-4-37"
+    ],
+    "rotation": -90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 23,
+    "src": "/study/pm-quiz2/source-24.jpg",
+    "name": "4ый варик/photo_2026-11-03_08-16-02.jpg",
+    "questions": [
+      "pm-real-4-43",
+      "pm-real-4-44",
+      "pm-real-4-45",
+      "pm-real-4-46",
+      "pm-real-4-47"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 24,
+    "src": "/study/pm-quiz2/source-25.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-20-11.jpg",
+    "questions": [
+      "pm-real-unknown-48",
+      "pm-real-unknown-49",
+      "pm-real-unknown-50"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 25,
+    "src": "/study/pm-quiz2/source-26.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-20-29.jpg",
+    "questions": [
+      "pm-real-unknown-33",
+      "pm-real-unknown-34",
+      "pm-real-unknown-35",
+      "pm-real-unknown-36",
+      "pm-real-unknown-37"
+    ],
+    "rotation": 0,
+    "width": 1200,
+    "height": 1600
+  },
+  {
+    "id": 26,
+    "src": "/study/pm-quiz2/source-27.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-20-31.jpg",
+    "questions": [
+      "pm-real-unknown-38",
+      "pm-real-unknown-39",
+      "pm-real-unknown-40",
+      "pm-real-unknown-41",
+      "pm-real-unknown-42"
+    ],
+    "rotation": 90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 27,
+    "src": "/study/pm-quiz2/source-28.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-20-33.jpg",
+    "questions": [
+      "pm-real-unknown-28",
+      "pm-real-unknown-29",
+      "pm-real-unknown-30",
+      "pm-real-unknown-31",
+      "pm-real-unknown-32"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 28,
+    "src": "/study/pm-quiz2/source-29.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-20-54.jpg",
+    "questions": [
+      "pm-real-1-1",
+      "pm-real-1-2",
+      "pm-real-1-3",
+      "pm-real-1-4",
+      "pm-real-1-5",
+      "pm-real-1-6",
+      "pm-real-1-7",
+      "pm-real-1-8",
+      "pm-real-1-9"
+    ],
+    "rotation": 0,
+    "width": 2560,
+    "height": 2471
+  },
+  {
+    "id": 29,
+    "src": "/study/pm-quiz2/source-30.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-20-58.jpg",
+    "questions": [
+      "pm-real-1-19",
+      "pm-real-1-20",
+      "pm-real-1-21",
+      "pm-real-1-22",
+      "pm-real-1-23",
+      "pm-real-1-24",
+      "pm-real-1-25",
+      "pm-real-1-26",
+      "pm-real-1-27"
+    ],
+    "rotation": 0,
+    "width": 2320,
+    "height": 2159
+  },
+  {
+    "id": 30,
+    "src": "/study/pm-quiz2/source-31.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-21-01.jpg",
+    "questions": [
+      "pm-real-1-27",
+      "pm-real-1-28",
+      "pm-real-1-29",
+      "pm-real-1-30",
+      "pm-real-1-31",
+      "pm-real-1-32",
+      "pm-real-1-33",
+      "pm-real-1-34",
+      "pm-real-1-35"
+    ],
+    "rotation": 0,
+    "width": 2560,
+    "height": 2273
+  },
+  {
+    "id": 31,
+    "src": "/study/pm-quiz2/source-32.jpg",
+    "name": "незнаю какой вариант/photo_2026-11-03_08-21-04.jpg",
+    "questions": [
+      "pm-real-1-10",
+      "pm-real-1-11",
+      "pm-real-1-12",
+      "pm-real-1-13",
+      "pm-real-1-14",
+      "pm-real-1-15",
+      "pm-real-1-16",
+      "pm-real-1-17",
+      "pm-real-1-18",
+      "pm-real-1-19"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 1173
+  },
+  {
+    "id": 32,
+    "src": "/study/pm-quiz2/source-33.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-10.jpg",
+    "questions": [
+      "pm-real-5-5",
+      "pm-real-5-6",
+      "pm-real-5-7",
+      "pm-real-5-8",
+      "pm-real-5-9",
+      "pm-real-5-10"
+    ],
+    "rotation": 0,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 33,
+    "src": "/study/pm-quiz2/source-34.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-28.jpg",
+    "questions": [
+      "pm-real-5-11",
+      "pm-real-5-12",
+      "pm-real-5-13",
+      "pm-real-5-14",
+      "pm-real-5-15"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 34,
+    "src": "/study/pm-quiz2/source-35.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-31.jpg",
+    "questions": [
+      "pm-real-5-16",
+      "pm-real-5-17",
+      "pm-real-5-18",
+      "pm-real-5-19",
+      "pm-real-5-20"
+    ],
+    "rotation": 0,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 35,
+    "src": "/study/pm-quiz2/source-36.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-34.jpg",
+    "questions": [
+      "pm-real-5-21",
+      "pm-real-5-22",
+      "pm-real-5-23",
+      "pm-real-5-24"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 36,
+    "src": "/study/pm-quiz2/source-37.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-37.jpg",
+    "questions": [
+      "pm-real-5-25",
+      "pm-real-5-26",
+      "pm-real-5-27",
+      "pm-real-5-28",
+      "pm-real-5-29"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 37,
+    "src": "/study/pm-quiz2/source-38.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-40.jpg",
+    "questions": [
+      "pm-real-5-30",
+      "pm-real-5-31",
+      "pm-real-5-32",
+      "pm-real-5-33",
+      "pm-real-5-34"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 38,
+    "src": "/study/pm-quiz2/source-39.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-43.jpg",
+    "questions": [
+      "pm-real-5-35",
+      "pm-real-5-36",
+      "pm-real-5-37",
+      "pm-real-5-38",
+      "pm-real-5-39"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 39,
+    "src": "/study/pm-quiz2/source-40.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-45.jpg",
+    "questions": [
+      "pm-real-5-40",
+      "pm-real-5-41",
+      "pm-real-5-42",
+      "pm-real-5-43",
+      "pm-real-5-44"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  },
+  {
+    "id": 40,
+    "src": "/study/pm-quiz2/source-41.jpg",
+    "name": "незнаю точно какой вариант говорят 5ый/photo_2026-11-03_08-19-48.jpg",
+    "questions": [
+      "pm-real-5-45",
+      "pm-real-5-46",
+      "pm-real-5-47",
+      "pm-real-5-48",
+      "pm-real-5-49",
+      "pm-real-5-50"
+    ],
+    "rotation": 90,
+    "width": 952,
+    "height": 1269
+  }
+]

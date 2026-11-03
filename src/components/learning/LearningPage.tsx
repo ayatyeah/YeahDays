@@ -713,7 +713,7 @@ export default function LearningPage({
                       )}
                       {e.practice && <span>{tx("Практикум")}</span>}
                       <span>
-                        <YgIcon name="bulb" />{tx(" ИИ-помощник")}</span>
+                        <YgIcon name="bulb" />{e.id === "project-management-quiz-2-real" ? tx(" Разборы и 2 конспекта") : tx(" ИИ-помощник")}</span>
                     </div>
                     <div className="learning-event-progress">
                       <small>

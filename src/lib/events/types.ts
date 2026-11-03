@@ -17,7 +17,7 @@ export interface Question {
   options: string[];
   /** Индекс верного варианта в `options` (до перемешивания). */
   answer: number;
-  /** true — порядок вариантов не перемешивать (True / False). */
+  /** true — сохранять исходный порядок (True / False или оригинальные A–E из источника). */
   fixed?: boolean;
   /** Почему ответ именно такой — показывается после выбора. */
   why: Text;

@@ -23,6 +23,7 @@ const OpenCVSandbox = dynamic(() => import("@/components/events/OpenCVSandbox"),
 const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading: Loading });
 const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
 import { PM_QUIZ2_TITLE } from "@/lib/events/projectManagement/quiz2";
+const PMRealQuiz = dynamic(() => import("@/components/events/PMRealQuiz"), { loading: Loading });
 const PMQuiz2 = dynamic(() => import("@/components/events/PMQuiz2"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
 const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
@@ -144,6 +145,7 @@ export default function EventScreen() {
   const userId = data?.user?.id ?? (status === "loading" || offline ? lastUser : null);
   if (!event || (!userId && status === "loading")) return <EventSkeleton />;
   if (!userId) return <Link href="/login" className="underline">Войти в аккаунт</Link>;
+  if (event.id === "project-management-quiz-2-real") return <PMRealQuiz key={userId} userId={userId} />;
   return <Runner key={`${userId}:${event.id}`} event={event} userId={userId} />;
 }
 
@@ -385,6 +387,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             <h1 className="ios-title mt-2">{event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>
           </header>
+          {event.id === "project-management-test-2" && <Link href="/events/project-management-quiz-2-real" className="block rounded-3xl border border-violet-400/50 bg-violet-500/10 p-5" data-no-i18n><p className="text-xs font-bold uppercase tracking-widest">Новый отдельный ивент</p><h2 className="mt-2 text-xl font-black">Квиз 2 · Вопросы из реального теста →</h2><p className="mt-2 text-sm">151 вопрос · исходные варианты A–E · разделение по вариантам · два конспекта с разборами</p></Link>}
           {event.id === "project-management-test-2" && (
             <section className="space-y-3 rounded-3xl border border-lime-400/40 bg-lime-500/5 p-5" data-no-i18n>
               <p className="text-xs font-semibold uppercase tracking-widest">Отдельный квиз · Practice / Simulated</p>

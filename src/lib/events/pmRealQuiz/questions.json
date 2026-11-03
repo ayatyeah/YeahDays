@@ -1,0 +1,3353 @@
+[
+  {
+    "id": "pm-real-1-1",
+    "variant": "1",
+    "number": 1,
+    "text": "Which budget is used for contract changes that there was no time to plan into the performance budget?",
+    "options": [
+      "The undistributed budget.",
+      "The scheduled work budget.",
+      "The management reserve.",
+      "The unallocated budget.",
+      "The distributed budget."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 0,
+    "explanation": "Undistributed budget — бюджет изменений контракта, которые из-за нехватки времени ещё не включили в performance budget. Unallocated относится к ещё не идентифицированным/не авторизованным задачам, а management reserve — другой резерв. Это точное разграничение из Lecture 4."
+  },
+  {
+    "id": "pm-real-1-2",
+    "variant": "1",
+    "number": 2,
+    "text": "Which approach to project problems does the earned value measurement system emphasize?",
+    "options": [
+      "Using the management reserve for each variance.",
+      "Moving overruns into the undistributed budget.",
+      "Correcting variances in large steps at milestones.",
+      "Reviewing performance only at project closure.",
+      "Finding and solving problems before they grow."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "EVMS замечает отклонения рано, когда их проще исправить небольшими действиями. Перенос перерасхода в другой бюджет не решает проблему; проверка только при закрытии уже слишком поздняя."
+  },
+  {
+    "id": "pm-real-1-3",
+    "variant": "1",
+    "number": 3,
+    "text": "How are formal groups created in an organization?",
+    "options": [
+      "By management decision, for organizational goals.",
+      "By employees who share interests or friendships.",
+      "By the customer, to review the project deliverables.",
+      "From people who work near each other.",
+      "By the members themselves, to meet social needs."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 0,
+    "explanation": "Formal group создаёт руководство ради целей организации. Дружба, общие интересы и близость рабочих мест объясняют informal groups, поэтому B, D и E не подходят; заказчик не является общим правилом создания формальных групп."
+  },
+  {
+    "id": "pm-real-1-4",
+    "variant": "1",
+    "number": 4,
+    "text": "Which term describes the power, often given by position, to make final decisions?",
+    "options": [
+      "Hierarchical referral.",
+      "Accountability.",
+      "Direct contact.",
+      "Authority.",
+      "Responsibility."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "Authority — право принимать окончательные решения. Responsibility — обязанность выполнить работу, accountability — отвечать за её удовлетворительное завершение. Direct contact и hierarchical referral — способы координации."
+  },
+  {
+    "id": "pm-real-1-5",
+    "variant": "1",
+    "number": 5,
+    "text": "What determines whether a matrix structure is strong or weak?",
+    "options": [
+      "How many projects report to the general manager.",
+      "How large the project budget is compared with others.",
+      "Whether staff remain loyal to their functional units.",
+      "Who has more influence over workers' daily performance.",
+      "Whether a liaison department handles engineering changes."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "Сила матрицы определяется влиянием PM по сравнению с функциональным руководителем, особенно на ежедневную работу сотрудников. Размер бюджета и число проектов сами по себе не определяют strong/weak matrix."
+  },
+  {
+    "id": "pm-real-1-6",
+    "variant": "1",
+    "number": 6,
+    "text": "The matrix form tries to combine the advantages of which two structures?",
+    "options": [
+      "Product and task force structures.",
+      "Functional and line-staff structures.",
+      "Pure functional and product structures.",
+      "Line-staff and liaison structures.",
+      "Task force and departmental structures."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 2,
+    "explanation": "Матрица сочетает pure functional и product/projectized структуры: техническую специализацию подразделений и ориентацию на результат проекта. Другие пары не дают именно этого сочетания."
+  },
+  {
+    "id": "pm-real-1-7",
+    "variant": "1",
+    "number": 7,
+    "text": "In the Agile Manifesto, which item is valued more than comprehensive documentation?",
+    "options": [
+      "Contract negotiation.",
+      "Working software.",
+      "Individuals and interactions.",
+      "Customer collaboration.",
+      "Responding to change."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 1,
+    "explanation": "В этой паре ценностей Manifesto работающий продукт важнее исчерпывающей документации. Остальные ценности существуют в других парах; вопрос просит конкретно пару к comprehensive documentation."
+  },
+  {
+    "id": "pm-real-1-8",
+    "variant": "1",
+    "number": 8,
+    "text": "What does the Japanese word \"Kanban\" mean?",
+    "options": [
+      "Bottleneck.",
+      "Waste.",
+      "Workflow.",
+      "Signboard.",
+      "Iteration."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Kanban буквально означает signboard — вывеска/визуальная карточка. Workflow — то, что доска помогает увидеть, waste — потери, iteration — итерация; это не перевод слова."
+  },
+  {
+    "id": "pm-real-1-9",
+    "variant": "1",
+    "number": 9,
+    "text": "Which agile approach is a family of customized methods that classifies projects by criticality and team size?",
+    "options": [
+      "Kanban.",
+      "Crystal.",
+      "Feature-Driven Development.",
+      "Extreme Programming.",
+      "DSDM."
+    ],
+    "sources": [
+      0,
+      10,
+      28
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 1,
+    "explanation": "Crystal — семейство методов, которые подбирают под размер команды и критичность системы. XP узнаётся по инженерным практикам, FDD — по features, Kanban — по потоку и WIP, DSDM — по своим восьми принципам."
+  },
+  {
+    "id": "pm-real-1-10",
+    "variant": "1",
+    "number": 10,
+    "text": "Which Scrum value is needed to take on difficult problems and do what is right, even when it is uncomfortable?",
+    "options": [
+      "Courage.",
+      "Focus.",
+      "Openness.",
+      "Respect.",
+      "Commitment."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Courage — смелость решать сложные проблемы и поступать правильно, даже когда некомфортно. Focus — концентрация, openness — открытость, respect — уважение, commitment — приверженность цели."
+  },
+  {
+    "id": "pm-real-1-11",
+    "variant": "1",
+    "number": 11,
+    "text": "Which question does the first topic of Sprint Planning answer?",
+    "options": [
+      "What went well in the last Sprint?",
+      "What was achieved in the Sprint?",
+      "How will the chosen work get done?",
+      "What can be Done this Sprint?",
+      "Why is this Sprint valuable?"
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Sprint Planning начинает с WHY — зачем Sprint ценен. После этого обсуждают WHAT можно сделать и HOW выполнить работу. Вопросы о прошлом Sprint относятся к Review или Retrospective."
+  },
+  {
+    "id": "pm-real-1-12",
+    "variant": "1",
+    "number": 12,
+    "text": "In Scrum, which commitment belongs to the Product Backlog?",
+    "options": [
+      "The Increment.",
+      "The Product Goal.",
+      "The Sprint Backlog.",
+      "The Sprint Goal.",
+      "The Definition of Done."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Product Backlog связан с Product Goal; Sprint Backlog — со Sprint Goal; Increment — с Definition of Done. В ответах смешаны артефакты и commitments: выбирай обязательство нужного артефакта."
+  },
+  {
+    "id": "pm-real-1-13",
+    "variant": "1",
+    "number": 13,
+    "text": "Which persona element explains how and why the intended user interacts with the solution?",
+    "options": [
+      "Differentiators.",
+      "Needs.",
+      "Motivations.",
+      "Traits and characteristics.",
+      "Name and image."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Motivations описывают, как и почему пользователь взаимодействует с решением. Needs — конкретные потребности, traits — характеристики, differentiators — отличие от других персон."
+  },
+  {
+    "id": "pm-real-1-14",
+    "variant": "1",
+    "number": 14,
+    "text": "Which INVEST criterion means the way a story is delivered is not fixed in advance and can be discussed with the team?",
+    "options": [
+      "Valuable.",
+      "Testable.",
+      "Negotiable.",
+      "Estimable.",
+      "Independent."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Negotiable означает, что детали реализации обсуждаются, а карточка не является замороженным контрактом. Valuable — польза, Testable — проверяемость, Estimable — возможность оценки, Independent — независимость."
+  },
+  {
+    "id": "pm-real-1-15",
+    "variant": "1",
+    "number": 15,
+    "text": "Which three elements make up the 3Cs of user stories?",
+    "options": [
+      "Conversation, Contract and Commitment.",
+      "Customer, Card and Criteria.",
+      "Collaboration, Content and Confirmation.",
+      "Card, Commitment and Collaboration.",
+      "Card, Conversation and Confirmation."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 4,
+    "explanation": "3Cs: Card, Conversation, Confirmation. Карточка фиксирует краткую идею, разговор уточняет смысл, подтверждение задаёт проверку принятия. Contract и Commitment в эту тройку не входят."
+  },
+  {
+    "id": "pm-real-1-16",
+    "variant": "1",
+    "number": 16,
+    "text": "Scenario: An e-government portal project in Astana had accurate initial estimates, but nobody updated the forecast of what the unfinished modules would cost. In month 10 the team discovered the remaining work needed twice the money left.\nQuestion: Which requirement of an effective control system was missing?",
+    "options": [
+      "Thorough planning of the work to be performed.",
+      "Periodic re-estimation of cost to complete.",
+      "Good initial estimating of time, labor and costs.",
+      "A disciplined budget and authorization of expenditures.",
+      "Clear communication of the scope of required tasks."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "Начальные оценки были хорошими, но прогноз оставшейся работы не пересматривался. Поэтому отсутствует periodic re-estimation of cost to complete, а не исходное планирование или разрешение расходов."
+  },
+  {
+    "id": "pm-real-1-17",
+    "variant": "1",
+    "number": 17,
+    "text": "Scenario: After the plan for a tax-system upgrade is approved, the project manager issues a signed work order that releases funds so the database team can start its work package.\nQuestion: To which phase of the operating cycle does this activity belong?",
+    "options": [
+      "Work authorization and release.",
+      "Cost data collection and reporting.",
+      "Cost analysis.",
+      "Reporting to customer and management.",
+      "Variance at completion forecasting."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 0,
+    "explanation": "Подписанный work order разрешает работу и выделение средств: work authorization and release, фаза II. Сбор фактических затрат, анализ и отчётность идут затем."
+  },
+  {
+    "id": "pm-real-1-18",
+    "variant": "1",
+    "number": 18,
+    "text": "Scenario: For a data-center project, BCWS is $450, BCWP is $400 and ACWP is $500 (in thousands).\nQuestion: What is the cost variance, and what does it indicate?",
+    "options": [
+      "+50; the project is on budget.",
+      "-100; the work cost more than budgeted.",
+      "+100; the work cost less than budgeted.",
+      "-100; the project is ahead of schedule.",
+      "-50; the project is behind schedule."
+    ],
+    "sources": [
+      1,
+      9,
+      31
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "CV = BCWP − ACWP = 400 − 500 = −100 тысяч. Выполненная работа обошлась дороже бюджета на 100 тысяч. Разность с BCWS относится к расписанию, поэтому вывод «ahead of schedule» не описывает CV."
+  },
+  {
+    "id": "pm-real-1-19",
+    "variant": "1",
+    "number": 19,
+    "text": "Scenario: A cloud-migration project shows BCWP = 400 and ACWP = 500 (thousand dollars).\nQuestion: What is the CPI, and how should it be interpreted?",
+    "options": [
+      "1.25; work is faster than planned.",
+      "0.8; work is costing more than planned.",
+      "0.8; work is slower than planned.",
+      "1.0; cost performance is perfect.",
+      "1.25; work is costing less than planned."
+    ],
+    "sources": [
+      1,
+      9,
+      31,
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "CPI = BCWP / ACWP = 400 / 500 = 0,8. На каждый потраченный доллар получено 0,8 доллара бюджетной ценности: перерасход. Скорость относительно расписания измеряет SPI, а 1,25 получается при перевёрнутой дроби."
+  },
+  {
+    "id": "pm-real-1-20",
+    "variant": "1",
+    "number": 20,
+    "text": "Scenario: An HR-system project has a budget at completion of $1,000 thousand and a current CPI of 0.8.\nQuestion: What is the estimate at completion if this efficiency continues?",
+    "options": [
+      "$1,000 thousand.",
+      "$800 thousand.",
+      "$1,200 thousand.",
+      "$1,250 thousand.",
+      "$1,080 thousand."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 3,
+    "explanation": "При сохранении эффективности EAC = BAC / CPI = 1000 / 0,8 = 1250 тысяч. Умножение на CPI ошибочно уменьшило бы итоговую стоимость при перерасходе."
+  },
+  {
+    "id": "pm-real-1-21",
+    "variant": "1",
+    "number": 21,
+    "text": "Scenario: Two weeks into a new digitization team, members argue about the approach and two senior developers openly compete to lead technical decisions.\nQuestion: Which stage of group development is the team in?",
+    "options": [
+      "Norming.",
+      "Adjourning.",
+      "Storming.",
+      "Performing.",
+      "Forming."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 2,
+    "explanation": "Споры о подходе и конкуренция за лидерство — storming. Forming — знакомство и неопределённость; norming — согласование правил; performing — продуктивная работа; adjourning — завершение."
+  },
+  {
+    "id": "pm-real-1-22",
+    "variant": "1",
+    "number": 22,
+    "text": "Scenario: A procurement specialist at a ministry is expected to finish a tender report and, on the same afternoon, to sit on an interview panel in another building. Doing one makes the other impossible.\nQuestion: What is this situation called?",
+    "options": [
+      "Role conflict.",
+      "Punctuated equilibrium.",
+      "Storming.",
+      "Group cohesiveness.",
+      "Groupthink."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 0,
+    "explanation": "Две несовместимые обязанности в одно время — role conflict. Это конфликт требований к роли, а не обязательно стадия развития группы или groupthink."
+  },
+  {
+    "id": "pm-real-1-23",
+    "variant": "1",
+    "number": 23,
+    "text": "Scenario: At an IT integrator in Almaty, management rates its engineers' technical skills very highly, yet most client projects finish late and over budget.\nQuestion: What does this situation most likely indicate?",
+    "options": [
+      "An ideal structure needing no change.",
+      "A market-wide fall in IT demand.",
+      "A shortage of technical certification.",
+      "Budgets that were set too generously.",
+      "A structural problem in managing projects."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 4,
+    "explanation": "Сильные технические навыки при регулярных срывах сроков и бюджета указывают на возможную проблему организации проектной работы. Это не доказательство нехватки сертификатов или падения рыночного спроса."
+  },
+  {
+    "id": "pm-real-1-24",
+    "variant": "1",
+    "number": 24,
+    "text": "Scenario: After a failed data migration at a bank, the project manager and the head of the infrastructure department each insist that the other caused the failure.\nQuestion: If trust continues to grow, what should happen next?",
+    "options": [
+      "Both managers readily admit responsibility.",
+      "Both managers deny that any problem exists.",
+      "The general manager replaces one of them.",
+      "Both escalate the issue to the customer.",
+      "Both begin to formally anticipate problems."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "Последовательность из Lecture 5: отрицание → взаимные обвинения → признание ответственности → совместное решение → предвидение проблем. Сейчас стадия обвинений, поэтому следующий шаг — признать свою ответственность, а не сразу перейти к профилактике."
+  },
+  {
+    "id": "pm-real-1-25",
+    "variant": "1",
+    "number": 25,
+    "text": "Scenario: The finance department of a state-owned utility can see at a glance what each department spends and keep it within agreed limits.\nQuestion: Which advantage of the traditional structure does this reflect?",
+    "options": [
+      "One person responsible for each project.",
+      "Easier budgeting and cost control.",
+      "Higher motivation and innovation.",
+      "Fast response to customer needs.",
+      "A single customer focal point."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 1,
+    "explanation": "Функциональные подразделения дают понятные границы бюджетов и контроля расходов. Единый ответственный за весь проект и customer focal point, напротив, часто отсутствуют в классической структуре."
+  },
+  {
+    "id": "pm-real-1-26",
+    "variant": "1",
+    "number": 26,
+    "text": "Scenario: A client of a software firm in Astana keeps asking who is in charge of her project; each department head says it is responsible only for its own part.\nQuestion: Which weakness of the traditional structure does this show?",
+    "options": [
+      "Excessive project authority.",
+      "Too many bosses per employee.",
+      "Too few specialists to share.",
+      "Weak technical control.",
+      "No customer focal point."
+    ],
+    "sources": [
+      2,
+      29
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 4,
+    "explanation": "Клиент не находит единую точку ответственности за проект — no customer focal point. Это типичный недостаток функциональной структуры, где каждый начальник отвечает лишь за свой участок."
+  },
+  {
+    "id": "pm-real-1-27",
+    "variant": "1",
+    "number": 27,
+    "text": "Scenario: Before creating any project positions, a company coordinates work between units through rules, planning processes, hierarchical referral and direct contact.\nQuestion: What are these coordination methods called?",
+    "options": [
+      "Integrating mechanisms.",
+      "Matrix role definitions.",
+      "Projectized authority lines.",
+      "Stages in the growth of trust.",
+      "Liaison department duties."
+    ],
+    "sources": [
+      2,
+      29,
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "Rules, planning processes, hierarchical referral и direct contact — integrating mechanisms. Они координируют работу ещё до введения специальных проектных ролей и не означают создание матрицы."
+  },
+  {
+    "id": "pm-real-1-28",
+    "variant": "1",
+    "number": 28,
+    "text": "Scenario: In a defense contractor's projectized division, the program manager assigns all work and also conducts the merit reviews of team members.\nQuestion: Which advantage of this structure does this illustrate?",
+    "options": [
+      "Strong continuity in each discipline.",
+      "Better use of scarce specialists.",
+      "Lower cost through shared personnel.",
+      "Easier staff sharing between projects.",
+      "Full line authority over the project."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 4,
+    "explanation": "В projectized структуре PM имеет полную линейную власть: распределяет работу и оценивает людей. Экономное совместное использование редких специалистов, наоборот, не является её сильной стороной."
+  },
+  {
+    "id": "pm-real-1-29",
+    "variant": "1",
+    "number": 29,
+    "text": "Scenario: A fintech company in Astana has complex products with short life cycles as its primary output.\nQuestion: Which organizational form is most worth considering?",
+    "options": [
+      "A pure functional organization.",
+      "Departmental project leaders.",
+      "Liaison departments only.",
+      "A matrix organization.",
+      "Integrating mechanisms only."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "Сложные продукты с коротким жизненным циклом требуют межфункциональной интеграции и гибкого распределения экспертов: стоит рассмотреть matrix. Это рекомендация под условия, а не утверждение, что матрица идеальна всегда."
+  },
+  {
+    "id": "pm-real-1-30",
+    "variant": "1",
+    "number": 30,
+    "text": "Scenario: An akimat is building a standard two-storey school from a design that has already been used for dozens of schools. Every construction step can be specified before work starts.\nQuestion: Which type of process best fits this project?",
+    "options": [
+      "An experimental process with frequent pivots.",
+      "An empirical process refined in each cycle.",
+      "An iterative process driven by user feedback.",
+      "An incremental process with emerging scope.",
+      "A defined process with steps set in advance."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 4,
+    "explanation": "Повторяемая школа по проверенному проекту с заранее известными шагами подходит defined process. Empirical/iterative подход особенно нужен там, где решение и требования приходится выяснять через опыт."
+  },
+  {
+    "id": "pm-real-1-31",
+    "variant": "1",
+    "number": 31,
+    "text": "Scenario: An agile team at a state agency has a fixed budget of 100 million tenge and a fixed six-month deadline. Halfway through, it is clear that not every requested feature will fit.\nQuestion: Following the agile triangle, what should be adjusted?",
+    "options": [
+      "The scope delivered within the fixed cost and time.",
+      "The quality, so that scope, cost and time stay fixed.",
+      "The deadline, so that full scope fits the budget.",
+      "The budget, so that full scope meets the deadline.",
+      "Both budget and deadline, while scope stays frozen."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "В учебной agile triangle при фиксированных времени и стоимости варьируют объём: сначала доставляют наиболее ценное. Снижать качество ради всех функций или автоматически увеличивать оба ограничения — не требуемый подход."
+  },
+  {
+    "id": "pm-real-1-32",
+    "variant": "1",
+    "number": 32,
+    "text": "Scenario: A sponsor asks how the e-procurement project is going. The project manager reports that 80% of planned tasks are complete, but nothing can yet be demonstrated to users.\nQuestion: Which agile principle shows the weakness of this progress report?",
+    "options": [
+      "Business people and developers work together daily.",
+      "Working software is the main measure of progress.",
+      "The team reflects at regular intervals to improve.",
+      "Requirements changes are welcome even late on.",
+      "Simplicity maximizes the amount of work not done."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 1,
+    "explanation": "80% задач без демонстрируемого результата не показывают ценность. В Agile основной показатель прогресса — работающий продукт, а не число закрытых задач или объём отчётов."
+  },
+  {
+    "id": "pm-real-1-33",
+    "variant": "1",
+    "number": 33,
+    "text": "Scenario: Before writing the code that calculates property tax, developers on an XP team first write automated checks that the code must pass.\nQuestion: Which XP practice is the team using?",
+    "options": [
+      "Refactoring.",
+      "Pair programming.",
+      "Customer tests.",
+      "Test-driven development.",
+      "Collective code ownership."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Автоматическую проверку пишут до рабочего кода — test-driven development. Refactoring улучшает структуру существующего кода, pair programming — работа парой; customer tests не являются здесь главным отличительным признаком."
+  },
+  {
+    "id": "pm-real-1-34",
+    "variant": "1",
+    "number": 34,
+    "text": "Scenario: Developers at a bank in Almaty are each assigned to three projects at once and lose time every time they move from one to another.\nQuestion: Which Lean waste does this describe?",
+    "options": [
+      "Motion.",
+      "Extra processes.",
+      "Task switching.",
+      "Partially done work.",
+      "Defects."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 2,
+    "explanation": "Постоянный переход между тремя проектами создаёт task switching: теряется контекст. Motion — передача/перемещение работы, partially done work — незавершённый запас, defects — ошибки."
+  },
+  {
+    "id": "pm-real-1-35",
+    "variant": "1",
+    "number": 35,
+    "text": "Scenario: A project leader at an Astana startup lets the developers choose the technical steps and tools, trusting their expertise rather than dictating the approach.\nQuestion: Which Lean core concept does this reflect?",
+    "options": [
+      "Optimize the whole.",
+      "Defer decisions.",
+      "Deliver fast.",
+      "Amplify learning.",
+      "Empower the team."
+    ],
+    "sources": [
+      3,
+      7,
+      8,
+      30
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 4,
+    "explanation": "Разработчикам доверяют выбирать технический способ работы — empower the team. Здесь главный сигнал — самостоятельность команды, а не скорость поставки или откладывание решения."
+  },
+  {
+    "id": "pm-real-1-36",
+    "variant": "1",
+    "number": 36,
+    "text": "Scenario: During an iteration, a deputy director keeps pulling developers into unplanned meetings. The agile leader asks him to route requests through her instead.\nQuestion: Which servant leader duty is she performing?",
+    "options": [
+      "Carrying food and water.",
+      "Re-communicating the project vision.",
+      "Practicing transparency.",
+      "Shielding the team from interruptions.",
+      "Recognizing conflict as a positive step."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Лидер становится точкой входа для внешних запросов и защищает команду от незапланированных отвлечений. Carrying food and water — обеспечение ресурсами, а не фильтрация встреч."
+  },
+  {
+    "id": "pm-real-1-37",
+    "variant": "1",
+    "number": 37,
+    "text": "Scenario: A digital team at the Shymkent akimat decides which features to build next only after observing how citizens actually used the previous release of its service portal, rather than relying on a long upfront forecast.\nQuestion: Which foundation of Scrum does this behavior reflect most directly?",
+    "options": [
+      "Critical path analysis.",
+      "Waterfall phase gating.",
+      "Empiricism.",
+      "Lean thinking.",
+      "Predictive planning."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 2,
+    "explanation": "Решения принимаются по наблюдениям за использованием предыдущего релиза: empiricism. Lean thinking фокусируется на сокращении потерь, predictive planning — на предварительном прогнозе."
+  },
+  {
+    "id": "pm-real-1-38",
+    "variant": "1",
+    "number": 38,
+    "text": "Scenario: An IT manager at a bank proposes creating a testing sub-team inside the Scrum Team, with its own lead who reports to a senior developer.\nQuestion: Which response is consistent with Scrum?",
+    "options": [
+      "Accept it, since testers need a separate lead to stay focused.",
+      "Accept it, since cross-functional teams need specialized sub-units.",
+      "Accept it, if the Scrum Master approves the reporting line.",
+      "Reject it, since a Scrum Team has no sub-teams or hierarchies.",
+      "Reject it, since testing should be done by the Product Owner."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 3,
+    "explanation": "Внутри Scrum Team нет подкоманд и иерархий. Разные профессиональные навыки допустимы, но отдельная подчинённая тестовая команда противоречит этому устройству; PO не обязан лично выполнять тестирование."
+  },
+  {
+    "id": "pm-real-1-39",
+    "variant": "1",
+    "number": 39,
+    "text": "Scenario: A ministry assigns a steering committee of five deputy heads to act jointly as the Product Owner for a new licensing system.\nQuestion: What is the main problem with this arrangement from a Scrum perspective?",
+    "options": [
+      "The Product Owner must be a member of the Developers.",
+      "The Product Owner must be one person, not a committee.",
+      "Deputy heads lack the technical skills to size items.",
+      "A committee cannot attend the Daily Scrum every day.",
+      "The committee should include the Scrum Master as chair."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Product Owner — один человек с единой accountability, хотя он представляет интересы многих людей. Проблема комитета не в посещении Daily или навыках оценки, а в размывании ответственности."
+  },
+  {
+    "id": "pm-real-1-40",
+    "variant": "1",
+    "number": 40,
+    "text": "Scenario: The Scrum Master of a team at a telecom company announces: \"I will decide who takes which task each morning so that you work efficiently.\"\nQuestion: What is the main issue with this approach?",
+    "options": [
+      "The Scrum Master should coach self-management, not assign work.",
+      "Task assignment is the Product Owner's job, not the Scrum Master's.",
+      "The Scrum Master should assign tasks only during Sprint Planning.",
+      "This is acceptable while the Developers are new to Scrum.",
+      "Task assignment should be done by the most senior Developer."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Scrum Master обучает self-management и помогает команде стать эффективнее. Developers сами решают, кто, что и как делает; передача раздачи задач PO или старшему разработчику не исправляет принципиальную проблему."
+  },
+  {
+    "id": "pm-real-1-41",
+    "variant": "1",
+    "number": 41,
+    "text": "Scenario: A team in Almaty proposes six-week Sprints because its features are large.\nQuestion: What does Scrum say about this proposal?",
+    "options": [
+      "Six weeks is allowed if stakeholders agree.",
+      "The Product Owner picks a new length each Sprint.",
+      "Sprints must be exactly two weeks long.",
+      "Sprint length may vary with feature size.",
+      "Sprints must be fixed at one month or less."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Sprint имеет фиксированную длительность не более месяца. Две недели — распространённый выбор, но не обязательное правило; крупные features нужно дробить, а не растягивать Sprint до шести недель."
+  },
+  {
+    "id": "pm-real-1-42",
+    "variant": "1",
+    "number": 42,
+    "text": "Scenario: The Daily Scrum at a telecom company regularly takes 45 minutes and consists of status reports to the department head.\nQuestion: Which change best aligns it with Scrum?",
+    "options": [
+      "Keep 45 minutes but limit it to three questions.",
+      "Cut it to 30 minutes and email status to managers.",
+      "Keep it to 15 minutes, focused on the Sprint Goal.",
+      "Move it to once a week to save working time.",
+      "Let the department head chair it for discipline."
+    ],
+    "sources": [
+      4
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 2,
+    "explanation": "Daily — 15 минут для Developers: проверить продвижение к Sprint Goal и адаптировать план. Это не 45-минутный отчёт начальнику; обязательные три вопроса не определяют современный Scrum."
+  },
+  {
+    "id": "pm-real-1-43",
+    "variant": "1",
+    "number": 43,
+    "text": "Scenario: At the end of a Sprint, the team and stakeholders from the Ministry of Health try the new features, discuss upcoming regulatory changes and agree to reorder the Product Backlog.\nQuestion: Which Scrum event is taking place?",
+    "options": [
+      "Backlog refinement.",
+      "Sprint Retrospective.",
+      "Sprint Planning.",
+      "Sprint Review.",
+      "Daily Scrum."
+    ],
+    "sources": [
+      4,
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 3,
+    "explanation": "Команда и stakeholders исследуют результат и обсуждают изменения будущего продукта — Sprint Review. Retrospective посвящена улучшению способов работы команды, а Planning — следующему Sprint."
+  },
+  {
+    "id": "pm-real-1-44",
+    "variant": "1",
+    "number": 44,
+    "text": "Scenario: A team building an e-government portal for registering small businesses has no direct contact with entrepreneurs. The analyst describes 'Aigerim, 34, owner of a bakery in Shymkent', with her goals, skill level and a typical working day.\nQuestion: What is the main purpose of creating this description?",
+    "options": [
+      "To define the acceptance tests for the registration form.",
+      "To record the legal rules the registration portal must comply with.",
+      "To empathize with users and align the portal with their needs.",
+      "To estimate the development effort for each portal feature.",
+      "To replace later usability testing with real entrepreneurs."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Реалистичная персона помогает понять пользователя и согласовать продукт с его потребностями. Она не является acceptance test, оценкой трудозатрат или заменой проверки с реальными предпринимателями."
+  },
+  {
+    "id": "pm-real-1-45",
+    "variant": "1",
+    "number": 45,
+    "text": "Scenario: An analyst prepared one-page persona summaries for a clinic appointment app. After a month of interviews with patients, the team wants a richer picture of each persona.\nQuestion: What is the most appropriate next step?",
+    "options": [
+      "Keep the short versions, since long ones suit only waterfall projects.",
+      "Average the interview data into one generic persona.",
+      "Convert each persona directly into an acceptance test.",
+      "Replace the personas with a plain list of system actors.",
+      "Expand the personas into the long template using the new research."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 4,
+    "explanation": "Появились новые интервью и нужна глубина: расширь short persona до long template. Не нужно усреднять разных пользователей в одного или превращать персону в критерий приёмки."
+  },
+  {
+    "id": "pm-real-1-46",
+    "variant": "1",
+    "number": 46,
+    "text": "Scenario: To save time, a team designing a city bus app creates one persona that combines traits common to students, pensioners, tourists and commuters.\nQuestion: What risk does this create?",
+    "options": [
+      "A generic persona that tries to suit everyone at once.",
+      "A delay because long templates take months to complete.",
+      "Requirements that reflect only one department's opinion.",
+      "A persona too narrow to write any user stories from.",
+      "Too many personas that quickly inflate the product backlog."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 0,
+    "explanation": "Одна персона для студентов, пенсионеров, туристов и пассажиров теряет различимые цели и поведение. Риск — слишком общий образ «для всех», а не слишком узкая персона или слишком много персон."
+  },
+  {
+    "id": "pm-real-1-47",
+    "variant": "1",
+    "number": 47,
+    "text": "Scenario: A backlog item for a tax portal reads: 'As a taxpayer, I need to download my income certificate.'\nQuestion: Which component of the common user story format is missing?",
+    "options": [
+      "The effort estimate for the story.",
+      "The user role or persona (WHO).",
+      "The action or feature needed (WHAT).",
+      "The benefit or value to the user (WHY).",
+      "The acceptance criteria that confirm the story."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 3,
+    "explanation": "WHO уже есть — taxpayer; WHAT — download income certificate. Не хватает WHY: so that …, то есть пользы. Оценка и acceptance criteria могут добавляться отдельно, но не являются пропущенной частью этой формулы."
+  },
+  {
+    "id": "pm-real-1-48",
+    "variant": "1",
+    "number": 48,
+    "text": "Scenario: For the story 'As a borrower, I need to see my monthly loan payment so that I can plan my budget', the product owner adds: shows the amount in tenge; updates after each payment; visible on the home screen.\nQuestion: What role do these added statements play?",
+    "options": [
+      "They fix the order of stories in the next release.",
+      "They define the story's boundaries for verification.",
+      "They describe the borrower persona's motivations and traits.",
+      "They replace the conversation between team and users.",
+      "They give the team's effort estimate for the story."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 1,
+    "explanation": "Валюта, обновление после оплаты и расположение задают проверяемые границы конкретной истории — acceptance criteria. Это не оценка трудоёмкости и не замена разговору с пользователем."
+  },
+  {
+    "id": "pm-real-1-49",
+    "variant": "1",
+    "number": 49,
+    "text": "Scenario: A ministry replaced 200-page specifications with user stories and now releases a small piece of its licensing service every two weeks.\nQuestion: What is the main benefit of this change?",
+    "options": [
+      "Stories remove the need to refine the backlog.",
+      "Stories make long-term estimates exact.",
+      "Small testable slices give fast delivery and feedback.",
+      "Stories let the team skip stakeholder talks.",
+      "Stories hold complete specs, so fewer questions arise."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Малые проверяемые части дают быстрые поставки и обратную связь. User stories не отменяют refinement и общение, не гарантируют точность долгосрочных оценок и не содержат всю спецификацию."
+  },
+  {
+    "id": "pm-real-1-50",
+    "variant": "1",
+    "number": 50,
+    "text": "Scenario: The backlog of an e-government portal has grown to 900 user stories, many of them outdated or duplicated, and planning meetings take hours.\nQuestion: Which action best addresses this limitation of user stories?",
+    "options": [
+      "Add more developers to finish all 900 stories.",
+      "Stop writing acceptance criteria to save time.",
+      "Refine and reprioritize the backlog regularly.",
+      "Convert every story into a detailed specification.",
+      "Freeze the backlog until the end of the project."
+    ],
+    "sources": [
+      5,
+      6
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Большой backlog с дублями и устаревшими историями нужно регулярно уточнять, очищать и переупорядочивать. Заморозка сохраняет мусор; новые разработчики не решают проблему актуальности требований."
+  },
+  {
+    "id": "pm-real-4-1",
+    "variant": "4",
+    "number": 1,
+    "text": "A logical grouping of contract tasks that have not yet been identified or authorized is held in which budget?",
+    "options": [
+      "The distributed budget.",
+      "The management reserve.",
+      "The undistributed budget.",
+      "The unallocated budget.",
+      "The performance budget."
+    ],
+    "sources": [
+      17
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 3,
+    "explanation": "В Lecture 4 unallocated budget — логическая группа ещё не идентифицированных/не авторизованных контрактных задач. Undistributed относится к изменениям контракта, которые не успели включить в performance budget. Эти два термина легко перепутать."
+  },
+  {
+    "id": "pm-real-4-2",
+    "variant": "4",
+    "number": 2,
+    "text": "Why is the earned value measurement system described as an early warning system?",
+    "options": [
+      "It compares final cost with the bid after closure.",
+      "It shows deviations from plan while still small.",
+      "It sets the management reserve for each phase.",
+      "It predicts the exact final cost with certainty.",
+      "It replaces periodic re-estimation of the cost."
+    ],
+    "sources": [
+      17
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "EVMS — early warning system: обнаруживает отклонения, пока они малы. Он не гарантирует точный прогноз и не заменяет регулярное переоценивание оставшихся затрат."
+  },
+  {
+    "id": "pm-real-4-3",
+    "variant": "4",
+    "number": 3,
+    "text": "Which list gives the reasons why people form groups?",
+    "options": [
+      "Productivity, flexibility, diversity and quality.",
+      "Structure, status, roles, norms and leadership.",
+      "Needs, proximity, attraction, goals and economics.",
+      "Forming, storming, norming, performing, adjourning.",
+      "Cost, schedule, technical performance and risk."
+    ],
+    "sources": [
+      17
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 2,
+    "explanation": "Причины объединения людей: needs, proximity, attraction, goals, economics. В D перечислены стадии развития, в B — характеристики группы; это другой вопрос."
+  },
+  {
+    "id": "pm-real-4-4",
+    "variant": "4",
+    "number": 4,
+    "text": "Which term means being answerable for completing a specific assignment satisfactorily?",
+    "options": [
+      "Accountability.",
+      "Responsibility.",
+      "Coordination.",
+      "Integration.",
+      "Authority."
+    ],
+    "sources": [
+      17
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "Being answerable за удовлетворительное выполнение назначения — accountability. Responsibility означает обязанность выполнить работу, authority — право принимать решения."
+  },
+  {
+    "id": "pm-real-4-5",
+    "variant": "4",
+    "number": 5,
+    "text": "Through whose eyes is a matrix described as strong or weak?",
+    "options": [
+      "The line manager’s.",
+      "The customer’s.",
+      "The functional workers’.",
+      "The general manager’s.",
+      "The project manager’s."
+    ],
+    "sources": [
+      17
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 4,
+    "explanation": "Strong/weak оценивают с позиции project manager: насколько сильны его полномочия относительно functional manager. Это не оценка с позиции заказчика или просто размера компании."
+  },
+  {
+    "id": "pm-real-4-6",
+    "variant": "4",
+    "number": 6,
+    "text": "In a matrix, what is the project manager accountable for?",
+    "options": [
+      "The overall success of the project.",
+      "The technical excellence of each discipline.",
+      "Setting the company’s overhead rates.",
+      "Merit reviews of all functional staff.",
+      "Resolving conflicts between all projects."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "PM отвечает за общий успех проекта. Техническое качество каждой дисциплины остаётся у функционального руководства; PM не получает автоматически право оценивать всех функциональных сотрудников."
+  },
+  {
+    "id": "pm-real-4-7",
+    "variant": "4",
+    "number": 7,
+    "text": "Which Agile Manifesto value best reflects the view that skilled team members matter more than methods?",
+    "options": [
+      "Processes and tools over individuals and interactions.",
+      "Individuals and interactions over processes and tools.",
+      "Customer collaboration over contract negotiation.",
+      "Responding to change over following a plan.",
+      "Working software over comprehensive documentation."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 1,
+    "explanation": "Здесь нужна пара individuals and interactions over processes and tools. A переворачивает приоритет; C–E — другие верные пары Manifesto, но не ответ на данный смысл вопроса."
+  },
+  {
+    "id": "pm-real-4-8",
+    "variant": "4",
+    "number": 8,
+    "text": "What does the Kanban principle “make process policies explicit” ask a team to do?",
+    "options": [
+      "Own and improve the process together through experiments.",
+      "Track the flow of work to measure the effect of changes.",
+      "Write down how work is done so all can discuss it.",
+      "Restrict the number of items in progress at once.",
+      "Show every work item on a shared, visible board."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 2,
+    "explanation": "Explicit policies — явно описать, как проходит работа, чтобы правила можно было обсуждать и улучшать. D — limit WIP, E — visualize workflow, B — manage flow; это соседние принципы Kanban."
+  },
+  {
+    "id": "pm-real-4-9",
+    "variant": "4",
+    "number": 9,
+    "text": "Which statement is one of the eight DSDM principles?",
+    "options": [
+      "Limit work in progress.",
+      "Defer decisions.",
+      "Expect uncertainty.",
+      "Sustainable pace.",
+      "Demonstrate control."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 4,
+    "explanation": "Demonstrate control входит в восемь принципов DSDM. Limit WIP связан с Kanban, defer decisions — с Lean, sustainable pace — с XP/Agile; не смешивай списки методов."
+  },
+  {
+    "id": "pm-real-4-10",
+    "variant": "4",
+    "number": 10,
+    "text": "According to the Scrum Guide, what do the Scrum values give direction to?",
+    "options": [
+      "The length of each Sprint.",
+      "The content of the Definition of Done.",
+      "The selection of team tools.",
+      "The order of Product Backlog items.",
+      "The team’s work, actions and behavior."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Scrum values направляют работу, поступки и поведение команды. Они не назначают длительность Sprint, инструменты или конкретный порядок элементов backlog."
+  },
+  {
+    "id": "pm-real-4-11",
+    "variant": "4",
+    "number": 11,
+    "text": "What is the maximum timebox for Sprint Planning in a one-month Sprint?",
+    "options": [
+      "Eight hours.",
+      "Three hours.",
+      "Two hours.",
+      "Four hours.",
+      "Fifteen minutes."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Для месячного Sprint Planning ограничен восемью часами. Четыре часа — Review, три — Retrospective, 15 минут — Daily; для коротких Sprint события обычно короче."
+  },
+  {
+    "id": "pm-real-4-12",
+    "variant": "4",
+    "number": 12,
+    "text": "According to the Scrum Guide, who is responsible for sizing Product Backlog items?",
+    "options": [
+      "The organization’s senior management.",
+      "The Scrum Master, who coaches the team.",
+      "The key stakeholders, who fund the product.",
+      "The Developers who will do the work.",
+      "The Product Owner, who orders the items."
+    ],
+    "sources": [
+      18
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 3,
+    "explanation": "Размер работы оценивают Developers, которые её выполнят. PO помогает понять ценность и компромиссы, но не назначает оценку; Scrum Master поддерживает процесс."
+  },
+  {
+    "id": "pm-real-4-13",
+    "variant": "4",
+    "number": 13,
+    "text": "Which persona element states what makes one persona unique compared with another persona?",
+    "options": [
+      "Name and image.",
+      "Differentiators.",
+      "Needs.",
+      "Motivations.",
+      "Short template."
+    ],
+    "sources": [
+      19
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 1,
+    "explanation": "Differentiators показывают, чем одна персона отличается от другой. Motivations — почему взаимодействует с продуктом, needs — конкретные потребности, name/image — узнаваемость образа."
+  },
+  {
+    "id": "pm-real-4-14",
+    "variant": "4",
+    "number": 14,
+    "text": "Under INVEST, what makes a user story Testable?",
+    "options": [
+      "It can be delivered apart from other features.",
+      "The team can negotiate how to deliver it.",
+      "A stakeholder can validate it objectively.",
+      "The team can estimate it from past experience.",
+      "It shows the value it brings to the customer."
+    ],
+    "sources": [
+      19
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Testable означает объективную проверку результата заинтересованной стороной. Independent — возможность отдельной поставки, Negotiable — обсуждаемость, Estimable — оценимость, Valuable — ценность."
+  },
+  {
+    "id": "pm-real-4-15",
+    "variant": "4",
+    "number": 15,
+    "text": "What style is recommended for the title on a user story card?",
+    "options": [
+      "A number from the product backlog.",
+      "A short acceptance criterion.",
+      "A noun naming the system module.",
+      "An active-verb goal phrase.",
+      "The name of the main persona."
+    ],
+    "sources": [
+      19
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 3,
+    "explanation": "Название карточки истории лучше формулировать как цель с активным глаголом, например «Book appointment». Номер backlog, название модуля и имя персоны не выражают цель действия."
+  },
+  {
+    "id": "pm-real-4-16",
+    "variant": "4",
+    "number": 16,
+    "text": "Scenario: At an IT startup in Astana, hours worked and money spent are entered into the project records only at the end of each quarter, often two months after the work was done.\nQuestion: Which requirement of effective cost and schedule control is weakest here?",
+    "options": [
+      "Thorough planning of the work to be done.",
+      "Timely accounting of progress and costs.",
+      "Disciplined authorization of spending.",
+      "Clear communication of the task scope.",
+      "Good estimating of labor and costs."
+    ],
+    "sources": [
+      19
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "Расходы и прогресс учитывают с большой задержкой — нарушено timely accounting. Даже подробный план бесполезен для своевременной коррекции, если фактические данные приходят через месяцы."
+  },
+  {
+    "id": "pm-real-4-17",
+    "variant": "4",
+    "number": 17,
+    "text": "Scenario: Each month the project manager of a digital-ID project presents status, variances and forecasts to the client ministry and to the company’s executive board.\nQuestion: Which phase of the operating cycle does this represent?",
+    "options": [
+      "Cost analysis.",
+      "Customer and management reporting.",
+      "Cost data collection and reporting.",
+      "The planning cycle.",
+      "Work authorization and release."
+    ],
+    "sources": [
+      19
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "PM сообщает клиенту и высшему руководству статус, отклонения и прогнозы — customer and management reporting, фаза V. Это не первичная регистрация затрат и не выдача разрешения на работу."
+  },
+  {
+    "id": "pm-real-4-18",
+    "variant": "4",
+    "number": 18,
+    "text": "Scenario: A school-digitization project reports, in million tenge: BCWS = 80, BCWP = 80, ACWP = 70.\nQuestion: What can be concluded from CV and SV?",
+    "options": [
+      "Over budget by 10 and exactly on schedule.",
+      "Over budget by 10 and ahead of schedule by 10.",
+      "On budget and ahead of schedule by 10.",
+      "Under budget by 10 and behind schedule by 10.",
+      "Under budget by 10 and exactly on schedule."
+    ],
+    "sources": [
+      20
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "CV = 80 − 70 = +10 млн тенге: экономия. SV = 80 − 80 = 0: точно по графику. Не меняй местами фактические расходы ACWP и плановую ценность BCWS."
+  },
+  {
+    "id": "pm-real-4-19",
+    "variant": "4",
+    "number": 19,
+    "text": "Scenario: A fintech startup’s project has CPI = 1.1 and SPI = 0.75.\nQuestion: What should be the main focus of corrective action?",
+    "options": [
+      "Improving the productivity of the work force.",
+      "Reducing the burn rate of the budget.",
+      "Re-baselining the budget at completion.",
+      "Improving the timeliness of physical progress.",
+      "Releasing the management reserve."
+    ],
+    "sources": [
+      20
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 3,
+    "explanation": "CPI = 1,1 говорит о хорошей эффективности затрат, SPI = 0,75 — об отставании физического прогресса от плана. Значит, внимание нужно расписанию, а не сокращению расходов или резерву."
+  },
+  {
+    "id": "pm-real-4-20",
+    "variant": "4",
+    "number": 20,
+    "text": "Scenario: A project was originally planned to last 12 months, and its SPI is now 0.8.\nQuestion: What is the new estimated project length?",
+    "options": [
+      "12.8 months.",
+      "10 months.",
+      "14 months.",
+      "9.6 months.",
+      "15 months."
+    ],
+    "sources": [
+      20
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "По упрощённой формуле лекции новая длительность = исходная / SPI = 12 / 0,8 = 15 месяцев. Это прогноз при сохранении эффективности, а не точная дата окончания проекта."
+  },
+  {
+    "id": "pm-real-4-21",
+    "variant": "4",
+    "number": 21,
+    "text": "Scenario: The team that launched an akimat’s open-data portal has delivered all tasks. Members hold a final meeting, and some express sadness about losing daily contact.\nQuestion: Which stage of group development is this?",
+    "options": [
+      "Norming.",
+      "Performing.",
+      "Storming.",
+      "Forming.",
+      "Adjourning."
+    ],
+    "sources": [
+      20
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "Работа завершена, команда прощается — adjourning. Performing описывает продуктивную работу до завершения, storming — конфликт, forming — начало."
+  },
+  {
+    "id": "pm-real-4-22",
+    "variant": "4",
+    "number": 22,
+    "text": "Scenario: At an akimat, management, the IT team and the analyst herself each have a different picture of what the ‘business analyst’ position should involve.\nQuestion: How is this situation best explained?",
+    "options": [
+      "One role can be perceived in up to three ways.",
+      "The team has fallen into groupthink.",
+      "The team has reached the adjourning stage.",
+      "The analyst is going through the storming stage.",
+      "The analyst has joined an informal interest group."
+    ],
+    "sources": [
+      20
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 0,
+    "explanation": "У роли есть ожидаемая, воспринимаемая и исполняемая стороны: разные участники могут видеть её по-разному. Само различие представлений не доказывает groupthink или стадию storming."
+  },
+  {
+    "id": "pm-real-4-23",
+    "variant": "4",
+    "number": 23,
+    "text": "Scenario: An akimat’s digital projects are delivered on time and to specification, but the groups and individuals involved are not satisfied with what they achieved.\nQuestion: What does this pattern most likely suggest?",
+    "options": [
+      "No change is needed because targets were met.",
+      "The akimat has found its ideal permanent structure.",
+      "The projects were scoped far too conservatively.",
+      "Met targets can still hide a structural mismatch.",
+      "Staff satisfaction has nothing to do with structure."
+    ],
+    "sources": [
+      21
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "Сроки и спецификации могут быть соблюдены, но неудовлетворённость участников всё равно сигнализирует о структурном несоответствии. Это повод рассмотреть организацию работы, а не автоматически объявить её идеальной."
+  },
+  {
+    "id": "pm-real-4-24",
+    "variant": "4",
+    "number": 24,
+    "text": "Scenario: At a bank in Almaty, a project manager and a functional manager have stopped blaming each other, and each has openly admitted their part in a delayed release.\nQuestion: What is the next stage in the growth of their trust?",
+    "options": [
+      "Denying that the problem exists at all.",
+      "Meeting face-to-face to solve the problem.",
+      "Blaming each other once the problem surfaces.",
+      "Anticipating problems before they occur.",
+      "Escalating the problem to the general manager."
+    ],
+    "sources": [
+      21
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 1,
+    "explanation": "После признания ответственности следующий этап доверия — личная совместная работа над проблемой. Anticipating problems идёт позднее; отрицание и обвинения — предыдущие этапы."
+  },
+  {
+    "id": "pm-real-4-25",
+    "variant": "4",
+    "number": 25,
+    "text": "Scenario: A regional bank is debating whether to keep its classical functional structure.\nQuestion: Which statement is an advantage of that structure?",
+    "options": [
+      "Projects rarely fall behind their schedules.",
+      "One individual is responsible for the total project.",
+      "Ideas are strongly oriented toward the ongoing projects.",
+      "Vertical communication channels are well established.",
+      "Decisions are balanced across all functional groups."
+    ],
+    "sources": [
+      21
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "У функциональной структуры хорошо установлены вертикальные каналы общения. Сквозная ответственность за проект и сбалансированные межфункциональные решения при этом не гарантируются."
+  },
+  {
+    "id": "pm-real-4-26",
+    "variant": "4",
+    "number": 26,
+    "text": "Scenario: In a functional engineering firm, every dispute about a joint design is settled in favor of the largest and most powerful department.\nQuestion: Which weakness of the traditional structure is this?",
+    "options": [
+      "There is no technical control over the design.",
+      "Personnel cannot be reused across projects.",
+      "Decisions favor the strongest units.",
+      "There are too many project managers involved.",
+      "Communication channels are poorly established."
+    ],
+    "sources": [
+      21
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 2,
+    "explanation": "Если в споре всегда побеждает самый мощный отдел, решения смещены в пользу сильнейших подразделений. Это не отсутствие технического контроля или вертикальных каналов."
+  },
+  {
+    "id": "pm-real-4-27",
+    "variant": "4",
+    "number": 27,
+    "text": "Scenario: An engineering division has a liaison department that handles engineering changes between its units. A conflict now arises between the engineering and manufacturing divisions.\nQuestion: How is this conflict most likely resolved?",
+    "options": [
+      "The engineering head decides alone.",
+      "The customer is asked to arbitrate.",
+      "It is referred to upper management.",
+      "The task force votes on a solution.",
+      "The liaison department resolves it alone."
+    ],
+    "sources": [
+      21
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 2,
+    "explanation": "Liaison department работает в пределах своего division и не обладает властью разрешать конфликт между divisions. Такой конфликт передают выше — upper management."
+  },
+  {
+    "id": "pm-real-4-28",
+    "variant": "4",
+    "number": 28,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 5,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-29",
+    "variant": "4",
+    "number": 29,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 5,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-30",
+    "variant": "4",
+    "number": 30,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 6,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-31",
+    "variant": "4",
+    "number": 31,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 6,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-32",
+    "variant": "4",
+    "number": 32,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 6,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-33",
+    "variant": "4",
+    "number": 33,
+    "text": "Scenario: On an XP project for a regional akimat, one person represents the business, sets requirements and priorities, and confirms the final product works as intended.\nQuestion: Which XP role does this person hold?",
+    "options": [
+      "Tester.",
+      "Customer.",
+      "Coach.",
+      "Sponsor.",
+      "Programmer."
+    ],
+    "sources": [
+      22
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 1,
+    "explanation": "В XP Customer представляет бизнес, определяет требования и приоритеты и подтверждает нужный результат. Tester проверяет, Coach помогает применять XP, Programmer реализует."
+  },
+  {
+    "id": "pm-real-4-34",
+    "variant": "4",
+    "number": 34,
+    "text": "Scenario: Without being asked, a team adds an animated 3D dashboard to an akimat’s reporting system. The akimat never uses it.\nQuestion: Which Lean waste does this represent?",
+    "options": [
+      "Defects.",
+      "Partially done work.",
+      "Motion.",
+      "Extra features.",
+      "Extra processes."
+    ],
+    "sources": [
+      22
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Команда построила ненужный пользователю 3D dashboard — extra features. Даже исправная законченная функция является потерей, если её не просили и не используют."
+  },
+  {
+    "id": "pm-real-4-35",
+    "variant": "4",
+    "number": 35,
+    "text": "Scenario: Instead of inspecting the finished system at the end, a team reviews and tests every piece of work as soon as it is produced, at each stage of development.\nQuestion: Which Lean core concept does this reflect?",
+    "options": [
+      "Defer decisions.",
+      "Optimize the whole.",
+      "Eliminate waste.",
+      "Build quality in.",
+      "Deliver fast."
+    ],
+    "sources": [
+      22
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Проверки встроены в каждый этап, а не оставлены на конец — build quality in. Это точнее, чем общее eliminate waste или deliver fast."
+  },
+  {
+    "id": "pm-real-4-36",
+    "variant": "4",
+    "number": 36,
+    "text": "Scenario: Two senior developers on a ministry project openly disagree about the system architecture and debate it in a team meeting.\nQuestion: How should an agile leader view this conflict?",
+    "options": [
+      "As a positive step in team development.",
+      "As acceptable only if a manager chairs it.",
+      "As a reason to impose a final decision.",
+      "As a sign the team should be split up.",
+      "As a matter to settle outside the team."
+    ],
+    "sources": [
+      22
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Открытое обсуждение технических разногласий может быть полезным шагом развития команды. Не следует автоматически подавлять спор, навязывать решение или разделять людей; речь о конструктивном обсуждении, не о личных нападках."
+  },
+  {
+    "id": "pm-real-4-37",
+    "variant": "4",
+    "number": 37,
+    "text": "Scenario: Halfway through a Sprint, the Developers of a fintech startup discover that a payment API they are integrating behaves differently than they assumed.\nQuestion: When does Scrum expect the team to adjust its plan and work?",
+    "options": [
+      "At the end of the release, when all data is available.",
+      "As soon as possible, to minimize further deviation.",
+      "Only after the Product Owner cancels the Sprint.",
+      "At the Sprint Review, after stakeholders give feedback.",
+      "At the next Sprint Retrospective, after discussion."
+    ],
+    "sources": [
+      22
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Обнаружив новое поведение API, команда адаптирует план как можно раньше. Не нужно ждать Review, Retrospective или отмены Sprint, если можно сохранить его цель."
+  },
+  {
+    "id": "pm-real-4-38",
+    "variant": "4",
+    "number": 38,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 7,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-39",
+    "variant": "4",
+    "number": 39,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 7,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-40",
+    "variant": "4",
+    "number": 40,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 7,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-41",
+    "variant": "4",
+    "number": 41,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 7,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-42",
+    "variant": "4",
+    "number": 42,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 7,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-43",
+    "variant": "4",
+    "number": 43,
+    "text": "Scenario: For a one-month Sprint, a team schedules a four-hour Sprint Review and a four-hour Sprint Retrospective.\nQuestion: Which statement is correct?",
+    "options": [
+      "The Review exceeds its two-hour maximum.",
+      "The Retrospective exceeds its three-hour maximum.",
+      "Both are within their timeboxes for a one-month Sprint.",
+      "The Review exceeds its three-hour maximum.",
+      "Both events exceed their two-hour maximum."
+    ],
+    "sources": [
+      23
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Для месячного Sprint Review ≤4 часов, Retrospective ≤3 часов. Значит, четырёхчасовой Review допустим, а четырёхчасовая Retrospective превышает timebox на час."
+  },
+  {
+    "id": "pm-real-4-44",
+    "variant": "4",
+    "number": 44,
+    "text": "Scenario: An IT outsourcing company in Astana builds a mobile app for the tax authority, but its developers are not allowed to meet taxpayers directly.\nQuestion: Which technique best helps the team understand value from the taxpayer’s point of view?",
+    "options": [
+      "Personas.",
+      "Story decomposition.",
+      "Product roadmap.",
+      "Regression testing.",
+      "Velocity tracking."
+    ],
+    "sources": [
+      23
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 0,
+    "explanation": "Persona помогает представить цели и контекст налогоплательщика, когда прямой контакт затруднён. Roadmap описывает развитие продукта, velocity — объём работы, regression testing — проверку старого поведения."
+  },
+  {
+    "id": "pm-real-4-45",
+    "variant": "4",
+    "number": 45,
+    "text": "Scenario: An analyst for a regional akimat’s social-benefits portal has official statistics on the age, district and income of benefit applicants.\nQuestion: How should she best use this data?",
+    "options": [
+      "As input used only for the project cost estimate.",
+      "As the product vision statement for the portal.",
+      "As the acceptance criteria for each user story.",
+      "As a replacement for personas, since statistics are more exact.",
+      "As a starting point for a representative pool of personas."
+    ],
+    "sources": [
+      23
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 4,
+    "explanation": "Статистика — исходные данные для набора репрезентативных персон. Она сама по себе не описывает мотивацию конкретных сегментов, не заменяет personas и не задаёт acceptance criteria."
+  },
+  {
+    "id": "pm-real-4-46",
+    "variant": "4",
+    "number": 46,
+    "text": "Scenario: A team designing an online pension calculator plans to use personas as the only source of user insight for the whole project.\nQuestion: Which is the strongest argument against this plan?",
+    "options": [
+      "Personas are not a substitute for real user input.",
+      "Personas cannot be ranked by the benefit they get.",
+      "Personas can only be used by the product owner.",
+      "Personas cannot include images or names of users.",
+      "Personas must always start with the long template."
+    ],
+    "sources": [
+      23
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 0,
+    "explanation": "Персоны — модель пользователей; они не заменяют реальные интервью, наблюдения и проверку решения. Их можно использовать всей командой, делать короткими и дополнять изображениями."
+  },
+  {
+    "id": "pm-real-4-47",
+    "variant": "4",
+    "number": 47,
+    "text": "Scenario: A junior developer at a fintech startup believes that only the product owner may write user stories and that every backlog item must be a user story.\nQuestion: Which statement is correct?",
+    "options": [
+      "Only the product owner writes stories, and every item must be a story.",
+      "Several roles may write stories; not every item must be one.",
+      "Testers write stories after the feature has already been built.",
+      "Only customers write stories, and other items stay off the backlog.",
+      "Only developers write stories, since they estimate and deliver them."
+    ],
+    "sources": [
+      23
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 1,
+    "explanation": "Истории могут писать разные роли, а Product Backlog может содержать и другие виды элементов. Accountability PO за backlog не означает, что только он должен лично написать каждую историю."
+  },
+  {
+    "id": "pm-real-4-48",
+    "variant": "4",
+    "number": 48,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 8,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-49",
+    "variant": "4",
+    "number": 49,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 8,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-4-50",
+    "variant": "4",
+    "number": 50,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 8,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-5-1",
+    "variant": "5",
+    "number": 1,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 4,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-5-2",
+    "variant": "5",
+    "number": 2,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 4,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-5-3",
+    "variant": "5",
+    "number": 3,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 4,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-5-4",
+    "variant": "5",
+    "number": 4,
+    "text": "Этого вопроса нет среди доступных страниц с подтверждённой принадлежностью к этому варианту.",
+    "options": [],
+    "sources": [],
+    "available": false,
+    "lecture": 5,
+    "answer": null,
+    "explanation": ""
+  },
+  {
+    "id": "pm-real-5-5",
+    "variant": "5",
+    "number": 5,
+    "text": "Which three common varieties can a matrix structure take?",
+    "options": [
+      "Strong, weak, or balanced.",
+      "Departmental, divisional, or liaison.",
+      "Pure, functional, or projectized.",
+      "Simple, complex, or hybrid.",
+      "Line, staff, or line-staff."
+    ],
+    "sources": [
+      32
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "Три разновидности матрицы — weak, balanced, strong. Они различаются распределением полномочий между PM и functional manager, а не просто сложностью продукта."
+  },
+  {
+    "id": "pm-real-5-6",
+    "variant": "5",
+    "number": 6,
+    "text": "Why is project engineering separated from project management in a matrix?",
+    "options": [
+      "So all conflicts go to the general manager.",
+      "So costs can be shared among several projects.",
+      "So a liaison department can handle design changes.",
+      "To keep technical direction with engineering.",
+      "So the project manager can conduct merit reviews."
+    ],
+    "sources": [
+      32
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "Project engineering отделяют, чтобы техническое руководство оставалось за инженерной функцией. PM интегрирует проект целиком; такое разделение не даёт ему автоматически merit reviews всех специалистов."
+  },
+  {
+    "id": "pm-real-5-7",
+    "variant": "5",
+    "number": 7,
+    "text": "Under the Agile Manifesto, why should effort go into responding to change rather than following a plan?",
+    "options": [
+      "Plans have no value once development begins.",
+      "Changes are rare in knowledge worker projects.",
+      "Detailed plans slow down contract negotiation.",
+      "Initial plans were made when least was known.",
+      "Plans must be fixed before scope can vary."
+    ],
+    "sources": [
+      32
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Первоначальный план составляют при минимуме знаний, затем опыт позволяет его уточнять. Responding to change не означает, что планы бесполезны или их нельзя создавать."
+  },
+  {
+    "id": "pm-real-5-8",
+    "variant": "5",
+    "number": 8,
+    "text": "In Kanban, what is the main purpose of limiting work in progress?",
+    "options": [
+      "To identify issues and minimize waste.",
+      "To keep every team member fully busy.",
+      "To fix the scope before each iteration.",
+      "To replace the need for a task board.",
+      "To make the team deliver every two weeks."
+    ],
+    "sources": [
+      32
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Ограничение WIP делает проблемы потока заметнее и уменьшает потери от слишком большого числа незавершённых задач. Цель не в максимальной занятости каждого человека и не в обязательных двухнедельных итерациях."
+  },
+  {
+    "id": "pm-real-5-9",
+    "variant": "5",
+    "number": 9,
+    "text": "Which practice is part of the set of good practices recommended by Feature-Driven Development?",
+    "options": [
+      "Individual code ownership.",
+      "Test-driven development.",
+      "Collective code ownership.",
+      "Pair programming.",
+      "Limiting work in progress."
+    ],
+    "sources": [
+      32
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "В FDD есть individual code ownership. Collective ownership, pair programming и TDD обычно отличают XP; limit WIP — Kanban. Здесь важно узнавать практику конкретного метода."
+  },
+  {
+    "id": "pm-real-5-10",
+    "variant": "5",
+    "number": 10,
+    "text": "Which list correctly names the five Scrum values?",
+    "options": [
+      "Commitment, focus, transparency, respect and empiricism.",
+      "Commitment, openness, adaptation, trust and simplicity.",
+      "Commitment, focus, openness, respect and courage.",
+      "Transparency, inspection, adaptation, respect and courage.",
+      "Courage, focus, inspection, respect and self-management."
+    ],
+    "sources": [
+      32
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 2,
+    "explanation": "Пять ценностей: commitment, focus, openness, respect, courage. Transparency, inspection, adaptation — pillars; empiricism — основа Scrum, а не дополнительная ценность."
+  },
+  {
+    "id": "pm-real-5-11",
+    "variant": "5",
+    "number": 11,
+    "text": "According to the Scrum Guide, which elements together make up the Sprint Backlog?",
+    "options": [
+      "The selected items, the team's capacity and a burn-down chart.",
+      "The Product Goal, the Sprint Goal and the release schedule.",
+      "The Sprint Goal, the whole Product Backlog and the last Increment.",
+      "The Product Goal, the selected items and the Definition of Done.",
+      "The Sprint Goal, the selected items and the plan to deliver them."
+    ],
+    "sources": [
+      11,
+      33
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Sprint Backlog = Sprint Goal (WHY) + выбранные Product Backlog items (WHAT) + план доставки (HOW). Весь Product Backlog и Product Goal не заменяют эту тройку."
+  },
+  {
+    "id": "pm-real-5-12",
+    "variant": "5",
+    "number": 12,
+    "text": "What must a Scrum Team do when its organization has a standard Definition of Done?",
+    "options": [
+      "Replace it with its own definition.",
+      "Follow it as a minimum.",
+      "Ask the Product Owner to approve a lower version.",
+      "Use it only when several teams share a product.",
+      "Follow it only for items that are released."
+    ],
+    "sources": [
+      11,
+      33
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Организационный Definition of Done обязателен как минимум. Команда может добавить строгость, но не заменить его более слабой версией; правило относится ко всем элементам Increment."
+  },
+  {
+    "id": "pm-real-5-13",
+    "variant": "5",
+    "number": 13,
+    "text": "What does the short persona template offer compared with the long template?",
+    "options": [
+      "A set of acceptance criteria for each story.",
+      "An in-depth story of the user's typical day.",
+      "A full list of the user's wants and wishes.",
+      "A ranked list of features for the release.",
+      "A one-page quick view of key information."
+    ],
+    "sources": [
+      11,
+      33
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 4,
+    "explanation": "Short persona — быстрый одностраничный обзор ключевой информации. Long template даёт более глубокий контекст, например день из жизни; список критериев истории — другой артефакт."
+  },
+  {
+    "id": "pm-real-5-14",
+    "variant": "5",
+    "number": 14,
+    "text": "Which INVEST criterion is met when a story explains why the customer will benefit from it?",
+    "options": [
+      "Testable.",
+      "Valuable.",
+      "Independent.",
+      "Estimable.",
+      "Negotiable."
+    ],
+    "sources": [
+      11,
+      33
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 1,
+    "explanation": "Если история объясняет пользу клиенту, выполняется Valuable. Testable — проверяемость, Independent — независимость, Estimable — оценимость, Negotiable — обсуждаемость."
+  },
+  {
+    "id": "pm-real-5-15",
+    "variant": "5",
+    "number": 15,
+    "text": "What does the Card in the 3Cs mainly contain?",
+    "options": [
+      "The effort estimate and the deadline.",
+      "Notes from every team discussion.",
+      "A brief story and an optional title.",
+      "The acceptance tests for the feature.",
+      "The full specification of the feature."
+    ],
+    "sources": [
+      11,
+      33
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Card содержит краткую историю и необязательное название. Детали выясняются в Conversation, а проверка принятия относится к Confirmation; карточка не должна притворяться полной спецификацией."
+  },
+  {
+    "id": "pm-real-5-16",
+    "variant": "5",
+    "number": 16,
+    "text": "Scenario: A ministry project has a detailed plan, sound estimates, an approved budget and up-to-date cost records. However, actual progress and spending are compared with the baseline only once, at project completion.\nQuestion: What is the most appropriate improvement to the control system?",
+    "options": [
+      "Prepare a more detailed work breakdown structure.",
+      "Compare actuals with plan frequently.",
+      "Re-estimate the original budget with a new method.",
+      "Communicate the project scope to the team again.",
+      "Ask the vendor to record costs more often."
+    ],
+    "sources": [
+      12,
+      34
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "Фактические данные уже есть, но их сравнивают с планом только после завершения. Нужны frequent comparisons, а не ещё один подробный WBS или более частая регистрация самих затрат."
+  },
+  {
+    "id": "pm-real-5-17",
+    "variant": "5",
+    "number": 17,
+    "text": "Scenario: A new PMO head in Almaty claims that once the project plan is approved, planning has no further connection to how costs are authorized, collected, analyzed and reported.\nQuestion: Which statement best corrects this view?",
+    "options": [
+      "Planning is repeated only when the customer requests it.",
+      "Cost control is a complete system independent of planning.",
+      "Planning is the last phase and follows customer reporting.",
+      "The operating cycle fully replaces planning after approval.",
+      "Planning and operations form one closed system."
+    ],
+    "sources": [
+      12,
+      34
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "Planning и четыре операционные фазы образуют замкнутую систему MCCS. План задаёт базу для разрешения работ, сбора данных, анализа и отчётности, а обратная связь уточняет дальнейшие действия."
+  },
+  {
+    "id": "pm-real-5-18",
+    "variant": "5",
+    "number": 18,
+    "text": "Scenario: A software team measures in hours: BCWS = 1,200, BCWP = 1,000, ACWP = 1,100.\nQuestion: Which statement about the variances is correct?",
+    "options": [
+      "CV = -100 and SV = +200.",
+      "CV = +200 and SV = +100.",
+      "CV = -100 and SV = -200.",
+      "CV = +100 and SV = -200.",
+      "CV = -200 and SV = -100."
+    ],
+    "sources": [
+      12,
+      34
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 2,
+    "explanation": "CV = 1000 − 1100 = −100 часов; SV = 1000 − 1200 = −200 часов. Используются бюджетные трудозатраты выполненной работы; обе отрицательные разницы показывают неблагоприятное отклонение."
+  },
+  {
+    "id": "pm-real-5-19",
+    "variant": "5",
+    "number": 19,
+    "text": "Scenario: A telecom project in Karaganda reports BCWS = 750, BCWP = 600 and ACWP = 500.\nQuestion: Which pair of indices is correct?",
+    "options": [
+      "CPI = 1.2 and SPI = 1.25.",
+      "CPI = 0.8 and SPI = 1.2.",
+      "CPI = 0.8 and SPI = 1.25.",
+      "CPI = 1.25 and SPI = 0.8.",
+      "CPI = 1.2 and SPI = 0.8."
+    ],
+    "sources": [
+      12,
+      34
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "CPI = 600 / 500 = 1,2; SPI = 600 / 750 = 0,8. По стоимости есть эффективность, по графику — отставание. Во всех числителях стоит earned value BCWP."
+  },
+  {
+    "id": "pm-real-5-20",
+    "variant": "5",
+    "number": 20,
+    "text": "Scenario: A bank's CRM project has BAC = 800, BCWP = 400 and ACWP = 500 (thousand dollars).\nQuestion: If current cost efficiency continues, what is the variance at completion?",
+    "options": [
+      "+100.",
+      "-200.",
+      "-250.",
+      "+200.",
+      "-100."
+    ],
+    "sources": [
+      13,
+      34
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 1,
+    "explanation": "CPI = 400 / 500 = 0,8. EAC = 800 / 0,8 = 1000. VAC = BAC − EAC = 800 − 1000 = −200 тысяч: ожидается перерасход на 200 тысяч, не экономия."
+  },
+  {
+    "id": "pm-real-5-21",
+    "variant": "5",
+    "number": 21,
+    "text": "Scenario: A task force with an eight-week deadline spent the first four weeks discussing options with little progress. At the midpoint, realizing time was running out, it changed course and worked intensively to finish.\nQuestion: Which model best explains this pattern?",
+    "options": [
+      "The groupthink model.",
+      "The closed-system cost model.",
+      "The punctuated equilibrium model.",
+      "The storming stage of development.",
+      "The five-stage maturity model."
+    ],
+    "sources": [
+      13,
+      35
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 2,
+    "explanation": "Долгое малоподвижное начало и резкий пересмотр работы в середине срока — punctuated equilibrium. Это не просто storming: в условии ключевой признак — midpoint transition."
+  },
+  {
+    "id": "pm-real-5-22",
+    "variant": "5",
+    "number": 22,
+    "text": "Scenario: A director notices that several team leaders face simultaneous demands where meeting one demand rules out the others, and she wants to know why management should care.\nQuestion: What is the main organizational consequence of such role conflict?",
+    "options": [
+      "Faster movement to the performing stage.",
+      "A shift from formal to informal groups.",
+      "Slower movement from forming to storming.",
+      "Higher overhead rates in every department.",
+      "Ineffective performance by people and groups."
+    ],
+    "sources": [
+      13,
+      35
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "Несовместимые требования к ролям мешают эффективно работать отдельным людям и группам. Они не гарантируют рост накладных расходов или какую-либо конкретную стадию развития."
+  },
+  {
+    "id": "pm-real-5-23",
+    "variant": "5",
+    "number": 23,
+    "text": "Scenario: Staff at a telecom company in Astana are highly committed to project work, yet how well specifications are met varies greatly between projects. The CEO asks a consultant to design \"the one ideal structure that will suit us forever\".\nQuestion: Which response reflects the soundest organizational thinking?",
+    "options": [
+      "Review it, accepting no structure is ideal.",
+      "Adopt a pure functional structure, ideal for all firms.",
+      "Keep the current structure, since commitment is high.",
+      "Loosen the specifications so the variation disappears.",
+      "Adopt a matrix, since it is ideal for every company."
+    ],
+    "sources": [
+      13,
+      35
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "Универсальной идеальной структуры навсегда нет. Нужно оценить соответствие структуре работы и среде; высокая вовлечённость не отменяет проблему нестабильного результата."
+  },
+  {
+    "id": "pm-real-5-24",
+    "variant": "5",
+    "number": 24,
+    "text": "Scenario: A new PMO director at a ministry wants project and functional managers to anticipate problems jointly from next week, although they currently deny that problems exist.\nQuestion: What is the most realistic expectation?",
+    "options": [
+      "A policy memo lets managers skip straight to anticipation.",
+      "Denial is actually the final, most mature stage of trust.",
+      "Anticipation normally comes before admitting responsibility.",
+      "Several intermediate stages of trust must come first.",
+      "Trust develops only when the PM has full line authority."
+    ],
+    "sources": [
+      13,
+      35
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "Нельзя приказом перескочить из отрицания сразу к совместному предвидению. Между ними идут обвинения, признание ответственности и совместное решение; доверие развивается последовательно."
+  },
+  {
+    "id": "pm-real-5-25",
+    "variant": "5",
+    "number": 25,
+    "text": "Scenario: A manufacturer in Karaganda produces standard products in large volumes within established specifications and runs very few one-off projects.\nQuestion: Why is the traditional structure a reasonable fit here?",
+    "options": [
+      "It speeds up decisions that cross departments.",
+      "It suits mass production within set specifications.",
+      "It gives each project manager full line authority.",
+      "It lets staff be dedicated to a single project.",
+      "It provides a strong focal point for each customer."
+    ],
+    "sources": [
+      13,
+      36
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 1,
+    "explanation": "Классическая функциональная структура подходит стабильному массовому производству по заданным спецификациям. Её достоинство здесь — соответствие повторяемой работе, а не полная власть PM над отдельным проектом."
+  },
+  {
+    "id": "pm-real-5-26",
+    "variant": "5",
+    "number": 26,
+    "text": "Scenario: A ministry asks why its functional structure produces \"committee solutions\" for projects and why nobody can be pinpointed when a project fails.\nQuestion: What is the best explanation?",
+    "options": [
+      "Specialists are grouped by discipline to share work.",
+      "Vertical communication channels are too weak.",
+      "The project manager holds too much line authority.",
+      "No one holds formal authority over the total project.",
+      "Each employee reports to more than one functional manager."
+    ],
+    "sources": [
+      13,
+      36
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "В функциональной структуре может не быть человека с формальной властью над всем проектом. Поэтому ответственность дробится между отделами и получаются committee solutions."
+  },
+  {
+    "id": "pm-real-5-27",
+    "variant": "5",
+    "number": 27,
+    "text": "Scenario: A company finds that project coordinators placed inside functional departments keep putting functional work ahead of their projects.\nQuestion: Which principle should guide the next step in organizing project work?",
+    "options": [
+      "Give project control to people loyal to the project.",
+      "Keep project leaders within each functional department.",
+      "Rely only on better rules and planning procedures.",
+      "Let liaison staff coordinate within one division.",
+      "Let functional managers run project merit reviews."
+    ],
+    "sources": [
+      13,
+      36
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 0,
+    "explanation": "Если функциональные задачи постоянно вытесняют проект, контроль проекта следует дать людям, ориентированным на его успех. Сохранение той же лояльности отделу или одни новые процедуры не устраняют конфликт приоритетов."
+  },
+  {
+    "id": "pm-real-5-28",
+    "variant": "5",
+    "number": 28,
+    "text": "Scenario: A holding company is considering a projectized structure for one of its subsidiaries.\nQuestion: Under which condition does such a structure give stable work and minimal conflict?",
+    "options": [
+      "Rare and very short projects.",
+      "Wide sharing of specialists.",
+      "Cost minimization as top priority.",
+      "Priorities set by functional heads.",
+      "A continuous flow of projects."
+    ],
+    "sources": [
+      14,
+      36
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 4,
+    "explanation": "Постоянный поток проектов обеспечивает занятость выделенных проектных команд и уменьшает конфликт за дальнейшую работу. Редкие короткие проекты делают чистую projectized структуру менее устойчивой."
+  },
+  {
+    "id": "pm-real-5-29",
+    "variant": "5",
+    "number": 29,
+    "text": "Scenario: A consultant compares several companies in Kazakhstan that are considering a matrix structure.\nQuestion: For which company would a matrix be most practical?",
+    "options": [
+      "A firm with little need for specialist skills.",
+      "A firm in a rapidly changing market.",
+      "A firm mass-producing one stable product.",
+      "A firm with one long project at a time.",
+      "A firm with stable, predictable demand."
+    ],
+    "sources": [
+      14,
+      36
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 1,
+    "explanation": "Матрица особенно уместна в быстро меняющейся среде, где нужна межфункциональная гибкость. Стабильное массовое производство может обходиться функциональной структурой; универсального лучшего варианта нет."
+  },
+  {
+    "id": "pm-real-5-30",
+    "variant": "5",
+    "number": 30,
+    "text": "Scenario: A bank in Almaty planned its new mobile app the way it plans branch construction, fixing every step in advance. Three months later, many requirements had changed and the plan was obsolete.\nQuestion: What is the most likely root cause of the problem?",
+    "options": [
+      "A defined process was used for uncertain work.",
+      "The developers lacked a detailed enough upfront plan.",
+      "The team used too many short iterations and increments.",
+      "The sponsor approved the project budget too early.",
+      "The bank should have hired more construction experts."
+    ],
+    "sources": [
+      14,
+      37
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Неопределённую разработку приложения планировали как полностью предсказуемое строительство. Ошибка — defined process для uncertain work; ещё более подробный первоначальный план не убирает неопределённость."
+  },
+  {
+    "id": "pm-real-5-31",
+    "variant": "5",
+    "number": 31,
+    "text": "Scenario: An analyst at a fintech company in Astana first studied and internalized agile principles, then began applying agile practices in her own work.\nQuestion: What is the next step in her path to organizational change?",
+    "options": [
+      "Practice agile techniques herself.",
+      "Fix scope and let cost and time vary.",
+      "Learn agile principles individually.",
+      "Encourage others to become agile.",
+      "Write a defined process for all teams."
+    ],
+    "sources": [
+      14,
+      37
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Путь в лекции: понять принципы самому → применять практики → помогать другим стать agile → изменения организации. Первые два этапа уже сделаны, следующий — encourage others."
+  },
+  {
+    "id": "pm-real-5-32",
+    "variant": "5",
+    "number": 32,
+    "text": "Scenario: A team split between Astana and Shymkent relies on long email threads to clarify requirements, and misunderstandings keep causing rework.\nQuestion: Which agile principle points to the best improvement?",
+    "options": [
+      "Working software measures progress best.",
+      "Simplicity is essential to every project.",
+      "Technical excellence enhances agility.",
+      "Face-to-face talk conveys information best.",
+      "Late requirement changes should be welcome."
+    ],
+    "sources": [
+      14,
+      37
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Для сложного уточнения требований прямой разговор быстрее устраняет неоднозначность, чем длинные письма. Для распределённой команды смысл — организовать живое обсуждение, например видеовстречу, а не отменить полезную письменную фиксацию."
+  },
+  {
+    "id": "pm-real-5-33",
+    "variant": "5",
+    "number": 33,
+    "text": "Scenario: An XP team merges everyone's code only once a month and then spends several days fixing code that no longer compiles or works together.\nQuestion: Which XP practice would best address this problem?",
+    "options": [
+      "Continuous integration.",
+      "Sustainable pace.",
+      "Metaphor.",
+      "Planning games.",
+      "Collective code ownership."
+    ],
+    "sources": [
+      14,
+      37
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Редкие слияния приводят к поздним конфликтам интеграции. Continuous integration — частое объединение и проверка изменений; collective ownership отвечает на вопрос владения кодом, а не частоты интеграции."
+  },
+  {
+    "id": "pm-real-5-34",
+    "variant": "5",
+    "number": 34,
+    "text": "Scenario: Analysts in Astana hand designs to developers in Almaty, who hand code to testers in Shymkent. Each handoff takes extra effort to explain and transfer.\nQuestion: Which Lean waste is most evident?",
+    "options": [
+      "Motion.",
+      "Extra features.",
+      "Task switching.",
+      "Extra processes.",
+      "Defects."
+    ],
+    "sources": [
+      14,
+      37
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Передача работы между аналитиками, разработчиками и тестерами в разных городах — motion в классификации Lean из курса. Task switching — когда один человек меняет задачи, extra features — ненужные функции."
+  },
+  {
+    "id": "pm-real-5-35",
+    "variant": "5",
+    "number": 35,
+    "text": "Scenario: Early in a project, a team runs weekly sessions where citizens try prototypes of a new portal and give feedback that the team uses immediately.\nQuestion: Which Lean core concept is the team mainly applying?",
+    "options": [
+      "Empower the team.",
+      "Defer decisions.",
+      "Amplify learning.",
+      "Optimize the whole.",
+      "Build quality in."
+    ],
+    "sources": [
+      14,
+      38
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 2,
+    "explanation": "Прототипы, регулярная обратная связь и немедленное применение выводов усиливают обучение — amplify learning. Главный сигнал не в полномочиях команды и не в отсрочке решения."
+  },
+  {
+    "id": "pm-real-5-36",
+    "variant": "5",
+    "number": 36,
+    "text": "Scenario: Team members at a bank hide failed prototypes from their leader because past mistakes were openly criticized. As a result, few new ideas are tried.\nQuestion: Which leadership task should the leader focus on first?",
+    "options": [
+      "Re-communicating the project vision often.",
+      "Providing more licences and equipment.",
+      "Adding approval steps for new prototypes.",
+      "Making experimentation safe.",
+      "Shielding the team from outside interruptions."
+    ],
+    "sources": [
+      15,
+      38
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 3,
+    "explanation": "Страх наказания за неудачный прототип подавляет обучение. Лидер должен сделать эксперименты безопасными: неудача становится источником выводов, а не поводом для публичного унижения."
+  },
+  {
+    "id": "pm-real-5-37",
+    "variant": "5",
+    "number": 37,
+    "text": "Scenario: A ministry IT department removes several approval documents that nobody reads and keeps only the activities that directly help deliver the product.\nQuestion: Which idea underlying Scrum does this change reflect?",
+    "options": [
+      "Lean thinking.",
+      "Empiricism.",
+      "Transparency.",
+      "Cross-functionality.",
+      "Self-management."
+    ],
+    "sources": [
+      15,
+      38
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Убирают бесполезные документы и сохраняют действия, дающие ценность — lean thinking. Empiricism означает решения по наблюдениям, transparency — видимость состояния; в вопросе акцент на устранении потерь."
+  },
+  {
+    "id": "pm-real-5-38",
+    "variant": "5",
+    "number": 38,
+    "text": "Scenario: A state agency staffs a team in which all UX design and database work must be requested from other departments, causing week-long waits every Sprint.\nQuestion: Which Scrum Team characteristic is missing?",
+    "options": [
+      "A single Product Owner.",
+      "Self-management.",
+      "Cross-functionality.",
+      "Small team size.",
+      "Openness."
+    ],
+    "sources": [
+      15,
+      38
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 2,
+    "explanation": "Если необходимые UX и database навыки всегда снаружи и команда неделями ждёт, ей не хватает cross-functionality. Self-management отвечает за право организовать работу, а не за наличие всех нужных компетенций."
+  },
+  {
+    "id": "pm-real-5-39",
+    "variant": "5",
+    "number": 39,
+    "text": "Scenario: In a state company, department heads regularly overrule the Product Owner's ordering of the Product Backlog, and the Developers receive conflicting priorities.\nQuestion: What does Scrum say is needed for the Product Owner to succeed?",
+    "options": [
+      "Department heads should jointly own the Product Backlog with the Product Owner.",
+      "The entire organization must respect the Product Owner's decisions.",
+      "Priorities should be fixed at the start and not changed.",
+      "The Scrum Master should approve every change to item order.",
+      "Developers should order the items they find most urgent."
+    ],
+    "sources": [
+      15,
+      38
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Организация должна уважать решения Product Owner о порядке backlog. Stakeholders могут убеждать PO, но не создавать параллельную систему приоритетов и коллективного владения его accountability."
+  },
+  {
+    "id": "pm-real-5-40",
+    "variant": "5",
+    "number": 40,
+    "text": "Scenario: A newly appointed Scrum Master in an akimat IT department approves vacations, sets individual KPIs for each Developer and reports their personal performance to management.\nQuestion: Which description of the Scrum Master shows that this behavior is wrong?",
+    "options": [
+      "The team member who decides how work is done.",
+      "A true leader who serves the Scrum Team.",
+      "The person who orders the Product Backlog.",
+      "The line manager accountable for each Developer.",
+      "A coordinator who reports progress to management."
+    ],
+    "sources": [
+      15,
+      39
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 1,
+    "explanation": "Scrum Master — лидер, служащий команде, а не её линейный начальник. Отпуска, индивидуальные KPI и персональные отчёты как основная роль здесь не отражают его Scrum accountability."
+  },
+  {
+    "id": "pm-real-5-41",
+    "variant": "5",
+    "number": 41,
+    "text": "Scenario: Mid-Sprint, the Developers of a university admissions portal realize one selected item is much larger than expected, although the Sprint Goal is still achievable with less scope.\nQuestion: What does Scrum allow them to do?",
+    "options": [
+      "Clarify and renegotiate scope with the Product Owner.",
+      "Change the Sprint Goal without involving anyone else.",
+      "Cancel the Sprint, since the forecast was wrong.",
+      "Ask the Scrum Master to extend the Sprint end date.",
+      "Lower the quality bar so all items can be finished."
+    ],
+    "sources": [
+      15,
+      39
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Scope можно уточнить и пересогласовать с PO по мере обучения, сохраняя Sprint Goal и качество. Не нужно автоматически отменять или продлевать Sprint; менять цель в одностороннем порядке тоже нельзя."
+  },
+  {
+    "id": "pm-real-5-42",
+    "variant": "5",
+    "number": 42,
+    "text": "Scenario: The Daily Scrum of a regional akimat team is held at different times and places each day, and participants mostly report how many hours they worked.\nQuestion: What is the main purpose of the event that they are missing?",
+    "options": [
+      "Re-order the Product Backlog with the Product Owner.",
+      "Report hours worked to the Scrum Master for tracking.",
+      "Demonstrate finished work to stakeholders for feedback.",
+      "Review the team's processes and Definition of Done.",
+      "Inspect Sprint Goal progress and adapt the plan."
+    ],
+    "sources": [
+      15,
+      39
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Daily помогает Developers проверить движение к Sprint Goal и адаптировать план. Отчёт по часам, демонстрация stakeholders и ретроспективный анализ процессов — не его основная цель."
+  },
+  {
+    "id": "pm-real-5-43",
+    "variant": "5",
+    "number": 43,
+    "text": "Scenario: In a Sprint Retrospective, a team at a mobile operator finds that failed deployments were caused by manual steps and decides to automate them.\nQuestion: What can the team do with this improvement?",
+    "options": [
+      "Wait for the Product Owner at the next Review.",
+      "Implement it in the current Sprint after the Retrospective.",
+      "Ask stakeholders to approve it at the next Review.",
+      "Record it only; changes are allowed after the release.",
+      "Add it to the Sprint Backlog for the next Sprint."
+    ],
+    "sources": [
+      16,
+      39
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Полезное улучшение можно включить в Sprint Backlog следующего Sprint. Retrospective завершает текущий Sprint, поэтому вариант «после Retrospective в текущем Sprint» вводит в заблуждение; разрешение stakeholders не требуется."
+  },
+  {
+    "id": "pm-real-5-44",
+    "variant": "5",
+    "number": 44,
+    "text": "Scenario: A product owner of a city parking app says: 'Personas are just a nicer name for user roles such as Admin or Driver.'\nQuestion: Which statement best corrects this view?",
+    "options": [
+      "Personas are job titles used to assign system access rights.",
+      "Personas are real customers who are quoted by name in specs.",
+      "Personas are groups of features ranked by development cost.",
+      "Personas are fictional archetypes of typical users.",
+      "Personas are team roles defined within the Scrum framework."
+    ],
+    "sources": [
+      16,
+      39
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 3,
+    "explanation": "Persona — вымышленный архетип типичного пользователя с целями и контекстом. Это не просто роль доступа Admin/Driver, не конкретный реальный клиент и не роль Scrum Team."
+  },
+  {
+    "id": "pm-real-5-45",
+    "variant": "5",
+    "number": 45,
+    "text": "Scenario: A startup in Astana needs a quick view of its key users for a planning meeting tomorrow morning, and there is no time for further research.\nQuestion: Which persona format best fits this need?",
+    "options": [
+      "A context diagram showing all external systems.",
+      "A full demographic report from the statistics agency.",
+      "A one-page short template with key facts.",
+      "A long template with an in-depth day-in-the-life story.",
+      "A detailed use case model listing all actors."
+    ],
+    "sources": [
+      16,
+      40
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Для быстрого обзора нужен short template с ключевыми фактами на одной странице. Long template нужен для глубины; нехватка исследований не означает, что можно выдавать предположения за проверенные факты."
+  },
+  {
+    "id": "pm-real-5-46",
+    "variant": "5",
+    "number": 46,
+    "text": "Scenario: An analyst writes a single persona called 'Average citizen' who is any age, lives in any region, speaks all languages and is equally at ease with mobile and desktop.\nQuestion: What is the main weakness of this persona?",
+    "options": [
+      "It is too short to count as a persona at all.",
+      "It has too many differentiators to be ranked properly.",
+      "It is too generic to be distinct or realistic.",
+      "It was written before the product roadmap existed.",
+      "It focuses on wants instead of on motivations."
+    ],
+    "sources": [
+      16,
+      40
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "«Любой возраст, любой регион, одинаковые навыки» стирает различия и делает образ нереалистичным. Полезная персона должна описывать узнаваемую группу с конкретным контекстом."
+  },
+  {
+    "id": "pm-real-5-47",
+    "variant": "5",
+    "number": 47,
+    "text": "Scenario: An analyst wants to rewrite the story 'As a citizen, I need to book a slot at a public service center so that I do not wait in a queue' in the alternative format.\nQuestion: Which version is the correct equivalent?",
+    "options": [
+      "'In order to book a slot, as a citizen, I need to avoid a queue.'",
+      "'In order to avoid a queue, as a citizen, I need to book a slot.'",
+      "'Given a free slot, when a citizen books it, the queue is avoided.'",
+      "'Citizen books a slot, system confirms, queue time goes down.'",
+      "'As a service center, I need slots booked so that queues shrink.'"
+    ],
+    "sources": [
+      16,
+      40
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 1,
+    "explanation": "Альтернативный порядок: In order to WHY, as WHO, I need WHAT. Здесь WHY — avoid a queue, WHO — citizen, WHAT — book a slot. Given/When — формат сценария проверки, а не та же история."
+  },
+  {
+    "id": "pm-real-5-48",
+    "variant": "5",
+    "number": 48,
+    "text": "Scenario: An akimat's appointment-booking story was accepted, but citizens later found they could book visits on public holidays. Nobody had stated what the feature should and should not allow.\nQuestion: What was most likely missing?",
+    "options": [
+      "A product roadmap for the next year.",
+      "A more detailed title on the story card.",
+      "A larger team to deliver the story.",
+      "A longer persona template for citizens.",
+      "Clear acceptance criteria for the story."
+    ],
+    "sources": [
+      16,
+      40
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 4,
+    "explanation": "Не указали разрешённое и запрещённое поведение для праздничных дней — отсутствовали ясные acceptance criteria. Большая команда, roadmap или более длинная персона не задают эти правила автоматически."
+  },
+  {
+    "id": "pm-real-5-49",
+    "variant": "5",
+    "number": 49,
+    "text": "Scenario: After several joint story-writing sessions, developers and the operations staff of a bank understand each other's work much better and feel more committed to the product.\nQuestion: Which strength of user stories does this illustrate?",
+    "options": [
+      "Stories guarantee that all estimates will be accurate.",
+      "Stories cut the number of team meetings down to zero.",
+      "Joint work on stories builds shared understanding.",
+      "Stories allow the team to skip backlog refinement.",
+      "Stories move responsibility for value to the developers."
+    ],
+    "sources": [
+      16,
+      40
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Совместное написание историй создаёт shared understanding и вовлечённость. Оно не отменяет refinement и встречи, не гарантирует точные оценки и не переносит accountability за ценность с PO на Developers."
+  },
+  {
+    "id": "pm-real-5-50",
+    "variant": "5",
+    "number": 50,
+    "text": "Scenario: Decomposing the epic 'Online onboarding for new bank clients' produced 40 child stories, some outdated and a few contradicting each other.\nQuestion: What should the analyst do?",
+    "options": [
+      "Ask developers to choose which stories to implement.",
+      "Merge all child stories back into a single large one.",
+      "Turn the child stories into personas for each group.",
+      "Organize the child stories to keep them current.",
+      "Stop decomposition and deliver the epic in one iteration."
+    ],
+    "sources": [
+      16,
+      40
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 3,
+    "explanation": "Декомпозиция требует поддержки связности дочерних историй: удалять устаревшее, разрешать противоречия, сохранять актуальность. Обратное слияние в большой epic или превращение историй в personas проблему не решает."
+  },
+  {
+    "id": "pm-real-unknown-28",
+    "variant": "unknown",
+    "number": 28,
+    "text": "Scenario: In a projectized company, two small projects each need a GIS analyst for only half of the working week.\nQuestion: Under a pure projectized structure, what is the most likely outcome?",
+    "options": [
+      "A liaison department supplies the analyst.",
+      "Neither project gets an analyst at all.",
+      "The analyst is shared to reduce total costs.",
+      "Each project keeps its own full-time analyst.",
+      "A functional manager lends the analyst part time."
+    ],
+    "sources": [
+      27
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 3,
+    "explanation": "В чистой projectized структуре люди закреплены за проектами: возможны два недозагруженных штатных аналитика. Совместное использование специалистов экономнее, но это уже не характерный результат pure projectized модели из лекции."
+  },
+  {
+    "id": "pm-real-unknown-29",
+    "variant": "unknown",
+    "number": 29,
+    "text": "Scenario: A telecom operator moving to a matrix structure asks HR what to prepare.\nQuestion: Which set of measures does matrix implementation require?",
+    "options": [
+      "One boss per employee and vertical channels.",
+      "Rules, procedures and hierarchical referral.",
+      "Training, open communication and role definitions.",
+      "Separate budgets for each functional unit.",
+      "Dedicated staff, line authority and merit reviews."
+    ],
+    "sources": [
+      27
+    ],
+    "available": true,
+    "lecture": 5,
+    "answer": 2,
+    "explanation": "Матрица требует обучения, открытой коммуникации и чёткого определения ролей, иначе двойное подчинение вызывает конфликты. Один начальник и только вертикальные каналы описывают функциональную модель."
+  },
+  {
+    "id": "pm-real-unknown-30",
+    "variant": "unknown",
+    "number": 30,
+    "text": "Scenario: A digital health project in Almaty involves doctors, data scientists and software engineers who analyze problems and design the new clinical system together.\nQuestion: Why are these people considered knowledge workers?",
+    "options": [
+      "They work mainly with physical materials and tools.",
+      "They hold university degrees in technical fields.",
+      "They apply expertise in analysis and development.",
+      "They follow fixed steps that others define in advance.",
+      "They hold formal management positions."
+    ],
+    "sources": [
+      27
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 2,
+    "explanation": "Knowledge workers применяют знания для анализа и разработки решений. Диплом или должность сами по себе не определяют тип работы; главное — её интеллектуальное содержание."
+  },
+  {
+    "id": "pm-real-unknown-31",
+    "variant": "unknown",
+    "number": 31,
+    "text": "Scenario: A ministry IT department introduced task boards and short iterations, but managers still dictate every technical decision and punish failed experiments.\nQuestion: Which statement best describes this department?",
+    "options": [
+      "It is doing agile without being agile.",
+      "It is being agile but not yet doing agile.",
+      "It is using a defined process correctly.",
+      "It has fixed scope and let cost and time vary.",
+      "It has reached full organizational agility."
+    ],
+    "sources": [
+      27
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Доски и итерации — doing agile, но подавление самостоятельности и наказание экспериментов противоречат being agile. Практики без ценностей не дают полноценной организационной гибкости."
+  },
+  {
+    "id": "pm-real-unknown-32",
+    "variant": "unknown",
+    "number": 32,
+    "text": "Scenario: Two weeks before release, the ministry asks for a change to the citizen registration form. The team accepts it, since it gives citizens a better service.\nQuestion: Which agile principle is the team following?",
+    "options": [
+      "Keep a sustainable pace for all sponsors.",
+      "Reflect regularly and adjust behavior.",
+      "Deliver working software every few months.",
+      "Trust motivated individuals to do the job.",
+      "Welcome changing requirements, even late."
+    ],
+    "sources": [
+      27
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 4,
+    "explanation": "Команда принимает позднее изменение, потому что оно улучшает сервис: welcome changing requirements, even late. Остальные принципы тоже полезны, но не описывают главный сигнал условия."
+  },
+  {
+    "id": "pm-real-unknown-33",
+    "variant": "unknown",
+    "number": 33,
+    "text": "Scenario: At an IT company in Almaty, all production code is developed while a colleague reviews the logic continuously during implementation.\nQuestion: Which XP practice does this describe?",
+    "options": [
+      "Whole team.",
+      "Small releases.",
+      "Code standards.",
+      "Collective code ownership.",
+      "Pair programming."
+    ],
+    "sources": [
+      25
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 4,
+    "explanation": "Совместная разработка с непрерывной проверкой вторым человеком — pair programming. Collective ownership означает, что команда может менять общий код; само по себе оно не требует работы вдвоём.",
+    "transcriptionNote": "Фото размыто: перед заучиванием дословной формулировки сверь оригинал. Смысл вопроса и варианты читаются."
+  },
+  {
+    "id": "pm-real-unknown-34",
+    "variant": "unknown",
+    "number": 34,
+    "text": "Scenario: A ministry has twenty finished specifications that have waited months for development, and code that has not been retested for weeks.\nQuestion: Which Lean waste is most evident?",
+    "options": [
+      "Partially done work.",
+      "Task switching.",
+      "Extra processes.",
+      "Motion.",
+      "Extra features."
+    ],
+    "sources": [
+      25
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 0,
+    "explanation": "Спецификации ждут реализации, код ждёт проверки — это запас незавершённой работы, partially done work. Даже готовый документ не означает готовую пользовательскую ценность; task switching — другая потеря.",
+    "transcriptionNote": "Фото размыто: перед заучиванием дословной формулировки сверь оригинал. Смысл вопроса и варианты читаются."
+  },
+  {
+    "id": "pm-real-unknown-35",
+    "variant": "unknown",
+    "number": 35,
+    "text": "Scenario: A team postpones choosing a database vendor until it understands the data volumes better, while still doing enough early planning.\nQuestion: Which Lean core concept is the team applying?",
+    "options": [
+      "Empower the team.",
+      "Build quality in.",
+      "Eliminate waste.",
+      "Deliver fast.",
+      "Defer decisions."
+    ],
+    "sources": [
+      25
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 4,
+    "explanation": "Выбор откладывают до получения достаточной информации, продолжая разумное планирование: defer decisions. Это не отказ принимать решение вообще, а сохранение вариантов до ответственного момента."
+  },
+  {
+    "id": "pm-real-unknown-36",
+    "variant": "unknown",
+    "number": 36,
+    "text": "Scenario: An agile leader at an Astana startup makes sure the team has the laptops, software licences and system access it needs to stay productive.\nQuestion: Which servant leader duty does this illustrate?",
+    "options": [
+      "Shielding the team from interruptions.",
+      "Carrying food and water.",
+      "Recognizing conflict as positive.",
+      "Communicating the project vision.",
+      "Practicing transparency."
+    ],
+    "sources": [
+      25
+    ],
+    "available": true,
+    "lecture": 6,
+    "answer": 1,
+    "explanation": "Carrying food and water — метафора обеспечения команды необходимыми ресурсами: техникой, доступами, лицензиями. Защита от прерываний — отдельная обязанность servant leader."
+  },
+  {
+    "id": "pm-real-unknown-37",
+    "variant": "unknown",
+    "number": 37,
+    "text": "Scenario: At a bank in Almaty, the Scrum Team's task board is updated only once a month, so managers who inspect progress often decide on the basis of outdated information.\nQuestion: How does Scrum theory describe inspection carried out under these conditions?",
+    "options": [
+      "Monthly updates are sufficient because Sprints last one month.",
+      "Inspection is unnecessary if the team adapts frequently.",
+      "Transparency matters only for the Product Backlog.",
+      "Low transparency affects the team but not decision quality.",
+      "Inspection without transparency is misleading and wasteful."
+    ],
+    "sources": [
+      25
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Проверка устаревшей картины работы вводит в заблуждение: inspection нуждается в transparency. Частая адаптация без достоверной информации не исправляет фундаментальную проблему."
+  },
+  {
+    "id": "pm-real-unknown-38",
+    "variant": "unknown",
+    "number": 38,
+    "text": "Scenario: Before an item is marked finished, a Developer notices that a teammate skipped a required code review and raises it directly with him so it is fixed.\nQuestion: Which accountability of the Developers does this illustrate?",
+    "options": [
+      "Causing the removal of impediments.",
+      "Establishing Scrum in the organization.",
+      "Maximizing the value of the product.",
+      "Ordering the Product Backlog items.",
+      "Holding each other accountable."
+    ],
+    "sources": [
+      26
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 4,
+    "explanation": "Developers поддерживают профессиональную ответственность друг друга, в том числе соблюдение Definition of Done. Создание Scrum в организации — Scrum Master, максимизация ценности и порядок backlog — PO."
+  },
+  {
+    "id": "pm-real-unknown-39",
+    "variant": "unknown",
+    "number": 39,
+    "text": "Scenario: A startup in Astana is discussing who should develop and explicitly communicate its long-term objective: \"become the main mobile app for paying utility bills in Kazakhstan\".\nQuestion: Who is accountable for this?",
+    "options": [
+      "The Developers.",
+      "The startup's investors.",
+      "The Product Owner.",
+      "The Scrum Master.",
+      "The whole organization by vote."
+    ],
+    "sources": [
+      26
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 2,
+    "explanation": "Долгосрочная цель продукта — Product Goal. За её разработку и явную коммуникацию accountable Product Owner; это не голосование всей организации и не личная задача Scrum Master."
+  },
+  {
+    "id": "pm-real-unknown-40",
+    "variant": "unknown",
+    "number": 40,
+    "text": "Scenario: A Scrum Master at a national railway company spends part of her time training managers in other departments and advising on how to roll out Scrum across the company.\nQuestion: Which statement best describes this activity?",
+    "options": [
+      "It replaces her accountability for team effectiveness.",
+      "It should be done only by an external consultant.",
+      "It is how the Scrum Master serves the organization.",
+      "It is a Product Owner duty that was wrongly delegated.",
+      "It is outside the Scrum Master's accountability entirely."
+    ],
+    "sources": [
+      26
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 2,
+    "explanation": "Обучать организацию и помогать внедрять Scrum — часть служения Scrum Master организации. Это дополняет, а не отменяет его accountability за эффективность команды."
+  },
+  {
+    "id": "pm-real-unknown-41",
+    "variant": "unknown",
+    "number": 41,
+    "text": "Scenario: During a Sprint, the government changes the regulation that the team's Sprint Goal was meant to implement, so the goal no longer makes sense.\nQuestion: Who has the authority to cancel the Sprint?",
+    "options": [
+      "Only the Product Owner.",
+      "The Developers by majority vote.",
+      "The head of the IT department.",
+      "Only the Scrum Master.",
+      "Any member of the Scrum Team."
+    ],
+    "sources": [
+      26
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Когда Sprint Goal устаревает, только Product Owner вправе отменить Sprint. Developers и stakeholders могут повлиять на решение, но не получают эту власть автоматически."
+  },
+  {
+    "id": "pm-real-unknown-42",
+    "variant": "unknown",
+    "number": 42,
+    "text": "Scenario: At 11 a.m., a Developer hits a serious blocker. A teammate says: \"We can only change our plan at the Daily Scrum, so let's wait until tomorrow.\"\nQuestion: Is the teammate right?",
+    "options": [
+      "No; Developers may adapt their plan at any time.",
+      "No; plan changes require starting a new Sprint.",
+      "Yes; plan changes are made only at the Daily Scrum.",
+      "No; plan changes require the Scrum Master's approval.",
+      "Yes; plan changes are made only at Sprint Planning."
+    ],
+    "sources": [
+      26
+    ],
+    "available": true,
+    "lecture": 7,
+    "answer": 0,
+    "explanation": "Daily — регулярная точка проверки, а не единственное разрешённое время менять план. Developers могут адаптироваться в течение дня, не ожидая разрешения Scrum Master или начала нового Sprint."
+  },
+  {
+    "id": "pm-real-unknown-48",
+    "variant": "unknown",
+    "number": 48,
+    "text": "Scenario: On an e-licensing project, the team asks who will mainly use the acceptance criteria to verify and validate that each delivered story meets the user need.\nQuestion: Who primarily uses acceptance criteria for this purpose?",
+    "options": [
+      "The Scrum Master, to track velocity.",
+      "External auditors, after the release.",
+      "The HR department, to rate the staff.",
+      "The developers alone, while coding.",
+      "The product owner and stakeholders."
+    ],
+    "sources": [
+      24
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 4,
+    "explanation": "PO и stakeholders используют acceptance criteria для проверки соответствия истории потребности. Developers тоже работают с критериями, но вариант D ошибочно ограничивает проверку только ими и только кодированием."
+  },
+  {
+    "id": "pm-real-unknown-49",
+    "variant": "unknown",
+    "number": 49,
+    "text": "Scenario: Clerks at a regional akimat, with no IT background, learned to write useful user stories during a short morning workshop.\nQuestion: Which strength of user stories does this show?",
+    "options": [
+      "They are tied to small, testable slices.",
+      "They build shared understanding of the domain.",
+      "They are simple enough to learn very quickly.",
+      "They invite conversation and decomposition.",
+      "They can be supplemented with analysis models."
+    ],
+    "sources": [
+      24
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 2,
+    "explanation": "Люди без IT-подготовки быстро научились писать истории — simple to learn quickly. Shared understanding и decomposition тоже достоинства, но главный факт условия — короткое обучение."
+  },
+  {
+    "id": "pm-real-unknown-50",
+    "variant": "unknown",
+    "number": 50,
+    "text": "Scenario: Developers who moved to an agile team from a waterfall project at a bank complain that they cannot start work without a detailed specification for each story.\nQuestion: Which limitation of user stories does this reflect?",
+    "options": [
+      "Stories cannot be estimated by experienced teams.",
+      "Stories fail to show the value to the customer.",
+      "Stories can be written only by the product owner.",
+      "Stories do not give full specs upfront.",
+      "Stories are too large to finish in one iteration."
+    ],
+    "sources": [
+      24
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 3,
+    "explanation": "История не даёт полной спецификации заранее: детали раскрывают в разговоре и критериях. Это ограничение требует сотрудничества, а не означает невозможность оценки или обязательный огромный размер истории."
+  }
+]

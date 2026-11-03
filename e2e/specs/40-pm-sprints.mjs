@@ -24,6 +24,13 @@ test('Спринты ПМ: отдельная версия, необратимы
     check((await root.getByTestId('pm-sprint-feedback').innerText()).includes('✓ Верно'), 'верный ответ показан сразу');
     check((await root.getByTestId('pm-sprint-explanation').innerText()).includes('Undistributed'), 'объяснение открыто сразу после ответа');
     await root.getByRole('button', { name: 'Разбор ↓' }).click();
+    await root.getByTestId('pm-sprint-explanation').getByRole('link', { name: /Читать конспект/ }).click();
+    await page.locator('#note-control').waitFor();
+    check((await page.locator('#note-control').innerText()).includes('четыре вида бюджета'), 'ссылка открывает нужную тему конспекта');
+    await page.evaluate(() => window.history.back());
+    await question.waitFor();
+    check(await question.getAttribute('data-question-id') === 'pm-real-1-1', 'назад из конспекта возвращает тот же вопрос');
+    check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'ответ сохранён после конспекта');
     mkdirSync('artifacts/pm-sprints', { recursive: true });
     await page.screenshot({ path: 'artifacts/pm-sprints/feedback-mobile.png' });
     await page.setViewportSize({ width: 1280, height: 800 });

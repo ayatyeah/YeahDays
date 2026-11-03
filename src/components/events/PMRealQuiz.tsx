@@ -95,6 +95,8 @@ function PMStudyQuiz({ userId, onVersionChange }: { userId: string; onVersionCha
       const entry = window.history.state?.pmQuizView;
       const saved = parseQuizView(entry?.userId === userId ? entry.view : JSON.parse(localStorage.getItem(viewKey) ?? "null"));
       if (saved) restoreView(saved);
+      const note = new URL(window.location.href).searchParams.get("pmNote");
+      if (notes.some(n => n.id === note)) setTab("full");
     } catch { setSaveError(true); }
     setReady(true);
     const pop = (event: PopStateEvent) => {
@@ -106,6 +108,11 @@ function PMStudyQuiz({ userId, onVersionChange }: { userId: string; onVersionCha
     window.addEventListener("popstate", pop);
     return () => window.removeEventListener("popstate", pop);
   }, [storageKey, viewKey, userId]);
+  useEffect(() => {
+    if (!ready || tab !== "full") return;
+    const note = new URL(window.location.href).searchParams.get("pmNote");
+    if (notes.some(n => n.id === note)) requestAnimationFrame(() => document.getElementById(`note-${note}`)?.scrollIntoView());
+  }, [ready, tab]);
   function persist(next: Answers) {
     setAnswers(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); setSaveError(false); }
@@ -133,6 +140,7 @@ function PMStudyQuiz({ userId, onVersionChange }: { userId: string; onVersionCha
     if (next === tab && !anchor) return;
     window.history.replaceState({ ...window.history.state, pmQuizView: { userId, view: snapshot() } }, "");
     const url = new URL(window.location.href);
+    url.searchParams.delete("pmNote");
     url.searchParams.set("pmView", next);
     url.hash = anchor ?? "";
     window.history.pushState({ pmQuizView: { userId, view: snapshot(next) } }, "", url);

@@ -132,7 +132,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
         <Link href="/learn" className="flex min-h-11 items-center text-sm font-semibold">← Учёба</Link>
         <h1 className="text-sm font-bold sm:text-lg">ПМ · Квиз 2</h1>
-        <span className="text-xs tabular-nums text-[var(--color-muted)]" aria-live="polite">{ready ? stats.correct : "—"} / 151 верно</span>
+        <span className="text-xs tabular-nums text-[var(--color-muted)]" aria-live="polite">{ready ? stats.correct : "—"} / {availableQuestions.length} верно</span>
       </div>
       <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto" aria-label="Разделы ивента">{tabs.map(([id, title]) => <button key={id} onClick={() => navigateTab(id)} aria-current={tab === id ? "page" : undefined} className={`min-h-11 shrink-0 rounded-xl px-3 text-xs font-bold sm:text-sm ${tab === id ? "bg-violet-500/15 text-violet-500" : "text-[var(--color-muted)]"}`}>{title}</button>)}</nav>
     </header>
@@ -144,7 +144,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold">Вариант и фильтры <span className="font-normal text-[var(--color-muted)]">· {label(variant)} · {filtered.length}</span></summary>
         <div className="space-y-3 pb-4">
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className="space-y-1 text-sm"><span>Вариант теста</span><select aria-label="Вариант теста" className={field} value={variant} onChange={e => setVariant(e.target.value)}><option value="all">Все 151 вопрос</option>{variants.map(v => <option key={v.id} value={v.id}>{v.label} · {availableQuestions.filter(item => item.variant === v.id).length}</option>)}</select></label>
+          <label className="space-y-1 text-sm"><span>Вариант теста</span><select aria-label="Вариант теста" className={field} value={variant} onChange={e => setVariant(e.target.value)}><option value="all">Все {availableQuestions.length} вопросов</option>{variants.map(v => <option key={v.id} value={v.id}>{v.label} · {availableQuestions.filter(item => item.variant === v.id).length}</option>)}</select></label>
           <label className="space-y-1 text-sm"><span>Тема</span><select aria-label="Тема" className={field} value={lecture} onChange={e => setLecture(e.target.value)}><option value="all">Все лекции</option>{[[4,"Затраты и группы"],[5,"Оргструктуры"],[6,"Agile и Lean"],[7,"Scrum"],[8,"Personas и stories"]].map(([n,t]) => <option key={n} value={n}>Лекция {n} · {t}</option>)}</select></label>
           <label className="space-y-1 text-sm"><span>Показать</span><select aria-label="Показать" className={field} value={filter} onChange={e => setFilter(e.target.value)}><option value="all">Все вопросы</option><option value="errors">Только ошибки</option><option value="unanswered">Без ответа</option></select></label>
           <label className="space-y-1 text-sm"><span>Поиск по вопросу или разбору</span><input className={field} type="search" placeholder="CPI, persona, доверие…" value={search} onChange={e => setSearch(e.target.value)} /></label>
@@ -204,7 +204,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
         return <p key={n} className="text-sm">Лекция {n}: верно {st.correct} / {st.total} · ошибок {st.answered - st.correct} · без ответа {st.total - st.answered}</p>;
       })}<Button variant="ghost" onClick={() => { setVariant("all"); setLecture("all"); setSearch(""); setFilter("errors"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Повторить все ошибки</Button>
       {confirmReset ? <div className="space-y-3"><p>Удалить все проверенные ответы этого ивента на этом устройстве?</p><div className="flex flex-wrap gap-2"><Button onClick={() => { persist({}); setDraft({}); setRevealed({}); setConfirmReset(false); }}>Да, сбросить ответы</Button><Button variant="ghost" onClick={() => setConfirmReset(false)}>Отмена</Button></div></div> : <Button variant="ghost" onClick={() => setConfirmReset(true)}>Сбросить тренировку</Button>}
-      <p className="text-xs text-[var(--color-muted)]">Ответы сохраняются в этом браузере. 151 исходный вопрос, 604 учебные переформулировки; ключ по лекциям, не официальный. Порядок A–E сохранён.</p>
+      <p className="text-xs text-[var(--color-muted)]">Ответы сохраняются в этом браузере. {availableQuestions.length} исходных вопросов, {Object.values(alternatives).flat().length} учебные переформулировки; ключ по лекциям, не официальный. Порядок A–E сохранён.</p>
       <Link className="inline-block py-2 text-sm underline" href="/events/project-management-test-2">Все лекции по ПМ →</Link>
       </details>
     </>}
@@ -225,13 +225,13 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
 
     {tab === "sources" && <section className={`${panel} space-y-5`}>
       <h2 className="text-2xl font-bold">Источники и полнота материалов</h2>
-      <p className="text-sm leading-relaxed">Проверены 41 фотография и Word из папки «ПМ ВОПРОСЫ С РЕАЛЬНОГО ТЕСТА». Повторные снимки связаны с одним вопросом. В Word не хватало 15 вопросов варианта 1 и полного №50 предполагаемого варианта 5 — они восстановлены по фото. Ещё 18 вопросов перенесены со страниц без номера.</p>
+      <p className="text-sm leading-relaxed">Проверены {sources.length} фотографий и Word из папки «ПМ ВОПРОСЫ С РЕАЛЬНОГО ТЕСТА». Повторные снимки связаны с одним вопросом. В Word не хватало 15 вопросов варианта 1 и полного №50 предполагаемого варианта 5 — они восстановлены по фото. Ещё 23 вопроса перенесены со страниц без номера. Из «ДВарики» добавлены новые №13–17 в группу «Номер не установлен». В «ДВарики2» новых вопросов нет: это повторные фото №5–49 предполагаемого варианта 5.</p>
       <div className="space-y-3">{variants.map(v => <div key={v.id} className="rounded-2xl bg-[var(--color-surface-2)] p-4"><h3 className="font-bold">{v.label} · {availableQuestions.filter(item => item.variant === v.id).length} вопросов</h3><p className="mt-1 text-sm">{v.note}</p></div>)}</div>
-      <p className="text-sm">Фотографии подтверждают текст, но не официальный ключ. Разборы основаны на пяти лекциях курса. В папках есть смешанные страницы; поэтому 18 вопросов без обложки не добавлены автоматически в вариант 4. Размытые строки помечены у соответствующих вопросов.</p>
+      <p className="text-sm">Фотографии подтверждают текст, но не официальный ключ. Разборы основаны на пяти лекциях курса. В папках есть смешанные страницы; поэтому 23 вопроса без обложки не добавлены автоматически в вариант 4. Размытые строки помечены у соответствующих вопросов.</p>
       <a href="/study/pm-quiz2/source-transcription.docx" className="inline-block min-h-11 underline">Скачать исходный Word (с исходными пропусками)</a>
       <div className="flex flex-wrap gap-3">{[4,5,6,7,8].map(n => <a key={n} href={`/study/pm-quiz2/lecture-${n}.pdf`} target="_blank" rel="noreferrer" className="min-h-11 rounded-xl border border-[var(--color-border)] px-3 py-2">Lecture {n} · PDF ↗</a>)}</div>
       <p className="text-sm">Дополнительная сверка: <a className="underline" href="https://scrumguides.org/scrum-guide.html" target="_blank" rel="noreferrer">Scrum Guide 2020</a> · <a className="underline" href="https://agilemanifesto.org/principles.html" target="_blank" rel="noreferrer">Agile Manifesto</a>.</p>
-      <h3 className="text-lg font-bold">Все 41 фото</h3>
+      <h3 className="text-lg font-bold">Все {sources.length} фото</h3>
       {sources.map((source, i) => <details key={source.id} className="rounded-2xl border border-[var(--color-border)] p-3"><summary className="min-h-11 cursor-pointer break-words py-2 text-sm">Фото {i + 1} · {source.name}</summary><SourcePhoto index={i} /></details>)}
     </section>}
     </div></div>

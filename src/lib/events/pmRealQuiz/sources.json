@@ -684,5 +684,365 @@
     "rotation": 90,
     "width": 952,
     "height": 1269
+  },
+  {
+    "id": 41,
+    "src": "/study/pm-quiz2/source-42.jpg",
+    "name": "ДВарики/photo_2026-11-03_12-59-25.jpg",
+    "questions": [
+      "pm-real-unknown-33",
+      "pm-real-unknown-34",
+      "pm-real-unknown-35",
+      "pm-real-unknown-36",
+      "pm-real-unknown-37"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 42,
+    "src": "/study/pm-quiz2/source-43.jpg",
+    "name": "ДВарики/photo_2026-11-03_12-59-49.jpg",
+    "questions": [
+      "pm-real-unknown-38",
+      "pm-real-unknown-39",
+      "pm-real-unknown-40",
+      "pm-real-unknown-41",
+      "pm-real-unknown-42"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 43,
+    "src": "/study/pm-quiz2/source-44.jpg",
+    "name": "ДВарики/photo_2026-11-03_12-59-52.jpg",
+    "questions": [
+      "pm-real-unknown-13",
+      "pm-real-unknown-14",
+      "pm-real-unknown-15",
+      "pm-real-unknown-16",
+      "pm-real-unknown-17"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 44,
+    "src": "/study/pm-quiz2/source-45.jpg",
+    "name": "ДВарики/photo_2026-11-03_12-59-55.jpg",
+    "questions": [
+      "pm-real-unknown-28",
+      "pm-real-unknown-29",
+      "pm-real-unknown-30",
+      "pm-real-unknown-31",
+      "pm-real-unknown-32"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 45,
+    "src": "/study/pm-quiz2/source-46.jpg",
+    "name": "ДВарики/photo_2026-11-03_12-59-57.jpg",
+    "questions": [
+      "pm-real-unknown-48",
+      "pm-real-unknown-49",
+      "pm-real-unknown-50"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 46,
+    "src": "/study/pm-quiz2/source-47.jpg",
+    "name": "ДВарики/photo_2026-11-03_12-59-59.jpg",
+    "questions": [
+      "pm-real-4-23",
+      "pm-real-4-24",
+      "pm-real-4-25",
+      "pm-real-4-26",
+      "pm-real-4-27"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 47,
+    "src": "/study/pm-quiz2/source-48.jpg",
+    "name": "ДВарики/photo_2026-11-03_13-00-02.jpg",
+    "questions": [
+      "pm-real-4-6",
+      "pm-real-4-7",
+      "pm-real-4-8",
+      "pm-real-4-9",
+      "pm-real-4-10",
+      "pm-real-4-11",
+      "pm-real-4-12"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 48,
+    "src": "/study/pm-quiz2/source-49.jpg",
+    "name": "ДВарики/photo_2026-11-03_13-00-04.jpg",
+    "questions": [
+      "pm-real-4-1",
+      "pm-real-4-2",
+      "pm-real-4-3",
+      "pm-real-4-4",
+      "pm-real-4-5"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 49,
+    "src": "/study/pm-quiz2/source-50.jpg",
+    "name": "ДВарики/photo_2026-11-03_13-00-06.jpg",
+    "questions": [
+      "pm-real-4-13",
+      "pm-real-4-14",
+      "pm-real-4-15",
+      "pm-real-4-16",
+      "pm-real-4-17"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 50,
+    "src": "/study/pm-quiz2/source-51.jpg",
+    "name": "ДВарики/photo_2026-11-03_13-00-09.jpg",
+    "questions": [
+      "pm-real-4-43",
+      "pm-real-4-44",
+      "pm-real-4-45",
+      "pm-real-4-46",
+      "pm-real-4-47"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 51,
+    "src": "/study/pm-quiz2/source-52.jpg",
+    "name": "ДВарики/photo_2026-11-03_13-00-12.jpg",
+    "questions": [
+      "pm-real-4-18",
+      "pm-real-4-19",
+      "pm-real-4-20",
+      "pm-real-4-21",
+      "pm-real-4-22"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 52,
+    "src": "/study/pm-quiz2/source-53.jpg",
+    "name": "ДВарики/photo_2026-11-03_13-00-15.jpg",
+    "questions": [
+      "pm-real-4-33",
+      "pm-real-4-34",
+      "pm-real-4-35",
+      "pm-real-4-36",
+      "pm-real-4-37"
+    ],
+    "rotation": 0,
+    "width": 1280,
+    "height": 960
+  },
+  {
+    "id": 53,
+    "src": "/study/pm-quiz2/source-54.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-19.jpg",
+    "questions": [
+      "pm-real-5-5",
+      "pm-real-5-6",
+      "pm-real-5-7",
+      "pm-real-5-8",
+      "pm-real-5-9",
+      "pm-real-5-10"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 54,
+    "src": "/study/pm-quiz2/source-55.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-34.jpg",
+    "questions": [
+      "pm-real-5-11",
+      "pm-real-5-12",
+      "pm-real-5-13",
+      "pm-real-5-14",
+      "pm-real-5-15"
+    ],
+    "rotation": 0,
+    "width": 2560,
+    "height": 1440
+  },
+  {
+    "id": 55,
+    "src": "/study/pm-quiz2/source-56.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-36.jpg",
+    "questions": [
+      "pm-real-5-16",
+      "pm-real-5-17",
+      "pm-real-5-18",
+      "pm-real-5-19",
+      "pm-real-5-20"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 56,
+    "src": "/study/pm-quiz2/source-57.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-38.jpg",
+    "questions": [
+      "pm-real-5-21",
+      "pm-real-5-22",
+      "pm-real-5-23",
+      "pm-real-5-24"
+    ],
+    "rotation": 0,
+    "width": 2560,
+    "height": 1440
+  },
+  {
+    "id": 57,
+    "src": "/study/pm-quiz2/source-58.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-41.jpg",
+    "questions": [
+      "pm-real-5-25",
+      "pm-real-5-26",
+      "pm-real-5-27",
+      "pm-real-5-28",
+      "pm-real-5-29"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 58,
+    "src": "/study/pm-quiz2/source-59.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-44.jpg",
+    "questions": [
+      "pm-real-5-30",
+      "pm-real-5-31",
+      "pm-real-5-32",
+      "pm-real-5-33",
+      "pm-real-5-34"
+    ],
+    "rotation": 0,
+    "width": 2560,
+    "height": 1440
+  },
+  {
+    "id": 59,
+    "src": "/study/pm-quiz2/source-60.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-46.jpg",
+    "questions": [
+      "pm-real-5-35",
+      "pm-real-5-36",
+      "pm-real-5-37",
+      "pm-real-5-38",
+      "pm-real-5-39"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 60,
+    "src": "/study/pm-quiz2/source-61.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-48.jpg",
+    "questions": [
+      "pm-real-5-40",
+      "pm-real-5-41",
+      "pm-real-5-42",
+      "pm-real-5-43",
+      "pm-real-5-44"
+    ],
+    "rotation": 0,
+    "width": 2560,
+    "height": 1440
+  },
+  {
+    "id": 61,
+    "src": "/study/pm-quiz2/source-62.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-50.jpg",
+    "questions": [
+      "pm-real-5-11",
+      "pm-real-5-12",
+      "pm-real-5-13",
+      "pm-real-5-14",
+      "pm-real-5-15"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 62,
+    "src": "/study/pm-quiz2/source-63.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-52.jpg",
+    "questions": [
+      "pm-real-5-30",
+      "pm-real-5-31",
+      "pm-real-5-32",
+      "pm-real-5-33",
+      "pm-real-5-34"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 63,
+    "src": "/study/pm-quiz2/source-64.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-54.jpg",
+    "questions": [
+      "pm-real-5-40",
+      "pm-real-5-41",
+      "pm-real-5-42",
+      "pm-real-5-43",
+      "pm-real-5-44"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
+  },
+  {
+    "id": 64,
+    "src": "/study/pm-quiz2/source-65.jpg",
+    "name": "ДВарики2/photo_2026-11-03_13-03-56.jpg",
+    "questions": [
+      "pm-real-5-45",
+      "pm-real-5-46",
+      "pm-real-5-47",
+      "pm-real-5-48",
+      "pm-real-5-49"
+    ],
+    "rotation": 0,
+    "width": 1440,
+    "height": 2560
   }
 ]

@@ -3924,5 +3924,135 @@
       "question": "Which claim confuses all user stories with oversized epics and assumes none can fit one iteration?",
       "explanation": "INVEST включает Small; большие истории декомпозируют до посильного размера."
     }
+  ],
+  "pm-real-unknown-13": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A marketing analyst compares sales volumes across customer segments. What is the purpose of that sales comparison?",
+      "explanation": "Сравнение продаж показывает, какой сегмент покупает больше всего; это аналитика рынка, не цель имени и образа персоны."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A persona database assigns an immutable unique code to each record so software can distinguish records reliably. What is the purpose of this technical identifier?",
+      "explanation": "Уникальный system ID различает записи в системе. Он не создаёт эмпатию, ради которой персона получает человеческий образ."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "An analyst documents the distinguishing needs and behaviors of each persona compared with the others. What is the main purpose of these differentiators?",
+      "explanation": "Differentiators показывают содержательные различия между персонами, а не просто дают им имена."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "A product team orders its personas by the value each is expected to receive from the solution. What is the purpose of this prioritization?",
+      "explanation": "Здесь персоны ранжируются по ожидаемой пользе; реалистичное имя само по себе этого не делает."
+    }
+  ],
+  "pm-real-unknown-14": [
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "What does the Negotiable criterion in INVEST mean for a user story?",
+      "explanation": "Negotiable: способ реализации и детали обсуждаются с командой, а не закреплены как неизменный контракт."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "What does the Testable criterion in INVEST mean for a user story?",
+      "explanation": "Testable: заинтересованная сторона может объективно проверить результат по согласованным условиям."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "What does the Small criterion in INVEST mean for a user story?",
+      "explanation": "Small: история достаточно мала для реализации в одной итерации; большие истории декомпозируют."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which description illustrates the Estimable criterion when a team uses experience with similar work to size a user story?",
+      "explanation": "Estimable: команда понимает историю настолько, что может оценить трудозатраты. Опыт аналогичных работ помогает оценке."
+    }
+  ],
+  "pm-real-unknown-15": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "An analyst needs a short label naming the goal of a user story so it is recognizable in the backlog. In what form should this label appear?",
+      "explanation": "Заголовок (story title) кратко обозначает цель истории; критерии приёмки отдельно описывают проверяемое поведение."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "A workshop needs an in-depth day-in-the-life narrative about a fictional user's context and motivations. In what form is this persona information best presented?",
+      "explanation": "Длинный шаблон персоны раскрывает контекст и повседневную жизнь пользователя, а не условия приёмки отдельной функции."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Developers assess how much work a user story will require. In what form should the outcome of this sizing activity be recorded?",
+      "explanation": "Effort estimate — оценка усилий. Она помогает планированию, но не подтверждает правильность результата."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Stakeholders need a high-level view of product direction and intended outcomes over future releases. In what form should that overview be presented?",
+      "explanation": "Product roadmap показывает направление развития продукта; это не критерии конкретной истории."
+    }
+  ],
+  "pm-real-unknown-16": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A project has approved spending and accurate records, but nobody updates the forecast of the time and cost needed to finish the remaining work. Which control requirement is missing?",
+      "explanation": "Нужно периодически пересчитывать time and cost to complete: прошлые оценки устаревают по мере получения новых данных."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A project records physical work completed only months later, leaving its progress reports outdated. Which control requirement is missing?",
+      "explanation": "Timely accounting of physical progress — своевременный учёт реально выполненных работ."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "The approved scope is clear in the plan, but different departments misunderstand which tasks they must perform. Which control requirement is missing?",
+      "explanation": "Нужно ясно донести scope of tasks до исполнителей; проблема в понимании состава работ."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Actual progress is recorded promptly, but the team compares it with the schedule only at project closure. Which control requirement is missing?",
+      "explanation": "Frequent comparison выявляет отклонения вовремя: одних свежих actuals без сравнения с планом недостаточно."
+    }
+  ],
+  "pm-real-unknown-17": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A project manager presents status, variances and forecasts to the hospital director and executive board. Which phase is being performed?",
+      "explanation": "Это представление результатов заказчику и руководству, а не первичный сбор табелей и счетов."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Before execution, the team defines the work, estimates resources and develops the schedule and budget baseline. Which part of the management system is being performed?",
+      "explanation": "Planning cycle создаёт плановую базу, с которой затем сравнивают исполнение."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "A controller compares earned value with actual costs and investigates why spending exceeds the budget for completed work. Which phase is being performed?",
+      "explanation": "Cost analysis — сравнение и интерпретация затрат, включая причины отклонений."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "An approved work order releases funding and gives the team permission to begin its work package. Which phase is being performed?",
+      "explanation": "Work authorization and release — разрешение начать работы и использовать выделенные средства."
+    }
   ]
 }

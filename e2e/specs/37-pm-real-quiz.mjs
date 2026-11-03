@@ -48,7 +48,7 @@ test('Реальный квиз ПМ: варианты, разборы, конс
     await root.getByLabel('Вариант теста', { exact:true }).selectOption('4');
     check((await filters.innerText()).includes('Отсутствуют №28'), 'пропуски сохранены');
     await root.getByLabel('Вариант теста', { exact:true }).selectOption('unknown');
-    check((await filters.innerText()).includes('По фильтрам: 18 вопросов'), 'неизвестный вариант отдельно');
+    check((await filters.innerText()).includes('По фильтрам: 23 вопросов'), 'неизвестный вариант отдельно');
     await root.getByLabel('Вариант теста', { exact:true }).selectOption('5');
     check((await filters.innerText()).includes('По фильтрам: 46 вопросов'), 'вариант 5 сохранён');
     await root.getByRole('button', { name:'Краткий конспект', exact:true }).click();
@@ -69,7 +69,7 @@ test('Реальный квиз ПМ: варианты, разборы, конс
     await controls.getByRole('button', { name:'Следующий →', exact:true }).click();
     check(await page.getByTestId('pm-real-alternatives').count() === 0, 'подсказки не переходят к следующему вопросу');
     await root.getByRole('button', { name:'Источники', exact:true }).click();
-    check(await root.locator('details').count() === 41, 'все источники доступны');
+    check(await root.locator('details').count() === 65, 'все источники доступны');
     check(await page.evaluate(() => document.body.style.overflow !== 'hidden'), 'обычная прокрутка восстановлена вне тренировки');
     check(!errors.some(e => /hydration|Minified React error|Uncaught/i.test(e)), 'нет ошибок React');
   } finally { await browser.close(); }

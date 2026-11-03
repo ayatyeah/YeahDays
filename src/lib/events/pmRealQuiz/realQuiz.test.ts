@@ -10,10 +10,10 @@ import { draw, steps } from "../engine";
 
 describe("PM real quiz source coverage and learning", () => {
   it("retains known gaps, uncertain variant identity, and every source image", () => {
-    expect(["1", "4", "5", "unknown"].map(v => availableQuestions.filter(q => q.variant === v).length)).toEqual([50,37,46,18]);
+    expect(["1", "4", "5", "unknown"].map(v => availableQuestions.filter(q => q.variant === v).length)).toEqual([50,37,46,23]);
     expect(bank.filter(q => !q.available && q.variant === "4").map(q => q.number)).toEqual([28,29,30,31,32,38,39,40,41,42,48,49,50]);
     expect(bank.filter(q => !q.available && q.variant === "5").map(q => q.number)).toEqual([1,2,3,4]);
-    expect(sources).toHaveLength(41);
+    expect(sources).toHaveLength(65);
     expect(new Set(bank.map(q => q.id)).size).toBe(bank.length);
     for (const source of sources) {
       expect(existsSync(`public${source.src}`)).toBe(true);
@@ -36,8 +36,8 @@ describe("PM real quiz source coverage and learning", () => {
     expect(get("1",18).options[get("1",18).answer!]).toBe("-100; the work cost more than budgeted.");
     expect(get("5",19).options[get("5",19).answer!]).toBe("CPI = 1.2 and SPI = 0.8.");
     expect(get("5",20).options[get("5",20).answer!]).toBe("-200.");
-    const quiz = draw(event, { ...steps(event).at(-1)!, count: 151 });
-    expect(quiz).toHaveLength(151);
+    const quiz = draw(event, { ...steps(event).at(-1)!, count: 156 });
+    expect(quiz).toHaveLength(156);
     for (const item of quiz) expect(item.options).toEqual(bank.find(q => q.id === item.id)!.options);
   });
   it("connects both summaries to available examples for all five lectures", () => {
@@ -52,7 +52,7 @@ describe("PM real quiz source coverage and learning", () => {
   it("offers exactly four distinct counterfactuals per available question without changing original answers", () => {
     const entries: Record<string, typeof alternatives["pm-real-1-1"]> = alternatives;
     expect(Object.keys(entries).sort()).toEqual(availableQuestions.map(q => q.id).sort());
-    expect(Object.values(entries).flat()).toHaveLength(604);
+    expect(Object.values(entries).flat()).toHaveLength(624);
     for (const q of availableQuestions) {
       const variants = entries[q.id];
       expect(variants.map(v => v.answer)).toEqual([0,1,2,3,4].filter(i => i !== q.answer));
@@ -79,7 +79,7 @@ describe("PM real quiz source coverage and learning", () => {
     expect(realQuizKey("alice")).not.toBe(realQuizKey("bob"));
     expect(parseAnswers("broken")).toEqual({});
     expect(parseAnswers(JSON.stringify({ "pm-real-1-1": 0, "pm-real-5-1": 1, "pm-real-1-2": 9, "pm-real-1-3": "0" }))).toEqual({"pm-real-1-1":0});
-    expect(answerStats({"pm-real-1-1":0})).toEqual({ total:151, answered:1, correct:1 });
+    expect(answerStats({"pm-real-1-1":0})).toEqual({ total:156, answered:1, correct:1 });
     expect(realProgress({"pm-real-1-1":0})).toEqual({});
     const complete = Object.fromEntries(availableQuestions.map(q => [q.id, q.answer!]));
     expect(Object.keys(realProgress(complete))).toHaveLength(11);

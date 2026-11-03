@@ -1097,7 +1097,8 @@
       "The performance budget."
     ],
     "sources": [
-      17
+      17,
+      48
     ],
     "available": true,
     "lecture": 4,
@@ -1117,7 +1118,8 @@
       "It replaces periodic re-estimation of the cost."
     ],
     "sources": [
-      17
+      17,
+      48
     ],
     "available": true,
     "lecture": 4,
@@ -1137,7 +1139,8 @@
       "Cost, schedule, technical performance and risk."
     ],
     "sources": [
-      17
+      17,
+      48
     ],
     "available": true,
     "lecture": 4,
@@ -1157,7 +1160,8 @@
       "Authority."
     ],
     "sources": [
-      17
+      17,
+      48
     ],
     "available": true,
     "lecture": 5,
@@ -1177,7 +1181,8 @@
       "The project manager’s."
     ],
     "sources": [
-      17
+      17,
+      48
     ],
     "available": true,
     "lecture": 5,
@@ -1197,7 +1202,8 @@
       "Resolving conflicts between all projects."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 5,
@@ -1217,7 +1223,8 @@
       "Working software over comprehensive documentation."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 6,
@@ -1237,7 +1244,8 @@
       "Show every work item on a shared, visible board."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 6,
@@ -1257,7 +1265,8 @@
       "Demonstrate control."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 6,
@@ -1277,7 +1286,8 @@
       "The team’s work, actions and behavior."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 7,
@@ -1297,7 +1307,8 @@
       "Fifteen minutes."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 7,
@@ -1317,7 +1328,8 @@
       "The Product Owner, who orders the items."
     ],
     "sources": [
-      18
+      18,
+      47
     ],
     "available": true,
     "lecture": 7,
@@ -1337,7 +1349,8 @@
       "Short template."
     ],
     "sources": [
-      19
+      19,
+      49
     ],
     "available": true,
     "lecture": 8,
@@ -1357,7 +1370,8 @@
       "It shows the value it brings to the customer."
     ],
     "sources": [
-      19
+      19,
+      49
     ],
     "available": true,
     "lecture": 8,
@@ -1377,7 +1391,8 @@
       "The name of the main persona."
     ],
     "sources": [
-      19
+      19,
+      49
     ],
     "available": true,
     "lecture": 8,
@@ -1397,7 +1412,8 @@
       "Good estimating of labor and costs."
     ],
     "sources": [
-      19
+      19,
+      49
     ],
     "available": true,
     "lecture": 4,
@@ -1417,7 +1433,8 @@
       "Work authorization and release."
     ],
     "sources": [
-      19
+      19,
+      49
     ],
     "available": true,
     "lecture": 4,
@@ -1437,7 +1454,8 @@
       "Under budget by 10 and exactly on schedule."
     ],
     "sources": [
-      20
+      20,
+      51
     ],
     "available": true,
     "lecture": 4,
@@ -1457,7 +1475,8 @@
       "Releasing the management reserve."
     ],
     "sources": [
-      20
+      20,
+      51
     ],
     "available": true,
     "lecture": 4,
@@ -1477,7 +1496,8 @@
       "15 months."
     ],
     "sources": [
-      20
+      20,
+      51
     ],
     "available": true,
     "lecture": 4,
@@ -1497,7 +1517,8 @@
       "Adjourning."
     ],
     "sources": [
-      20
+      20,
+      51
     ],
     "available": true,
     "lecture": 4,
@@ -1517,7 +1538,8 @@
       "The analyst has joined an informal interest group."
     ],
     "sources": [
-      20
+      20,
+      51
     ],
     "available": true,
     "lecture": 4,
@@ -1537,7 +1559,8 @@
       "Staff satisfaction has nothing to do with structure."
     ],
     "sources": [
-      21
+      21,
+      46
     ],
     "available": true,
     "lecture": 5,
@@ -1557,7 +1580,8 @@
       "Escalating the problem to the general manager."
     ],
     "sources": [
-      21
+      21,
+      46
     ],
     "available": true,
     "lecture": 5,
@@ -1577,7 +1601,8 @@
       "Decisions are balanced across all functional groups."
     ],
     "sources": [
-      21
+      21,
+      46
     ],
     "available": true,
     "lecture": 5,
@@ -1597,7 +1622,8 @@
       "Communication channels are poorly established."
     ],
     "sources": [
-      21
+      21,
+      46
     ],
     "available": true,
     "lecture": 5,
@@ -1617,7 +1643,8 @@
       "The liaison department resolves it alone."
     ],
     "sources": [
-      21
+      21,
+      46
     ],
     "available": true,
     "lecture": 5,
@@ -1697,7 +1724,8 @@
       "Programmer."
     ],
     "sources": [
-      22
+      22,
+      52
     ],
     "available": true,
     "lecture": 6,
@@ -1717,7 +1745,8 @@
       "Extra processes."
     ],
     "sources": [
-      22
+      22,
+      52
     ],
     "available": true,
     "lecture": 6,
@@ -1737,7 +1766,8 @@
       "Deliver fast."
     ],
     "sources": [
-      22
+      22,
+      52
     ],
     "available": true,
     "lecture": 6,
@@ -1757,7 +1787,8 @@
       "As a matter to settle outside the team."
     ],
     "sources": [
-      22
+      22,
+      52
     ],
     "available": true,
     "lecture": 6,
@@ -1777,7 +1808,8 @@
       "At the next Sprint Retrospective, after discussion."
     ],
     "sources": [
-      22
+      22,
+      52
     ],
     "available": true,
     "lecture": 7,
@@ -1857,7 +1889,8 @@
       "Both events exceed their two-hour maximum."
     ],
     "sources": [
-      23
+      23,
+      50
     ],
     "available": true,
     "lecture": 7,
@@ -1877,7 +1910,8 @@
       "Velocity tracking."
     ],
     "sources": [
-      23
+      23,
+      50
     ],
     "available": true,
     "lecture": 8,
@@ -1897,7 +1931,8 @@
       "As a starting point for a representative pool of personas."
     ],
     "sources": [
-      23
+      23,
+      50
     ],
     "available": true,
     "lecture": 8,
@@ -1917,7 +1952,8 @@
       "Personas must always start with the long template."
     ],
     "sources": [
-      23
+      23,
+      50
     ],
     "available": true,
     "lecture": 8,
@@ -1937,7 +1973,8 @@
       "Only developers write stories, since they estimate and deliver them."
     ],
     "sources": [
-      23
+      23,
+      50
     ],
     "available": true,
     "lecture": 8,
@@ -2041,7 +2078,8 @@
       "Line, staff, or line-staff."
     ],
     "sources": [
-      32
+      32,
+      53
     ],
     "available": true,
     "lecture": 5,
@@ -2061,7 +2099,8 @@
       "So the project manager can conduct merit reviews."
     ],
     "sources": [
-      32
+      32,
+      53
     ],
     "available": true,
     "lecture": 5,
@@ -2081,7 +2120,8 @@
       "Plans must be fixed before scope can vary."
     ],
     "sources": [
-      32
+      32,
+      53
     ],
     "available": true,
     "lecture": 6,
@@ -2101,7 +2141,8 @@
       "To make the team deliver every two weeks."
     ],
     "sources": [
-      32
+      32,
+      53
     ],
     "available": true,
     "lecture": 6,
@@ -2121,7 +2162,8 @@
       "Limiting work in progress."
     ],
     "sources": [
-      32
+      32,
+      53
     ],
     "available": true,
     "lecture": 6,
@@ -2141,7 +2183,8 @@
       "Courage, focus, inspection, respect and self-management."
     ],
     "sources": [
-      32
+      32,
+      53
     ],
     "available": true,
     "lecture": 7,
@@ -2162,7 +2205,9 @@
     ],
     "sources": [
       11,
-      33
+      33,
+      54,
+      61
     ],
     "available": true,
     "lecture": 7,
@@ -2183,7 +2228,9 @@
     ],
     "sources": [
       11,
-      33
+      33,
+      54,
+      61
     ],
     "available": true,
     "lecture": 7,
@@ -2204,7 +2251,9 @@
     ],
     "sources": [
       11,
-      33
+      33,
+      54,
+      61
     ],
     "available": true,
     "lecture": 8,
@@ -2225,7 +2274,9 @@
     ],
     "sources": [
       11,
-      33
+      33,
+      54,
+      61
     ],
     "available": true,
     "lecture": 8,
@@ -2246,7 +2297,9 @@
     ],
     "sources": [
       11,
-      33
+      33,
+      54,
+      61
     ],
     "available": true,
     "lecture": 8,
@@ -2267,7 +2320,8 @@
     ],
     "sources": [
       12,
-      34
+      34,
+      55
     ],
     "available": true,
     "lecture": 4,
@@ -2288,7 +2342,8 @@
     ],
     "sources": [
       12,
-      34
+      34,
+      55
     ],
     "available": true,
     "lecture": 4,
@@ -2309,7 +2364,8 @@
     ],
     "sources": [
       12,
-      34
+      34,
+      55
     ],
     "available": true,
     "lecture": 4,
@@ -2330,7 +2386,8 @@
     ],
     "sources": [
       12,
-      34
+      34,
+      55
     ],
     "available": true,
     "lecture": 4,
@@ -2351,7 +2408,8 @@
     ],
     "sources": [
       13,
-      34
+      34,
+      55
     ],
     "available": true,
     "lecture": 4,
@@ -2372,7 +2430,8 @@
     ],
     "sources": [
       13,
-      35
+      35,
+      56
     ],
     "available": true,
     "lecture": 4,
@@ -2393,7 +2452,8 @@
     ],
     "sources": [
       13,
-      35
+      35,
+      56
     ],
     "available": true,
     "lecture": 4,
@@ -2414,7 +2474,8 @@
     ],
     "sources": [
       13,
-      35
+      35,
+      56
     ],
     "available": true,
     "lecture": 5,
@@ -2435,7 +2496,8 @@
     ],
     "sources": [
       13,
-      35
+      35,
+      56
     ],
     "available": true,
     "lecture": 5,
@@ -2456,7 +2518,8 @@
     ],
     "sources": [
       13,
-      36
+      36,
+      57
     ],
     "available": true,
     "lecture": 5,
@@ -2477,7 +2540,8 @@
     ],
     "sources": [
       13,
-      36
+      36,
+      57
     ],
     "available": true,
     "lecture": 5,
@@ -2498,7 +2562,8 @@
     ],
     "sources": [
       13,
-      36
+      36,
+      57
     ],
     "available": true,
     "lecture": 5,
@@ -2519,7 +2584,8 @@
     ],
     "sources": [
       14,
-      36
+      36,
+      57
     ],
     "available": true,
     "lecture": 5,
@@ -2540,7 +2606,8 @@
     ],
     "sources": [
       14,
-      36
+      36,
+      57
     ],
     "available": true,
     "lecture": 5,
@@ -2561,7 +2628,9 @@
     ],
     "sources": [
       14,
-      37
+      37,
+      58,
+      62
     ],
     "available": true,
     "lecture": 6,
@@ -2582,7 +2651,9 @@
     ],
     "sources": [
       14,
-      37
+      37,
+      58,
+      62
     ],
     "available": true,
     "lecture": 6,
@@ -2603,7 +2674,9 @@
     ],
     "sources": [
       14,
-      37
+      37,
+      58,
+      62
     ],
     "available": true,
     "lecture": 6,
@@ -2624,7 +2697,9 @@
     ],
     "sources": [
       14,
-      37
+      37,
+      58,
+      62
     ],
     "available": true,
     "lecture": 6,
@@ -2645,7 +2720,9 @@
     ],
     "sources": [
       14,
-      37
+      37,
+      58,
+      62
     ],
     "available": true,
     "lecture": 6,
@@ -2666,7 +2743,8 @@
     ],
     "sources": [
       14,
-      38
+      38,
+      59
     ],
     "available": true,
     "lecture": 6,
@@ -2687,7 +2765,8 @@
     ],
     "sources": [
       15,
-      38
+      38,
+      59
     ],
     "available": true,
     "lecture": 6,
@@ -2708,7 +2787,8 @@
     ],
     "sources": [
       15,
-      38
+      38,
+      59
     ],
     "available": true,
     "lecture": 7,
@@ -2729,7 +2809,8 @@
     ],
     "sources": [
       15,
-      38
+      38,
+      59
     ],
     "available": true,
     "lecture": 7,
@@ -2750,7 +2831,8 @@
     ],
     "sources": [
       15,
-      38
+      38,
+      59
     ],
     "available": true,
     "lecture": 7,
@@ -2771,7 +2853,9 @@
     ],
     "sources": [
       15,
-      39
+      39,
+      60,
+      63
     ],
     "available": true,
     "lecture": 7,
@@ -2792,7 +2876,9 @@
     ],
     "sources": [
       15,
-      39
+      39,
+      60,
+      63
     ],
     "available": true,
     "lecture": 7,
@@ -2813,7 +2899,9 @@
     ],
     "sources": [
       15,
-      39
+      39,
+      60,
+      63
     ],
     "available": true,
     "lecture": 7,
@@ -2834,7 +2922,9 @@
     ],
     "sources": [
       16,
-      39
+      39,
+      60,
+      63
     ],
     "available": true,
     "lecture": 7,
@@ -2855,7 +2945,9 @@
     ],
     "sources": [
       16,
-      39
+      39,
+      60,
+      63
     ],
     "available": true,
     "lecture": 8,
@@ -2876,7 +2968,8 @@
     ],
     "sources": [
       16,
-      40
+      40,
+      64
     ],
     "available": true,
     "lecture": 8,
@@ -2897,7 +2990,8 @@
     ],
     "sources": [
       16,
-      40
+      40,
+      64
     ],
     "available": true,
     "lecture": 8,
@@ -2918,7 +3012,8 @@
     ],
     "sources": [
       16,
-      40
+      40,
+      64
     ],
     "available": true,
     "lecture": 8,
@@ -2939,7 +3034,8 @@
     ],
     "sources": [
       16,
-      40
+      40,
+      64
     ],
     "available": true,
     "lecture": 8,
@@ -2960,7 +3056,8 @@
     ],
     "sources": [
       16,
-      40
+      40,
+      64
     ],
     "available": true,
     "lecture": 8,
@@ -3001,7 +3098,8 @@
       "A functional manager lends the analyst part time."
     ],
     "sources": [
-      27
+      27,
+      44
     ],
     "available": true,
     "lecture": 5,
@@ -3021,7 +3119,8 @@
       "Dedicated staff, line authority and merit reviews."
     ],
     "sources": [
-      27
+      27,
+      44
     ],
     "available": true,
     "lecture": 5,
@@ -3041,7 +3140,8 @@
       "They hold formal management positions."
     ],
     "sources": [
-      27
+      27,
+      44
     ],
     "available": true,
     "lecture": 6,
@@ -3061,7 +3161,8 @@
       "It has reached full organizational agility."
     ],
     "sources": [
-      27
+      27,
+      44
     ],
     "available": true,
     "lecture": 6,
@@ -3081,7 +3182,8 @@
       "Welcome changing requirements, even late."
     ],
     "sources": [
-      27
+      27,
+      44
     ],
     "available": true,
     "lecture": 6,
@@ -3101,7 +3203,8 @@
       "Pair programming."
     ],
     "sources": [
-      25
+      25,
+      41
     ],
     "available": true,
     "lecture": 6,
@@ -3122,7 +3225,8 @@
       "Extra features."
     ],
     "sources": [
-      25
+      25,
+      41
     ],
     "available": true,
     "lecture": 6,
@@ -3143,7 +3247,8 @@
       "Defer decisions."
     ],
     "sources": [
-      25
+      25,
+      41
     ],
     "available": true,
     "lecture": 6,
@@ -3163,7 +3268,8 @@
       "Practicing transparency."
     ],
     "sources": [
-      25
+      25,
+      41
     ],
     "available": true,
     "lecture": 6,
@@ -3183,7 +3289,8 @@
       "Inspection without transparency is misleading and wasteful."
     ],
     "sources": [
-      25
+      25,
+      41
     ],
     "available": true,
     "lecture": 7,
@@ -3203,7 +3310,8 @@
       "Holding each other accountable."
     ],
     "sources": [
-      26
+      26,
+      42
     ],
     "available": true,
     "lecture": 7,
@@ -3223,7 +3331,8 @@
       "The whole organization by vote."
     ],
     "sources": [
-      26
+      26,
+      42
     ],
     "available": true,
     "lecture": 7,
@@ -3243,7 +3352,8 @@
       "It is outside the Scrum Master's accountability entirely."
     ],
     "sources": [
-      26
+      26,
+      42
     ],
     "available": true,
     "lecture": 7,
@@ -3263,7 +3373,8 @@
       "Any member of the Scrum Team."
     ],
     "sources": [
-      26
+      26,
+      42
     ],
     "available": true,
     "lecture": 7,
@@ -3283,7 +3394,8 @@
       "Yes; plan changes are made only at Sprint Planning."
     ],
     "sources": [
-      26
+      26,
+      42
     ],
     "available": true,
     "lecture": 7,
@@ -3303,7 +3415,8 @@
       "The product owner and stakeholders."
     ],
     "sources": [
-      24
+      24,
+      45
     ],
     "available": true,
     "lecture": 8,
@@ -3323,7 +3436,8 @@
       "They can be supplemented with analysis models."
     ],
     "sources": [
-      24
+      24,
+      45
     ],
     "available": true,
     "lecture": 8,
@@ -3343,11 +3457,112 @@
       "Stories are too large to finish in one iteration."
     ],
     "sources": [
-      24
+      24,
+      45
     ],
     "available": true,
     "lecture": 8,
     "answer": 3,
     "explanation": "История не даёт полной спецификации заранее: детали раскрывают в разговоре и критериях. Это ограничение требует сотрудничества, а не означает невозможность оценки или обязательный огромный размер истории."
+  },
+  {
+    "id": "pm-real-unknown-13",
+    "variant": "unknown",
+    "number": 13,
+    "text": "Why do analysts give a persona a realistic name and a fictional image?",
+    "options": [
+      "To show which market segment buys the most.",
+      "To give each persona a unique system ID.",
+      "To separate it clearly from other personas.",
+      "To make it relatable and build empathy.",
+      "To rank personas by their expected benefit."
+    ],
+    "sources": [
+      43
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 3,
+    "explanation": "Реалистичное имя и вымышленный образ помогают воспринимать персону как конкретного человека и развивать эмпатию (empathy). Это не статистика покупок, технический ID или рейтинг ценности. Отличия между персонами описывают differentiators; здесь спрашивается именно, зачем очеловечивать образ."
+  },
+  {
+    "id": "pm-real-unknown-14",
+    "variant": "unknown",
+    "number": 14,
+    "text": "What does the Independent criterion in INVEST mean for a user story?",
+    "options": [
+      "It can be delivered apart from other features.",
+      "Its delivery approach is open to team discussion.",
+      "It can be checked objectively by a stakeholder.",
+      "It is small enough to finish in one iteration.",
+      "Its effort can be estimated from past experience."
+    ],
+    "sources": [
+      43
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 0,
+    "explanation": "Independent — история по возможности самостоятельна: её можно реализовать и доставить без обязательного ожидания других функций. B описывает Negotiable, C — Testable, D — Small, E — Estimable. Отличай независимость от размера: маленькая история всё ещё может иметь сильные зависимости."
+  },
+  {
+    "id": "pm-real-unknown-15",
+    "variant": "unknown",
+    "number": 15,
+    "text": "In the 3Cs, how is Confirmation most often expressed?",
+    "options": [
+      "As a story title.",
+      "As acceptance criteria.",
+      "As a long persona template.",
+      "As an effort estimate.",
+      "As a product roadmap."
+    ],
+    "sources": [
+      43
+    ],
+    "available": true,
+    "lecture": 8,
+    "answer": 1,
+    "explanation": "Confirmation фиксирует, как убедиться, что история реализована правильно: это acceptance criteria и проверяемые примеры/тесты. Card кратко напоминает о потребности, Conversation уточняет смысл, Confirmation проверяет договорённость. Заголовок, оценка усилий, persona и roadmap сами по себе не задают условия приёмки."
+  },
+  {
+    "id": "pm-real-unknown-16",
+    "variant": "unknown",
+    "number": 16,
+    "text": "Scenario: On an akimat road-monitoring project, several department heads bought equipment and hired contractors directly, without any sign-off from the project manager.\nQuestion: Which requirement of an effective control system is being violated?",
+    "options": [
+      "Periodic re-estimation of time and cost to complete.",
+      "Timely accounting of physical progress.",
+      "Clear communication of the scope of tasks.",
+      "Frequent comparison of actual progress to schedule.",
+      "Disciplined budgeting and authorization of spending."
+    ],
+    "sources": [
+      43
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "Ключевой сигнал — расходы и договоры без согласования (without any sign-off). Нарушена дисциплина бюджета и разрешения на расходование средств: authorization of spending. Пересчёт прогноза (A), учёт прогресса (B), объяснение scope (C) и сравнение с графиком (D) решают другие проблемы контроля."
+  },
+  {
+    "id": "pm-real-unknown-17",
+    "variant": "unknown",
+    "number": 17,
+    "text": "Scenario: Every Friday the project office of a regional hospital IT project gathers timesheets, supplier invoices and purchase records and enters them into the cost system.\nQuestion: Which phase of the operating cycle is being performed?",
+    "options": [
+      "Reporting to customer and management.",
+      "The planning cycle.",
+      "Cost analysis.",
+      "Work authorization and release.",
+      "Cost data collection and reporting."
+    ],
+    "sources": [
+      43
+    ],
+    "available": true,
+    "lecture": 4,
+    "answer": 4,
+    "explanation": "Сбор timesheets, invoices и purchase records с занесением в систему — cost data collection and reporting. Это получение и регистрация фактических затрат. Анализ (C) начинается при сравнении и интерпретации этих данных; разрешение работ (D) предшествует исполнению; отчёт заказчику и руководству (A) — отдельная фаза представления выводов."
   }
 ]

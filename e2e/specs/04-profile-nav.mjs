@@ -159,37 +159,23 @@ test("Навигация: пять вкладок переключаются, а
   await browser.close();
 });
 
-test("Навигация: горизонтальный свайп по экрану меняет раздел", async () => {
+test("Навигация: горизонтальный свайп следует истории разделов", async () => {
   const user = await newUser();
   const { browser, page } = await session({ user });
-  // «Прогресс» стоит между «Вместе» и «Профилем» — с него проверяются
-  // оба направления, и на нём нет колоды, которая забирает жест себе.
-  await openSection(page, "/progress");
-
-  const pane = page.locator("[data-section-active]");
-  // влево — следующий раздел справа
-  await swipe(pane, [320, 420], [110, 424]);
-  await page.waitForURL((u) => u.pathname === "/account", { timeout: 10_000 });
-  check(true, "свайп влево увёл на «Профиль»");
-
-  // вправо — обратно
-  await swipe(page.locator("[data-section-active]"), [80, 420], [300, 416]);
-  await page.waitForURL((u) => u.pathname === "/progress", { timeout: 10_000 });
-  check(true, "свайп вправо вернул на «Прогресс»");
-
-  await checkText(
-    bottomNav(page).locator('button[aria-current="page"]'),
-    "Прогресс",
-    "панель внизу догнала свайп",
-  );
-
-  // Ещё вправо — «Вместе», как в меню. Раньше свайп ходил по своему
-  // списку и из «Прогресса» уводил в календарь, которого в меню нет.
-  await swipe(page.locator("[data-section-active]"), [80, 420], [300, 416]);
-  await page.waitForURL((u) => u.pathname === "/community", { timeout: 10_000 });
-  check(true, "свайп вправо с «Прогресса» открыл «Вместе» — соседа по меню");
-
-  await browser.close();
+  try {
+    await openSection(page, "/progress");
+    await bottomNav(page).getByRole("button", { name: "Профиль", exact: true }).tap();
+    await page.waitForURL((u) => u.pathname === "/account");
+    await swipe(page.locator("[data-section-active]"), [320, 420], [110, 424]);
+    await page.waitForURL((u) => u.pathname === "/progress", { timeout: 10_000 });
+    check(true, "свайп влево возвращает посещённый Прогресс");
+    await checkText(bottomNav(page).locator('button[aria-current="page"]'), "Прогресс", "активная вкладка синхронизирована с историей");
+    await page.waitForTimeout(450);
+    await swipe(page.locator("[data-section-active]"), [80, 420], [300, 416]);
+    await page.waitForURL((u) => u.pathname === "/account", { timeout: 10_000 });
+    check(true, "свайп вправо возвращает вперёд на Профиль");
+    check(await page.getByRole("navigation", { name: "История страниц" }).getByRole("button", { name: "Вперёд", exact: true }).isDisabled(), "в конце истории нет выдуманного следующего раздела");
+  } finally { await browser.close(); }
 });
 
 test("Навигация: прокрутка профиля не прячет последнюю строку под панелью", async () => {

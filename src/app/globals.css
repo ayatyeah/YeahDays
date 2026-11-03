@@ -863,3 +863,18 @@ input, textarea { scroll-margin-block:90px; }
   html[data-editing] { --install-offset:0px !important; }
   .one-action-plan input, .one-action-plan textarea { min-width:0; max-width:100%; }
 }
+
+/* Shared history controls occupy their own strip, including focused study screens. */
+:root { --history-nav-height: calc(44px + env(safe-area-inset-top, 0px)); }
+body { padding-top: var(--history-nav-height); }
+.yg-history-nav {
+  position: fixed; inset: 0 0 auto; z-index: 70;
+  height: var(--history-nav-height); padding: env(safe-area-inset-top, 0px) 12px 0;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+}
+.yg-history-nav button { min-height: 44px; padding: 0 12px; font-size: 14px; font-weight: 600; border-radius: 10px; }
+.yg-history-nav button:disabled { opacity: .35; cursor: default; }
+.yg-history-nav button:not(:disabled):hover { background: var(--color-surface-2); }
+body .app-shell-frame { height: calc(var(--app-h, 100dvh) - var(--history-nav-height)); min-height: 0; }
+.yg-sidebar { top: var(--history-nav-height); }

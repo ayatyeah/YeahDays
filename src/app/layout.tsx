@@ -3,6 +3,7 @@ import OrdinaryRuntime from "@/components/OrdinaryRuntime";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import HistoryNavigation from "@/components/HistoryNavigation";
 import Shell from "@/components/Shell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -165,6 +166,7 @@ export default async function RootLayout({
         <AppModeProvider mode="normal">
         <AuthProvider>
           <ErrorBoundary>
+            <HistoryNavigation />
             <Shell>{children}</Shell>
           </ErrorBoundary>
           <OrdinaryRuntime />

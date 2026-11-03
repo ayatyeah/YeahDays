@@ -15,6 +15,6 @@ const AUTH = new Set(["/login", "/login/lms", "/register", "/forgot-password"]);
 export default function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const plain = PUBLIC.has(path) || path.startsWith("/invite/") || path === "/admin" || path.startsWith("/admin/") || path === "/team" || path.startsWith("/team/") || isRmtPath(path) || isVersionPicker(path);
-  if (plain) return <div className="min-h-dvh">{AUTH.has(path) && <LanguageSwitcher className="fixed right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-50 bg-[var(--color-bg)]" />}{children}</div>;
+  if (plain) return <div className="min-h-dvh">{AUTH.has(path) && <LanguageSwitcher className="fixed right-3 top-[calc(var(--history-nav-height)+0.75rem)] z-50 bg-[var(--color-bg)]" />}{children}</div>;
   return <AppChrome>{children}</AppChrome>;
 }

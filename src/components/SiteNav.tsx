@@ -53,7 +53,7 @@ export default function SiteNav() {
   }, [onLanding]);
 
   return (
-    <header className="sticky top-0 z-40">
+    <header className="sticky top-[var(--history-nav-height)] z-40">
       <div className="marble-bar border-b border-[var(--color-border)]">
         <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3 sm:px-8">
           <Link href="/ordinary" className="flex shrink-0 items-center gap-2.5">

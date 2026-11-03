@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
@@ -9,7 +10,7 @@ import bank from "@/lib/events/pmRealQuiz/questions.json";
 import alternativeBank from "@/lib/events/pmRealQuiz/alternatives.json";
 import notes from "@/lib/events/pmRealQuiz/notes.json";
 import sources from "@/lib/events/pmRealQuiz/sources.json";
-import { answerStats, availableQuestions, parseAnswers, realProgress, realQuizKey, REAL_PM_ID, REAL_PM_TITLE, variants, type Answers } from "@/lib/events/pmRealQuiz/model";
+import { answerStats, availableQuestions, parseAnswers, realProgress, realQuizKey, REAL_PM_ID, variants, type Answers } from "@/lib/events/pmRealQuiz/model";
 import { saveProgress } from "@/lib/events/storage";
 
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6";
@@ -33,6 +34,14 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
   const [ready, setReady] = useState(false);
   const [saveError, setSaveError] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const scrollArea = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (tab !== "questions") return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [tab]);
   const questionTop = useRef<HTMLElement>(null);
   const storageKey = realQuizKey(userId);
   useEffect(() => {
@@ -61,33 +70,31 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
   const selected = q ? (checked ? answers[q.id] : draft[q.id]) : undefined;
   function openQuestion(ref: string) {
     const [v, n] = ref.split(":");
-    setVariant(v); setLecture("all"); setFilter("all"); setSearch(""); setActive(`pm-real-${v}-${n}`); setTab("questions");
+    setVariant(v); setLecture("all"); setFilter("all"); setSearch(""); setActive(`pm-real-${v}-${n}`); setFiltersOpen(false); setTab("questions");
+    requestAnimationFrame(() => scrollArea.current?.scrollTo({ top: 0 }));
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
   function move(index: number) {
     setActive(filtered[index].id);
-    questionTop.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollArea.current?.scrollTo({ top: 0 });
   }
   const missing = bank.filter(item => !item.available && item.variant === variant).map(item => item.number);
-  return <div className="mx-auto w-full max-w-4xl space-y-5 pb-24" data-no-i18n data-testid="pm-real-quiz">
-    <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm underline" aria-label="Навигация по ПМ"><Link href="/learn">← Учёба</Link><Link href="/events/project-management-test-2">Все лекции по ПМ</Link><Link href="/events">Ивенты</Link></nav>
-    <header className="space-y-3 rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 to-sky-500/10 p-5 sm:p-7">
-      <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-muted)]">Project Management · Лекции 4–8</p>
-      <h1 className="break-words text-3xl font-black leading-tight sm:text-4xl">{REAL_PM_TITLE}</h1>
-      <p className="text-sm leading-relaxed">Подготовка к квизу 4 ноября 2026. По твоей информации — 50% эндтерма. Здесь собраны присланные вопросы, исходные ответы A–E и объяснения, чтобы узнавать принцип даже в новом сценарии.</p>
-      <div className="flex flex-wrap gap-2 text-sm font-semibold"><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">151 вопрос</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">604 переформулировки</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">4 группы материалов</span><span className="rounded-xl bg-[var(--color-surface)] px-3 py-2">2 конспекта</span></div>
-      <p className="text-xs leading-relaxed text-[var(--color-muted)]">Вопросы из присланных фото и Word. Ответы и разборы составлены по лекциям, это не официальный ключ. Наличие этих же вопросов в твоём квизе не подтверждено. Исходные номера и порядок A–E сохранены.</p>
+  const content = <div className={tab === "questions" ? "fixed inset-x-0 bottom-0 top-[var(--history-nav-height)] z-[60] flex h-[calc(100dvh-var(--history-nav-height))] flex-col overflow-hidden bg-[var(--color-bg)]" : "mx-auto w-full max-w-5xl space-y-4 pb-24"} data-no-i18n data-testid="pm-real-quiz">
+    <header className="shrink-0 border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 pb-2 pt-[max(0.5rem,env(safe-area-inset-top))] sm:px-6">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+        <Link href="/learn" className="flex min-h-11 items-center text-sm font-semibold">← Учёба</Link>
+        <h1 className="text-sm font-bold sm:text-lg">ПМ · Квиз 2</h1>
+        <span className="text-xs tabular-nums text-[var(--color-muted)]" aria-live="polite">{ready ? stats.correct : "—"} / 151 верно</span>
+      </div>
+      <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto" aria-label="Разделы ивента">{tabs.map(([id, title]) => <button key={id} onClick={() => setTab(id)} aria-current={tab === id ? "page" : undefined} className={`min-h-11 shrink-0 rounded-xl px-3 text-xs font-bold sm:text-sm ${tab === id ? "bg-violet-500/15 text-violet-500" : "text-[var(--color-muted)]"}`}>{title}</button>)}</nav>
     </header>
-    <div className="grid grid-cols-3 gap-2 text-center" aria-live="polite">
-      {[["Проверено", stats.answered], ["Верно", stats.correct], ["Ошибки", stats.answered - stats.correct]].map(([title, value]) => <div className="rounded-2xl bg-[var(--color-surface-2)] p-3" key={title}><b className="block text-xl tabular-nums">{ready ? value : "—"}</b><span className="text-xs">{title}</span></div>)}
-    </div>
-    <p className="text-xs text-[var(--color-muted)]">Проверенные ответы сохраняются в этом браузере для твоего аккаунта. Между устройствами они не переносятся. Счёт показывает текущие ответы, а не прогноз оценки.</p>
+    <div ref={scrollArea} className={tab === "questions" ? "min-h-0 flex-1 overflow-y-auto overscroll-contain" : "space-y-4"} data-testid="pm-quiz-scroll">
+    <div className="mx-auto w-full max-w-6xl space-y-3 p-3 sm:p-5">
     {saveError && <p className="rounded-2xl border border-amber-400 p-3" role="alert">Сохранение недоступно. Ответы остаются в этой вкладке до её закрытия.</p>}
-    <nav className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Разделы ивента">{tabs.map(([id, title]) => <button key={id} onClick={() => setTab(id)} aria-current={tab === id ? "page" : undefined} className={`min-h-12 rounded-2xl border px-3 py-3 text-sm font-bold ${tab === id ? "border-violet-400 bg-violet-500/15" : "border-[var(--color-border)] bg-[var(--color-surface)]"}`}>{title}</button>)}</nav>
-
     {tab === "questions" && <>
-      <section className={`${panel} space-y-4`}>
-        <h2 className="text-xl font-bold">Выбери вариант и решай</h2>
+      <details open={filtersOpen} onToggle={e => setFiltersOpen(e.currentTarget.open)} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4" data-testid="pm-quiz-filters">
+        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold">Вариант и фильтры <span className="font-normal text-[var(--color-muted)]">· {label(variant)} · {filtered.length}</span></summary>
+        <div className="space-y-3 pb-4">
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="space-y-1 text-sm"><span>Вариант теста</span><select aria-label="Вариант теста" className={field} value={variant} onChange={e => setVariant(e.target.value)}><option value="all">Все 151 вопрос</option>{variants.map(v => <option key={v.id} value={v.id}>{v.label} · {availableQuestions.filter(item => item.variant === v.id).length}</option>)}</select></label>
           <label className="space-y-1 text-sm"><span>Тема</span><select aria-label="Тема" className={field} value={lecture} onChange={e => setLecture(e.target.value)}><option value="all">Все лекции</option>{[[4,"Затраты и группы"],[5,"Оргструктуры"],[6,"Agile и Lean"],[7,"Scrum"],[8,"Personas и stories"]].map(([n,t]) => <option key={n} value={n}>Лекция {n} · {t}</option>)}</select></label>
@@ -97,21 +104,26 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
         {variant !== "all" && <p className="text-sm text-[var(--color-muted)]">{variants.find(v => v.id === variant)?.note}</p>}
         {!!missing.length && <p className="text-sm">Отсутствуют №{missing.join(", ")}. Их не включаем в тренировку и не заменяем придуманными вопросами.</p>}
         <p className="text-sm font-semibold" role="status">По фильтрам: {filtered.length} вопросов</p>
-        <details><summary className="min-h-11 cursor-pointer py-2 font-semibold">Перейти к номеру вопроса</summary><div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-8">{filtered.map(item => <button key={item.id} onClick={() => { setActive(item.id); questionTop.current?.scrollIntoView({ behavior: "smooth" }); }} aria-label={`${label(item.variant)}, вопрос ${item.number}`} aria-current={q?.id === item.id ? "step" : undefined} className={`min-h-12 rounded-xl border p-2 text-sm ${q?.id === item.id ? "border-violet-400 bg-violet-500/15" : "border-[var(--color-border)]"}`}>
+        <details><summary className="min-h-11 cursor-pointer py-2 font-semibold">Перейти к номеру вопроса</summary><div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-8">{filtered.map(item => <button key={item.id} onClick={() => { setActive(item.id); setFiltersOpen(false); scrollArea.current?.scrollTo({ top: 0 }); }} aria-label={`${label(item.variant)}, вопрос ${item.number}`} aria-current={q?.id === item.id ? "step" : undefined} className={`min-h-12 rounded-xl border p-2 text-sm ${q?.id === item.id ? "border-violet-400 bg-violet-500/15" : "border-[var(--color-border)]"}`}>
           {variant === "all" ? `${item.variant === "unknown" ? "?" : item.variant}.${item.number}` : item.number}{answers[item.id] === undefined ? "" : answers[item.id] === item.answer ? " ✓" : " ×"}
         </button>)}</div></details>
-      </section>
-      {!ready ? <p role="status">Загружаем сохранённые ответы…</p> : !q ? <section className={panel}><h2 className="font-bold">По этим фильтрам вопросов нет</h2><p className="mt-2 text-sm">Попробуй другой вариант или тему. В фильтре ошибок появляются только проверенные неверные ответы.</p><Button className="mt-4" onClick={() => { setVariant("all"); setLecture("all"); setFilter("all"); setSearch(""); }}>Показать все вопросы</Button></section> : <section className={`${panel} scroll-mt-4 space-y-5`} ref={questionTop} data-testid="pm-real-question">
+        <Button onClick={() => { setFiltersOpen(false); scrollArea.current?.scrollTo({ top: 0 }); }}>К вопросам</Button>
+        </div>
+      </details>
+      {!ready ? <p role="status">Загружаем сохранённые ответы…</p> : !q ? <section className={panel}><h2 className="font-bold">По этим фильтрам вопросов нет</h2><p className="mt-2 text-sm">Попробуй другой вариант или тему. В фильтре ошибок появляются только проверенные неверные ответы.</p><Button className="mt-4" onClick={() => { setVariant("all"); setLecture("all"); setFilter("all"); setSearch(""); }}>Показать все вопросы</Button></section> : <section className={`${panel} scroll-mt-4 space-y-4`} ref={questionTop} data-testid="pm-real-question">
         <div className="flex flex-wrap justify-between gap-2 text-sm"><p className="font-bold">{label(q.variant)} · №{q.number}</p><span>Лекция {q.lecture} · {position + 1} / {filtered.length}</span></div>
         {"transcriptionNote" in q && q.transcriptionNote && <p className="rounded-xl bg-amber-500/10 p-3 text-sm">{q.transcriptionNote}</p>}
-        <fieldset className="space-y-3" lang="en"><legend className="mb-4 whitespace-pre-line text-base font-medium leading-relaxed sm:text-lg">{q.text}</legend>
+        <fieldset className="min-w-0" lang="en"><legend className="sr-only">Question {q.number}</legend>
+          <div className="grid items-start gap-4 lg:grid-cols-2 lg:gap-8">
+          <p className="whitespace-pre-line text-base font-medium leading-relaxed lg:sticky lg:top-4 lg:text-lg" id="pm-question-text">{q.text}</p>
+          <div className="space-y-2" role="radiogroup" aria-labelledby="pm-question-text">
           {q.options.map((option, i) => <label key={`${q.id}-${i}`} className={`flex min-h-12 items-start gap-3 rounded-2xl border p-3 ${showAnswer && q.answer === i ? "border-emerald-500 bg-emerald-500/10" : checked && selected === i ? "border-rose-400 bg-rose-500/10" : "border-[var(--color-border)] has-[:checked]:bg-violet-500/10"}`}>
             <input className="mt-1 shrink-0" type="radio" name={q.id} value={i} checked={selected === i} disabled={checked} onChange={() => setDraft({ ...draft, [q.id]: i })} />
             <span><b>{letters[i]}.</b> {option}{showAnswer && q.answer === i ? " ✓" : ""}</span>
           </label>)}
+          </div></div>
         </fieldset>
         <div className="flex flex-wrap gap-2">
-          {!checked && <Button disabled={selected === undefined} onClick={() => { if (selected !== undefined) persist({ ...answers, [q.id]: selected }); }}>Проверить ответ</Button>}
           {!showAnswer && <Button variant="ghost" onClick={() => setRevealed({ ...revealed, [q.id]: true })}>Показать разбор без ответа</Button>}
           {showAnswer && <Button variant="ghost" onClick={() => {
             const next = { ...answers }; delete next[q.id]; persist(next);
@@ -119,16 +131,16 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
             setRevealed({ ...revealed, [q.id]: false });
           }}>Решить ещё раз</Button>}
         </div>
-        {showAnswer && <div className="space-y-3 rounded-2xl bg-[var(--color-surface-2)] p-4" role="status" data-testid="pm-real-explanation">
-          <h3 className="font-bold">{checked ? selected === q.answer ? "Верно!" : "Есть ошибка." : "Разбор без зачёта ответа."} Ответ: {letters[q.answer!]}</h3>
+        {showAnswer && <details key={`explanation-${q.id}`} className="space-y-3 rounded-2xl bg-[var(--color-surface-2)] p-4" data-testid="pm-real-explanation">
+          <summary className="min-h-11 cursor-pointer font-bold"><span role="status">{checked ? selected === q.answer ? "Верно!" : "Есть ошибка." : "Разбор без зачёта ответа."} Ответ: {letters[q.answer!]}</span><span className="ml-2 text-sm font-normal underline">Почему?</span></summary>
           <p className="text-sm leading-relaxed">{q.explanation}</p>
           <p className="text-xs text-[var(--color-muted)]">Учебный ключ по Lecture {q.lecture}; не официальный ответ преподавателя.</p>
           <div className="flex flex-wrap gap-2">{notes.filter(n => n.examples.includes(`${q.variant}:${q.number}`)).map(n => <button key={n.id} className="min-h-11 text-left text-sm underline" onClick={() => { setTab("full"); requestAnimationFrame(() => document.getElementById(`note-${n.id}`)?.scrollIntoView({ behavior: "smooth" })); }}>Разобраться: {n.title} →</button>)}</div>
-        </div>}
-        {showAnswer && <section key={`alternatives-${q.id}`} className="space-y-3" data-testid="pm-real-alternatives">
-          <h3 className="text-lg font-bold">А если правильный ответ — другой?</h3>
+        </details>}
+        {showAnswer && <details key={`alternatives-${q.id}`} className="space-y-3" data-testid="pm-real-alternatives">
+          <summary className="min-h-11 cursor-pointer py-2 font-bold">А если правильный ответ — другой? <span className="text-sm font-normal text-[var(--color-muted)]">4 условия</span></summary>
           <p className="text-sm leading-relaxed text-[var(--color-muted)]">Четыре учебные переформулировки, не вопросы с реального теста. Варианты A–E остаются теми же: меняется условие. Раскрой букву, чтобы увидеть, когда подходит этот ответ.</p>
-          {alternatives[q.id].map(alt => <details key={alt.answer} className="rounded-2xl border border-[var(--color-border)] p-3 sm:p-4" data-testid="pm-real-alternative">
+          {alternatives[q.id].map(alt => <details key={alt.answer} name={`alternatives-${q.id}`} className="rounded-2xl border border-[var(--color-border)] p-3 sm:p-4" data-testid="pm-real-alternative">
             <summary className="min-h-11 cursor-pointer break-words py-2 text-sm font-semibold"><span className="text-violet-500">Если ответ {letters[alt.answer]}</span> · <span lang="en">{q.options[alt.answer]}</span></summary>
             <div className="space-y-3 border-t border-[var(--color-border)] pt-3">
               <p className="text-xs font-bold text-[var(--color-muted)]">{alt.mode === "misconception" ? "Найди ошибочное утверждение" : "Новое условие"}</p>
@@ -137,15 +149,16 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
               {alt.mode === "misconception" && <p className="text-xs leading-relaxed text-[var(--color-muted)]">Здесь нужно выбрать указанную ошибку. Само утверждение в ответе не становится верным правилом.</p>}
             </div>
           </details>)}
-        </section>}
-        <div className="flex flex-wrap justify-between gap-2"><Button variant="ghost" disabled={position <= 0} onClick={() => move(position - 1)}>← Предыдущий</Button><Button disabled={position >= filtered.length - 1} onClick={() => move(position + 1)}>Следующий →</Button></div>
+        </details>}
       </section>}
-      <section className={`${panel} space-y-3`}><h2 className="font-bold">Что повторить по лекциям</h2>{[4,5,6,7,8].map(n => {
+      <details className={`${panel} space-y-3`}><summary className="min-h-11 cursor-pointer font-bold">Прогресс и настройки тренировки</summary><h2 className="font-bold">Что повторить по лекциям</h2>{[4,5,6,7,8].map(n => {
         const st = answerStats(answers, availableQuestions.filter(item => item.lecture === n));
         return <p key={n} className="text-sm">Лекция {n}: верно {st.correct} / {st.total} · ошибок {st.answered - st.correct} · без ответа {st.total - st.answered}</p>;
       })}<Button variant="ghost" onClick={() => { setVariant("all"); setLecture("all"); setSearch(""); setFilter("errors"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Повторить все ошибки</Button>
       {confirmReset ? <div className="space-y-3"><p>Удалить все проверенные ответы этого ивента на этом устройстве?</p><div className="flex flex-wrap gap-2"><Button onClick={() => { persist({}); setDraft({}); setRevealed({}); setConfirmReset(false); }}>Да, сбросить ответы</Button><Button variant="ghost" onClick={() => setConfirmReset(false)}>Отмена</Button></div></div> : <Button variant="ghost" onClick={() => setConfirmReset(true)}>Сбросить тренировку</Button>}
-      </section>
+      <p className="text-xs text-[var(--color-muted)]">Ответы сохраняются в этом браузере. 151 исходный вопрос, 604 учебные переформулировки; ключ по лекциям, не официальный. Порядок A–E сохранён.</p>
+      <Link className="inline-block py-2 text-sm underline" href="/events/project-management-test-2">Все лекции по ПМ →</Link>
+      </details>
     </>}
 
     {(tab === "brief" || tab === "full") && <>
@@ -173,7 +186,18 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
       <h3 className="text-lg font-bold">Все 41 фото</h3>
       {sources.map((source, i) => <details key={source.id} className="rounded-2xl border border-[var(--color-border)] p-3"><summary className="min-h-11 cursor-pointer break-words py-2 text-sm">Фото {i + 1} · {source.name}</summary><SourcePhoto index={i} /></details>)}
     </section>}
+    </div></div>
+    {tab === "questions" && q && ready && <footer className="shrink-0 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-5" data-testid="pm-quiz-controls">
+      <div className="mx-auto flex max-w-6xl items-center gap-2">
+        <Button className="shrink-0 px-3" variant="ghost" aria-label="Предыдущий вопрос" disabled={position <= 0} onClick={() => move(position - 1)}>←</Button>
+        <span className="shrink-0 text-xs tabular-nums">{position + 1} / {filtered.length}</span>
+        {!checked && !showAnswer ? <Button className="ml-auto flex-1 sm:max-w-xs" variant="primary" disabled={selected === undefined} onClick={() => { if (selected !== undefined) persist({ ...answers, [q.id]: selected }); }}>Проверить ответ</Button> : <Button className="ml-auto flex-1 sm:max-w-xs" variant="primary" disabled={position >= filtered.length - 1} onClick={() => move(position + 1)}>{position >= filtered.length - 1 ? "Конец подборки" : "Следующий →"}</Button>}
+        {!showAnswer && <Button className="shrink-0 px-3" variant="ghost" aria-label="Следующий вопрос" disabled={position >= filtered.length - 1} onClick={() => move(position + 1)}>→</Button>}
+      </div>
+      {showAnswer && <p className="mx-auto mt-1 max-w-6xl text-center text-xs" role="status">{checked ? selected === q.answer ? "Верно" : "Есть ошибка" : "Без зачёта ответа"} · Правильный ответ: {letters[q.answer!]}</p>}
+    </footer>}
   </div>;
+  return tab === "questions" && ready ? createPortal(content, document.body) : content;
 }
 function SourcePhoto({ index }: { index: number }) {
   const source = sources[index];

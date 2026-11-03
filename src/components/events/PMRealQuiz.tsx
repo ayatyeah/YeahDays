@@ -11,6 +11,7 @@ import alternativeBank from "@/lib/events/pmRealQuiz/alternatives.json";
 import notes from "@/lib/events/pmRealQuiz/notes.json";
 import sources from "@/lib/events/pmRealQuiz/sources.json";
 import { answerStats, availableQuestions, parseAnswers, realProgress, realQuizKey, REAL_PM_ID, variants, type Answers } from "@/lib/events/pmRealQuiz/model";
+import { parseQuizView, type QuizView } from "@/lib/events/pmRealQuiz/viewState";
 import { saveProgress } from "@/lib/events/storage";
 
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-6";
@@ -44,11 +45,33 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
   }, [tab]);
   const questionTop = useRef<HTMLElement>(null);
   const storageKey = realQuizKey(userId);
+  const viewKey = `${storageKey}:view`;
+  function restoreView(view: QuizView) {
+    setTab(view.tab); setVariant(view.variant); setLecture(view.lecture);
+    setFilter(view.filter); setSearch(view.search); setActive(view.active);
+    setDraft(view.draft); setRevealed(view.revealed); setFiltersOpen(false);
+    requestAnimationFrame(() => {
+      if (view.tab === "questions") scrollArea.current?.scrollTo({ top: view.scroll });
+      else window.scrollTo({ top: view.scroll });
+    });
+  }
   useEffect(() => {
-    try { setAnswers(parseAnswers(localStorage.getItem(storageKey))); }
-    catch { setSaveError(true); }
+    try {
+      setAnswers(parseAnswers(localStorage.getItem(storageKey)));
+      const entry = window.history.state?.pmQuizView;
+      const saved = parseQuizView(entry?.userId === userId ? entry.view : JSON.parse(localStorage.getItem(viewKey) ?? "null"));
+      if (saved) restoreView(saved);
+    } catch { setSaveError(true); }
     setReady(true);
-  }, [storageKey]);
+    const pop = (event: PopStateEvent) => {
+      if (window.location.pathname !== `/events/${REAL_PM_ID}`) return;
+      const entry = event.state?.pmQuizView;
+      const view = entry?.userId === userId ? parseQuizView(entry.view) : null;
+      if (view) restoreView(view);
+    };
+    window.addEventListener("popstate", pop);
+    return () => window.removeEventListener("popstate", pop);
+  }, [storageKey, viewKey, userId]);
   function persist(next: Answers) {
     setAnswers(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); setSaveError(false); }
@@ -68,8 +91,33 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
   const checked = q && answers[q.id] !== undefined;
   const showAnswer = q && (checked || revealed[q.id]);
   const selected = q ? (checked ? answers[q.id] : draft[q.id]) : undefined;
+  function snapshot(nextTab = tab): QuizView {
+    return { tab: nextTab, variant, lecture, filter, search, active: q?.id ?? active, draft, revealed,
+      scroll: nextTab !== tab ? 0 : tab === "questions" ? scrollArea.current?.scrollTop ?? 0 : window.scrollY };
+  }
+  function navigateTab(next: Tab, anchor?: string) {
+    if (next === tab && !anchor) return;
+    window.history.replaceState({ ...window.history.state, pmQuizView: { userId, view: snapshot() } }, "");
+    const url = new URL(window.location.href);
+    url.searchParams.set("pmView", next);
+    url.hash = anchor ?? "";
+    window.history.pushState({ pmQuizView: { userId, view: snapshot(next) } }, "", url);
+    setTab(next);
+    requestAnimationFrame(() => {
+      if (anchor) document.getElementById(anchor)?.scrollIntoView();
+      else if (next === "questions") scrollArea.current?.scrollTo({ top: 0 });
+      else window.scrollTo({ top: 0 });
+    });
+  }
+  useEffect(() => {
+    if (!ready) return;
+    const view: QuizView = { tab, variant, lecture, filter, search, active: q?.id ?? active, draft, revealed, scroll: 0 };
+    try { localStorage.setItem(viewKey, JSON.stringify(view)); } catch { setSaveError(true); }
+    window.history.replaceState({ ...window.history.state, pmQuizView: { userId, view } }, "");
+  }, [ready, tab, variant, lecture, filter, search, active, q?.id, draft, revealed, userId, viewKey]);
   function openQuestion(ref: string) {
     const [v, n] = ref.split(":");
+    navigateTab("questions");
     setVariant(v); setLecture("all"); setFilter("all"); setSearch(""); setActive(`pm-real-${v}-${n}`); setFiltersOpen(false); setTab("questions");
     requestAnimationFrame(() => scrollArea.current?.scrollTo({ top: 0 }));
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -86,7 +134,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
         <h1 className="text-sm font-bold sm:text-lg">ПМ · Квиз 2</h1>
         <span className="text-xs tabular-nums text-[var(--color-muted)]" aria-live="polite">{ready ? stats.correct : "—"} / 151 верно</span>
       </div>
-      <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto" aria-label="Разделы ивента">{tabs.map(([id, title]) => <button key={id} onClick={() => setTab(id)} aria-current={tab === id ? "page" : undefined} className={`min-h-11 shrink-0 rounded-xl px-3 text-xs font-bold sm:text-sm ${tab === id ? "bg-violet-500/15 text-violet-500" : "text-[var(--color-muted)]"}`}>{title}</button>)}</nav>
+      <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto" aria-label="Разделы ивента">{tabs.map(([id, title]) => <button key={id} onClick={() => navigateTab(id)} aria-current={tab === id ? "page" : undefined} className={`min-h-11 shrink-0 rounded-xl px-3 text-xs font-bold sm:text-sm ${tab === id ? "bg-violet-500/15 text-violet-500" : "text-[var(--color-muted)]"}`}>{title}</button>)}</nav>
     </header>
     <div ref={scrollArea} className={tab === "questions" ? "min-h-0 flex-1 overflow-y-auto overscroll-contain" : "space-y-4"} data-testid="pm-quiz-scroll">
     <div className="mx-auto w-full max-w-6xl space-y-3 p-3 sm:p-5">
@@ -135,7 +183,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
           <summary className="min-h-11 cursor-pointer font-bold"><span role="status">{checked ? selected === q.answer ? "Верно!" : "Есть ошибка." : "Разбор без зачёта ответа."} Ответ: {letters[q.answer!]}</span><span className="ml-2 text-sm font-normal underline">Почему?</span></summary>
           <p className="text-sm leading-relaxed">{q.explanation}</p>
           <p className="text-xs text-[var(--color-muted)]">Учебный ключ по Lecture {q.lecture}; не официальный ответ преподавателя.</p>
-          <div className="flex flex-wrap gap-2">{notes.filter(n => n.examples.includes(`${q.variant}:${q.number}`)).map(n => <button key={n.id} className="min-h-11 text-left text-sm underline" onClick={() => { setTab("full"); requestAnimationFrame(() => document.getElementById(`note-${n.id}`)?.scrollIntoView({ behavior: "smooth" })); }}>Разобраться: {n.title} →</button>)}</div>
+          <div className="flex flex-wrap gap-2">{notes.filter(n => n.examples.includes(`${q.variant}:${q.number}`)).map(n => <button key={n.id} className="min-h-11 text-left text-sm underline" onClick={() => navigateTab("full", `note-${n.id}`)}>Разобраться: {n.title} →</button>)}</div>
         </details>}
         {showAnswer && <details key={`alternatives-${q.id}`} className="space-y-3" data-testid="pm-real-alternatives">
           <summary className="min-h-11 cursor-pointer py-2 font-bold">А если правильный ответ — другой? <span className="text-sm font-normal text-[var(--color-muted)]">4 условия</span></summary>
@@ -165,7 +213,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
       <section className={`${panel} space-y-3`}><h2 className="text-2xl font-bold">{tab === "brief" ? "Краткий конспект" : "Развёрнутый конспект"}</h2>
         <p className="text-sm leading-relaxed">{tab === "brief" ? "Быстрое повторение перед квизом: ключевые признаки, формулы и различия. После каждого блока — примеры из банка." : "Разбор всей тематической базы лекций 4–8: как устроены понятия, как применять их в сценариях и почему похожие ответы не подходят."}</p>
         <p className="text-sm">Сначала пойми правило, затем ответь на примеры без подсказки. После полного варианта повтори ошибки. На самом квизе ориентируйся на смысл ответа: буквы и сценарии могут измениться.</p>
-        <nav className="grid gap-2 sm:grid-cols-2" aria-label="Оглавление конспекта">{notes.map(n => <a key={n.id} className="min-h-11 rounded-xl bg-[var(--color-surface-2)] px-3 py-2 text-sm" href={`#note-${n.id}`}>L{n.lecture} · {n.title}</a>)}</nav>
+        <nav className="grid gap-2 sm:grid-cols-2" aria-label="Оглавление конспекта">{notes.map(n => <a key={n.id} className="min-h-11 rounded-xl bg-[var(--color-surface-2)] px-3 py-2 text-sm" href={`#note-${n.id}`} onClick={e => { e.preventDefault(); document.getElementById(`note-${n.id}`)?.scrollIntoView({ behavior: "smooth" }); }}>L{n.lecture} · {n.title}</a>)}</nav>
       </section>
       {notes.map(n => <section key={n.id} id={`note-${n.id}`} className={`${panel} scroll-mt-4 space-y-4`}>
         <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-muted)]">Лекция {n.lecture}</p><h2 className="text-xl font-bold">{n.title}</h2>

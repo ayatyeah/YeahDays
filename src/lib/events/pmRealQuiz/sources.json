@@ -879,7 +879,11 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-51-58.jpg",
+      "хз какой варик/photo_2026-11-03_15-57-46.jpg"
+    ]
   },
   {
     "id": 54,
@@ -894,7 +898,10 @@
     ],
     "rotation": 0,
     "width": 2560,
-    "height": 1440
+    "height": 1440,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-57-50.jpg"
+    ]
   },
   {
     "id": 55,
@@ -909,7 +916,10 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-57-53.jpg"
+    ]
   },
   {
     "id": 56,
@@ -923,7 +933,10 @@
     ],
     "rotation": 0,
     "width": 2560,
-    "height": 1440
+    "height": 1440,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-57-56.jpg"
+    ]
   },
   {
     "id": 57,
@@ -938,7 +951,10 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-57-59.jpg"
+    ]
   },
   {
     "id": 58,
@@ -953,7 +969,10 @@
     ],
     "rotation": 0,
     "width": 2560,
-    "height": 1440
+    "height": 1440,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-04.jpg"
+    ]
   },
   {
     "id": 59,
@@ -968,7 +987,10 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-07.jpg"
+    ]
   },
   {
     "id": 60,
@@ -983,7 +1005,10 @@
     ],
     "rotation": 0,
     "width": 2560,
-    "height": 1440
+    "height": 1440,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-09.jpg"
+    ]
   },
   {
     "id": 61,
@@ -998,7 +1023,10 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-12.jpg"
+    ]
   },
   {
     "id": 62,
@@ -1013,7 +1041,10 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-15.jpg"
+    ]
   },
   {
     "id": 63,
@@ -1028,7 +1059,10 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-18.jpg"
+    ]
   },
   {
     "id": 64,
@@ -1043,6 +1077,289 @@
     ],
     "rotation": 0,
     "width": 1440,
-    "height": 2560
+    "height": 2560,
+    "aliases": [
+      "хз какой варик/photo_2026-11-03_15-58-22.jpg"
+    ]
+  },
+  {
+    "id": 65,
+    "src": "/study/pm-quiz2/source-66.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-50-57.jpg",
+    "questions": [
+      "pm-real-3-6",
+      "pm-real-3-7",
+      "pm-real-3-8",
+      "pm-real-3-9",
+      "pm-real-3-10",
+      "pm-real-3-11"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 66,
+    "src": "/study/pm-quiz2/source-67.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-16.jpg",
+    "questions": [
+      "pm-real-3-12",
+      "pm-real-3-13",
+      "pm-real-3-14",
+      "pm-real-3-15",
+      "pm-real-3-16"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 67,
+    "src": "/study/pm-quiz2/source-68.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-19.jpg",
+    "questions": [
+      "pm-real-3-22",
+      "pm-real-3-23",
+      "pm-real-3-24",
+      "pm-real-3-25",
+      "pm-real-3-26"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 68,
+    "src": "/study/pm-quiz2/source-69.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-21.jpg",
+    "questions": [
+      "pm-real-3-27",
+      "pm-real-3-28",
+      "pm-real-3-29",
+      "pm-real-3-30",
+      "pm-real-3-31"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 69,
+    "src": "/study/pm-quiz2/source-70.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-27.jpg",
+    "questions": [
+      "pm-real-3-17",
+      "pm-real-3-18",
+      "pm-real-3-19",
+      "pm-real-3-20",
+      "pm-real-3-21",
+      "pm-real-3-22",
+      "pm-real-3-23",
+      "pm-real-3-24",
+      "pm-real-3-25",
+      "pm-real-3-26"
+    ],
+    "rotation": 90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 70,
+    "src": "/study/pm-quiz2/source-71.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-29.jpg",
+    "questions": [
+      "pm-real-3-37",
+      "pm-real-3-38",
+      "pm-real-3-39",
+      "pm-real-3-40",
+      "pm-real-3-41"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 71,
+    "src": "/study/pm-quiz2/source-72.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-33.jpg",
+    "questions": [
+      "pm-real-3-47",
+      "pm-real-3-48",
+      "pm-real-3-49",
+      "pm-real-3-50"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 72,
+    "src": "/study/pm-quiz2/source-73.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-37.jpg",
+    "questions": [
+      "pm-real-3-32",
+      "pm-real-3-33",
+      "pm-real-3-34",
+      "pm-real-3-35",
+      "pm-real-3-36"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 73,
+    "src": "/study/pm-quiz2/source-74.jpg",
+    "name": "3ий варик/photo_2026-11-03_15-51-40.jpg",
+    "questions": [
+      "pm-real-3-42",
+      "pm-real-3-43",
+      "pm-real-3-44",
+      "pm-real-3-45",
+      "pm-real-3-46"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 74,
+    "src": "/study/pm-quiz2/source-75.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-26.jpg",
+    "questions": [
+      "pm-real-3-6",
+      "pm-real-3-7",
+      "pm-real-3-8",
+      "pm-real-3-9",
+      "pm-real-3-10",
+      "pm-real-3-11"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 75,
+    "src": "/study/pm-quiz2/source-76.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-29.jpg",
+    "questions": [
+      "pm-real-3-12",
+      "pm-real-3-13",
+      "pm-real-3-14",
+      "pm-real-3-15",
+      "pm-real-3-16"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 76,
+    "src": "/study/pm-quiz2/source-77.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-34.jpg",
+    "questions": [
+      "pm-real-3-17",
+      "pm-real-3-18",
+      "pm-real-3-19",
+      "pm-real-3-20",
+      "pm-real-3-21",
+      "pm-real-3-22",
+      "pm-real-3-23",
+      "pm-real-3-24",
+      "pm-real-3-25",
+      "pm-real-3-26"
+    ],
+    "rotation": 90,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 77,
+    "src": "/study/pm-quiz2/source-78.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-39.jpg",
+    "questions": [
+      "pm-real-3-22",
+      "pm-real-3-23",
+      "pm-real-3-24",
+      "pm-real-3-25",
+      "pm-real-3-26"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 78,
+    "src": "/study/pm-quiz2/source-79.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-41.jpg",
+    "questions": [
+      "pm-real-3-27",
+      "pm-real-3-28",
+      "pm-real-3-29",
+      "pm-real-3-30",
+      "pm-real-3-31"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 79,
+    "src": "/study/pm-quiz2/source-80.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-45.jpg",
+    "questions": [
+      "pm-real-3-32",
+      "pm-real-3-33",
+      "pm-real-3-34",
+      "pm-real-3-35",
+      "pm-real-3-36"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 80,
+    "src": "/study/pm-quiz2/source-81.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-48.jpg",
+    "questions": [
+      "pm-real-3-37",
+      "pm-real-3-38",
+      "pm-real-3-39",
+      "pm-real-3-40",
+      "pm-real-3-41"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 81,
+    "src": "/study/pm-quiz2/source-82.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-51.jpg",
+    "questions": [
+      "pm-real-3-42",
+      "pm-real-3-43",
+      "pm-real-3-44",
+      "pm-real-3-45",
+      "pm-real-3-46"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
+  },
+  {
+    "id": 82,
+    "src": "/study/pm-quiz2/source-83.jpg",
+    "name": "хз какой варик/photo_2026-11-03_15-58-55.jpg",
+    "questions": [
+      "pm-real-3-47",
+      "pm-real-3-48",
+      "pm-real-3-49",
+      "pm-real-3-50"
+    ],
+    "rotation": 0,
+    "width": 960,
+    "height": 1280
   }
 ]

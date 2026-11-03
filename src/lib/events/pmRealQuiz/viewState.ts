@@ -1,4 +1,4 @@
-import { availableQuestions, parseAnswers, type Answers } from "./model";
+import { availableQuestions, variants, parseAnswers, type Answers } from "./model";
 
 export type QuizTab = "questions" | "brief" | "full" | "sources";
 export type QuizView = {
@@ -11,7 +11,7 @@ export function parseQuizView(value: unknown): QuizView | null {
   if (!["questions", "brief", "full", "sources"].includes(String(v.tab)) || !availableQuestions.some(q => q.id === v.active)) return null;
   return {
     tab: v.tab as QuizTab,
-    variant: ["all", "1", "4", "5", "unknown"].includes(String(v.variant)) ? String(v.variant) : "all",
+    variant: ["all", ...variants.map(item => item.id)].includes(String(v.variant)) ? String(v.variant) : "all",
     lecture: ["all", "4", "5", "6", "7", "8"].includes(String(v.lecture)) ? String(v.lecture) : "all",
     filter: ["all", "errors", "unanswered"].includes(String(v.filter)) ? String(v.filter) : "all",
     search: typeof v.search === "string" ? v.search : "",

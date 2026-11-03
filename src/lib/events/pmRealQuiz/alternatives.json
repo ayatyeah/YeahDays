@@ -4054,5 +4054,941 @@
       "question": "An approved work order releases funding and gives the team permission to begin its work package. Which phase is being performed?",
       "explanation": "Work authorization and release — разрешение начать работы и использовать выделенные средства."
     }
+  ],
+  "pm-real-3-6": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which support role coordinates project information and follows up tasks without assuming full project-manager authority?",
+      "explanation": "Координатор поддерживает обмен информацией и согласование задач без всей полноты полномочий PM."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Who heads the organization as a whole and resolves issues escalated above project and functional management?",
+      "explanation": "Общий руководитель стоит выше проектного и функционального управления и решает эскалированные вопросы."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Who is accountable for the overall success of an individual project in a matrix?",
+      "explanation": "PM отвечает за общий успех конкретного проекта, объединяя работу функций."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which role directs the project-management function across multiple project managers?",
+      "explanation": "Руководитель проектного управления направляет работу нескольких PM."
+    }
+  ],
+  "pm-real-3-7": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation treats the right-hand items as completely worthless?",
+      "explanation": "Это ошибочное обнуление ценности правых пунктов; Manifesto прямо признаёт их ценность."
+    },
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation limits the relevance of the right-hand items to one project sector?",
+      "explanation": "Это выдуманное ограничение по отрасли: ценности не действуют только в государственных проектах."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation removes the preference expressed by the word \"over\"?",
+      "explanation": "Равный вес убрал бы приоритет, который выражен словом over."
+    },
+    {
+      "answer": 4,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation reverses the preference expressed by the Manifesto?",
+      "explanation": "Здесь ошибочно перевёрнут приоритет: Manifesto предпочитает левые пункты правым."
+    }
+  ],
+  "pm-real-3-8": [
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Which Kanban practice asks the team to experiment and improve its working system together?",
+      "explanation": "Совместные эксперименты и улучшения соответствуют Improve collaboratively."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which Kanban practice focuses on monitoring and improving how items move through the system?",
+      "explanation": "Manage flow направлен на прохождение задач через систему."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which Kanban practice makes the rules for taking and completing work clear to everyone?",
+      "explanation": "Явные правила позволяют всем понимать и обсуждать порядок работы."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which Kanban practice represents the work and its stages on a visible board?",
+      "explanation": "Доска и стадии делают поток работы видимым: Visualize the workflow."
+    }
+  ],
+  "pm-real-3-9": [
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Which family of agile methods adapts its approach to team size and system criticality, emphasizing people and communication?",
+      "explanation": "Crystal подбирает подход с учётом людей, размера команды и критичности системы."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which method organizes development around small client-valued features and feature teams?",
+      "explanation": "FDD организует разработку вокруг небольших полезных клиенту функций."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which method is known for pair programming, test-driven development and refactoring?",
+      "explanation": "Парное программирование, TDD и рефакторинг характерны для XP."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which method visualizes work, limits work in progress and manages flow?",
+      "explanation": "Визуализация, WIP-лимиты и управление потоком указывают на Kanban."
+    }
+  ],
+  "pm-real-3-10": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which Scrum value involves committing to achieve goals and supporting one another?",
+      "explanation": "Приверженность достижению целей и поддержка команды — Commitment."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Which Scrum value involves doing the right thing and working on tough problems?",
+      "explanation": "Готовность делать правильное и решать трудное — Courage."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which pillar of empiricism makes work and its state visible and understood?",
+      "explanation": "Видимость и общее понимание состояния работы — Transparency; это столп, а не ценность Scrum."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which Scrum value means recognizing one another as capable, independent people?",
+      "explanation": "Признание компетентности и самостоятельности коллег — Respect."
+    }
+  ],
+  "pm-real-3-15": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which Scrum value describes dedication to achieving goals and supporting teammates?",
+      "explanation": "Commitment относится к ценностям Scrum, а не к трём C истории."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which of the 3Cs is the short written record of a user story?",
+      "explanation": "Card — короткая письменная запись истории."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which of the 3Cs expresses how the team will verify that the story meets the need?",
+      "explanation": "Confirmation задаёт условия подтверждения результата, обычно acceptance criteria."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "What general term describes people working jointly toward a shared outcome, rather than a named element of the 3Cs?",
+      "explanation": "Collaboration — общее слово для совместной работы; в 3Cs такого отдельного элемента нет."
+    }
+  ],
+  "pm-real-3-17": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which phase gathers timesheets and invoices and records actual expenditure?",
+      "explanation": "Первичный сбор табелей и счетов относится к Cost data collection and reporting."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Which phase gives permission to begin an approved work package and spend its budget?",
+      "explanation": "Разрешение начать пакет работ и расходовать бюджет — Work authorization and release."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which phase communicates status, variances and forecasts to the sponsor and customer?",
+      "explanation": "Представление статуса и прогнозов заказчику — Reporting to customer and management."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which cycle defines the work, estimates resources and establishes the schedule and budget?",
+      "explanation": "Определение работ и создание плановой базы — Planning cycle."
+    }
+  ],
+  "pm-real-3-19": [
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "An authorized scope increase has been estimated and approved. What budget-baseline action is appropriate to include the additional work?",
+      "explanation": "В новой ситуации увеличение объёма уже официально одобрено, поэтому бюджетную базу пересматривают под него; это не способ скрыть перерасход."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "An approved contract change is currently held in undistributed budget and now needs funding assigned to planned work. Which listed funding action targets that source?",
+      "explanation": "Вопрос специально называет approved contract change и undistributed budget: средства на изменение распределяют по спланированным работам."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "A project has CPI = 1.1 and SPI = 0.75. Which aspect of performance most directly needs improvement?",
+      "explanation": "CPI выше 1 показывает хорошую эффективность затрат, SPI ниже 1 — отставание физического прогресса от плана."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "The sponsor explicitly requests an earlier finish and cost performance is healthy. Which schedule objective is being requested?",
+      "explanation": "Здесь прямо поставлена цель завершить раньше, поэтому требуется сокращение оставшегося графика."
+    }
+  ],
+  "pm-real-3-22": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "What concept describes the collection of role relationships associated with one position?",
+      "explanation": "Role set — совокупность ролевых отношений, связанных с позицией."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "What concept describes a shared rule about acceptable behavior within a group?",
+      "explanation": "Норма задаёт ожидаемое и допустимое поведение участников группы."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "What concept describes the strength of members' attraction and commitment to their group?",
+      "explanation": "Cohesiveness описывает притяжение участников к группе и её сплочённость."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "What concept describes the ranking of members by their standing in a group?",
+      "explanation": "Status hierarchy — иерархия положения участников."
+    }
+  ],
+  "pm-real-3-23": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which misguided response would avoid schedule accountability by deleting the target dates?",
+      "explanation": "Это ошибочное устранение плановых сроков вместо решения причин задержек."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "An approved sourcing strategy replaces the entire internal testing group with an external testing provider. Which organizational action implements that decision?",
+      "explanation": "В изменённом условии аутсорсинг уже обоснован и утверждён отдельной стратегией; исходные обвинения сами по себе этого не доказывали."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "An investigation finds a single leadership problem in development, while the rest of the structure works well. Which narrowly targeted personnel action matches that finding?",
+      "explanation": "Теперь расследование локализовало проблему в одном руководителе, поэтому узкая кадровая мера соответствует новым данным."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "An independent skills assessment finds the testers cannot perform the required technical tests. Which conclusion follows from that assessment?",
+      "explanation": "Теперь есть независимая проверка навыков, прямо подтверждающая дефицит технической компетенции."
+    }
+  ],
+  "pm-real-3-24": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Two managers agree a problem exists, but each insists the other caused it. Which stage is this?",
+      "explanation": "Проблему признают, но каждый переносит вину на другого."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Two managers acknowledge their own contribution to an existing problem. Which stage is this?",
+      "explanation": "Участники признают собственную ответственность за проблему."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Two managers jointly identify and prevent risks before they turn into problems. Which stage is this?",
+      "explanation": "Совместно предвидят и предотвращают трудности до их появления."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Two managers meet personally to resolve an existing problem together. Which stage is this?",
+      "explanation": "Участники лично встречаются для совместного решения существующей проблемы."
+    }
+  ],
+  "pm-real-3-25": [
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A dedicated customer-facing team can address a client request immediately without passing it through departments. Which benefit is demonstrated?",
+      "explanation": "Прямой быстрый ответ клиенту демонстрирует Quick response to customers."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Specialists in different departments exchange information directly and frequently. Which benefit is demonstrated?",
+      "explanation": "Обмен между подразделениями без длинной вертикальной цепочки — горизонтальная коммуникация."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "A named project manager is explicitly accountable for the whole project outcome. Which benefit is demonstrated?",
+      "explanation": "Назначен конкретный ответственный за весь проектный результат."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Several departments synchronize their work through one effective shared mechanism. Which benefit is demonstrated?",
+      "explanation": "Общий механизм синхронизации упрощает координацию подразделений."
+    }
+  ],
+  "pm-real-3-26": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Departments prevent experts from exchanging useful technical lessons. Which disadvantage is most directly shown?",
+      "explanation": "Препятствие касается обмена знаниями между специалистами."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "The organization cannot reliably assign expenses to budgets or monitor cost variances. Which disadvantage is most directly shown?",
+      "explanation": "Проблема в распределении затрат и контроле отклонений бюджета."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "An employee receives conflicting work instructions from both a functional manager and a project manager. Which disadvantage is most directly shown?",
+      "explanation": "Два источника управленческих указаний создают двойное подчинение."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Engineering decisions receive no competent technical supervision or standards review. Which disadvantage is most directly shown?",
+      "explanation": "Отсутствие технического надзора и стандартов означает слабый технический контроль."
+    }
+  ],
+  "pm-real-3-27": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A matrix gives the project manager dominant authority over day-to-day project work. Which arrangement fits?",
+      "explanation": "Доминирующие полномочия PM соответствуют сильной матрице."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A coordinating department can resolve issues within its division but must escalate issues outside it. Which arrangement fits?",
+      "explanation": "Полномочия liaison department ограничены своим дивизионом."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "A functional organization makes customers contact several separate departments with no single project contact. Which arrangement fits?",
+      "explanation": "Клиенту некуда обратиться за единым проектным результатом: функции разобщены."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "A company maintains separate full-time staff for each project, producing expensive duplication. Which arrangement fits?",
+      "explanation": "Собственный постоянный штат каждого проекта дублирует ресурсы и повышает расходы."
+    }
+  ],
+  "pm-real-3-28": [
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A staffing agreement explicitly prohibits transferring assigned employees before project closure. What prevents a transfer?",
+      "explanation": "Теперь ограничение прямо записано в контракте, а не выведено из опасений PM."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "An appraisal policy explicitly requires the employee to remain for the entire project to qualify for review. What prevents an earlier departure?",
+      "explanation": "Теперь требование полного срока задано политикой аттестации."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "A matrix assignment leaves the employee administratively accountable to her functional supervisor elsewhere. Which statement describes that reporting relationship?",
+      "explanation": "В новой ситуации описана административная подчинённость функциональному руководителю в матрице."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "The project requests a return to the functional pool, but every relevant functional manager rejects the request. What is blocking the return?",
+      "explanation": "Теперь причиной невозможности возврата является явно указанный отказ функциональных менеджеров."
+    }
+  ],
+  "pm-real-3-29": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A company intentionally replaces dual authority with one direct supervisor for each employee. Which reporting change is being introduced?",
+      "explanation": "Единственная линия подчинения заменяет двойное управление."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "An approved market-entry plan requires more funds for promotion and customer acquisition. What resource increase is needed?",
+      "explanation": "Расширение продвижения требует увеличения именно маркетинговых средств."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Two departments cannot resolve an issue within their authority and pass it to their common superior. Which mechanism is used?",
+      "explanation": "Hierarchical referral означает передачу нерешённого вопроса общему вышестоящему руководителю."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "A company adopts a pure project structure and assigns employees exclusively to one project. Which staffing arrangement is required?",
+      "explanation": "Эксклюзивно выделенные сотрудники характерны для чистой проектной структуры."
+    }
+  ],
+  "pm-real-3-30": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which characteristic explicitly establishes a customer-approved scope baseline that cannot change without formal agreement?",
+      "explanation": "Условие явно фиксирует подписанную заказчиком базу scope."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Which characteristic combines little uncertainty with mature, stable technology?",
+      "explanation": "Названы низкая неопределённость и стабильная технология."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which characteristic describes standardized physical production steps repeated in the same way?",
+      "explanation": "Стандартные физические операции с повторяемыми шагами — именно этот вариант."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which characteristic describes tasks whose order and behavior can be planned reliably in advance?",
+      "explanation": "Предсказуемая известная последовательность позволяет заранее надёжно планировать задачи."
+    }
+  ],
+  "pm-real-3-31": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A planning description explicitly allows scope to change as learning reveals what is valuable. Which listed model names that flexibility?",
+      "explanation": "Новый вопрос выделяет изменяемость scope как характеристику agile-планирования."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "A team repeatedly tests hypotheses and updates its plan from observed results. Which listed model emphasizes that learning mechanism?",
+      "explanation": "Проверка гипотез и адаптация по наблюдениям описывают эмпирический подход."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "A sponsor fixes the budget and deadline, and the team varies the scope to fit. Which listed model explicitly states those two constraints?",
+      "explanation": "В этом варианте прямо названы фиксированные cost и time, которые искал новый вопрос."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "A sponsor fixes spending and quality standards while allowing both deadline and scope to change. Which model matches?",
+      "explanation": "Новый спонсор фиксирует только стоимость и качество; сроки и объём остаются переменными."
+    }
+  ],
+  "pm-real-3-32": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A team releases useful software from the first weeks and continues delivering regularly. Which agile principle is illustrated?",
+      "explanation": "Ранняя регулярная поставка полезного продукта — Early and continuous delivery of value."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "The team itself develops the architecture and design instead of receiving them as orders from outside. Which principle is illustrated?",
+      "explanation": "Архитектура и дизайн возникают в самоорганизующейся команде."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Developers and business representatives discuss the product together every working day. Which principle is illustrated?",
+      "explanation": "Ежедневная совместная работа бизнеса и разработчиков — отдельный принцип Agile."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "The team continually invests in good design and engineering quality to remain adaptable. Which principle is illustrated?",
+      "explanation": "Хороший дизайн и техническое совершенство поддерживают гибкость."
+    }
+  ],
+  "pm-real-3-33": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "An XP team chooses the simplest design that meets its current requirements without speculative extra features. Which practice is this?",
+      "explanation": "Simple design обеспечивает простейшее достаточное решение текущих требований."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A developer writes a failing test before implementing the behavior needed to pass it. Which XP practice is this?",
+      "explanation": "При TDD сначала создают падающий тест, затем реализуют поведение."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "An XP team uses a shared analogy to describe how its system works. Which practice is this?",
+      "explanation": "Общая аналогия для понимания системы — Metaphor."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Developers merge changes frequently and automatically build and test the integrated code. Which practice is this?",
+      "explanation": "Частое объединение изменений с автоматической проверкой — Continuous integration."
+    }
+  ],
+  "pm-real-3-34": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Developers repeatedly stop one task to work on another, spending time recovering context. Which Lean waste is this?",
+      "explanation": "Потери вызваны переключением и восстановлением контекста: Task switching."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "A team builds an elaborate feature that no customer needs or uses. Which Lean waste is this?",
+      "explanation": "Ненужная пользователю функциональность — Extra features."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Software errors force the team to repair and retest delivered functionality. Which Lean waste is this?",
+      "explanation": "Ошибки и вызванные ими переделки — Defects."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Completed specifications wait months for coding, and code waits weeks for testing. Which Lean waste is this?",
+      "explanation": "Работа начата, но ещё не доведена до полезного результата: Partially done work."
+    }
+  ],
+  "pm-real-3-35": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A team ignores prototype feedback and repeats mistakes instead of learning from short experiments. Which Lean concept is neglected?",
+      "explanation": "Игнорирование опыта и обратной связи мешает Amplify learning."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A team postpones all quality checks until the final release instead of preventing defects during development. Which concept is neglected?",
+      "explanation": "Качество должно создаваться в процессе, а не проверяться только в конце."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Managers deny the team authority to make informed decisions about its own work. Which concept is neglected?",
+      "explanation": "Отказ дать команде разумные полномочия противоречит Empower the team."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "A team commits to an irreversible vendor choice before enough information is available, although waiting is safe. Which concept is neglected?",
+      "explanation": "Необратимое решение принято преждевременно, вместо ожидания достаточных данных."
+    }
+  ],
+  "pm-real-3-36": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Both candidates describe helping the team, removing obstacles and enabling autonomous decisions. Which classification fits?",
+      "explanation": "Оба кандидата помогают команде и создают условия для самостоятельности: servant leadership."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "The first candidate describes adaptive iterations; the second describes fixed repeatable steps prescribed in advance. Which classification fits?",
+      "explanation": "Новые описания действительно сопоставляют адаптивный процесс и заранее заданные шаги."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Both candidates describe issuing detailed orders and enforcing compliance from above. Which classification fits?",
+      "explanation": "Оба руководителя строят работу на приказах и контроле выполнения."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "The first candidate emphasizes people, purpose and empowerment; the second emphasizes tasks, control and speed. Which classification fits?",
+      "explanation": "Теперь порядок акцентов обратный: сначала люди и цель, затем задачи и контроль."
+    }
+  ],
+  "pm-real-3-37": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A team makes work transparent, inspects outcomes and promptly adapts when evidence shows a problem. Which description fits?",
+      "explanation": "Прозрачность, проверка и своевременная адаптация вместе образуют корректный эмпирический цикл."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "A team removes activities that add no value and concentrates on essentials. Which description fits?",
+      "explanation": "Устранение ненужных действий и внимание к существенному соответствуют Lean."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken recommendation would postpone all response to discovered problems until release?",
+      "explanation": "Это намеренно ошибочная рекомендация: выявленные отклонения требуют своевременной реакции."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which listed claim criticizes making information visible without subsequently examining it?",
+      "explanation": "Вопрос просит опознать конкретное утверждение из списка. Это не точная цитата Scrum Guide: его стандартная формулировка говорит об inspection without transparency."
+    }
+  ],
+  "pm-real-3-38": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "The state of the work is hidden and participants cannot see what is really complete. Which characteristic is most directly missing?",
+      "explanation": "Когда состояние работы скрыто, отсутствует Transparency."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "A team retains unnecessary activities that add no value instead of concentrating on essentials. Which idea is most directly neglected?",
+      "explanation": "Сохранение бесполезных действий противоречит Lean thinking."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "A team must wait for another department to perform every required test because it lacks testing skills. Which characteristic is missing?",
+      "explanation": "Нехватка компетенций для создания результата внутри команды — отсутствие cross-functionality."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "A Scrum event continues indefinitely with no maximum duration. Which practice is being ignored?",
+      "explanation": "Событие без предельной длительности нарушает принцип timeboxing."
+    }
+  ],
+  "pm-real-3-39": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which mistaken proposal turns the Daily Scrum into a vote on product priorities?",
+      "explanation": "Это ошибочная замена проверки прогресса голосованием о продуктовых приоритетах."
+    },
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which proposal asks for immediate insertion into the current Sprint rather than a change to Product Backlog ordering?",
+      "explanation": "Этот вариант описывает просьбу немедленно добавить работу в текущий Sprint; сама просьба не даёт права нарушать Sprint Goal."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken proposal assigns Product Backlog ordering to the Scrum Master?",
+      "explanation": "Здесь неверно передают управление порядком Product Backlog Scrum Master."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which mistaken proposal claims official rank allows someone to bypass Product Owner accountability?",
+      "explanation": "Здесь неверно считают должностной ранг основанием обходить ответственность PO."
+    }
+  ],
+  "pm-real-3-40": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which mistaken policy allows stakeholders to override the maximum duration of Scrum events?",
+      "explanation": "Это ошибочное разрешение нарушать максимальный timebox по желанию участников."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken policy assigns sole control of event durations to the Product Owner?",
+      "explanation": "Этот ответ описывает неверное назначение PO единственным распорядителем длительности событий."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which proposal addresses a lengthy presentation by dividing it into several presentations without ensuring the event meets its purpose or timebox?",
+      "explanation": "Разделение презентаций само по себе не обеспечивает ни назначение события, ни соблюдение общего timebox."
+    },
+    {
+      "answer": 4,
+      "mode": "misconception",
+      "question": "Which mistaken policy exempts every Scrum event except the Daily Scrum from time limits?",
+      "explanation": "Это неверное исключение остальных событий из правил timeboxing."
+    }
+  ],
+  "pm-real-3-41": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which mistaken response changes the Sprint duration to fit additional work?",
+      "explanation": "Вариант прямо предлагает неправильное продление уже идущего Sprint."
+    },
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which mistaken response treats seniority as permission to endanger a valid Sprint Goal?",
+      "explanation": "Должностной ранг не разрешает ставить действующий Sprint Goal под угрозу."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which mistaken response sacrifices quality to fit extra scope into the Sprint?",
+      "explanation": "Сокращение необходимого тестирования снижает качество и не является допустимым способом вместить scope."
+    },
+    {
+      "answer": 4,
+      "mode": "misconception",
+      "question": "Which mistaken response gives the Scrum Master authority reserved for the Product Owner?",
+      "explanation": "Отменить Sprint при устаревшей цели вправе только PO, а не Scrum Master."
+    }
+  ],
+  "pm-real-3-42": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation ties freedom of Daily Scrum format to Sprints shorter than two weeks?",
+      "explanation": "Длительность Sprint менее двух недель не является условием выбора формата Daily Scrum."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation prohibits looking at the work board except at the Sprint Review?",
+      "explanation": "Доской можно пользоваться в работе и на Daily Scrum; она не зарезервирована за Review."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation makes the Daily Scrum format subject to Product Owner approval?",
+      "explanation": "Developers выбирают технику Daily Scrum без обязательного разрешения PO."
+    },
+    {
+      "answer": 4,
+      "mode": "misconception",
+      "question": "Which mistaken interpretation treats the traditional three questions as compulsory?",
+      "explanation": "Традиционные три вопроса — возможная техника, но не обязательное правило."
+    }
+  ],
+  "pm-real-3-43": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which proposal removes the interactive Review and substitutes asynchronous reporting?",
+      "explanation": "Письменный отчёт не заменяет совместную проверку результата и обсуждение дальнейших шагов."
+    },
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which proposal mistakenly shifts product-and-stakeholder discussion from Review to Retrospective?",
+      "explanation": "Retrospective улучшает работу команды и не заменяет обсуждение продукта со stakeholders на Review."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken view reduces the Sprint Review to a formal demonstration?",
+      "explanation": "Сведение Review к демонстрации лишает его совместного исследования и адаптации."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which proposal excludes the stakeholder feedback that a Sprint Review needs?",
+      "explanation": "Исключение stakeholders лишает Review нужной обратной связи."
+    }
+  ],
+  "pm-real-3-44": [
+    {
+      "answer": 0,
+      "mode": "misconception",
+      "question": "Which misguided rule excludes valid user archetypes merely because they are absent from the student database?",
+      "explanation": "Персона — архетип пользователя, поэтому отсутствие конкретной записи в базе не основание её исключать."
+    },
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which policy assumes identical priority without evaluating needs or value?",
+      "explanation": "Равенство приоритетов здесь просто предполагается без анализа пользы."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which policy bases prioritization on developer interest instead of user benefit?",
+      "explanation": "Личный интерес разработчиков подменяет оценку пользы для пользователей."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which policy destroys the distinctions between personas by replacing them with an average user?",
+      "explanation": "Усреднение уничтожает различия потребностей разных персон."
+    }
+  ],
+  "pm-real-3-45": [
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which mistaken claim treats personas as a reason to stop departmental workshops?",
+      "explanation": "Персоны не отменяют обсуждение и исследование пользователей."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which mistaken claim grants department heads final priority authority merely because personas exist?",
+      "explanation": "Персоны не передают руководителям подразделений окончательную власть над приоритетами."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which mistaken claim turns personas into an immutable scope contract?",
+      "explanation": "Персоны не являются договором о неизменном объёме продукта."
+    },
+    {
+      "answer": 4,
+      "mode": "misconception",
+      "question": "Which mistaken claim treats a persona artifact as a replacement for the Product Owner?",
+      "explanation": "Персона — модель пользователя, а не замена ответственного Product Owner."
+    }
+  ],
+  "pm-real-3-46": [
+    {
+      "answer": 1,
+      "mode": "misconception",
+      "question": "Which proposed shortcut removes meaningful differences by averaging all user archetypes?",
+      "explanation": "Один средний пользователь скроет реальные различия потребностей."
+    },
+    {
+      "answer": 2,
+      "mode": "misconception",
+      "question": "Which proposal discards behavioral and motivational context and keeps only user roles?",
+      "explanation": "Описания ролей сами по себе не содержат весь контекст и мотивацию персон."
+    },
+    {
+      "answer": 3,
+      "mode": "misconception",
+      "question": "Which proposal incorrectly substitutes persona descriptions for feature-specific acceptance conditions?",
+      "explanation": "Acceptance criteria относятся к проверяемому поведению функции, а не к описанию архетипа."
+    },
+    {
+      "answer": 4,
+      "mode": "misconception",
+      "question": "Which mistaken proposal uses the fictional nature of personas as an excuse to ignore changing user context?",
+      "explanation": "Вымышленность персонажа не освобождает от проверки актуальности пользовательского контекста."
+    }
+  ],
+  "pm-real-3-48": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which source best describes the user's detailed daily context, motivations and frustrations?",
+      "explanation": "Длинный шаблон персоны раскрывает повседневный контекст и мотивацию пользователя."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which source visualizes how much planned Sprint work remains over time?",
+      "explanation": "Burndown показывает оставшуюся работу во времени, а не критерии правильности функции."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Which source provides a brief label naming the goal of this particular story?",
+      "explanation": "Название карточки кратко обозначает цель истории."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which source describes the broad purpose and intended direction of the product?",
+      "explanation": "Product vision описывает общий замысел и направление продукта."
+    }
+  ],
+  "pm-real-3-49": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "Which activity inspects how the team worked and plans improvements to effectiveness and quality?",
+      "explanation": "Sprint Retrospective проверяет способы работы и выбирает улучшения."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "Which engineering practice has two developers work together at one workstation?",
+      "explanation": "Совместная работа двух разработчиков у одного компьютера — Pair programming."
+    },
+    {
+      "answer": 2,
+      "mode": "scenario",
+      "question": "Which scheduling activity determines the longest dependency path and the minimum project duration?",
+      "explanation": "Critical path calculation определяет длиннейшую цепочку зависимостей."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "Which technique compares planned value, earned value and actual cost to assess project performance?",
+      "explanation": "Сравнение PV, EV и AC относится к Earned value analysis."
+    }
+  ],
+  "pm-real-3-50": [
+    {
+      "answer": 0,
+      "mode": "scenario",
+      "question": "A story spends most of its text on irrelevant biographical details of the actor. Which weakness is most directly shown?",
+      "explanation": "Недостаток здесь в чрезмерной, не относящейся к делу детализации роли."
+    },
+    {
+      "answer": 1,
+      "mode": "scenario",
+      "question": "The team identifies only two stories despite knowing many additional user needs that should enter the backlog. Which weakness is most directly shown?",
+      "explanation": "Теперь условие прямо говорит о недостаточном количестве записанных историй."
+    },
+    {
+      "answer": 3,
+      "mode": "scenario",
+      "question": "Every story requires several unfinished stories before it can be delivered. Which weakness is most directly shown?",
+      "explanation": "Множество зависимостей мешает поставлять истории независимо."
+    },
+    {
+      "answer": 4,
+      "mode": "scenario",
+      "question": "The analyst treats differences between persona profiles as the sole basis for stories and ignores other needs evidence. Which weakness is most directly shown?",
+      "explanation": "Теперь проблема — исключительная опора на differentiators вместо разнообразных данных о нуждах."
+    }
   ]
 }

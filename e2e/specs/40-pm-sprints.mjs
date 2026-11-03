@@ -1,3 +1,4 @@
+import { mkdirSync } from 'node:fs';
 import { test, check, newUser, session, openSection } from '../harness.mjs';
 
 test('Спринты ПМ: отдельная версия, необратимый ответ и продолжение', async () => {
@@ -7,16 +8,25 @@ test('Спринты ПМ: отдельная версия, необратимы
     await openSection(page, '/events/project-management-quiz-2-real');
     await page.getByTestId('pm-quiz-version').selectOption('sprints');
     const root = page.getByTestId('pm-sprints');
+    check(await root.getByLabel('Вариант спринта').locator('option').count() === 5, 'пять отдельных подборок');
+    await root.getByLabel('Количество вопросов').fill('51');
+    check(await root.getByRole('button', { name: 'Начать спринт', exact: true }).isDisabled(), 'нельзя больше 50');
     await root.getByLabel('Количество вопросов').fill('2');
     await root.getByRole('button', { name: 'Начать спринт', exact: true }).click();
     const question = page.getByTestId('pm-sprint-question');
     const original = await question.locator('h2').innerText();
-    const options = question.getByRole('button');
+    check(await question.getAttribute('data-question-id') === 'pm-real-1-1', 'порядок начинается с первого вопроса');
+    const options = question.getByRole('group').getByRole('button');
     check(await options.count() === 5, 'исходные пять вариантов');
     check(await root.getByRole('button', { name: 'Следующий →', exact: true }).isDisabled(), 'нельзя пропустить вопрос');
     await options.first().click();
     check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'первый выбор блокирует все варианты');
-    check(!(await question.innerText()).includes('Правильный ответ'), 'правильный ответ скрыт до завершения');
+    check((await root.getByTestId('pm-sprint-feedback').innerText()).includes('✓ Верно'), 'верный ответ показан сразу');
+    mkdirSync('artifacts/pm-sprints', { recursive: true });
+    await page.screenshot({ path: 'artifacts/pm-sprints/feedback-mobile.png' });
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.screenshot({ path: 'artifacts/pm-sprints/feedback-desktop.png' });
+    await page.setViewportSize({ width: 390, height: 844 });
     await page.reload({ waitUntil: 'networkidle' });
     await question.waitFor();
     check(await question.locator('h2').innerText() === original, 'вопрос сохранился после перезагрузки');
@@ -29,6 +39,7 @@ test('Спринты ПМ: отдельная версия, необратимы
     check(await question.locator('h2').innerText() === original, 'переключение версий сохраняет спринт');
     await root.getByRole('button', { name: 'Следующий →', exact: true }).click();
     const second = await question.locator('h2').innerText();
+    check(await question.getAttribute('data-question-id') === 'pm-real-1-2', 'второй вопрос идёт по порядку');
     check(second !== original, 'нет повторов внутри спринта');
     await root.getByRole('button', { name: '← Назад', exact: true }).click();
     check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'назад не снимает блокировку');
@@ -39,10 +50,23 @@ test('Спринты ПМ: отдельная версия, необратимы
     check(await result.locator('details').count() === 2, 'после финиша доступны оба разбора');
     check((await result.innerText()).includes('Пройдено уникальных: 2 / 192'), 'общий охват учитывает оба вопроса');
     await result.getByRole('button', { name: 'Настроить следующий спринт' }).click();
+    await root.getByLabel('Вариант спринта').selectOption('4');
+    check(await root.getByLabel('Количество вопросов').getAttribute('max') === '37', 'лимит по доступным вопросам варианта 4');
     await root.getByLabel('Количество вопросов').fill('1');
     await root.getByRole('button', { name: 'Начать спринт', exact: true }).click();
     const next = await question.locator('h2').innerText();
-    check(next !== original && next !== second, 'следующий спринт берёт непройденный вопрос');
+    check(next !== original && next !== second, 'выбран другой вариант');
+    check(await question.getAttribute('data-question-id') === 'pm-real-4-1', 'вариант 4 начинается с первого');
+    await options.first().click();
+    check((await root.getByTestId('pm-sprint-feedback').innerText()).includes('✕ Неверно'), 'ошибка показана сразу');
+    check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'после ошибки нельзя перевыбрать');
+    await question.getByRole('button', { name: 'Выбрать другой спринт' }).click();
+    await root.getByLabel('Вариант спринта').selectOption('extra-2');
+    check(await root.getByLabel('Количество вопросов').getAttribute('max') === '9', 'остаток разбит в отдельную подборку');
+    await root.getByLabel('Порядок вопросов').selectOption('random');
+    await root.getByLabel('Количество вопросов').fill('9');
+    await root.getByRole('button', { name: 'Начать спринт', exact: true }).click();
+    check((await question.innerText()).includes('Дополнительный 2 · Случайно'), 'выбрана случайная дополнительная подборка');
     const footer = await root.locator('footer').boundingBox();
     check(footer.y + footer.height <= page.viewportSize().height + 1, 'кнопки помещаются на мобильном экране');
   } finally { await browser.close(); }

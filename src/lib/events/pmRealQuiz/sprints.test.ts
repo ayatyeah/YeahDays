@@ -1,26 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { availableQuestions } from "./model";
-import { advanceSprint, createSprint, emptySprintState, lockSprintAnswer, parseSprintState, sprintKey } from "./sprints";
+import { advanceSprint, createSprint, emptySprintState, lockSprintAnswer, parseSprintState, sprintKey, sprintGroups } from "./sprints";
 
 describe("PM exam sprints", () => {
-  it("covers all questions before repeats and prioritizes errors after coverage", () => {
-    let state = emptySprintState();
-    const seen = new Set<string>();
-    for (let batch = 0; batch < 4; batch++) {
-      const count = batch === 3 ? 42 : 50;
-      state = { ...state, sprint: createSprint(state.record, count) };
-      for (const id of state.sprint!.ids) {
-        expect(seen.has(id)).toBe(false); seen.add(id);
-        state = lockSprintAnswer(state, id, 0); state = advanceSprint(state);
-      }
-      expect(state.sprint!.finished).toBe(true);
+  it("partitions all questions without duplication and preserves source order", () => {
+    expect(sprintGroups.map(g => g.ids.length)).toEqual([50,37,46,50,9]);
+    const ids = sprintGroups.flatMap(g => g.ids);
+    expect(new Set(ids).size).toBe(availableQuestions.length);
+    expect(ids.sort()).toEqual(availableQuestions.map(q => q.id).sort());
+    expect(createSprint("1", 3, "ordered").ids).toEqual(["pm-real-1-1", "pm-real-1-2", "pm-real-1-3"]);
+    expect(createSprint("5", 2, "ordered").ids).toEqual(["pm-real-5-5", "pm-real-5-6"]);
+    for (const group of sprintGroups) {
+      const s = createSprint(group.id, 999, "random", () => 0);
+      expect(new Set(s.ids).size).toBe(group.ids.length);
+      expect([...s.ids].sort()).toEqual([...group.ids].sort());
+      expect(s.ids).not.toEqual(group.ids);
+      expect(createSprint(group.id, 4, "random", () => 0).ids).toEqual(s.ids.slice(0,4));
     }
-    expect(seen.size).toBe(availableQuestions.length);
-    const errors = availableQuestions.filter(q => q.answer !== 0).map(q => q.id);
-    expect(createSprint(state.record, errors.length).ids.every(id => errors.includes(id))).toBe(true);
   });
   it("locks first choice across repeated events, navigation and reload", () => {
-    let state = { ...emptySprintState(), sprint: createSprint({}, 2) };
+    let state = { ...emptySprintState(), sprint: createSprint("1", 2, "ordered") };
     const id = state.sprint.ids[0];
     expect(advanceSprint(state)).toBe(state);
     state = lockSprintAnswer(state, id, 2) as typeof state;
@@ -37,10 +36,12 @@ describe("PM exam sprints", () => {
   });
   it("isolates users, validates stored data and restricts counts", () => {
     expect(sprintKey("a")).not.toBe(sprintKey("b"));
+    const legacy = { ids: availableQuestions.map(q => q.id), answers: {}, index: 7, finished: false };
+    expect(parseSprintState(JSON.stringify({ record: {}, sprint: legacy })).sprint?.ids).toHaveLength(192);
     expect(parseSprintState("broken")).toEqual(emptySprintState());
-    expect(createSprint({}, 999).ids).toHaveLength(availableQuestions.length);
-    expect(createSprint({}, 0).ids).toHaveLength(1);
-    const s = createSprint({}, 2);
+    expect(createSprint("1", 999, "random").ids).toHaveLength(50);
+    expect(createSprint("1", 0, "ordered").ids).toHaveLength(1);
+    const s = createSprint("1", 2, "ordered");
     expect(parseSprintState(JSON.stringify({ record: {}, sprint: { ...s, ids: [s.ids[0], s.ids[0]] } })).sprint).toBeNull();
     const restored = parseSprintState(JSON.stringify({ record: { unknown: { attempts: 1, correct: 1, lastAnswer: 0 } }, sprint: { ...s, finished: true, index: 999, answers: { [s.ids[0]]: 9 } } }));
     expect(restored.record).toEqual({});

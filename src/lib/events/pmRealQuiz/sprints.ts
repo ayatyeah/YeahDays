@@ -1,7 +1,13 @@
 import { availableQuestions } from "./model";
 
 export type SprintRecord = Record<string, { attempts: number; correct: number; lastAnswer: number }>;
-export type Sprint = { ids: string[]; answers: Record<string, number>; index: number; finished: boolean };
+export type SprintOrder = "ordered" | "random";
+const extra = availableQuestions.filter(q => !["1", "4", "5"].includes(q.variant)).sort((a, b) => a.variant.localeCompare(b.variant) || a.number - b.number);
+export const sprintGroups = [
+  ...["1", "4", "5"].map(id => ({ id, label: `Вариант ${id}`, ids: availableQuestions.filter(q => q.variant === id).sort((a, b) => a.number - b.number).map(q => q.id) })),
+  ...Array.from({ length: Math.ceil(extra.length / 50) }, (_, i) => ({ id: `extra-${i + 1}`, label: `Дополнительный ${i + 1}`, ids: extra.slice(i * 50, (i + 1) * 50).map(q => q.id) })),
+];
+export type Sprint = { group?: string; order?: SprintOrder; ids: string[]; answers: Record<string, number>; index: number; finished: boolean };
 export type SprintState = { record: SprintRecord; sprint: Sprint | null };
 export const emptySprintState = (): SprintState => ({ record: {}, sprint: null });
 export const sprintKey = (userId: string) => `yg-pm-sprints:v1:${userId}`;
@@ -22,20 +28,19 @@ export function parseSprintState(raw: string | null): SprintState {
     const answers: Record<string, number> = {};
     for (const id of s.ids) if (validAnswer(s.answers?.[id])) answers[id] = s.answers[id];
     const index = Number.isInteger(s.index) ? Math.max(0, Math.min(s.ids.length - 1, s.index)) : 0;
-    return { record, sprint: { ids: s.ids, answers, index, finished: s.finished === true && s.ids.every((id: string) => answers[id] !== undefined) } };
+    return { record, sprint: { group: sprintGroups.some(g => g.id === s.group) ? s.group : undefined, order: s.order === "ordered" ? "ordered" : "random", ids: s.ids, answers, index, finished: s.finished === true && s.ids.every((id: string) => answers[id] !== undefined) } };
   } catch { return emptySprintState(); }
 }
 
-export function createSprint(record: SprintRecord, count: number, random = Math.random): Sprint {
-  const shuffled = [...availableQuestions];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+export function createSprint(groupId: string, count: number, order: SprintOrder, random = Math.random): Sprint {
+  const group = sprintGroups.find(g => g.id === groupId) ?? sprintGroups[0];
+  const ids = [...group.ids];
+  if (order === "random") for (let i = ids.length - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [ids[i], ids[j]] = [ids[j], ids[i]];
   }
-  const priority = (id: string) => !record[id] ? 0 : record[id].lastAnswer !== byId.get(id)!.answer ? 1 : 2;
-  shuffled.sort((a, b) => priority(a.id) - priority(b.id) || (record[a.id]?.attempts ?? 0) - (record[b.id]?.attempts ?? 0));
-  const size = Number.isFinite(count) ? Math.max(1, Math.min(byId.size, Math.floor(count))) : 10;
-  return { ids: shuffled.slice(0, size).map(q => q.id), answers: {}, index: 0, finished: false };
+  const size = Number.isFinite(count) ? Math.max(1, Math.min(50, ids.length, Math.floor(count))) : Math.min(10, ids.length);
+  return { group: group.id, order, ids: ids.slice(0, size), answers: {}, index: 0, finished: false };
 }
 
 /** First selection is final, including repeated clicks and attempts after reload. */

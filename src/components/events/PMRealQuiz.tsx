@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
+import PMSprints from "./PMSprints";
+import PMQuizVersion, { type PMQuizMode } from "./PMQuizVersion";
 import EventNotes from "@/components/EventNotes";
 import bank from "@/lib/events/pmRealQuiz/questions.json";
 import alternativeBank from "@/lib/events/pmRealQuiz/alternatives.json";
@@ -23,6 +25,38 @@ const tabs: [Tab, string][] = [["questions", "Вопросы"], ["brief", "Кр�
 const label = (v: string) => variants.find(x => x.id === v)?.label ?? v;
 
 export default function PMRealQuiz({ userId }: { userId: string }) {
+  const [mode, setMode] = useState<PMQuizMode>("learn");
+  const [loaded, setLoaded] = useState(false);
+  const modeKey = `${realQuizKey(userId)}:mode`;
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(modeKey); } catch { /* Version choice can work without storage. */ }
+    const initial = (url.searchParams.get("pmMode") ?? saved) === "sprints" ? "sprints" : "learn";
+    setMode(initial); setLoaded(true);
+    url.searchParams.set("pmMode", initial);
+    window.history.replaceState(window.history.state, "", url);
+    const pop = () => {
+      const next = new URL(window.location.href).searchParams.get("pmMode") === "sprints" ? "sprints" : "learn";
+      setMode(next);
+      try { localStorage.setItem(modeKey, next); } catch { /* Optional preference. */ }
+    };
+    window.addEventListener("popstate", pop);
+    return () => window.removeEventListener("popstate", pop);
+  }, [modeKey]);
+  function changeMode(next: PMQuizMode) {
+    if (mode === next) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("pmMode", next);
+    window.history.pushState({ ...window.history.state }, "", url);
+    try { localStorage.setItem(modeKey, next); } catch { /* Optional preference. */ }
+    setMode(next);
+  }
+  if (!loaded) return <p role="status">Загружаем квиз…</p>;
+  return mode === "sprints" ? <PMSprints key={userId} userId={userId} onVersionChange={changeMode} /> : <PMStudyQuiz key={userId} userId={userId} onVersionChange={changeMode} />;
+}
+
+function PMStudyQuiz({ userId, onVersionChange }: { userId: string; onVersionChange: (mode: PMQuizMode) => void }) {
   const [tab, setTab] = useState<Tab>("questions");
   const [variant, setVariant] = useState("1");
   const [lecture, setLecture] = useState("all");
@@ -134,6 +168,7 @@ export default function PMRealQuiz({ userId }: { userId: string }) {
         <h1 className="text-sm font-bold sm:text-lg">ПМ · Квиз 2</h1>
         <span className="text-xs tabular-nums text-[var(--color-muted)]" aria-live="polite">{ready ? stats.correct : "—"} / {availableQuestions.length} верно</span>
       </div>
+      <PMQuizVersion mode="learn" onChange={onVersionChange} />
       <nav className="mx-auto flex max-w-6xl gap-1 overflow-x-auto" aria-label="Разделы ивента">{tabs.map(([id, title]) => <button key={id} onClick={() => navigateTab(id)} aria-current={tab === id ? "page" : undefined} className={`min-h-11 shrink-0 rounded-xl px-3 text-xs font-bold sm:text-sm ${tab === id ? "bg-violet-500/15 text-violet-500" : "text-[var(--color-muted)]"}`}>{title}</button>)}</nav>
     </header>
     <div ref={scrollArea} className={tab === "questions" ? "min-h-0 flex-1 overflow-y-auto overscroll-contain" : "space-y-4"} data-testid="pm-quiz-scroll">

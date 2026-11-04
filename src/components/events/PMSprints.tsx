@@ -4,22 +4,40 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { availableQuestions, variants } from "@/lib/events/pmRealQuiz/model";
 import { advanceSprint, createSprint, emptySprintState, lockSprintAnswer, parseSprintState, sprintKey, sprintGroups, sprintQuestions, type SprintOrder, type SprintState } from "@/lib/events/pmRealQuiz/sprints";
-import notes from "@/lib/events/pmRealQuiz/notes.json";
+import { questionNote, relatedQuestions, questionLabel } from "@/lib/events/pmRealQuiz/related";
 import PMQuizVersion, { type PMQuizMode } from "./PMQuizVersion";
 
 const button = "min-h-11 rounded-xl border border-[var(--color-border)] px-4 py-2 font-semibold disabled:opacity-40";
 const letters = "ABCDE";
 const byId = new Map(sprintQuestions.map(q => [q.id, q]));
 function NoteLink({ question }: { question: (typeof sprintQuestions)[number] }) {
-  const sourceNumber = question.variant === "supplement" ? Number(question.id.split("-").at(-1)) : question.number;
-  const topicByNumber: Record<number, string> = { 1: "control", 2: "control", 3: "groups", 4: "authority", 5: "structures", 6: "structures", 7: "agile", 8: "methods", 9: "methods", 10: "scrum-foundation", 11: "scrum-events", 12: "scrum-artifacts", 13: "personas", 14: "stories", 15: "stories", 16: "control", 17: "control", 18: "evm", 19: "evm", 20: "evm", 21: "groups", 22: "groups", 23: "authority", 24: "authority", 25: "structures", 26: "structures", 27: "structures", 28: "structures", 29: "structures", 30: "agile", 31: "agile", 32: "agile", 33: "methods", 34: "lean", 35: "lean", 36: "leader", 37: "scrum-foundation", 38: "scrum-foundation", 39: "scrum-roles", 40: "scrum-roles", 41: "scrum-events", 42: "scrum-events", 43: "scrum-events", 44: "personas", 45: "personas", 46: "personas", 47: "stories", 48: "stories", 49: "stories", 50: "stories" };
-  const topic = question.id === "pm-supp-html-11" ? "scrum-roles" : topicByNumber[sourceNumber];
-  const note = notes.find(n => n.examples.includes(`${question.variant}:${question.number}`)) ?? notes.find(n => n.id === topic) ?? notes.find(n => n.lecture === question.lecture)!;
+  const note = questionNote(question);
   return <a className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold underline" href={`/events/project-management-quiz-2-real?pmMode=learn&pmView=full&pmNote=${note.id}#note-${note.id}`}>Читать конспект: {note.title} →</a>;
+}
+const sprintUrl = "/events/project-management-quiz-2-real?pmMode=sprints";
+function RelatedQuestions({ question }: { question: (typeof sprintQuestions)[number] }) {
+  const [show, setShow] = useState(false);
+  const [all, setAll] = useState(false);
+  const related = relatedQuestions(question);
+  return <div className="mt-3 border-t border-violet-400/30 pt-3" data-testid="pm-related">
+    <button type="button" role="switch" aria-checked={show} aria-label="Показать похожие вопросы" className={`${button} w-full text-left`} onClick={() => setShow(!show)}>{show ? "✓ Скрыть" : "Показать"} похожие вопросы · {related.length}</button>
+    {show && <div className="mt-3 space-y-3" data-testid="pm-related-list"><p className="text-sm text-[var(--color-muted)]">Сравни формулировку и смысл ответа: буквы A–E в разных вопросах отличаются. Просмотр не засчитывается как ответ в спринте.</p>
+      {(all ? related : related.slice(0, 3)).map(({ question: item, sameConcept }) => <article key={item.id} className="space-y-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3" data-testid="pm-related-card">
+        <p className="text-xs text-[var(--color-muted)]">{questionLabel(item)} · {sameConcept ? "Близкий вопрос" : "Та же тема конспекта"}</p>
+        <p className="whitespace-pre-line font-semibold">{item.text}</p>
+        <p className="font-semibold text-emerald-700 dark:text-emerald-300">Здесь правильный ответ: {letters[item.answer!]}. {item.options[item.answer!]}</p>
+        <p className="whitespace-pre-line text-sm leading-relaxed">{item.explanation}</p>
+        {item.variant === "supplement" && <p className="text-xs text-[var(--color-muted)]">{item.transcriptionNote}</p>}
+        <a className="inline-flex min-h-11 items-center text-sm font-semibold underline" href={`${sprintUrl}&pmRead=${item.id}`}>Открыть вопрос со всеми вариантами →</a>
+      </article>)}
+      {related.length > 3 && <button className={button} onClick={() => setAll(!all)}>{all ? "Оставить три ближайших" : `Показать остальные (${related.length - 3})`}</button>}
+    </div>}
+  </div>;
 }
 export default function PMSprints({ userId, onVersionChange }: { userId: string; onVersionChange: (mode: PMQuizMode) => void }) {
   const [state, setState] = useState<SprintState>(emptySprintState);
   const current = useRef(state);
+  const [reading, setReading] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
   const [group, setGroup] = useState("1");
@@ -35,6 +53,7 @@ export default function PMSprints({ userId, onVersionChange }: { userId: string;
       if (saved?.group) { setGroup(saved.group); setCount(String(Math.min(50, saved.ids.length))); }
       if (saved?.order) setOrder(saved.order);
     } catch { setError(true); }
+    setReading(new URL(window.location.href).searchParams.get("pmRead"));
     setReady(true);
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -46,6 +65,7 @@ export default function PMSprints({ userId, onVersionChange }: { userId: string;
     try { localStorage.setItem(key, JSON.stringify(next)); setError(false); } catch { setError(true); }
   }
   function advance() { commit(advanceSprint(current.current)); scroller.current?.scrollTo({ top: 0 }); }
+  const review = reading ? byId.get(reading) : undefined;
   const s = state.sprint;
   const q = s ? byId.get(s.ids[s.index])! : null;
   const selected = q && s ? s.answers[q.id] : undefined;
@@ -63,8 +83,17 @@ export default function PMSprints({ userId, onVersionChange }: { userId: string;
       <PMQuizVersion mode="sprints" onChange={onVersionChange} />
     </header>
     <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain"><div className="mx-auto max-w-4xl space-y-4 p-4 sm:p-6">
+      {review && <article data-testid="pm-question-reader" className="space-y-4">
+        <a className={`${button} inline-flex items-center`} href={sprintUrl}>← Вернуться к спринту</a>
+        <p className="text-sm text-[var(--color-muted)]">Просмотр для сравнения · {questionLabel(review)}</p>
+        <h2 className="whitespace-pre-line text-lg font-bold">{review.text}</h2>
+        {review.transcriptionNote && <p className="text-xs text-[var(--color-muted)]">{review.transcriptionNote}</p>}
+        <div className="grid gap-2">{review.options.map((option, i) => <p key={i} className={`rounded-xl border p-3 ${i === review.answer ? "border-emerald-500 bg-emerald-500/15" : "border-[var(--color-border)]"}`}>{letters[i]}. {option}{i === review.answer && " ✓"}</p>)}</div>
+        <section className="rounded-2xl bg-violet-500/10 p-4"><h3 className="mb-2 font-bold">Почему этот ответ</h3><p>{review.explanation}</p><NoteLink question={review} /></section>
+        <p className="text-sm text-[var(--color-muted)]">Твой вопрос и ответ в спринте сохранены. Этот просмотр не меняет результат.</p>
+      </article>}
       {error && <p role="alert" className="rounded-xl border border-amber-400 p-3">Не удалось сохранить прогресс. Не закрывай вкладку, пока сохранение не восстановится.</p>}
-      {(!s || configure) && <div className="space-y-5" data-testid="pm-sprint-setup">
+      {!review && (!s || configure) && <div className="space-y-5" data-testid="pm-sprint-setup">
         <h2 className="text-2xl font-bold">Новый спринт</h2>
         <p>Первый выбор фиксируется сразу. Поменять ответ нельзя. Сразу после выбора увидишь результат и объяснение. Кнопка «Разбор» внизу откроет его без поиска прокруткой.</p>
         <div className="rounded-2xl border border-[var(--color-border)] p-4"><p>Пройдено уникальных: <strong>{covered} / {availableQuestions.length}</strong></p><p>Дополнение: <strong>{supplementCovered} / 54</strong> · Основной банк с фото: 192 вопроса.</p><p>Верно в последней попытке: <strong>{correctCoverage} / {availableQuestions.length}</strong></p><p className="mt-2 text-sm text-[var(--color-muted)]">Внутри спринта повторов нет. У вопросов с фото порядок A–E сохранён. HTML содержит сокращённые формулировки; вопросы и отвлекающие ответы DOCX составлены для тренировки по ключу. Дополнительные подборки — учебное разделение остальных вопросов, а не номера реальных вариантов.</p></div>
@@ -79,23 +108,23 @@ export default function PMSprints({ userId, onVersionChange }: { userId: string;
         <button className={`${button} w-full bg-violet-600 text-white`} disabled={!validCount} onClick={() => { commit({ ...current.current, sprint: createSprint(group, Number(count), order) }); setConfigure(false); scroller.current?.scrollTo({ top: 0 }); }}>Начать спринт</button>
         <p className="text-xs text-[var(--color-muted)]">Прогресс спринтов сохраняется отдельно от версии «Обучение», в этом браузере. Можно переключить версию и продолжить позже.</p>
       </div>}
-      {s && !s.finished && !configure && q && <article className="space-y-4" data-testid="pm-sprint-question" data-question-id={q.id}>
+      {!review && s && !s.finished && !configure && q && <article className="space-y-4" data-testid="pm-sprint-question" data-question-id={q.id}>
         <div className="flex flex-wrap items-center justify-between gap-2 text-sm"><span>{sprintGroups.find(g => g.id === s.group)?.label ?? "Сохранённый спринт"} · {s.order === "ordered" ? "По порядку" : "Случайно"}</span><button className={button} onClick={() => { setConfigure(true); scroller.current?.scrollTo({ top: 0 }); }}>Выбрать другой спринт</button></div>
         <p className="text-sm text-[var(--color-muted)]">{q.variant === "supplement" ? "Учебное дополнение" : variants.find(v => v.id === q.variant)?.label} · №{q.number} · Лекция {q.lecture}</p>
         <h2 className="whitespace-pre-line text-lg font-bold leading-relaxed sm:text-xl">{q.text}</h2>
         {q.transcriptionNote && <p className="text-xs text-[var(--color-muted)]">{q.transcriptionNote}</p>}
         <div className="grid grid-cols-1 gap-2" role="group" aria-label="Ответы — выбор необратим">{q.options.map((option, i) => <button key={i} disabled={selected !== undefined} aria-pressed={selected === i} className={`min-h-14 rounded-2xl border p-3 text-left leading-relaxed ${selected !== undefined && i === q.answer ? "border-emerald-500 bg-emerald-500/15" : selected === i ? "border-red-500 bg-red-500/15" : "border-[var(--color-border)] bg-[var(--color-surface)]"}`} onClick={() => commit(lockSprintAnswer(current.current, q.id, i))}><strong>{letters[i]}.</strong> {option}</button>)}</div>
         <p className="text-sm" role="status">{selected !== undefined ? `${selected === q.answer ? "Верно!" : "Неверно."} Правильный ответ: ${letters[q.answer!]}. ${q.options[q.answer!]}. Ответ зафиксирован.` : "Нажатие на вариант сразу фиксирует ответ."}</p>
-        {selected !== undefined && <section id="pm-sprint-explanation" data-testid="pm-sprint-explanation" className="rounded-2xl border border-violet-400/40 bg-violet-500/10 p-4"><h3 className="mb-2 font-bold">Почему этот ответ</h3><p className="whitespace-pre-line leading-relaxed">{q.explanation}</p><NoteLink question={q} /></section>}
+        {selected !== undefined && <section id="pm-sprint-explanation" data-testid="pm-sprint-explanation" className="rounded-2xl border border-violet-400/40 bg-violet-500/10 p-4"><h3 className="mb-2 font-bold">Почему этот ответ</h3><p className="whitespace-pre-line leading-relaxed">{q.explanation}</p><NoteLink question={q} /><RelatedQuestions key={q.id} question={q} /></section>}
       </article>}
-      {s?.finished && !configure && <section className="space-y-4" data-testid="pm-sprint-result">
+      {!review && s?.finished && !configure && <section className="space-y-4" data-testid="pm-sprint-result">
         <h2 className="text-2xl font-bold">Спринт завершён</h2><p className="text-3xl font-black">{score} / {s.ids.length} · {Math.round(score / s.ids.length * 100)}%</p>
         <p>Ошибок: {s.ids.length - score}. Пройдено уникальных: {covered} / {availableQuestions.length}. Верно в последней попытке: {correctCoverage}.</p>
         <button className={`${button} bg-violet-600 text-white`} onClick={() => { commit({ ...current.current, sprint: null }); scroller.current?.scrollTo({ top: 0 }); }}>Настроить следующий спринт</button>
         <h3 className="text-lg font-bold">Ответы и разборы</h3>
-        {s.ids.map((id, i) => { const item = byId.get(id)!; const chosen = s.answers[id]; const correct = chosen === item.answer; return <details key={id} className="rounded-2xl border border-[var(--color-border)] p-4"><summary className="min-h-11 cursor-pointer font-semibold">{i + 1}. {correct ? "Верно" : "Ошибка"} · {item.variant === "supplement" ? "Учебное дополнение" : variants.find(v => v.id === item.variant)?.label} · №{item.number}</summary><p className="my-3 whitespace-pre-line font-semibold">{item.text}</p><p>Твой ответ: {letters[chosen]}. {item.options[chosen]}</p><p className="my-2">Правильный: {letters[item.answer!]}. {item.options[item.answer!]}</p><p>{item.explanation}</p><NoteLink question={item} />{item.variant === "supplement" && <p className="mt-2 text-xs text-[var(--color-muted)]">{item.transcriptionNote}</p>}</details>; })}
+        {s.ids.map((id, i) => { const item = byId.get(id)!; const chosen = s.answers[id]; const correct = chosen === item.answer; return <details key={id} className="rounded-2xl border border-[var(--color-border)] p-4"><summary className="min-h-11 cursor-pointer font-semibold">{i + 1}. {correct ? "Верно" : "Ошибка"} · {item.variant === "supplement" ? "Учебное дополнение" : variants.find(v => v.id === item.variant)?.label} · №{item.number}</summary><p className="my-3 whitespace-pre-line font-semibold">{item.text}</p><p>Твой ответ: {letters[chosen]}. {item.options[chosen]}</p><p className="my-2">Правильный: {letters[item.answer!]}. {item.options[item.answer!]}</p><p>{item.explanation}</p><NoteLink question={item} /><RelatedQuestions question={item} />{item.variant === "supplement" && <p className="mt-2 text-xs text-[var(--color-muted)]">{item.transcriptionNote}</p>}</details>; })}
       </section>}
     </div></div>
-    {s && !s.finished && !configure && <footer className="shrink-0 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">{selected !== undefined && q && <p className="mx-auto mb-2 max-w-4xl text-sm font-bold" data-testid="pm-sprint-feedback" role="status">{selected === q.answer ? "✓ Верно" : "✕ Неверно"} · Правильный ответ: {letters[q.answer!]} <button className="ml-3 min-h-11 rounded-lg border border-[var(--color-border)] px-3" onClick={() => document.getElementById("pm-sprint-explanation")?.scrollIntoView({ block: "start", behavior: "smooth" })}>Разбор ↓</button></p>}<div className="mx-auto flex max-w-4xl gap-3"><button className={button} disabled={s.index === 0} onClick={() => { commit({ ...current.current, sprint: { ...current.current.sprint!, index: s.index - 1 } }); scroller.current?.scrollTo({ top: 0 }); }}>← Назад</button><button className={`${button} flex-1 bg-violet-600 text-white`} disabled={selected === undefined} onClick={advance}>{s.index === s.ids.length - 1 ? "Завершить спринт" : "Следующий →"}</button></div></footer>}
+    {!review && s && !s.finished && !configure && <footer className="shrink-0 border-t border-[var(--color-border)] bg-[var(--color-surface)] px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">{selected !== undefined && q && <p className="mx-auto mb-2 max-w-4xl text-sm font-bold" data-testid="pm-sprint-feedback" role="status">{selected === q.answer ? "✓ Верно" : "✕ Неверно"} · Правильный ответ: {letters[q.answer!]} <button className="ml-3 min-h-11 rounded-lg border border-[var(--color-border)] px-3" onClick={() => document.getElementById("pm-sprint-explanation")?.scrollIntoView({ block: "start", behavior: "smooth" })}>Разбор ↓</button></p>}<div className="mx-auto flex max-w-4xl gap-3"><button className={button} disabled={s.index === 0} onClick={() => { commit({ ...current.current, sprint: { ...current.current.sprint!, index: s.index - 1 } }); scroller.current?.scrollTo({ top: 0 }); }}>← Назад</button><button className={`${button} flex-1 bg-violet-600 text-white`} disabled={selected === undefined} onClick={advance}>{s.index === s.ids.length - 1 ? "Завершить спринт" : "Следующий →"}</button></div></footer>}
   </section>, document.body);
 }

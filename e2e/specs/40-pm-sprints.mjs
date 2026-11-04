@@ -24,6 +24,19 @@ test('Спринты ПМ: отдельная версия, необратимы
     check((await root.getByTestId('pm-sprint-feedback').innerText()).includes('✓ Верно'), 'верный ответ показан сразу');
     check((await root.getByTestId('pm-sprint-explanation').innerText()).includes('Undistributed'), 'объяснение открыто сразу после ответа');
     await root.getByRole('button', { name: 'Разбор ↓' }).click();
+    const related = root.getByTestId('pm-related');
+    check(await related.getByRole('switch').getAttribute('aria-checked') === 'false', 'похожие вопросы изначально скрыты');
+    const beforeRelated = await page.evaluate(() => Object.fromEntries(Object.entries(localStorage).filter(([key]) => key.startsWith('yg-pm-sprints:'))));
+    await related.getByRole('switch').click();
+    check(await related.getByTestId('pm-related-card').count() === 3, 'показаны три ближайших вопроса');
+    check((await related.getByTestId('pm-related-card').first().innerText()).includes('Здесь правильный ответ:'), 'у похожего вопроса есть ответ и разбор');
+    await related.getByTestId('pm-related-card').first().getByRole('link').click();
+    await page.getByTestId('pm-question-reader').waitFor();
+    check((await page.getByTestId('pm-question-reader').innerText()).includes('Почему этот ответ'), 'открыт полный вопрос с разбором');
+    await page.getByRole('link', { name: '← Вернуться к спринту', exact: true }).click();
+    await question.waitFor();
+    check(await question.getAttribute('data-question-id') === 'pm-real-1-1', 'просмотр похожего сохраняет текущий вопрос');
+    check(JSON.stringify(await page.evaluate(() => Object.fromEntries(Object.entries(localStorage).filter(([key]) => key.startsWith('yg-pm-sprints:'))))) === JSON.stringify(beforeRelated), 'просмотр не меняет ответы и статистику спринта');
     await root.getByTestId('pm-sprint-explanation').getByRole('link', { name: /Читать конспект/ }).click();
     await page.locator('#note-control').waitFor();
     check((await page.locator('#note-control').innerText()).includes('четыре вида бюджета'), 'ссылка открывает нужную тему конспекта');
@@ -41,6 +54,7 @@ test('Спринты ПМ: отдельная версия, необратимы
     check(await question.locator('h2').innerText() === original, 'вопрос сохранился после перезагрузки');
     check(await options.evaluateAll(nodes => nodes.every(n => n.disabled)), 'после перезагрузки нельзя перевыбрать');
     await page.getByTestId('pm-quiz-version').selectOption('learn');
+    await page.getByRole('button', { name: 'Вопросы', exact: true }).click();
     await page.getByTestId('pm-real-question').waitFor();
     check(await page.getByTestId('pm-real-question').getByRole('radio').count() === 5, 'старая версия доступна отдельно');
     await page.getByTestId('pm-quiz-version').selectOption('sprints');

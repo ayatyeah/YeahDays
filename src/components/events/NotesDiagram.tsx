@@ -1,11 +1,6 @@
 import type { ReactNode } from "react";
 import { A, Arrow, B, Box, Device, F, G, R, S, Svg, V, Wrap, type Draw, type L } from "./diagrams/kit";
-import { diagrams as rm1 } from "./diagrams/rm1";
-import { diagrams as rm2 } from "./diagrams/rm2";
-import { diagrams as rm3 } from "./diagrams/rm3";
-import { diagrams as rm4 } from "./diagrams/rm4";
 import { diagrams as rm5 } from "./diagrams/rm5";
-import { diagrams as rmx } from "./diagrams/rmx";
 import { diagrams as cc6 } from "./diagrams/cc6";
 import { diagrams as cc7 } from "./diagrams/cc7";
 import { diagrams as cc8 } from "./diagrams/cc8";
@@ -940,7 +935,7 @@ const DIAGRAMS: Record<string, Draw> = {
   ),
 };
 
-Object.assign(DIAGRAMS, rm1, rm2, rm3, rm4, rm5, rmx, cc6, cc7, cc8, cc9, cc10, cn5, cn7, pm4, pm5, pm6, pm7, pm8, pm9, pm10);
+Object.assign(DIAGRAMS, rm5, cc6, cc7, cc8, cc9, cc10, cn5, cn7, pm4, pm5, pm6, pm7, pm8, pm9, pm10);
 
 export default function NotesDiagram({ name, lang }: { name: string; lang: string }) {
   const draw = DIAGRAMS[name];

@@ -2,7 +2,7 @@ import type { Term, Text } from "../types";
 
 const t = (term: string, en: string, ru: string): Term => ({ term, def: { en, ru } });
 
-/** Глоссарий курса (лекции 1–5 и формат квиза-кейса) — он же колода карточек «термин → определение». */
+/** Глоссарий курса (лекции 1–5) — он же колода карточек «термин → определение». */
 export const glossary: Term[] = [
   // Лекция 1: что такое исследование
   t("Research", "A systematic, creative and critical process for finding verifiable answers, solving real problems and building credible, reproducible knowledge.", "Систематический, творческий и критический процесс поиска проверяемых ответов, решения реальных задач и создания достоверного, воспроизводимого знания."),
@@ -28,7 +28,7 @@ export const glossary: Term[] = [
   t("Evidence matrix", "A comparison table of papers: problem, method, data, main finding, limitation and what is missing.", "Таблица сравнения статей: проблема, метод, данные, главный результат, ограничение и чего не хватает."),
   t("Synthesis", "Making sources talk to each other — agreements, contradictions, shared limitations and what none of them studied — instead of summarising them one by one.", "Сведение источников в диалог — согласия, противоречия, общие ограничения и то, чего не изучил никто, — вместо пересказа по одному."),
   t("Research gap", "Something important that previous research has not adequately answered, tested or studied in a specific context, justified by the literature.", "Нечто важное, на что прежние исследования не ответили, не проверили или не изучили в конкретном контексте, обоснованное литературой."),
-  t("Population / context gap", "A question studied in one group or setting (e.g. taxi drivers, English) but not in the one that matters (long-haul drivers, Kazakh).", "Вопрос изучен в одной группе или среде (например, таксисты, английский), но не в нужной (дальнобойщики, казахский)."),
+  t("Population / context gap", "A limitation in how well existing findings cover a particular population or setting.", "Ограничение применимости имеющихся результатов к определённой популяции или условиям."),
   t("Method gap", "A topic studied mostly one way (e.g. surveys) with little evidence from other designs such as experiments.", "Тема изучена в основном одним способом (например, опросами), а доказательств от других дизайнов, например экспериментов, мало."),
   t("Contradiction gap", "Studies report conflicting results and the reasons for the disagreement have not been explained.", "Исследования дают противоречивые результаты, и причины расхождения не объяснены."),
   t("Evaluation / data gap", "Existing studies use limited datasets, inconsistent definitions or measures, or short follow-up, so the evidence cannot be generalised.", "Работы используют ограниченные данные, несогласованные определения или меры, короткое наблюдение, поэтому доказательства нельзя обобщить."),
@@ -54,10 +54,9 @@ export const glossary: Term[] = [
   t("Anonymity", "A response cannot reasonably be linked to a person, or identifiers are irreversibly removed.", "Ответ нельзя разумным способом связать с человеком, или идентификаторы удалены необратимо."),
   t("Pseudonymisation", "Replacing names with codes while a separate key still links them — it gives confidentiality, not anonymity.", "Замена имён кодами при сохранении отдельного ключа — даёт конфиденциальность, а не анонимность."),
   t("Data lifecycle", "Collect only what is needed → store securely → named access → justified retention → delete or share, with a record.", "Собрать только нужное → безопасно хранить → поимённый доступ → обоснованный срок хранения → удалить или передать, с записью."),
-  t("Data minimisation", "Collecting only the data the research question needs; continuous video to measure a fatigue score breaks it.", "Сбор только тех данных, которые нужны вопросу; непрерывное видео ради балла усталости нарушает этот принцип."),
-  t("Safeguard", "A concrete action that reduces a specific risk, e.g. video off by default with no frames stored — not a wish such as 'be careful'.", "Конкретное действие, снижающее определённый риск, например видео выключено по умолчанию и кадры не хранятся, — а не пожелание «быть аккуратными»."),
+  t("Data minimisation", "Collect only the information necessary to answer the research question.", "Собирать только информацию, необходимую для ответа на исследовательский вопрос."),
+  t("Safeguard", "A practical measure that reduces a specified research risk.", "Практическая мера, которая снижает конкретный риск исследования."),
   t("Evidence record", "The document that proves a safeguard was applied: signed consent forms, an approval letter, an access list, a deletion log.", "Документ, доказывающий, что мера применена: подписанные формы согласия, письмо об одобрении, список доступа, журнал удаления."),
-  t("Ethics card", "Data · People · Risk · Safeguard · Evidence — one line each, so that every risk has an action and a record.", "Data · People · Risk · Safeguard · Evidence — по строке на каждое, чтобы у каждого риска были действие и запись."),
   t("Ethics approval", "Review by the ethics committee before data collection with people; a change after approval needs an amendment first.", "Рассмотрение этическим комитетом до сбора данных с участием людей; изменение после одобрения требует поправки заранее."),
   t("Verification ladder", "Read → match the publisher record → resolve the DOI or Crossref entry → check corrections and retractions → open and check that it supports the claim.", "Прочитать → сверить с записью издателя → проверить DOI или Crossref → проверить исправления и отзывы → открыть и убедиться, что источник подтверждает утверждение."),
   t("DOI", "Digital Object Identifier — a persistent identifier that supports traceability; it says nothing about quality, and a missing DOI is not a missing source.", "Digital Object Identifier — постоянный идентификатор для прослеживаемости; о качестве ничего не говорит, а отсутствие DOI не означает отсутствия источника."),
@@ -82,7 +81,7 @@ export const glossary: Term[] = [
   t("Mixed methods", "Collecting and analysing both quantitative and qualitative data in one study and integrating them to answer the RQ.", "Сбор и анализ и количественных, и качественных данных в одном исследовании с их интеграцией для ответа на RQ."),
   t("Operationalisation", "Turning an abstract concept into a measurable indicator: 'performance' → task completion time in minutes.", "Превращение абстрактного понятия в измеримый показатель: «performance» → время выполнения задачи в минутах."),
   t("Independent variable", "The factor the researcher changes, manipulates or groups by — e.g. app vs paper checklist.", "Фактор, который исследователь меняет или по которому делит группы, — например, приложение или бумажный чек-лист."),
-  t("Dependent variable", "The outcome that is measured — e.g. the score on a validated fatigue scale.", "Измеряемый исход — например, балл по валидированной шкале усталости."),
+  t("Dependent variable", "The measured outcome whose variation the study seeks to explain.", "Измеряемый результат, изменения которого исследование пытается объяснить."),
   t("Confounder", "A third factor linked to both the factor and the outcome that can create a false association, such as baseline sleep.", "Третий фактор, связанный и с фактором, и с исходом, который может создать ложную связь, например исходный сон."),
   t("Correlation vs causation", "An association between two variables does not show that one causes the other; causal claims need an appropriate design.", "Связь двух переменных не показывает, что одна вызывает другую; причинные выводы требуют подходящего дизайна."),
   t("Hypothesis", "A testable expectation about a difference or relationship, stated before the data; exploratory studies may not need one.", "Проверяемое ожидание о разнице или связи, сформулированное до данных; поисковым исследованиям она может быть не нужна."),
@@ -93,84 +92,36 @@ export const glossary: Term[] = [
   t("Thematic analysis", "Reading qualitative data repeatedly, coding it and grouping codes into themes that emerge from the data.", "Многократное чтение качественных данных, кодирование и объединение кодов в темы, возникающие из данных."),
   t("Think-aloud", "An observation method in which participants say their reasoning aloud while doing a task.", "Метод наблюдения, при котором участники вслух проговаривают свои рассуждения во время задачи."),
   t("Credibility strategies", "How qualitative rigour is shown: member checking, thick description and an audit trail of analytical decisions.", "Как показывают строгость качественного исследования: проверка участниками, плотное описание и аудиторский след аналитических решений."),
-  t("Sampling frame", "The actual list a sample is drawn from, e.g. a register of licensed truck drivers.", "Реальный список, из которого берут выборку, например реестр водителей с лицензией."),
+  t("Sampling frame", "The list or source from which units are selected for a sample.", "Список или источник, из которого отбирают единицы выборки."),
   t("Random assignment", "Deciding by chance who gets which condition; it is not random sampling, which decides who enters the study.", "Случайное решение, кто получает какое условие; это не случайная выборка, которая решает, кто попадает в исследование."),
   t("Purposive sampling", "Choosing information-rich participants on purpose, often until saturation, when new interviews add no new themes.", "Намеренный выбор участников, богатых информацией, часто до насыщения — пока новые интервью не перестают давать новые темы."),
-  // Формат квиза-кейса
-  t("Evidence table", "The case's list of Studies A–D with design, sample, finding and limitation — the only literature allowed in the answers.", "Список Study A–D в кейсе с дизайном, выборкой, результатом и ограничением — единственная литература, допустимая в ответах."),
-  t("Unsupported claim", "A statement presented as fact without evidence, e.g. 'The app will definitely reduce accidents'.", "Утверждение, поданное как факт без доказательств, например «The app will definitely reduce accidents»."),
+  t("Unsupported claim", "A conclusion that is not supported by the available evidence.", "Вывод, который не подтверждён имеющимися доказательствами."),
   t("Self-reported data", "Data that participants report about themselves; numbers stay quantitative, but recall and social desirability lower reliability.", "Данные, которые участники сообщают о себе; числа остаются количественными, но память и желание выглядеть лучше снижают надёжность."),
   t("Validated scale", "A questionnaire scale tested for reliability and validity, so the same outcome is measured the same way in every group.", "Шкала-опросник, проверенная на надёжность и валидность, чтобы один и тот же исход измерялся одинаково во всех группах."),
   t("Self-selection", "Participants choose their own exposure (e.g. how often to respond to alerts), so groups may differ in ways that explain the result.", "Участники сами выбирают воздействие (например, как часто реагировать на сигналы), поэтому группы могут различаться так, что это объясняет результат."),
   t("Attrition", "Participants dropping out during a study; if it is high or uneven between groups, results can be biased.", "Выбывание участников во время исследования; если оно велико или неравномерно между группами, результаты искажаются."),
 ];
 
-/** Шпаргалка на одну страницу — то, что стоит перечитать за пять минут до квиза. */
+/** Краткое повторение понятий лекций 1–5. */
 export const cheatSheet: Text = {
-  en: `## The quiz: 10 points, only the case
-- Part A: 6 × 0.5 — the issue in a course term + evidence from the case, one or two sentences.
-- Part B: B1 0.5 · B2 1 · B3 1 · B4 0.5 · B5 1.5 · B6 1.5 · B7 1. Time ≈ 4 minutes per point in a 40-minute quiz.
-- Use only the case and Studies A–D, cite them by letter, hedge: may, suggests, remains unclear.
-## Key definitions
-- **Development output** — a built artefact (app, prototype). **Research output** — evidence-based knowledge that answers the RQ. Data are neither.
-- **Unsupported claim** — a result stated without evidence ("will definitely reduce accidents").
-- **Research gap** — something important still unknown in a specific context, justified by the literature; never "no research exists".
-- **FFP** — fabrication (inventing), falsification (distorting), plagiarism (taking). Unopened AI references risk fabrication.
-- **Confidentiality** (the team knows identities, controls access) ≠ **anonymity** (no reasonable link to a person).
-- **DOI** — an identifier, not a quality badge; a missing DOI is not a missing source.
-## Templates
-= Problem: Current situation: … Limitation: However, Study X found … Need: Therefore, evidence is needed on whether …
-= RQ: Among [population], does [factor], compared with [comparison], change [measurable outcome] over [time]?
-= Search: ("term A" OR synonym) AND ("term B" OR synonym) AND ("term C" OR synonym)
-= Synthesis: Findings: A and B both … yet D … Methods: only A … whereas B … Limitations: A and D … Overall: … remains unclear.
-= Gap: We know … However … It remains unclear whether … The proposed study could address this by …
-= Ethics: Risk (whose data, what harm) → Safeguard (an action) → Record (consent forms, approval letter, access list, deletion log)
-## Quantitative vs qualitative
-- **Quantitative:** numbers, measurement, comparison, statistics; how much, how often, is there a difference; often deductive.
-- **Qualitative:** words and meanings, experience, themes; how and why; often inductive; small purposive samples.
-- Self-reported numbers are still quantitative. Randomised supports cause; observational shows association only.
-- The method follows the RQ: question → evidence → data → method.
-## Quiz checklist
-- A: six answers, each with a term and a reason from the case.
-- B1: the app is the development output; findings are the research output.
-- B2: three labelled parts and at least one study letter.
-- B3: one question with population, comparison and a measurable outcome the case collects.
-- B4: quotation marks, brackets, AND between concepts, OR between synonyms, every bracket closed.
-- B5: two different risks, each with a safeguard and a record.
-- B6: by findings, methods, limitations — not four summaries.
-- B7: "remains unclear" plus why the study fits; never "no research exists".
-- One thread: the outcome in the RQ is the outcome in the need, the synthesis and the gap.`,
-  ru: `## Квиз: 10 баллов, только кейс
-- Часть A: 6 × 0.5 — проблема термином курса + довод из кейса, одно-два предложения.
-- Часть B: B1 0.5 · B2 1 · B3 1 · B4 0.5 · B5 1.5 · B6 1.5 · B7 1. Время ≈ 4 минуты на балл при квизе в 40 минут.
-- Только кейс и Study A–D, ссылки по буквам, осторожные формулировки: may, suggests, remains unclear.
-## Ключевые определения
-- **Development output** — созданный артефакт (приложение, прототип). **Research output** — знание на доказательствах, отвечающее на RQ. Данные — ни то ни другое.
-- **Unsupported claim** — результат, заявленный без доказательств («will definitely reduce accidents»).
-- **Research gap** — нечто важное, ещё неизвестное в конкретном контексте и обоснованное литературой; никогда не «исследований нет».
-- **FFP** — fabrication (выдумывание), falsification (искажение), plagiarism (присвоение). Неоткрытые ссылки от ИИ — риск фабрикации.
-- **Confidentiality** (команда знает личности, контролирует доступ) ≠ **anonymity** (связать ответ с человеком нельзя).
-- **DOI** — идентификатор, а не знак качества; нет DOI — ещё не значит, что нет источника.
-## Шаблоны
-= Problem: Current situation: … Limitation: However, Study X found … Need: Therefore, evidence is needed on whether …
-= RQ: Among [population], does [factor], compared with [comparison], change [measurable outcome] over [time]?
-= Search: ("term A" OR synonym) AND ("term B" OR synonym) AND ("term C" OR synonym)
-= Synthesis: Findings: A and B both … yet D … Methods: only A … whereas B … Limitations: A and D … Overall: … remains unclear.
-= Gap: We know … However … It remains unclear whether … The proposed study could address this by …
-= Ethics: Risk (whose data, what harm) → Safeguard (an action) → Record (consent forms, approval letter, access list, deletion log)
-## Количественное и качественное
-- **Количественное:** числа, измерение, сравнение, статистика; сколько, как часто, есть ли разница; чаще дедуктивное.
-- **Качественное:** слова и смыслы, опыт, темы; как и почему; чаще индуктивное; небольшие целевые выборки.
-- Числа из самоотчёта остаются количественными. Рандомизация поддерживает причинность; наблюдение показывает только связь.
-- Метод следует за RQ: вопрос → доказательства → данные → метод.
-## Чек-лист на квиз
-- A: шесть ответов, в каждом — термин и довод из кейса.
-- B1: приложение — development output; результаты — research output.
-- B2: три подписанные части и хотя бы одна буква исследования.
-- B3: один вопрос с популяцией, сравнением и измеримым исходом, который кейс собирает.
-- B4: кавычки, скобки, AND между понятиями, OR между синонимами, все скобки закрыты.
-- B5: два разных риска, у каждого — мера защиты и запись.
-- B6: по findings, methods, limitations — не четыре пересказа.
-- B7: «remains unclear» и почему исследование подходит; никогда «no research exists».
-- Одна нить: исход в RQ — тот же, что в потребности, синтезе и пробеле.`,
+  en: `## Research foundations
+Research is a systematic inquiry that produces justified knowledge. Building an artefact is a development activity; evaluating it can generate research evidence. A useful research question is specific, answerable and feasible.
+## Problems and evidence
+State the problem, identify what is known and explain what remains uncertain. A research gap must follow from reviewed evidence. Keep conclusions proportional to the study design, sample and limitations.
+## Research ethics
+Participation requires informed, voluntary consent. Confidentiality controls access to identifiable data; anonymity means the data cannot reasonably be linked to a participant. Minimise collected data and document how it is protected. Fabrication invents evidence, falsification distorts it, and plagiarism presents others' work as one's own.
+## Literature review
+Search using synonyms joined by OR and separate concepts joined by AND. Assess relevance, methods and source quality. Synthesise agreements, disagreements and limitations across papers instead of listing summaries. A DOI identifies a document; it does not guarantee quality.
+## Choosing methods
+Quantitative research measures variables and analyses numerical patterns. Qualitative research explores meanings and experience through methods such as interviews and observation. Choose the method to answer the question. Distinguish sampling from assigning experimental conditions, and association from causation. Explain what the chosen method cannot establish.`,
+  ru: `## Основы исследования
+Исследование — систематическое изучение, которое даёт обоснованное знание. Создание артефакта относится к разработке; его оценка может дать исследовательские данные. Хороший исследовательский вопрос конкретен, допускает ответ и выполним.
+## Проблема и доказательства
+Опиши проблему, установи, что уже известно, и объясни, что остаётся неясным. Исследовательский пробел должен следовать из изученной литературы. Сила вывода зависит от дизайна исследования, выборки и ограничений.
+## Этика исследования
+Участие требует информированного и добровольного согласия. Конфиденциальность ограничивает доступ к данным с идентификаторами; анонимность означает, что данные нельзя обоснованно связать с участником. Собирай минимум необходимых данных и документируй их защиту. Fabrication — выдумывание доказательств, falsification — их искажение, plagiarism — присвоение чужой работы.
+## Обзор литературы
+Соединяй синонимы через OR, разные понятия — через AND. Проверяй релевантность, методы и качество источника. Сопоставляй согласия, противоречия и ограничения работ вместо отдельных пересказов. DOI идентифицирует документ, но не гарантирует качество.
+## Выбор методов
+Количественное исследование измеряет переменные и анализирует числовые закономерности. Качественное изучает смыслы и опыт, например через интервью и наблюдение. Метод выбирают под вопрос. Различай отбор участников и распределение экспериментальных условий, связь и причинность. Объясняй, какие выводы выбранный метод сделать не позволяет.`,
 };

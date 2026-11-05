@@ -30,7 +30,7 @@ test("Практикум CV: тренажёр проверяет ответ и �
   await openEvent(page);
   const quick = page.getByRole("navigation", { name: "Быстрый доступ" });
   const labels = await quick.getByRole("button").allInnerTexts();
-  check(["Пробные варианты · 8", "Тренажёр расчётов", "Найди баг", "Песочница OpenCV", "✦ ИИ-помощник"].every((l) => labels.includes(l)), "под заголовком ивента — быстрый доступ к вариантам, практикуму и помощнику");
+  check(["Пробные варианты · 4", "Тренажёр расчётов", "Найди баг", "Песочница OpenCV", "✦ ИИ-помощник"].every((l) => labels.includes(l)), "под заголовком ивента — быстрый доступ к вариантам, практикуму и помощнику");
   await page.getByText("Практикум").first().scrollIntoViewIfNeeded();
 
   await quick.getByRole("button", { name: "Тренажёр расчётов" }).tap();
@@ -103,8 +103,8 @@ test("Отчёт по варианту: после трёх проверенны
     return route.fulfill({ json: { summary: "Теряешь баллы на расчётах.", topics: [{ title: "Linear classifier", why: "Забыт bias.", parts: ["cv-l3-p1"], trainers: ["linear"] }], plan: ["Реши 3 задачи s = Wx + b"] } });
   });
   await openEvent(page);
-  await page.getByRole("button", { name: /Variant 1|Вариант 1/ }).first().tap();
-  await page.getByText(/Question 1/).first().waitFor({ timeout: 10_000 });
+  await page.getByRole("button", { name: /Lecture Practice 1|Практика по лекциям 1/ }).first().tap();
+  await page.getByRole("textbox").first().waitFor({ timeout: 10_000 });
   const boxes = page.getByRole("textbox");
   for (let i = 0; i < 3; i++) await boxes.nth(i).fill(`Answer number ${i + 1} with some reasoning.`);
   await page.getByRole("checkbox").first().check();

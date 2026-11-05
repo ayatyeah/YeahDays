@@ -7,7 +7,7 @@ import { BUGS, type BugSnippet } from "@/lib/events/computerVision/bugs";
 import { openTutor, useTutorDetail } from "@/lib/tutorFocus";
 
 /**
- * Игра «Найди баг»: сниппеты OpenCV с одной ошибкой, как в Q1c мидтерма.
+ * Игра «Найди баг»: сниппеты OpenCV с одной ошибкой по лекции об изображениях.
  * Нажми строку с багом, выбери исправление, прочитай почему. Раунд — 10
  * сниппетов и 2 минуты; серия правильных ответов даёт бонус. Рекорд и
  * слабые темы — на устройстве, в готовность ивента не идут.
@@ -158,7 +158,7 @@ export default function BugHunt({ userId, lang, onExit }: { userId: string; lang
 
       {phase === "intro" && (
         <section className="space-y-3 rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
-          <p className="text-sm">Баги из настоящих вариантов: RGB вместо BGR, чётное ядро, нет sigmaX, img[x, y] вместо img[y, x], сохранение картинки 0…1 через imwrite и другие. Одни падают с ошибкой, другие тихо портят результат — это тоже надо уметь сказать. Помни: строка, на которой код падает, не всегда та, где ошибка.</p>
+          <p className="text-sm">Упражнения по Lecture 1: порядок BGR, индексация [y, x], форма массива, количество пикселей и проверка результата imread. Найди ошибочную строку и выбери исправление.</p>
           {best > 0 && <p className="text-sm text-[var(--color-muted)]">Твой рекорд: <b className="text-[var(--color-fg)]">{best}</b></p>}
           <Button variant="primary" className="w-full" onClick={start}>Начать раунд</Button>
         </section>

@@ -1,36 +1,32 @@
 import type { MockExam } from "../types";
-import { mocksA } from "./mocksA";
-import { mocksB } from "./mocksB";
-import { mocksC } from "./mocksC";
-import { mocksD } from "./mocksD";
+import { lecture1 } from "./lecture1";
+import { lecture2 } from "./lecture2";
+import { lecture3 } from "./lecture3";
+import { lecture4 } from "./lecture4";
+import { lecture5 } from "./lecture5";
 
-/**
- * Пробные варианты мидтерма с открытыми вопросами (проверка ИИ — lib/examGrade.ts).
- * v1 — образец преподавателя дословно; v2 — настоящий вариант другой группы
- * (ткани); v7 — настоящий «Variant 5» (птицы на фотоловушках), недостающие
- * задания дописаны; v3–v6 и v8 — новые, по лекциям и типам вопросов настоящих
- * вариантов.
- *
- * Как на экзамене: пять заданий — три открытых вопроса (OpenCV, пайплайн,
- * своя система) и две задачи с расчётом (классификация по оценкам и
- * линейный классификатор). Название — «Midterm Variant N», сценарий уходит
- * в подпись.
- */
-const scene = (title: string) => {
-  const rest = title.replace(/^[^—]*—\s*/, "");
-  return rest.charAt(0).toUpperCase() + rest.slice(1);
-};
-
-const asMidterm = (exam: MockExam): MockExam => {
-  const n = exam.id.slice(1);
-  return {
-    ...exam,
-    title: { en: `Midterm Variant ${n}`, ru: `Midterm Variant ${n}` },
-    source: { en: `${scene(exam.title.en)} · ${exam.source.en}`, ru: `${scene(exam.title.ru)} · ${exam.source.ru}` },
-    questions: exam.questions.map((q, i) => ({ ...q, kind: i === 1 || i === 2 ? "task" : "question" })),
-  };
-};
-
-export const mocks: MockExam[] = [...mocksA, ...mocksB, ...mocksC, ...mocksD]
-  .sort((a, b) => Number(a.id.slice(1)) - Number(b.id.slice(1)))
-  .map(asMidterm);
+/** Every task comes directly from a lecture question and its explanation. */
+export const mocks: MockExam[] = Array.from({ length: 4 }, (_, version) => ({
+  id: `cv-lecture-practice-${version + 1}`,
+  title: { en: `Lecture Practice ${version + 1}`, ru: `Практика по лекциям ${version + 1}` },
+  minutes: 90,
+  source: { en: "Lectures 1–5: choose an answer and explain your reasoning", ru: "Лекции 1–5: выбери ответ и объясни ход рассуждений" },
+  questions: [lecture1, lecture2, lecture3, lecture4, lecture5].map((lecture, i) => {
+    const pool = lecture.parts.flatMap(part => part.questions.map(question => ({ part, question })));
+    return {
+      id: `cv-lecture-practice-${version + 1}-l${i + 1}`,
+      title: lecture.title.en,
+      kind: "question" as const,
+      points: 20,
+      context: `Source: ${lecture.title.en}. For each task, choose the correct answer and explain it using the lecture.`,
+      tasks: pool.slice(version * 4, version * 4 + 4).map(({ part, question }, j) => ({
+        id: `cv-lecture-practice-${version + 1}-${question.id}`,
+        label: `${j + 1}. ${part.title.en}`,
+        points: 5,
+        prompt: `${question.q}\n${question.options.map((option, k) => `${String.fromCharCode(65 + k)}. ${option}`).join("\n")}\nExplain your choice.`,
+        rubric: ["2 pts — selects the correct answer", "3 pts — explains the relevant lecture concept accurately"],
+        answer: { en: `${question.options[question.answer]}. ${question.why.en}`, ru: `${question.options[question.answer]}. ${question.why.ru}` },
+      })),
+    };
+  }),
+}));

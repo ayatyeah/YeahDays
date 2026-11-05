@@ -210,7 +210,7 @@ export interface MockExam {
   minutes: number;
   /** Сколько баллов во всём варианте; по умолчанию 100 (у квизов бывает 10). */
   total?: number;
-  /** Откуда вариант: «Sample from the instructor», «Based on a real variant», «New». */
+  /** Откуда вариант: например, лекции и темы, на которых основаны задания. */
   source: Text;
   questions: ExamQuestion[];
 }

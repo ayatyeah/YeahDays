@@ -63,7 +63,7 @@ export default function PMQuiz2({ userId, onExit }: { userId: string; onExit: ()
     <header className="space-y-3">
       <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">Project Management · Practice / Simulated</p>
       <h1 className="break-words text-2xl font-black leading-tight sm:text-3xl">{PM_QUIZ2_TITLE}</h1>
-      <p className={`text-sm text-[var(--color-muted)] ${attempt ? "hidden" : ""}`}>Отдельный тренировочный вариант по лекциям 4–8. Это реконструкция по материалам курса, а не реальные вопросы Quiz 2. 60 минут и формат A–E — тренировочные допущения по Quiz 1.</p>
+      <p className={`text-sm text-[var(--color-muted)] ${attempt ? "hidden" : ""}`}>Отдельный тренировочный вариант по лекциям 4–8. Авторские задания со ссылками на страницы лекций. 60 минут и формат A–E выбраны для самостоятельной тренировки.</p>
     </header>
     {saveError && <p role="alert" className="rounded-2xl border border-amber-400 p-3 text-sm">Не удалось сохранить попытку на устройстве. Не закрывай эту вкладку до завершения.</p>}
     {!ready ? <p role="status">Загружаем попытку…</p> : !attempt ? <section className={panel}>

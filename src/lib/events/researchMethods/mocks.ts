@@ -1,13 +1,6 @@
 import type { ExamTask, MockExam } from "../types";
 
-/**
- * Пробные варианты квиза по Research Methods and Tools — «Practice Quiz 3
- * (Review of Lectures 1–4)», 10 баллов, ~40 минут:
- * Part A — 6 тестовых подпунктов по 0.5 (кейс и evidence table в context),
- * Part B — 7 открытых подпунктов на 7 баллов по тому же кейсу.
- * rmv1 — настоящий квиз преподавателя (SafeDrive), формулировки Part A как в
- * оригинале; критерии и эталоны наши. rmv2–rmv8 — новые кейсы того же устройства.
- */
+/** Авторские кейсы по лекциям 1–4: исследовательский вопрос, обзор литературы, этика и методы исследования. */
 
 /** Тестовый подпункт части A: 0.5 балла, четыре варианта, проверяется на устройстве. */
 function mc(id: string, label: string, prompt: string, options: string[], correct: number, en: string, ru: string): ExamTask {
@@ -22,8 +15,7 @@ function open(id: string, label: string, points: number, prompt: string, rubric:
 const PART_A = "Part A — Multiple choice";
 const PART_B = "Part B — Short answers";
 const MINUTES = 40;
-const REAL = { en: "Real practice quiz from the instructor", ru: "Настоящий пробный квиз преподавателя" };
-const NEW = { en: "New — in the format of the real quiz", ru: "Новый — в формате настоящего квиза" };
+const NEW = { en: "Study case based on lectures 1–4", ru: "Учебный кейс по лекциям 1–4" };
 
 const title = (name: string, ru: string) => ({
   en: `Practice Quiz 3 — ${name} Case (Review of Lectures 1–4)`,
@@ -44,7 +36,7 @@ const caseContext = (story: string, rows: string[]) =>
 
 const partBContext = (name: string) => `Use the ${name} case and the evidence table from Part A.`;
 
-/** Формулировки части B — одинаковые во всех вариантах, как в настоящем квизе. */
+/** Формулировки части B — одинаковые во всех вариантах, для тренировки понятий лекций. */
 const B = {
   b1: (n: string) => `Identify one **development output** and one **research output** of the ${n} project.`,
   b2: (n: string) =>
@@ -67,210 +59,6 @@ const SEARCH_SYNTAX =
 /** Общая строка критериев синтеза (b6): сравнение по темам, а не по статьям. */
 const SYNTHESIS_THEMES =
   "0.5 pts — compares across studies by theme (findings, methods or limitations): sentences link at least two studies ('A and B both…, but…') and all four studies are used. A study-by-study list ('Study A found… Study B found…') earns 0 for this line.";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// rmv1 — SafeDrive (настоящий квиз)
-// ─────────────────────────────────────────────────────────────────────────────
-
-const v1: MockExam = {
-  id: "rmv1",
-  title: title("SafeDrive", "приложение от сонливости для дальнобойщиков"),
-  minutes: MINUTES,
-  total: 10,
-  source: REAL,
-  questions: [
-    {
-      id: "rmv1-a",
-      title: PART_A,
-      points: 3,
-      context: caseContext(
-        `A university clinic is considering **SafeDrive**, a mobile app for long-haul truck drivers. SafeDrive uses the phone camera to detect drowsiness and plays an audio alert. It logs how many times the alert was triggered and the driver's location. Drivers also self-report their sleep hours and fatigue level.
-The team plans a six-week study with 60 long-haul truck drivers: one group receives SafeDrive, the other uses a standard paper fatigue checklist. Planned data: alert logs, self-reported sleep hours, a validated fatigue scale, driving experience, and a smartphone-comfort score.
-The team calls the project "AI for Road Safety" and asks: "Does technology improve road safety?" They write: "The app will definitely reduce accidents."
-The literature folder contains records suggested by a generative AI tool; some have no DOI and have never been opened. The app continuously records camera video and location unless the driver changes the default setting.`,
-        [
-          `| Study A | Randomised study; 150 taxi drivers aged 35 to 55; 8 weeks | Drowsiness alerts reduced self-reported near-miss events. The difference in the actual accident rate was small and not statistically significant | Near-miss events were self-reported. The age group differs from long-haul truck drivers |`,
-          `| Study B | Observational study; 900 users of a commercial drowsiness-alert app | Drivers who responded to alerts frequently had fewer logged fatigue events than infrequent responders | Drivers chose how often to respond to alerts. Baseline sleep habits were not controlled |`,
-          `| Study C | Qualitative interviews with 18 long-haul truck drivers | Drivers valued audio alerts during night shifts, but found constant video monitoring intrusive; some covered the camera | Small qualitative sample. Does not estimate the intervention effect quantitatively |`,
-          `| Study D | Systematic review of 15 digital driver-monitoring studies | Results were mixed. Studies used inconsistent definitions of a "fatigue event", different outcome measures, and short follow-up periods | Few studies focused specifically on long-haul truck drivers. Attrition was common |`,
-        ],
-      ),
-      tasks: [
-        mc("rmv1-a1", "1",
-          `What is the main problem with the team's research question "Does technology improve road safety?"`,
-          [
-            "It is too narrow and specific",
-            "It is too broad, with no measurable outcome",
-            "It fails to mention artificial intelligence",
-            "It has no connection to the topic",
-          ], 1,
-          `**Correct: "too broad, with no measurable outcome".** "Technology" could mean any device or system, "road safety" is neither defined nor measured, and no population or comparison is named — no single study could collect evidence to answer it. A researchable version names the population (long-haul truck drivers), the comparison (SafeDrive vs the paper checklist) and an outcome the team actually measures (validated fatigue-scale scores over six weeks).
-- "Too narrow and specific" — the opposite: the question covers every technology and every road user.
-- "Fails to mention artificial intelligence" — adding a buzzword would not make it researchable; the problem is scope and measurement, not the label.
-- "No connection to the topic" — it is connected to road safety; it is simply not focused.`,
-          `**Верно: «too broad, with no measurable outcome».** «Технология» может означать любое устройство или систему, «безопасность на дорогах» не определена и не измеряется, не названы ни популяция, ни сравнение — собрать доказательства для ответа невозможно. Исследуемая версия называет популяцию (дальнобойщики), сравнение (SafeDrive против бумажного чек-листа) и результат, который команда реально измеряет (баллы по валидированной шкале усталости за шесть недель).
-- «Too narrow and specific» — наоборот: вопрос охватывает любую технологию и всех участников движения.
-- «Fails to mention artificial intelligence» — модное слово не делает вопрос исследуемым; проблема в охвате и измеримости, а не в названии.
-- «No connection to the topic» — связь с темой есть, просто вопрос не сфокусирован.`),
-        mc("rmv1-a2", "2",
-          `The team writes: "The app will definitely reduce accidents." How is this statement best described?`,
-          [
-            "A testable, falsifiable hypothesis",
-            "A well-formed research problem",
-            "An unsupported claim, not a problem",
-            "A clearly stated research objective",
-          ], 2,
-          `**Correct: "an unsupported claim, not a problem".** It announces a result before any data exist, and "definitely" leaves no room for evidence. The table even points the other way: in Study A the accident difference was small and not significant, and Study D found mixed results. Accidents are not in the planned data at all.
-- "A testable, falsifiable hypothesis" — a hypothesis is a testable prediction with a comparison and a measure, e.g. "Drivers using SafeDrive will have lower fatigue-scale scores after six weeks than drivers using the paper checklist."
-- "A well-formed research problem" — a problem describes a situation and what is not yet known, not a promised result.
-- "A clearly stated research objective" — an objective says what the study will do ("to compare…"), not what the app will achieve.`,
-          `**Верно: «an unsupported claim, not a problem».** Результат объявлен до появления данных, а «definitely» вообще не оставляет места доказательствам. Таблица говорит скорее обратное: в Study A разница по авариям мала и незначима, в Study D результаты смешанные. Аварии к тому же не входят в планируемые данные.
-- «A testable, falsifiable hypothesis» — гипотеза — это проверяемое предсказание со сравнением и измерением, например: через шесть недель баллы усталости у водителей с SafeDrive ниже, чем у водителей с бумажным чек-листом.
-- «A well-formed research problem» — проблема описывает ситуацию и то, что пока неизвестно, а не обещанный результат.
-- «A clearly stated research objective» — цель говорит, что исследование сделает («сравнить…»), а не чего добьётся приложение.`),
-        mc("rmv1-a3", "3",
-          `Which of the following is a development output rather than a research output?`,
-          [
-            "Comparing alert rates between the SafeDrive and control groups",
-            "The SafeDrive prototype itself, with its detection feature",
-            "The analysis of drivers' self-reported fatigue levels",
-            "A systematic review of fifteen driver-monitoring studies",
-          ], 1,
-          `**Correct: "the SafeDrive prototype itself".** A development output is something the team builds — an app, a feature, code. A research output is new knowledge produced from evidence: a comparison, an analysis, a synthesis.
-- "Comparing alert rates between the groups" — an analysis of data, so a research output.
-- "The analysis of self-reported fatigue levels" — produces findings, so a research output.
-- "A systematic review of fifteen studies" — a synthesis of existing evidence, also a research output.`,
-          `**Верно: «the SafeDrive prototype itself».** Результат разработки (development output) — то, что команда строит: приложение, функция, код. Исследовательский результат (research output) — новое знание из доказательств: сравнение, анализ, синтез.
-- «Comparing alert rates between the groups» — анализ данных, то есть исследовательский результат.
-- «The analysis of self-reported fatigue levels» — даёт выводы, значит, это исследование.
-- «A systematic review of fifteen studies» — синтез существующих данных, тоже исследовательский результат.`),
-        mc("rmv1-a4", "4",
-          `Which study provides qualitative data?`,
-          ["Study A", "Study B", "Study C", "Study D"], 2,
-          `**Correct: Study C.** Interviews with 18 drivers produce words, experiences and opinions (audio alerts valued, video intrusive) — qualitative data. Its limitation confirms it: it does not estimate the effect quantitatively.
-- Study A — a randomised study counting near-misses and accidents: quantitative.
-- Study B — an observational study of logged fatigue events in 900 users: quantitative.
-- Study D — a systematic review: a secondary synthesis of 15 studies with measured outcomes, not new interview data.`,
-          `**Верно: Study C.** Интервью с 18 водителями дают слова, опыт и мнения (звуковой сигнал ценят, видео раздражает) — это качественные (qualitative) данные. Это подтверждает и ограничение: эффект количественно не оценивается.
-- Study A — рандомизированное исследование, считает near-miss и аварии: количественные данные.
-- Study B — наблюдательное исследование по журналам 900 пользователей: количественные данные.
-- Study D — систематический обзор: вторичный синтез 15 исследований с измеренными результатами, а не новые интервью.`),
-        mc("rmv1-a5", "5",
-          `The literature folder contains AI-suggested records; some have no DOI and have never been opened. What is the main risk?`,
-          [
-            "No risk, as long as the topics look relevant",
-            "Risk of citing fabricated, unverified sources",
-            "Risk that the articles are too recent to use",
-            "Risk that DOIs are unnecessary for citation",
-          ], 1,
-          `**Correct: "risk of citing fabricated, unverified sources".** Generative AI can invent plausible references — real-looking authors, titles and DOIs. A record that has never been opened has not passed verification (read → match the publisher record → resolve the DOI in Crossref → check for retractions → open the method and result), so citing it may mean citing something that does not exist or does not support the claim.
-- "No risk if the topics look relevant" — a relevant-looking title proves neither that the work exists nor that it fits the claim.
-- "Too recent" — the date is not the issue; recent work is often the most useful.
-- "DOIs are unnecessary" — some legitimate works lack a DOI, but a DOI supports traceability; the risk is the missing check, not the missing DOI.`,
-          `**Верно: «risk of citing fabricated, unverified sources».** Генеративный ИИ умеет выдумывать правдоподобные ссылки — с похожими на настоящие авторами, названиями и DOI. Запись, которую ни разу не открывали, не прошла проверку (прочитать → сверить со страницей издателя → найти DOI в Crossref → проверить отзыв статьи → открыть метод и результат), поэтому можно сослаться на то, чего нет или что не подтверждает утверждение.
-- «No risk if the topics look relevant» — подходящее название не доказывает ни существования работы, ни того, что она подтверждает мысль.
-- «Too recent» — дело не в дате; свежие работы часто самые полезные.
-- «DOIs are unnecessary» — у части настоящих работ DOI нет, но DOI помогает отследить источник; риск в отсутствии проверки, а не в отсутствии DOI.`),
-        mc("rmv1-a6", "6",
-          `SafeDrive continuously records camera video and location unless the driver changes the default setting. Which type of risk is this?`,
-          [
-            "Feasibility and resource risk",
-            "Ethical and data-protection risk",
-            "Topic-framing and scope risk",
-            "Grammar and style risk",
-          ], 1,
-          `**Correct: "ethical and data-protection risk".** Continuous face video and precise location are identifiable personal data — far more than the research question needs — and "on by default" means drivers have not actively chosen it. Study C shows drivers find constant video intrusive. Safeguards: off by default (opt-in), on-device processing, storing only alert counts and times.
-- "Feasibility and resource risk" — concerns time, data access and infrastructure; storage may cost more, but the core problem is possible harm to people.
-- "Topic-framing and scope risk" — concerns the breadth of the question, not how data are collected.
-- "Grammar and style risk" — nothing in the default setting is a writing issue.`,
-          `**Верно: «ethical and data-protection risk».** Непрерывное видео лица и точная геолокация — идентифицирующие персональные данные, их намного больше, чем нужно вопросу, а «включено по умолчанию» значит, что водители этого не выбирали. По Study C постоянное видео водителей раздражает. Меры: по умолчанию выключено (opt-in), обработка на телефоне, хранить только число и время сигналов.
-- «Feasibility and resource risk» — это время, доступ к данным и инфраструктура; хранение может стоить дороже, но суть в возможном вреде людям.
-- «Topic-framing and scope risk» — это ширина вопроса, а не способ сбора данных.
-- «Grammar and style risk» — настройка по умолчанию никак не связана с текстом.`),
-      ],
-    },
-    {
-      id: "rmv1-b",
-      title: PART_B,
-      kind: "question",
-      points: 7,
-      context: partBContext("SafeDrive"),
-      tasks: [
-        open("rmv1-b1", "1", 0.5, B.b1("SafeDrive"),
-          [
-            "0.25 pts — a development output: something built — the SafeDrive app or prototype, its camera-based drowsiness detection, the audio alert or the alert-logging feature. A finding or an analysis given here earns 0.",
-            "0.25 pts — a research output: new knowledge from the study — e.g. the comparison of validated fatigue-scale scores (or self-reported sleep hours) between the SafeDrive and paper-checklist groups after six weeks. Naming the app, a feature, the raw alert logs or 'collecting data' earns 0.",
-          ],
-          `- **Development output:** the SafeDrive prototype — the app with camera-based drowsiness detection, the audio alert and the alert log.
-- **Research output:** the comparison of validated fatigue-scale scores after six weeks between drivers who used SafeDrive and drivers who used the paper checklist, reported with its limitations.`,
-          `Результат разработки (development output) — то, что команда **строит**: приложение SafeDrive с распознаванием сонливости по камере, звуковым сигналом и журналом срабатываний. Исследовательский результат (research output) — **новое знание** из данных: например, сравнение баллов по валидированной шкале усталости через шесть недель в группе SafeDrive и в группе с бумажным чек-листом.
-Где теряют баллы: журнал срабатываний или «сбор данных» назван исследовательским результатом — это функция и сырые данные, а не вывод; «приложение снизит аварии» — утверждение, а не результат; систематический обзор (Study D) — чужая работа, а не результат этого проекта.`),
-        open("rmv1-b2", "2", 1, B.b2("SafeDrive"),
-          [
-            "0.25 pts — current situation: drowsiness is a safety concern for long-haul truck drivers, and the clinic is considering a phone-based alert app (SafeDrive). Stated neutrally — no 'definitely', no invented accident statistics.",
-            "0.5 pts — a limitation supported by the evidence table and attributed to a study: e.g. Study A — fewer near-misses only by self-report, no significant accident difference, taxi drivers aged 35–55; Study D — mixed results, inconsistent definitions of a 'fatigue event', few long-haul studies; Study B — observational, responders self-selected. 0.25 if the limitation is plausible but not tied to any study; 0 for an opinion or a claim that the app works.",
-            "0.25 pts — the need for this study, following from that limitation: a controlled comparison of SafeDrive vs the paper checklist among long-haul truck drivers with a validated fatigue measure. A need unrelated to the stated limitation ('we need a better app') earns 0.",
-          ],
-          `Drowsiness is a recognised safety risk for long-haul truck drivers, and a university clinic is considering a phone-based drowsiness-alert app, SafeDrive, to support them. However, the evidence is limited: the only randomised study (Study A) involved taxi drivers aged 35–55 and found fewer self-reported near-misses but no significant difference in accidents, while a systematic review (Study D) reports mixed results, inconsistent definitions of a "fatigue event" and few studies of long-haul drivers. A controlled study is therefore needed to compare SafeDrive with the standard paper fatigue checklist among long-haul truck drivers, using a validated fatigue scale rather than self-reported events.`,
-          `Три части: (1) **текущая ситуация** — нейтрально, без «definitely»: клиника рассматривает SafeDrive для дальнобойщиков, сонливость за рулём — риск; (2) **ограничение из таблицы со ссылкой на исследование** — Study A: меньше near-miss только по самоотчёту, по авариям разница незначима, и это таксисты 35–55 лет; Study D: результаты смешанные, «fatigue event» определяют по-разному, дальнобойщиков мало; (3) **потребность** — ровно то, что закрывает это ограничение: контролируемое сравнение SafeDrive и бумажного чек-листа у дальнобойщиков по валидированной шкале.
-Где теряют баллы: ограничение без ссылки на Study A–D (0.25 вместо 0.5); «приложения точно снижают аварии» — утверждение, а не ограничение; потребность не вытекает из ограничения («нужно удобное приложение»); выдуманная статистика аварий — в кейсе её нет.`),
-        open("rmv1-b3", "3", 1, B.b3("SafeDrive"),
-          [
-            "0.25 pts — one clear, focused, neutral question: not 'Does technology improve road safety?' and not a question that assumes the result ('How much will SafeDrive reduce accidents?'); not two or three questions in one.",
-            "0.25 pts — names the population: long-haul truck drivers (not 'drivers' or 'people' in general).",
-            "0.25 pts — names the factor or comparison: SafeDrive vs the standard paper fatigue checklist.",
-            "0.25 pts — names a measurable outcome that the planned data capture within six weeks: validated fatigue-scale scores (or self-reported sleep hours). 'Accidents' or 'road safety' earns 0 for this line: they are not in the planned data and are too rare to compare in six weeks with 60 drivers.",
-          ],
-          `Among long-haul truck drivers, how do fatigue levels measured with a validated fatigue scale differ after six weeks between drivers who use the SafeDrive drowsiness-alert app and drivers who use the standard paper fatigue checklist?
-Population — long-haul truck drivers; comparison — SafeDrive vs the paper checklist; outcome — the validated fatigue-scale score. It is feasible because the 60 drivers, both conditions and the scale are already in the plan.`,
-          `Вопрос один и нейтральный, в нём три элемента: **популяция** — дальнобойщики (не «водители» вообще); **фактор/сравнение** — SafeDrive против стандартного бумажного чек-листа; **результат** — балл по валидированной шкале усталости через шесть недель. Он выполним: все нужные данные уже есть в плане.
-Где теряют баллы: результат «аварии» или «безопасность на дорогах» — их нет в плане, а за шесть недель у 60 водителей аварий слишком мало для сравнения; формулировка «How much will SafeDrive reduce accidents?» заранее предполагает ответ; нет группы сравнения; несколько вопросов вместо одного.`),
-        open("rmv1-b4", "4", 0.5, B.b4("SafeDrive"),
-          [
-            "0.25 pts — three or four concept groups joined with AND that match the study — the population (truck / long-haul drivers), the problem (drowsiness / fatigue) and the intervention (detection or alert system, app) — each group with at least two synonyms joined with OR inside parentheses.",
-            SEARCH_SYNTAX,
-          ],
-          `= ("truck driver" OR "long-haul driver" OR "commercial driver") AND (drowsiness OR fatigue OR sleepiness) AND ("drowsiness detection" OR "alert system" OR "driver monitoring")
-AND links the three concepts (who, problem, intervention) and narrows the search; OR inside each pair of brackets adds synonyms and broadens it; quotation marks keep multi-word phrases together.`,
-          `= ("truck driver" OR "long-haul driver" OR "commercial driver") AND (drowsiness OR fatigue OR sleepiness) AND ("drowsiness detection" OR "alert system" OR "driver monitoring")
-Сбалансированная строка: каждое понятие (кто, проблема, вмешательство) — отдельная группа в скобках с синонимами через OR (расширяет), группы соединены AND (сужает), фразы из нескольких слов — в кавычках.
-Где теряют баллы: вставлен весь исследовательский вопрос; только AND (слишком узко) или только OR (тысячи лишних результатов); нет скобок, и AND/OR смешаны; незакрытые кавычки; одно понятие («driver fatigue»).`),
-        open("rmv1-b5", "5", 1.5, B.b5("SafeDrive"),
-          [
-            "0.25 pts — risk 1 named from the case: continuous camera video and location recorded by default — identifiable data beyond what the question needs, and drivers have not actively chosen it (Study C: drivers found constant video intrusive).",
-            "0.25 pts — a specific safeguard for risk 1: recording off by default (opt-in); the camera image processed on the phone with only alert times and counts stored; no raw video uploaded; no exact location kept. 'Be careful with data' or 'follow the law' earns 0.",
-            "0.25 pts — evidence for risk 1: e.g. a screenshot of the default settings, the data-management plan listing the only fields stored, or a storage check showing no video files on the server.",
-            "0.25 pts — risk 2, different from risk 1: e.g. voluntariness and informed consent (drivers may feel pressure if employers are involved; consent must explain alerts, logs and location), or confidentiality of sleep and fatigue data that could harm drivers if employers saw it, or insecure storage.",
-            "0.25 pts — a specific safeguard for risk 2: voluntary participation with a clear way to withdraw and no employer access to individual results; pseudonymous participant codes with the name–code key kept separately in encrypted, institution-approved storage with named access.",
-            "0.25 pts — evidence for risk 2: signed and dated consent forms (with the form version), the ethics-committee approval reference, or an access list / access log for the dataset. A safeguard without any record earns 0 for this line.",
-          ],
-          `- **Risk 1 — continuous video and location by default.** The app collects identifiable face video and precise location that the research question does not need, and drivers have not actively agreed to it. **Safeguard:** recording off by default; the camera image is processed on the phone and only alert times and counts are stored — no raw video, no exact location. **Evidence:** a screenshot of the default settings and the data-management plan listing the stored fields.
-- **Risk 2 — consent and confidentiality of fatigue data.** Drivers may feel pressure to take part if their employer is involved, and sleep or fatigue scores could harm them if employers saw them. **Safeguard:** voluntary participation with a clear way to withdraw, pseudonymous codes, the name–code key kept separately in encrypted university storage, and no individual data shared with employers. **Evidence:** signed and dated consent forms, the ethics-approval number and the dataset's access log.`,
-          `Каждый риск — три элемента: **риск из кейса**, **конкретная мера** и **запись, доказывающая, что мера применена** (строка EVIDENCE этической карточки).
-- Риск 1: непрерывная запись видео лица и геолокации по умолчанию — собирается больше, чем нужно вопросу, данные идентифицируют человека, а «включено по умолчанию» — не осознанный выбор (в Study C водители заклеивали камеру). Мера: по умолчанию выключено (opt-in), кадры обрабатываются на телефоне, хранятся только время и число сигналов. Доказательство: скриншот настроек по умолчанию, план управления данными со списком хранимых полей.
-- Риск 2: добровольность и конфиденциальность — если участвует работодатель, водители могут чувствовать давление, а данные о сне и усталости могут им навредить. Мера: добровольное участие с понятным выходом, коды вместо имён, ключ «имя—код» отдельно в зашифрованном хранилище университета, работодатель не видит индивидуальных данных. Доказательство: подписанные формы согласия, номер одобрения этического комитета, журнал доступа.
-Где теряют баллы: «будем осторожны», «соблюдаем закон» — не конкретная мера; мера без записи-доказательства; один и тот же риск дважды; обещание «анонимности» при наличии ключа «имя—код» — это конфиденциальность, а не анонимность.`),
-        open("rmv1-b6", "6", 1.5, B.b6(),
-          [
-            SYNTHESIS_THEMES,
-            "0.5 pts — notes the methodological contrast and what it means: only A is randomised (but taxi drivers and self-reported near-misses); B is observational — responders self-selected and baseline sleep was not controlled, so no causal claim; C is qualitative — explains acceptance (audio valued, video intrusive) but gives no effect size; D is a secondary review showing inconsistent definitions, different outcomes and short follow-up.",
-            "0.5 pts — draws an overall conclusion with limitations: the evidence that alerts reduce fatigue-related events is promising but weak or indirect — no significant accident effect, self-reported or self-selected outcomes, few long-haul truck drivers — and acceptance depends on privacy (video).",
-          ],
-          `Across the evidence, drowsiness alerts are associated with fewer fatigue-related events, but the strength of that evidence is limited. Study A, the only randomised study, and Study B both report positive effects, yet A's benefit appears only in self-reported near-misses (the accident difference was not significant), and B's comparison of frequent and infrequent responders is observational, so drivers who respond often may simply sleep better. Study D confirms this mixed picture across 15 studies and partly explains it: definitions of a "fatigue event" and outcome measures differ, and follow-up is short. Study C adds what the numbers cannot show: long-haul drivers value audio alerts but find constant video intrusive, and some covered the camera, which may limit real use. Overall, the evidence is promising but indirect for long-haul truck drivers, who are under-represented in A, B and D.`,
-          `Нужен синтез, а не пересказ: каждое предложение связывает минимум два исследования. Схема образца: (1) что совпадает — A и B говорят о меньшем числе событий усталости; (2) почему доверие ограничено — в A эффект только по самоотчёту, по авариям незначим; B наблюдательное, водители сами выбирали, как реагировать (самоотбор), сон не контролировался; (3) что объясняет разброс — D: разные определения «fatigue event», разные показатели, короткое наблюдение; (4) что добавляет качественное C — звуковой сигнал ценят, видео раздражает, камеру заклеивают; (5) общий вывод с ограничениями.
-Где теряют баллы: «Study A found… Study B found…» по очереди (0 за первую строку критериев); не сказано, что B не доказывает причинность; C используется как доказательство эффекта (эффект оно не измеряет); нет итогового вывода или вывод «приложения точно работают».`),
-        open("rmv1-b7", "7", 1, B.b7("SafeDrive"),
-          [
-            "0.5 pts — a gap that follows from the table and is tied to studies: e.g. limited controlled evidence for long-haul truck drivers (A used taxi drivers aged 35–55; D found few long-haul studies), or inconsistent and self-reported fatigue outcomes (A self-reported near-misses; D inconsistent definitions). Phrased as limited evidence; 'no research exists' or a gap not linked to the table earns 0 for this line.",
-            "0.5 pts — explains how this study addresses it: a controlled comparison of SafeDrive vs the paper checklist in 60 long-haul truck drivers, with the same validated fatigue scale in both groups instead of self-reported events. Only 'the study will fill the gap', or promising to measure accidents or long-term effects in six weeks, earns 0.",
-          ],
-          `Existing evidence on drowsiness alerts comes mainly from other driver groups and uses inconsistent outcomes: the only randomised study (A) involved taxi drivers aged 35–55 and relied on self-reported near-misses, and the review (D) found few studies of long-haul truck drivers and inconsistent definitions of a "fatigue event". There is therefore limited controlled evidence on whether a phone-based alert reduces fatigue among long-haul truck drivers when fatigue is measured consistently. The proposed study addresses this by comparing two groups of long-haul truck drivers (ideally assigned at random) — SafeDrive vs the paper checklist — with the same validated fatigue scale in both groups over six weeks.`,
-          `Пробел должен следовать из таблицы: единственное рандомизированное исследование (A) — на таксистах 35–55 лет и с самоотчётом, в обзоре (D) мало работ о дальнобойщиках, а «fatigue event» определяют по-разному. Значит, контролируемых данных **именно о дальнобойщиках** с единым измерением усталости **мало** — это пробел популяции и измерения. Исследование закрывает его: две группы дальнобойщиков (лучше со случайным распределением), SafeDrive против чек-листа, одна валидированная шкала в обеих группах.
-Где теряют баллы: «исследований по этой теме нет» — неверно, в таблице их четыре; пробел не опирается на конкретные исследования; «исследование заполнит пробел» без объяснения, как; обещание измерить аварии или долгосрочный эффект — шести недель для этого мало.`),
-      ],
-    },
-  ],
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // rmv2 — MedTime: напоминания о лекарствах для пожилых
@@ -1728,4 +1516,4 @@ Unlike the long sentence typed into Google, this string splits the problem into 
   ],
 };
 
-export const rmMocks: MockExam[] = [v1, v2, v3, v4, v5, v6, v7, v8];
+export const rmMocks: MockExam[] = [v2, v3, v4, v5, v6, v7, v8];

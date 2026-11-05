@@ -2,9 +2,10 @@ import { expect, it } from "vitest";
 import { BUGS } from "./bugs";
 
 it("банк «Найди баг»: строка бага в коде, три разных исправления, объяснения на двух языках", () => {
-  expect(BUGS.length).toBeGreaterThanOrEqual(30);
+  expect(BUGS.length).toBeGreaterThanOrEqual(10);
   expect(new Set(BUGS.map((b) => b.id)).size).toBe(BUGS.length);
   for (const b of BUGS) {
+    expect(b.sourcePart).toBe("cv-l1-p1");
     expect(b.bug, b.id).toBeGreaterThanOrEqual(0);
     expect(b.bug, b.id).toBeLessThan(b.lines.length);
     expect(new Set(b.fixes).size, b.id).toBe(3);

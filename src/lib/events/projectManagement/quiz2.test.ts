@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import questions from "./quiz2_questions.json";
 import { answerQuiz2, finishQuiz2, newQuiz2Attempt, parseQuiz2Attempt, quiz2Key } from "./quiz2";
 
-describe("PM Quiz 2 reconstruction", () => {
+describe("PM lecture practice", () => {
   it("has 50 unique sourced scenario questions, five distinct options, balanced letters and the planned coverage", () => {
     expect(questions).toHaveLength(50);
     expect(new Set(questions.map(q => q.id)).size).toBe(50);

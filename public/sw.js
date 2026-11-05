@@ -10,9 +10,9 @@ const BUILD = new URL(self.location.href).searchParams.get("v") || "dev";
 /** Оболочка приложения: HTML разделов и то, без чего экран не соберётся. */
 const SHELL = `yg-shell-${BUILD}`;
 /** Неизменяемые ассеты сборки (/_next/static/**) — живут между версиями. */
-const STATIC = "yg-static";
+const STATIC = "yg-static-lecture-v1";
 /** Картинки и иконки — тоже переживают деплой. */
-const MEDIA = "yg-media";
+const MEDIA = "yg-media-lecture-v1";
 
 const PRECACHE = [
   "/app",
@@ -91,7 +91,7 @@ self.addEventListener("activate", (event) => {
       );
       // старые кэши прошлой схемы именования
       await Promise.all(
-        keys.filter((k) => k.startsWith("yeahdays-")).map((k) => caches.delete(k)),
+        keys.filter((k) => k.startsWith("yeahdays-") || (k.startsWith("yg-static") && k !== STATIC) || (k.startsWith("yg-media") && k !== MEDIA)).map((k) => caches.delete(k)),
       );
       await self.clients.claim();
     })(),

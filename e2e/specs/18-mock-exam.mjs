@@ -25,14 +25,14 @@ test("Пробный мидтерм: ответ сохраняется, без �
   await openSection(page, EVENT);
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
   await page.getByText(/Пробный мидтерм · \d+ вариантов/).waitFor({ timeout: 10_000 });
-  await page.getByRole("button", { name: /Variant 1|Вариант 1/ }).first().tap();
-  await page.getByText(/Question 1/).first().waitFor({ timeout: 10_000 });
+  await page.getByRole("button", { name: /Lecture Practice 1|Практика по лекциям 1/ }).first().tap();
+  await page.getByRole("textbox").first().waitFor({ timeout: 10_000 });
 
   const first = page.getByRole("textbox").first();
   await first.fill("Resize every image to 224x224; Gaussian blur against noise; normalize brightness.");
   await page.reload({ waitUntil: "networkidle" });
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
-  await page.getByRole("button", { name: /Variant 1|Вариант 1/ }).first().tap();
+  await page.getByRole("button", { name: /Lecture Practice 1|Практика по лекциям 1/ }).first().tap();
   check((await page.getByRole("textbox").first().inputValue()).startsWith("Resize every image"), "черновик ответа пережил перезагрузку");
 
   const button = page.getByRole("button", { name: "Проверить ИИ" }).first();

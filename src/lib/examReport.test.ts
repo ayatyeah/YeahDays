@@ -19,7 +19,7 @@ describe("reportInput", () => {
 });
 
 describe("parseReport", () => {
-  const parts = new Set(["cv-l3-p1", "cv-drill-p1"]);
+  const parts = new Set(["cv-l3-p1", "cv-l1-p1"]);
   it("оставляет только известные части и тренажёры, режет длину", () => {
     const r = parseReport(
       {

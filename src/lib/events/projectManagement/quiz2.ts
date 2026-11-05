@@ -1,4 +1,4 @@
-export const PM_QUIZ2_TITLE = "МАКСИМАЛЬНО ПРИБЛИЖЕННАЯ ВЕРСИЯ КВИЗА 2";
+export const PM_QUIZ2_TITLE = "ПРАКТИКА ПО ЛЕКЦИЯМ 4–8";
 export const PM_QUIZ2_VERSION = 1;
 export const PM_QUIZ2_DURATION = 60 * 60 * 1000;
 export const PM_QUIZ2_COUNT = 50;

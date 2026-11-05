@@ -11,7 +11,7 @@ test('Квиз ПМ: отдельный вариант, сохранение, с
   };
   try {
     await open();
-    check(await page.getByRole('heading',{name:'МАКСИМАЛЬНО ПРИБЛИЖЕННАЯ ВЕРСИЯ КВИЗА 2',exact:true}).count()===1,'отдельный экран с заданным названием');
+    check(await page.getByRole('heading',{name:'ПРАКТИКА ПО ЛЕКЦИЯМ 4–8',exact:true}).count()===1,'отдельный экран с заданным названием');
     await page.getByRole('button',{name:'Начать 60 минут',exact:true}).click();
     await page.getByTestId('quiz2-question').waitFor();
     check(await page.getByRole('radio').count()===5,'пять вариантов A–E');

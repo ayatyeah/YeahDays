@@ -120,7 +120,7 @@ test("Учёба: обзор, маршрут, практика и создани
       }
       throw Error("Unexpected learning request");
     });
-    await page.goto("/learn", { waitUntil: "networkidle" });
+    await page.goto("/learn?view=courses", { waitUntil: "networkidle" });
     await page.reload({ waitUntil: "networkidle" });
     await page
       .getByRole("button", { name: "Продолжить", exact: true })
@@ -246,7 +246,7 @@ test("Учёба: обзор, маршрут, практика и создани
     check(created, "новый маршрут создан");
     for (const width of [320, 390, 1440]) {
       await page.setViewportSize({ width, height: 844 });
-      await page.goto("/learn", { waitUntil: "networkidle" });
+      await page.goto("/learn?view=courses", { waitUntil: "networkidle" });
       await page.locator(".learning-continue").waitFor();
       check(
         await page.evaluate(

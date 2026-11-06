@@ -3,7 +3,8 @@
   "deploy": {
     "startCommand": "env MALLOC_ARENA_MAX=2 node --optimize-for-size --max-old-space-size=256 --max-semi-space-size=2 node_modules/next/dist/bin/next start",
     "healthcheckPath": "/api/auth/csrf",
-    "healthcheckTimeout": 120
+    "healthcheckTimeout": 120,
+    "preDeployCommand": "npm run db:deploy"
   },
   "build": {
     "buildCommand": "npm run check"

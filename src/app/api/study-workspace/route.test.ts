@@ -1,0 +1,13 @@
+import {beforeEach,it,expect,vi} from 'vitest';
+const m=vi.hoisted(()=>({auth:vi.fn(),find:vi.fn(),rate:vi.fn()}));
+vi.mock('@/auth',()=>({auth:m.auth}));
+vi.mock('@/lib/db',()=>({prisma:{studyWorkspace:{findUnique:m.find}}}));
+vi.mock('@/lib/rateLimit',()=>({rateLimit:m.rate}));
+import {GET,POST} from './route';
+import {newStudyData} from '@/lib/studyWorkspace';
+const post=(body:unknown)=>POST(new Request('http://localhost/api/study-workspace',{method:'POST',body:JSON.stringify(body)}));
+beforeEach(()=>{vi.clearAllMocks();m.auth.mockResolvedValue({user:{id:'owner'}});m.rate.mockReturnValue(true);});
+it('requires authentication for reads and mutations',async()=>{m.auth.mockResolvedValue(null);expect((await GET()).status).toBe(401);expect((await post({action:'begin'})).status).toBe(401);expect(m.find).not.toHaveBeenCalled();});
+it('reads only the signed in account',async()=>{m.find.mockResolvedValue(null);expect(await (await GET()).json()).toEqual({study:null});expect(m.find).toHaveBeenCalledWith({where:{userId:'owner'}});});
+it('rejects malformed actions and rate limited writes',async()=>{expect((await post({action:'delete',userId:'other'})).status).toBe(400);m.rate.mockReturnValue(false);expect((await post({action:'begin'})).status).toBe(429);});
+it('never calls AI without the separately recorded consent',async()=>{const data=newStudyData();data.mode='ai';m.find.mockResolvedValue({enrolledAt:new Date(),data});expect((await post({action:'feedback',userId:'other'})).status).toBe(403);expect(m.find).toHaveBeenCalledWith({where:{userId:'owner'}});});

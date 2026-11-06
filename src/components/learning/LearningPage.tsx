@@ -62,7 +62,7 @@ export default function LearningPage({
   const tl = useContentLang();
   function navigate(next: string, skillId = "", nextQuest = "") {
     const query = new URLSearchParams();
-    if (next !== "hub") query.set("view", next);
+    query.set("view", next === "hub" ? "courses" : next);
     if (skillId) query.set("skill", skillId);
     if (nextQuest) query.set("quest", nextQuest);
     router.push(`/learn${query.size ? `?${query}` : ""}`);

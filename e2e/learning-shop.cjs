@@ -18,7 +18,7 @@ await page.addInitScript(id=>{localStorage.setItem('yeahdays-store',JSON.stringi
 const {encode}=await import(process.cwd()+'/node_modules/@auth/core/jwt.js');
 await page.context().addCookies([{name:'authjs.session-token',value:await encode({secret:'local-learning-test-secret',salt:'authjs.session-token',token:{id,sub:id,name:'Learning QA'}}),url:'http://localhost:3120'}]);
 await page.route('**/api/**',async route=>{const p=new URL(route.request().url()).pathname;if(p==='/api/learning')return route.continue();let data={ok:true};if(p==='/api/auth/session')data={user:{id,name:'Learning QA'},expires:'2099-01-01T00:00:00Z'};else if(p==='/api/state')data={data:null,updatedAt:null};await route.fulfill({contentType:'application/json',body:JSON.stringify(data)});});
-await page.goto('http://localhost:3120/learn');
+await page.goto('http://localhost:3120/learn?view=courses');
 await page.getByLabel('Твой ответ',{exact:true}).waitFor();
 await page.waitForTimeout(1000);
 if(await page.getByRole('button',{name:'Понятно',exact:true}).isVisible())await page.getByRole('button',{name:'Понятно',exact:true}).click();

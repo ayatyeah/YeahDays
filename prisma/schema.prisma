@@ -55,6 +55,7 @@ model User {
   aiChatArchives    AiChatArchive[]
   aiChat            AiChat?
   research          ResearchParticipant?
+  studyWorkspace    StudyWorkspace?
   personalization   PersonalizationProfile?
   learningProfile   LearningProfile?
   lmsConnection     LmsConnection?
@@ -651,6 +652,15 @@ model Challenge30 {
 
 // Study-event progress, synced across devices. `share` opts the row into the
 // friends' leaderboard; without it nobody else sees the result.
+// Personal study practice. Kept separate from the closed research cohort.
+model StudyWorkspace {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  enrolledAt DateTime @default(now())
+  data Json
+  updatedAt DateTime @updatedAt @default(now())
+}
+
 model EventProgress {
   userId String
   eventId String

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLocaleStore } from "@/i18n/locale";
 import { useEffect, useRef, useState } from "react";
 
 const KEY = "__ygHistory";
@@ -7,6 +8,8 @@ type Entry = { trail: string; index: number };
 
 /** Track this tab's same-origin history, preserving Next's router state. */
 export default function HistoryNavigation() {
+  const locale = useLocaleStore(s=>s.locale);
+  const labels = locale === "en" ? ["Page history","Back","Forward","swipe left","swipe right"] : locale === "kk" ? ["Бет тарихы","Артқа","Алға","солға сырғыту","оңға сырғыту"] : ["История страниц","Назад","Вперёд","свайп влево","свайп вправо"];
   const [available, setAvailable] = useState({ back: false, forward: false });
   const navigate = useRef<(direction: -1 | 1) => void>(() => {});
   useEffect(() => {
@@ -113,8 +116,8 @@ export default function HistoryNavigation() {
       clearTimeout(timer);
     };
   }, []);
-  return <nav aria-label="История страниц" data-no-i18n data-no-swipe className="yg-history-nav">
-    <button type="button" aria-label="Назад" disabled={!available.back} onClick={() => navigate.current(-1)} title="Назад · свайп влево">← <span>Назад</span></button>
-    <button type="button" aria-label="Вперёд" disabled={!available.forward} onClick={() => navigate.current(1)} title="Вперёд · свайп вправо"><span>Вперёд</span> →</button>
+  return <nav aria-label={labels[0]} data-no-i18n data-no-swipe className="yg-history-nav">
+    <button type="button" aria-label={labels[1]} disabled={!available.back} onClick={() => navigate.current(-1)} title={`${labels[1]} · ${labels[3]}`}>← <span>{labels[1]}</span></button>
+    <button type="button" aria-label={labels[2]} disabled={!available.forward} onClick={() => navigate.current(1)} title={`${labels[2]} · ${labels[4]}`}><span>{labels[2]}</span> →</button>
   </nav>;
 }

@@ -1,5 +1,7 @@
 import type { StudyEvent } from "../types";
 import bank from "./bank.json";
+import fullRu from "./notes.json";
+import fullEn from "./notes-en.json";
 
 
 export const topics: Record<number, string> = {
@@ -40,7 +42,8 @@ export const event: StudyEvent = {
     id: `cne-l${lecture}`, title: { en: `Lecture ${lecture} — ${modules.map(m => topics[m].split(" · ")[0]).join(" / ")}`, ru: `Лекция ${lecture} — ${modules.map(m => topics[m].split(" · ")[1]).join(" / ")}` },
     parts: modules.map(m => ({
       id: `cne-m${m}`, title: { en: `Module ${m} — ${topics[m].split(" · ")[0]}`, ru: `Модуль ${m} — ${topics[m].split(" · ")[1]}` },
-      notes: { ru: `## Главное по теме\n${summariesRu[m]}\n\n> Подробный русский конспект доступен в материалах эндки, раздел «Подробные конспекты». Там же — PDF лекций и полный банк вопросов.\n\n## Источник\nЛекция ${lecture}; модуль NetAcad ${m}.`, en: `## Key concepts\n${summaries[m]}\n\n> Use the language toggle for the Russian summary. Detailed Russian notes, original lecture PDFs and the complete question bank are in the endterm materials.\n\n## Source\nLecture ${lecture}; NetAcad module ${m}.` },
+      notes: { ru: fullRu[String(m) as keyof typeof fullRu], en: fullEn[String(m) as keyof typeof fullEn] },
+      shortNotes: { ru: `## Главное по теме\n${summariesRu[m]}\n\n> Это краткая версия для повторения. Выбери «Полный конспект» выше, чтобы прочитать объяснения, таблицы и примеры.\n\n## Источник\nЛекция ${lecture}; модуль NetAcad ${m}.`, en: `## Key concepts\n${summaries[m]}\n\n> This is the concise revision version. Select “Полный конспект” above for detailed explanations, tables and examples.\n\n## Source\nLecture ${lecture}; NetAcad module ${m}.` },
       questions: bank.filter(q => q.topic === m && q.eligible && q.correct.length === 1 && !q.options.some(o => /\b(both a and b|all of the above|none of the above)\b/i.test(o))).map(q => ({
         id: `cne-${q.id}`, q: q.prompt, options: q.options, answer: q.correct[0],
         why: { ru: `${q.explanation}\nИсточник: ${q.source}.`, en: `Answer: ${q.answers.join("; ")}.\n${summaries[m]}\nSource: ${q.source}.` },

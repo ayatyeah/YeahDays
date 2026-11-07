@@ -4,7 +4,7 @@ Sources supplied by the user on 2026-11-07: `/home/yeahayat/Загрузки/к�
 
 - `Эндка/проверка_вопросов.json` supplies 558 deduplicated thematic cards, original options, module classification, source references and Russian explanations.
 - `Эндка/ВОПРОСЫ_ЭНДКА_с_ответами.md` supplies the reviewed answer wording and qualification labels. These take precedence over the account's selected options when displaying the bank.
-- `Эндка/модули_08–16/*_конспект.md` supplies the Russian notes. The bilingual route summaries and open practice prompts are authored study aids; the full source notes remain available in the materials panel.
+- `Эндка/модули_08–16/*_конспект.md` supplies the Russian notes. The full notes are shown directly in the lecture reader by default, with an English translation in `notes-en.json`. Each part also has a concise bilingual revision version (`shortNotes`). Language and length are independent controls; the chosen length also feeds copying, speech, scroll mode and note videos. The bilingual summaries and open practice prompts are authored study aids.
 - `NetAcad_данные/ЭНДКА.md` maps lectures 5–10 to modules 8–16.
 - Original lecture PDFs, instructor sample, announcement and downloadable notes/banks are copied under `public/events/computer-networks-endterm/`.
 

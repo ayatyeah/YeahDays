@@ -163,7 +163,12 @@ function EventSkeleton() {
   );
 }
 
-function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
+function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: string }) {
+  const [notesVersion, setNotesVersion] = useState<"full" | "short">("full");
+  const event = useMemo(() => notesVersion === "full" ? sourceEvent : {
+    ...sourceEvent,
+    lectures: sourceEvent.lectures.map(lecture => ({ ...lecture, parts: lecture.parts.map(part => ({ ...part, notes: part.shortNotes ?? part.notes })) })),
+  }, [sourceEvent, notesVersion]);
   const list = useMemo(() => steps(event), [event]);
   const tl = useContentLang();
   const [progress, setProgress] = useState<Progress>({});
@@ -194,6 +199,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
     setProgress(local);
     setLang(loadPref("lang", "en") === "ru" ? "ru" : "en");
     setMusic(loadPref("music", "on") !== "off");
+    setNotesVersion(loadPref("notes-length", "full") === "short" ? "short" : "full");
     setDrill(loadDrill(userId, event.id));
     setSim(loadSim(userId, event.id));
     setLoaded(true);
@@ -696,7 +702,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
       )}
       {view.mode === "scroll" && (
         <ScrollStudy
-          key={view.step.id}
+          key={`${view.step.id}:${notesVersion}`}
           event={event}
           userId={userId}
           start={view.step}
@@ -761,9 +767,11 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
             </header>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => notesMode("scroll", view.step)}>📜 Scroll-mode</Button>
-              <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
+              {part.shortNotes ? <div role="group" aria-label="Язык конспекта" className="flex gap-2" data-no-i18n>
+                {(["ru", "en"] as const).map(value => <Button key={value} size="sm" aria-pressed={lang === value} variant={lang === value ? "primary" : "ghost"} onClick={() => { setLang(value); savePref("lang", value); }}>{value.toUpperCase()}</Button>)}
+              </div> : <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
                 {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
-              </Button>
+              </Button>}
               <SpeakButton text={part.notes[lang]} lang={lang} />
               {shelves.lectures[view.step.lecture!].parts[view.step.part!].count > 0 && (
                 <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "part", lecture: view.step.lecture!, part: view.step.part! }, back: view })}>
@@ -773,7 +781,10 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "video", step: view.step })}>▶ Смотреть как видео</Button>
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
-            <article className={panel}>
+            {part.shortNotes && <div role="group" aria-label="Объём конспекта" className="flex flex-wrap gap-2" data-no-i18n>
+              {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
+            </div>}
+            <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
               <EventNotes text={part.notes[lang]} lang={lang} />
             </article>
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>

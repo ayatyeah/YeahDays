@@ -34,6 +34,8 @@ export interface Part {
   title: Text;
   /** Конспект в упрощённой разметке: «## », «- », «> », **жирный**. */
   notes: Text;
+  /** Optional concise version; notes remains the full version in both languages. */
+  shortNotes?: Text;
   questions: Question[];
   /**
    * «Разбор до косточек» — отдельный банк на 30–40 вопросов, покрывающий

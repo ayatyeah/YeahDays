@@ -23,6 +23,18 @@ describe("Computer Networks endterm", () => {
     const quiz=draw(event,steps(event).at(-1)!);
     expect(quiz).toHaveLength(45); expect(new Set(quiz.map(q=>q.lecture)).size).toBe(6);
   });
+  it("provides full and concise versions in both languages for all nine modules", () => {
+    for (const part of event.lectures.flatMap(lecture => lecture.parts)) {
+      for (const lang of ["ru", "en"] as const) {
+        expect(part.shortNotes?.[lang].length, part.id).toBeGreaterThan(400);
+        expect(part.notes[lang].length, part.id).toBeGreaterThan(part.shortNotes![lang].length);
+      }
+      expect(part.notes.en, part.id).not.toMatch(/[А-Яа-яЁё]/);
+    }
+    const ios = event.lectures[0].parts[2];
+    expect(ios.notes.en).toContain("copy running-config startup-config");
+    expect(ios.notes.ru).toContain("copy running-config startup-config");
+  });
   it("draws the stated format, scores only exact MCQ sets and restores valid attempts", () => {
     const a=newAttempt(Math.random,1000);
     expect(a.deadline).toBe(2701000); expect(a.ids).toHaveLength(25); expect(a.openIds).toHaveLength(5);

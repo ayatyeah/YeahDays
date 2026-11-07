@@ -6,7 +6,8 @@ import NotesImage from "@/components/events/NotesImage";
 
 /** **жирный** и *курсив* внутри строки; остальное — как есть. */
 export function inline(text: string): ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g).map((piece, i) => {
+  return text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`)/g).map((piece, i) => {
+    if (piece.startsWith("`") && piece.endsWith("`")) return <code key={i} className="break-words rounded bg-[var(--color-surface-2)] px-1 font-mono text-[0.9em]">{piece.slice(1, -1)}</code>;
     if (piece.startsWith("**") && piece.endsWith("**")) return <strong key={i}>{piece.slice(2, -2)}</strong>;
     if (piece.startsWith("*") && piece.endsWith("*") && piece.length > 2) return <em key={i}>{piece.slice(1, -1)}</em>;
     return <Fragment key={i}>{piece}</Fragment>;
@@ -34,6 +35,7 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
   let list: string[] = [];
   let table: string[][] = [];
   let question: string | null = null;
+  let fencedCode: string[] | null = null;
 
   const flushList = () => {
     if (!list.length) return;
@@ -67,6 +69,16 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
   };
 
   for (const line of text.split("\n")) {
+    if (line.startsWith("```")) {
+      flushList(); flushTable();
+      if (fencedCode === null) fencedCode = [];
+      else {
+        blocks.push(<pre key={`code${blocks.length}`} className="overflow-x-auto rounded-2xl bg-[var(--color-surface-2)] p-4 font-mono text-[13px]"><code>{fencedCode.join("\n")}</code></pre>);
+        fencedCode = null;
+      }
+      continue;
+    }
+    if (fencedCode !== null) { fencedCode.push(line); continue; }
     if (line.startsWith("- ")) { flushTable(); list.push(line.slice(2)); continue; }
     if (line.startsWith("|")) { flushList(); if (!isRule(line)) table.push(cells(line)); continue; }
     flushList();

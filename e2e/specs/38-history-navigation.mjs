@@ -16,15 +16,20 @@ async function swipe(page, direction, kind = 'normal') {
   },{direction,kind});
 }
 
-test('История страниц: кнопки и свайпы везде',async () => {
+test('История страниц: кнопки только на внутренних экранах',async () => {
   const user=await newUser();
   const {page,browser,errors}=await session({user,engine:'chromium',serviceWorkers:'block',initScript:"localStorage.setItem('yd-install-dismissed','1')"});
   const nav=page.getByRole('navigation',{name:'История страниц',exact:true});
   const back=nav.getByRole('button',{name:'Назад',exact:true});
   const forward=nav.getByRole('button',{name:'Вперёд',exact:true});
   try {
-    await openSection(page,'/learn');
-    check(await nav.isVisible(),'общие кнопки на Учёбе');
+    for (const path of ['/', '/login', '/today', '/app', '/learn']) {
+      await openSection(page,path);
+      check(await nav.count()===0,`нет кнопок на ${path}`);
+      check(await page.evaluate(()=>getComputedStyle(document.body).paddingTop)==='0px',`нет пустой полосы на ${path}`);
+    }
+    await openSection(page,'/events');
+    check(await nav.isVisible(),'кнопки на странице ивентов');
     await page.locator('a[href="/events/project-management-test-2"]').first().click();
     await page.getByRole('heading', { name: 'Подготовка к MCQ Test 2', exact: true, level: 1 }).first().waitFor();
     await page.waitForFunction(() => !document.querySelector('nav[aria-label="История страниц"] button')?.disabled, null, {timeout:5000});
@@ -38,7 +43,7 @@ test('История страниц: кнопки и свайпы везде',as
     await swipe(page,'left','cancel');
     check(page.url().endsWith('/events/project-management-test-2'),'поля, вертикаль и отмена не вызывают переход');
     await swipe(page,'left');
-    await page.waitForURL('**/learn');
+    await page.waitForURL('**/events');
     check(await forward.isEnabled(),'свайп влево возвращает назад');
     await page.waitForTimeout(450);
     await forward.click();
@@ -46,7 +51,7 @@ test('История страниц: кнопки и свайпы везде',as
     check(page.url().endsWith('/events/project-management-test-2'),'кнопка вперёд восстанавливает страницу');
     await page.waitForTimeout(450);
     await back.click();
-    await page.waitForURL('**/learn');
+    await page.waitForURL('**/events');
     await page.waitForTimeout(450);
     // Exercise the same document gesture on a different page, outside the quiz.
     await page.locator('h1').first().evaluate(el => {

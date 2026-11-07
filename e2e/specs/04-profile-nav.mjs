@@ -174,7 +174,7 @@ test("Навигация: горизонтальный свайп следует
     await swipe(page.locator("[data-section-active]"), [80, 420], [300, 416]);
     await page.waitForURL((u) => u.pathname === "/account", { timeout: 10_000 });
     check(true, "свайп вправо возвращает вперёд на Профиль");
-    check(await page.getByRole("navigation", { name: "История страниц" }).getByRole("button", { name: "Вперёд", exact: true }).isDisabled(), "в конце истории нет выдуманного следующего раздела");
+    check(await page.getByRole("navigation", { name: "История страниц" }).count() === 0, "на основной вкладке нет верхних кнопок истории");
   } finally { await browser.close(); }
 });
 

@@ -23,6 +23,7 @@ const OpenCVSandbox = dynamic(() => import("@/components/events/OpenCVSandbox"),
 const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading: Loading });
 const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
 import { PM_QUIZ2_TITLE } from "@/lib/events/projectManagement/quiz2";
+const NetworksEndterm = dynamic(() => import("@/components/events/NetworksEndterm"), { loading: Loading });
 const PMQuiz2 = dynamic(() => import("@/components/events/PMQuiz2"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
 const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
@@ -60,6 +61,7 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
 type View =
   | { mode: "map" }
   | { mode: "pmQuiz2" }
+  | { mode: "cnEndterm" }
   | { mode: "sheet" }
   | { mode: "cards" }
   | { mode: "game" }
@@ -393,6 +395,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
               <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "pmQuiz2" })}>Открыть Квиз 2</Button>
             </section>
           )}
+          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">Материалы эндки и полный банк</h2><p>6 PDF-лекций · 558 карточек · образец преподавателя · пробная эндка: 20 + 5 + 5 вопросов, 45 минут.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Открыть подготовку к эндке</Button></section>}
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -646,6 +649,7 @@ function Runner({ event, userId }: { event: StudyEvent; userId: string }) {
         </>
       )}
 
+      {view.mode === "cnEndterm" && event.id === "computer-networks-endterm" && <NetworksEndterm userId={userId} onExit={toMap} />}
       {view.mode === "pmQuiz2" && event.id === "project-management-test-2" && <PMQuiz2 userId={userId} onExit={toMap} />}
       {view.mode === "mock" && (
         <MockExamView

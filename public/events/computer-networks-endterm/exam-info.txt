@@ -1,0 +1,15 @@
+Dear Students, I would like to inform you about the upcoming endterm exam in the discipline "Computer Networks". The exam is aimed at a comprehensive test of your theoretical knowledge, understanding of features of the transport layer and application layer, and practical skills in configuring Cisco IOS equipment, studied in weeks 5-10 (NetAcad course and lecture materials).
+ Date & Time & Venue: 
+-       10.11 2026 at 14:00 for the group SE-2422, Office No. 211
+-       10.11.2026 at 15:00 for the group SE-2424 office -No103
+-       10.11.2026 at 19:00 for the group SE-2425 office -No C1.1.234
+-       11.11.2026 at 14:00 for the group SE-2426 office -No C1.1.255
+-       11.11.2026 at 17:00 for the group SE-2423 office -No C1.3.235
+
+Duration: 45 minutes 
+Format: written
+Number of Questions: 30 Questions [20 MCQ questions (3 points)) + 5 MCQs with three or two options (4 points; also, it will be evaluated how many correct answers there are) and 5 open questions (4 points)].
+
+Maximum Score: 100. The sample of the questions is attached below 
+
+Please prepare for the endterm exam. Good luck

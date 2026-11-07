@@ -1,5 +1,7 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+import { allowHistoryGestures, showHistoryNavigation } from "@/lib/historyNavigation";
 import { useLocaleStore } from "@/i18n/locale";
 import { useEffect, useRef, useState } from "react";
 
@@ -8,6 +10,7 @@ type Entry = { trail: string; index: number };
 
 /** Track this tab's same-origin history, preserving Next's router state. */
 export default function HistoryNavigation() {
+  const pathname = usePathname();
   const locale = useLocaleStore(s=>s.locale);
   const labels = locale === "en" ? ["Page history","Back","Forward","swipe left","swipe right"] : locale === "kk" ? ["Бет тарихы","Артқа","Алға","солға сырғыту","оңға сырғыту"] : ["История страниц","Назад","Вперёд","свайп влево","свайп вправо"];
   const [available, setAvailable] = useState({ back: false, forward: false });
@@ -77,7 +80,7 @@ export default function HistoryNavigation() {
     };
     const start = (e: TouchEvent) => {
       drag = null;
-      if (e.touches.length !== 1 || excluded(e.target)) return;
+      if (!allowHistoryGestures(window.location.pathname) || e.touches.length !== 1 || excluded(e.target)) return;
       const t = e.touches[0];
       // Leave browser edge gestures and pinch zoom to the browser.
       if (t.clientX < 24 || t.clientX > innerWidth - 24) return;
@@ -116,6 +119,7 @@ export default function HistoryNavigation() {
       clearTimeout(timer);
     };
   }, []);
+  if (!showHistoryNavigation(pathname)) return null;
   return <nav aria-label={labels[0]} data-no-i18n data-no-swipe className="yg-history-nav">
     <button type="button" aria-label={labels[1]} disabled={!available.back} onClick={() => navigate.current(-1)} title={`${labels[1]} · ${labels[3]}`}>← <span>{labels[1]}</span></button>
     <button type="button" aria-label={labels[2]} disabled={!available.forward} onClick={() => navigate.current(1)} title={`${labels[2]} · ${labels[4]}`}><span>{labels[2]}</span> →</button>

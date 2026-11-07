@@ -16,7 +16,7 @@ test("Сети: ивент есть в списке, конспект читае
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/events");
-  await page.getByRole("link", { name: /Computer Networks/ }).tap();
+  await page.locator(`a[href="${EVENT}"]`).tap();
   await page.getByText("Готовность к квизу").waitFor({ timeout: 15_000 });
   const map = await page.locator("body").innerText();
   check(map.includes("Lecture 5") && map.includes("Beyond the slides"), "в маршруте пять лекций и блок «сверх слайдов»");
@@ -224,7 +224,7 @@ test("Сети: отдельная лента роликов лекции 7 — 
   const user = await newUser();
   const { browser, page } = await session({ user });
   await openSection(page, "/events");
-  await page.getByRole("link", { name: /Computer Networks/ }).tap();
+  await page.locator(`a[href="${EVENT}"]`).tap();
   await page.getByRole("button", { name: "🎬 Лента" }).first().tap();
   await page.getByRole("heading", { name: "🎬 Ролики" }).waitFor({ timeout: 15_000 });
   const lectures = await page.locator('section[aria-label^="Лекция "]').evaluateAll((els) => els.map((el) => el.getAttribute("aria-label")));

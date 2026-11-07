@@ -166,6 +166,7 @@ export default function Drill({
                 <button
                   key={`${index}-${i}`}
                   lang="en"
+                  data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
                   disabled={answered}
                   aria-pressed={picked === i}
                   onClick={() => choose(i)}

@@ -905,3 +905,46 @@ body .app-shell-frame { height: calc(var(--app-h, 100dvh) - var(--history-nav-he
     scale: .98;
   }
 }
+
+/* Answer feedback must remain visible through the monochrome study theme. */
+html body button[data-answer-state] {
+  transition: none !important;
+  opacity: 1;
+}
+html body button[data-answer-state="correct"] {
+  --answer-glow: 16 185 129;
+  background-color: #ecfdf5 !important;
+  border-color: #10b981 !important;
+  color: #065f46 !important;
+}
+html body button[data-answer-state="wrong"] {
+  --answer-glow: 244 63 94;
+  background-color: #fff1f2 !important;
+  border-color: #f43f5e !important;
+  color: #9f1239 !important;
+}
+html[data-theme="dark"] body button[data-answer-state="correct"] {
+  background-color: #063f2e !important;
+  color: #d1fae5 !important;
+}
+html[data-theme="dark"] body button[data-answer-state="wrong"] {
+  background-color: #4c1024 !important;
+  color: #ffe4e6 !important;
+}
+@keyframes yg-answer-correct {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgb(var(--answer-glow) / 40%); }
+  35% { transform: translateY(-3px) scale(1.015); box-shadow: 0 0 0 6px rgb(var(--answer-glow) / 22%); }
+  70% { transform: translateY(1px) scale(.995); }
+  100% { transform: none; box-shadow: 0 0 0 12px rgb(var(--answer-glow) / 0%); }
+}
+@keyframes yg-answer-wrong {
+  0%, 100% { transform: translateX(0); box-shadow: 0 0 0 0 rgb(var(--answer-glow) / 0%); }
+  20% { transform: translateX(-7px); box-shadow: 0 0 0 5px rgb(var(--answer-glow) / 20%); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(2px); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html body button[data-answer-state="correct"] { animation: yg-answer-correct 560ms cubic-bezier(.2,.8,.2,1) both; }
+  html body button[data-answer-state="wrong"] { animation: yg-answer-wrong 420ms ease-out both; }
+}

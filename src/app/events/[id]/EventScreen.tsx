@@ -1118,14 +1118,15 @@ function Quiz({
             const wrong = answered && i === picked && i !== item.correct;
             return (
               <button
-                key={i}
+                key={`${item.id}-${i}`}
                 lang="en"
+                data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
                 disabled={answered}
                 aria-pressed={picked === i}
                 onClick={() => setAnswers([...answers, i])}
                 className={cn(
                   "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
-                  right ? "yg-pop border-emerald-400 bg-emerald-500/15" : wrong ? "yg-shake border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
+                  right ? "border-emerald-400 bg-emerald-500/15" : wrong ? "border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
                   !answered && "hover:bg-[var(--color-surface-2)]",
                   answered && !right && !wrong && "opacity-60",
                 )}

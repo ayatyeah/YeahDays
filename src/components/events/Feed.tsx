@@ -481,6 +481,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
               <button
                 key={`${index}-${i}`}
                 lang="en"
+                data-answer-state={ok ? "correct" : bad ? "wrong" : undefined}
                 disabled={picked !== null}
                 onClick={() => choose(i)}
                 className={cn(

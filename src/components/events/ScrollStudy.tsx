@@ -321,6 +321,7 @@ export default function ScrollStudy({
                   <button
                     key={o}
                     lang="en"
+                    data-answer-state={ok ? "correct" : bad ? "wrong" : undefined}
                     disabled={picked !== null}
                     onClick={() => choose(item.step, item.k, o)}
                     className={cn(

@@ -332,7 +332,7 @@ button {
     border-color 0.2s var(--ease-out),
     background-color 0.2s var(--ease-out);
 }
-.press:active {
+.press:not(:disabled):not([aria-disabled="true"]):active {
   transform: scale(0.955);
   opacity: 0.7;
   transition-duration: 0.06s;
@@ -879,3 +879,29 @@ body { padding-top: var(--history-nav-height); }
 .yg-history-nav button:not(:disabled):hover { background: var(--color-surface-2); }
 body .app-shell-frame { height: calc(var(--app-h, 100dvh) - var(--history-nav-height)); min-height: 0; }
 .yg-sidebar { top: var(--history-nav-height); }
+
+/* One motion language for native buttons, custom controls and CTA links.
+   Individual translate preserves transforms used to position/animate components. */
+@media (prefers-reduced-motion: no-preference) {
+  html body :is(button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], a[data-button-motion], a.press, a.tap) {
+    transition: translate 180ms cubic-bezier(.2,.8,.2,1),
+      transform 180ms cubic-bezier(.2,.8,.2,1),
+      scale 160ms cubic-bezier(.2,.8,.2,1),
+      filter 180ms ease, background-color 180ms ease,
+      border-color 180ms ease, color 180ms ease, opacity 180ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    html body :is(button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], a[data-button-motion], a.press, a.tap):not(:disabled):not([aria-disabled="true"]):hover {
+      translate: 0 -2px;
+      filter: brightness(1.06) drop-shadow(0 5px 7px rgb(0 0 0 / 12%));
+    }
+  }
+  html body :is(button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], a[data-button-motion], a.press, a.tap):not(:disabled):not([aria-disabled="true"]):active {
+    translate: 0 1px;
+    filter: brightness(.97);
+    transition-duration: 70ms;
+  }
+  html body :is(button, [role="button"], input[type="button"], input[type="submit"], input[type="reset"], a[data-button-motion], a.tap):not(.press):not(:disabled):not([aria-disabled="true"]):active {
+    scale: .98;
+  }
+}

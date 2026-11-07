@@ -247,10 +247,10 @@ export default function Landing() {
           <a href="#about">О проекте</a>
         </nav>
         <div className={styles.navActions}>
-          <Link href="/login" className={styles.login}>
+          <Link href="/login" data-button-motion className={styles.login}>
             Войти
           </Link>
-          <Link className={styles.navCta} href="/today">
+          <Link data-button-motion className={styles.navCta} href="/today">
             Начать{" "}
             <span>
               <Arrow />
@@ -356,7 +356,7 @@ export default function Landing() {
                 <h3>{look.title}</h3>
                 <p>{look.text}</p>
               </div>
-              <Link href="/today" className={styles.darkCta}>
+              <Link href="/today" data-button-motion className={styles.darkCta}>
                 Найти своё действие{" "}
                 <span>
                   <Arrow />
@@ -771,7 +771,7 @@ export default function Landing() {
               <span>С одного действия.</span>
             </h2>
             <p>Пять минут сегодня — уже начало чего-то большего.</p>
-            <Link href="/today" className={styles.primary}>
+            <Link href="/today" data-button-motion className={styles.primary}>
               Начать бесплатно{" "}
               <span>
                 <Arrow />

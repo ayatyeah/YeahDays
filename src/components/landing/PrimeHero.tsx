@@ -27,8 +27,8 @@ export default function PrimeHero({ action, done, onNext, onComplete }: {
         <h2>{tx("Не идеальнее. Чуть лучше.")}</h2>
         <p>{tx("Один понятный шаг сегодня. Учёба, задачи и прогресс — в твоём ритме.")}</p>
         <div className={styles.actions}>
-          <Link prefetch={false} className={styles.primary} href="/today">{tx("Начать свой путь")}<span aria-hidden="true">↗</span></Link>
-          <a className={styles.secondary} href="#how">{tx("Как это работает")}</a>
+          <Link prefetch={false} data-button-motion className={styles.primary} href="/today">{tx("Начать свой путь")}<span aria-hidden="true">↗</span></Link>
+          <a data-button-motion className={styles.secondary} href="#how">{tx("Как это работает")}</a>
         </div>
         <small>{tx("Бесплатно · Без карты · В твоём темпе")}</small>
       </div>

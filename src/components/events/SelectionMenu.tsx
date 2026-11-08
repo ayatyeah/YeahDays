@@ -121,9 +121,10 @@ export default function SelectionMenu() {
   }
 
   if (!selection) return null;
+  const toEnglish = selection.lang.toLowerCase().split("-")[0] === "ru";
   return createPortal(
     <div ref={panel} className={styles.panel} role="dialog" aria-label="Действия с выделенным текстом" style={{ left: selection.left, top: selection.top, "--selection-top": `${selection.top}px` } as CSSProperties} onMouseDown={(event) => { if ((event.target as Element).closest("button, a")) event.preventDefault(); }}>
-      <div className={styles.heading}><span>✦ Выделенный текст</span><button type="button" aria-label="Закрыть меню выделения" onClick={close}>×</button></div>
+      <div className={styles.heading}><span>✦ Выделенный текст · {toEnglish ? "RU → EN" : "→ RU"}</span><button type="button" aria-label="Закрыть меню выделения" onClick={close}>×</button></div>
       <div className={styles.actions}>
         <button type="button" disabled={busy} onClick={() => void translate()}>{busy ? "Перевожу…" : "Перевести выделенное"}</button>
         <button type="button" onClick={() => void copy(selection.text)}>Копировать</button>
@@ -133,7 +134,7 @@ export default function SelectionMenu() {
       </div>
       {busy && <p role="status" className={styles.notice}>Перевожу выделенный фрагмент…</p>}
       {result && <div className={styles.response}>
-        <strong>{resultType === "source" ? "Русская версия выделенных абзацев" : "Перевод выделенного фрагмента"}</strong>
+        <strong>{resultType === "source" ? "Русская версия выделенных абзацев" : toEnglish ? "Перевод на английский" : "Перевод на русский"}</strong>
         <div className={styles.result}>{resultType === "source" ? <TutorText text={result} /> : <p className="whitespace-pre-wrap">{result}</p>}</div>
         <button type="button" onClick={() => void copy(result)}>Скопировать ответ</button>
         <small>{resultType === "source" ? "Из русской версии конспекта · показаны абзацы целиком" : "Перевод: MyMemory · без Gemini"}</small>

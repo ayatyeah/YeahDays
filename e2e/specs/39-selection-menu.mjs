@@ -54,3 +54,27 @@ test('Selection menu: ordinary actions never send AI requests',async()=>{
   check(posts===1,'only explicit send consumes one AI request');
  }finally{await browser.close();}
 });
+
+test('Selection menu: full notes translate in both directions',async()=>{
+ const user=await newUser();const {browser,page}=await session({user,engine:'chromium'});
+ try{
+  let aiCalls=0;const pairs=[];
+  await page.route('**/api/study-events/tutor',route=>{if(route.request().method()==='POST')aiCalls++;return route.fulfill({json:{available:true}});});
+  await page.route('https://api.mymemory.translated.net/get?**',route=>{const url=new URL(route.request().url());const pair=url.searchParams.get('langpair');pairs.push(pair);check(url.searchParams.get('q')===(pair==='ru|en'?'Главная мысль:':'Key idea:'),'exact selected label sent');return route.fulfill({headers:{'access-control-allow-origin':'*'},json:{responseStatus:200,responseData:{translatedText:pair==='ru|en'?'Main idea:':'Ключевая идея:'}}});});
+  await openSection(page,'/events/computer-networks-endterm');
+  await page.getByRole('button',{name:'Начать с первой части',exact:true}).click();
+  for(const lang of ['RU','EN']){
+   await page.getByRole('group',{name:'Язык конспекта',exact:true}).getByRole('button',{name:lang,exact:true}).click();
+   await page.getByRole('button',{name:'Полный конспект',exact:true}).click();
+   const label=page.getByTestId('lecture-notes').locator('p strong').first();await label.scrollIntoViewIfNeeded();await page.waitForTimeout(300);
+   await label.evaluate(el=>{const range=document.createRange();range.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(range);});
+   const menu=page.getByRole('dialog',{name:'Действия с выделенным текстом'});await menu.waitFor();
+   await menu.getByRole('button',{name:'Перевести выделенное',exact:true}).click();
+   await menu.getByText(lang==='RU'?'Main idea:':'Ключевая идея:',{exact:true}).waitFor();
+   check(await menu.getByText(lang==='RU'?'Перевод на английский':'Перевод на русский',{exact:true}).isVisible(),'result direction labelled');
+   await page.keyboard.press('Escape');
+  }
+  check(pairs.join(',')==='ru|en,en|ru','direction follows current notes language');
+  check(aiCalls===0,'neither direction uses Gemini');
+ }finally{await browser.close();}
+});

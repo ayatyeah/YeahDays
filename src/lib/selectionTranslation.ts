@@ -4,14 +4,14 @@ const DAY = 24 * 60 * 60 * 1000;
 
 export async function translateSelection(text: string, language: string, signal?: AbortSignal): Promise<string> {
   const source = language.toLowerCase().split('-')[0];
-  if (source === 'ru') return text;
+  const target = source === 'ru' ? 'en' : 'ru';
   if (!text.trim()) throw new Error('Сначала выдели слово или фразу.');
   if (new TextEncoder().encode(text).length > 500) throw new Error('Фрагмент слишком длинный. Выдели одно слово или короткую фразу.');
-  const from = ['en', 'kk', 'de', 'fr', 'es', 'it', 'tr', 'zh'].includes(source) ? source : 'en';
-  const key = `${from}:${text}`;
+  const from = ['ru', 'en', 'kk', 'de', 'fr', 'es', 'it', 'tr', 'zh'].includes(source) ? source : 'en';
+  const key = `${from}>${target}:${text}`;
   const cached = cache.get(key);
   if (cached && cached.expires > Date.now()) return cached.text;
-  const params = new URLSearchParams({ q: text, langpair: `${from}|ru` });
+  const params = new URLSearchParams({ q: text, langpair: `${from}|${target}` });
   const response = await fetch(`https://api.mymemory.translated.net/get?${params}`, {
     credentials: 'omit', referrerPolicy: 'no-referrer',
     signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(12000)]) : AbortSignal.timeout(12000),
@@ -29,7 +29,7 @@ export async function translateSelection(text: string, language: string, signal?
   });
   const normalize = (value: string) => value.normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').replace(/^[\s\p{P}]+|[\s\p{P}]+$/gu, '');
   const original = normalize(text);
-  const isTranslation = (value: string) => /[а-яё]/i.test(value) && normalize(value) !== original;
+  const isTranslation = (value: string) => (target === 'en' ? /[a-z]/i.test(value) && !/[а-яё]/i.test(value) : /[а-яё]/i.test(value)) && normalize(value) !== original;
   let translated = decode(body.responseData.translatedText);
   // MyMemory can rank an untranslated memory entry above its actual translation.
   // Accept an alternative only for the same whole phrase, never a fuzzy neighbour.
@@ -37,7 +37,7 @@ export async function translateSelection(text: string, language: string, signal?
     const matches = (Array.isArray(body.matches) ? body.matches : []) as { segment?: unknown; translation?: unknown; match?: unknown }[];
     const alternative = matches.filter((match) => typeof match.segment === 'string' && normalize(decode(match.segment)) === original && typeof match.translation === 'string' && Number(match.match) >= 0.75 && isTranslation(decode(match.translation)))
       .sort((a, b) => Number(b.match) - Number(a.match))[0];
-    if (!alternative || typeof alternative.translation !== 'string') throw new Error('Сервис не нашёл русский перевод этого фрагмента. Попробуй выделить более полную фразу.');
+    if (!alternative || typeof alternative.translation !== 'string') throw new Error(`Сервис не нашёл ${target === 'en' ? 'английский' : 'русский'} перевод этого фрагмента. Попробуй выделить более полную фразу.`);
     translated = decode(alternative.translation);
   }
   if (cache.size >= 200) cache.delete(cache.keys().next().value!);

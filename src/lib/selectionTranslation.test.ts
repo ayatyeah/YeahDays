@@ -29,3 +29,19 @@ it('does not cache unchanged source text as a successful translation',async()=>{
  expect(await translateSelection('Example heading','en')).toBe('Пример заголовка');
  expect(f).toHaveBeenCalledTimes(2);
 });
+it('translates Russian selections into English and caches that direction',async()=>{
+ const f=vi.fn().mockResolvedValue(new Response(JSON.stringify({responseStatus:200,responseData:{translatedText:'Network layer'}})));
+ vi.stubGlobal('fetch',f);
+ expect(await translateSelection('Сетевой уровень','ru-RU')).toBe('Network layer');
+ expect(await translateSelection('Сетевой уровень','ru')).toBe('Network layer');
+ expect(f).toHaveBeenCalledTimes(1);
+ expect(new URL(f.mock.calls[0][0]).searchParams.get('langpair')).toBe('ru|en');
+});
+it('selects an English exact-match alternative when the main answer remains Russian',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response(JSON.stringify({responseStatus:200,responseData:{translatedText:'Маршрутизатор'},matches:[{segment:'Маршрутизатор',translation:'Router',match:.9}]}))));
+ expect(await translateSelection('маршрутизатор','ru')).toBe('Router');
+});
+it('does not present untranslated Russian with Latin abbreviations as English',async()=>{
+ vi.stubGlobal('fetch',vi.fn().mockResolvedValue(new Response(JSON.stringify({responseStatus:200,responseData:{translatedText:'Это IP-адрес'}}))));
+ await expect(translateSelection('IP-адрес назначения','ru')).rejects.toThrow('не нашёл английский перевод');
+});

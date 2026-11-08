@@ -301,7 +301,8 @@
     "caution": "",
     "eligible": true,
     "core": true,
-    "source": "модули_08, Q3"
+    "source": "модули_08, Q3",
+    "explanationEn": "Fragmentation splits an IP packet into smaller fragments so that each fits the outgoing link MTU. IPv4 routers can fragment packets if fragmentation is allowed (DF is not set). IPv6 routers do not fragment packets; they return an ICMPv6 Packet Too Big message so that the source can adapt. This is different from transport-layer segmentation."
   },
   {
     "id": "E203",
@@ -770,12 +771,13 @@
     "correct": [
       2
     ],
-    "answerText": "The MTU is passed to the network layer by the data link layer..",
-    "explanation": "MTU ограничивает размер пакета, переносимого каналом. IPv4-пакет при допустимой фрагментации делят на части; IPv6-маршрутизатор не фрагментирует, а сообщает Packet Too Big.",
+    "answerText": "The MTU is passed to the network layer by the data link layer.",
+    "explanation": "MTU (Maximum Transmission Unit) — максимальный размер IP-пакета, который можно передать в одном кадре данного канала. Канальный уровень сообщает это ограничение сетевому, чтобы тот учитывал его при передаче пакетов. Например, при Ethernet MTU 1500 байт в этот лимит входит IP-заголовок, но не заголовок Ethernet. MTU ограничивает размер пакета, а не скорость передачи, поэтому вариант про изменение скорости неверен.",
     "caution": "",
     "eligible": true,
     "core": true,
-    "source": "модули_08, Q3"
+    "source": "модули_08, Q3",
+    "explanationEn": "MTU (Maximum Transmission Unit) is the largest IP packet that can be carried in one frame on a given link. The data link layer passes this limit to the network layer, which must account for it when sending packets. For example, an Ethernet MTU of 1500 bytes includes the IP header but excludes the Ethernet header. MTU limits packet size, not transmission speed, so the option about adjusting speed is incorrect."
   },
   {
     "id": "E223",

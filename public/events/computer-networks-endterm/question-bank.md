@@ -439,9 +439,9 @@
 3. The MTU is passed to the network layer by the data link layer.
 4. To increase speed of delivery, the network layer ignores the MTU.
 
-**Ответ:** The MTU is passed to the network layer by the data link layer..
+**Ответ:** The MTU is passed to the network layer by the data link layer.
 
-**Объяснение:** MTU ограничивает размер пакета, переносимого каналом. IPv4-пакет при допустимой фрагментации делят на части; IPv6-маршрутизатор не фрагментирует, а сообщает Packet Too Big.
+**Объяснение:** MTU (Maximum Transmission Unit) — максимальный размер IP-пакета, который можно передать в одном кадре данного канала. Канальный уровень сообщает это ограничение сетевому, чтобы тот учитывал его при передаче пакетов. Например, при Ethernet MTU 1500 байт в этот лимит входит IP-заголовок, но не заголовок Ethernet. MTU ограничивает размер пакета, а не скорость передачи, поэтому вариант про изменение скорости неверен.
 
 ### E223. Which characteristic describes an IPv6 enhancement over IPv4?
 

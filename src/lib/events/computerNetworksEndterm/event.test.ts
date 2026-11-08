@@ -6,6 +6,20 @@ import { draw, steps } from "../engine";
 import { existsSync } from "node:fs";
 
 describe("Computer Networks endterm", () => {
+  it("explains MTU as a packet-size limit in both languages without injecting module summaries", () => {
+    const questions = event.lectures.flatMap(l => l.parts.flatMap(p => p.questions));
+    const mtu = questions.find(q => q.id === "cne-E222")!;
+    expect(mtu.options[mtu.answer]).toBe("The MTU is passed to the network layer by the data link layer.");
+    expect(mtu.why.ru).toContain("а не скорость передачи");
+    expect(mtu.why.en).toContain("packet size, not transmission speed");
+    expect(mtu.why.en).toContain("data link layer");
+    for (const part of event.lectures.flatMap(l => l.parts)) {
+      const summary = part.shortNotes!.en.split("\n")[1];
+      for (const q of part.questions) expect(q.why.en).not.toContain(summary);
+    }
+    const fallback = questions.find(q => q.id !== "cne-E222" && q.id !== "cne-E202")!;
+    expect(fallback.why.en).toContain("A detailed English explanation is not available");
+  });
   it("preserves all 558 source cards and 250 module questions with provenance", () => {
     expect(bank).toHaveLength(558);
     expect(bank.filter(q=>q.core)).toHaveLength(250);

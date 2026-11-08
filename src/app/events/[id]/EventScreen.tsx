@@ -48,6 +48,7 @@ import { clearProgress, loadPref, loadProgress, savePref, saveProgress } from "@
 import type { Lang, MockExam, StudyEvent } from "@/lib/events/types";
 import { useContentLang } from "@/i18n/locale";
 import Tutor from "@/components/events/Tutor";
+import SelectionMenu from "@/components/events/SelectionMenu";
 import { openTutor, useTutorDetail, useTutorFocus } from "@/lib/tutorFocus";
 
 /** Пока подгружается редкий экран (тренажёр, игра, видео…) — каркас вместо пустоты. */
@@ -753,6 +754,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         />
       )}
       {view.mode !== "pmQuiz2" && <Tutor event={event} userId={userId} />}
+      <SelectionMenu key={`${event.id}-${view.mode}`} eventId={event.id} />
 
       {view.mode === "read" && (() => {
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];
@@ -785,7 +787,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
             <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
-              <EventNotes text={part.notes[lang]} lang={lang} />
+              <EventNotes text={part.notes[lang]} lang={lang} translation={event.id === "computer-networks-endterm" && lang === "en" ? part.notes.ru : undefined} />
             </article>
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>
               Начать квиз по этой части · {view.step.count} вопросов
@@ -842,7 +844,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
             <article className={panel}>
-              <EventNotes text={part.notes[lang]} lang={lang} />
+              <EventNotes text={part.notes[lang]} lang={lang} translation={event.id === "computer-networks-endterm" && lang === "en" ? part.notes.ru : undefined} />
             </article>
             <PartNav
               prev={flat[at - 1] && { label: where(flat[at - 1]), go: () => setView({ mode: "extra", ...flat[at - 1] }) }}

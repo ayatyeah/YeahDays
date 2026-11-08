@@ -30,10 +30,11 @@ const isRule = (line: string) => /^\|[\s\-:|]+\|$/.test(line.trim());
  * - «![подпись](/путь.webp)» иллюстрация;
  * - «?? вопрос» и следом «?= ответ» — вопрос для самопроверки.
  */
-export default function EventNotes({ text, lang }: { text: string; lang: string }) {
+export default function EventNotes({ text, lang, translation }: { text: string; lang: string; translation?: string }) {
   const blocks: ReactNode[] = [];
-  let list: string[] = [];
+  let list: { text: string; translation?: string }[] = [];
   let table: string[][] = [];
+  let tableTranslations: (string | undefined)[] = [];
   let question: string | null = null;
   let fencedCode: string[] | null = null;
 
@@ -41,7 +42,7 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
     if (!list.length) return;
     blocks.push(
       <ul key={`l${blocks.length}`} className="list-disc space-y-2 pl-5">
-        {list.map((item, i) => <li key={i}>{inline(item)}</li>)}
+        {list.map((item, i) => <li key={i} data-selection-translation={item.translation}>{inline(item.text)}</li>)}
       </ul>,
     );
     list = [];
@@ -53,11 +54,11 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
       <div key={`t${blocks.length}`} className="-mx-1 overflow-x-auto">
         <table className="w-full border-collapse text-[14px]">
           <thead>
-            <tr>{head.map((h, i) => <th key={i} className="border-b-2 border-[var(--color-border-strong)] px-2 py-2 text-left font-semibold">{inline(h)}</th>)}</tr>
+            <tr data-selection-translation={tableTranslations[0]}>{head.map((h, i) => <th key={i} className="border-b-2 border-[var(--color-border-strong)] px-2 py-2 text-left font-semibold">{inline(h)}</th>)}</tr>
           </thead>
           <tbody>
             {rows.map((row, r) => (
-              <tr key={r} className="odd:bg-[var(--color-surface-2)]/60">
+              <tr key={r} data-selection-translation={tableTranslations[r + 1]} className="odd:bg-[var(--color-surface-2)]/60">
                 {row.map((c, i) => <td key={i} className="border-b border-[var(--color-border)] px-2 py-2 align-top">{inline(c)}</td>)}
               </tr>
             ))}
@@ -66,9 +67,17 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
       </div>,
     );
     table = [];
+    tableTranslations = [];
   };
 
-  for (const line of text.split("\n")) {
+  const lines = text.split("\n");
+  const translatedLines = translation?.split("\n");
+  // Only use aligned bilingual sources. Never guess a translation by position
+  // if the document structures differ.
+  const shape = (line: string) => line.trim() ? /^(## |- |> |= |\||```|@|\?)/.exec(line)?.[0] || "paragraph" : "blank";
+  const aligned = translatedLines?.length === lines.length && lines.every((line, i) => shape(line) === shape(translatedLines[i]));
+  for (const [lineIndex, line] of lines.entries()) {
+    const translated = aligned ? translatedLines?.[lineIndex].replace(/^(## |- |> |= )/, "") : undefined;
     if (line.startsWith("```")) {
       flushList(); flushTable();
       if (fencedCode === null) fencedCode = [];
@@ -79,8 +88,8 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
       continue;
     }
     if (fencedCode !== null) { fencedCode.push(line); continue; }
-    if (line.startsWith("- ")) { flushTable(); list.push(line.slice(2)); continue; }
-    if (line.startsWith("|")) { flushList(); if (!isRule(line)) table.push(cells(line)); continue; }
+    if (line.startsWith("- ")) { flushTable(); list.push({ text: line.slice(2), translation: translated }); continue; }
+    if (line.startsWith("|")) { flushList(); if (!isRule(line)) { table.push(cells(line)); tableTranslations.push(translated ? cells(translated).join(" · ") : undefined); } continue; }
     flushList();
     flushTable();
     const key = blocks.length;
@@ -90,8 +99,8 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
       question = null;
       continue;
     }
-    if (line.startsWith("## ")) blocks.push(<h3 key={key} className="pt-3 text-lg font-bold">{line.slice(3)}</h3>);
-    else if (line.startsWith("> ")) blocks.push(<blockquote key={key} className="rounded-2xl border-l-4 border-violet-400 bg-violet-500/10 px-4 py-3 font-medium">{inline(line.slice(2))}</blockquote>);
+    if (line.startsWith("## ")) blocks.push(<h3 key={key} data-selection-translation={translated} className="pt-3 text-lg font-bold">{line.slice(3)}</h3>);
+    else if (line.startsWith("> ")) blocks.push(<blockquote key={key} data-selection-translation={translated} className="rounded-2xl border-l-4 border-violet-400 bg-violet-500/10 px-4 py-3 font-medium">{inline(line.slice(2))}</blockquote>);
     else if (line.startsWith("= ")) blocks.push(<pre key={key} className="whitespace-pre-wrap break-words rounded-2xl bg-[var(--color-surface-2)] px-4 py-3 font-mono text-[13px]">{line.slice(2)}</pre>);
     else if (line.startsWith("@diagram ")) blocks.push(<NotesDiagram key={key} name={line.slice(9).trim()} lang={lang} />);
     else if (line.startsWith("@demo ")) blocks.push(<NotesDemo key={key} name={line.slice(6).trim()} lang={lang} />);
@@ -99,10 +108,10 @@ export default function EventNotes({ text, lang }: { text: string; lang: string 
       const m = /^!\[([^\]]*)\]\(([^)]+)\)/.exec(line);
       if (m) blocks.push(<NotesImage key={key} alt={m[1]} src={m[2]} />);
     }
-    else if (line.trim()) blocks.push(<p key={key}>{inline(line)}</p>);
+    else if (line.trim()) blocks.push(<p key={key} data-selection-translation={translated}>{inline(line)}</p>);
   }
   flushList();
   flushTable();
 
-  return <div lang={lang} className="space-y-3 text-[15px] leading-relaxed">{blocks}</div>;
+  return <div data-selection-notes lang={lang} className="space-y-3 text-[15px] leading-relaxed">{blocks}</div>;
 }

@@ -12,6 +12,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
 import { dailyLimit } from "@/lib/aiLimit";
+import { geminiAvailable } from "@/lib/geminiTutor";
 import { gradeAvailable } from "@/lib/examGrade";
 import { cleanFocus, cleanMessages, findTutorEvent, MAX_HISTORY, MAX_MESSAGE, streamTutor, TUTOR_CONSENT, type TutorLang } from "@/lib/tutor";
 
@@ -22,7 +23,7 @@ const json = (value: unknown, status = 200) =>
   NextResponse.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
 
 export async function GET() {
-  return json({ available: gradeAvailable() });
+  return json({ available: geminiAvailable() || gradeAvailable() });
 }
 
 export async function POST(req: Request) {
@@ -37,12 +38,12 @@ export async function POST(req: Request) {
   } catch {
     return json({ error: "Некорректный запрос" }, 400);
   }
-  if (body.consent !== TUTOR_CONSENT) return json({ error: "Нужно согласие на отправку вопроса в OpenAI" }, 400);
+  if (body.consent !== TUTOR_CONSENT) return json({ error: "Нужно согласие на отправку вопроса ИИ-провайдеру" }, 400);
   const event = findTutorEvent(body.eventId);
   if (!event) return json({ error: "Такого ивента нет" }, 404);
   const messages = cleanMessages(body.messages);
   if (!messages.length) return json({ error: "Напиши вопрос" }, 400);
-  if (!gradeAvailable()) return json({ error: "ИИ ещё не подключён" }, 503);
+  if (!geminiAvailable() && !gradeAvailable()) return json({ error: "ИИ ещё не подключён" }, 503);
 
   if (!rateLimit(`tutor:${userId}`, 10, 60_000)) return json({ error: "Слишком часто — подожди минуту" }, 429);
   if (!(await dailyLimit(`tutor-day:${userId}`, 120))) return json({ error: "На сегодня вопросов больше нет — лимит обновится через сутки" }, 429);

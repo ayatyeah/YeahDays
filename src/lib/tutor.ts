@@ -9,6 +9,7 @@
  * хранится на сервере — она живёт в браузере (components/events/Tutor.tsx).
  */
 
+import { geminiAvailable, streamGeminiTutor } from "@/lib/geminiTutor";
 import { recordAiUsage } from "@/lib/aiUsage";
 import { findEvent } from "@/lib/events";
 import { BUGS } from "@/lib/events/computerVision/bugs";
@@ -217,6 +218,7 @@ export function findTutorEvent(id: unknown) {
  * Расход учитывается по событию response.completed.
  */
 export async function streamTutor(event: StudyEvent, focus: TutorFocus, messages: TutorMessage[], lang: TutorLang, signal?: AbortSignal): Promise<ReadableStream<Uint8Array>> {
+  if (geminiAvailable()) return streamGeminiTutor(tutorInstructions(event, focus, lang), messages, signal);
   const key = process.env.OPENAI_API_KEY?.trim();
   if (!key) throw new Error("AI unavailable");
   const response = await fetch("https://api.openai.com/v1/responses", {

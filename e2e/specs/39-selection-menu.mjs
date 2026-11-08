@@ -14,7 +14,7 @@ try{
  let payload;
  await page.route('**/api/study-events/tutor',async route=>{if(route.request().method()==='POST'){payload=route.request().postDataJSON();await route.fulfill({status:200,contentType:'text/plain',body:'Сетевой уровень передаёт пакеты между сетями.'});}else await route.continue();});
  await select();
- await menu.getByRole('button',{name:'Перевести на русский',exact:true}).click();
+ await menu.getByRole('button',{name:'Русский абзац · без ИИ',exact:true}).click();
  await menu.getByText('Русская версия выделенных абзацев',{exact:true}).waitFor();
  assert.equal(payload,undefined,'bilingual notes translate without AI or consent');
  assert((await menu.innerText()).includes('IP отвечает за адресацию'));

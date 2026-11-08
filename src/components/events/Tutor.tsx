@@ -532,7 +532,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
                 {available === true && !aiAllowed && (
                   <label className="flex items-start gap-2 px-1 text-xs text-[var(--color-muted)]">
                     <input type="checkbox" className="mt-0.5" checked={consent} onChange={(e) => { setConsent(e.target.checked); if (e.target.checked) setError(null); }} />
-                    <span>Отправлять мой вопрос и то, что открыто на экране, в OpenAI для ответа. Ничего не хранится на сервере.</span>
+                    <span>Отправлять мой вопрос и то, что открыто на экране, ИИ-провайдеру (Google Gemini или OpenAI) для ответа. Ничего не хранится на сервере.</span>
                   </label>
                 )}
                 <form

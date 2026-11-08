@@ -1,0 +1,15 @@
+**
+!Dockerfile
+!package.json
+!package-lock.json
+!prisma/
+!prisma/**
+!src/
+!src/**
+!public/
+!public/**
+!next.config.ts
+!tsconfig.json
+!postcss.config.mjs
+!eslint.config.mjs
+!vitest.config.ts

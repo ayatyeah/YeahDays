@@ -7,6 +7,7 @@
     "preDeployCommand": "npm run db:deploy"
   },
   "build": {
-    "buildCommand": "npm run check"
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile"
   }
 }

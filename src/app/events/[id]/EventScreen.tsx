@@ -16,6 +16,7 @@ import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeade
 import EventPlan from "@/components/events/EventPlan";
 const Flashcards = dynamic(() => import("@/components/events/Flashcards"), { loading: Loading });
 const LectureVideo = dynamic(() => import("@/components/events/LectureVideo"), { loading: Loading });
+const NetworkStoryClip = dynamic(() => import("@/components/events/NetworkStoryClip"), { loading: Loading });
 import MockExamView, { MockList } from "@/components/events/MockExams";
 const VisionTrainer = dynamic(() => import("@/components/events/VisionTrainer"), { loading: Loading });
 const BugHunt = dynamic(() => import("@/components/events/BugHunt"), { loading: Loading });
@@ -783,6 +784,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "video", step: view.step })}>▶ Смотреть как видео</Button>
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
+            {event.id === "computer-networks-endterm" && part.id === "cne-m8" && <NetworkStoryClip />}
             {part.shortNotes && <div role="group" aria-label="Объём конспекта" className="flex flex-wrap gap-2" data-no-i18n>
               {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}

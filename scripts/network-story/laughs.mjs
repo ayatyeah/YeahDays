@@ -1,0 +1,7 @@
+import{readFileSync,writeFileSync,existsSync,copyFileSync}from'node:fs';import{homedir}from'node:os';import{join}from'node:path';
+const key=readFileSync(join(homedir(),'.config/yeahgrind/elevenlabs-key'),'utf8').trim();
+for(const [name,text] of [['chuckle','A brief warm studio audience chuckle after a clever joke in a family-friendly animated sitcom. A small group of adults naturally chuckles together, starts quickly, gently fades, no speech, no words, no applause, no music, clean dry recording.'],['laugh','A short cheerful studio audience laugh after a silly visual gag in an animated sitcom. Mixed natural human voices, friendly amused laughter, no intelligible words, no clapping, no shouting, no music, clean recording, quick start and gentle fade.']]){
+ const path=`output/network-story-v3/${name}.mp3`;if(existsSync(path))continue;if(existsSync(`scripts/network-story/assets/${name}.mp3`)){copyFileSync(`scripts/network-story/assets/${name}.mp3`,path);continue;}
+ const r=await fetch('https://api.elevenlabs.io/v1/sound-generation?output_format=mp3_44100_128',{method:'POST',headers:{'xi-api-key':key,'Content-Type':'application/json'},body:JSON.stringify({text,duration_seconds:2.5,prompt_influence:.45}),signal:AbortSignal.timeout(120000)});
+ if(!r.ok){const j=await r.json();throw Error(`Sound generation ${r.status}: ${j.detail?.status}`)}writeFileSync(path,Buffer.from(await r.arrayBuffer()));console.log(name,'saved; provider character-cost:',r.headers.get('character-cost')||'not supplied');
+}

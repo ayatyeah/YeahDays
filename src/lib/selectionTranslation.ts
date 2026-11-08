@@ -22,11 +22,24 @@ export async function translateSelection(text: string, language: string, signal?
   if (body.quotaFinished || Number(body.responseStatus) === 429 || Number(body.responseStatus) === 403) throw new Error('Лимит обычного переводчика исчерпан. Попробуй позже. Gemini не используется.');
   if (Number(body.responseStatus) !== 200 || typeof body.responseData?.translatedText !== 'string' || !body.responseData.translatedText.trim()) throw new Error('Не удалось перевести фрагмент. Попробуй ещё раз.');
   const entities: Record<string, string> = { amp: '&', quot: '"', apos: "'", lt: '<', gt: '>' };
-  const translated = body.responseData.translatedText.replace(/&(#x[0-9a-f]+|#\d+|amp|quot|apos|lt|gt);/gi, (all: string, code: string) => {
+  const decode = (value: string): string => value.replace(/&(#x[0-9a-f]+|#\d+|amp|quot|apos|lt|gt);/gi, (all: string, code: string) => {
     if (!code.startsWith('#')) return entities[code.toLowerCase()] || all;
     const n = code[1].toLowerCase() === 'x' ? parseInt(code.slice(2), 16) : Number(code.slice(1));
     return n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : all;
   });
+  const normalize = (value: string) => value.normalize('NFKC').toLowerCase().replace(/\s+/g, ' ').replace(/^[\s\p{P}]+|[\s\p{P}]+$/gu, '');
+  const original = normalize(text);
+  const isTranslation = (value: string) => /[а-яё]/i.test(value) && normalize(value) !== original;
+  let translated = decode(body.responseData.translatedText);
+  // MyMemory can rank an untranslated memory entry above its actual translation.
+  // Accept an alternative only for the same whole phrase, never a fuzzy neighbour.
+  if (!isTranslation(translated)) {
+    const matches = (Array.isArray(body.matches) ? body.matches : []) as { segment?: unknown; translation?: unknown; match?: unknown }[];
+    const alternative = matches.filter((match) => typeof match.segment === 'string' && normalize(decode(match.segment)) === original && typeof match.translation === 'string' && Number(match.match) >= 0.75 && isTranslation(decode(match.translation)))
+      .sort((a, b) => Number(b.match) - Number(a.match))[0];
+    if (!alternative || typeof alternative.translation !== 'string') throw new Error('Сервис не нашёл русский перевод этого фрагмента. Попробуй выделить более полную фразу.');
+    translated = decode(alternative.translation);
+  }
   if (cache.size >= 200) cache.delete(cache.keys().next().value!);
   cache.set(key, { text: translated, expires: Date.now() + DAY });
   return translated;

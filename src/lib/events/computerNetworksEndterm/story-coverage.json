@@ -1,0 +1,289 @@
+[
+  {
+    "module": 8,
+    "notesSha256": "1b26428bd54353c7b11d990f03eff79ccce6bba9d0ea42f1be6dfa25906deb55",
+    "sections": [
+      {
+        "heading": "8. Сетевой уровень: как пакет попадает в другую сеть",
+        "chapters": [
+          1,
+          2
+        ]
+      },
+      {
+        "heading": "Три характеристики IP",
+        "chapters": [
+          3
+        ]
+      },
+      {
+        "heading": "IPv4 и IPv6 headers",
+        "chapters": [
+          4,
+          5
+        ]
+      },
+      {
+        "heading": "Локальный адресат или шлюз",
+        "chapters": [
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  {
+    "module": 9,
+    "notesSha256": "62f52b51df4c7465c7fa354a7ce875823b777fc207614fc899aee554e84ae649",
+    "sections": [
+      {
+        "heading": "9. ARP и ND: как найти MAC",
+        "chapters": [
+          1
+        ]
+      },
+      {
+        "heading": "ARP для IPv4",
+        "chapters": [
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "heading": "Neighbor Discovery для IPv6",
+        "chapters": [
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "module": 10,
+    "notesSha256": "8a51b780f699cdb2fe9974b7e2156a8737d46e4f3ff0f7e8eac098de8d7a2929",
+    "sections": [
+      {
+        "heading": "10. Настройка Cisco IOS",
+        "chapters": [
+          1
+        ]
+      },
+      {
+        "heading": "Режимы и память",
+        "chapters": [
+          1,
+          2
+        ]
+      },
+      {
+        "heading": "Учебный пример настройки",
+        "chapters": [
+          3,
+          4
+        ]
+      },
+      {
+        "heading": "SSH",
+        "chapters": [
+          5
+        ]
+      },
+      {
+        "heading": "Что проверять",
+        "chapters": [
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "module": 11,
+    "notesSha256": "db65fb09c0dcefdf69ac7f89674fe4c204b51d7ad5cff8878828f04ef77d7c0d",
+    "sections": [
+      {
+        "heading": "11. IPv4 и подсети",
+        "chapters": [
+          1
+        ]
+      },
+      {
+        "heading": "Таблица, которую стоит выучить",
+        "chapters": [
+          2
+        ]
+      },
+      {
+        "heading": "Как решить задачу за минуту",
+        "chapters": [
+          3,
+          4
+        ]
+      },
+      {
+        "heading": "Число подсетей и VLSM",
+        "chapters": [
+          5
+        ]
+      },
+      {
+        "heading": "Специальные диапазоны",
+        "chapters": [
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "module": 12,
+    "notesSha256": "261ae039d6ef65d36d5256054027678636382c1d4516e08d18496a7c24de46d3",
+    "sections": [
+      {
+        "heading": "12. IPv6",
+        "chapters": [
+          1
+        ]
+      },
+      {
+        "heading": "Типы адресов",
+        "chapters": [
+          2,
+          3
+        ]
+      },
+      {
+        "heading": "Префиксы и подсети",
+        "chapters": [
+          3
+        ]
+      },
+      {
+        "heading": "Как назначается адрес",
+        "chapters": [
+          4,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "module": 13,
+    "notesSha256": "a40dc59cd7cc7b25d929fdcc4cacbaa84288526f25df6762957b60683785192a",
+    "sections": [
+      {
+        "heading": "13. ICMP, ping и traceroute",
+        "chapters": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "module": 14,
+    "notesSha256": "38365fa7692279cda5e0ddb7e544fce822a98219912ad15082e4c55145a5e551",
+    "sections": [
+      {
+        "heading": "14. TCP и UDP",
+        "chapters": [
+          1,
+          2
+        ]
+      },
+      {
+        "heading": "Порты и sockets",
+        "chapters": [
+          1,
+          3
+        ]
+      },
+      {
+        "heading": "TCP handshake и завершение",
+        "chapters": [
+          4,
+          5,
+          6
+        ]
+      }
+    ]
+  },
+  {
+    "module": 15,
+    "notesSha256": "234b97377207fd98ec7d81de4cfb6689909022c6d2c6790910908aab6360fc54",
+    "sections": [
+      {
+        "heading": "15. Прикладной уровень",
+        "chapters": [
+          1,
+          7
+        ]
+      },
+      {
+        "heading": "Протоколы и порты",
+        "chapters": [
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "heading": "DNS",
+        "chapters": [
+          2
+        ]
+      },
+      {
+        "heading": "DHCP",
+        "chapters": [
+          3
+        ]
+      },
+      {
+        "heading": "HTTP и почта",
+        "chapters": [
+          4,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "module": 16,
+    "notesSha256": "e347de4d041664d9ba40f8ab2ac4a9b32f575c4c092ceec6962b274d65801184",
+    "sections": [
+      {
+        "heading": "16. Безопасность",
+        "chapters": [
+          1,
+          2
+        ]
+      },
+      {
+        "heading": "Различай термины",
+        "chapters": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "heading": "AAA",
+        "chapters": [
+          5
+        ]
+      },
+      {
+        "heading": "IOS security",
+        "chapters": [
+          6,
+          7
+        ]
+      }
+    ]
+  }
+]

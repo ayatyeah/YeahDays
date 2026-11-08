@@ -784,7 +784,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "video", step: view.step })}>▶ Смотреть как видео</Button>
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
-            {event.id === "computer-networks-endterm" && part.id === "cne-m8" && <NetworkStoryClip />}
+            {event.id === "computer-networks-endterm" && <NetworkStoryClip key={part.id} partId={part.id} />}
             {part.shortNotes && <div role="group" aria-label="Объём конспекта" className="flex flex-wrap gap-2" data-no-i18n>
               {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
@@ -859,6 +859,11 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
       {view.mode === "video" && (() => {
         const lecture = event.lectures[view.step.lecture!];
         const part = lecture.parts[view.step.part!];
+        if (event.id === "computer-networks-endterm") return <>
+          <button className="text-sm underline" onClick={() => setView({ mode: "read", step: view.step })}>← К конспекту</button>
+          <NetworkStoryClip key={part.id} partId={part.id} initiallyOpen />
+          <Button variant="primary" onClick={() => startQuiz(view.step)}>Начать квиз по этой части</Button>
+        </>;
         return (
           <LectureVideo
             key={part.id}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, type PointerEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Anton } from "next/font/google";
@@ -14,15 +15,36 @@ export default function PrimeHero({ action, done, onNext, onComplete }: {
   action: DemoAction; done: boolean; onNext: () => void; onComplete: () => void;
 }) {
   const tx = useCopy();
+  const heroRef = useRef<HTMLElement>(null);
+  function trackPointer(event: PointerEvent<HTMLElement>) {
+    if (event.pointerType !== "mouse" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    event.currentTarget.style.setProperty("--look-x", `${x * 10}deg`);
+    event.currentTarget.style.setProperty("--look-y", `${-y * 6}deg`);
+  }
+  function resetPointer() {
+    heroRef.current?.style.setProperty("--look-x", "0deg");
+    heroRef.current?.style.setProperty("--look-y", "0deg");
+  }
   return <>
-    <section className={styles.hero} aria-labelledby="prime-hero-title" data-no-i18n>
+    <section ref={heroRef} className={styles.hero} aria-labelledby="prime-hero-title" data-no-i18n onPointerMove={trackPointer} onPointerLeave={resetPointer} data-celebrating={done}>
       <p className={styles.eyebrow}>{tx("МАЛЕНЬКИЕ ШАГИ. БОЛЬШИЕ ПЕРЕМЕНЫ.")}</p>
-      <h1 id="prime-hero-title" className={`${styles.wordmark} ${display.className}`} aria-label="YEAH GRIND!!!!!!!!">
-        <span>YEAH</span><span>GRIND<span className={styles.punctuation}>!!!!!!!!</span></span>
+      <h1 id="prime-hero-title" className={`${styles.wordmark} ${display.className}`} aria-label="YEAH GRIND">
+        <span>YEAH</span><span>GRIND</span>
       </h1>
       <div className={styles.orbit} aria-hidden="true" />
-      <span className={styles.scribble} aria-hidden="true" />
-      <Image className={styles.character} src="/landing/looks/prime-stride-v1.webp" alt="" width={933} height={1400} sizes="(max-width: 700px) 240px, (max-width: 1000px) 360px, 520px" priority unoptimized />
+      <div className={styles.character} aria-hidden="true" data-testid="landing-character">
+        <div className={styles.characterTilt}>
+          <div className={styles.characterFloat}>
+            <Image className={styles.characterPose} data-visible={!done} src="/landing/looks/prime-stride-v1.webp" alt="" width={933} height={1400} sizes="(max-width: 700px) 250px, 520px" priority unoptimized />
+            <Image className={styles.characterPose} data-visible={done} src="/landing/looks/prime-celebrate-v1.webp" alt="" width={933} height={1400} sizes="(max-width: 700px) 250px, 520px" unoptimized />
+          </div>
+        </div>
+        <span className={styles.characterShadow} />
+        {done && <span className={styles.xpBurst} key={action.name}>+{action.xp} XP <span>✦</span></span>}
+      </div>
       <div className={styles.copy}>
         <h2>{tx("Не идеальнее. Чуть лучше.")}</h2>
         <p>{tx("Один понятный шаг сегодня. Учёба, задачи и прогресс — в твоём ритме.")}</p>

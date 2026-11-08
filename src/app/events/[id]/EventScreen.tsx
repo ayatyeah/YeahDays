@@ -754,7 +754,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         />
       )}
       {view.mode !== "pmQuiz2" && <Tutor event={event} userId={userId} />}
-      <SelectionMenu key={`${event.id}-${view.mode}`} eventId={event.id} />
+      <SelectionMenu key={`${event.id}-${view.mode}`} />
 
       {view.mode === "read" && (() => {
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];

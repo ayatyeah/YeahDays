@@ -19,7 +19,7 @@ interface FocusState {
   label: string;
   /** Панель помощника открыта; ask — вопрос, который надо сразу задать. */
   open: boolean;
-  ask: { text: string; at: number } | null;
+  ask: { text: string; at: number; autoSend?: boolean } | null;
   setBase: (base: FocusState["base"]) => void;
   setDetail: (detail: Detail, label?: string) => void;
   setOpen: (open: boolean, ask?: string) => void;
@@ -38,6 +38,9 @@ export const useTutorFocus = create<FocusState>((set) => ({
 
 /** Открыть помощника; с текстом — сразу задать этот вопрос. */
 export const openTutor = (ask?: string) => useTutorFocus.getState().setOpen(true, ask);
+
+/** Prepare a question without spending an AI request until the user sends it. */
+export const openTutorDraft = (text: string) => useTutorFocus.setState({ open: true, ask: { text, at: Date.now(), autoSend: false } });
 
 /**
  * Опубликовать подробности текущего экрана. key — сериализуемый отпечаток:

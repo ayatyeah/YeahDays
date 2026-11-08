@@ -355,7 +355,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
   useEffect(() => {
     if (!open || !ask || ask.at === handledAsk.current || available === null) return;
     handledAsk.current = ask.at;
-    if (canSend) void send(ask.text);
+    if (canSend && ask.autoSend !== false) void send(ask.text);
     else setInput(ask.text);
   }, [open, ask, available, canSend, send]);
 

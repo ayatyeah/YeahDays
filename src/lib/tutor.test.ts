@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+vi.mock("@/lib/geminiTutor", () => ({ geminiAvailable: () => false, streamGeminiTutor: vi.fn() }));
 vi.mock("@/lib/aiUsage", () => ({ recordAiUsage: vi.fn() }));
 import { findEvent } from "@/lib/events";
 import { BUGS } from "@/lib/events/computerVision/bugs";

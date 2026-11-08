@@ -1,6 +1,7 @@
 import { beforeEach, expect, it, vi } from "vitest";
 
-const mocks = vi.hoisted(() => ({ auth: vi.fn(), rate: vi.fn(), stream: vi.fn(), available: vi.fn() }));
+const mocks = vi.hoisted(() => ({ auth: vi.fn(), rate: vi.fn(), stream: vi.fn(), available: vi.fn(), gemini: vi.fn() }));
+vi.mock("@/lib/geminiTutor", () => ({ geminiAvailable: mocks.gemini }));
 vi.mock("@/auth", () => ({ auth: mocks.auth }));
 vi.mock("@/lib/rateLimit", () => ({ rateLimit: mocks.rate }));
 vi.mock("@/lib/examGrade", () => ({ gradeAvailable: mocks.available }));
@@ -14,6 +15,7 @@ beforeEach(() => {
   mocks.auth.mockResolvedValue({ user: { id: "u1" } });
   mocks.rate.mockReturnValue(true);
   mocks.available.mockReturnValue(true);
+  mocks.gemini.mockReturnValue(false);
   mocks.stream.mockResolvedValue(new ReadableStream({ start: (c) => { c.enqueue(new TextEncoder().encode("Ответ")); c.close(); } }));
 });
 
@@ -41,4 +43,12 @@ it("лимиты, выключенный ИИ и сбой", async () => {
   expect((await post(ok)).status).toBe(429);
   mocks.stream.mockRejectedValueOnce(new Error("boom"));
   expect((await post(ok)).status).toBe(502);
+});
+
+it("Gemini works without an OpenAI key", async () => {
+  mocks.available.mockReturnValue(false);
+  mocks.gemini.mockReturnValue(true);
+  const response = await post(ok);
+  expect(response.status).toBe(200);
+  expect(await response.text()).toBe("Ответ");
 });

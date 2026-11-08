@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 vi.mock("@/lib/aiUsage", () => ({ recordAiUsage: vi.fn() }));
 const sse = (...chunks: string[]) => new Response(new ReadableStream({ start(c) { chunks.forEach(s => c.enqueue(new TextEncoder().encode(s))); c.close(); } }));
 const data = (text: string) => `data: ${JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }] })}\n\n`;
-beforeEach(() => { vi.resetModules(); vi.stubEnv("GOOGLE_GEMINI_API_SECRET", "first-key"); vi.stubEnv("GOOGLE_GEMINI_API_KEY_2", "second-key"); });
+beforeEach(() => { vi.resetModules(); for (const name of Object.keys(process.env)) { if (/^(GEMINI_API_KEY|GOOGLE_GEMINI_API_SECRET|GOOGLE_GEMINI_API_KEY_\d+)$/.test(name)) vi.stubEnv(name, ""); } vi.stubEnv("GOOGLE_GEMINI_API_SECRET", "first-key"); vi.stubEnv("GOOGLE_GEMINI_API_KEY_2", "second-key"); });
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 it("streams split UTF-8/SSE chunks and maps conversation roles without putting keys in URLs", async () => {
   const event = data("Пакет");

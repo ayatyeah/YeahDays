@@ -18,7 +18,20 @@ test('Selection menu: ordinary actions never send AI requests',async()=>{
   const menu=page.getByRole('dialog',{name:'Действия с выделенным текстом'});
   async function select(){await p.scrollIntoViewIfNeeded();await page.waitForTimeout(300);await p.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);});await menu.waitFor();}
   await select();
-  await menu.getByRole('button',{name:'На русском · без ИИ',exact:true}).click();
+  await p.evaluate(el=>{const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){const start=node.textContent.indexOf('IP addresses');if(start>=0){const r=document.createRange();r.setStart(node,start);r.setEnd(node,start+'IP addresses'.length);const s=getSelection();s.removeAllRanges();s.addRange(r);break;}}});
+  await page.waitForTimeout(300);
+  const link=menu.getByRole('link',{name:/Перевести выделенное/});
+  const url=new URL(await link.getAttribute('href'));
+  check(url.origin==='https://translate.google.com' && url.searchParams.get('tl')==='ru','ordinary translator targets Russian');
+  check(url.searchParams.get('text')==='IP addresses','translator receives exactly the selection');
+  check(await link.getAttribute('target')==='_blank','translator opens separately');
+  await page.context().route('https://translate.google.com/**',route=>route.fulfill({contentType:'text/html',body:'Translator test destination'}));
+  const popupPromise=page.waitForEvent('popup');
+  await link.click();const popup=await popupPromise;await popup.waitForLoadState();
+  check(new URL(popup.url()).searchParams.get('text')==='IP addresses','new tab receives phrase, not the paragraph');
+  await popup.close();await page.keyboard.press('Escape');await select();
+
+  await menu.getByRole('button',{name:'Русский абзац · без ИИ',exact:true}).click();
   check((await menu.innerText()).includes('IP отвечает за адресацию'),'Russian source paragraph shown');
   await menu.getByRole('button',{name:'Копировать',exact:true}).click();
   check(await page.evaluate(()=>window.__copied)===(await p.innerText()).trim(),'selected text copied');

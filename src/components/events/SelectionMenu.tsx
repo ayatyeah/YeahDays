@@ -100,16 +100,17 @@ export default function SelectionMenu() {
   }
 
   if (!selection) return null;
+  const translateUrl = `https://translate.google.com/?${new URLSearchParams({ sl: "auto", tl: "ru", text: selection.text, op: "translate" })}`;
   return createPortal(
-    <div ref={panel} className={styles.panel} role="dialog" aria-label="Действия с выделенным текстом" style={{ left: selection.left, top: selection.top, "--selection-top": `${selection.top}px` } as CSSProperties} onMouseDown={(event) => { if ((event.target as Element).closest("button")) event.preventDefault(); }}>
+    <div ref={panel} className={styles.panel} role="dialog" aria-label="Действия с выделенным текстом" style={{ left: selection.left, top: selection.top, "--selection-top": `${selection.top}px` } as CSSProperties} onMouseDown={(event) => { if ((event.target as Element).closest("button, a")) event.preventDefault(); }}>
       <div className={styles.heading}><span>✦ Выделенный текст</span><button type="button" aria-label="Закрыть меню выделения" onClick={close}>×</button></div>
       <div className={styles.actions}>
-        <button type="button" disabled={!selection.translation} title={!selection.translation ? "Для этого фрагмента нет готового русского абзаца" : undefined} onClick={() => { setResult(selection.translation); setNotice(""); }}>На русском · без ИИ</button>
+        <a href={translateUrl} target="_blank" rel="noopener noreferrer" data-button-motion title="Google Переводчик · новая вкладка">Перевести выделенное ↗<small className={styles.translatorHint}>Google Переводчик</small></a>
         <button type="button" onClick={() => void copy(selection.text)}>Копировать</button>
         <button type="button" aria-pressed={speaking} onClick={speak}>{speaking ? "Остановить" : "Озвучить"}</button>
         <button type="button" onClick={askTutor}>Спросить ИИ…</button>
+        {selection.translation && <button type="button" onClick={() => { setResult(selection.translation); setNotice(""); }}>Русский абзац · без ИИ</button>}
       </div>
-      {!selection.translation && <p className={styles.notice}>Готового перевода этого фрагмента нет.</p>}
       {result && <div className={styles.response}>
         <strong>Русская версия выделенных абзацев</strong>
         <div className={styles.result}><TutorText text={result} /></div>

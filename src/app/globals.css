@@ -948,3 +948,8 @@ html[data-theme="dark"] body button[data-answer-state="wrong"] {
   html body button[data-answer-state="correct"] { animation: yg-answer-correct 560ms cubic-bezier(.2,.8,.2,1) both; }
   html body button[data-answer-state="wrong"] { animation: yg-answer-wrong 420ms ease-out both; }
 }
+
+/* Let readers translate quiz text without submitting their selection. */
+[data-selection-question] { -webkit-user-select: text; user-select: text; }
+
+button[data-selection-question][aria-disabled="true"] { cursor: text; }

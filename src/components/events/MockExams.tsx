@@ -381,7 +381,7 @@ export default function MockExamView({
               {question.kind === "task" ? "Задача: расчёт" : "Открытый вопрос"}
             </p>
           )}
-          <h2 className="text-lg font-bold" lang="en">{question.title} <span className="text-sm font-normal text-[var(--color-muted)]">[{question.points} pts]</span></h2>
+          <h2 data-selection-question className="text-lg font-bold" lang="en">{question.title} <span className="text-sm font-normal text-[var(--color-muted)]">[{question.points} pts]</span></h2>
           {question.context.trim() && <div lang="en"><EventNotes text={question.context} lang="en" /></div>}
           {question.tasks.map((task) => {
             const answer = saved.answers[task.id] ?? "";
@@ -404,10 +404,10 @@ export default function MockExamView({
                       return (
                         <button
                           key={i}
-                          lang="en"
-                          disabled={!!g}
+                          data-selection-question lang="en"
+                          aria-disabled={!!g}
                           aria-pressed={chosen}
-                          onClick={() => choose(task, i)}
+                          onClick={() => { if (!g) choose(task, i); }}
                           className={cn(
                             "block w-full rounded-2xl border px-3 py-2.5 text-left text-sm transition",
                             !g && "border-[var(--color-border)] hover:bg-[var(--color-surface-2)]",

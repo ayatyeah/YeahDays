@@ -157,7 +157,7 @@ export default function Drill({
 
         <section className={panel}>
           {card?.level === 1 && !answered && <p className="mb-2 text-xs font-semibold text-amber-500">↺ Ты здесь ошибался — попробуй ещё раз</p>}
-          <h2 lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
+          <h2 data-selection-question lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
           <div className="mt-4 space-y-2">
             {item.options.map((option, i) => {
               const right = answered && i === item.correct;
@@ -165,11 +165,11 @@ export default function Drill({
               return (
                 <button
                   key={`${index}-${i}`}
-                  lang="en"
+                  data-selection-question lang="en"
                   data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
-                  disabled={answered}
+                  aria-disabled={answered}
                   aria-pressed={picked === i}
-                  onClick={() => choose(i)}
+                  onClick={() => { if (!answered) choose(i); }}
                   className={cn(
                     "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
                     right ? "border-emerald-400 bg-emerald-500/15" : wrong ? "border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
@@ -191,10 +191,10 @@ export default function Drill({
                     ? card?.level === 2 ? "Верно · освоено ✓" : `Верно · ещё ${STREAK_TO_MASTER - (card?.streak ?? 0)} раз — и освоено`
                     : returns ? "Неверно — вопрос вернётся через пару вопросов" : "Неверно — вернётся в следующем раунде"}
                 </p>
-                <p className="mt-1" lang={lang}>{item.why[lang]}</p>
+                <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
                 {picked !== item.correct && item.wrong?.[picked!] && (
                   <p className="mt-2 text-[var(--color-fg-dim)]">
-                    <span lang="en" className="font-medium">✗ {item.options[picked!]}</span> — <span lang={lang}>{item.wrong[picked!]![lang]}</span>
+                    <span data-selection-question lang="en" className="font-medium">✗ {item.options[picked!]}</span> — <span data-selection-question lang={lang}>{item.wrong[picked!]![lang]}</span>
                   </p>
                 )}
                 <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs">
@@ -206,7 +206,7 @@ export default function Drill({
                   <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
                     {item.options.map((option, i) => item.wrong?.[i] && (
                       <li key={i} className={cn("text-[13px]", i === picked ? "text-[var(--color-strength)]" : "text-[var(--color-fg-dim)]")}>
-                        <span lang="en" className="font-medium">✗ {option}</span> — <span lang={lang}>{item.wrong[i]![lang]}</span>
+                        <span data-selection-question lang="en" className="font-medium">✗ {option}</span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
                       </li>
                     ))}
                   </ul>

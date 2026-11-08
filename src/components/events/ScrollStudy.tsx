@@ -263,7 +263,7 @@ export default function ScrollStudy({
           <div className="mx-auto my-auto w-full max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{`${item.step.title[lang]} · ${item.index + 1}/${item.of}`}</p>
             {item.page.heading && <p className="mt-1 text-sm font-semibold text-[var(--color-muted)]">{item.page.heading}</p>}
-            <p className="mt-6 border-l-4 border-violet-400 pl-4 text-2xl font-semibold leading-snug" lang={lang}>{inline(text)}</p>
+            <p className="mt-6 border-l-4 border-violet-400 pl-4 text-2xl font-semibold leading-snug" data-selection-question lang={lang}>{inline(text)}</p>
           </div>
         </div>
       );
@@ -312,7 +312,7 @@ export default function ScrollStudy({
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]" aria-hidden>
               <div className="h-full bg-amber-400" style={{ width: `${(done / quiz.length) * 100}%` }} />
             </div>
-            <h2 lang="en" className="mt-4 text-xl font-bold leading-snug">{q.q}</h2>
+            <h2 data-selection-question lang="en" className="mt-4 text-xl font-bold leading-snug">{q.q}</h2>
             <div className="mt-5 space-y-2">
               {q.options.map((option, o) => {
                 const ok = picked !== null && o === q.correct;
@@ -320,10 +320,10 @@ export default function ScrollStudy({
                 return (
                   <button
                     key={o}
-                    lang="en"
+                    data-selection-question lang="en"
                     data-answer-state={ok ? "correct" : bad ? "wrong" : undefined}
-                    disabled={picked !== null}
-                    onClick={() => choose(item.step, item.k, o)}
+                    aria-disabled={picked !== null}
+                    onClick={() => { if (picked === null) choose(item.step, item.k, o); }}
                     className={cn(
                       "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
                       ok ? "border-emerald-500 bg-emerald-500/15" : bad ? "border-red-500 bg-red-500/15" : "border-[var(--color-border-strong)] bg-[var(--color-surface)]",
@@ -338,8 +338,8 @@ export default function ScrollStudy({
             {picked !== null && (
               <div role="status" data-review={`${item.step.id}:${item.k}`} className="mt-4 rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
                 <p className="font-semibold">{picked === q.correct ? "Верно" : "Неверно"}</p>
-                <p className="mt-1" lang={lang}>{q.why[lang]}</p>
-                {picked !== q.correct && q.wrong?.[picked] && <p className="mt-2 text-[var(--color-muted)]" lang={lang}>{q.wrong[picked]![lang]}</p>}
+                <p className="mt-1" data-selection-question lang={lang}>{q.why[lang]}</p>
+                {picked !== q.correct && q.wrong?.[picked] && <p className="mt-2 text-[var(--color-muted)]" data-selection-question lang={lang}>{q.wrong[picked]![lang]}</p>}
                 <button className="mt-3 rounded-full bg-[var(--color-fg)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)]" onClick={() => scrollTo(i + 1)}>Дальше ↓</button>
               </div>
             )}

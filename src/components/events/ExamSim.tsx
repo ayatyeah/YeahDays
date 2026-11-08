@@ -81,12 +81,12 @@ export default function ExamSim({
             {flags.includes(index) ? "⚑ Вернуться" : "⚐ Отметить"}
           </button>
         </div>
-        <h2 lang="en" className="mt-3 text-lg font-semibold leading-snug">{item.q}</h2>
+        <h2 data-selection-question lang="en" className="mt-3 text-lg font-semibold leading-snug">{item.q}</h2>
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => (
             <button
               key={`${index}-${i}`}
-              lang="en"
+              data-selection-question lang="en"
               aria-pressed={picked === i}
               onClick={() => setAnswers(answers.map((a, j) => (j === index ? i : a)))}
               className={cn(

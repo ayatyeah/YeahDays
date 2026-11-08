@@ -16,12 +16,12 @@ export default function CheckQuestion({ question, answer, lang }: { question: st
   return (
     <div className={cn("rounded-2xl border px-4 py-3", state === "known" ? "border-emerald-400/60 bg-emerald-500/10" : state === "repeat" ? "border-amber-400/60 bg-amber-500/10" : "border-[var(--color-border-strong)] bg-[var(--color-surface-2)]")}>
       <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{ru ? "Проверь себя" : "Check yourself"}</p>
-      <p className="mt-1 font-medium">{question}</p>
+      <p data-selection-question lang={lang} className="mt-1 font-medium">{question}</p>
       {state === "closed" ? (
         <button className="mt-2 text-sm font-semibold text-[var(--color-intelligence)] underline" onClick={() => setState("open")}>{ru ? "Показать ответ" : "Show the answer"}</button>
       ) : (
         <>
-          <p className="mt-2 rounded-xl bg-[var(--color-bg)] px-3 py-2 text-sm">{answer}</p>
+          <p data-selection-question lang={lang} className="mt-2 rounded-xl bg-[var(--color-bg)] px-3 py-2 text-sm">{answer}</p>
           {state === "open" && (
             <div className="mt-2 flex gap-2">
               <button className="rounded-xl bg-emerald-500/20 px-3 py-1.5 text-sm font-semibold" onClick={() => setState("known")}>{ru ? "Знаю" : "I knew it"}</button>

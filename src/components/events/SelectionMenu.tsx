@@ -8,7 +8,7 @@ import { TutorText } from "./Tutor";
 import styles from "./selection-menu.module.css";
 
 type SelectionInfo = { text: string; translation: string; lang: string; left: number; top: number };
-export default function SelectionMenu() {
+export default function SelectionMenu({ allowTutor = true }: { allowTutor?: boolean }) {
   const [selection, setSelection] = useState<SelectionInfo | null>(null);
   const [result, setResult] = useState("");
   const [resultType, setResultType] = useState<"translation" | "source">("translation");
@@ -41,9 +41,9 @@ export default function SelectionMenu() {
       const range = sel.getRangeAt(0);
       if (panel.current?.contains(range.startContainer)) return;
       const element = range.startContainer.nodeType === Node.ELEMENT_NODE ? range.startContainer as Element : range.startContainer.parentElement;
-      const root = element?.closest("[data-selection-notes]");
+      const root = element?.closest("[data-selection-notes], [data-selection-question]");
       const text = sel.toString().trim();
-      if (!text || !root || !root.contains(range.endContainer) || element?.closest("button, input, textarea, [contenteditable=true]")) {
+      if (!text || !root || !root.contains(range.endContainer) || (element?.closest("input, textarea, [contenteditable=true]") || (element?.closest("button") && !root.hasAttribute("data-selection-question")))) {
         if (!panel.current?.contains(document.activeElement)) close();
         return;
       }
@@ -62,6 +62,16 @@ export default function SelectionMenu() {
     function outside(event: PointerEvent) {
       if (event.target instanceof Node && !panel.current?.contains(event.target)) close();
     }
+    // Dragging text in an answer must not submit that answer (or toggle a label).
+    function selectionClick(event: MouseEvent) {
+      if (event.detail === 0 || !(event.target instanceof Element)) return;
+      const target = event.target.closest("[data-selection-question]");
+      const selection = window.getSelection();
+      if (target && selection && !selection.isCollapsed && selection.toString().trim() && selection.anchorNode && selection.focusNode && target.contains(selection.anchorNode) && target.contains(selection.focusNode)) {
+        event.preventDefault(); event.stopPropagation();
+      }
+    }
+    document.addEventListener("click", selectionClick, true);
     document.addEventListener("selectionchange", schedule);
     document.addEventListener("keydown", key);
     document.addEventListener("pointerdown", outside);
@@ -72,6 +82,7 @@ export default function SelectionMenu() {
     return () => {
       clearTimeout(timer);
       request.current?.abort();
+      document.removeEventListener("click", selectionClick, true);
       document.removeEventListener("selectionchange", schedule);
       document.removeEventListener("keydown", key);
       document.removeEventListener("pointerdown", outside);
@@ -129,7 +140,7 @@ export default function SelectionMenu() {
         <button type="button" disabled={busy} onClick={() => void translate()}>{busy ? "Перевожу…" : "Перевести выделенное"}</button>
         <button type="button" onClick={() => void copy(selection.text)}>Копировать</button>
         <button type="button" aria-pressed={speaking} onClick={speak}>{speaking ? "Остановить" : "Озвучить"}</button>
-        <button type="button" onClick={askTutor}>Спросить ИИ…</button>
+        {allowTutor && <button type="button" onClick={askTutor}>Спросить ИИ…</button>}
         {selection.translation && <button type="button" onClick={() => { request.current?.abort(); request.current = null; setBusy(false); setResultType("source"); setError(""); setResult(selection.translation); setNotice(""); }}>Русский абзац · без ИИ</button>}
       </div>
       {busy && <p role="status" className={styles.notice}>Перевожу выделенный фрагмент…</p>}

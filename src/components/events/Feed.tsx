@@ -472,7 +472,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
             {card.questions.map((_, i) => <span key={i} className={cn("h-1.5 flex-1 rounded-full", i < index || (i === index && picked !== null) ? "bg-amber-300" : "bg-white/20")} />)}
           </div>
         )}
-        <h2 lang="en" className="mt-3 text-xl font-bold leading-snug">{q.q}</h2>
+        <h2 data-selection-question lang="en" className="mt-3 text-xl font-bold leading-snug">{q.q}</h2>
         <div className="mt-5 space-y-2">
           {q.options.map((option, i) => {
             const ok = picked !== null && i === q.correct;
@@ -480,10 +480,10 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
             return (
               <button
                 key={`${index}-${i}`}
-                lang="en"
+                data-selection-question lang="en"
                 data-answer-state={ok ? "correct" : bad ? "wrong" : undefined}
-                disabled={picked !== null}
-                onClick={() => choose(i)}
+                aria-disabled={picked !== null}
+                onClick={() => { if (picked === null) choose(i); }}
                 className={cn(
                   "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
                   ok ? "border-emerald-400 bg-emerald-500/20" : bad ? "border-red-400 bg-red-500/20" : "border-white/20 bg-white/5",
@@ -498,8 +498,8 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
         {picked !== null && (
           <div role="status" className="mt-4 rounded-2xl bg-white/10 p-4 text-sm">
             <p className="font-semibold">{picked === q.correct ? "Верно" : "Неверно — вопрос вернётся в «Учить вопросами»"}</p>
-            <p className="mt-1 text-white/85" lang={lang}>{q.why[lang]}</p>
-            {picked !== q.correct && q.wrong?.[picked] && <p className="mt-2 text-white/70" lang={lang}>{q.wrong[picked]![lang]}</p>}
+            <p className="mt-1 text-white/85" data-selection-question lang={lang}>{q.why[lang]}</p>
+            {picked !== q.correct && q.wrong?.[picked] && <p className="mt-2 text-white/70" data-selection-question lang={lang}>{q.wrong[picked]![lang]}</p>}
             {last ? (
               <>
                 {card.questions.length > 1 && <p className="mt-3 font-semibold">{`Итог: ${right} из ${card.questions.length}`}</p>}

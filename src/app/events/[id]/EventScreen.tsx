@@ -754,7 +754,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         />
       )}
       {view.mode !== "pmQuiz2" && <Tutor event={event} userId={userId} />}
-      <SelectionMenu key={`${event.id}-${view.mode}`} />
+      <SelectionMenu key={`${event.id}-${view.mode}`} allowTutor={view.mode !== "pmQuiz2"} />
 
       {view.mode === "read" && (() => {
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];
@@ -1113,7 +1113,7 @@ function Quiz({
       </header>
 
       <section className={panel}>
-        <h2 lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
+        <h2 data-selection-question lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => {
             const right = answered && i === item.correct;
@@ -1121,11 +1121,11 @@ function Quiz({
             return (
               <button
                 key={`${item.id}-${i}`}
-                lang="en"
+                data-selection-question lang="en"
                 data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
-                disabled={answered}
+                aria-disabled={answered}
                 aria-pressed={picked === i}
-                onClick={() => setAnswers([...answers, i])}
+                onClick={() => { if (!answered) setAnswers([...answers, i]); }}
                 className={cn(
                   "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
                   right ? "border-emerald-400 bg-emerald-500/15" : wrong ? "border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
@@ -1143,12 +1143,12 @@ function Quiz({
           <div ref={feedback} className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
               <p className="font-semibold">{picked === item.correct ? "Верно" : "Неверно"}</p>
-              <p className="mt-1" lang={lang}>{item.why[lang]}</p>
+              <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
               {item.wrong && (
                 <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
                   {item.options.map((option, i) => item.wrong?.[i] && (
                     <li key={i} className={cn("text-[13px]", i === picked ? "text-[var(--color-strength)]" : "text-[var(--color-fg-dim)]")}>
-                      <span lang="en" className="font-medium">✗ {option}</span> — <span lang={lang}>{item.wrong[i]![lang]}</span>
+                      <span data-selection-question lang="en" className="font-medium">✗ {option}</span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
                     </li>
                   ))}
                 </ul>
@@ -1261,11 +1261,11 @@ function Mistakes({ eventId, mistakes, lang, onLang }: { eventId: string; mistak
       <ol className="mt-4 space-y-4">
         {mistakes.map(({ item, picked }) => (
           <li key={item.id} className="rounded-2xl border border-[var(--color-border)] p-4 text-sm">
-            <p lang="en" className="font-semibold">{item.q}</p>
-            {picked !== undefined && picked >= 0 ? <p lang="en" className="mt-2 text-[var(--color-strength)]">✗ {item.options[picked]}</p> : <p className="mt-2 text-[var(--color-strength)]">Без ответа</p>}
-            <p lang="en" className="mt-1 text-[var(--color-stability)]">✓ {item.options[item.correct]}</p>
-            <p lang={lang} className="mt-2 text-[var(--color-muted)]">{item.why[lang]}</p>
-            {picked !== undefined && picked >= 0 && item.wrong?.[picked] && <p lang={lang} className="mt-1 text-[var(--color-muted)]">Почему не «{item.options[picked]}»: {item.wrong[picked]![lang]}</p>}
+            <p data-selection-question lang="en" className="font-semibold">{item.q}</p>
+            {picked !== undefined && picked >= 0 ? <p data-selection-question lang="en" className="mt-2 text-[var(--color-strength)]">✗ {item.options[picked]}</p> : <p className="mt-2 text-[var(--color-strength)]">Без ответа</p>}
+            <p data-selection-question lang="en" className="mt-1 text-[var(--color-stability)]">✓ {item.options[item.correct]}</p>
+            <p data-selection-question lang={lang} className="mt-2 text-[var(--color-muted)]">{item.why[lang]}</p>
+            {picked !== undefined && picked >= 0 && item.wrong?.[picked] && <p data-selection-question lang={lang} className="mt-1 text-[var(--color-muted)]">Почему не «{item.options[picked]}»: {item.wrong[picked]![lang]}</p>}
             <ReportQuestion eventId={eventId} questionId={item.id} />
           </li>
         ))}

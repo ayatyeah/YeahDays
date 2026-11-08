@@ -78,3 +78,46 @@ test('Selection menu: full notes translate in both directions',async()=>{
   check(aiCalls===0,'neither direction uses Gemini');
  }finally{await browser.close();}
 });
+
+test('Selection menu: quiz questions and option selection do not submit answers',async()=>{
+ const user=await newUser();const {browser,page}=await session({user,engine:'chromium'});
+ try{
+  await page.setViewportSize({width:1280,height:900});
+  await page.route('https://api.mymemory.translated.net/get?**',route=>route.fulfill({headers:{'access-control-allow-origin':'*'},json:{responseStatus:200,responseData:{translatedText:'Тестовый перевод фрагмента'}}}));
+  await openSection(page,'/events/computer-networks-endterm');
+  await page.getByRole('button',{name:'Начать с первой части',exact:true}).click();
+  await page.getByRole('button',{name:/Начать квиз по этой части/}).click();
+  const question=page.locator('h2[data-selection-question]').first();await question.waitFor();
+  await question.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);});
+  const menu=page.getByRole('dialog',{name:'Действия с выделенным текстом'});await menu.waitFor();
+  await menu.getByRole('button',{name:'Перевести выделенное',exact:true}).click();
+  await menu.getByText('Тестовый перевод фрагмента',{exact:true}).waitFor();
+  check(await menu.getByText('Перевод на русский',{exact:true}).isVisible(),'English question translates in place');
+  await page.keyboard.press('Escape');await page.evaluate(()=>getSelection()?.removeAllRanges());
+  const option=page.locator('button[data-selection-question]').first();await option.scrollIntoViewIfNeeded();
+  const rect=await option.evaluate(el=>{const node=Array.from(el.childNodes).find(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim().length>2);const r=document.createRange();r.setStart(node,0);r.setEnd(node,Math.min(8,node.textContent.length));const b=r.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};});
+  await page.mouse.move(rect.x+1,rect.y+rect.height/2);await page.mouse.down();await page.mouse.move(rect.x+rect.width-1,rect.y+rect.height/2,{steps:12});await page.mouse.up();
+  await menu.waitFor();
+  check(await option.isEnabled(),'dragging option text does not answer');
+  check(await page.locator('button[data-answer-state]').count()===0,'no answer feedback from selection');
+  await menu.getByRole('button',{name:'Перевести выделенное',exact:true}).click();
+  await menu.getByText('Тестовый перевод фрагмента',{exact:true}).waitFor();
+  await page.keyboard.press('Escape');await page.evaluate(()=>getSelection()?.removeAllRanges());
+  await option.click();
+  check(await option.isDisabled(),'normal answer click still works');
+  check(await option.getAttribute('aria-pressed')==='true','chosen answer remains selected');
+  await page.waitForTimeout(650);
+  const other=page.locator('button[data-selection-question]').nth(1);
+  await other.scrollIntoViewIfNeeded();
+  const answeredRect=await other.evaluate(el=>{const node=Array.from(el.childNodes).find(n=>n.nodeType===Node.TEXT_NODE&&n.textContent.trim().length>2);const r=document.createRange();r.setStart(node,0);r.setEnd(node,Math.min(8,node.textContent.length));const b=r.getBoundingClientRect();return {x:b.x,y:b.y,width:b.width,height:b.height};});
+  await page.mouse.move(answeredRect.x+1,answeredRect.y+answeredRect.height/2);await page.mouse.down();await page.mouse.move(answeredRect.x+answeredRect.width-1,answeredRect.y+answeredRect.height/2,{steps:12});await page.mouse.up();
+  await menu.waitFor();
+  await menu.getByRole('button',{name:'Перевести выделенное',exact:true}).click();
+  await menu.getByText('Тестовый перевод фрагмента',{exact:true}).waitFor();
+  check(await other.evaluate(el=>!el.disabled),'answered option retains native text selection');
+  await page.keyboard.press('Escape');await page.evaluate(()=>getSelection()?.removeAllRanges());
+  await other.dispatchEvent('click');
+  check(await option.getAttribute('aria-pressed')==='true' && await other.getAttribute('aria-pressed')==='false','clicking another answered option cannot change the answer');
+
+ }finally{await browser.close();}
+});

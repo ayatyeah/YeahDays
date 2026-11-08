@@ -20,17 +20,22 @@ test('Selection menu: ordinary actions never send AI requests',async()=>{
   await select();
   await p.evaluate(el=>{const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let node;while((node=walker.nextNode())){const start=node.textContent.indexOf('IP addresses');if(start>=0){const r=document.createRange();r.setStart(node,start);r.setEnd(node,start+'IP addresses'.length);const s=getSelection();s.removeAllRanges();s.addRange(r);break;}}});
   await page.waitForTimeout(300);
-  const link=menu.getByRole('link',{name:/Перевести выделенное/});
-  const url=new URL(await link.getAttribute('href'));
-  check(url.origin==='https://translate.google.com' && url.searchParams.get('tl')==='ru','ordinary translator targets Russian');
-  check(url.searchParams.get('text')==='IP addresses','translator receives exactly the selection');
-  check(await link.getAttribute('target')==='_blank','translator opens separately');
-  await page.context().route('https://translate.google.com/**',route=>route.fulfill({contentType:'text/html',body:'Translator test destination'}));
-  const popupPromise=page.waitForEvent('popup');
-  await link.click();const popup=await popupPromise;await popup.waitForLoadState();
-  check(new URL(popup.url()).searchParams.get('text')==='IP addresses','new tab receives phrase, not the paragraph');
-  await popup.close();await page.keyboard.press('Escape');await select();
-
+  let translationCalls=0;
+  await page.context().route('https://api.mymemory.translated.net/get?**',route=>{
+   translationCalls++;const url=new URL(route.request().url());
+   check(url.searchParams.get('q')==='IP addresses','only selected phrase sent to translator');
+   return route.fulfill({headers:{'access-control-allow-origin':'*'},json:{responseStatus:200,responseData:{translatedText:'IP-адреса'}}});
+  });
+  const tabs=page.context().pages().length;
+  await menu.getByRole('button',{name:'Перевести выделенное',exact:true}).click();
+  await menu.getByText('IP-адреса',{exact:true}).waitFor();
+  check(page.context().pages().length===tabs,'translation stays inside the original menu');
+  await menu.getByRole('button',{name:'Перевести выделенное',exact:true}).click();
+  await menu.getByText('IP-адреса',{exact:true}).waitFor();
+  check(translationCalls===1,'repeat translation uses cache');
+  check(posts===0,'inline translator never calls Gemini');
+  await page.screenshot({path:'e2e/.out/selection-inline.png'});
+  await page.keyboard.press('Escape');await select();
   await menu.getByRole('button',{name:'Русский абзац · без ИИ',exact:true}).click();
   check((await menu.innerText()).includes('IP отвечает за адресацию'),'Russian source paragraph shown');
   await menu.getByRole('button',{name:'Копировать',exact:true}).click();

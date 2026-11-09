@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { rateLimit } from "@/lib/rateLimit";
+import { tutorQuota, TUTOR_USER_DAILY_LIMIT, TUTOR_GLOBAL_DAILY_LIMIT } from "@/lib/tutorQuota";
 import { dailyLimit } from "@/lib/aiLimit";
 import { geminiAvailable } from "@/lib/geminiTutor";
 import { gradeAvailable } from "@/lib/examGrade";
@@ -23,7 +24,8 @@ const json = (value: unknown, status = 200) =>
   NextResponse.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
 
 export async function GET() {
-  return json({ available: geminiAvailable() || gradeAvailable() });
+  const userId = (await auth())?.user?.id;
+  return json({ available: geminiAvailable() || gradeAvailable(), quota: userId ? await tutorQuota(userId) : null, provider: geminiAvailable() ? { name: "Gemini", remaining: null } : null });
 }
 
 export async function POST(req: Request) {
@@ -46,8 +48,8 @@ export async function POST(req: Request) {
   if (!geminiAvailable() && !gradeAvailable()) return json({ error: "ИИ ещё не подключён" }, 503);
 
   if (!rateLimit(`tutor:${userId}`, 10, 60_000)) return json({ error: "Слишком часто — подожди минуту" }, 429);
-  if (!(await dailyLimit(`tutor-day:${userId}`, 120))) return json({ error: "На сегодня вопросов больше нет — лимит обновится через сутки" }, 429);
-  if (!(await dailyLimit("tutor:global", 4000))) return json({ error: "Общий дневной лимит ИИ исчерпан" }, 429);
+  if (!(await dailyLimit(`tutor-day:${userId}`, TUTOR_USER_DAILY_LIMIT))) return json({ error: "На сегодня вопросов больше нет — лимит обновится в 00:00 UTC" }, 429);
+  if (!(await dailyLimit("tutor:global", TUTOR_GLOBAL_DAILY_LIMIT))) return json({ error: "Общий дневной лимит ИИ исчерпан" }, 429);
 
   const lang: TutorLang = body.lang === "en" || body.lang === "kk" ? body.lang : "ru";
   try {

@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState, ty
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import type { TutorQuota } from "@/lib/tutorQuota";
 import type { StudyEvent } from "@/lib/events/types";
 import type { TutorFocus } from "@/lib/tutor";
 import { useTutorFocus } from "@/lib/tutorFocus";
@@ -176,6 +177,10 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ text: string } | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
+  const [quota, setQuota] = useState<TutorQuota | null>(null);
+  const [quotaLoaded, setQuotaLoaded] = useState(false);
+  const [provider, setProvider] = useState<string | null>(null);
+  const quotaRequest = useRef(0);
   const [consent, setConsent] = useState(false);
   const [screen, setScreen] = useState(true);
   const [quote, setQuote] = useState("");
@@ -197,18 +202,37 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
   messagesRef.current = messages;
 
   const focus: TutorFocus = { ...base, ...detail };
-  const canSend = available === true && (aiAllowed || consent);
+  const quotaExhausted = quota !== null && (quota.personal.remaining === 0 || quota.shared.remaining === 0);
+  const canSend = available === true && !quotaExhausted && (aiAllowed || consent);
 
   useEffect(() => setMessages(loadChat(key)), [key]);
 
-  // Есть ли ИИ — спрашиваем при первом открытии.
+  const refreshQuota = useCallback(async () => {
+    const requestId = ++quotaRequest.current;
+    try {
+      const response = await fetch("/api/study-events/tutor", { cache: "no-store" });
+      if (!response.ok) throw new Error("quota unavailable");
+      const data = await response.json() as { available?: boolean; quota?: TutorQuota | null; provider?: { name: string } | null };
+      if (requestId !== quotaRequest.current) return;
+      setAvailable(data.available === true);
+      setQuota(data.quota ?? null);
+      setProvider(data.provider?.name ?? null);
+    } catch {
+      if (requestId !== quotaRequest.current) return;
+      setQuota(null);
+      setAvailable(value => value ?? false);
+    } finally {
+      if (requestId === quotaRequest.current) setQuotaLoaded(true);
+    }
+  }, []);
   useEffect(() => {
-    if (!open || available !== null) return;
-    void fetch("/api/study-events/tutor")
-      .then((r) => r.json())
-      .then((b: { available?: boolean }) => setAvailable(b.available === true))
-      .catch(() => setAvailable(false));
-  }, [open, available]);
+    if (!open) return;
+    void refreshQuota();
+    const refresh = () => { if (!document.hidden) void refreshQuota(); };
+    const timer = window.setInterval(refresh, 60_000);
+    window.addEventListener("focus", refresh);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", refresh); quotaRequest.current++; };
+  }, [open, userId, refreshQuota]);
 
   // Выделенный на странице текст (вне панели) — можно спросить про него.
   useEffect(() => {
@@ -276,7 +300,8 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
       if (!text || busy) return;
       if (!canSend) {
         setInput(text);
-        if (available === true) setError({ text: "Отметь галочку согласия ниже — и отправь ещё раз" });
+        if (quotaExhausted) setError({ text: "Дневной лимит сайта исчерпан. Время обновления указано под счётчиком." });
+        else if (available === true) setError({ text: "Отметь галочку согласия ниже — и отправь ещё раз" });
         return;
       }
       const prev = messagesRef.current;
@@ -344,11 +369,12 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
         window.clearTimeout(watchdog);
         setBusy(false);
         abort.current = null;
+        void refreshQuota();
       }
     },
     // focus пересобирается каждый рендер; всё, что нужно, в списке
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [busy, canSend, available, screen, quote, event.id, locale, key, base, detail],
+    [busy, canSend, available, quotaExhausted, refreshQuota, screen, quote, event.id, locale, key, base, detail],
   );
 
   // Вопрос из другого экрана («✦ Спросить помощника», «Подсказка от ИИ»).
@@ -461,6 +487,19 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
                   ×
                 </button>
               </header>
+              <details className="shrink-0 border-b border-[var(--color-border)] px-4 py-2 text-xs text-[var(--color-muted)]" data-testid="tutor-quota">
+                <summary className="cursor-pointer" aria-live="polite">
+                  {quota ? `Ваш лимит сайта: осталось ${quota.personal.remaining} из ${quota.personal.limit}` : quotaLoaded ? "Лимит сайта временно недоступен" : "Проверяем лимит…"}
+                </summary>
+                <div className="mt-2 space-y-1 leading-relaxed">
+                  {quota && <>
+                    <p>Обновится {new Date(quota.personal.resetsAt).toLocaleString("ru-RU", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} по времени устройства.</p>
+                    <p>Общий лимит сайта: осталось {quota.shared.remaining} из {quota.shared.limit}. Он общий для всех пользователей.</p>
+                    <p>Считаются отправленные запросы, в том числе если ответ прервался. Новый чат не сбрасывает счётчик.</p>
+                  </>}
+                  {provider === "Gemini" && <p>Остаток квоты Gemini неизвестен. Google задаёт её для проекта и модели, а не отдельно для каждого ключа. Она может закончиться раньше лимита сайта.</p>}
+                </div>
+              </details>
 
               <div ref={scroller} className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4 text-[14.5px] leading-relaxed">
                 {messages.length === 0 && (
@@ -469,7 +508,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
                     <p className="text-sm text-[var(--color-muted)]">Выдели текст в конспекте — и спроси про него. Переписка хранится только на этом устройстве.</p>
                     <div className="grid gap-2">
                       {tips.map((t) => (
-                        <button key={t} type="button" disabled={busy || available === false} onClick={() => void send(t)} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-left text-sm transition hover:border-violet-400/60 disabled:opacity-50">
+                        <button key={t} type="button" disabled={busy || available === false || quotaExhausted} onClick={() => void send(t)} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-2)] px-3 py-2.5 text-left text-sm transition hover:border-violet-400/60 disabled:opacity-50">
                           {t}
                         </button>
                       ))}
@@ -516,7 +555,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
                 {messages.length > 0 && (
                   <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-0.5 [scrollbar-width:none]">
                     {tips.map((t) => (
-                      <button key={t} type="button" disabled={busy || available === false} onClick={() => void send(t)} className="shrink-0 rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs transition hover:border-violet-400/60 disabled:opacity-50">
+                      <button key={t} type="button" disabled={busy || available === false || quotaExhausted} onClick={() => void send(t)} className="shrink-0 rounded-full border border-[var(--color-border)] px-3 py-1.5 text-xs transition hover:border-violet-400/60 disabled:opacity-50">
                         {t}
                       </button>
                     ))}
@@ -564,7 +603,7 @@ export default function Tutor({ event, userId }: { event: StudyEvent; userId: st
                       ■
                     </button>
                   ) : (
-                    <button type="submit" disabled={!input.trim() || available === false} aria-label="Отправить" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-lg font-bold text-white disabled:opacity-40">
+                    <button type="submit" disabled={!input.trim() || available === false || quotaExhausted} aria-label="Отправить" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-lg font-bold text-white disabled:opacity-40">
                       ↑
                     </button>
                   )}

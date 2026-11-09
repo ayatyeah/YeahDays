@@ -17,7 +17,7 @@ export default function NetworkStoryClip({ partId, initiallyOpen = false }: { pa
   if (!episode) return null;
   return <details open={open} className="rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:p-5" onToggle={e => { if (!e.currentTarget.open) player.current?.pause(); setOpen(e.currentTarget.open); }}>
     <summary className="cursor-pointer font-semibold">🎬 История: {episode.title} · {clock(episode.duration)}</summary>
-    <p className="mt-2 text-sm text-[var(--color-muted)]">Полный разбор этой части: приключения Аяна, Порта Петровича и Арпи, примеры, анимация и закадровый смех. Озвучка на русском.</p>
+    <p className="mt-2 text-sm text-[var(--color-muted)]">Основные темы этой части: приключения Аяна, Порта Петровича и Арпи, примеры, анимация и закадровый смех. Озвучка на русском. Дополнения по вопросам банка читай в полном конспекте.</p>
     {open && <div className="mt-4 space-y-3">
       <video ref={player} controls playsInline preload="metadata" poster={`${episode.base}.jpg`} src={`${episode.base}.mp4`} aria-label={`История: ${episode.title}`} className="aspect-video w-full rounded-xl bg-black" onError={() => setFailed(true)}>
         <track kind="captions" src={`${episode.base}.vtt`} srcLang="ru" label="Русский" />

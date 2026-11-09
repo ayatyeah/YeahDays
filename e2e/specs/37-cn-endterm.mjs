@@ -73,7 +73,8 @@ test("CN endterm: full and short lecture notes in RU and EN", async () => {
       await language.getByRole("button",{name:lang,exact:true}).click();
       await length.getByRole("button",{name:"Полный конспект",exact:true}).click();
       const full=await notes.innerText();
-      check(full.length>1800 && await notes.locator("table").count()===1,`${lang}: full explanation and header comparison table`);
+      check(full.includes("192.168.1.254") && full.includes("remote"), `${lang}: question-focused route example renders`);
+      check(full.length>1800 && await notes.locator("table").count()>=2,`${lang}: full explanation, header and route comparison tables`);
       await length.getByRole("button",{name:"Краткий конспект",exact:true}).click();
       check((await notes.innerText()).length<full.length/2,`${lang}: concise version is shorter`);
       check(await language.getByRole("button",{name:lang,exact:true}).getAttribute("aria-pressed")==="true",`${lang}: length switch preserves language`);

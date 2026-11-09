@@ -17,7 +17,7 @@ try {
   await consent.click();
   await consent.waitFor({ state: 'hidden' });
   assert.equal(await page.locator('h1').count(), 1);
-  assert.equal(await page.locator('h1').getAttribute('aria-label'), 'YEAH GRIND!!!!!!!!');
+  assert.equal(await page.locator('h1').getAttribute('aria-label'), 'YEAH GRIND');
   for (const width of [1440, 1280, 768, 390, 320]) {
     await page.setViewportSize({ width, height: width < 700 ? 844 : 1000 });
     await page.waitForTimeout(180);

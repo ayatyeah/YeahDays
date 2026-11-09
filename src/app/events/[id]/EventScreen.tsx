@@ -24,6 +24,7 @@ const OpenCVSandbox = dynamic(() => import("@/components/events/OpenCVSandbox"),
 const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading: Loading });
 const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
 import { PM_QUIZ2_TITLE } from "@/lib/events/projectManagement/quiz2";
+const NetworkPartStudy = dynamic(() => import("@/components/events/NetworkPartStudy"), { loading: Loading });
 const NetworksEndterm = dynamic(() => import("@/components/events/NetworksEndterm"), { loading: Loading });
 const PMQuiz2 = dynamic(() => import("@/components/events/PMQuiz2"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
@@ -293,9 +294,14 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
     setView({ mode: "quiz", step, quiz: draw(event, step), run: ++runs.current });
   }
 
-  // Конспект части открывается так, как читали в прошлый раз: обычной страницей или в scroll-mode.
+  // В подготовке к сетям карта ведёт в полный конспект с материалами части.
+  // Остальные ивенты сохраняют выбранный режим чтения.
   function open(step: Step) {
-    if (step.kind === "part") setView({ mode: loadPref("notes-mode", "read") === "scroll" ? "scroll" : "read", step });
+    if (step.kind === "part" && sourceEvent.id === "computer-networks-endterm") {
+      setNotesVersion("full");
+      savePref("notes-length", "full");
+      setView({ mode: "read", step });
+    } else if (step.kind === "part") setView({ mode: loadPref("notes-mode", "read") === "scroll" ? "scroll" : "read", step });
     else startQuiz(step);
   }
 
@@ -403,7 +409,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "pmQuiz2" })}>Открыть Квиз 2</Button>
             </section>
           )}
-          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">Материалы эндки и полный банк</h2><p>6 PDF-лекций · 558 карточек · образец преподавателя · пробная эндка: 20 + 5 + 5 вопросов, 45 минут.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Открыть подготовку к эндке</Button></section>}
+          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">PDF и пробная эндка</h2><p>Обновлённые конспекты RU/EN, самопроверка и все вопросы темы открываются в частях лекций ниже. Здесь — исходные PDF, образец преподавателя и пробный экзамен.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Открыть подготовку к эндке</Button></section>}
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -523,6 +529,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
                     <StepRow
                       key={step.id}
                       step={step}
+                      networkMaterials={event.id === "computer-networks-endterm"}
                       result={progress[step.id]}
                       onOpen={() => open(step)}
                       deep={step.kind === "part" ? deepStep(event, li, step.part!) : null}
@@ -788,9 +795,13 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             {part.shortNotes && <div role="group" aria-label="Объём конспекта" className="flex flex-wrap gap-2" data-no-i18n>
               {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
-            <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
-              <EventNotes text={part.notes[lang]} lang={lang} translation={event.id === "computer-networks-endterm" && lang === "en" ? part.notes.ru : undefined} />
-            </article>
+            {event.id === "computer-networks-endterm" ? <NetworkPartStudy key={part.id} module={Number(part.id.replace("cne-m", ""))} lang={lang}>
+              <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
+                <EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} />
+              </article>
+            </NetworkPartStudy> : <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
+              <EventNotes text={part.notes[lang]} lang={lang} />
+            </article>}
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>
               Начать квиз по этой части · {view.step.count} вопросов
             </Button>
@@ -1029,7 +1040,7 @@ function Verdict({ event, progress, percent: value }: { event: StudyEvent; progr
   );
 }
 
-function StepRow({ step, result, onOpen, deep, deepResult, onDeep }: { step: Step; result?: Progress[string]; onOpen: () => void; deep?: Step | null; deepResult?: Progress[string]; onDeep?: () => void }) {
+function StepRow({ step, result, onOpen, deep, deepResult, onDeep, networkMaterials }: { networkMaterials?: boolean; step: Step; result?: Progress[string]; onOpen: () => void; deep?: Step | null; deepResult?: Progress[string]; onDeep?: () => void }) {
   const tl = useContentLang();
   const label = step.kind === "part" ? `Часть ${step.part! + 1}. ${step.title[tl]}` : step.title[tl];
   return (
@@ -1041,7 +1052,7 @@ function StepRow({ step, result, onOpen, deep, deepResult, onDeep }: { step: Ste
         <span className="min-w-0">
           <span className={cn("block break-words text-sm", step.kind !== "part" && "font-semibold")}>{label}</span>
           <span className="block text-xs text-[var(--color-muted)]">
-            {step.kind === "part" ? `конспект + квиз · ${step.count} вопросов` : `${step.count} вопросов`}
+            {step.kind === "part" ? networkMaterials ? `Полный конспект RU/EN · самопроверка · квиз ${step.count} вопросов` : `конспект + квиз · ${step.count} вопросов` : `${step.count} вопросов`}
           </span>
         </span>
         <span

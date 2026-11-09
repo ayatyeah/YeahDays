@@ -45,7 +45,7 @@ export const event: StudyEvent = {
       shortNotes: { ru: `## Главное по теме\n${summariesRu[m]}\n\n> Это краткая версия для повторения. Выбери «Полный конспект» выше, чтобы прочитать объяснения, таблицы и примеры.\n\n## Источник\nЛекция ${lecture}; модуль NetAcad ${m}.`, en: `## Key concepts\n${summaries[m]}\n\n> This is the concise revision version. Select “Полный конспект” above for detailed explanations, tables and examples.\n\n## Source\nLecture ${lecture}; NetAcad module ${m}.` },
       questions: bank.filter(q => q.topic === m && q.eligible && q.correct.length === 1 && !q.options.some(o => /\b(both a and b|all of the above|none of the above)\b/i.test(o))).map(q => ({
         id: `cne-${q.id}`, q: q.prompt, options: q.options, answer: q.correct[0],
-        why: { ru: `${q.explanation}\nИсточник: ${q.source}.`, en: `${q.explanationEn ?? `Correct answer: ${q.answers.join("; ").replace(/[.!?]+$/, "")}.\nA detailed English explanation is not available for this question yet. Use “Объяснение на русском” to read the Russian explanation.`}\nSource: ${q.source}.` },
+        why: { ru: `${q.explanation}\nИсточник: ${q.source}.`, en: `${q.explanationEn}\nSource: ${q.source}.` },
       })),
     })),
   })),

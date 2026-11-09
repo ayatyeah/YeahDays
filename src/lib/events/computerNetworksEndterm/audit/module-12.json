@@ -1,0 +1,569 @@
+{
+  "module": 12,
+  "questions": [
+    {
+      "id": "E137",
+      "explanation": "IPv6 имеет восемь групп по 16 бит: 8 × 16 = 128. 32 бита — IPv4, 48 — обычный MAC, 64 — типичный interface ID, но не весь IPv6-адрес.",
+      "explanationEn": "IPv6 has eight 16-bit groups: 8 × 16 = 128 bits. 32 describes IPv4, 48 an ordinary MAC and 64 a typical interface ID, not the full IPv6 address."
+    },
+    {
+      "id": "E139",
+      "explanation": "IPv6 обычно записывают hex-группами, а IPv4 содержит 32 бита и обычно записывается четырьмя десятичными октетами. IPv6 содержит 128, не 32/64 бита. Здесь спрашивают стандартное представление адресов, а не возможность математически записать любое число в hex.",
+      "explanationEn": "IPv6 normally uses hexadecimal groups; IPv4 has 32 bits and normally uses four decimal octets. IPv6 is 128 bits, not 32/64. The question concerns conventional address notation, not the mathematical possibility of writing any number in hex."
+    },
+    {
+      "id": "E296",
+      "explanation": "Главный стимул — ограниченные 2^32 IPv4-адресов и их исчерпание при росте Интернета. 128-битный IPv6 резко увеличивает пространство. Улучшения заголовка полезны, но IPv6 не гарантирует автоматическую безопасность, меньшую задержку или более простую запись каждого адреса.",
+      "explanationEn": "The main driver is exhaustion of the limited 2^32 IPv4 address space as Internet use grows. IPv6 greatly expands it to 128 bits. Header improvements help, but IPv6 does not automatically guarantee security, lower latency or easier notation."
+    },
+    {
+      "id": "E297",
+      "explanation": "В сохранённом тексте §12.1.1 говорится о всех пяти RIR, поэтому фразе «4 из 5» сопоставлен False. Это датированное утверждение конкретной версии курса, не надёжная проверка современной политики выделения IPv4. В карточке не указана дата; исключаем её из оцениваемого квиза, чтобы не учить устаревающую статистику как постоянный закон.",
+      "explanationEn": "Saved section 12.1.1 says all five RIRs, which explains its False key for “4 out of 5.” This is a dated course-version claim, not a reliable statement of current IPv4 allocation policy. Because the card has no reference date, it is excluded from scored practice rather than teaching changeable statistics as a permanent rule.",
+      "correction": {
+        "eligible": false,
+        "caution": "Историческая статистика версии курса; без даты не подходит для однозначного оцениваемого вопроса."
+      }
+    },
+    {
+      "id": "E298",
+      "explanation": "Dual stack запускает IPv4 и IPv6 параллельно: IPv6-пакет передаётся как IPv6. Tunneling прячет IPv6 внутри IPv4, translation преобразует форматы; это не native IPv6 в смысле вопроса. Поэтому All of the above не подходит.",
+      "explanationEn": "Dual stack runs IPv4 and IPv6 alongside each other, so IPv6 packets travel as IPv6. Tunneling encapsulates IPv6 inside IPv4 and translation converts protocols; those are not native IPv6 in this question’s sense. Therefore “All of the above” is wrong."
+    },
+    {
+      "id": "E299",
+      "explanation": "Для большинства обычных IPv6 LAN рекомендуется /64: первые 64 бита задают сеть, оставшиеся 64 — interface ID, совместимый с обычным SLAAC. /32 и /48 обычно описывают более крупные блоки, /128 — один адрес. Это правило LAN, не запрет других префиксов для специальных каналов.",
+      "explanationEn": "Most ordinary IPv6 LANs use /64: 64 network bits and a 64-bit interface ID suitable for normal SLAAC. /32 and /48 usually represent larger allocations; /128 is a single address. This LAN convention does not prohibit other prefixes on specialized links."
+    },
+    {
+      "id": "E300",
+      "explanation": "ISP выделяет global routing prefix организации. Организация сама использует последующие биты subnet ID для своих LAN; interface ID идентифицирует узел внутри LAN. Поэтому ответ не включает автоматически назначение всех внутренних subnet ID провайдером.",
+      "explanationEn": "The ISP allocates the organization’s global routing prefix. The organization uses following subnet-ID bits for its internal LANs, and an interface ID identifies a node on a LAN. The provider does not thereby choose all internal subnet IDs."
+    },
+    {
+      "id": "E301",
+      "explanation": "LLA действует только на своём link: роутеры не пересылают пакеты с такими source/destination за его пределы. ULA может маршрутизироваться между внутренними сетями организации, GUA — глобально; поэтому «не глобальный» не равно «вообще не маршрутизируется».",
+      "explanationEn": "An LLA is confined to its link; routers do not forward packets with link-local source/destination beyond it. ULAs may be routed between internal networks, while GUAs are globally routable. “Not global” does not mean “never routable.”"
+    },
+    {
+      "id": "E302",
+      "explanation": "False: subnet ID расположен между global routing prefix и interface ID. Например, из /48 для LAN /64 доступны 64−48 = 16 subnet bits без заимствования последних 64 бит interface ID. Не нужно переносить привычное IPv4-правило заимствования host bits на эту схему буквально.",
+      "explanationEn": "False: the subnet ID sits between the global routing prefix and interface ID. A /48 allocation with /64 LANs leaves 64−48 = 16 subnet bits without borrowing the final 64 interface-ID bits. The IPv4 host-bit borrowing analogy should not be applied literally here."
+    },
+    {
+      "id": "E303",
+      "explanation": "fe80 относится к FE80::/10, зарезервированному для link-local unicast (LLA). Multicast начинается с ff, GUA не обязан начинаться именно с 2001. Это определение области адреса, а не признак отсутствующей конфигурации.",
+      "explanationEn": "fe80 falls in FE80::/10, the link-local unicast range. Multicast starts with ff; a GUA need not specifically start with 2001. The prefix identifies address scope, not missing configuration."
+    },
+    {
+      "id": "E304",
+      "explanation": "False: host запрашивает информацию сообщением RS (Router Solicitation), обычно к FF02::2. RA (Router Advertisement) отправляет роутер и сообщает префикс/параметры. Утверждение перепутало названия сообщений и отправителей.",
+      "explanationEn": "False: a host requests information with RS (Router Solicitation), normally to FF02::2. A router sends RA (Router Advertisement) containing prefix/configuration information. The statement reverses message names and senders."
+    },
+    {
+      "id": "E305",
+      "explanation": "SLAAC использует префикс из RA, после чего host самостоятельно формирует interface ID и проверяет уникальность. DHCPv6-сервер для выдачи адреса не нужен. В методе 2 сервер даёт дополнительные настройки, а в методе 3 — сам адрес.",
+      "explanationEn": "SLAAC uses the RA prefix and lets the host generate an interface ID and check uniqueness. No DHCPv6 server assigns its address. Method 2 adds a server for extra settings; method 3 assigns the address through the server."
+    },
+    {
+      "id": "E306",
+      "explanation": "Stateful DHCPv6 выдаёт IPv6-адрес и ведёт состояние аренд, поэтому подходит формулировка о серверной выдаче адресной информации. Важно: слово solely не относится к default gateway — его host обычно узнаёт через RA, даже используя stateful DHCPv6. SLAAC формирует адрес на самом host.",
+      "explanationEn": "Stateful DHCPv6 assigns the IPv6 address and tracks leases, matching the server-based assignment described. Important: “solely” does not cover the default gateway, which normally still comes from RA. SLAAC forms the address on the host."
+    },
+    {
+      "id": "E307",
+      "explanation": "Это SLAAC + stateless DHCPv6: адрес host формирует по RA, а DNS и дополнительные параметры получает от DHCPv6. Сервер не выдаёт здесь сам IPv6-адрес и не ведёт адресные аренды как stateful DHCPv6.",
+      "explanationEn": "This is SLAAC plus stateless DHCPv6: the host forms its address using RA, then obtains DNS and other settings through DHCPv6. The server does not assign the IPv6 address or maintain address leases as stateful DHCPv6 does."
+    },
+    {
+      "id": "E308",
+      "explanation": "EUI-64 и randomly generated — именно способы сформировать interface ID: первый выводит его из MAC, второй не требует MAC. SLAAC — процесс автоконфигурации в целом; stateless DHCPv6 даёт другие параметры, а stateful DHCPv6 назначает адрес сервером.",
+      "explanationEn": "EUI-64 and random generation are interface-ID construction methods: one derives it from MAC, the other need not. SLAAC is the overall autoconfiguration process; stateless DHCPv6 supplies other settings and stateful DHCPv6 assigns addresses through a server."
+    },
+    {
+      "id": "E309",
+      "explanation": "True: структура GUA явно предусматривает subnet ID, которым организация разделяет выделенный префикс на внутренние сети. Например, /48 содержит 65536 подсетей /64. Это не означает, что все сети автоматически настроятся без плана адресации.",
+      "explanationEn": "True: GUA structure includes a subnet ID that lets an organization divide its allocation into internal networks. A /48, for example, contains 65536 /64s. This does not mean all networks configure themselves without an addressing plan."
+    },
+    {
+      "id": "E310",
+      "explanation": "Subnet ID выбирает конкретную подсеть внутри выделенного организации global routing prefix. Interface ID выбирает интерфейс в этой подсети. Слова prefix/network шире и не называют конкретное поле, о котором спрашивают.",
+      "explanationEn": "The subnet ID selects an internal subnet within the organization’s allocated global routing prefix. The interface ID selects an interface on that subnet. “Prefix/network” are broader terms rather than the specific field requested."
+    },
+    {
+      "id": "E311",
+      "explanation": "/48 занимает первые три hextet: 2001:db8:cafe. LAN /64 включает четвёртый hextet, поэтому 1111 — 16-битный subnet ID. 2222:3333:4444:5555 составляет interface ID; cafe ещё входит в выделенный провайдером префикс.",
+      "explanationEn": "/48 covers the first three hextets, 2001:db8:cafe. The /64 LAN includes the fourth, so 1111 is the 16-bit subnet ID. 2222:3333:4444:5555 is the interface ID; cafe still belongs to the provider prefix."
+    },
+    {
+      "id": "E312",
+      "explanation": "Subnet ID занимает промежуток от /32 провайдера до /64 LAN: 64−32 = 32 бита. Последние 64 бита остаются interface ID. Ответ 16 был бы верен для /48→/64, но здесь исходный префикс /32.",
+      "explanationEn": "Subnet ID spans from the /32 allocation to the /64 LAN boundary: 64−32 = 32 bits. The last 64 remain interface ID. 16 would be correct for /48 to /64, not this /32 allocation."
+    },
+    {
+      "id": "E313",
+      "explanation": "Убираем ведущий ноль в 0DB8 → DB8 и заменяем три подряд нулевых hextet после AB00 на ::. Получаем 2001:DB8:0:AB00::1234. Нули в конце AB00 нельзя удалять (AB — другое число), два :: создают неоднозначность.",
+      "explanationEn": "Remove the leading zero from 0DB8 and replace the three consecutive zero hextets after AB00 with ::. The result is 2001:DB8:0:AB00::1234. Trailing zeros in AB00 cannot be removed (AB is a different value), and two :: would be ambiguous."
+    },
+    {
+      "id": "E314",
+      "explanation": "/64 сохраняет первые четыре группы: 2001:DB8:D15:EA. Остальные биты host-части обнуляем: 2001:DB8:D15:EA::/64. CC44 — пятая группа и уже относится к interface ID.",
+      "explanationEn": "/64 retains the first four groups: 2001:DB8:D15:EA. Zeroing the interface portion produces 2001:DB8:D15:EA::/64. CC44 is the fifth group and belongs to the interface ID."
+    },
+    {
+      "id": "E315",
+      "explanation": "При включении IPv6 интерфейс автоматически формирует link-local адрес для общения на своём link и Neighbor Discovery. GUA или ULA требуют дополнительного назначения/автоконфигурации; ::1 — loopback всего локального стека, не автоматически выдаваемый каждому интерфейсу адрес.",
+      "explanationEn": "Enabling IPv6 automatically creates a link-local address for local-link communication and Neighbor Discovery. GUA/ULA need further assignment/autoconfiguration; ::1 is stack loopback, not an address assigned separately to every interface."
+    },
+    {
+      "id": "E316",
+      "explanation": "FE80::/10 — link-local диапазон, ограниченный одним link. FC00::/7 — unique-local, который может маршрутизироваться внутри организации. Global unicast имеет другой scope; FF обозначает multicast, а не link-local unicast.",
+      "explanationEn": "FE80::/10 is the link-local range confined to one link. FC00::/7 is unique-local and can be internally routed. Global unicast has a different scope; FF identifies multicast, not link-local unicast."
+    },
+    {
+      "id": "E317",
+      "explanation": "::1 — IPv6 loopback: ping обращается к собственному стеку и проверяет его локальную работу. Пакет не идёт по кабелю к gateway или другим host, поэтому тест не проверяет сеть, multicast и тем более отсутствующий в IPv6 broadcast.",
+      "explanationEn": "::1 is IPv6 loopback: ping exercises the local stack. It does not travel over the cable to a gateway or other hosts, so it does not test external connectivity, multicast or the broadcast mechanism IPv6 does not have."
+    },
+    {
+      "id": "E318",
+      "explanation": "Сначала раскрываем ::: 2001:DB8:0000:1000:A9CD:47FF:FE57:FE94. /64 оставляет первые четыре группы сети, а последние четыре A9CD:47FF:FE57:FE94 — interface ID. 1000 относится к четвёртой группе, не к host-части.",
+      "explanationEn": "Expand :: first: 2001:DB8:0000:1000:A9CD:47FF:FE57:FE94. /64 makes the first four groups the network and the final four, A9CD:47FF:FE57:FE94, the interface ID. 1000 is the fourth network group, not host portion."
+    },
+    {
+      "id": "E319",
+      "explanation": "Четыре hextet по 16 бит дают /64: 2001:DB8:AA04:B5. Обнуляем последние четыре и получаем 2001:DB8:AA04:B5::/64. Убирать B5 из сетевой части нельзя: это изменит первые 64 бита.",
+      "explanationEn": "Four 16-bit hextets make /64: 2001:DB8:AA04:B5. Zero the final four to obtain 2001:DB8:AA04:B5::/64. Removing B5 changes the actual first 64 bits."
+    },
+    {
+      "id": "E320",
+      "explanation": "В IPv6 нет broadcast; доставку группе выполняет multicast. Unicast существует, а аналогом ограниченной внутренней адресации служат unique-local адреса, поэтому слово private не является лучшим ответом по сравнению с явно отсутствующим broadcast.",
+      "explanationEn": "IPv6 has no broadcast; multicast provides group delivery. Unicast exists, and unique-local addresses support limited internal addressing, so “private” is not the best choice compared with the explicitly absent broadcast type."
+    },
+    {
+      "id": "E321",
+      "explanation": "Успешный ping ::1 подтверждает, что локальный IPv6/IP-стек отвечает. Он не выходит на реальную сеть, поэтому не доказывает исправность кабеля, gateway, link-local настройки или доступность остальных host.",
+      "explanationEn": "A successful ::1 ping confirms the local IPv6/IP stack responds. It never tests the real link, so it cannot prove cabling, gateway configuration, link-local configuration or other hosts’ reachability."
+    },
+    {
+      "id": "E322",
+      "explanation": "2001:0db8:0000:abcd:0000:0000:0000:0001 → убираем ведущие нули, затем сокращаем три нулевые группы после abcd: 2001:db8:0:abcd::1. Единственную нулевую группу перед abcd надо сохранить: иначе изменится её позиция и весь адрес.",
+      "explanationEn": "Remove leading zeros, then compress the three zero groups after abcd: 2001:db8:0:abcd::1. Keep the single zero group before abcd; dropping it would move abcd and change the address."
+    },
+    {
+      "id": "E323",
+      "explanation": "Минимум — link-local IPv6 address: он обеспечивает работу IPv6 на своём канале и ND. Глобальный адрес нужен не каждому интерфейсу для локального обмена; IPv4 параллельно не обязателен. Loopback не заменяет адрес интерфейса на link.",
+      "explanationEn": "A link-local IPv6 address is the minimum for local-link IPv6 and ND. Global unicast is not required for every local exchange, and IPv4 need not coexist. Stack loopback cannot substitute for a link interface address."
+    },
+    {
+      "id": "E324",
+      "explanation": "Link-local требуется для базового общения и обнаружения соседей на IPv6-enabled интерфейсе. GUA нужен для глобальной адресации, ULA — для внутренней; site-local — устаревший тип. Ни один из них не заменяет минимальную LLA.",
+      "explanationEn": "Link-local is required for basic IPv6 communication and neighbor discovery on the link. GUA supports global addressing, ULA internal addressing, and site-local is deprecated. None substitutes for the minimum LLA."
+    },
+    {
+      "id": "E325",
+      "explanation": "Три части: global routing prefix выделяет ISP; subnet ID выбирает сеть внутри организации; interface ID идентифицирует локальный интерфейс host. В неверных вариантах перепутаны роли: interface ID не задаёт локальную сеть, а глобальный префикс не описан здесь как произвольный выбор локального администратора.",
+      "explanationEn": "The ISP supplies the global routing prefix; subnet ID selects an internal network; interface ID identifies the host interface on that network. The wrong options swap roles: interface ID does not identify the network, and the provider prefix is not simply assigned by the local administrator."
+    },
+    {
+      "id": "E326",
+      "explanation": "До границы LAN /64 после /48 остаётся 64−48 = 16 бит subnet ID. Это 2^16 = 65536 /64-подсетей. 80 — все биты после /48, включая interface ID, который условие запрещает заимствовать.",
+      "explanationEn": "There are 64−48 = 16 subnet-ID bits before the /64 LAN boundary, giving 2^16 = 65536 /64s. 80 counts every bit after /48, including interface-ID bits the question forbids borrowing."
+    },
+    {
+      "id": "E327",
+      "explanation": "Link-local предназначен для общения только на одном link и не пересылается роутерами. Loopback замыкается на самом узле, unspecified означает отсутствие адреса; ULA может маршрутизироваться внутри нескольких сетей организации, GUA — глобально.",
+      "explanationEn": "Link-local communicates on one link and is not forwarded by routers. Loopback stays inside the host, unspecified means no address, ULA can route across internal networks and GUA globally."
+    },
+    {
+      "id": "E490",
+      "explanation": "/64 — четыре полных hextet: 2001:DB8:BC15:A. Полная запись сетевого префикса — 2001:DB8:BC15:A::/64. 12AB уже interface ID; первые три группы были бы лишь /48.",
+      "explanationEn": "/64 means four complete hextets: 2001:DB8:BC15:A. Written fully, the network prefix is 2001:DB8:BC15:A::/64. 12AB belongs to interface ID; three groups would describe only /48."
+    },
+    {
+      "id": "E492",
+      "explanation": "Удлинение /48 до /52 добавляет 4 subnet bits — старший hex-разряд четвёртого hextet. Его значения 0…f дают 16 подсетей; младшие 12 бит этого hextet должны быть нулевыми. Последняя сеть поэтому 2001:db8:0:f000::/52, а не :f: или :f00:.",
+      "explanationEn": "Extending /48 to /52 adds four subnet bits: the highest hex digit of the fourth hextet. Values 0…f yield 16 subnets, while its lower 12 bits remain zero. Thus the last network is 2001:db8:0:f000::/52, not :f: or :f00:."
+    },
+    {
+      "id": "E493",
+      "explanation": "FE80::1:4545:6578:ABC1 попадает в FE80::/10 и имеет корректную IPv6-запись. FD80 и FC90 относятся к ULA; FEC8 не входит в link-local /10, FE0A тоже ниже его начала. Последний вариант вдобавок не содержит восемь групп или :: для пропущенных.",
+      "explanationEn": "FE80::1:4545:6578:ABC1 is valid IPv6 notation inside FE80::/10. FD80/FC90 are in the ULA range; FEC8 and FE0A are outside link-local /10. The last option also lacks eight groups or :: to represent omissions."
+    },
+    {
+      "id": "E494",
+      "explanation": "Anycast использует один unicast-адрес на нескольких интерфейсах; маршрутизация доставляет пакет одному ближайшему по метрике экземпляру. Multicast доставлял бы группе, а GUA/LLA/ULA описывают область адреса, не этот способ назначения нескольким узлам.",
+      "explanationEn": "Anycast assigns one unicast address to multiple interfaces and routing delivers to one nearest instance by metric. Multicast would deliver to a group; GUA/LLA/ULA describe scope rather than this multiple-instance assignment."
+    },
+    {
+      "id": "E495",
+      "explanation": "Loopback (::1) и link-local — разновидности unicast: адресуют один интерфейс/локальный стек. Multicast и anycast — отдельные типы доставки; broadcast в IPv6 отсутствует.",
+      "explanationEn": "Loopback (::1) and link-local are unicast forms, addressing one interface/local stack. Multicast and anycast are separate delivery categories; IPv6 has no broadcast."
+    },
+    {
+      "id": "E496",
+      "explanation": "FE80::/10 специально выделен для link-local общения; такие пакеты не покидают канал. FC00::/7 (включая FD…) — ULA для ограниченных внутренних сетей и может маршрутизироваться между ними. 2001::/32 не является link-local префиксом.",
+      "explanationEn": "FE80::/10 is reserved for link-local communication and its packets stay on the link. FC00::/7, including FD…, is ULA and can route between limited internal networks. 2001::/32 is not link-local."
+    },
+    {
+      "id": "E497",
+      "explanation": "SLAAC формирует GUA на host из рекламируемого роутером префикса и собственного IID, без сервера адресных аренд. Stateless DHCPv6 обычно даёт дополнительные параметры, не сам адрес; stateful DHCPv6 ведёт аренды, а static — ручное назначение.",
+      "explanationEn": "SLAAC forms a GUA on the host using the advertised prefix and its own IID, without an address-lease server. Stateless DHCPv6 supplies additional settings rather than the address; stateful DHCPv6 tracks leases and static means manual assignment."
+    },
+    {
+      "id": "E498",
+      "explanation": "16 подсетей получается только если схема оставляет 4 бита subnet-поля внутри каждого sub-site: 2^4 = 16. Иерархию site/sub-site/subnet нельзя восстановить из текста без размеров полей на рисунке. Ключ сохранён как условный; без схемы карточка не оценивается.",
+      "explanationEn": "16 subnets follows only if the diagram allocates four subnet bits within each sub-site: 2^4 = 16. The text alone does not specify the site/sub-site/subnet field widths. The key remains conditional and the exhibit-free card is not scored.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужна схема с шириной полей; 16 верно только при 4 битах subnet на sub-site."
+      }
+    },
+    {
+      "id": "E499",
+      "explanation": "FF02::1 — all-nodes multicast со scope link-local: получают IPv6-узлы именно этого канала. Только роутеры — FF02::2. Пакет не адресован одному уникальному host и не является специальным запросом DHCP-серверам.",
+      "explanationEn": "FF02::1 is link-local all-nodes multicast, targeting IPv6 nodes on this link. Routers only would be FF02::2. It is neither one unique host nor the DHCP-server group."
+    },
+    {
+      "id": "E500",
+      "explanation": "Dual-stack сохраняет два независимых стека и оба формата пакетов. Tunneling оставляет исходный IPv6 пакет внутри IPv4-оболочки. Translation преобразует один протокол в другой, поэтому это не то же самое, что вложить неизменённый пакет.",
+      "explanationEn": "Dual stack keeps both protocol stacks and packet formats. Tunneling carries the original IPv6 packet inside an IPv4 envelope. Translation converts one protocol into the other rather than merely enclosing the unchanged packet."
+    },
+    {
+      "id": "E501",
+      "explanation": "FF02::1:FFAE:F85F соответствует solicited-node шаблону FF02::1:FFxx:xxxx; ::1 — loopback; FF02::1 — all-nodes multicast. 2001:DB8::BAF:3F57:FE94 имеет формат GUA в учебной классификации, но 2001:db8::/32 специально зарезервирован для документации, а не реальной публичной маршрутизации.",
+      "explanationEn": "FF02::1:FFAE:F85F matches the solicited-node FF02::1:FFxx:xxxx pattern; ::1 is loopback; FF02::1 is all-nodes multicast. 2001:DB8::BAF:3F57:FE94 has GUA form in the exercise, but 2001:db8::/32 is reserved for documentation, not actual public routing."
+    },
+    {
+      "id": "E508",
+      "explanation": "Traceroute показывает адреса узлов, отвечающих на исчерпание Hop Limit, затем назначение. Сохранённые три адреса можно подтвердить только выполнив исходную PT-активность и проверив её маршруты. По одному списку IPv6-адресов порядок реального пути не определяется; карточка исключена из оценивания.",
+      "explanationEn": "Traceroute reports nodes responding to expired Hop Limit and then the destination. The saved three addresses require the original Packet Tracer activity and its routing state to verify. A list of candidate IPv6 addresses alone cannot reveal the actual path; the card is excluded from scoring.",
+      "correction": {
+        "eligible": false,
+        "caution": "Требуется исходная PT-активность и вывод traceroute; конкретные три адреса не проверены."
+      }
+    },
+    {
+      "id": "E510",
+      "explanation": "Три последовательные группы 0000 после 0db8 заменяются ::; ведущие нули убираются: 0db8→db8, 0008→8, 0001→1. В a0b0 нули внутренние/конечные и остаются. Итог 2001:db8::a0b0:8:1; остальные варианты меняют значения или позиции групп.",
+      "explanationEn": "Compress the three zero groups after 0db8 to :: and remove leading zeros: 0db8→db8, 0008→8, 0001→1. Zeros inside/after nonzero digits in a0b0 stay. The result is 2001:db8::a0b0:8:1; other options change group values or positions."
+    },
+    {
+      "id": "E579",
+      "explanation": "Упрощённый основной IPv6-заголовок улучшает обработку пакетов: фиксированная структура и отсутствие checksum основного заголовка уменьшают некоторые действия роутера. Он не меньше минимального IPv4-заголовка (40 против 20 байт), а адреса длиннее (128 против 32). «Efficient packet handling» — общий результат этих изменений.",
+      "explanationEn": "The simplified IPv6 base header supports efficient packet handling through its fixed structure and lack of a base-header checksum. It is not smaller than the minimum IPv4 header (40 versus 20 bytes), and addresses are larger (128 versus 32 bits). “Efficient packet handling” is the overall benefit."
+    },
+    {
+      "id": "E583",
+      "explanation": "128-битное адресное пространство позволяет выделять огромное количество глобальных адресов, поэтому NAT не требуется как мера экономии IPv4. Это не означает, что IPv6 автоматически безопасен или что firewall не нужен. Увеличение таблиц маршрутов и упрощение заголовка сами по себе не объясняют отказ от NAT ради экономии адресов.",
+      "explanationEn": "The 128-bit space permits vast numbers of global addresses, removing IPv4-style address-conservation pressure for NAT. It does not make IPv6 automatically secure or eliminate firewalls. Route-table growth and header simplification do not explain this address-conservation benefit."
+    },
+    {
+      "id": "E711",
+      "explanation": "Три подряд 0000 после fe80 сокращаются до ::; 0220→220, 0b3f→b3f и 0029→29. f0e0 сохраняется, потому что удаляются лишь ведущие нули. Получается fe80::220:b3f:f0e0:29; варианты с 9ea добавляют отсутствующие данные.",
+      "explanationEn": "Compress the three zero groups after fe80 to ::; 0220→220, 0b3f→b3f and 0029→29. Keep f0e0 because only leading zeros may be removed. The result is fe80::220:b3f:f0e0:29; options containing 9ea introduce nonexistent data."
+    },
+    {
+      "id": "E712",
+      "explanation": "::1/128 — единственный IPv6 loopback-адрес для обращения к себе. Unspecified — ::/128 без единицы. GUA и link-local адресуют интерфейсы сети; loopback не генерируется из EUI-64.",
+      "explanationEn": "::1/128 is IPv6’s loopback address for the local host. Unspecified is ::/128 without the final one. GUA/link-local identify network interfaces, and loopback is not generated using EUI-64."
+    },
+    {
+      "id": "E713",
+      "explanation": "fe80::30d0:115:3f57:fe4c/128 — отдельный адрес в link-local диапазоне. fe80::/64 выглядит как маршрут префикса, ::1/128 — loopback, а 2001:… не link-local. Но подтвердить, что выбранный адрес принадлежит именно этой workstation, можно только по отсутствующему выводу netstat; ключ условный.",
+      "explanationEn": "fe80::30d0:115:3f57:fe4c/128 is a single address in the link-local range. fe80::/64 is a prefix route, ::1/128 is loopback and 2001:… is not link-local. However, proving ownership by this workstation requires the missing netstat output; the key remains conditional.",
+      "correction": {
+        "eligible": false,
+        "caution": "Тип адреса определим по префиксу, но принадлежность workstation требует исходного вывода netstat."
+      }
+    },
+    {
+      "id": "E729",
+      "explanation": "В show running-config ищут глобальную команду ipv6 unicast-routing: именно она включает IPv6 forwarding. show interfaces описывает интерфейсы, copy … сохраняет настройки, show ip nat translations показывает IPv4 NAT; ни одна из них прямо не подтверждает нужную конфигурационную команду.",
+      "explanationEn": "Use show running-config to find the global ipv6 unicast-routing command enabling IPv6 forwarding. show interfaces reports interfaces, copy … saves settings and show ip nat translations shows IPv4 NAT; none directly verifies that configuration command."
+    },
+    {
+      "id": "E750",
+      "explanation": "Global routing prefix — блок от провайдера; subnet ID — выбранная организацией сеть внутри блока; interface ID — интерфейс host внутри этой сети. Поэтому аналог host-части IPv4 — interface ID, а не subnet ID.",
+      "explanationEn": "Global routing prefix is the provider allocation; subnet ID selects the organization’s network within it; interface ID identifies the host interface within that subnet. The IPv4 host-portion analogue is interface ID, not subnet ID."
+    },
+    {
+      "id": "E767",
+      "explanation": "FF02::2 — all-routers multicast только на локальном link (scope 02). FF02::1 адресовал бы всем IPv6-узлам этого link. Ни глобальная рассылка всем сетям, ни выделенная группа DHCP-серверов здесь не указаны.",
+      "explanationEn": "FF02::2 is all-routers multicast on the local link only (scope 02). FF02::1 would target all IPv6 nodes there. This is neither an all-network group nor the DHCP-server group."
+    },
+    {
+      "id": "E782",
+      "explanation": "Варианты фактически спрашивают полный /64 network prefix: сохраняем 2001:DA48:FC5:A4 и обнуляем interface ID → 2001:DA48:FC5:A4::/64. Термин subnet ID в вопросе неточен: отдельное поле subnet ID зависит от длины allocation провайдера (при /48 это A4), которая здесь не задана.",
+      "explanationEn": "The options actually ask for the full /64 network prefix: retain 2001:DA48:FC5:A4 and zero interface ID → 2001:DA48:FC5:A4::/64. “Subnet ID” is imprecise: the separate subnet-ID field depends on provider-allocation length (A4 for /48), which is not specified here.",
+      "correction": {
+        "caution": "Под subnet ID здесь имеется в виду полный network prefix /64; размер отдельного поля subnet ID без allocation провайдера неизвестен.",
+        "eligible": false
+      }
+    }
+  ],
+  "notes": {
+    "ru": "## Практическая настройка IPv6 и точные границы понятий\n\n### ULA, LLA и документационные адреса\n\nUnique-local FC00::/7 (обычно локально генерируемые FD…) предназначены для внутреннего общения в организации или ограниченной группе сайтов. Их можно маршрутизировать между внутренними подсетями, но обычно не в глобальном Интернете. LLA FE80::/10 не покидает один link. Поэтому ULA и LLA нельзя считать синонимами. 2001:db8::/32 — документационный диапазон: он имеет привычный формат GUA в упражнениях, но не предназначен для адресации реального публичного сервиса. IPv6 сам по себе не заменяет фильтрацию и безопасность.\n\n### Мини-лаборатория IOS\n\n```text\nconfigure terminal\nipv6 unicast-routing\ninterface gigabitethernet 0/0/0\nipv6 address 2001:db8:acad:1::1/64\nipv6 address fe80::1 link-local\nno shutdown\nend\nshow ipv6 interface brief\nshow ipv6 route\n```\n\n`ipv6 address …/64` задаёт GUA; пробел перед `/64` не нужен. `link-local` явно задаёт LLA. Одного адреса на интерфейсе недостаточно для forwarding между сетями: нужна глобальная `ipv6 unicast-routing`. `show ipv6 interface brief` показывает GUA/LLA и up/up (физический/канальный уровни); `show ipv6 route` — IPv6 маршруты. В `show running-config` ищи включение маршрутизации. На Windows адрес, prefix length и default gateway задаются отдельно; gateway может быть LLA роутера.\n\nLLA автоматически появляется при включении IPv6 и может создаваться из EUI-64 или другого IID-алгоритма. Он должен быть уникальным на link, а не во всём Интернете: одинаковый fe80::1 на двух раздельных link допустим. При обращении к LLA иногда требуется указать исходный интерфейс/zone, иначе непонятно, на каком link искать соседa.\n\n### EUI-64 по шагам\n\nMAC 00:1A:2B:3C:4D:5E → разделить 00:1A:2B и 3C:4D:5E → вставить FF:FE → 00:1A:2B:FF:FE:3C:4D:5E → инвертировать U/L-бит (XOR 0x02 первого байта) → 02:1A:2B:FF:FE:3C:4D:5E. IID: 021a:2bff:fe3c:4d5e. Не путай инверсию одного бита с перестановкой всего MAC. Случайные/stable privacy IID не обязаны содержать FFFE. DAD проверяет уникальность перед обычным использованием адреса.\n\n### Три RA-сценария без ловушки про gateway\n\nSLAAC создаёт адрес на host; SLAAC + stateless DHCPv6 добавляет серверные параметры вроде DNS; stateful DHCPv6 выдаёт сам адрес и отслеживает аренду. Во всех этих учебных сценариях default router узнаётся из RA, не из обычного DHCPv6. RA не создаёт уникальный IID за host: тот выбирается отдельно. Получение DNS из RA зависит от поддерживаемых опций и реализации.\n\n### План подсетей и multicast\n\nДля /48 2001:db8:acad::/48 выдели LAN 2001:db8:acad:1::/64, следующую LAN :2::/64 и третью :3::/64. Меняется subnet ID, а длина IID остаётся 64 бита. Не вычитай IPv4 network/broadcast «минус два» из количества IPv6-подсетей: IPv6 не имеет broadcast. FF02::1 — все nodes канала; FF02::2 — routers. Solicited-node multicast использует последние 24 бита unicast/anycast адреса, чтобы уменьшить число получателей NS. Для …:1234:5678 это FF02::1:FF34:5678. При заданиях с отсутствующей схемой сначала нужны размеры site/sub-site/subnet полей: без них ответ 16 или 256 не выводится.\n",
+    "en": "## Practical IPv6 configuration and precise terminology\n\n### ULA, LLA and documentation addresses\n\nUnique-local FC00::/7 (normally locally generated FD…) serves internal communication within an organization or limited sites. It can route between internal subnets but normally not across the global Internet. LLA FE80::/10 never leaves one link. ULA and LLA are therefore not synonyms. 2001:db8::/32 is reserved for documentation: exercises use its familiar GUA form, but it is not for a real public service. IPv6 alone does not replace filtering/security.\n\n### IOS mini-lab\n\n```text\nconfigure terminal\nipv6 unicast-routing\ninterface gigabitethernet 0/0/0\nipv6 address 2001:db8:acad:1::1/64\nipv6 address fe80::1 link-local\nno shutdown\nend\nshow ipv6 interface brief\nshow ipv6 route\n```\n\n`ipv6 address …/64` sets a GUA with no space before `/64`; `link-local` explicitly sets an LLA. Interface addressing alone does not enable forwarding: use global `ipv6 unicast-routing`. `show ipv6 interface brief` displays GUA/LLA and up/up physical/line-protocol states; `show ipv6 route` shows IPv6 routes. Look in `show running-config` to verify routing is enabled. Windows configures address, prefix length and default gateway separately; the gateway may be the router’s LLA.\n\nAn LLA appears automatically when IPv6 is enabled and may use EUI-64 or another IID method. It must be unique on its link, not globally: fe80::1 can exist on two separate links. Accessing an LLA may require a source interface/zone so the system knows which link to use.\n\n### EUI-64 step by step\n\nMAC 00:1A:2B:3C:4D:5E → split 00:1A:2B and 3C:4D:5E → insert FF:FE → 00:1A:2B:FF:FE:3C:4D:5E → flip the U/L bit (XOR first byte with 0x02) → 02:1A:2B:FF:FE:3C:4D:5E. IID: 021a:2bff:fe3c:4d5e. This flips one bit, not the whole MAC. Random/stable privacy IIDs need not contain FFFE. DAD checks uniqueness before normal address use.\n\n### Three RA scenarios without the gateway trap\n\nSLAAC constructs the address on the host; SLAAC plus stateless DHCPv6 adds server settings such as DNS; stateful DHCPv6 assigns the address and tracks leases. In these course scenarios the default router still comes from RA, not ordinary DHCPv6. RA does not choose a unique IID for the host. DNS through RA depends on supported options/implementation.\n\n### Subnet plan and multicast\n\nFor allocation 2001:db8:acad::/48, assign LANs 2001:db8:acad:1::/64, :2::/64 and :3::/64. Change subnet ID while retaining 64 IID bits. Do not subtract IPv4-style network/broadcast addresses when counting IPv6 subnets; IPv6 has no broadcast. FF02::1 targets all link-local nodes; FF02::2 routers. Solicited-node multicast uses a unicast/anycast address’s final 24 bits to narrow NS recipients: …:1234:5678 maps to FF02::1:FF34:5678. Missing-exhibit problems require actual site/sub-site/subnet field widths before a result such as 16 or 256 can be computed.\n"
+  },
+  "coverage": [
+    {
+      "topic": "12.0.1 Why should I take this module?",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.0.2 What will I learn in this module?",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.1.1 Need for IPv6",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.1.2 IPv4 and IPv6 Coexistence",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.1.3 Check Your Understanding - IPv4 Issues",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "available questions reviewed; dated/exhibit-dependent facts explicitly qualified"
+    },
+    {
+      "topic": "12.2.1 IPv6 Addressing Formats",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.2.2 Rule 1 - Omit Leading Zeros",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.2.3 Rule 2- Double Colon",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.2.4 Check Your Understanding - IPv6 Address Representation",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "available questions reviewed; dated/exhibit-dependent facts explicitly qualified"
+    },
+    {
+      "topic": "12.3.1 Unicast, Multicast, Anycast",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.2 IPv6 Prefix Length",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.3 Types of IPv6 Unicast Addresses",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.4 A Note About the Unique Local Address",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.5 IPv6 GUA",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.6 IPv6 GUA Structure",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.7 IPv6 LLA",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.3.8 Check Your Understanding - IPv6 Address Types",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "available questions reviewed; dated/exhibit-dependent facts explicitly qualified"
+    },
+    {
+      "topic": "12.4.1 Static GUA Configuration on a Router",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.4.2 Static GUA Configuration on a Windows Host",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.4.3 Static Configuration of a Link-Local Unicast Address",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.4.4 Syntax Checker - GUA and LLA Static Configuration",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.4.5 Packet Tracer - Basic Device Configuration",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.5.1 RS and RA Messages",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.2 Method 1 - SLAAC",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.3 Method 2 - SLAAC and Stateless DHCPv6",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.4 Method 3 - Stateful DHCPv6",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.5 EUI-64 Process vs. Randomly Generated",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.6 EUI-64 Process",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.7 Randomly Generated Interface IDs",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.5.8 Check Your Understanding - Dynamic Addressing for IPv6 GUAs",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "available questions reviewed; dated/exhibit-dependent facts explicitly qualified"
+    },
+    {
+      "topic": "12.6.1 Dynamic LLAs",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.6.2 Dynamic LLAs on Windows",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.6.3 Dynamic LLAs on Cisco Routers",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.6.4 Verify IPv6 Address Configuration",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.6.5 Syntax Checker - Verify IPv6 Address Configuration",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.6.6 Packet Tracer - Configure IPv6 Addressing",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.7.1 Assigned IPv6 Multicast Addresses",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.7.2 Well-Known IPv6 Multicast Addresses",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.7.3 Solicited-Node IPv6 Multicast Addresses",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.7.4 Lab - Identify IPv6 Addresses",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.8.1 Subnet Using the Subnet ID",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.8.2 IPv6 Subnetting Example",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.8.3 IPv6 Subnet Allocation",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.8.4 Router Configured with IPv6 Subnets",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "12.8.5 Check Your Understanding - Subnet an IPv6 Network",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "available questions reviewed; dated/exhibit-dependent facts explicitly qualified"
+    },
+    {
+      "topic": "12.9.1 Packet Tracer - Implement a Subnetted IPv6 Addressing Scheme",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.9.2 Lab - Configure IPv6 Addresses on Network Devices",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "instructions/objectives reviewed; interactive exercise not executed from text archive"
+    },
+    {
+      "topic": "12.9.3 What did I learn in this module?",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "reviewed: current notes plus audit supplement cover available text"
+    },
+    {
+      "topic": "Module Quiz - IPv6 Addressing",
+      "source": "NetAcad_данные/модули/12.md",
+      "status": "available questions reviewed; dated/exhibit-dependent facts explicitly qualified"
+    }
+  ],
+  "issues": [
+    "E297 excluded from scored quiz: unqualified historical RIR exhaustion statistic. Saved course text says all five but no current claim is made.",
+    "E306 solely DHCPv6 wording qualified: default router still comes from RA.",
+    "E498/E508/E713 remain conditional/excluded for missing exhibit or Packet Tracer state.",
+    "E782 uses subnet ID to mean full /64 network prefix; clarified terminology.",
+    "E501 documentation range is not actually globally routed despite GUA classification in exercise.",
+    "Saved course text reviewed, not a claim of live module completion."
+  ],
+  "verificationSources": [
+    "NetAcad_данные/модули/12.md",
+    "NetAcad_данные/вопросы/модули_12.md",
+    "https://www.rfc-editor.org/rfc/inline-errata/rfc4291.html"
+  ]
+}

@@ -1,0 +1,616 @@
+{
+  "module": 16,
+  "questions": [
+    {
+      "id": "E012",
+      "explanation": "Confidentiality ограничивает раскрытие данных, integrity защищает от недопустимого изменения, availability обеспечивает доступ законным пользователям. Это три цели security. Fault tolerance относится к устойчивости к отказам, scalability — росту сети, QoS — приоритетам трафика, а не всей тройке CIA.",
+      "explanationEn": "Confidentiality limits disclosure, integrity protects against unauthorized alteration, and availability preserves legitimate access. Together these are security goals. Fault tolerance concerns failures, scalability growth and QoS traffic priorities rather than the entire CIA triad."
+    },
+    {
+      "id": "E020",
+      "explanation": "Virus, worm и Trojan horse — виды вредоносного программного кода на устройствах. Firewall и VPN — защитные средства; zero-day описывает эксплуатацию ещё неизвестной/неисправленной уязвимости, DoS — отказ в обслуживании, который не обязательно требует установленного malware.",
+      "explanationEn": "Viruses, worms and Trojan horses are types of malicious code running on devices. Firewalls and VPNs are defensive tools; zero-day describes exploitation of an unknown/unpatched flaw, while DoS describes service denial and need not involve installed malware."
+    },
+    {
+      "id": "E021",
+      "explanation": "Программа тайно собирает историю посещения сайтов — это определяющий признак spyware. В условии нет перегрузки сервиса (DoS), использования чужой личности или доказательства неизвестной уязвимости (zero-day); следи за действием «secretly collecting data».",
+      "explanationEn": "Secret collection of browsing activity is the defining clue for spyware. The scenario does not describe service overload (DoS), impersonation or proof of an unknown flaw (zero-day); the key action is secretly collecting user data."
+    },
+    {
+      "id": "E033",
+      "explanation": "VPN создаёт защищённый туннель от удалённого сотрудника до сети организации. ACL фильтрует трафик, IPS обнаруживает/блокирует атаки, BYOD означает использование личных устройств; ни один из них сам не предоставляет требуемый удалённый туннель.",
+      "explanationEn": "A VPN provides a protected tunnel from the remote employee to the organization. An ACL filters traffic, an IPS detects/blocks attacks, and BYOD means using personal devices; none alone provides the requested remote tunnel."
+    },
+    {
+      "id": "E042",
+      "explanation": "login в режиме настройки линии включает проверку ранее заданного line password при входе в user EXEC. enable secret защищает последующее повышение привилегий, service password-encryption скрывает пароли в конфигурации, а secret без контекста не является требуемой командой входа.",
+      "explanationEn": "login under line configuration enables checking the previously configured line password on entry to user EXEC. enable secret protects later privilege elevation; service password-encryption obscures configuration passwords; secret alone is not this login command."
+    },
+    {
+      "id": "E043",
+      "explanation": "service password-encryption скрывает поддерживаемые пароли, отображавшиеся открытым текстом в конфигурации. enable secret задаёт один секрет privileged EXEC, а login включает аутентификацию линии. В классическом IOS скрытие Type 7 обратимо и не является сильной защитой или шифрованием сетевого сеанса.",
+      "explanationEn": "service password-encryption obscures supported passwords previously shown as plaintext in configuration. enable secret sets one privileged EXEC secret and login enables line authentication. Classic IOS Type 7 is reversible obfuscation, not strong secret protection or session encryption."
+    },
+    {
+      "id": "E054",
+      "explanation": "После загрузки существующей конфигурации обычный вход через console приводит в user EXEC (>). Отсутствие console password означает отсутствие этой проверки входа; enable secret понадобится только при команде enable для #. Setup mode ожидался бы при отсутствии startup-config, а не отсутствии console password.",
+      "explanationEn": "After loading an existing configuration, normal console access enters user EXEC (>). With no console password, that login check is absent; enable secret is needed later when enable requests # access. Setup mode would reflect missing startup-config, not merely a missing console password."
+    },
+    {
+      "id": "E416",
+      "explanation": "Переформатирование диска уничтожает хранящиеся файлы, поэтому главное последствие — data loss/manipulation. Information theft означает копирование/кражу сведений, identity theft — выдачу себя за другого, а disruption of service — недоступность сервиса без обязательного уничтожения данных.",
+      "explanationEn": "Reformatting the disk destroys stored files, so the principal impact is data loss/manipulation. Information theft steals/copies information, identity theft impersonates someone, and service disruption denies availability without necessarily destroying data."
+    },
+    {
+      "id": "E417",
+      "explanation": "Покупки с чужими кредитными данными означают использование чужой личности/платёжной идентичности — identity theft (в варианте опечатка Identify). Кража данных могла произойти раньше, но вопрос описывает уже их использование от чужого имени, не просто information theft.",
+      "explanationEn": "Purchases using someone else’s credit information misuse that person’s identity/payment identity: identity theft (misspelled Identify in the option). Information theft may have happened earlier, but the described action is impersonation, not merely stealing data."
+    },
+    {
+      "id": "E418",
+      "explanation": "Пользователи имеют право на сервис, но не могут его получить: нарушается availability, то есть disruption of service. В условии не сказано, что данные украдены, изменены или кто-то присвоил чужую личность.",
+      "explanationEn": "Authorized users are prevented from receiving service, violating availability: disruption of service. The scenario does not state that data was stolen/altered or that anyone impersonated another person."
+    },
+    {
+      "id": "E419",
+      "explanation": "Исследовательские данные украдены — это information theft, нарушение конфиденциальности. Их изменение/уничтожение было бы data manipulation/loss, а использование чужой личности — identity theft. Простая кража не требует отказа сервиса.",
+      "explanationEn": "Stealing research data is information theft and a confidentiality breach. Altering/destroying it would be manipulation/loss, while impersonation is identity theft. Theft need not disrupt the service."
+    },
+    {
+      "id": "E420",
+      "explanation": "Перегрузка сети специально лишает остальных доступа, то есть disruption of service/DoS. Ключевой ущерб — доступность, а не кража документов, изменение записей или использование чужой личности.",
+      "explanationEn": "Overloading the network to deny others access is disruption of service/DoS. The main harm concerns availability rather than document theft, record alteration or impersonation."
+    },
+    {
+      "id": "E421",
+      "explanation": "Alter data records означает изменить записи, нарушив их целостность: data loss or manipulation. Копирование записей без изменения было бы information theft; перегрузка доступа — service disruption.",
+      "explanationEn": "Altering data records violates their integrity, so data loss or manipulation is the match. Copying records without changing them would be information theft; denying access through overload would be service disruption."
+    },
+    {
+      "id": "E422",
+      "explanation": "Кража пользовательской базы — information theft: атакующий получает конфиденциальные сведения. Даже если в базе есть личности пользователей, identity theft требует их использования для выдачи себя за этих людей; это в условии не описано.",
+      "explanationEn": "Stealing a user database is information theft: the attacker obtains confidential information. Even if it contains identities, identity theft involves using them to impersonate people, which is not stated here."
+    },
+    {
+      "id": "E423",
+      "explanation": "Атакующий притворяется другим человеком ради его кредитных сведений — это identity theft. Information theft описывает саму кражу данных, но здесь определяющий признак — impersonates another person. Изменение данных и отказ сервиса не указаны.",
+      "explanationEn": "The attacker impersonates another person to obtain credit information, making identity theft the match. Information theft describes stealing data, but the defining clue here is impersonation. Neither alteration nor service denial is described."
+    },
+    {
+      "id": "E424",
+      "explanation": "Очень большое число некорректных web-запросов замедляет сервер для законных пользователей — DoS. Указан один атакующий компьютер, поэтому не требуется называть это распределённой DDoS. Reconnaissance собирало бы сведения; access attack предполагало бы неразрешённый вход, а установка malware не доказана.",
+      "explanationEn": "A very large volume of malformed web requests slows service for legitimate users: DoS. One attacking computer is specified, so distributed DDoS is not required. Reconnaissance gathers information, access attacks gain unauthorized entry, and installed malware is not established here."
+    },
+    {
+      "id": "E425",
+      "explanation": "Слабый FTP-пароль позволил компрометировать рабочую станцию; ключевой шаг — неразрешённый доступ, поэтому access attack. Последующая выгрузка документов — кража данных, возможное последствие этого доступа. Нет описания простого сканирования или перегрузки сервиса.",
+      "explanationEn": "A weak FTP password led to workstation compromise; the defining step is unauthorized access, hence access attack. Document exfiltration is a possible consequence of that access. The scenario is not merely scanning or overwhelming a service."
+    },
+    {
+      "id": "E426",
+      "explanation": "После запуска скачанного «очистителя» повреждены системные файлы: вредоносный исполняемый код означает malware attack. Маскировка под полезную программу может быть признаком Trojan, но среди вариантов дана более широкая категория malware. Сканирование и сетевой flood не описаны.",
+      "explanationEn": "Running the downloaded “cleaner” corrupts system files, identifying a malicious executable and thus a malware attack. Its useful-software disguise may suggest a Trojan, but malware is the offered broader category. Scanning and network flooding are not described."
+    },
+    {
+      "id": "E427",
+      "explanation": "Учебный сценарий связывает найденный USB и последующий несанкционированный доступ к камере с внедрённым malware. Поэтому выбирается malware attack, а не DoS или reconnaissance. В реальной диагностике сам светодиод камеры не доказывает причину; требуются проверка процессов и устройства.",
+      "explanationEn": "The exercise links a found USB device with subsequent unauthorized camera activity, pointing to introduced malware. That matches malware attack rather than DoS or reconnaissance. In real diagnosis a camera indicator alone does not prove the cause; processes and device activity need checking."
+    },
+    {
+      "id": "E428",
+      "explanation": "В сохранённом сценарии массовые вредоносные пакеты и замедление сервиса трактуются как DoS: ресурс занят и плохо обслуживает законные запросы. Пропущенные обновления повышают уязвимость, но сами не определяют вид атаки. Если пакеты исходят из заражённого сервера, malware может сосуществовать с DoS; формулировка источника неоднозначна.",
+      "explanationEn": "The saved scenario treats large volumes of malicious packets and service slowdown as DoS: resources are occupied instead of serving legitimate requests. Missed updates increase vulnerability but do not alone identify the attack. If the server emits those packets because it is infected, malware may coexist with DoS; the source wording is ambiguous."
+    },
+    {
+      "id": "E429",
+      "explanation": "Проверка многих адресов и случайных портов похожа на сканирование для выяснения доступных систем/служб — reconnaissance. В условии нет подтверждённого входа, установки кода или достаточного flood для отказа сервиса. Некорректность пакетов сама по себе не делает атаку DoS.",
+      "explanationEn": "Probing multiple addresses and random ports suggests scanning to discover systems/services: reconnaissance. Successful access, installed code or enough flooding to deny service is not established. Malformed packets alone do not make an attack DoS."
+    },
+    {
+      "id": "E430",
+      "explanation": "Firewall стоит между сетями и применяет правила разрешения/запрета их обмена. AAA проверяет личности/права администраторов, IPS выявляет и блокирует атаки, ESA/WSA специализируются на почте/вебе. Формулировка про контроль трафика между сетями прямо описывает firewall.",
+      "explanationEn": "A firewall sits between networks and enforces allow/deny rules on their traffic. AAA verifies identities/permissions, IPS detects/blocks attacks, and ESA/WSA specialize in email/web protection. General traffic control between networks directly describes a firewall."
+    },
+    {
+      "id": "E431",
+      "explanation": "AAA server централизует проверку административной личности и разрешённых действий, поэтому устройства обращаются к нему за authentication/authorization. Firewall и IPS фильтруют/анализируют трафик; ESA/WSA защищают почту и веб, а не являются базой прав управления оборудованием.",
+      "explanationEn": "An AAA server centralizes administrator identity verification and permitted actions, so devices consult it for authentication/authorization. Firewalls/IPS filter or analyze traffic; ESA/WSA protect mail/web rather than serving as the device-management permissions database."
+    },
+    {
+      "id": "E432",
+      "explanation": "Сильный пароль защищает backup от неразрешённого восстановления/чтения, поэтому это Security. Frequency определяет расписание, Storage — место хранения, Validation — проверку целостности и успешного восстановления.",
+      "explanationEn": "A strong password protects a backup against unauthorized reading/restoration, so this is Security. Frequency sets the schedule, Storage determines location, and Validation checks integrity and successful recovery."
+    },
+    {
+      "id": "E433",
+      "explanation": "DMZ — отдельный сегмент для публично доступных серверов с контролируемыми правилами доступа извне и внутрь. Inside — доверенная внутренняя сеть; Outside/Internet — внешняя сторона, а не специально выделенная серверная зона.",
+      "explanationEn": "A DMZ is a separate segment for externally accessible servers with controlled inbound and internal access. Inside is the internal network; Outside/Internet is the external side, not the dedicated public-server zone."
+    },
+    {
+      "id": "E434",
+      "explanation": "Антивирус работает на endpoint и обнаруживает/блокирует вредоносное ПО на самом устройстве — ожидаемый пример в курсе. AAA и ESA/WSA решают централизованные задачи. Host firewall тоже может входить в endpoint protection, но предложенный server-based firewall не является выбранным здесь примером защиты конечного клиента.",
+      "explanationEn": "Antivirus runs on an endpoint to detect/block malware on that device, the course’s intended example. AAA and ESA/WSA address centralized functions. A host firewall can also contribute to endpoint protection, but the offered server-based firewall is not the selected end-client example."
+    },
+    {
+      "id": "E435",
+      "explanation": "Firewall контролирует входящие и исходящие сетевые соединения компьютера по правилам. Antivirus/antimalware ищут вредоносный код, port scanner обнаруживает открытые порты, а security center объединяет настройки. Именно фильтрация неразрешённых коммуникаций описывает firewall.",
+      "explanationEn": "A firewall controls a computer’s inbound/outbound communications using rules. Antivirus/antimalware detect malicious code, a port scanner discovers open ports, and a security center groups settings. Filtering unauthorized communications specifically describes a firewall."
+    },
+    {
+      "id": "E436",
+      "explanation": "Синтаксис: block-for B — длительность блокировки, attempts N — число неудач, within W — окно наблюдения. Здесь B=30 секунд, N=2, W=10 секунд: login block-for 30 attempts 2 within 10. Остальные варианты переставляют значения и задают другое условие. В курсе речь о блокировании попыток VTY-входа.",
+      "explanationEn": "Syntax: block-for B is blocking duration, attempts N is the failure threshold, and within W is the observation window. Here B=30 seconds, N=2 and W=10 seconds: login block-for 30 attempts 2 within 10. Other choices swap values. The course describes blocking VTY login attempts."
+    },
+    {
+      "id": "E437",
+      "explanation": "Accounting ведёт журнал действий пользователя: когда вошёл, что выполнял и какие ресурсы использовал. Доказать личность — authentication; разрешить определённые ресурсы — authorization. Challenge/response относится к механизму проверки личности, не учёту действий.",
+      "explanationEn": "Accounting records user activity, such as login times, actions and resource use. Proving identity is authentication; granting access to resources is authorization. Challenge/response is an identity-checking mechanism, not activity accounting."
+    },
+    {
+      "id": "E438",
+      "explanation": "nslookup помогает узнавать DNS-имена/адреса, fping — обнаруживать отвечающие узлы. Использование для сбора картины сети соответствует reconnaissance. Инструменты также легитимны для администратора; само их наличие не доказывает атаку, а контекст вопроса задаёт вредоносную разведку.",
+      "explanationEn": "nslookup discovers DNS names/addresses and fping can identify responsive hosts. Using them to map a network matches reconnaissance. These are also legitimate administration tools; their mere presence does not prove an attack, while the question supplies malicious context."
+    },
+    {
+      "id": "E439",
+      "explanation": "SSH шифрует сеанс, включая учётные данные; Telnet передаёт их открыто. Оба могут использовать TCP, VTY и аутентификацию, поэтому эти признаки не являются преимуществом SSH именно над Telnet.",
+      "explanationEn": "SSH encrypts the session, including credentials; Telnet sends them in plaintext. Both can use TCP, VTY lines and authentication, so those features do not distinguish SSH from Telnet."
+    },
+    {
+      "id": "E440",
+      "explanation": "Firewall предотвращает нежелательный сетевой обмен на границе и потому служит основным средством защиты от внешних соединений. AAA контролирует доступ пользователей, patches закрывают уязвимости, password protection защищает секреты; они дополняют firewall, но не заменяют его фильтрацию. Это не утверждение, что firewall защищает от всех угроз.",
+      "explanationEn": "A firewall blocks unwanted network communication at the boundary, making it a major protection against external connections. AAA controls user access, patches fix flaws and password protection secures secrets; they complement rather than replace traffic filtering. This does not mean a firewall stops every threat."
+    },
+    {
+      "id": "E441",
+      "explanation": "Цель DoS — сделать ресурс недоступным законным пользователям. Access attack стремится получить чужие права, reconnaissance собирает сведения, trust exploitation использует доверительные отношения. Формулировка «prevent authorized users from accessing» прямо указывает на отказ в обслуживании.",
+      "explanationEn": "DoS aims to make a resource unavailable to legitimate users. Access attacks seek unauthorized privileges, reconnaissance gathers information, and trust exploitation abuses trusted relationships. Preventing authorized access directly describes denial of service."
+    },
+    {
+      "id": "E442",
+      "explanation": "AAA расшифровывается Authentication (проверка личности), Authorization (разрешённые действия), Accounting (учёт действий). Automation, autobalancing и autoconfiguration не входят в эту тройку, хотя тоже начинаются с A.",
+      "explanationEn": "AAA stands for Authentication (identity verification), Authorization (permitted actions) and Accounting (activity records). Automation, autobalancing and autoconfiguration are not part of this framework despite starting with A."
+    },
+    {
+      "id": "E443",
+      "explanation": "Worm — самостоятельный вредоносный код, способный распространяться, эксплуатируя уязвимости других систем. Virus обычно связан с заражённым объектом/программой; Trojan определяется маскировкой под полезное ПО. Social engineering воздействует на человека, а не является самостоятельным кодом.",
+      "explanationEn": "A worm is self-contained malicious code that can spread by exploiting other systems’ vulnerabilities. A virus is typically attached to an infected object/program; a Trojan is defined by disguising itself as useful software. Social engineering targets people rather than being self-contained code."
+    },
+    {
+      "id": "E444",
+      "explanation": "После отказа кондиционера нарушился температурный режим — environmental threat. Electrical означало бы проблему напряжения/питания; configuration — неверные настройки; maintenance — ошибки обращения/обслуживания. В условии непосредственный фактор — окружающая среда.",
+      "explanationEn": "A failed air conditioner disrupts temperature control, an environmental threat. Electrical concerns voltage/power, configuration concerns settings, and maintenance concerns handling/service errors. The direct factor here is the environment."
+    },
+    {
+      "id": "E445",
+      "explanation": "Vulnerability — слабое место, которое делает систему восприимчивой к атаке. Метод использования этого слабого места — exploit; потенциальный источник вреда — threat. Компьютер-жертва и чувствительные данные — объекты защиты, а не определение уязвимости.",
+      "explanationEn": "A vulnerability is a weakness that makes a system susceptible to attack. An exploit is a way to use the weakness; a threat is a potential source of harm. A victim computer or sensitive information is an asset/target, not the definition of vulnerability."
+    },
+    {
+      "id": "E446",
+      "explanation": "В базовой IOS SSH-настройке нужны hostname, domain name и local user: имя/домен используются при создании ключей, пользователь — для login local. Console password и enable password защищают другие этапы доступа. Это три верных пункта из предложенных, но для рабочего SSH также нужны RSA keys, IP-доступность и VTY transport input ssh.",
+      "explanationEn": "Basic IOS SSH setup needs hostname, domain name and a local user: name/domain are used when generating keys, and the user supports login local. Console and enable passwords protect different access stages. These are the three offered prerequisites; working SSH also needs RSA keys, IP reachability and VTY transport input ssh."
+    },
+    {
+      "id": "E447",
+      "explanation": "Reconnaissance выясняет, какие системы, адреса, порты и службы существуют, чтобы подготовить последующие действия. Изменение данных, отключение сервисов и блокирование пользователей — уже другие цели/стадии атак, а не разведка.",
+      "explanationEn": "Reconnaissance discovers systems, addresses, ports and services to prepare later actions. Altering data, disabling services and denying users access are different attack goals/stages, not reconnaissance itself."
+    },
+    {
+      "id": "E448",
+      "explanation": "Правила firewall на хостах могут запрещать ICMP Echo Request/Reply и тем самым ping между компьютерами. Smartcard управляет удостоверением личности, файловые права — файлами, изменение MAC не является корректным способом выборочной блокировки ICMP. Блокирование ping не равнозначно полной изоляции хостов.",
+      "explanationEn": "Host firewall rules can block ICMP Echo Request/Reply and therefore ping between computers. Smartcards address identity, file permissions protect files, and changing MAC addresses is not selective ICMP filtering. Blocking ping does not fully isolate the hosts."
+    },
+    {
+      "id": "E449",
+      "explanation": "SSH — удалённый доступ по IP с шифрованием данных сеанса. Console-кабель даёт локальный out-of-band доступ, AUX может обслуживать dialup; использование терминальной программы само не определяет способ подключения. VTY по сети не становится out-of-band из-за пароля.",
+      "explanationEn": "SSH is remote IP access with encrypted session data. A console cable gives local out-of-band access, AUX may support dialup, and using terminal software alone does not identify the connection method. Network VTY access is not out-of-band merely because it uses a password."
+    },
+    {
+      "id": "E456",
+      "explanation": "В контексте удалённого CLI-доступа используются SSH и Telnet. FTP передаёт файлы, SMTP — почту, HTTP обслуживает веб; Remote Connect не указан как стандартный протокол этой задачи. SSH защищает сеанс, Telnet — нет.",
+      "explanationEn": "For remote CLI access, SSH and Telnet are the matching protocols. FTP transfers files, SMTP mail and HTTP web content; Remote Connect is not a standard protocol in this task. SSH protects the session, whereas Telnet does not."
+    },
+    {
+      "id": "E479",
+      "explanation": "192.168.25.10 принадлежит private-блоку 192.168.0.0/16 и не маршрутизируется напрямую через публичный Интернет. Нужен публичный способ доступа, например соответствующая NAT-публикация или VPN. Это не loopback (127/8), не link-local (169.254/16), и конфликт адресов из условия не следует.",
+      "explanationEn": "192.168.25.10 belongs to private 192.168.0.0/16 and cannot be routed directly across the public Internet. A public access arrangement such as appropriate NAT publishing or a VPN is needed. It is neither loopback (127/8) nor link-local (169.254/16), and no address conflict is established."
+    },
+    {
+      "id": "E514",
+      "explanation": "Сначала user EXEC (>), enable открывает privileged EXEC (#), configure terminal — global configuration, line console 0 — line configuration. Пароль console задаётся именно на линии, поэтому нельзя остановиться в global config или перепрыгнуть туда напрямую из >.",
+      "explanationEn": "Start at user EXEC (>), use enable for privileged EXEC (#), configure terminal for global configuration, and line console 0 for line configuration. The console password is configured on the line, so global configuration is not the final mode and cannot be entered directly from >."
+    },
+    {
+      "id": "E518",
+      "explanation": "В формулировке курса имеется в виду: открытые пароли перестают быть читаемыми прямо в running-config. Значения всё равно видны как Type 7 и обратимо декодируются, поэтому это не абсолютный запрет увидеть пароль. Команда не шифрует WAN-трафик, не меняет алгоритм enable secret и не сохраняет изменения в NVRAM автоматически.",
+      "explanationEn": "The course means plaintext passwords stop being directly readable in running-config. Encoded Type 7 values remain visible and reversible, so this is not an absolute barrier to recovering passwords. It does not encrypt WAN traffic, change the enable secret algorithm or automatically save to NVRAM."
+    },
+    {
+      "id": "E520",
+      "explanation": "service password-encryption скрывает поддерживаемые пароли, отображавшиеся открытым текстом в конфигурации. enable secret задаёт один секрет privileged EXEC, а login включает аутентификацию линии. В классическом IOS скрытие Type 7 обратимо и не является сильной защитой или шифрованием сетевого сеанса.",
+      "explanationEn": "service password-encryption obscures supported passwords previously shown as plaintext in configuration. enable secret sets one privileged EXEC secret and login enables line authentication. Classic IOS Type 7 is reversible obfuscation, not strong secret protection or session encryption."
+    },
+    {
+      "id": "E521",
+      "explanation": "Console и VTY имеют настройки line authentication, а privileged EXEC защищается enable secret. Ethernet-порт не получает обычный CLI line password; global configuration защищён тем, что вход в него идёт через privileged EXEC, а не отдельным паролем режима.",
+      "explanationEn": "Console and VTY have line-authentication settings, while privileged EXEC is protected by enable secret. An Ethernet port does not receive an ordinary CLI line password; global configuration is reached through privileged EXEC rather than having its own separate mode password."
+    },
+    {
+      "id": "E527",
+      "explanation": "Для console-входа нужно значение password из line console 0, а не enable secret и не line vty. Сохранённый ответ lineconin предполагает именно такую строку в отсутствующем exhibit. Без самой конфигурации невозможно проверить буквальное значение, поэтому карточка исключена из автоматического квиза.",
+      "explanationEn": "Console login uses the password under line console 0, not enable secret or the VTY password. The saved lineconin answer assumes that value in the missing exhibit. Without the configuration its literal value cannot be verified, so the card is excluded from the automatic quiz."
+    },
+    {
+      "id": "E595",
+      "explanation": "hostname CL1 меняет имя устройства; banner motd задаёт объявление при подключении; password class в выбранной console line задаёт её пароль. Для фактической проверки этого line password дополнительно нужен login. Banner не аутентифицирует, hostname не изменяет пароль.",
+      "explanationEn": "hostname CL1 sets the device name; banner motd defines a connection notice; password class under the selected console line sets its password. login is additionally needed to enforce that line password. A banner does not authenticate and hostname does not change passwords."
+    },
+    {
+      "id": "E597",
+      "explanation": "transport input ssh разрешает входящие VTY-сеансы по SSH, который шифрует обмен, и исключает Telnet из списка разрешённых протоколов. Эта команда не создаёт пользователя и не заменяет login local; она также не включает исходящий SSH-клиент. Полный SSH-сервер требует остальных настроек и ключей.",
+      "explanationEn": "transport input ssh permits inbound VTY sessions using encrypted SSH and excludes Telnet from the allowed protocols. It does not create users or replace login local, nor does it enable an outbound SSH client. The full SSH server still needs its other configuration and keys."
+    },
+    {
+      "id": "E600",
+      "explanation": "SSH — сетевой сеанс с шифрованием; Telnet — сетевой сеанс с открытым текстом. Console — прямой доступ вне рабочего IP-пути, удобный при неисправной сети; AUX исторически используется для модемного dialup. Выбирай по каналу подключения и защите, а не только по наличию пароля.",
+      "explanationEn": "SSH is an encrypted network session; Telnet is plaintext network access. Console is direct access outside the working IP path, useful when the network fails; AUX traditionally supports modem dialup. Classify by connection path and protection, not merely by whether a password exists."
+    },
+    {
+      "id": "E607",
+      "explanation": "ARP requests широковещательны и при большом объёме нагружают LAN. ARP также не аутентифицирует обычные ответы, поэтому поддельная IP→MAC привязка может направить трафик атакующему. ARP-кэш хоста и MAC-таблица коммутатора — разные таблицы; множество запросов не означает автоматически переполнение «host MAC table».",
+      "explanationEn": "ARP requests are broadcasts and can burden a LAN in large volumes. Ordinary ARP replies are not authenticated, so forged IP-to-MAC mappings can redirect traffic to an attacker. A host ARP cache and a switch MAC table are different structures; many requests do not automatically imply a “host MAC table” overflow."
+    },
+    {
+      "id": "E643",
+      "explanation": "Стандартный серверный TCP-порт Telnet — 23, поэтому клиент ставит 23 в destination port. 443 обычно HTTPS, 161 SNMP, 110 POP3. Исходный клиентский порт будет отдельным значением и не определяет требуемую службу.",
+      "explanationEn": "The standard Telnet server TCP port is 23, so the client uses 23 as destination port. 443 normally identifies HTTPS, 161 SNMP and 110 POP3. The separate client source port does not identify the requested server service."
+    },
+    {
+      "id": "E644",
+      "explanation": "Domain name вместе с hostname используется в стандартной настройке RSA keys; RSA обеспечивает идентичность/криптографию SSH-сервера. Local user создаёт учётную запись, login local выбирает эту базу для VTY, transport input ssh разрешает только SSH. Эти команды решают разные задачи и не заменяют IP-доступность устройства.",
+      "explanationEn": "The domain name and hostname are used in standard RSA-key setup; RSA supports SSH server identity/cryptography. A local user creates credentials, login local selects that database for VTY, and transport input ssh permits SSH only. These steps serve different purposes and do not replace IP reachability."
+    },
+    {
+      "id": "E645",
+      "explanation": "SSH шифрует login information и данные сеанса, тогда как Telnet передаёт их открыто. SSH не требует IPsec для собственной защиты и не использует случайный одноразовый серверный порт; сила выбранного пароля сама по себе не является главным различием этих протоколов.",
+      "explanationEn": "SSH encrypts login information and session data, while Telnet sends them in plaintext. SSH does not need IPsec for its own protection or use a random one-time server port; password strength itself is not the fundamental distinction."
+    },
+    {
+      "id": "E646",
+      "explanation": "Worm может распространяться самостоятельно, а virus размножается через заражённый объект/программу и её выполнение. Оба могут самовоспроизводиться, поэтому «worms self-replicate but viruses do not» неверно. Предложенные варианты упрощены/неточны; полностью корректной пары в них нет, карточка остаётся исключённой.",
+      "explanationEn": "A worm can spread independently, whereas a virus replicates through an infected object/program and its execution. Both can replicate, so “worms self-replicate but viruses do not” is false. The offered statements are inaccurate/oversimplified; no fully correct distinction is present and the card remains excluded."
+    },
+    {
+      "id": "E647",
+      "explanation": "Stateful packet inspection ведёт состояние соединений и проверяет, соответствует ли входящий пакет уже разрешённому обмену. Обычная фильтрация адресов/портов рассматривает поля пакета, URL filtering — адрес сайта; они сами не проверяют принадлежность к существующему сеансу.",
+      "explanationEn": "Stateful packet inspection tracks connection state and checks whether incoming traffic belongs to an already permitted exchange. Basic address/port filtering inspects packet fields and URL filtering inspects website addresses; neither alone establishes membership in an existing session."
+    },
+    {
+      "id": "E648",
+      "explanation": "SSH обеспечивает защищённый зашифрованный удалённый сеанс. Telnet тоже может требовать аутентификацию, поэтому наличие login не отличает SSH. Более высокая скорость или простота использования не гарантируются и не являются причиной выбора безопасного протокола.",
+      "explanationEn": "SSH supplies a protected, encrypted remote session. Telnet can also authenticate users, so login support alone is not the difference. Greater speed or ease of use is not guaranteed and is not the security reason to choose SSH."
+    },
+    {
+      "id": "E649",
+      "explanation": "Несколько средств на разных участках — perimeter firewall, дополнительное разделение и внутренний IPS — образуют layered/defense-in-depth защиту. Она не полагается на один барьер: пропущенную одной системой угрозу может остановить другая. В условии описана архитектура слоёв, не процедура расчёта риска.",
+      "explanationEn": "Multiple controls at different locations—a perimeter firewall, further separation and an internal IPS—form layered/defense-in-depth protection. It avoids reliance on one barrier so another control may stop a missed threat. The scenario describes layers rather than a risk-assessment procedure."
+    },
+    {
+      "id": "E650",
+      "explanation": "Чужая личность для кредитной карты → identity theft; украденные секретные документы → information theft; уничтоженные записи → data loss; перегруженный сайт → disruption of service. Различай действие и главный ущерб: кража сведений, подмена личности, целостность/потеря или доступность.",
+      "explanationEn": "Using another identity for credit is identity theft; stealing secret documents is information theft; destroying recordings is data loss; overwhelming a website is disruption of service. Match the action and primary harm: stolen information, impersonation, integrity/loss or availability."
+    },
+    {
+      "id": "E651",
+      "explanation": "Непродуманные правила доступа — security policy weakness; уязвимость самой ОС — technological weakness; ошибочная ACL, пропускающая вредоносный трафик, — configuration weakness. Разница: слабые правила, слабая технология или неверно настроенная технология.",
+      "explanationEn": "Inadequately planned access rules are a security-policy weakness; an OS flaw is a technological weakness; an incorrectly configured ACL permitting malicious traffic is a configuration weakness. Distinguish deficient rules, flawed technology and incorrectly configured technology."
+    },
+    {
+      "id": "E652",
+      "explanation": "Man-in-the-middle вмешивается в обмен между двумя сторонами: читает или подменяет сообщения, пока стороны считают, что общаются напрямую. DoS лишает доступа, username enumeration выясняет существующие имена. Именно компрометация данных между endpoints описывает MITM.",
+      "explanationEn": "A man-in-the-middle intervenes between two parties to read or modify messages while they believe they communicate directly. DoS denies availability and username enumeration discovers valid names. Compromising data between endpoints specifically describes MITM."
+    },
+    {
+      "id": "E653",
+      "explanation": "В терминологии задания: packet filtering → адреса, application filtering → порты предполагаемых приложений, URL filtering → URL/ключевые слова, stateful inspection → связь с существующим обменом. Уточнение: обычный packet filter тоже может учитывать порты, а современные application-aware фильтры анализируют само приложение; классификация курса упрощена.",
+      "explanationEn": "In the exercise terminology: packet filtering matches addresses, application filtering matches presumed-application ports, URL filtering matches URLs/keywords, and stateful inspection matches existing exchanges. In practice, packet filters can also inspect ports and modern application-aware filters identify applications themselves; the course classification is simplified."
+    },
+    {
+      "id": "E654",
+      "explanation": "Malware, выглядящее как видеоигра, — Trojan horse: пользователь запускает его, доверяя маскировке. Прикрепление к другой программе и распространение при запуске описывает virus; автоматическое распространение через уязвимость — worm. Одной необходимости ручного действия недостаточно для определения Trojan.",
+      "explanationEn": "Malware disguised as a video game is a Trojan horse: the user runs it because of its benign appearance. Attaching to another program and spreading on execution describes a virus; automatic exploitation-driven spread describes a worm. Requiring manual action alone does not define a Trojan."
+    },
+    {
+      "id": "E671",
+      "explanation": "Патчи всех уязвимых систем закрывают слабость, через которую worm автоматически распространяется. Антивирусные определения помогают обнаружению, но не устраняют саму уязвимость; смена паролей и AAA не исправляют дефект ОС. Поэтому обновление систем — наиболее прямой ответ в этом вопросе.",
+      "explanationEn": "Patching all vulnerable systems removes the flaw through which a worm spreads automatically. Antivirus definitions help detection but do not fix the flaw; password changes and AAA do not repair OS defects. Updating systems is therefore the most direct answer here."
+    },
+    {
+      "id": "E672",
+      "explanation": "Уже заданы правила VTY, но для реального SSH ещё нужны RSA keys, domain name для стандартной генерации ключей и local username/password database, на которую ссылается login local. RBAC и privilege levels могут настраивать права, но не являются обязательными тремя шагами из этого списка. В стандартном сценарии SSH активируется при готовых ключах/настройках.",
+      "explanationEn": "The VTY rules are present, but SSH still needs RSA keys, the domain name used in standard key generation, and the local username/password database referenced by login local. RBAC and privilege levels can refine permissions but are not the three prerequisites listed here. In the standard setup SSH becomes available with the required keys/settings."
+    },
+    {
+      "id": "E674",
+      "explanation": "exec-timeout относится к интерактивным EXEC-сеансам на линиях console и VTY: незанятый терминал автоматически отключается. Ethernet, serial и loopback — сетевые интерфейсы, не линии пользовательского CLI-сеанса, поэтому этот таймер там не настраивается как line command.",
+      "explanationEn": "exec-timeout applies to interactive EXEC sessions on console and VTY lines, disconnecting unattended idle terminals. Ethernet, serial and loopback are network interfaces rather than user CLI lines, so this line-session timer is not configured on them."
+    },
+    {
+      "id": "E675",
+      "explanation": "transport input ssh на VTY разрешает входящие SSH-сеансы и исключает Telnet. Это объясняет роль сохранённого ответа, но определить, что именно этой команды недостаёт в конкретном роутере, можно только по PT-файлу/running-config. Без активности ответ не подтверждён, карточка исключена.",
+      "explanationEn": "transport input ssh on VTY permits incoming SSH sessions and excludes Telnet. This explains the saved answer’s role, but establishing that this is the missing command requires the actual PT file/running-config. Without the activity the answer is unverified and the card is excluded."
+    },
+    {
+      "id": "E676",
+      "explanation": "SSH предоставляет защищённый удалённый CLI-доступ для просмотра конфигураций устройств, в том числе в других зданиях. Telnet не шифрует, HTTP без TLS тоже открыт, FTP предназначен для передачи файлов, а не защищённого интерактивного управления.",
+      "explanationEn": "SSH provides protected remote CLI access for inspecting device configurations, including off-site devices. Telnet is plaintext, HTTP without TLS is also unencrypted, and FTP transfers files rather than providing protected interactive management."
+    },
+    {
+      "id": "E677",
+      "explanation": "RobErT — короткое распространённое имя с предсказуемой сменой регистра. Это не длинная passphrase и не строка из десяти цифр/символов. Изменение регистра само по себе не делает легко угадываемое личное слово сильным паролем.",
+      "explanationEn": "RobErT is a short common name with predictable capitalization. It is neither a long passphrase nor ten digits/special characters. Mixed case alone does not make an easily guessed personal word a strong password."
+    },
+    {
+      "id": "E679",
+      "explanation": "Security защищает чувствительные данные и сохраняет доступ к ним для уполномоченных пользователей — сочетание конфиденциальности и доступности. Приоритизация delay-sensitive потоков — QoS; рост сети — scalability; синхронизация timestamp не является определением security.",
+      "explanationEn": "Security protects sensitive data while preserving access for authorized users, combining confidentiality and availability. Prioritizing delay-sensitive traffic is QoS, growth is scalability, and timestamp synchronization is not the definition of security."
+    },
+    {
+      "id": "E681",
+      "explanation": "Spyware — установленное ПО, собирающее сведения о пользователе, обычно скрытно. Сбой/замедление сервиса описывает DoS, использование украденных credentials — неразрешённый доступ, а фильтрующее устройство — firewall.",
+      "explanationEn": "Spyware is installed software that gathers user information, usually covertly. Slowing/crashing a service describes DoS, using stolen credentials describes unauthorized access, and a traffic-filtering device is a firewall."
+    },
+    {
+      "id": "E706",
+      "explanation": "service password-encryption — глобальная настройка (config)#; login — правило выбранной линии (config-line)#; ip address — адрес интерфейса (config-if)#; copy running-config startup-config — административная операция в #; enable — повышение прав из >. Сопоставление определяется областью действия команды.",
+      "explanationEn": "service password-encryption is global configuration (config)#; login configures the selected line (config-line)#; ip address configures an interface (config-if)#; copy running-config startup-config is an administrative operation at #; enable elevates from >. Match commands by their configuration scope."
+    },
+    {
+      "id": "E719",
+      "explanation": "Серверный TCP-порт 22 стандартно используется SSH для защищённого удалённого доступа. DHCP использует UDP 67/68, DNS — 53, TFTP — UDP 69. В реальной сети порты можно изменить, но вопрос спрашивает стандартное назначение.",
+      "explanationEn": "Server TCP port 22 is the standard SSH port for protected remote access. DHCP uses UDP 67/68, DNS 53 and TFTP UDP 69. Real deployments can change ports, but this question asks the standard assignment."
+    },
+    {
+      "id": "E723",
+      "explanation": "Смысл сохранённого ответа: stateless packet filter проверяет заголовки L3/L4, stateful firewall дополнительно хранит состояние соединения. Называть это строгой границей «до session layer» неточно: TCP state находится в транспорте, а набор возможностей зависит от продукта. Поэтому карточка оставлена вне автоматической оценки; изучай различие наличия состояния, а не искусственный потолок OSI.",
+      "explanationEn": "The intended distinction is that a stateless packet filter checks Layer 3/4 headers while a stateful firewall also tracks connection state. Calling this a strict “up to session layer” boundary is imprecise: TCP state is transport-layer information and capabilities vary by product. The card remains excluded; learn state tracking rather than an artificial OSI ceiling."
+    },
+    {
+      "id": "E724",
+      "explanation": "Антивирус обнаруживает/блокирует malware, а обновления закрывают уязвимости, через которые он попадает/распространяется. Очистка cache и дефрагментация не являются защитой от вредоносного кода. Удаление ненужных программ уменьшает поверхность атаки, но два прямых основных средства из вопроса — antivirus и updates.",
+      "explanationEn": "Antivirus detects/blocks malware and updates fix vulnerabilities used for entry/spread. Clearing cache and defragmenting are not malware defenses. Removing unused software can reduce attack surface, but the two direct main controls asked for are antivirus and updates."
+    },
+    {
+      "id": "E725",
+      "explanation": "После двух неудачных входов за 30 секунд команда блокирует VTY-входы на 180 секунд. Это замедляет brute-force guessing пароля. Она не останавливает распространение worm как таковое, не защищает физическую серверную и не обнаруживает пассивный перехват трафика.",
+      "explanationEn": "After two failed logins within 30 seconds, this command blocks VTY login attempts for 180 seconds, slowing brute-force password guessing. It does not directly stop worm propagation, protect the equipment room or detect passive traffic interception."
+    },
+    {
+      "id": "E726",
+      "explanation": "Firewall перегружен трафиком, и законные пользователи потеряли доступ к Интернету: это DoS, нарушение доступности. По условию нельзя утверждать Trojan или факт неразрешённого входа; reconnaissance обычно собирает сведения, а здесь явно описан отказ обслуживания.",
+      "explanationEn": "Traffic overwhelms the firewall and legitimate users lose Internet access: DoS, an availability attack. The scenario does not establish a Trojan or unauthorized login; reconnaissance generally gathers information, whereas service denial is explicit here."
+    },
+    {
+      "id": "E745",
+      "explanation": "Сотрудник пока собирает сведения о Wi-Fi для будущего взлома — стадия reconnaissance. Access attack началась бы при получении неразрешённого доступа; DoS — при нарушении работы; Trojan — вид маскирующегося ПО, которого условие не описывает.",
+      "explanationEn": "The employee is gathering wireless information for a future break-in: reconnaissance. An access attack would involve unauthorized entry, DoS disruption, and a Trojan disguised software; none of those is the action described yet."
+    },
+    {
+      "id": "E746",
+      "explanation": "Разделение Read-only и Edit определяет разрешённые действия уже вошедших пользователей — authorization. Authentication проверяет, кто вошёл; accounting записывает, что он сделал. Automation не компонент AAA.",
+      "explanationEn": "Assigning Read-only versus Edit determines what already logged-in users may do: authorization. Authentication verifies who logged in, and accounting records actions. Automation is not an AAA component."
+    },
+    {
+      "id": "E755",
+      "explanation": "ESD/плохое обслуживание/маркировка → maintenance; скачки/просадки/отключения питания → electrical; температура/влажность → environmental; физические повреждения оборудования → hardware. Категории определяются непосредственной причиной: например отказ кондиционера приводит к environmental-угрозе перегрева.",
+      "explanationEn": "ESD/poor handling/labeling map to maintenance; voltage spikes/brownouts/outages to electrical; temperature/humidity to environmental; physical equipment damage to hardware. Categorize by the immediate cause: air-conditioning failure leads to environmental overheating."
+    },
+    {
+      "id": "E779",
+      "explanation": "Worm может самостоятельно размножаться и создавать много сетевого трафика, поэтому это возможное объяснение замедления после установки подозрительного ПО. Spam — нежелательные сообщения, phishing — обман для получения сведений. Но из одного замедления нельзя доказать worm; формулировка asks might, а не подтверждённый диагноз.",
+      "explanationEn": "A worm can replicate independently and generate heavy traffic, so it is a possible explanation after suspicious software installation. Spam is unsolicited messaging and phishing is deceptive information gathering. Slow performance alone cannot prove a worm; the question asks what might have been introduced, not a confirmed diagnosis."
+    },
+    {
+      "id": "E792",
+      "explanation": "В контексте задачи VPN создаёт защищённый туннель, через который удалённый пользователь получает доступ к сети организации. Другие варианты описывают firewall или обнаружение угроз. VPN — семейство решений/технологий, а не один-единственный протокол; здесь имеется в виду безопасный remote-access VPN.",
+      "explanationEn": "In this task, a VPN provides a protected tunnel for a remote user to access an organization’s network. The other options describe firewalls or threat detection. VPN is a family of solutions/technologies rather than one single protocol; the intended case is a secure remote-access VPN."
+    }
+  ],
+  "notes": {
+    "ru": "## Защита: пропущенные темы курса и практический смысл\n\n### Три вида слабостей и четыре вида ущерба\n\nТехнологическая слабость — дефект ОС/протокола/оборудования. Конфигурационная — неверная ACL, открытый ненужный сервис, слабый пароль. Слабость политики — отсутствующие или плохо продуманные правила доступа, обновлений и ответственности. Один инцидент может сочетать все три. Не называй любой протокол «всегда небезопасным»: например, приложение может использовать TLS, а версия и настройка имеют значение.\n\nCIA помогает классифицировать ущерб: кража сведений нарушает confidentiality; подмена записей — integrity; перегрузка сервиса — availability. Identity theft выделяется использованием чужой личности, а не просто наличием чужого имени в украденной базе.\n\n### Слои защиты и их роли\n\n| Средство | Конкретная роль |\n|---|---|\n| VPN | Защищённый туннель удалённого доступа/между площадками |\n| Firewall | Политика разрешения и запрета сетевого обмена |\n| IPS | Анализ трафика с возможностью блокирования обнаруженной атаки |\n| IDS | Обнаружение и оповещение; само по себе не равно блокированию |\n| ESA / WSA | Фильтрация подозрительной почты / опасных веб-ресурсов |\n| AAA server | Централизованная личность, права и учёт административного доступа |\n| Endpoint protection | Антивирус/host IPS, обновления, firewall хоста и обученный пользователь |\n\nDMZ позволяет публиковать нужные серверы отдельными правилами, не открывая всю внутреннюю сеть. Stateful firewall не обязан запрещать абсолютно все новые входящие подключения: правила могут явно разрешать публичную службу. Его отличие — учёт состояния соединения.\n\n### Backups: четыре отдельных вопроса\n\n**Frequency:** как часто сохранять полный backup и изменения. **Storage:** где хранить копию, включая отдельную площадку, чтобы один инцидент не уничтожил оригинал и копию. **Security:** кто имеет доступ, как защищены копия и ключи/пароли восстановления. **Validation:** проверить целостность и реально попробовать восстановление. Файл, который скопировали, но никогда не восстановили, ещё не доказывает рабочий план восстановления.\n\nОбновления закрывают известные уязвимости, особенно важные для самостоятельного распространения worm. Стандартный образ ОС с разрешёнными приложениями облегчает управление, но после развёртывания тоже нуждается в патчах. Антивирусные определения обновляют обнаружение; они не заменяют исправление ОС.\n\n### Hardening и Cisco AutoSecure\n\n`auto secure` из privileged EXEC запускает помощник настройки защиты на поддерживаемом IOS. Он помогает, но не делает устройство неуязвимым; до применения в реальной сети нужно понимать, какие службы и доступ он изменит. Общие шаги: сменить заводские credentials, ограничить права, убрать ненужные службы, обновить ПО и обеспечить физическую защиту.\n\nФизический план включает закрываемую серверную, контроль/журнал входов и камеры; кондиционирование — от перегрева, UPS/качественное питание — от electrical threats, ESD-защиту и маркировку — от maintenance mistakes.\n\n### Почему каждая команда безопасности нужна\n\n| Команда / место | Что делает | Чего не делает |\n|---|---|---|\n| security passwords min-length 10 / global | Требует минимальную длину для новых поддерживаемых паролей | Не делает угадываемое имя хорошим паролем и не заменяет существующие автоматически |\n| login block-for 120 attempts 3 within 60 / global | Блокирует VTY-попытки на 120 секунд после 3 неудач за 60 секунд | Не блокирует весь IP-трафик и не защищает физический вход |\n| exec-timeout 5 30 / line | Завершает сеанс после 5 минут 30 секунд простоя | Это не общий лимит длительности активной работы |\n| login local / VTY | Проверяет локальную базу username | Не создаёт пользователя и не генерирует SSH keys |\n| transport input ssh / VTY | Разрешает SSH вместо Telnet | Не включает шифрование открытого Telnet-сеанса |\n| no ip http server / global | Выключает ненужный HTTP-сервер устройства | Не выключает автоматически отдельный HTTPS-сервер |\n\nСлужбы сначала проверяют: `show ip ports all` на подходящем IOS-XE или `show control-plane host open-ports` на старом IOS. Отключают только ненужное, чтобы не потерять используемый способ управления. Проверка `show running-config | section line vty` показывает выбранные правила входа; затем сохраняют `copy running-config startup-config`.\n\n### Исторический учебный пример и реальные настройки\n\nВ исходном курсе встречаются RSA 1024, MD5 и учебные пароли cisco/class. Это иллюстрации синтаксиса старой платформы, не современный эталон защиты. В рабочем устройстве выбирают поддерживаемые актуальные алгоритмы, SSHv2 и надёжные уникальные секреты; уже существующий конспект использует пример RSA 2048. Type 7 обратим, смена регистра имени не спасает слабый пароль. Длинная непредсказуемая passphrase помогает запоминанию без очевидных личных данных.\n\nПрактическая последовательность SSH: hostname → domain name → RSA keys → local username secret → VTY login local → transport input ssh; нужны также IP-доступность и разрешение соединения политикой. Проверь вход и права, закрытие неактивного сеанса и сохранение настроек. Изученные лабораторные цели не означают, что конкретные PT-активности уже выполнены.\n\n### Разведка, доступ и DoS: не путать стадии\n\nРазведка включает Internet queries (публичные сведения и DNS/регистрация), ping sweep (какие адреса отвечают) и port scan (какие службы доступны). Это сбор картины, а не доказанный взлом; те же средства используются администраторами при разрешённой диагностике.\n\nВиды access attack: **password attack** пытается получить секрет подбором, кражей или перехватом; **trust exploitation** использует скомпрометированную доверенную систему/учётную запись, чтобы получить доступ к другой; **port redirection** использует перенаправление через уже захваченную систему для достижения ресурса, к которому напрямую путь ограничен; **man-in-the-middle** вмешивается в обмен сторон, читая или подменяя его. Не путай port redirection с обычным разрешённым NAT port forwarding: категория определяется не названием функции, а неразрешённым использованием.\n\nDoS истощает ресурсы/нарушает сервис. DDoS имеет ту же цель, но трафик приходит из множества источников, часто с заражённых устройств. Много пакетов от одного компьютера — ещё не доказательство DDoS. Trojan определяется обманной маскировкой и не обязан сам размножаться; он может открыть backdoor или загрузить другой malware, включая worm.\n",
+    "en": "## Security: omitted course topics and practical meaning\n\n### Three weaknesses and four impacts\n\nA technological weakness is a flaw in software/protocol/hardware. A configuration weakness is a bad ACL, unnecessary open service or weak password. A policy weakness is missing or poorly designed access, update or responsibility rules. One incident can combine all three. Avoid saying any protocol is always insecure: TLS, version and configuration matter.\n\nCIA classifies impact: information theft violates confidentiality; record alteration integrity; service overload availability. Identity theft specifically uses another person’s identity, rather than merely stealing a database containing names.\n\n### Layers and their roles\n\n| Control | Specific role |\n|---|---|\n| VPN | Protected remote-access/site-to-site tunnel |\n| Firewall | Network allow/deny policy |\n| IPS | Analyze traffic and block detected attacks |\n| IDS | Detection/alerts, not automatically prevention |\n| ESA / WSA | Filter suspicious email / dangerous web resources |\n| AAA server | Centralize administrator identity, permissions and accounting |\n| Endpoint protection | Antivirus/host IPS, updates, host firewall and trained users |\n\nA DMZ publishes needed servers under separate rules without exposing the whole internal network. A stateful firewall need not deny every new inbound connection: explicit rules can permit a public service. Its defining feature is connection-state tracking.\n\n### Backups: four separate questions\n\n**Frequency:** when to make full backups and capture changes. **Storage:** where to keep a copy, including another site so one incident cannot destroy both original and backup. **Security:** who has access and how copies/recovery keys or passwords are protected. **Validation:** verify integrity and actually test restoration. A copied file alone does not prove the recovery plan works.\n\nUpdates close known vulnerabilities, particularly those used for autonomous worm spread. A standard OS image with approved applications simplifies management but still needs patches after deployment. Antivirus definitions improve detection; they do not replace OS fixes.\n\n### Hardening and Cisco AutoSecure\n\n`auto secure` from privileged EXEC runs a security configuration assistant on supported IOS. It helps but does not make the router invulnerable; understand its service/access changes before using it on a real network. General steps are replacing default credentials, limiting privileges, removing unused services, updating software and protecting physical access.\n\nPhysical planning includes locked equipment rooms, access controls/logs and cameras; cooling mitigates overheating, UPS/quality power addresses electrical threats, and ESD procedures/labels reduce maintenance mistakes.\n\n### Why each security command matters\n\n| Command / mode | What it does | What it does not do |\n|---|---|---|\n| security passwords min-length 10 / global | Enforces minimum length for new supported passwords | Does not make a predictable name strong or automatically replace existing passwords |\n| login block-for 120 attempts 3 within 60 / global | Blocks VTY attempts for 120 seconds after 3 failures in 60 seconds | Does not block all IP traffic or secure physical entry |\n| exec-timeout 5 30 / line | Disconnects after 5 minutes 30 seconds idle | Not a maximum active working-session duration |\n| login local / VTY | Uses the local username database | Does not create users or generate SSH keys |\n| transport input ssh / VTY | Permits SSH instead of Telnet | Does not encrypt a plaintext Telnet session |\n| no ip http server / global | Disables an unnecessary HTTP server | Does not automatically disable a separate HTTPS server |\n\nInspect services first using `show ip ports all` on applicable IOS-XE or `show control-plane host open-ports` on older IOS. Disable only unneeded services to avoid losing the management path in use. `show running-config | section line vty` verifies line rules; save using `copy running-config startup-config`.\n\n### Historical teaching examples versus operational settings\n\nThe source course uses RSA 1024, MD5 and example passwords cisco/class. These illustrate older-platform syntax rather than a modern security benchmark. Real deployments should select supported current algorithms, SSHv2 and strong unique secrets; the existing notes use RSA 2048 as an example. Type 7 is reversible and mixed-case personal names remain weak. A long unpredictable passphrase can improve memorability without obvious personal information.\n\nThe SSH sequence is hostname → domain name → RSA keys → local username secret → VTY login local → transport input ssh. IP reachability and access-policy permission are also required. Verify login/permissions, idle-session termination and persistence. Covering lab objectives does not mean the specific PT activities have already been executed.\n\n### Reconnaissance, access and DoS are different stages\n\nReconnaissance includes Internet queries (public information and DNS/registration), ping sweeps (which addresses respond) and port scans (which services are available). This maps the environment rather than proving a break-in; administrators use the same tools for authorized diagnosis.\n\nAccess attack types: a **password attack** tries to obtain credentials through guessing, theft or interception; **trust exploitation** uses a compromised trusted system/account to access another; **port redirection** relays through a compromised system to reach a resource not directly accessible; **man-in-the-middle** intervenes in communication to read or alter it. Do not equate malicious port redirection with ordinary authorized NAT port forwarding: unauthorized use, not the feature name, determines the attack.\n\nDoS exhausts resources/disrupts service. DDoS has the same goal but comes from many sources, often infected devices. Many packets from one computer do not establish DDoS. A Trojan is defined by its deceptive disguise and need not replicate itself; it may open a backdoor or load other malware, including a worm.\n"
+  },
+  "coverage": [
+    {
+      "topic": "16.0.1 Why should I take this module?",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.0.2 What will I learn to do in this module?",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.1.1 Types of Threats",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.1.2 Types of Vulnerabilities",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.1.3 Physical Security",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.1.4 Check Your Understanding - Security Threats and Vulnerabilities",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.2.1 Types of Malware",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.2.2 Reconnaissance Attacks",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.2.3 Access Attacks",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.2.4 Denial of Service Attacks",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.2.5 Check Your Understanding - Network Attacks",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.2.6 Lab - Research Network Security Threats",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "objectives and defensive workflow explained; activity not executed"
+    },
+    {
+      "topic": "16.3.1 The Defense-in-Depth Approach",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.2 Keep Backups",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.3 Upgrade, Update, and Patch",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.4 Authentication, Authorization, and Accounting",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.5 Firewalls",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.6 Types of Firewalls",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.7 Endpoint Security",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.3.8 Check Your Understanding - Network Attack Mitigation",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.4.1 Cisco AutoSecure",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.4.2 Passwords",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.4.3 Additional Password Security",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.4.4 Enable SSH",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.4.5 Disable Unused Services",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "16.4.6 Packet Tracer - Configure Secure Passwords and SSH",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "objectives and defensive workflow explained; activity not executed"
+    },
+    {
+      "topic": "16.4.7 Lab - Configure Network Devices with SSH",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "objectives and defensive workflow explained; activity not executed"
+    },
+    {
+      "topic": "16.5.1 Packet Tracer - Secure Network Devices",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "objectives and defensive workflow explained; activity not executed"
+    },
+    {
+      "topic": "16.5.2 Lab - Secure Network Devices",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "objectives and defensive workflow explained; activity not executed"
+    },
+    {
+      "topic": "16.5.3 What did I learn in this module?",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "Module Quiz - Network Security Fundamentals",
+      "source": "NetAcad_данные/модули/16.md; live 16.4 cross-check by root",
+      "status": "covered in existing notes plus audited supplement"
+    }
+  ],
+  "issues": [
+    {
+      "ids": [
+        "E428"
+      ],
+      "issue": "Course DoS scenario wording also permits infected-host interpretation; explanation states intended impact and ambiguity."
+    },
+    {
+      "ids": [
+        "E434"
+      ],
+      "issue": "Antivirus is intended answer; host firewalls can also be endpoint controls."
+    },
+    {
+      "ids": [
+        "E527",
+        "E675"
+      ],
+      "issue": "Missing exhibit/PT, preserved exclusion."
+    },
+    {
+      "ids": [
+        "E646",
+        "E723"
+      ],
+      "issue": "Inaccurate answer choices/strict OSI ceiling; preserved exclusion and corrected conceptual explanation."
+    },
+    {
+      "ids": [
+        "E518",
+        "E653"
+      ],
+      "issue": "Legacy Type7 and simplified firewall taxonomy explicitly qualified."
+    }
+  ]
+}

@@ -1,0 +1,533 @@
+{
+  "module": 15,
+  "questions": [
+    {
+      "id": "E058",
+      "explanation": "DHCP автоматически выдаёт IP-адрес и сетевые параметры, избавляя от ручной настройки каждого host. Удалённое управление — SSH/Telnet, имена обслуживает DNS, достижимость проверяет ping/ICMP.",
+      "explanationEn": "DHCP automatically assigns IP configuration instead of requiring manual setup on every host. SSH/Telnet provide remote management, DNS handles names, and ping/ICMP tests reachability."
+    },
+    {
+      "id": "E067",
+      "explanation": "В классификации этого курса DNS и DHCP помогают обнаружить нужную адресную/служебную информацию: DNS разрешает имена, DHCP обнаруживает сервер настройки и выдаёт параметры. TCP переносит данные, SSH даёт защищённый сеанс управления, поэтому эта пара не подходит.",
+      "explanationEn": "In this course’s classification, DNS and DHCP discover addressing/service information: DNS resolves names, while DHCP discovers configuration servers and supplies settings. TCP transports data and SSH provides secure management sessions, so they are not the intended pair."
+    },
+    {
+      "id": "E071",
+      "explanation": "DNS предоставляет разрешение имён, DHCP — конфигурацию host: это прикладные сетевые сервисы. EIGRP и OSPF обмениваются маршрутами, ICMP служит диагностике сетевого уровня; они не являются выбранными application-layer сервисами.",
+      "explanationEn": "DNS provides name resolution and DHCP host configuration, making them application services. EIGRP/OSPF exchange routes and ICMP supports network-layer control/diagnostics rather than the application services requested."
+    },
+    {
+      "id": "E104",
+      "explanation": "При отправке инкапсуляция идёт сверху вниз: HTTP-запрос становится данными TCP, TCP-сегмент помещается в IP-пакет, затем в Ethernet-кадр. Поэтому порядок HTTP → TCP → IP → Ethernet. Обратный порядок относится к приёму.",
+      "explanationEn": "Sending encapsulates top-down: HTTP request inside TCP, TCP segment inside IP, IP packet inside Ethernet. Thus HTTP → TCP → IP → Ethernet; reverse order describes receiving."
+    },
+    {
+      "id": "E382",
+      "explanation": "Application layer определяет прикладные протоколы обмена между программами, например HTTP или SMTP. Transport даёт общую доставку между процессами, Network — IP/маршрутизацию, Physical — передачу сигналов; вопрос про смысл прикладного обмена.",
+      "explanationEn": "Application layer defines protocols such as HTTP/SMTP for programs exchanging data. Transport provides process-to-process delivery, Network IP/routing and Physical signals; the question asks about application-specific exchange."
+    },
+    {
+      "id": "E383",
+      "explanation": "MKV, GIF и JPG определяют формат представления мультимедийных данных, поэтому в OSI относятся к Presentation. Они не выбирают маршрут, не управляют транспортной доставкой и сами по себе не устанавливают Session-диалог.",
+      "explanationEn": "MKV, GIF and JPG define multimedia representation formats, so they map to OSI Presentation. They do not route packets, provide transport delivery or establish session dialogs."
+    },
+    {
+      "id": "E384",
+      "explanation": "Верхний уровень TCP/IP объединяет OSI Application (сервис), Presentation (формат/кодирование) и Session (диалог). Transport и Network остаются самостоятельными уровнями TCP/IP, Data link входит в Network access.",
+      "explanationEn": "TCP/IP Application combines OSI Application services, Presentation formats/encoding and Session dialogs. Transport and Network remain separate TCP/IP layers; Data link belongs to Network access."
+    },
+    {
+      "id": "E385",
+      "explanation": "DNS и SMTP задают обмен сообщениями для разрешения имён и отправки почты — прикладные протоколы. PNG и QuickTime описывают представление/форматы мультимедиа и в модели OSI связаны с Presentation.",
+      "explanationEn": "DNS and SMTP define exchanges for name resolution and sending email, so they are application protocols. PNG and QuickTime concern multimedia representation/formats, associated with OSI Presentation."
+    },
+    {
+      "id": "E386",
+      "explanation": "Session устанавливает и поддерживает диалог между peers, поэтому подходит обмен информацией для начала диалога. Сжатие и форматирование — Presentation; предоставление прикладного интерфейса — Application.",
+      "explanationEn": "Session establishes and maintains peer dialogs, matching information exchange to initiate a dialog. Compression/formatting belong to Presentation; an application-facing interface belongs to Application."
+    },
+    {
+      "id": "E387",
+      "explanation": "True: peer может предоставлять свой ресурс (роль server) и одновременно запрашивать чужой (роль client). P2P не означает, что ролей нет; роли распределены между участниками без обязательного выделенного сервера.",
+      "explanationEn": "True: a peer can offer its resource as a server and request another peer’s resource as a client. P2P does not eliminate roles; it distributes them without requiring a dedicated server."
+    },
+    {
+      "id": "E388",
+      "explanation": "Курс ожидает POST для загрузки данных на обработку веб-серверу. Но формулировка «uploading files» без условий неоднозначна: PUT тоже может загрузить/заменить ресурс по заданному URI. GET получает ресурс. Поэтому ключ POST сохранён как ответ курса, а карточка исключена из строгого оцениваемого квиза.",
+      "explanationEn": "The course expects POST for submitting uploaded data to a web server. However, “uploading files” alone is ambiguous: PUT can also upload/create or replace a resource at a specified URI. GET retrieves a resource. POST is retained as the course key, but the card is excluded from strict scored practice.",
+      "correction": {
+        "eligible": false,
+        "caution": "Неоднозначная формулировка: загрузка возможна через POST и PUT; POST — ожидаемый ответ курса."
+      }
+    },
+    {
+      "id": "E389",
+      "explanation": "HTTP — прикладной протокол запроса и получения веб-ресурсов, поэтому из этих вариантов выбирают его. IMAP/SMTP относятся к почте. SSL — устаревшее название технологии защиты, не сам веб-протокол; транспортное соединение при HTTP/1.1 устанавливает TCP.",
+      "explanationEn": "HTTP is the application protocol for requesting web resources, so it is the correct option. IMAP/SMTP concern email. SSL is an obsolete security technology name, not the web application protocol; TCP establishes the transport connection for HTTP/1.1."
+    },
+    {
+      "id": "E390",
+      "explanation": "SMTP отправляет сообщение от почтового клиента к серверу и пересылает между серверами. POP и IMAP используются для получения/синхронизации mailbox. HTTP может использовать webmail-интерфейс, но не является указанным почтовым протоколом отправки.",
+      "explanationEn": "SMTP submits mail from a client to a server and relays it between servers. POP/IMAP retrieve or synchronize mailboxes. Webmail may use HTTP as an interface, but it is not the email-submission protocol asked for."
+    },
+    {
+      "id": "E391",
+      "explanation": "IMAP сохраняет mailbox на сервере и позволяет клиенту получить/кэшировать копии, синхронизируя изменения. Поэтому выбираем вариант с сохранением оригинала. TCP 110 относится к POP3; отправку новых писем обычно выполняет SMTP, не IMAP.",
+      "explanationEn": "IMAP retains the mailbox on the server while clients retrieve/cache copies and synchronize changes, matching the original-preserving option. TCP 110 belongs to POP3; SMTP normally submits new mail rather than IMAP."
+    },
+    {
+      "id": "E392",
+      "explanation": "False: обычный HTTP не шифрует обмен и не защищает его от чтения по пути. HTTPS добавляет TLS. Это различие протоколов, а не обещание, что любой сайт с HTTPS добросовестен.",
+      "explanationEn": "False: plain HTTP does not encrypt traffic against interception. HTTPS adds TLS. This protocol distinction does not mean every HTTPS website is trustworthy."
+    },
+    {
+      "id": "E393",
+      "explanation": "AAAA хранит IPv6-адрес для имени. A предназначен для IPv4, NS указывает authoritative name server, MX — mail exchanger. Количество A в названии помогает отличить семейство адреса, но не число возвращаемых ответов.",
+      "explanationEn": "AAAA maps a name to IPv6. A maps to IPv4, NS names authoritative DNS servers and MX identifies mail exchangers. The record type specifies address family, not how many answers are returned."
+    },
+    {
+      "id": "E394",
+      "explanation": "False: отсутствие имени в своей зоне не означает немедленный отказ. DNS-сервер может использовать кэш, переслать запрос/выполнить рекурсию или дать referral; итоговая ошибка возможна, если разрешение действительно не удалось.",
+      "explanationEn": "False: an out-of-zone name does not require immediate failure. A server may use cache, forward/recurse or provide a referral; an error is possible only if resolution actually fails or policy disallows it."
+    },
+    {
+      "id": "E395",
+      "explanation": "nslookup показывает используемый default DNS server и результаты запросов к нему. Адрес самого клиента смотрят через ipconfig; все локально закэшированные DNS-записи — через ipconfig /displaydns. Это разные источники диагностики.",
+      "explanationEn": "nslookup identifies the default DNS server it uses and query results. ipconfig shows the client’s configuration; ipconfig /displaydns shows the local DNS cache. They inspect different things."
+    },
+    {
+      "id": "E396",
+      "explanation": "NS-запись указывает имя сервера, авторитетного для зоны. A/AAAA дают адреса host, а MX выбирает почтовый сервер. Адрес NS-сервера может дополнительно разрешаться A/AAAA, но его роль описывает именно NS.",
+      "explanationEn": "An NS record names an authoritative server for a zone. A/AAAA map host addresses and MX selects mail exchangers. The NS server’s address may separately resolve through A/AAAA, but NS identifies its authoritative role."
+    },
+    {
+      "id": "E397",
+      "explanation": "FTP разделяет управление и данные: одна TCP control connection переносит команды/ответы, отдельная data connection — файл или список каталога. Поэтому ожидаются 2 соединения при передаче; это не одна универсальная connection для обоих потоков.",
+      "explanationEn": "FTP separates control from data: one TCP connection carries commands/replies and another carries a file or directory listing. A transfer therefore uses two connections, not one combined channel."
+    },
+    {
+      "id": "E398",
+      "explanation": "True: FTP поддерживает upload (client→server, push) и download (server→client, pull). Роль client определяется тем, кто инициирует сервисный запрос, а не направлением байтов конкретного файла.",
+      "explanationEn": "True: FTP supports uploads (client→server, push) and downloads (server→client, pull). Client role is determined by initiating service requests, not by the direction of a particular file’s bytes."
+    },
+    {
+      "id": "E399",
+      "explanation": "TCP 21 — управляющее соединение FTP; TCP 20 — серверный data port классического active FTP. 25 относится к SMTP, 110 — POP3. В passive FTP data connection использует согласованный другой порт, поэтому 20 не обязателен для каждого FTP-сеанса.",
+      "explanationEn": "TCP 21 is FTP control; TCP 20 is the server data port in classic active FTP. 25 is SMTP and 110 POP3. Passive FTP negotiates another data port, so port 20 is not used by every FTP session."
+    },
+    {
+      "id": "E400",
+      "explanation": "False: SMB реализован и вне Windows — например, Samba в Linux/Unix, а macOS также поддерживает SMB. Популярность протокола в Microsoft-сетях не делает его эксклюзивным для этой ОС.",
+      "explanationEn": "False: SMB exists outside Windows, including Samba on Linux/Unix and SMB support in macOS. Its popularity in Microsoft networks does not make it exclusive to that OS."
+    },
+    {
+      "id": "E401",
+      "explanation": "Домашний роутер обычно содержит DHCP-сервер для внутренней LAN и выдаёт клиентам частные IPv4/маску/gateway/DNS. DHCP провайдера обычно настраивает WAN роутера; DNS-сервер не выдаёт аренды, а выделенный file server для домашней сети не требуется.",
+      "explanationEn": "A home router commonly runs DHCP for its internal LAN, supplying client IPv4/mask/gateway/DNS. ISP DHCP generally configures the router’s WAN side; DNS does not issue leases and a dedicated home file server is unnecessary."
+    },
+    {
+      "id": "E402",
+      "explanation": "В DNS-имени www.cisco.com самый правый label — com, top-level domain. www — имя узла/поддомен, http — схема URL, index.html — путь к ресурсу; они не являются TLD.",
+      "explanationEn": "In www.cisco.com, the rightmost DNS label com is the top-level domain. www is a host/subdomain, http the URL scheme and index.html the resource path, not TLDs."
+    },
+    {
+      "id": "E403",
+      "explanation": "TCP/IP Application ближе всего к пользователю и включает OSI Session-функции управления диалогом приложений. Logical IP addressing выполняется Internet layer, physical/MAC addressing — Network access; они не относятся к этим двум характеристикам.",
+      "explanationEn": "TCP/IP Application is closest to the user and includes OSI Session’s dialog-management functions. Logical IP addressing belongs to Internet and MAC addressing to Network access, not these application characteristics."
+    },
+    {
+      "id": "E404",
+      "explanation": "GET просит сервер вернуть представление ресурса, например страницу. POST отправляет данные на обработку, PUT задаёт/заменяет ресурс. ACK — флаг/подтверждение TCP, не HTTP-метод.",
+      "explanationEn": "GET asks for a resource representation such as a page. POST submits data for processing and PUT creates/replaces a resource. ACK is a TCP acknowledgment/flag, not an HTTP method."
+    },
+    {
+      "id": "E405",
+      "explanation": "POP3 получает сообщения с почтового сервера в клиент. SMTP в базовой модели отправляет/пересылает почту, SNMP управляет устройствами. HTTP может обслуживать webmail, но среди перечисленных именно POP3 — специальный протокол получения mailbox.",
+      "explanationEn": "POP3 retrieves mail from a mail server into a client. SMTP submits/relays mail and SNMP manages devices. HTTP may serve webmail, but POP3 is the dedicated retrieval protocol among these options."
+    },
+    {
+      "id": "E406",
+      "explanation": "SMB предоставляет сетевой доступ к общим файлам и принтерам, поэтому соответствует сценарию Microsoft-приложений. HTTP обслуживает веб, SMTP — почту, DHCP — IP-настройки; они не заменяют SMB-доступ к ресурсам.",
+      "explanationEn": "SMB provides shared-file and printer access, matching the Microsoft-application scenario. HTTP serves web resources, SMTP email and DHCP IP configuration rather than SMB resource access."
+    },
+    {
+      "id": "E407",
+      "explanation": "HTTP — прикладной протокол, MPEG/GIF — стандарты представления данных; TCP/IP Application включает также Presentation-функции, поэтому верны все три. TCP/UDP — Transport, IP — Internet. Вопрос намеренно говорит «protocols or standards».",
+      "explanationEn": "HTTP is an application protocol and MPEG/GIF are representation standards. TCP/IP Application includes Presentation functions, so all three fit. TCP/UDP belong to Transport and IP to Internet. The question explicitly includes “protocols or standards.”"
+    },
+    {
+      "id": "E408",
+      "explanation": "Централизованная выдача и аренда адресов сокращают ручные ошибки и работу при большом числе host, поэтому DHCP эффективнее статической настройки. Причина не в DNS, авторских правах или большем числе настроек у каждого host; DHCPv4 использует UDP, а не надёжный TCP.",
+      "explanationEn": "Centralized address leasing reduces manual effort and errors across many hosts. This is unrelated to DNS, copyright or more settings per host; DHCPv4 uses UDP rather than reliable TCP."
+    },
+    {
+      "id": "E409",
+      "explanation": "ПК автора инициирует запрос к файловому сервису издателя, поэтому он client, хотя отправляет данные. Server — сторона, предоставляющая доступ к файлам; направление upload не меняет эти роли.",
+      "explanationEn": "The author’s PC initiates a request to the publisher’s file service, so it is the client even while uploading. The server provides the resource; upload direction does not reverse the roles."
+    },
+    {
+      "id": "E410",
+      "explanation": "FTP умеет upload и download, поэтому клиент может передавать файл в обе стороны. Это client/server, а не P2P. Control и data разделяются протоколом, не произвольным выбором «одно или два»; TCP обеспечивает надёжную доставку.",
+      "explanationEn": "FTP supports both upload and download. It is client/server, not P2P. Control and data are separate protocol channels, not an arbitrary client choice of one/two, and TCP supplies reliable transport."
+    },
+    {
+      "id": "E411",
+      "explanation": "Запрос автоматической IPv4-конфигурации обслуживает DHCP независимо от того, Wi‑Fi это или провод. FTP/HTTP переносят прикладные данные, ICMP диагностирует IP, SNMP управляет устройствами — адресную аренду они не выдают.",
+      "explanationEn": "DHCP handles automatic IPv4 configuration on both wireless and wired links. FTP/HTTP transfer application data, ICMP provides IP diagnostics and SNMP manages devices; none assigns the requested lease."
+    },
+    {
+      "id": "E412",
+      "explanation": "Application — верхний TCP/IP уровень, предоставляющий приложениям сетевые сервисы. Transport обслуживает доставку, Internet — маршрутизацию, Network access — локальный канал; они ниже и дальше от пользовательских функций.",
+      "explanationEn": "Application is the top TCP/IP layer exposing network services to applications. Transport handles delivery, Internet routing and Network access the local link; those are lower-level functions."
+    },
+    {
+      "id": "E413",
+      "explanation": "IMAP хранит и синхронизирует mailbox на сервере, что облегчает централизованный backup и работу с нескольких устройств. POP ориентирован на скачивание в клиент, SMTP — на отправку. HTTPS защищает веб, но сам по себе не задаёт серверную модель mailbox.",
+      "explanationEn": "IMAP keeps and synchronizes the mailbox on the server, supporting central backups and multiple devices. POP is download-oriented and SMTP handles submission. HTTPS protects web traffic but does not itself define mailbox storage/synchronization."
+    },
+    {
+      "id": "E414",
+      "explanation": "HTTPS добавляет TLS к HTTP и шифрует веб-обмен. Обычные DHCP, DNS и FTP в базовых вариантах не обеспечивают такого шифрования; защищённые расширения DNS/FTP — отдельные варианты, не указанные здесь.",
+      "explanationEn": "HTTPS adds TLS encryption to HTTP. Basic DHCP, DNS and FTP do not provide that encryption; secured DNS/FTP variants are distinct alternatives not named here."
+    },
+    {
+      "id": "E415",
+      "explanation": "Локальный DNS хранит записи внутренних имён и может пересылать запросы другим DNS-серверам, когда сам не может ответить. Выдача IP-аренд — DHCP, получение почты — POP/IMAP; общий перенос данных не является этим специализированным сервисом DNS.",
+      "explanationEn": "Local DNS can map internal host names and forward unresolved queries to other DNS servers. DHCP assigns leases, POP/IMAP retrieve email, and general data transfer is not the DNS service described."
+    },
+    {
+      "id": "E455",
+      "explanation": "Курс различает network applications (например браузер с сетевыми функциями) и application-layer services (фоновые службы вроде разрешения имён), которые помогают приложениям обращаться в сеть. Gaming/productivity/antivirus/VM — категории программ: они могут использовать сеть, но не являются двумя базовыми формами доступа в этой классификации.",
+      "explanationEn": "The course distinguishes network applications, such as browsers, and application-layer services, such as background name resolution. Gaming/productivity/antivirus/VM are software categories that may use networking, not the two access forms in this classification."
+    },
+    {
+      "id": "E472",
+      "explanation": "169.254.142.5 — IPv4 link-local/APIPA. В стандартном Windows-сценарии автоматической настройки он появляется, когда DHCP-аренда не получена. Это указывает на сбой процесса DHCP, а не обязательно самого сервера; DNS/HTTP не назначают этот адрес.",
+      "explanationEn": "169.254.142.5 is IPv4 link-local/APIPA. In the usual Windows automatic-configuration scenario it appears when no DHCP lease is obtained. It indicates failed DHCP acquisition, not necessarily a broken server; DNS/HTTP do not assign this address."
+    },
+    {
+      "id": "E534",
+      "explanation": "DHCP, DNS и FTP предоставляют host-настройку, имена и файлы — application services. ARP разрешает локальные IPv4→MAC, PPP относится к канальному уровню, NAT — механизм преобразования адресов, не прикладной протокол в этом списке.",
+      "explanationEn": "DHCP, DNS and FTP provide host configuration, name resolution and file transfer: application services. ARP resolves local IPv4-to-MAC, PPP is link-layer and NAT is address translation rather than an application protocol here."
+    },
+    {
+      "id": "E536",
+      "explanation": "При получении оболочки снимаются снизу вверх: сначала Ethernet, затем IP, затем TCP, после чего HTTP-ответ передаётся приложению. HTTP→TCP→IP→Ethernet описывает отправку, а перестановка TCP/IP нарушает вложенность.",
+      "explanationEn": "Reception removes encapsulation bottom-up: Ethernet, IP, TCP, then the HTTP response reaches the application. HTTP→TCP→IP→Ethernet describes sending; swapping IP and TCP breaks their nesting."
+    },
+    {
+      "id": "E615",
+      "explanation": "Варианты не содержат трёх полностью верных утверждений. Однозначно верны connectionless transport и low overhead without sequencing/flow control. UDP имеет checksum, поэтому «полагается на application для error detection» буквально неверно; восстановление/повторы действительно может реализовать приложение. IP также не гарантирует recovery. Карточка не оценивается.",
+      "explanationEn": "The options do not contain three fully correct claims. Connectionless transport and low overhead without sequencing/flow control are correct. UDP has a checksum, so relying exclusively on applications for error detection is false as written; applications may implement recovery/retries. IP also does not guarantee recovery. This card is not scored.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нельзя выбрать три корректных варианта: UDP имеет checksum; карточка сохранена для разбора ошибки формулировки."
+      }
+    },
+    {
+      "id": "E618",
+      "explanation": "DNS часто использует UDP 53 для обычного client query и TCP 53 для zone transfer между серверами. HTTP/FTP/SMTP в базовой модели используют TCP. Уточнение: DNS-клиенты тоже могут использовать TCP; правило «UDP только clients, TCP только servers» не абсолютное.",
+      "explanationEn": "DNS commonly uses UDP 53 for ordinary client queries and TCP 53 for server zone transfers. Basic HTTP/FTP/SMTP use TCP. DNS clients can also use TCP, so “UDP only for clients, TCP only for servers” is not an absolute rule."
+    },
+    {
+      "id": "E623",
+      "explanation": "Для HTTP/1.1 и HTTP/2 TCP обеспечивает упорядоченный поток и повтор потерянных байтов, чтобы страница пришла целиком. Это не гарантия максимальной скорости и не готовность игнорировать ошибки. Современный HTTP/3 использует QUIC/UDP; вопрос относится к классической TCP-модели курса.",
+      "explanationEn": "For HTTP/1.1 and HTTP/2, TCP supplies an ordered stream and retransmits lost bytes so the resource arrives intact. It does not guarantee maximum speed or tolerate missing data. HTTP/3 uses QUIC/UDP; this question assumes the course’s classic TCP model."
+    },
+    {
+      "id": "E626",
+      "explanation": "В обоих моделях есть роли client (запрашивает) и server (предоставляет). Разница в распределении: P2P позволяет одному узлу выполнять обе роли и не требует выделенного сервера. Модели не определяются проводной средой или обязательным конкретным набором протоколов.",
+      "explanationEn": "Both models have client/requester and server/provider roles. P2P lets a node take both roles without requiring a dedicated server. The models are not defined by wired media or one mandatory protocol suite."
+    },
+    {
+      "id": "E627",
+      "explanation": "DNS-запрос от workstation к DNS-server — явный client/server обмен: клиент спрашивает, сервер отвечает по своей службе имён. eMule и общий принтер coworker-PC — примеры P2P в курсе; ARP — механизм разрешения соседнего адреса, не этот прикладной сценарий.",
+      "explanationEn": "A workstation querying a DNS server is explicit client/server communication: a client requests the naming service. eMule and a coworker-PC shared printer are course P2P examples; ARP is neighbor address resolution rather than this application scenario."
+    },
+    {
+      "id": "E628",
+      "explanation": "ПК обращается к файловой службе выделенного file server, поэтому схема client/server. Upload не делает ПК сервером: он остаётся инициатором запроса. Point-to-point описывает связь/топологию, а не распределение этих прикладных ролей.",
+      "explanationEn": "The PC accesses a file server’s service, making this client/server. Uploading does not make the PC the server; it still initiates the request. Point-to-point describes connectivity/topology, not these application roles."
+    },
+    {
+      "id": "E629",
+      "explanation": "P2P распределяет ресурсы между peers и позволяет sharing без выделенного server. Централизованные user accounts не обязательны; обмен не односторонний. Простые P2P-сети обычно сложнее администрировать при росте, поэтому scalability не является ожидаемым преимуществом здесь.",
+      "explanationEn": "P2P distributes resources among peers and allows sharing without a dedicated server. Centralized accounts are not required and traffic is not one-way. Basic P2P networks become harder to administer at scale, so scalability is not the intended advantage."
+    },
+    {
+      "id": "E630",
+      "explanation": "MX связывает домен с именами mail exchange servers, которым следует доставлять почту. Это не прямое IP-соответствие (A/AAAA) и не alias (CNAME). IP почтового сервера затем разрешается отдельным DNS-запросом.",
+      "explanationEn": "MX associates a domain with mail-exchanger hostnames for mail delivery. It is not a direct IP mapping (A/AAAA) or alias (CNAME). The mail server’s IP can then be resolved separately."
+    },
+    {
+      "id": "E631",
+      "explanation": "Эти примеры используют peer-to-peer обмен: участники могут получать и предоставлять ресурсы/данные друг другу. Наличие вспомогательного индекса или tracker не превращает сами peer transfers в master-slave или point-to-point модель.",
+      "explanationEn": "These examples use peer-to-peer exchange, with participants receiving and supplying resources/data. A supporting index or tracker does not turn peer transfers into a master-slave or point-to-point application model."
+    },
+    {
+      "id": "E632",
+      "explanation": "P2P-приложение может одновременно запрашивать чужие ресурсы и отдавать свои: один host выполняет client и server роли. Email/authentication сами по себе не означают такую архитектуру, а классический client/server разделяет роли сервиса.",
+      "explanationEn": "A P2P application can request remote resources while serving its own, so one host acts as client and server. Email/authentication do not inherently imply that architecture; classic client/server separates service roles."
+    },
+    {
+      "id": "E633",
+      "explanation": "HTTP GET запрашивает представление ресурса, например HTML-страницу. Upload обычно использует POST/PUT; сообщение ошибки — ответ сервера со status code, а почта через TCP 110 относится к POP3.",
+      "explanationEn": "HTTP GET requests a resource representation such as an HTML page. Uploads use POST/PUT; errors are server responses with status codes, while mail on TCP 110 is POP3."
+    },
+    {
+      "id": "E636",
+      "explanation": "GET, PUT и POST — имена методов HTTP: получить, создать/заменить и отправить на обработку. DNS, DHCP, SMTP и POP3 имеют другие форматы команд/сообщений, поэтому не подходят.",
+      "explanationEn": "GET, PUT and POST are HTTP method names for retrieval, creation/replacement and submission. DNS, DHCP, SMTP and POP3 use different message/command formats."
+    },
+    {
+      "id": "E637",
+      "explanation": "SMB поддерживает длительный сеанс доступа к файлам/принтерам как к общим ресурсам, что и подчёркивает курс. FTP тоже передаёт в обе стороны и использует TCP, поэтому противопоставление ему UDP/ненадёжности неверно. Именно FTP разделяет control/data connections; это не особая причина большей скорости SMB.",
+      "explanationEn": "SMB supports a persistent session for shared file/printer access, the feature emphasized by the course. FTP also transfers both ways and uses TCP, so calling it UDP/unreliable is false. FTP has separate control/data connections; that is not SMB’s special speed advantage."
+    },
+    {
+      "id": "E638",
+      "explanation": "HTTPS — HTTP поверх TLS для защищённого веб-обмена. SMTP/IMAP относятся к почте, SMB — к общим файлам; они не заменяют web-протокол HTTPS в этом сценарии.",
+      "explanationEn": "HTTPS is HTTP protected by TLS for secure web exchange. SMTP/IMAP handle email and SMB file sharing, rather than this web protocol."
+    },
+    {
+      "id": "E639",
+      "explanation": "Application TCP/IP включает три верхних OSI-слоя: Session управляет диалогом, Presentation форматом/кодированием, Application прикладным сервисом. Physical/Data link находятся в Network access, Network в Internet, Transport отдельно.",
+      "explanationEn": "TCP/IP Application includes OSI Session dialog management, Presentation representation/encoding and Application services. Physical/Data link map to Network access, Network to Internet and Transport remains separate."
+    },
+    {
+      "id": "E640",
+      "explanation": "Нужны Session, Application и Presentation: TCP/IP объединяет их функции в один верхний уровень. Transport доставляет данные между процессами и не входит в эту тройку; Physical/Data link обслуживают канал и сигналы.",
+      "explanationEn": "Session, Application and Presentation map to the single TCP/IP application layer. Transport delivers data between processes and is outside this trio; Physical/Data link handle signals and the link."
+    },
+    {
+      "id": "E670",
+      "explanation": "В типичном сценарии Windows адрес 169.254.10.3 — автоматически выбранный APIPA после неудачного получения DHCP-аренды. Поэтому ожидаются auto-address configuration и отсутствие успешного контакта DHCP. По одному этому адресу нельзя установить неправильный DNS или enterprise dynamic routing. Вручную назначенный 169.254 адрес был бы другим сценарием.",
+      "explanationEn": "In the usual Windows scenario, 169.254.10.3 is automatically selected APIPA after DHCP acquisition fails. Thus automatic configuration and unsuccessful DHCP contact are the expected conclusions. The address alone cannot prove DNS or enterprise routing misconfiguration; manual assignment would be a different scenario."
+    },
+    {
+      "id": "E686",
+      "explanation": "В TCP/IP верхний Application охватывает OSI 7/6/5: Application, Presentation, Session. Не выбирай Transport только потому, что он тоже обслуживает приложения: он отдельно обеспечивает общую доставку и порты.",
+      "explanationEn": "TCP/IP Application covers OSI layers 7/6/5: Application, Presentation and Session. Transport also serves applications but remains separate, providing common delivery and ports."
+    },
+    {
+      "id": "E720",
+      "explanation": "POP3 загружает сообщения из mailbox сервера в почтовый клиент. Удалённый доступ к устройствам — Telnet/SSH, realtime chat — другие приложения. POP3 не является протоколом управления сетевым оборудованием.",
+      "explanationEn": "POP3 downloads messages from a server mailbox to a mail client. Device remote access belongs to Telnet/SSH and real-time chat to other applications; POP3 does not manage network equipment."
+    },
+    {
+      "id": "E721",
+      "explanation": "Один обычный студенческий ПК предоставляет общую папку другому без выделенного file server — P2P-сеть в классификации курса. Первый ПК временно выступает server, второй client; будущая копия на USB не меняет модель сетевого обмена.",
+      "explanationEn": "One ordinary student PC shares a folder with another without a dedicated file server, the course’s P2P model. The first acts as server and the second as client; later copying to USB does not change that network model."
+    },
+    {
+      "id": "E722",
+      "explanation": "nslookup явно посылает запрос DNS-серверу для указанного имени. ipconfig /displaydns лишь выводит локальный кэш; tracert исследует путь по hops, net — набор команд сетевых ресурсов, не требуемая DNS-утилита.",
+      "explanationEn": "nslookup explicitly queries a DNS server for a hostname. ipconfig /displaydns only displays local cache, tracert examines hops and net is a network-resource command family rather than the required DNS tool."
+    },
+    {
+      "id": "E760",
+      "explanation": "В базовой модели FTP, HTTP/1.x/2 и SMTP используют TCP для упорядоченного потока; DHCPv4 и TFTP используют UDP. TFTP реализует нужные подтверждения на прикладном уровне, не превращаясь в TCP. HTTP/3 — современное исключение с QUIC/UDP, поэтому уточняем версию HTTP.",
+      "explanationEn": "In the basic model, FTP, HTTP/1.x/2 and SMTP use TCP streams; DHCPv4 and TFTP use UDP. TFTP supplies its own needed acknowledgments without becoming TCP. HTTP/3 is a modern QUIC/UDP exception, so the HTTP version matters."
+    },
+    {
+      "id": "E772",
+      "explanation": "Принтер подключён к обычному домашнему ПК, который делится ресурсом с peers без выделенного print server — это P2P-сеть. ПК-хозяин всё равно выполняет server роль для печати; P2P не означает полного отсутствия серверных функций.",
+      "explanationEn": "The printer is shared by an ordinary home PC without a dedicated print server, making this a P2P network. The owning PC still serves print requests; P2P does not eliminate server functions."
+    },
+    {
+      "id": "E776",
+      "explanation": "IMAP сохраняет сообщения и папки на сервере и синхронизирует действия клиентов, облегчая работу с нескольких устройств. Отправку выполняет SMTP, не IMAP. POP может оставлять серверные копии по настройке, поэтому преимущество IMAP — серверная синхронизация, а не магический фиксированный срок хранения.",
+      "explanationEn": "IMAP retains server-side messages/folders and synchronizes client actions, aiding multiple-device access. SMTP sends mail, not IMAP. POP can optionally leave server copies, so IMAP’s advantage is server synchronization rather than an arbitrary fixed retention period."
+    },
+    {
+      "id": "E778",
+      "explanation": "Application, Presentation и Session соответствуют TCP/IP Application: сервис, представление данных и диалог. Data link, Network и Transport остаются ниже и обслуживают передачу, а не эту верхнюю группу функций.",
+      "explanationEn": "Application, Presentation and Session map to TCP/IP Application: service, representation and dialog. Data link, Network and Transport remain lower-layer delivery functions."
+    },
+    {
+      "id": "E784",
+      "explanation": "DNS и POP — прикладные сервисы разрешения имён и получения почты. Ethernet находится на Network access, IP — Internet, TCP/UDP — Transport; значит верхний слой TCP/IP представляет именно DNS/POP.",
+      "explanationEn": "DNS and POP are application services for naming and email retrieval. Ethernet is Network access, IP Internet and TCP/UDP Transport, leaving DNS/POP at the top TCP/IP layer."
+    },
+    {
+      "id": "E790",
+      "explanation": "UDP destination 67 — серверная сторона DHCPv4, принимающая запросы клиентов; клиентская сторона использует 68. FTP control — TCP 21, SSH 22, Telnet 23. Сам порт лишь указывает ожидаемую службу, но в учебном вопросе этого достаточно для DHCP.",
+      "explanationEn": "UDP destination 67 identifies the DHCPv4 server; clients use 68. FTP control is TCP 21, SSH 22 and Telnet 23. A port suggests the expected service, which is sufficient to identify DHCP in this exercise."
+    },
+    {
+      "id": "E791",
+      "explanation": "HTTPS защищает HTTP-ресурсы — текст, изображения и другие веб-данные — с помощью TLS. Secure remote device access обычно SSH, name→IP — DNS, а незашифрованный remote access — Telnet; это отдельные службы.",
+      "explanationEn": "HTTPS protects HTTP resources such as text/images and other web data using TLS. Secure device administration is normally SSH, name-to-IP is DNS and plaintext remote administration Telnet; those are separate services."
+    }
+  ],
+  "notes": {
+    "ru": "## Полная цепочка веб-запроса, DNS и аренды DHCP\n\n### От URL до страницы\n\nВ `http://www.cisco.com/index.html` схема — http, имя сервера — www.cisco.com, путь — /index.html. Браузеру нужен IP: сначала cache/DNS. Затем классический HTTP-клиент устанавливает TCP-соединение, отправляет GET с путём, получает status/headers/body, а браузер интерпретирует HTML. HTML — язык структуры документа, HTTP — протокол обмена; картинка может потребовать отдельного запроса. HTTPS добавляет TLS, который защищает передачу, но не гарантирует добросовестность сайта. HTTP/3 вместо TCP использует QUIC — поэтому проверяй версию в вопросе.\n\n### DNS распределён, а не знает всё в одном месте\n\nИерархия: root → TLD (.com) → домен cisco.com → имя www.cisco.com. Authoritative server знает данные своей зоны; recursive resolver помогает клиенту получить ответ, используя другие серверы и cache. Ответы временно кэшируются по TTL; это экономит запросы, но устаревшая запись может сохраняться до истечения срока. В DNS-сообщении есть question, answer, authority и additional sections. A/AAAA содержат адрес, NS задаёт авторитетный сервер, MX — mail exchanger; имя почтового сервера затем тоже разрешается в IP.\n\n`nslookup example.com` проверяет серверный DNS-ответ; `ipconfig /displaydns` показывает локальный кэш Windows. Если доступ по IP работает, а по имени нет, исследуй DNS, не объявляй сразу сломанным физический линк. Если имя вне зоны, сервер не обязан сразу отказывать: возможны рекурсия, forwarding или referral.\n\n### DORA — почему нужны все четыре сообщения\n\nDiscover ищет DHCPv4-серверы; Offer предлагает адрес, маску, gateway, DNS и срок аренды. При нескольких Offer клиент выбирает один и отправляет Request с указанием предложения. ACK подтверждает аренду; NAK означает, что предложение недействительно и получение нужно начать заново. До истечения lease клиент запрашивает продление. IP не становится вечной собственностью устройства. Static полезен для предсказуемых адресов инфраструктуры, DHCP — для массовой управляемой настройки клиентов.\n\nНачальный клиент без IPv4 использует 0.0.0.0 и broadcast; UDP 68 — клиент, 67 — сервер. Адрес 169.254.x.x после ожидания DHCP — повод проверить связь, VLAN, relay и доступность DHCP, а не доказательство единственной причины. DHCPv6 имеет другие имена сообщений; не переноси слово DORA как буквальные имена IPv6-пакетов.\n\n### Почта, файлы и распределение ролей\n\nПуть письма: sender client → SMTP server → SMTP server получателя → IMAP/POP3 клиент получателя. IMAP сохраняет серверный mailbox и синхронизирует папки; POP3 ориентирован на загрузку сообщений и может оставлять копии настройкой. Безопасные версии могут использовать TLS и другие порты, чем базовая таблица курса.\n\nFTP: control channel остаётся для команд, data channel создаётся для передачи файла/списка. Active/passive отличаются установлением data connection; оба варианта могут загружать и скачивать. SMB включает создание/аутентификацию/закрытие сессий и управление доступом к файлам/принтерам. Samba позволяет участвовать Linux/Unix; протокол не ограничен Microsoft.\n\nP2P-приложению нужны пользовательская часть и фоновая служба отдачи ресурсов. В hybrid P2P индекс может быть централизован, а сами файлы — на peers. Выделенный directory/tracker поэтому не обязательно превращает обмен файлов в обычный central file-server. В client/server направление upload/download не меняет роли: client инициирует запрос, server предоставляет сервис.\n\n**Самопроверка без подсказок:** URL→DNS→TCP→HTTP; DNS TTL зачем? Почему DHCP Request после Offer? Кто выдаёт IP, кто ищет MAC? Чем IMAP отличается от SMTP? Почему upload не делает клиента сервером? Ответь своими словами до открытия вариантов.\n",
+    "en": "## The complete web, DNS and DHCP lease sequence\n\n### From URL to page\n\nIn `http://www.cisco.com/index.html`, http is the scheme, www.cisco.com the server name and /index.html the path. The browser needs an IP through cache/DNS, establishes the classic HTTP TCP connection, sends GET for the path and receives status/headers/body to render HTML. HTML structures a document; HTTP transfers it. Images may require further requests. HTTPS adds TLS protection without guaranteeing site honesty. HTTP/3 uses QUIC instead of TCP, so note the question’s version.\n\n### DNS is distributed\n\nHierarchy: root → TLD (.com) → cisco.com → www.cisco.com. An authoritative server knows its zone; a recursive resolver assists clients using other servers and cache. TTL limits cached-answer lifetime, reducing queries while allowing stale data until expiry. DNS messages include question, answer, authority and additional sections. A/AAAA contain addresses, NS names authoritative servers and MX mail exchangers; exchanger names still need IP resolution.\n\n`nslookup example.com` tests server-side resolution; `ipconfig /displaydns` displays the Windows local cache. If IP access works but name access fails, investigate DNS rather than assuming a broken link. An out-of-zone name need not fail immediately: recursion, forwarding or referral can supply an answer.\n\n### Why DORA needs four messages\n\nDiscover finds DHCPv4 servers; Offer proposes address, mask, gateway, DNS and lease duration. With multiple offers, the client selects one in Request. ACK finalizes the lease; NAK invalidates it and restarts acquisition. The client requests renewal before expiry; an address is not permanent property. Static assignment suits predictable infrastructure, while DHCP manages many clients efficiently.\n\nAn initial unconfigured client uses 0.0.0.0 and broadcast; UDP 68 is client, 67 server. A 169.254.x.x fallback suggests checking connectivity, VLAN, relay and DHCP availability, not one proven failure cause. DHCPv6 uses different message names; DORA is not its literal packet-name sequence.\n\n### Mail, files and roles\n\nMail flows sender client → SMTP server → recipient SMTP server → recipient IMAP/POP3 client. IMAP synchronizes a server mailbox and folders; POP3 is download-oriented and may optionally retain copies. Secure variants can use TLS and ports beyond the basic course table.\n\nFTP retains a control channel for commands and opens a data channel for file/directory transfer. Active/passive differ in data-connection establishment; both upload and download. SMB creates/authenticates/terminates sessions and controls file/printer access. Samba connects Linux/Unix systems; SMB is not Microsoft-only.\n\nP2P applications need a user interface and background resource-sharing service. Hybrid P2P can centralize an index while peers store the files, so a directory/tracker does not necessarily make file exchange a central file-server model. Upload/download direction does not change client/server roles: the client requests a service and the server provides it.\n\n**Self-check:** Explain URL→DNS→TCP→HTTP, DNS TTL, Request after Offer, IP assignment versus MAC resolution, IMAP versus SMTP, and why uploading does not make the client the server.\n"
+  },
+  "coverage": [
+    {
+      "topic": "15.0.1 Why should I take this module?",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.0.2 What will I learn to do in this module?",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.1.1 Application Layer",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.1.2 Presentation and Session Layer",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.1.3 TCP/IP Application Layer Protocols",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.1.4 Check Your Understanding - Application, Session, Presentation",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "question wording and all bank answer rationales reviewed; ambiguities qualified"
+    },
+    {
+      "topic": "15.2.1 Client-Server Model",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.2.2 Peer-to-Peer Networks",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.2.3 Peer-to-Peer Applications",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.2.4 Common P2P Applications",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.2.5 Check Your Understanding - Peer-to-Peer",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "question wording and all bank answer rationales reviewed; ambiguities qualified"
+    },
+    {
+      "topic": "15.3.1 Hypertext Transfer Protocol and Hypertext Markup Language",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.3.2 HTTP and HTTPS",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.3.3 Email Protocols",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.3.4 SMTP, POP, and IMAP",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.3.5 Check Your Understanding - Web and Email Protocols",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "question wording and all bank answer rationales reviewed; ambiguities qualified"
+    },
+    {
+      "topic": "15.4.1 Domain Name System",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.4.2 DNS Message Format",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.4.3 DNS Hierarchy",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.4.4 The nslookup Command",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.4.5 Syntax Checker - The nslookup Command",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "available objectives reviewed; interactive lab not executed"
+    },
+    {
+      "topic": "15.4.6 Dynamic Host Configuration Protocol",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.4.7 DHCP Operation",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.4.8 Lab - Observe DNS Resolution",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "available objectives reviewed; interactive lab not executed"
+    },
+    {
+      "topic": "15.4.9 Check Your Understanding - IP Addressing Services",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "question wording and all bank answer rationales reviewed; ambiguities qualified"
+    },
+    {
+      "topic": "15.5.1 File Transfer Protocol",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.5.2 Server Message Block",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "15.5.3 Check Your Understanding - File Sharing Services",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "question wording and all bank answer rationales reviewed; ambiguities qualified"
+    },
+    {
+      "topic": "15.6.1 What did I learn in this module?",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "reviewed: existing notes plus audit supplement explain available subsection text"
+    },
+    {
+      "topic": "Module Quiz - Application Layer",
+      "source": "NetAcad_данные/модули/15.md",
+      "status": "question wording and all bank answer rationales reviewed; ambiguities qualified"
+    }
+  ],
+  "issues": [
+    "E388 upload without resource semantics ambiguous between POST/PUT; excluded from scored practice.",
+    "E615 demands three UDP claims but only two options fully correct; kept excluded and explained checksum issue.",
+    "HTTP/TCP questions explicitly qualified for HTTP/1.x/2; HTTP/3 uses QUIC/UDP.",
+    "DNS UDP client/TCP server simplification qualified: clients can also use TCP.",
+    "APIPA indicates failed automatic DHCP acquisition in the intended scenario; does not prove a specific server fault.",
+    "POP3 can retain server copies; IMAP advantage is synchronization/server mailbox, not absolute deletion behavior.",
+    "Review used saved NetAcad text, not an assertion of live quiz completion."
+  ],
+  "verificationSources": [
+    "NetAcad_данные/модули/15.md",
+    "NetAcad_данные/вопросы/модули_15.md",
+    "https://www.rfc-editor.org/rfc/rfc9110.html"
+  ]
+}

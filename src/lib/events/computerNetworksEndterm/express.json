@@ -1,0 +1,170 @@
+[
+  {
+    "id": "recall-1",
+    "module": 8,
+    "question": "Почему remote route связан с next hop, а C и L — нет?",
+    "answer": "Remote network не подключена напрямую: пакет передают соседнему роутеру. C — подключённая сеть, L — собственный IP интерфейса. S и O показывают источник маршрута, а не отдельную категорию local/remote.",
+    "english": "What routing table entry has a next hop?"
+  },
+  {
+    "id": "recall-2",
+    "module": 8,
+    "question": "ПК отправляет пакет на сервер в другой сети. Чьи destination IP и MAC в первом кадре?",
+    "answer": "IP — удалённого сервера; MAC — локального default gateway. Роутер меняет канальную оболочку для следующего участка; без NAT конечные IP сохраняются.",
+    "english": "Remote destination: server IP, gateway MAC."
+  },
+  {
+    "id": "recall-3",
+    "module": 8,
+    "question": "MTU — это скорость или размер? Кто сообщает ограничение IP?",
+    "answer": "Максимальный размер пакета на канале; ограничение приходит от data link layer. IPv4 может фрагментировать при DF=0. IPv6-роутер не фрагментирует: возвращает Packet Too Big.",
+    "english": "MTU comes from the data link layer."
+  },
+  {
+    "id": "recall-4",
+    "module": 9,
+    "question": "Как коммутатор учится и как решает, куда отправить кадр?",
+    "answer": "Учится по source MAC и входному порту. Ищет destination MAC. Известный unicast идёт в нужный порт; неизвестный unicast и broadcast — по VLAN кроме входного порта.",
+    "english": "Learn source; forward by destination."
+  },
+  {
+    "id": "recall-5",
+    "module": 9,
+    "question": "ARP и Neighbor Discovery: запросы и адреса назначения?",
+    "answer": "ARP Request — Ethernet broadcast, ответ обычно unicast. IPv6 использует ICMPv6 NS/NA и multicast вместо ARP; RS/RA служат для обнаружения роутеров и параметров сети.",
+    "english": "ARP = IPv4→MAC; NS/NA = IPv6 neighbors."
+  },
+  {
+    "id": "recall-6",
+    "module": 10,
+    "question": "Как настроить и сохранить IP интерфейса IOS?",
+    "answer": "enable → configure terminal → interface g0/0 → ip address 192.168.1.1 255.255.255.0 → no shutdown → end → copy running-config startup-config. Проверка: show ip interface brief и show ip route.",
+    "english": "Save RAM running-config to NVRAM startup-config."
+  },
+  {
+    "id": "recall-7",
+    "module": 10,
+    "question": "Зачем Layer 2 switch нужны SVI и ip default-gateway?",
+    "answer": "SVI с IP/маской нужен для управления самим switch. Шлюз нужен его управляющему трафику в другие сети. Коммутация пользовательских Ethernet-кадров выполняется по MAC и не требует IP на switch.",
+    "english": "Management IP is not required for Layer 2 forwarding."
+  },
+  {
+    "id": "recall-8",
+    "module": 11,
+    "question": "192.168.10.77/27: сеть, broadcast, хосты и их число?",
+    "answer": "Осталось 5 бит: блок 32, хостов 30. Границы 0,32,64,96: .77 входит в .64–.95. Сеть .64, broadcast .95, хосты .65–.94.",
+    "english": "Network .64; broadcast .95; 30 hosts."
+  },
+  {
+    "id": "recall-9",
+    "module": 11,
+    "question": "Пять подсетей: сколько заимствованных бит? А 90 хостов: какой префикс?",
+    "answer": "Для 5 подсетей: 2²=4 мало, 2³=8 достаточно — 3 бита. Для 90 хостов: 2⁶−2=62 мало, 2⁷−2=126 достаточно — 7 host bits, /25.",
+    "english": "Subnet count: 2^b. Ordinary host count: 2^h−2."
+  },
+  {
+    "id": "recall-10",
+    "module": 11,
+    "question": "Назови RFC 1918 и отличи 169.254 от публичного IP.",
+    "answer": "Private: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16. 169.254/16 — link-local, часто после неудачи DHCP. Не каждый адрес вне RFC1918 публичный: есть loopback, multicast и другие специальные блоки.",
+    "english": "Private ≠ link-local; public ≠ merely not private."
+  },
+  {
+    "id": "recall-11",
+    "module": 12,
+    "question": "Что остаётся от 2001:db8:1:2:abcd::7 при /64?",
+    "answer": "Первые 4 hextets — сеть 2001:db8:1:2::/64. Последние 64 бита — interface ID abcd:0:0:7. При выделенном /48 под subnet ID здесь 16 бит.",
+    "english": "Expand :: before dividing the prefix and interface ID."
+  },
+  {
+    "id": "recall-12",
+    "module": 12,
+    "question": "Кто сообщает IPv6 default gateway: RA или DHCPv6?",
+    "answer": "Router Advertisement. SLAAC формирует адрес из объявленного префикса и interface ID; DHCPv6 может дать адрес и/или другие настройки. DAD через NS проверяет уникальность.",
+    "english": "RA supplies the default router; DAD detects duplicates."
+  },
+  {
+    "id": "recall-13",
+    "module": 12,
+    "question": "ff02::1, ff02::2, fe80::/10, ::1 — что это?",
+    "answer": "ff02::1 — все узлы канала, ff02::2 — все роутеры канала, fe80::/10 — link-local, ::1 — loopback. IPv6 не использует broadcast.",
+    "english": "All nodes; all routers; link-local; loopback."
+  },
+  {
+    "id": "recall-14",
+    "module": 13,
+    "question": "Чем ping отличается от traceroute? Что значит *?",
+    "answer": "Ping Echo Request/Reply проверяет достижимость и RTT. Traceroute меняет TTL/Hop Limit и использует Time Exceeded для поиска хопов. * означает отсутствие ответа за время ожидания; фильтрация возможна даже при работающем маршруте.",
+    "english": "A timeout is not proof that the router is down."
+  },
+  {
+    "id": "recall-15",
+    "module": 13,
+    "question": "Что доказывает ping 127.0.0.1? Зачем extended ping?",
+    "answer": "Loopback проверяет локальный IP-стек, а не кабель/шлюз. Extended ping в IOS позволяет выбрать source address/interface и проверить достижимость именно с него.",
+    "english": "Loopback tests the local stack; extended ping selects the source."
+  },
+  {
+    "id": "recall-16",
+    "module": 14,
+    "question": "TCP получил байты 4001–4500. Какой ACK?",
+    "answer": "4501 — следующий ожидаемый байт. ACK не номер последнего принятого байта. Нумерация позволяет обнаруживать пропуски и упорядочивать данные.",
+    "english": "ACK means next expected byte."
+  },
+  {
+    "id": "recall-17",
+    "module": 14,
+    "question": "TCP vs UDP: соединение, порядок, заголовок, повторы?",
+    "answer": "TCP: handshake SYN→SYN/ACK→ACK, порядок, подтверждения и повторы; минимум 20 байт заголовка. UDP: без handshake, 8 байт, нет собственного восстановления порядка/потерь. UDP checksum обнаруживает ошибки, но не обеспечивает доставку.",
+    "english": "UDP trades built-in reliability for lower overhead."
+  },
+  {
+    "id": "recall-18",
+    "module": 14,
+    "question": "Receive window и congestion control — одно и то же?",
+    "answer": "Нет. Flow control ограничивает отправителя возможностями получателя (receive window). Congestion control реагирует на загрузку сети. Оба могут ограничивать объём данных в пути.",
+    "english": "Receiver capacity versus network congestion."
+  },
+  {
+    "id": "recall-19",
+    "module": 15,
+    "question": "DNS A/AAAA/NS/MX и команды: что для чего?",
+    "answer": "A→IPv4, AAAA→IPv6, NS→authoritative name servers, MX→mail servers. nslookup делает DNS-запросы. DNS использует UDP и TCP 53; не только UDP.",
+    "english": "MX points to mail exchange; AAAA resolves IPv6."
+  },
+  {
+    "id": "recall-20",
+    "module": 15,
+    "question": "Как различить SMTP, POP3, IMAP, FTP, SMB?",
+    "answer": "SMTP отправляет почту; POP3 скачивает; IMAP синхронизирует серверные папки. FTP передаёт файлы с отдельными control/data соединениями. SMB даёт длительное совместное использование файлов и принтеров.",
+    "english": "Send mail, download mail, sync mail, transfer files, share resources."
+  },
+  {
+    "id": "recall-21",
+    "module": 15,
+    "question": "DORA, HTTP GET/POST/PUT и основные порты?",
+    "answer": "DHCP Discover→Offer→Request→ACK, UDP67 сервер/68 клиент. GET читает ресурс; POST отправляет на обработку; PUT задаёт ресурс по URI. HTTP80, HTTPS443, DNS53, SMTP25, POP3110, IMAP143, FTP control21, SSH22, Telnet23.",
+    "english": "Know the service destination port, not a random client source port."
+  },
+  {
+    "id": "recall-22",
+    "module": 16,
+    "question": "Authentication, authorization, accounting: примеры?",
+    "answer": "Authentication проверяет личность (логин). Authorization разрешает действие (Read-only или Edit). Accounting фиксирует действия в журнале. Право редактирования папки — authorization.",
+    "english": "Who are you? What may you do? What did you do?"
+  },
+  {
+    "id": "recall-23",
+    "module": 16,
+    "question": "Reconnaissance, access, DoS и malware — как отличить?",
+    "answer": "Сканирование портов/карта сети — reconnaissance; несанкционированный вход — access; недоступность сервиса из-за атаки — DoS. Worm распространяется самостоятельно, virus связан с заражённым объектом, Trojan маскируется под полезное, spyware собирает данные.",
+    "english": "Classify the action, not just a scary word in the scenario."
+  },
+  {
+    "id": "recall-24",
+    "module": 16,
+    "question": "Что нужно для SSH в IOS? Почему password-encryption не заменяет SSH?",
+    "answer": "Hostname, domain name, RSA keys, local username/secret; на VTY login local и transport input ssh. SSH шифрует сетевой сеанс. service password-encryption только скрывает открытые пароли в конфигурации; legacy Type7 обратим.",
+    "english": "SSH encrypts transport; Type7 obscures stored configuration passwords."
+  }
+]

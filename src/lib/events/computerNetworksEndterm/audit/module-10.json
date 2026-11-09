@@ -1,0 +1,498 @@
+{
+  "module": 10,
+  "questions": [
+    {
+      "id": "E036",
+      "explanation": "Privileged EXEC (#) даёт полный административный доступ и позволяет перейти к конфигурации через configure terminal. User EXEC (>) ограничен мониторингом; global/interface/line configuration — отдельные режимы изменения настроек. «Все команды» в формулировке означает полный доступ к возможностям, а не возможность вводить любую команду прямо в приглашении #.",
+      "explanationEn": "Privileged EXEC (#) grants full administrative access and permits entry to configuration through configure terminal. User EXEC (>) offers limited monitoring; global/interface/line configuration are specific editing modes. “All commands” means access to all capabilities, not that every configuration command is entered directly at the # prompt."
+    },
+    {
+      "id": "E037",
+      "explanation": "Маркер (config) в Switch(config)# обозначает global configuration: здесь меняют настройки устройства в целом. Голый # — privileged EXEC, > — user EXEC; (config-if) и (config-line) означали бы интерфейс и линию соответственно.",
+      "explanationEn": "The (config) marker identifies global configuration, where device-wide settings are changed. A bare # indicates privileged EXEC and > user EXEC; interface and line modes would show (config-if) and (config-line)."
+    },
+    {
+      "id": "E038",
+      "explanation": "Знак > без (config) — user EXEC, начальный режим с ограниченными командами просмотра. После enable приглашение станет Switch#; при входе в настройку появится (config)#. Поэтому ни privileged EXEC, ни режимы конфигурации здесь не подходят.",
+      "explanationEn": "A > prompt without (config) identifies user EXEC, the initial mode with limited monitoring commands. enable changes it to Switch#; configuration adds (config)#. Thus neither privileged EXEC nor a configuration mode matches this prompt."
+    },
+    {
+      "id": "E039",
+      "explanation": "end и Ctrl+Z сразу завершают любую вложенную конфигурацию и возвращают к privileged EXEC (#). exit поднимает только на один уровень; enable предназначен для перехода из user EXEC, а disable понижает privileged EXEC до user EXEC.",
+      "explanationEn": "end and Ctrl+Z leave any nested configuration mode and return directly to privileged EXEC (#). exit moves up only one level; enable elevates user EXEC, while disable drops privileged EXEC to user EXEC."
+    },
+    {
+      "id": "E040",
+      "explanation": "В global configuration команда hostname принимает новое имя одним аргументом: hostname Sw-Floor-2. Ключевое слово пишется слитно; host name и name не являются этим синтаксисом IOS. Имя изменит префикс приглашения, но не режим CLI.",
+      "explanationEn": "In global configuration, hostname takes the new name as its argument: hostname Sw-Floor-2. The keyword is one word; host name and name are not this IOS syntax. It changes the prompt name without changing CLI mode."
+    },
+    {
+      "id": "E041",
+      "explanation": "enable secret class задаёт секрет для перехода по enable в privileged EXEC; class здесь учебное значение пароля. enable class и secret class имеют неверный синтаксис. service password-encryption скрывает уже заданные открытые пароли, но само не задаёт пароль privileged EXEC.",
+      "explanationEn": "enable secret class sets the secret required when using enable to enter privileged EXEC; class is the sample password. enable class and secret class are invalid syntax. service password-encryption obscures existing plaintext passwords but does not itself set the privileged EXEC password."
+    },
+    {
+      "id": "E044",
+      "explanation": "Правильный синтаксис — banner motd, затем одинаковый разделитель до и после текста: $ Keep out $. IOS показывает этот текст при подключении. Остальные варианты не содержат корректного ключевого слова motd/синтаксиса banner; сообщение само по себе не проверяет пароль.",
+      "explanationEn": "The syntax is banner motd followed by the same delimiter before and after the text: $ Keep out $. IOS displays it on connection. The alternatives lack the correct motd/banner syntax; the message itself performs no authentication."
+    },
+    {
+      "id": "E047",
+      "explanation": "SVI — программный интерфейс VLAN, поэтому отдельного разъёма у него нет. Он представляет коммутатор в IP-сети для управления. Console, Ethernet и Serial в этих вариантах относятся к физическим подключениям.",
+      "explanationEn": "An SVI is a software VLAN interface and therefore has no dedicated physical connector. It gives the switch an IP presence for management. Console, Ethernet and Serial in these choices refer to physical connections."
+    },
+    {
+      "id": "E048",
+      "explanation": "running-config — активная конфигурация в RAM: корректная команда изменяет работу устройства сразу. NVRAM хранит startup-config, а не running-config. Перезагрузка не сохраняет изменения автоматически; их сохраняют copy running-config startup-config.",
+      "explanationEn": "running-config is the active configuration in RAM, so a valid change affects operation immediately. NVRAM stores startup-config, not running-config. Rebooting does not automatically save changes; copy running-config startup-config does."
+    },
+    {
+      "id": "E049",
+      "explanation": "У user EXEC приглашение заканчивается > и доступна лишь часть команд просмотра. enable переводит в privileged EXEC, не сразу в global configuration; для последнего затем нужен configure terminal. Интерфейсы и routing protocols из user EXEC не настраиваются.",
+      "explanationEn": "User EXEC ends in > and permits only limited inspection. enable enters privileged EXEC, not global configuration directly; configure terminal is then required. Interfaces and routing protocols cannot be configured from user EXEC."
+    },
+    {
+      "id": "E050",
+      "explanation": "enable secret защищает повышение прав до privileged EXEC. Console, AUX и VTY — другие точки входа: их аутентификация задаётся в line configuration (login/password либо login local). Наличие enable secret не заменяет пароль входа на эти линии.",
+      "explanationEn": "enable secret protects elevation to privileged EXEC. Console, AUX and VTY are separate entry points whose authentication is configured under line configuration using login/password or login local. An enable secret does not replace line login authentication."
+    },
+    {
+      "id": "E051",
+      "explanation": "В базовом состоянии учебного Cisco-коммутатора SVI связан с VLAN 1. VLAN 99, 100 или 999 могут быть выбраны администратором для управления, но не являются значением по умолчанию. Наличие VLAN 1 ещё не означает настроенный IP или доступность управления.",
+      "explanationEn": "The default SVI in the course switch configuration is VLAN 1. An administrator can choose VLAN 99, 100 or 999 for management, but these are not the default. VLAN 1 existing does not itself imply a configured IP or working remote management."
+    },
+    {
+      "id": "E052",
+      "explanation": "В правилах курса hostname начинается с буквы, не содержит пробелов и имеет менее 64 символов. Только нижний регистр не обязателен. Заканчиваться специальным символом нельзя: последний символ должен быть буквой или цифрой.",
+      "explanationEn": "Course hostname guidelines require a leading letter, no spaces and fewer than 64 characters. Lowercase-only spelling is not required. The name should end in a letter or digit, not a special character."
+    },
+    {
+      "id": "E055",
+      "explanation": "IP-адрес интерфейса изменяется в running-config сразу после принятия команды, поэтому отдельное apply или reload не требуется. copy running-config startup-config нужно для сохранения после перезагрузки, а обратное копирование загружает старую конфигурацию. Для фактической связи интерфейс также должен быть включён и подключён.",
+      "explanationEn": "The interface IP changes in running-config as soon as the command is accepted, so no separate apply or reload is needed. copy running-config startup-config preserves it across reboot; copying the other way loads saved settings. Actual communication also requires an enabled, connected interface."
+    },
+    {
+      "id": "E056",
+      "explanation": "RAM энергозависима: рабочая конфигурация и динамические таблицы теряются при отключении питания/перезапуске. ROM, Flash и NVRAM сохраняют свои данные, поэтому они не подходят под условие «lose all content».",
+      "explanationEn": "RAM is volatile: active configuration and dynamic tables are lost on power cycling/restart. ROM, Flash and NVRAM retain their data, so they do not fit “lose all content”."
+    },
+    {
+      "id": "E057",
+      "explanation": "В copy сначала указан источник, потом назначение: startup-config → running-config загружает сохранённые команды в RAM. Команды объединяются с текущими, а не обязательно полностью заменяют их. Для сохранения в NVRAM направление было бы обратным; удаления конфигурации эта команда не выполняет.",
+      "explanationEn": "copy lists source first and destination second: startup-config → running-config loads saved commands into RAM. They merge with the current configuration rather than necessarily replacing it completely. Saving to NVRAM uses the reverse direction; this command does not erase configuration."
+    },
+    {
+      "id": "E059",
+      "explanation": "Контекстная справка ? перечисляет команды текущего режима или допустимые следующие keywords/arguments после уже введённого текста. Tab — отдельное дополнение слова; сообщение об ошибке появляется после неверного ввода. Справка не выбирает за администратора лучший способ решения задачи.",
+      "explanationEn": "Context-sensitive ? help lists commands available in the current mode or valid next keywords/arguments after entered text. Tab completion is a separate feature; an error message follows invalid input. Help does not choose the best solution to a task for the administrator."
+    },
+    {
+      "id": "E060",
+      "explanation": "В принятой в курсе архитектуре startup-config хранится в энергонезависимой NVRAM и читается при загрузке. RAM содержит действующую running-config; Flash обычно хранит образ IOS; ROM — начальный код загрузки/диагностики.",
+      "explanationEn": "In the course architecture, nonvolatile NVRAM holds startup-config for loading at boot. RAM holds active running-config, Flash normally holds the IOS image, and ROM contains initial boot/diagnostic code."
+    },
+    {
+      "id": "E074",
+      "explanation": "При decapsulation оболочки снимаются снаружи внутрь: Ethernet содержит IP-пакет, поэтому после Ethernet обрабатывается IP на internet/network layer. TCP/UDP находятся внутри IP, HTTP — ещё выше; UDP к internet layer не относится.",
+      "explanationEn": "Decapsulation removes outer headers first: Ethernet contains an IP packet, so IP at the internet/network layer is next. TCP/UDP are inside IP and HTTP is above them; UDP is not an internet-layer protocol."
+    },
+    {
+      "id": "E084",
+      "explanation": "В обычной схеме курса хост видит по маске, что получатель в другой сети, и отправляет первый кадр локальному шлюзу. L2-коммутатор сам не выполняет IP-маршрутизацию. Уточнение: технически хост может иметь более специфичный маршрут через другой роутер; утверждение про default gateway предполагает обычный хост без такого маршрута.",
+      "explanationEn": "In the course’s ordinary host setup, the mask shows that the destination is remote, so the first frame is addressed to the local gateway. A Layer 2 switch does not perform IP routing. Strictly, a host may have a more-specific route through another router; the default-gateway statement assumes the usual host without such a route."
+    },
+    {
+      "id": "E089",
+      "explanation": "False: роутер снимает входной кадр и создаёт новый для следующего канала. Поэтому source/destination MAC относятся к текущему переходу, а не всему пути. Слово physical не делает MAC-пару в пересылаемых кадрах неизменной; IP конечных узлов обычно сохраняются при отсутствии NAT.",
+      "explanationEn": "False: a router removes the incoming frame and builds another for the next link. Source/destination MAC addresses therefore describe the current hop, not the whole path. “Physical” does not make the MAC pair in forwarded frames immutable; endpoint IPs normally remain unchanged without NAT."
+    },
+    {
+      "id": "E102",
+      "explanation": "Канальный уровень оборачивает IP-пакет в Layer 2 frame для конкретной среды, после чего физический уровень передаёт биты. TCP-сегмент находится внутри IP, а не снаружи. Ни L2-инкапсуляция, ни IP сами по себе не гарантируют надёжную доставку.",
+      "explanationEn": "The data link layer encapsulates an IP packet in a Layer 2 frame appropriate to the medium, then the physical layer sends bits. A TCP segment is inside IP, not its outer wrapper. Neither this encapsulation nor IP itself guarantees reliable delivery."
+    },
+    {
+      "id": "E152",
+      "explanation": "К L2 относятся приём кадра, снятие его оболочки и создание нового кадра на выходе. Поиск destination network в routing table — решение L3, поэтому этот вариант не входит в три канальные функции, хотя роутер выполняет его между decapsulation и re-encapsulation.",
+      "explanationEn": "Receiving a frame, removing its encapsulation and building an outgoing frame are Layer 2 functions. Looking up a destination network in the routing table is Layer 3, so it is excluded even though the router performs it between decapsulation and re-encapsulation."
+    },
+    {
+      "id": "E258",
+      "explanation": "Setup mode предлагает первичную конфигурацию, когда IOS загрузился, но startup-config не найден в NVRAM. Повреждённый/отсутствующий IOS относится к проблеме загрузки ОС, а отказ POST — к аппаратной диагностике; они не объясняют обычный диалог настройки работающего IOS.",
+      "explanationEn": "Setup mode offers initial configuration when IOS has loaded but no startup-config is found in NVRAM. Missing/corrupt IOS is an operating-system boot problem and POST failure is hardware diagnosis; neither describes the normal setup dialog in running IOS."
+    },
+    {
+      "id": "E259",
+      "explanation": "service password-encryption в global configuration скрывает поддерживаемые открытые пароли в конфигурации. enable secret задаёт только секрет privileged EXEC; enable password задаёт один пароль и сам по себе не скрывает все остальные. В классическом IOS это слабая обратимая Type 7, а не защита трафика или сильное шифрование всех секретов.",
+      "explanationEn": "service password-encryption in global configuration obscures supported plaintext passwords in the configuration. enable secret sets only the privileged EXEC secret; enable password sets one password without obscuring others. In classic IOS this is weak reversible Type 7, not traffic encryption or strong protection for every secret."
+    },
+    {
+      "id": "E260",
+      "explanation": "Среди вариантов enable secret trustknow1 — корректный способ задать хешируемый секрет для privileged EXEC, откуда доступны настройки. enable password — более слабый старый вариант; service password-encryption не задаёт секрет и использует слабое скрытие открытых паролей. trustknow1 здесь значение из задачи, не рекомендация хорошего пароля.",
+      "explanationEn": "Among the options, enable secret trustknow1 correctly sets a hashed secret for privileged EXEC, which gives access to configuration. enable password is the weaker legacy option; service password-encryption neither sets this secret nor provides strong protection. trustknow1 is the exercise value, not a recommended strong password."
+    },
+    {
+      "id": "E261",
+      "explanation": "hostname portsmouth меняет имя router на portsmouth, но оставляет текущий global configuration mode. Поэтому получается portsmouth(config)#. Голый portsmouth# означал бы переход в privileged EXEC, которого команда hostname не делает; режима config-host для этой команды нет.",
+      "explanationEn": "hostname portsmouth changes the name from router to portsmouth while retaining global configuration mode. The result is portsmouth(config)#. A bare portsmouth# would imply a mode change that hostname does not perform; there is no config-host mode for this command."
+    },
+    {
+      "id": "E262",
+      "explanation": "Out-of-band доступ в данном случае идёт через console, поэтому нужны line console 0, password cisco и login. VTY обеспечивает сетевой удалённый доступ. Без login заданный line password не включит требуемую проверку; enable password защищает повышение прав, а не вход на console.",
+      "explanationEn": "Here out-of-band access uses the console, requiring line console 0, password cisco and login. VTY is network remote access. Without login the line password does not enable the requested authentication; enable password protects privilege elevation, not console login."
+    },
+    {
+      "id": "E263",
+      "explanation": "show ip interface brief сводит все интерфейсы, IPv4-адреса, Status и Protocol в одну таблицу. ping проверяет достижимость, show ip route показывает маршруты, а show interface fa0/1 ограничивается одним интерфейсом и выдаёт подробности вместо общей сводки.",
+      "explanationEn": "show ip interface brief summarizes all interfaces, IPv4 addresses, Status and Protocol in one table. ping tests reachability, show ip route lists routes, and show interface fa0/1 targets one interface rather than providing the requested overall summary."
+    },
+    {
+      "id": "E264",
+      "explanation": "Privileged EXEC (#) даёт полный административный доступ и позволяет перейти к конфигурации через configure terminal. User EXEC (>) ограничен мониторингом; global/interface/line configuration — отдельные режимы изменения настроек. «Все команды» в формулировке означает полный доступ к возможностям, а не возможность вводить любую команду прямо в приглашении #.",
+      "explanationEn": "Privileged EXEC (#) grants full administrative access and permits entry to configuration through configure terminal. User EXEC (>) offers limited monitoring; global/interface/line configuration are specific editing modes. “All commands” means access to all capabilities, not that every configuration command is entered directly at the # prompt."
+    },
+    {
+      "id": "E265",
+      "explanation": "startup-config содержит сохранённые команды, которые применяются при запуске IOS. Текущие используемые команды — running-config в RAM. Начальная аппаратная работа и резервная загрузочная среда относятся к ROM/bootstrap, а не к startup-config.",
+      "explanationEn": "startup-config contains saved commands applied when IOS starts. Currently active commands are running-config in RAM. Initial hardware operation and a limited boot environment belong to ROM/bootstrap, not startup-config."
+    },
+    {
+      "id": "E266",
+      "explanation": "Default gateway задаётся логическим IP-адресом локального интерфейса роутера: хост должен достигать его на своём канале перед отправкой в другие сети. MAC — физический адрес, который хост найдёт через ARP; IP L2-коммутатора для управления не заменяет маршрутизатор.",
+      "explanationEn": "The default gateway is the logical IP address of the router interface on the host’s local network, reachable before forwarding to remote networks. Its MAC is a physical address resolved with ARP; a Layer 2 switch management IP is not a substitute for a router."
+    },
+    {
+      "id": "E267",
+      "explanation": "banner motd показывает объявление подключающемуся к устройству пользователю, например предупреждение о допустимом доступе. Это не рассылка всем LAN-хостам, не сообщение о состоянии маршрутизаторских каналов и не идентификатор печатных документов.",
+      "explanationEn": "banner motd displays an announcement to someone connecting to the device, such as an authorized-access notice. It is not a broadcast to all LAN users, a router link-status message or a printed-document identifier."
+    },
+    {
+      "id": "E268",
+      "explanation": "login — команда line configuration: сначала выбирают console, vty или aux, затем включают проверку входа на этой линии. Global configuration выбирает линию, но сам login вводится в (config-line)#; EXEC-режимы не предназначены для настройки line authentication.",
+      "explanationEn": "login is a line-configuration command: select console, vty or aux first, then enable login authentication for that line. Global configuration selects the line, but login is entered at (config-line)#; EXEC modes do not configure line authentication."
+    },
+    {
+      "id": "E269",
+      "explanation": "В принятой в курсе архитектуре startup-config хранится в энергонезависимой NVRAM и читается при загрузке. RAM содержит действующую running-config; Flash обычно хранит образ IOS; ROM — начальный код загрузки/диагностики.",
+      "explanationEn": "In the course architecture, nonvolatile NVRAM holds startup-config for loading at boot. RAM holds active running-config, Flash normally holds the IOS image, and ROM contains initial boot/diagnostic code."
+    },
+    {
+      "id": "E270",
+      "explanation": "Команда service password-encryption в global configuration сразу скрывает поддерживаемые пароли, ранее показанные открыто, включая line passwords. Она не ограничивается одной линией. no service password-encryption отключает последующее преобразование, но не превращает уже записанные зашифрованные значения обратно в открытый текст.",
+      "explanationEn": "service password-encryption runs in global configuration and immediately obscures supported existing plaintext passwords, including line passwords. It is not limited to one line. no service password-encryption stops future conversion but does not convert already encoded values back to plaintext."
+    },
+    {
+      "id": "E513",
+      "explanation": "User EXEC — первый вход и ограниченный мониторинг (>). enable даёт privileged EXEC (#), откуда доступны административные действия. configure terminal открывает global configuration ((config)#), где hostname и другие глобальные настройки влияют на устройство в целом. Это различие прав и назначения режимов, а не разные физические интерфейсы.",
+      "explanationEn": "User EXEC is initial access and limited monitoring (>). enable enters privileged EXEC (#) for administrative actions. configure terminal enters global configuration ((config)#), where hostname and other global settings affect the device as a whole. These are privilege/function modes, not physical interfaces."
+    },
+    {
+      "id": "E515",
+      "explanation": "SVI не имеет собственного физического порта, позволяет IP-управление коммутатором и в базовой конфигурации связан с VLAN 1. Это логический интерфейс, не security protocol и не переходник между типами среды. Обычная L2-пересылка пользовательских кадров не требует SVI.",
+      "explanationEn": "An SVI has no dedicated physical port, enables IP management of the switch, and defaults to VLAN 1 in the basic configuration. It is a logical interface, not a security protocol or media converter. Ordinary Layer 2 forwarding of user frames does not require an SVI."
+    },
+    {
+      "id": "E516",
+      "explanation": "RM-3-Switch-2A4 и SwBranch799 начинаются с буквы, заканчиваются буквой/цифрой и используют допустимые символы. Branch2! заканчивается !; Floor(15) содержит скобки; HO Floor 17 содержит пробелы. Дефисы внутри первого правильного имени допустимы.",
+      "explanationEn": "RM-3-Switch-2A4 and SwBranch799 begin with a letter, end with a letter/digit and use permitted characters. Branch2! ends with !, Floor(15) contains parentheses, and HO Floor 17 contains spaces. Internal hyphens in the first correct name are allowed."
+    },
+    {
+      "id": "E519",
+      "explanation": "exit возвращает на один уровень иерархии, например из (config-if)# в (config)#. end и Ctrl+Z перескакивают прямо в privileged EXEC. Ctrl+C обычно прерывает текущую операцию/ввод и не является командой «на один уровень назад».",
+      "explanationEn": "exit moves back one hierarchy level, for example from (config-if)# to (config)#. end and Ctrl+Z go directly to privileged EXEC. Ctrl+C normally interrupts an operation/input rather than serving as the one-level-back command."
+    },
+    {
+      "id": "E522",
+      "explanation": "RAM содержит активно используемую running-config и теряет данные при power cycle — обе выбранные характеристики верны. RAM есть и у роутеров, и у коммутаторов. Энергонезависимое хранение нескольких образов IOS относится прежде всего к Flash, не RAM.",
+      "explanationEn": "RAM contains the active running-config and loses data during a power cycle, making both selected statements correct. Both routers and switches have RAM. Persistent storage of multiple IOS images primarily describes Flash, not RAM."
+    },
+    {
+      "id": "E523",
+      "explanation": "Tab дополняет частично введённое слово, если оно однозначно распознано, например conf до configure. При неоднозначном начале нужно ввести больше символов или использовать ?. Tab не завершает сеанс, не выходит из конфигурации и не отменяет команду.",
+      "explanationEn": "Tab completes a partially entered word when it is unambiguous, such as conf to configure. Ambiguous input needs more letters or ? help. Tab does not end a session, leave configuration or cancel the command."
+    },
+    {
+      "id": "E524",
+      "explanation": "show ip interface brief показывает Status/Protocol и назначенный IPv4 для интерфейсов, то есть именно требуемое состояние коммутатора. ipconfig — команда хоста, а ping/traceroute проверяют достижимость/путь и не выводят таблицу локальных интерфейсов IOS.",
+      "explanationEn": "show ip interface brief displays interface Status/Protocol and assigned IPv4 addresses, matching the requested switch information. ipconfig is a host command; ping/traceroute test reachability/path rather than listing IOS local interfaces."
+    },
+    {
+      "id": "E525",
+      "explanation": "Перезагрузка без сохранения удалит несохранённые изменения RAM, затем загрузит startup-config из NVRAM. copy startup-config running-config лишь объединяет конфигурации и может оставить нежелательные команды. Перезапуск терминала не перезагружает роутер; удаление vlan.dat не восстанавливает его конфигурацию. В реальной сети reload прерывает работу, здесь это учебный выбор.",
+      "explanationEn": "Reloading without saving discards unsaved RAM changes and then loads startup-config from NVRAM. copy startup-config running-config merges configurations and may leave unwanted commands. Restarting a terminal does not reboot the router; deleting vlan.dat does not restore its configuration. A real reload interrupts service; this is the exercise’s choice."
+    },
+    {
+      "id": "E526",
+      "explanation": "Команда сохраняет текущую running-config как startup-config, поэтому новые настройки загрузятся после перезапуска. Это не замена образа IOS и не откат к старым параметрам. В модели курса файл startup-config сохраняется в NVRAM, а не в хранилище образа IOS Flash.",
+      "explanationEn": "The command saves the current running-config as startup-config, so the new settings load after restart. It neither replaces IOS nor restores old settings. In the course model startup-config is saved in NVRAM, not the Flash location used for the IOS image."
+    },
+    {
+      "id": "E540",
+      "explanation": "Сохранённый ответ предполагает приглашение Switch>: configure terminal доступна из privileged EXEC, поэтому сначала нужен enable. Однозначное сокращение conf t допустимо, console не является обязательным способом входа в конфигурацию. Сам рисунок с ошибкой здесь отсутствует, поэтому конкретный вывод нельзя независимо подтвердить.",
+      "explanationEn": "The saved answer assumes a Switch> prompt: configure terminal requires privileged EXEC, so enable is needed first. An unambiguous abbreviation such as conf t is allowed, and console access is not mandatory for configuration. The actual error exhibit is missing here, so its specific diagnosis cannot be independently confirmed.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужен исходный рисунок/файл активности; сохранённый ответ не подтверждён независимо."
+      }
+    },
+    {
+      "id": "E541",
+      "explanation": "192.168.5.10 — сохранённый ответ для конкретного PT-файла, не адрес по умолчанию у SVI. Его нужно проверить на Switch0 командой show ip interface brief или show running-config в interface vlan. Без исходной активности выбирать между перечисленными IP по теории невозможно; задача исключена из автоматического квиза.",
+      "explanationEn": "192.168.5.10 is the saved answer for that PT activity, not a default SVI address. Verify it on Switch0 using show ip interface brief or show running-config under interface vlan. Without the activity, theory cannot distinguish these IPs; the question is excluded from the automatic quiz.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужен исходный рисунок/файл активности; сохранённый ответ не подтверждён независимо."
+      }
+    },
+    {
+      "id": "E580",
+      "explanation": "Шлюз L2-коммутатора обслуживает пакеты, источником которых является сам коммутатор: например SSH-ответ администратору в другой сети. Он не подменяет default gateway на подключённых ПК и не используется для каждого транзитного кадра. Управление из той же подсети возможно без шлюза.",
+      "explanationEn": "A Layer 2 switch gateway serves packets originating from the switch itself, such as SSH replies to an administrator on another subnet. It does not replace gateways configured on attached PCs or handle every transit frame. Same-subnet management can work without a gateway."
+    },
+    {
+      "id": "E584",
+      "explanation": "В сценарии наиболее вероятен неверный default gateway: локальные пакеты доставляются напрямую, удалённые требуют роутера. Работа локальной сети делает обрыв кабеля менее вероятным. Неверная маска тоже способна дать похожие симптомы, поэтому это выбор наиболее подходящего варианта, а не окончательный диагноз без проверки IP/mask/gateway.",
+      "explanationEn": "An invalid default gateway best fits this scenario: local packets are delivered directly, while remote destinations need a router. Working local communication makes a disconnected cable less likely. A wrong mask can also cause similar symptoms, so this is the best listed explanation, not a definitive diagnosis without checking IP/mask/gateway."
+    },
+    {
+      "id": "E599",
+      "explanation": "Сначала POST проверяет оборудование и bootstrap начинает загрузку; затем находится и запускается IOS; после этого IOS читает startup-config. Нельзя применить обычные команды конфигурации до запуска ОС, поэтому фазы 2 и 3 не взаимозаменяемы.",
+      "explanationEn": "POST checks hardware and the bootstrap starts booting first; next IOS is located and loaded; then IOS reads startup-config. Normal configuration commands cannot be applied before the operating system runs, so phases 2 and 3 cannot be reversed."
+    },
+    {
+      "id": "E601",
+      "explanation": "NVRAM сохраняет содержимое без питания и хранит startup-config. Routing table, ARP table и running-config — изменяемые рабочие данные в RAM. Поэтому из списка верны сохранность без питания и стартовая конфигурация.",
+      "explanationEn": "NVRAM retains its contents without power and stores startup-config. Routing table, ARP table and running-config are active working data in RAM. Thus power-independent retention and startup configuration are the two correct choices."
+    },
+    {
+      "id": "E602",
+      "explanation": "ip default-gateway 172.16.100.1 задаёт роутер для исходящего управления L2-коммутатора, чтобы он мог ответить администратору из другой сети. Команда не назначает 172.16.100.1 самому SVI и не ограничивает все кадры одним адресатом. Для результата также нужны настроенный SVI, доступный роутер и разрешённый удалённый доступ.",
+      "explanationEn": "ip default-gateway 172.16.100.1 sets the router for the Layer 2 switch’s own outbound traffic, allowing replies to administrators on another subnet. It neither assigns 172.16.100.1 to the SVI nor restricts all frames to one destination. A configured SVI, reachable router and enabled management access are also required."
+    },
+    {
+      "id": "E603",
+      "explanation": "login относится к выбранной линии и вводится в (config-line)#. interface fastethernet 0/0 выбирает интерфейс из (config)#. copy running-config startup-config — административная EXEC-команда в #. enable вводится из > для повышения прав. Важен не только текст команды, но и режим приглашения.",
+      "explanationEn": "login applies to a selected line at (config-line)#. interface fastethernet 0/0 selects an interface from (config)#. copy running-config startup-config is an administrative EXEC command at #. enable is entered from > to elevate privileges. The prompt mode matters as well as the command text."
+    },
+    {
+      "id": "E604",
+      "explanation": "По смыслу default gateway — IP интерфейса Router1, подключённого к LAN PC1. Хост должен сначала добраться до него локально; WAN-интерфейс, устройство ISP и IP управления Switch1 не подходят. Связь конкретных устройств на рисунке здесь не проверяется, потому что исходный exhibit отсутствует.",
+      "explanationEn": "By definition, the default gateway is the IP of Router1’s interface on PC1’s LAN. The host must reach it locally first; Router1’s WAN interface, an ISP device and Switch1’s management IP do not fit. The specific diagram connections cannot be verified here because the exhibit is absent.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужен исходный рисунок/файл активности; сохранённый ответ не подтверждён независимо."
+      }
+    },
+    {
+      "id": "E605",
+      "explanation": "Неверный шлюз мешает доставлять пакеты в другие сети, но обычно не мешает прямому обмену внутри подсети и loopback ping 127.0.0.1. ARP разрешает заданный IP в MAC, а не исправляет ошибочный IP шлюза. Коммутатор не прекращает L2-пересылку из-за этой настройки хоста.",
+      "explanationEn": "A wrong gateway prevents reaching other networks but normally leaves direct same-subnet traffic and loopback ping 127.0.0.1 working. ARP resolves the configured IP to a MAC; it does not discover and fix a wrong gateway IP. The switch does not stop Layer 2 forwarding because of the host setting."
+    },
+    {
+      "id": "E606",
+      "explanation": "В copy running-config startup-config источник — рабочая конфигурация RAM, назначение — startup-config в NVRAM. Поэтому изменяется содержимое NVRAM. Команда не перезаписывает ROM, образ IOS во Flash или саму конфигурацию-источник в RAM.",
+      "explanationEn": "In copy running-config startup-config, the source is the active RAM configuration and the destination is startup-config in NVRAM. Therefore NVRAM changes. The command does not overwrite ROM, the IOS image in Flash or the source configuration in RAM."
+    },
+    {
+      "id": "E658",
+      "explanation": "show ip route показывает destination prefixes, next hop и выходной интерфейс, поэтому по нему выбирают путь к удалённой сети. show arp сопоставляет локальные IP/MAC; show interfaces описывает состояние портов; show protocols не заменяет таблицу маршрутов назначения.",
+      "explanationEn": "show ip route lists destination prefixes, next hops and exit interfaces, allowing the path to a remote network to be identified. show arp maps local IP/MAC pairs, show interfaces describes port status, and show protocols does not replace the destination routing table."
+    },
+    {
+      "id": "E661",
+      "explanation": "show version выводит сведения об IOS, аппаратуре и загрузке, включая configuration register на соответствующих роутерах. Состояние serial смотрят через show interfaces; administrative distance — в маршрутах; сведения о протоколах маршрутизации — другими show-командами.",
+      "explanationEn": "show version reports IOS, hardware and boot information, including the configuration register on relevant routers. Serial status belongs in show interfaces, administrative distance in route information, and routing-protocol details in other show commands."
+    },
+    {
+      "id": "E665",
+      "explanation": "Сохранённый ответ связывает вывод с отсутствием маршрута. В IOS ping символ U означает ICMP Destination Unreachable, ! — успешный ответ, . — таймаут. Однако U не доказывает одну-единственную причину: unreachable имеет разные коды. Без самого вывода и ICMP-кода утверждать, какой роутер не имел маршрута, нельзя; карточка остаётся вне автоматического квиза.",
+      "explanationEn": "The saved answer interprets the output as a missing route. IOS ping uses U for ICMP Destination Unreachable, ! for success and . for timeout. However, U alone does not prove one cause because unreachable has multiple codes. Without the output and ICMP code, a specific missing-route diagnosis is unverified; this card stays outside the automatic quiz.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужен исходный рисунок/файл активности; сохранённый ответ не подтверждён независимо."
+      }
+    },
+    {
+      "id": "E678",
+      "explanation": "Для списка IP всех интерфейсов на Cisco-роутере подходит show ip interface brief. nslookup обращается к DNS; ipconfig getifaddr en0 — команда другой ОС для одного интерфейса; show ip route выводит маршруты, а не полную таблицу IP/состояний интерфейсов.",
+      "explanationEn": "show ip interface brief is the Cisco router command for an overview of all interface IPs. nslookup queries DNS; ipconfig getifaddr en0 is a different operating system’s command for one interface; show ip route lists routes rather than a full interface IP/status summary."
+    },
+    {
+      "id": "E696",
+      "explanation": "После приёма подходящего L2-кадра роутер снимает его заголовок/трейлер, чтобы получить IP-пакет. Только затем ищется маршрут; после выбора выхода создаётся новый кадр и передаётся дальше. Вопрос спрашивает непосредственное действие после получения, поэтому decapsulation предшествует другим вариантам.",
+      "explanationEn": "After accepting the relevant Layer 2 frame, the router removes its header/trailer to access the IP packet. It then looks up the route, builds an outgoing frame and forwards it. The question asks the immediate action on receipt, so decapsulation precedes the other listed steps."
+    },
+    {
+      "id": "E700",
+      "explanation": "Локальный получатель находится по маске и ARP без участия шлюза, поэтому обмен внутри своей сети сохраняется. Пакеты в удалённые сети направляются неверному шлюзу и не доставляются обычным путём. Следовательно неверны варианты «не работает локально» и «никакого влияния».",
+      "explanationEn": "The host identifies a local destination using its mask and resolves it with ARP without using a gateway, so same-network communication remains possible. Remote packets are sent to the wrong gateway and fail through the normal path. Therefore “local communication fails” and “no impact” are incorrect."
+    },
+    {
+      "id": "E740",
+      "explanation": "Активные адресованные интерфейсы дают непосредственно подключённые маршруты, а установленный статический default route имеет код S (часто S*). Локальные коды — C и L, не C и S; MAC находятся в ARP/канальных таблицах. В IOS таблицу смотрят show ip route, не netstat -r. Для сопоставимых маршрутов одного протокола обычно предпочтительна меньшая метрика, не большая.",
+      "explanationEn": "Active addressed interfaces contribute directly connected routes, and an installed static default route has code S (often S*). Local route codes are C and L, not C and S; MAC addresses belong to ARP/link-layer tables. IOS uses show ip route, not netstat -r. Comparable routes from one protocol normally prefer a lower metric, not a higher one."
+    },
+    {
+      "id": "E766",
+      "explanation": "Роутер удаляет входную Ethernet-оболочку и заново инкапсулирует IP-пакет для выходного Serial-интерфейса. Просто заменить destination MAC недостаточно: следующий канал может вообще не использовать Ethernet/MAC. Маршрут выбирается по IP, а не по Ethernet-заголовку. Указание именно S0/0/0 требует исходной схемы, которой здесь нет.",
+      "explanationEn": "The router removes the incoming Ethernet encapsulation and re-encapsulates the IP packet for the outgoing Serial link. Merely replacing the destination MAC is insufficient because that link may not use Ethernet/MAC at all. Routing uses IP, not the Ethernet header. The specific S0/0/0 exit still requires the missing diagram.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужен исходный рисунок/файл активности; сохранённый ответ не подтверждён независимо."
+      }
+    },
+    {
+      "id": "E769",
+      "explanation": "show ip interface brief позволяет увидеть IP VLAN 1 и состояния портов, но не пароли и не гарантированную доступность удалённого управления. Up/up физического порта указывает на активный канал, не точно на число конечных устройств за ним. Сохранённые три ответа относятся к отсутствующему exhibit; без него и дополнительных настроек их нельзя полностью подтвердить.",
+      "explanationEn": "show ip interface brief can reveal VLAN 1’s IP and interface states, but not passwords or guaranteed remote management reachability. An up/up physical port shows an active link, not the exact number of endpoints behind it. The saved three answers refer to a missing exhibit and cannot be fully verified without it and further configuration details.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужен исходный рисунок/файл активности; сохранённый ответ не подтверждён независимо."
+      }
+    }
+  ],
+  "notes": {
+    "ru": "## Проверка понимания: настройка и диагностика роутера\n\n### Когда no shutdown недостаточно\n\nКоманда снимает административную блокировку. Физический канал также требует кабеля/трансивера, работающего соседа и включённого порта на другом конце. `administratively down/down` — проверь shutdown; `down/down` — физический канал; `up/down` — line protocol/канальную настройку. `up/up` означает работу уровней 1–2, но не доказывает правильный IP, маршруты или доступность приложения. `description` служит подписью порта и не включает его.\n\nДля SVI VLAN должна существовать и быть активна; обычно нужен хотя бы один активный порт этой VLAN в forwarding state. IP адресуется на `interface vlan 1`, а не произвольно на access-порт L2-коммутатора.\n\n### Команда под конкретную проверку\n\n| Нужно узнать | Команда | Почему именно она |\n|---|---|---|\n| Все IPv4 и состояния | show ip interface brief | Краткая таблица IP, Status, Protocol |\n| IPv6 всех интерфейсов | show ipv6 interface brief | Включая link-local и global адреса |\n| Какие сети достижимы | show ip route / show ipv6 route | Префикс, next hop и выходной интерфейс |\n| Подробности порта | show interfaces | Состояния, ошибки и счётчики канала |\n| IP-параметры порта | show ip interface / show ipv6 interface | Подробная конфигурация соответствующего протокола |\n| Текущие/сохранённые команды | show running-config / show startup-config | Сравнение того, что действует сейчас и после перезапуска |\n| IOS и загрузка | show version | Версия, оборудование, uptime, configuration register где поддерживается |\n\n`?` показывает допустимые команды/аргументы в текущем контексте. `Tab` завершает однозначное слово. «Invalid input» может означать неверный режим, а не необходимость печатать полную команду: `conf t` допустима в #, но не в >.\n\n### Разбор неисправного шлюза\n\nPC 192.168.10.10/24 и SVI 192.168.10.2/24 используют роутер 192.168.10.1 как gateway. Сосед .20 доступен напрямую; 10.1.1.10 требует роутера. На ПК gateway настраивается в ОС, на L2-коммутаторе — `ip default-gateway 192.168.10.1`; настройка коммутатора не раздаёт шлюз его клиентам. Для IPv6 шлюз может быть link-local адресом роутера и изучаться из RA — одинаковый глобальный префикс для адреса шлюза не требуется.\n\nПорядок диагностики: сверить адрес/маску/шлюз с таблицей → проверить Status/Protocol → ping своего шлюза → ping удалённого IP → проверить маршруты туда и обратно → исправить причину → повторить тест и записать изменение. Не считать один timeout доказательством обрыва: ICMP может фильтроваться. `!` в IOS ping — ответ, `.` — таймаут, `U` — unreachable; код ICMP уточняет причину.\n\n### Сохранить, загрузить или откатить\n\n`copy running-config startup-config`: сохранить действующие команды для следующего запуска. `copy startup-config running-config`: объединить сохранённые команды с текущими, а не гарантированно удалить все новые команды. В учебной задаче о полном отказе от несохранённых изменений выбирается reload без сохранения: при старте загрузится старый startup-config. В реальной сети перезагрузка прерывает работу.\n\n### Практическая самопроверка\n\nОбъясни без подсказки: почему SVI с IP не гарантирует SSH; почему локальный ping может работать при неверном gateway; чем сохранение отличается от применения настройки; почему роутер меняет L2-оболочку на каждом канале. Для лаборатории собери топологию, настрой адреса и доступ, проверь связность и show-команды, затем сохрани настройки. Названия интерфейсов зависят от модели: G0/0 и G0/0/0 нельзя механически подменять.\n\nВ архиве есть описания лабораторных и заголовки видео 10.4.1–10.4.2, но пустые транскрипты этих двух видео. Их содержимое и конкретные ответы недоступных PT-файлов не выданы здесь за повторно просмотренные.\n",
+    "en": "## Understanding check: router setup and diagnosis\n\n### When no shutdown is not enough\n\nThe command removes administrative shutdown. The physical link also needs working cabling/transceivers, a live neighbor and an enabled far-end port. `administratively down/down` suggests checking shutdown; `down/down` suggests the physical link; `up/down` suggests line-protocol/link configuration. `up/up` confirms Layer 1–2 operation, not correct IP addressing, routing or application availability. `description` labels a port; it does not enable it.\n\nAn SVI requires an existing active VLAN and normally at least one active forwarding port in that VLAN. Configure its IP under `interface vlan 1`, not arbitrarily on a Layer 2 access port.\n\n### Choose the command for the question\n\n| Need to know | Command | Why |\n|---|---|---|\n| All IPv4 addresses and states | show ip interface brief | Concise IP, Status and Protocol table |\n| All interface IPv6 addresses | show ipv6 interface brief | Includes link-local and global addresses |\n| Reachable networks | show ip route / show ipv6 route | Prefix, next hop and exit interface |\n| Port details | show interfaces | Status, errors and link counters |\n| Interface IP properties | show ip interface / show ipv6 interface | Detailed protocol-specific configuration |\n| Active/saved commands | show running-config / show startup-config | Compare current settings with next-boot settings |\n| IOS and boot information | show version | Version, hardware, uptime and configuration register where supported |\n\n`?` lists valid commands/arguments in context. `Tab` completes an unambiguous word. “Invalid input” can mean the wrong mode, not a need to spell out the whole command: `conf t` works at # but not >.\n\n### Diagnose a wrong gateway\n\nPC 192.168.10.10/24 and SVI 192.168.10.2/24 use router 192.168.10.1 as gateway. Neighbor .20 is reached directly; 10.1.1.10 needs a router. Configure the PC gateway in its OS and the Layer 2 switch gateway with `ip default-gateway 192.168.10.1`; the switch setting does not assign its clients a gateway. An IPv6 gateway may be a router’s link-local address learned through RA; it need not share the host’s global prefix.\n\nTroubleshoot in order: compare address/mask/gateway with the addressing table → check Status/Protocol → ping the gateway → ping a remote IP → check forward and return routes → fix the cause → retest and document. One timeout does not prove a broken cable because ICMP may be filtered. IOS ping uses `!` for reply, `.` for timeout and `U` for unreachable; the ICMP code further identifies the cause.\n\n### Save, load or revert\n\n`copy running-config startup-config` saves active commands for boot. `copy startup-config running-config` merges saved commands into the active configuration; it does not guarantee removal of every new command. For the exercise asking to discard all unsaved changes, reload without saving loads the old startup-config at boot. A real reload interrupts service.\n\n### Practical self-check\n\nExplain without notes why an SVI address does not guarantee SSH, why local ping can work with a wrong gateway, how saving differs from applying a setting, and why routers replace link encapsulation at each hop. In the lab, assemble the topology, configure addressing/access, verify connectivity and show-command output, then save. Interface names depend on the model; G0/0 and G0/0/0 are not interchangeable by assumption.\n\nThe archive contains lab descriptions and video headings 10.4.1–10.4.2, but empty transcripts for those videos. Their unseen contents and unavailable PT-file answers are not represented as independently rechecked here.\n"
+  },
+  "coverage": [
+    {
+      "topic": "10.0.1 Why should I take this module?",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.0.2 What will I learn in this module?",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.1.1 Basic Router Configuration Steps",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.1.2 Basic Router Configuration Example",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.1.3 Syntax Checker - Configure Initial Router Settings",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "commands explained; interactive exercise not executed"
+    },
+    {
+      "topic": "10.1.4 Packet Tracer - Configure Initial Router Settings",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "objectives and workflow explained; activity not executed"
+    },
+    {
+      "topic": "10.2.1 Configure Router Interfaces",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.2.2 Configure Router Interfaces Example",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.2.3 Verify Interface Configuration",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.2.4 Configuration Verification Commands",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.2.5 Syntax Checker - Configure Interfaces",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "commands explained; interactive exercise not executed"
+    },
+    {
+      "topic": "10.3.1 Default Gateway on a Host",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.3.2 Default Gateway on a Switch",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "10.3.3 Syntax Checker - Configure the Default Gateway",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "commands explained; interactive exercise not executed"
+    },
+    {
+      "topic": "10.3.4 Packet Tracer - Connect a Router to a LAN",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "objectives and workflow explained; activity not executed"
+    },
+    {
+      "topic": "10.3.5 Packet Tracer - Troubleshoot Default Gateway Issues",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "objectives and workflow explained; activity not executed"
+    },
+    {
+      "topic": "10.4.1 Video - Network Device Differences - Part 1",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "source transcript empty; contents unavailable"
+    },
+    {
+      "topic": "10.4.2 Video - Network Device Differences - Part 2",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "source transcript empty; contents unavailable"
+    },
+    {
+      "topic": "10.4.3 Lab - Build a Switch and Router Network",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "objectives and workflow explained; activity not executed"
+    },
+    {
+      "topic": "10.4.4 What did I learn in this module?",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "Module Quiz - Basic Router Configuration",
+      "source": "NetAcad_данные/модули/10.md",
+      "status": "covered in existing notes plus audited supplement"
+    }
+  ],
+  "issues": [
+    {
+      "ids": [
+        "E540",
+        "E541",
+        "E604",
+        "E665",
+        "E766",
+        "E769"
+      ],
+      "issue": "Missing exhibit/activity; retain exclusion from automatic quiz, explain conditional reasoning instead of inventing evidence."
+    },
+    {
+      "ids": [
+        "E084"
+      ],
+      "issue": "Absolute default-gateway wording assumes ordinary host route setup; explanation now states assumption."
+    },
+    {
+      "ids": [
+        "E259",
+        "E270"
+      ],
+      "issue": "Course shorthand all passwords clarified to supported plaintext configuration passwords and weak legacy Type 7."
+    },
+    {
+      "ids": [
+        "E036",
+        "E264"
+      ],
+      "issue": "Full administrative access does not mean all command syntax is accepted directly at privileged EXEC prompt."
+    }
+  ]
+}

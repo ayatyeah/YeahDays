@@ -1,0 +1,89 @@
+{
+  "checkedOn": "2026-11-09",
+  "course": "CCNA: Introduction to Networks",
+  "method": "Authenticated curriculum preview; module outlines 8–16 compared against saved 2026-11-07 text. Spot-check 8.5 routing; not a fresh export of all multimedia or submitted quiz attempts. Also spot-checked 16.4 device security and SSH commands.",
+  "modules": {
+    "8": [
+      "8.0 Introduction",
+      "8.1 Network Layer Characteristics",
+      "8.2 IPv4 Packet",
+      "8.3 IPv6 Packet",
+      "8.4 How a Host Routes",
+      "8.5 Introduction to Routing",
+      "8.6 Module Practice and Quiz"
+    ],
+    "9": [
+      "9.0 Introduction",
+      "9.1 MAC and IP",
+      "9.2 ARP",
+      "9.3 IPv6 Neighbor Discovery",
+      "9.4 Module Practice and Quiz"
+    ],
+    "10": [
+      "10.0 Introduction",
+      "10.1 Configure Initial Router Settings",
+      "10.2 Configure Interfaces",
+      "10.3 Configure the Default Gateway",
+      "10.4 Module Practice and Quiz"
+    ],
+    "11": [
+      "11.0 Introduction",
+      "11.1 IPv4 Address Structure",
+      "11.2 IPv4 Unicast, Broadcast, and Multicast",
+      "11.3 Types of IPv4 Addresses",
+      "11.4 Network Segmentation",
+      "11.5 Subnet an IPv4 Network",
+      "11.6 Subnet a Slash 16 and a Slash 8 Prefix",
+      "11.7 Subnet to Meet Requirements",
+      "11.8 VLSM",
+      "11.9 Structured Design",
+      "11.10 Module Practice and Quiz"
+    ],
+    "12": [
+      "12.0 Introduction",
+      "12.1 IPv4 Issues",
+      "12.2 IPv6 Address Representation",
+      "12.3 IPv6 Address Types",
+      "12.4 GUA and LLA Static Configuration",
+      "12.5 Dynamic Addressing for IPv6 GUAs",
+      "12.6 Dynamic Addressing for IPv6 LLAs",
+      "12.7 IPv6 Multicast Addresses",
+      "12.8 Subnet an IPv6 Network",
+      "12.9 Module Practice and Quiz"
+    ],
+    "13": [
+      "13.0 Introduction",
+      "13.1 ICMP Messages",
+      "13.2 Ping and Traceroute Tests",
+      "13.3 Module Practice and Quiz"
+    ],
+    "14": [
+      "14.0 Introduction",
+      "14.1 Transportation of Data",
+      "14.2 TCP Overview",
+      "14.3 UDP Overview",
+      "14.4 Port Numbers",
+      "14.5 TCP Communication Process",
+      "14.6 Reliability and Flow Control",
+      "14.7 UDP Communication",
+      "14.8 Module Practice and Quiz"
+    ],
+    "15": [
+      "15.0 Introduction",
+      "15.1 Application, Presentation, and Session",
+      "15.2 Peer-to-Peer",
+      "15.3 Web and Email Protocols",
+      "15.4 IP Addressing Services",
+      "15.5 File Sharing Services",
+      "15.6 Module Practice and Quiz"
+    ],
+    "16": [
+      "16.0 Introduction",
+      "16.1 Security Threats and Vulnerabilities",
+      "16.2 Network Attacks",
+      "16.3 Network Attack Mitigations",
+      "16.4 Device Security",
+      "16.5 Module Practice and Quiz"
+    ]
+  }
+}

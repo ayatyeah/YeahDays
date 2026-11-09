@@ -1,0 +1,576 @@
+{
+  "module": 8,
+  "questions": [
+    {
+      "id": "E029",
+      "explanation": "Router выбирает следующий переход по IP назначения и таблице маршрутизации, поэтому определяет путь между сетями. Firewall прежде всего разрешает/блокирует трафик, web server обслуживает HTTP-запросы, DSL modem обеспечивает доступ по линии. Совмещённое устройство может выполнять несколько ролей, но спрашивается именно роль маршрутизатора.",
+      "explanationEn": "A router selects a next hop from the destination IP and routing table, so it determines paths between networks. A firewall primarily filters traffic, a web server serves HTTP, and a DSL modem provides line access. A combined appliance may perform several roles, but routing is the role asked about."
+    },
+    {
+      "id": "E066",
+      "explanation": "BGP и OSPF обмениваются информацией о достижимости сетей и помогают строить таблицы маршрутизации. Поэтому это routing protocols. Они не являются протоколами обнаружения служб вроде DNS/DHCP и не предназначены прежде всего для шифрования или фильтрации.",
+      "explanationEn": "BGP and OSPF exchange network reachability information and help construct routing tables, making them routing protocols. They are not service-discovery protocols such as DNS/DHCP and their primary job is not encryption or filtering."
+    },
+    {
+      "id": "E078",
+      "explanation": "IANA координирует глобальные IP-ресурсы, параметры протоколов и корневую DNS-зону. Региональные адресные блоки затем распределяют RIR. IETF разрабатывает стандарты, IAB обеспечивает архитектурный надзор, ISOC поддерживает развитие Интернета — это другие роли.",
+      "explanationEn": "IANA coordinates global IP resources, protocol parameters and the DNS root zone; RIRs distribute regional address blocks. IETF develops standards, IAB provides architectural oversight and ISOC supports Internet development. Those are different functions."
+    },
+    {
+      "id": "E085",
+      "explanation": "False: сеть определяется левыми, старшими битами — префиксом, длина которого задаётся маской. Правые оставшиеся биты идентифицируют узел/интерфейс в этой сети. Например, в 192.168.1.10/24 сеть 192.168.1.0, а последние 8 бит относятся к хосту.",
+      "explanationEn": "False: the leftmost, high-order prefix bits identify the network; the mask specifies their length. Remaining rightmost bits identify the host/interface within it. For 192.168.1.10/24 the network is 192.168.1.0 and the final eight bits form the host portion."
+    },
+    {
+      "id": "E087",
+      "explanation": "Верны утверждения о логических IP-адресах, 12 hex-цифрах Ethernet MAC и длинах IP 32/128 бит. Один hex-символ кодирует 4 бита: 12 × 4 = 48 бит MAC. Поэтому варианты, меняющие местами logical/physical, приписывающие IP длину 12 hex или MAC длину 32 бита, неверны. Здесь речь об обычном Ethernet.",
+      "explanationEn": "The true statements identify IP addresses as logical, Ethernet MAC addresses as 12 hex digits, and IP addresses as 32 or 128 bits. Each hex digit encodes four bits, so 12 × 4 = 48 MAC bits. Options reversing logical/physical or assigning 12 hex digits to IP or 32 bits to MAC are wrong in this Ethernet context."
+    },
+    {
+      "id": "E096",
+      "explanation": "Destination IP задаёт конечного получателя и позволяет каждому роутеру выбрать сеть назначения. Destination MAC действует только на текущем канале, а destination port выбирает приложение уже на узле. Source-адреса показывают отправителя, а не куда доставлять пакет.",
+      "explanationEn": "The destination IP identifies the final receiver and lets each router choose a destination network. The destination MAC applies only to the current link, while the destination port selects an application on the host. Source addresses identify the sender, not the forwarding destination."
+    },
+    {
+      "id": "E129",
+      "explanation": "Преобразуем каждый октет: 192 = 128+64 → 11000000; 168 = 128+32+8 → 10101000; 11 = 8+2+1 → 00001011; 10 = 8+2 → 00001010. Получается 11000000.10101000.00001011.00001010. Другие варианты подменяют 168 на 192, меняют местами 11 и 10 или записывают 18 вместо 10.",
+      "explanationEn": "Convert each octet: 192 = 128+64 → 11000000; 168 = 128+32+8 → 10101000; 11 = 8+2+1 → 00001011; 10 = 8+2 → 00001010. Thus 11000000.10101000.00001011.00001010 is correct. Other choices replace 168 with 192, swap 11 and 10, or encode 18 instead of 10."
+    },
+    {
+      "id": "E130",
+      "explanation": "172 = 128+32+8+4 → 10101100; 16 → 00010000; 31 = 16+8+4+2+1 → 00011111; 30 = 16+8+4+2 → 00011110. Ответ 10101100.00010000.00011111.00011110. В остальных ответах первый октет равен 192/168 либо третий равен 30 вместо 31.",
+      "explanationEn": "172 = 128+32+8+4 → 10101100; 16 → 00010000; 31 = 16+8+4+2+1 → 00011111; 30 = 16+8+4+2 → 00011110. The result is 10101100.00010000.00011111.00011110. Other answers encode 192/168 in the first octet or 30 instead of 31 in the third."
+    },
+    {
+      "id": "E162",
+      "explanation": "В Ethernet-заголовке destination MAC записан перед source MAC. В следующем IP-заголовке source IP расположен перед destination IP. Поэтому общий порядок: destination NIC, source NIC, source IP, destination IP. Нельзя переносить один и тот же порядок source/destination на оба заголовка.",
+      "explanationEn": "The Ethernet header places destination MAC before source MAC. The enclosed IP header places source IP before destination IP. Therefore the order is destination NIC, source NIC, source IP, destination IP. The source/destination order is not identical in the two headers."
+    },
+    {
+      "id": "E196",
+      "explanation": "Префикс 01:00:5E используется для отображения IPv4 multicast в Ethernet. Поэтому 01-00-5E-0A-00-02 адресует определённую группу. Unicast выбирал бы один узел, а broadcast FF:FF:FF:FF:FF:FF — все узлы локального широковещательного домена.",
+      "explanationEn": "The 01:00:5E prefix maps IPv4 multicast to Ethernet, so 01-00-5E-0A-00-02 targets a particular group. Unicast targets one node; broadcast FF:FF:FF:FF:FF:FF targets every node in the local broadcast domain."
+    },
+    {
+      "id": "E200",
+      "explanation": "Сегменты создаёт транспортный уровень (например TCP) и передаёт их сетевому, где добавляется IPv4/IPv6-заголовок. Вопрос спрашивает, кто передаёт сегмент, поэтому Transport layer. Network layer создаёт пакет, Data link layer — кадр, Session layer управляет диалогом.",
+      "explanationEn": "The transport layer, such as TCP, produces segments and hands them to the network layer for an IPv4/IPv6 header. The question asks who supplies the segment, so Transport layer is correct. The network layer creates packets, data link creates frames, and session manages dialogs."
+    },
+    {
+      "id": "E201",
+      "explanation": "Data link layer принимает готовый IP-пакет и заключает его в кадр с правилами конкретного канала. Physical layer затем передаёт биты сигналами; он не выполняет это оформление пакета в кадр. Network layer создаёт IP-пакет, Transport layer работает с сегментами.",
+      "explanationEn": "The data link layer takes an IP packet and encapsulates it in a frame appropriate to the link. The physical layer then transmits bits as signals rather than performing this packet-to-frame encapsulation. Network creates IP packets; transport handles segments."
+    },
+    {
+      "id": "E202",
+      "explanation": "Разбиение уже существующего IP-пакета под меньший MTU называется fragmentation. Segmentation происходит уровнем выше, при подготовке транспортных данных; encapsulation добавляет оболочку, serialization передаёт данные последовательно. IPv4-роутер может фрагментировать при DF=0; IPv6-роутер вместо этого возвращает Packet Too Big.",
+      "explanationEn": "Splitting an existing IP packet to fit a smaller MTU is fragmentation. Segmentation happens at transport; encapsulation adds a wrapper; serialization sends data sequentially. An IPv4 router may fragment when DF=0; an IPv6 router instead returns Packet Too Big."
+    },
+    {
+      "id": "E203",
+      "explanation": "Best effort означает отсутствие гарантии успешной и безошибочной доставки: IP не выполняет подтверждение и восстановление потерь. Connectionless отвечает на другой вопрос — устанавливается ли соединение заранее. Media independent означает независимость от среды, а не надёжность.",
+      "explanationEn": "Best effort means no guarantee of successful, error-free delivery: IP supplies no acknowledgment/recovery service. Connectionless answers a different question—whether a connection is established first. Media independent concerns the transmission medium, not reliability."
+    },
+    {
+      "id": "E204",
+      "explanation": "Source IP сообщает, откуда пришёл пакет, Destination IP — куда он направлен. Protocol обозначает тип вложенного протокола, TTL ограничивает переходы, DS обозначает обработку/приоритет. Эти три поля не идентифицируют пару конечных узлов.",
+      "explanationEn": "Source IP says where the packet originates and Destination IP where it is going. Protocol identifies the encapsulated protocol, TTL limits hops, and DS describes traffic treatment/priority. Those fields do not identify the endpoint pair."
+    },
+    {
+      "id": "E205",
+      "explanation": "В обычной маршрутизации без NAT source/destination IPv4 сохраняются между конечными узлами. TTL ограничивает переходы, а не приоритет. Для сборки фрагментов нужны Identification и Fragment Offset, а не checksum/total length. Version означает IPv4/IPv6; вложенный протокол задаёт Protocol.",
+      "explanationEn": "With ordinary routing and no NAT, source/destination IPv4 addresses remain the endpoint addresses. TTL limits hops, not priority. Fragment reassembly uses Identification and Fragment Offset, not checksum/total length. Version means IPv4/IPv6; Protocol identifies the encapsulated protocol."
+    },
+    {
+      "id": "E206",
+      "explanation": "Header Checksum вычисляется по IPv4-заголовку и позволяет обнаружить его повреждение. Он не защищает всю полезную нагрузку. TTL — счётчик переходов, Protocol — тип вложенных данных, DS — обработка трафика; ни один из них не служит контрольной суммой.",
+      "explanationEn": "Header Checksum is computed over the IPv4 header and detects corruption there, not across the whole payload. TTL counts hops, Protocol identifies the payload protocol, and DS indicates traffic treatment; none is a checksum."
+    },
+    {
+      "id": "E207",
+      "explanation": "Значения 1, 6 и 17 в поле Protocol обозначают ICMP, TCP и UDP, чтобы получатель передал полезную нагрузку нужному обработчику. Checksum проверяет заголовок, TTL ограничивает путь, DS задаёт обработку трафика — эти поля не выбирают протокол.",
+      "explanationEn": "Protocol values 1, 6 and 17 identify ICMP, TCP and UDP so the receiver dispatches the payload to the correct handler. Checksum checks the header, TTL bounds the path and DS controls traffic treatment; they do not select a protocol."
+    },
+    {
+      "id": "E208",
+      "explanation": "IPv4 имеет ограниченное 32-битное пространство, поэтому возникают depletion, рост сложности/таблиц и потеря прямой end-to-end связности из-за широкого применения NAT. IP не держит соединения всегда открытыми. Политические границы не являются свойством формата IPv4, а «слишком много адресов» противоположно реальной проблеме.",
+      "explanationEn": "IPv4 has a finite 32-bit space, leading to depletion, complexity/routing-table growth and reduced direct end-to-end connectivity from widespread NAT. IP does not keep connections always active. Political borders are not an IPv4 format limitation, and too many addresses is the opposite of the actual problem."
+    },
+    {
+      "id": "E209",
+      "explanation": "IPv6 увеличивает адрес с 32 до 128 бит и использует упрощённый фиксированный основной заголовок, облегчая обработку. Усложнение заголовка и классовая адресация не являются улучшениями IPv6; большой запас адресов уменьшает необходимость NAT ради их экономии, а не стандартизует его обязательное применение.",
+      "explanationEn": "IPv6 expands addresses from 32 to 128 bits and uses a simpler fixed base header for easier processing. More complex headers and class-based addressing are not IPv6 improvements; the larger space reduces address-conservation pressure for NAT rather than making NAT mandatory."
+    },
+    {
+      "id": "E210",
+      "explanation": "У базового IPv6-заголовка два верных свойства: 40 байт и 8 полей — Version, Traffic Class, Flow Label, Payload Length, Next Header, Hop Limit, Source и Destination. 20 байт — минимальный IPv4-заголовок. Extension headers учитываются отдельно. В формулировке пропущено Choose two, но верны именно два варианта.",
+      "explanationEn": "The IPv6 base header has two correct properties: 40 bytes and eight fields—Version, Traffic Class, Flow Label, Payload Length, Next Header, Hop Limit, Source and Destination. Twenty bytes is the minimum IPv4 header. Extension headers are additional. The prompt omits “Choose two”, but two options are correct."
+    },
+    {
+      "id": "E211",
+      "explanation": "Hop Limit выполняет в IPv6 роль ограничения переходов, которую в IPv4 выполняет TTL. Source/destination адреса обычно не меняются на каждом роутере. Version определяет версию IP, а Next Header — следующий заголовок; Traffic Class соответствует обработке трафика, а не TTL.",
+      "explanationEn": "Hop Limit performs IPv6 hop limiting, replacing IPv4 TTL. Source/destination addresses normally do not change at every router. Version identifies the IP version; Next Header identifies the following header. Traffic Class, not TTL, handles traffic classification."
+    },
+    {
+      "id": "E212",
+      "explanation": "Узлы одной IP-подсети передают кадры друг другу непосредственно через локальный канал/коммутатор, без маршрутизатора. Remote host по определению находится в другой сети. Хост может ping свой loopback. Обычному L2-switch не требуется включать IP routing для пересылки кадров.",
+      "explanationEn": "Hosts in the same IP subnet exchange frames directly over the local link/switch, without a router. A remote host is on another network by definition. A host can ping its loopback. A normal Layer 2 switch does not enable IP routing to forward frames."
+    },
+    {
+      "id": "E213",
+      "explanation": "Default gateway обычно является IP локального интерфейса роутера в той же подсети, что и хост. Его можно достичь по локальному каналу, а он знает дальнейший путь. Для соседа в той же подсети gateway не нужен; удалённый L2-switch не может быть обычным локальным шлюзом.",
+      "explanationEn": "The default gateway is normally the local router-interface IP in the host’s subnet. The host can reach it directly and the router forwards beyond the subnet. Same-subnet neighbors need no gateway; a remote Layer 2 switch is not the normal local gateway."
+    },
+    {
+      "id": "E214",
+      "explanation": "В Windows route print и netstat -r выводят таблицы маршрутов IPv4/IPv6. У route порядок слов именно route print. Остальные варианты print route, print net и netroute -l не являются правильным синтаксисом этих штатных команд.",
+      "explanationEn": "On Windows, route print and netstat -r display IPv4/IPv6 routing tables. The word order is specifically route print. The other proposed commands—print route, print net and netroute -l—are not the correct built-in syntax."
+    },
+    {
+      "id": "E215",
+      "explanation": "В Cisco IOS IPv4-таблицу маршрутизации показывает show ip route из EXEC. route print и netstat -r относятся к Windows, причём netstart в варианте ещё и опечатка. show routing table не является требуемой IOS-командой этого курса.",
+      "explanationEn": "Cisco IOS displays the IPv4 routing table with show ip route in EXEC mode. route print and netstat -r are Windows commands; the proposed netstart is also misspelled. show routing table is not the IOS command taught here."
+    },
+    {
+      "id": "E216",
+      "explanation": "Буква O обозначает маршрут, изученный OSPF. Для directly connected используется C; local — L; static — S. Код O — буква названия протокола, а не цифра 0 и не значение administrative distance. Default route определяется префиксом /0, а не буквой O.",
+      "explanationEn": "O marks a route learned through OSPF. C means connected, L local and S static. O is a protocol letter, not the digit zero or an administrative distance. A default route is recognized by its /0 prefix, not the letter O."
+    },
+    {
+      "id": "E217",
+      "explanation": "Default route применяется, когда не найден более специфичный подходящий маршрут, поэтому это gateway of last resort. IPv4-префикс 0.0.0.0/0 совпадает с любым адресом, но имеет наименьшую специфичность. Static означает способ настройки: статический маршрут может быть default, но не обязан.",
+      "explanationEn": "A default route is used when no more specific matching route exists, hence gateway of last resort. IPv4 prefix 0.0.0.0/0 matches every address but is least specific. Static describes how a route is configured; a static route may be default but need not be."
+    },
+    {
+      "id": "E218",
+      "explanation": "Static route вручную задаёт администратор, указывая сеть и next hop/выходной интерфейс. Сам по себе он не обучается соседями, не рассылается им и не пересчитывает альтернативу после изменения топологии; для этого нужны дополнительные настройки или dynamic routing. Поэтому большое количество меняющихся резервных путей не его главное преимущество.",
+      "explanationEn": "An administrator manually configures a static route with a network and next hop/exit interface. By itself it is neither learned from nor advertised to neighbors and does not calculate alternatives after topology changes; additional configuration or dynamic routing is needed. Many changing redundant paths are therefore not its main advantage."
+    },
+    {
+      "id": "E219",
+      "explanation": "True: один роутер может одновременно иметь connected, static и learned dynamic routes. Например, default route задают вручную, а внутренние подсети изучают через OSPF. Эти способы заполнения таблицы совместимы; при конкуренции маршрутов применяются правила выбора маршрута.",
+      "explanationEn": "True: a router can simultaneously have connected, static and dynamically learned routes. For example, a default route may be configured manually while internal networks are learned with OSPF. These ways of populating a routing table are compatible; route-selection rules resolve competing entries."
+    },
+    {
+      "id": "E220",
+      "explanation": "Флаг -r у netstat означает вывод routing table. netstat -s показывает статистику протоколов, tracert исследует переходы до выбранной цели, а show ip route — команда Cisco IOS, не Windows.",
+      "explanationEn": "The -r flag makes netstat display the routing table. netstat -s displays protocol statistics, tracert probes hops to one destination, and show ip route belongs to Cisco IOS rather than Windows."
+    },
+    {
+      "id": "E221",
+      "explanation": "Layer 3 добавляет IP-заголовок, содержащий source и destination IP. MAC-адреса появятся при оформлении кадра на Layer 2; номера портов принадлежат TCP/UDP на Layer 4. Поэтому из перечисленного именно IP-адреса являются добавлением сетевого уровня.",
+      "explanationEn": "Layer 3 adds an IP header containing source and destination IP addresses. MAC addresses are added by Layer 2 framing; port numbers belong to TCP/UDP at Layer 4. Therefore IP addresses are the network-layer addition listed."
+    },
+    {
+      "id": "E222",
+      "explanation": "Канальный уровень сообщает сетевому допустимый MTU, чтобы IP-пакет помещался в кадр данного канала. Это ограничение размера, а не скорости передачи: IP не замедляет линию ради слишком большого пакета. Игнорировать MTU нельзя; его источник здесь нижний канальный, а не верхние уровни.",
+      "explanationEn": "The data link layer passes its MTU to the network layer so an IP packet fits the link’s frame capacity. This is packet size, not transmission speed: IP does not slow the line to accommodate an oversized packet. It cannot ignore MTU, which comes from the lower data link layer, not higher layers."
+    },
+    {
+      "id": "E223",
+      "explanation": "IPv6 имеет упрощённый основной заголовок с фиксированными 40 байтами, поэтому правильный вариант — improved packet handling. IPv6-адреса тоже иерархические. 128 бит в четыре раза длиннее 32 бит, но число адресов больше в 2^96 раз, а не в четыре. Шифрование/IPsec возможно и для IPv4, поэтому privacy не исключительно IPv6.",
+      "explanationEn": "IPv6 uses a simplified fixed 40-byte base header, making improved packet handling the right choice. IPv6 addressing is also hierarchical. 128 bits is four times the bit length of 32, but the address count is 2^96 times larger, not four times. Encryption/IPsec is also available for IPv4, so privacy is not IPv6-only."
+    },
+    {
+      "id": "E224",
+      "explanation": "IPv4-адрес содержит ровно 32 бита, обычно четыре восьмибитных октета. Не все значения назначаются обычным хостам: есть network/broadcast и специальные диапазоны. У IPv4 заголовок сложнее базового IPv6, а наличие IPsec не является отличительным свойством 32-битного формата.",
+      "explanationEn": "An IPv4 address contains exactly 32 bits, usually written as four eight-bit octets. Not every value is assignable to ordinary hosts: network/broadcast and special-use ranges exist. IPv4 has a more complex header than the IPv6 base header; IPsec availability is not the defining property of its 32-bit format."
+    },
+    {
+      "id": "E225",
+      "explanation": "Роутер сопоставляет destination IP с префиксами routing table и выбирает маршрут к удалённой сети. Source IP обозначает отправителя. MAC-адреса нужны для входного/выходного канала, но по destination MAC нельзя определить конечную удалённую IP-сеть.",
+      "explanationEn": "The router matches destination IP against routing-table prefixes to choose a remote-network route. Source IP identifies the sender. MAC addresses serve ingress/egress links; a destination MAC does not identify the final remote IP network."
+    },
+    {
+      "id": "E226",
+      "explanation": "Если получатель в той же IP-подсети LAN, хост узнаёт его MAC и адресует кадр непосредственно ему. Default gateway используется для других сетей и не должен быть обязательным промежуточным шагом локальной передачи. Здесь курс подразумевает одну подсеть, а не просто общий физический коммутатор.",
+      "explanationEn": "For a destination in the same LAN IP subnet, the host resolves the destination MAC and sends the frame directly to it. A default gateway handles other networks and is not a mandatory hop for local delivery. The course assumes one subnet, not merely a shared physical switch."
+    },
+    {
+      "id": "E227",
+      "explanation": "Ожидаемый учебный ответ — 127.0.0.1, стандартный адрес localhost для проверки своего IP-стека. Но весь 127.0.0.0/8 зарезервирован для loopback, поэтому вариант 127.0.0.0 делает формулировку «какой адрес можно использовать» неоднозначной. 126.x.x.x к loopback не относится. Карточка исключена из оцениваемого одиночного квиза, чтобы не наказывать за это различие.",
+      "explanationEn": "The expected course answer is 127.0.0.1, the conventional localhost address for testing the local IP stack. However, all of 127.0.0.0/8 is reserved for loopback, so the 127.0.0.0 option makes “which address can be used” ambiguous. 126.x.x.x is not loopback. This card is excluded from scored single-answer quizzes to avoid penalizing that distinction.",
+      "correction": {
+        "answers": [
+          "127.0.0.1"
+        ],
+        "correct": [
+          3
+        ],
+        "answerText": "127.0.0.1 — ожидаемый учебный ответ; формулировка неоднозначна из-за 127.0.0.0/8.",
+        "eligible": false,
+        "caution": "Весь 127.0.0.0/8 — loopback; вариант 127.0.0.0 делает одиночный выбор неоднозначным."
+      }
+    },
+    {
+      "id": "E228",
+      "explanation": "Надёжный верхний протокол, например TCP, отслеживает полученные байты, подтверждения и пропуски и организует повторную отправку. IP остаётся connectionless/best effort; он не заводит сеанс и не получает магические «connectionless acknowledgements». Best effort не означает, что всё обязательно доставлено.",
+      "explanationEn": "A reliable upper-layer protocol such as TCP tracks bytes, acknowledgments and gaps and arranges retransmission. IP remains connectionless/best effort; it does not create sessions or provide “connectionless acknowledgements.” Best effort does not guarantee every packet arrives."
+    },
+    {
+      "id": "E229",
+      "explanation": "IPv6 создавался прежде всего для преодоления исчерпания адресов IPv4: вместо 32 бит используются 128. Это не способ легче читать 32-битный адрес и не проект для увеличения NAT; наоборот, большее пространство уменьшает нужду экономить адреса через NAT.",
+      "explanationEn": "IPv6 was created primarily to address IPv4 address exhaustion by using 128 instead of 32 bits. It is not a way to make a 32-bit address easier to read or a project to expand NAT; more address space reduces the need for address-conservation NAT."
+    },
+    {
+      "id": "E230",
+      "explanation": "Для продвижения к конечной сети роутер использует destination IP. Source IP полезен для идентификации отправителя, но не задаёт направление к получателю. Канальные адреса меняются от участка к участку и обслуживают лишь текущий hop.",
+      "explanationEn": "A router uses destination IP to move toward the final network. Source IP identifies the sender rather than the target direction. Data-link addresses change across routed links and serve only the current hop."
+    },
+    {
+      "id": "E231",
+      "explanation": "Destination Address обычно сохраняется до получателя, если нет NAT. TTL изменяется каждым роутером. Packet Length и флаги могут измениться при IPv4-фрагментации, поэтому не являются лучшим ответом на вопрос о типично неизменном поле.",
+      "explanationEn": "Destination Address normally remains the final receiver’s address unless NAT changes it. Each router changes TTL. Packet Length and flags can change during IPv4 fragmentation, so they are not the best answer for the typically unchanged field."
+    },
+    {
+      "id": "E232",
+      "explanation": "В IPv6 роутер уменьшает Hop Limit и отбрасывает пакет при исчерпании. TTL — название аналогичного поля IPv4. Address Unreachable и No Route to Destination — причины диагностических сообщений, а не счётчик срока жизни IPv6-пакета.",
+      "explanationEn": "IPv6 routers decrement Hop Limit and discard the packet when it expires. TTL is the corresponding IPv4 field name. Address Unreachable and No Route to Destination are diagnostic reasons, not the IPv6 packet lifetime counter."
+    },
+    {
+      "id": "E475",
+      "explanation": "Голос и видео в реальном времени должны приходить вовремя: задержки и jitter нарушают разговор/показ. Email, обычная веб-страница и FTP в основном терпят ожидание ради полного получения данных. Речь о типичной интерактивной voice/video передаче, а не о скачивании видеофайла.",
+      "explanationEn": "Real-time voice and video must arrive promptly; delay and jitter disrupt the conversation/display. Email, ordinary web pages and FTP generally tolerate waiting for complete data. This refers to interactive voice/video, not downloading a video file."
+    },
+    {
+      "id": "E483",
+      "explanation": "При /26 из 32 бит остаётся 6 host bits: 2^6 = 64 адреса. В обычной IPv4-подсети один — network, один — broadcast, поэтому пригодны 64−2 = 62. Ответ 64 считает весь блок, а 254 относится к /24.",
+      "explanationEn": "A /26 leaves 32−26 = 6 host bits, giving 2^6 = 64 total addresses. An ordinary IPv4 subnet reserves network and broadcast, leaving 64−2 = 62 usable hosts. Sixty-four counts the whole block; 254 corresponds to /24."
+    },
+    {
+      "id": "E486",
+      "explanation": "Нужно минимум пять разных подсетей: 2^2 = 4 недостаточно, 2^3 = 8 достаточно. Поэтому заимствуются три host bits. Четыре или пять тоже дадут больше сетей, но вопрос ищет минимальное необходимое количество.",
+      "explanationEn": "At least five distinct subnets are needed: 2^2 = 4 is insufficient, while 2^3 = 8 is enough. Therefore borrow three host bits. Four or five would also create enough subnets, but the question asks for the minimum required."
+    },
+    {
+      "id": "E529",
+      "explanation": "Логический адрес здесь означает IP. Он добавляется в заголовок network layer при превращении транспортного сегмента в пакет. Data link добавляет канальные MAC-адреса, transport — порты, physical передаёт сигналы.",
+      "explanationEn": "The logical address here is an IP address. The network layer adds it when encapsulating a transport segment into a packet. Data link adds MAC addresses, transport adds ports, and physical transmits signals."
+    },
+    {
+      "id": "E539",
+      "explanation": "L2-switch пересылает кадры по MAC-таблице без собственного IP. IP на SVI позволяет администратору подключаться к самому switch по SSH/другим IP-службам. Этот management IP не превращает L2-switch в default gateway и не нужен для приёма или рассылки кадров.",
+      "explanationEn": "A Layer 2 switch forwards frames using its MAC table without its own IP address. An SVI management IP lets administrators reach the switch via SSH or other IP services. It does not make a Layer 2 switch a default gateway and is not needed to receive or flood frames."
+    },
+    {
+      "id": "E544",
+      "explanation": "Destination IP входит в IP-заголовок, который создаёт network layer (L3). Transport layer добавляет TCP/UDP-порты; application/presentation работают с приложением и представлением данных, а не с IP-адресацией пакета.",
+      "explanationEn": "Destination IP is part of the IP header created by the network layer (Layer 3). Transport adds TCP/UDP ports; application and presentation handle application data and representation rather than packet IP addressing."
+    },
+    {
+      "id": "E581",
+      "explanation": "IP является connectionless: отправка пакета не требует предварительного handshake IP. Он media independent, а не dependent, и не гарантирует надёжную end-to-end доставку. User-data segmentation — задача транспорта, а не базовая характеристика IP.",
+      "explanationEn": "IP is connectionless: sending a packet does not require a prior IP handshake. It is media independent rather than dependent and does not guarantee reliable end-to-end delivery. User-data segmentation is a transport task, not a defining IP characteristic."
+    },
+    {
+      "id": "E586",
+      "explanation": "IP не восстанавливает потери и порядок обычного потока пакетов; при необходимости это делают верхние уровни, например TCP. Тип среды меняет L2-оболочку, а не принцип IP-инкапсуляции. MAC находится в кадре, а ошибки на отдельном канале не заменяют end-to-end восстановление.",
+      "explanationEn": "IP does not recover lost packets or restore an ordinary packet stream’s order; upper layers such as TCP do so when needed. Media type changes Layer 2 encapsulation, not the basic IP encapsulation. MAC belongs to the frame, and per-link error handling cannot replace end-to-end recovery."
+    },
+    {
+      "id": "E587",
+      "explanation": "Protocol сообщает получателю, что находится в полезной нагрузке IPv4: например, TCP=6 или UDP=17. Identification связывает фрагменты одной исходной датаграммы; Version выбирает IPv4/IPv6; Differentiated Services задаёт класс обработки трафика.",
+      "explanationEn": "Protocol tells the receiver what IPv4 carries, such as TCP=6 or UDP=17. Identification associates fragments of one original datagram; Version selects IPv4/IPv6; Differentiated Services describes traffic treatment."
+    },
+    {
+      "id": "E598",
+      "explanation": "Без исходной схемы нельзя независимо подтвердить именно 172.20.0.254. Это сохранённый ответ варианта: он верен, если данный адрес принадлежит локальному интерфейсу default gateway ПК. Для выхода из LAN ПК доставляет кадр шлюзу, сохраняя destination IP удалённого сайта. Другие IP нельзя отвергать только по внешнему виду без маски и топологии.",
+      "explanationEn": "Without the exhibit, 172.20.0.254 cannot be independently verified. It is the saved variant answer and is correct if it identifies the PC’s local default-gateway interface. To leave the LAN, the PC sends the frame to that gateway while retaining the website’s destination IP. Other addresses cannot be rejected by appearance alone without the mask/topology."
+    },
+    {
+      "id": "E608",
+      "explanation": "Операционно работающий интерфейс имеет Status up и Protocol up в show ip interface brief. Сохранённый ответ перечисляет R1 G0/0,S0/0/0 и R2 G0/1,S0/0/0, но без исходного PT-файла состояния и конкретные имена портов не подтверждены. Проверяй оба столбца; administratively down не считается работающим.",
+      "explanationEn": "An operational interface shows both Status up and Protocol up in show ip interface brief. The saved answer lists R1 G0/0,S0/0/0 and R2 G0/1,S0/0/0, but the original PT file is required to verify those particular interfaces. Check both columns; administratively down is not operational."
+    },
+    {
+      "id": "E609",
+      "explanation": "Двоичное 0100 равно десятичному 4; четырёхбитное поле Version поэтому обозначает IPv4. Source IPv4 address занимает 32 бита. Protocol выбирает вложенный протокол, TTL ограничивает переходы — они не задают номер версии IP.",
+      "explanationEn": "Binary 0100 equals decimal 4, so the four-bit Version field identifies IPv4. Source IPv4 address occupies 32 bits. Protocol chooses the encapsulated protocol and TTL limits hops; neither gives the IP version."
+    },
+    {
+      "id": "E620",
+      "explanation": "Registered port — зарегистрированный для службы/приложения номер в диапазоне 1024–49151, для назначения которого обращаются к IANA. Dynamic/private ports 49152–65535 не регистрируются как постоянные службы. Source port описывает роль поля в пакете, а не категорию регистрации.",
+      "explanationEn": "A registered port is assigned to a service/application in 1024–49151 through IANA registration. Dynamic/private ports 49152–65535 are not registered as permanent services. Source port describes a packet field’s role, not a registration category."
+    },
+    {
+      "id": "E635",
+      "explanation": "SMB поддерживает длительную сессию клиента с сервером для общего доступа к файлам/принтерам: подключение не обязательно создаётся заново для каждого действия. SMB умеет аутентификацию и не использует FTP как свой транспорт. Сообщения организованы общим SMB-форматом с различными командами, поэтому утверждение о совершенно разных форматах не является нужной характеристикой.",
+      "explanationEn": "SMB supports a persistent client-server session for file/printer sharing rather than requiring a new connection for every operation. SMB supports authentication and does not use FTP as its transport. Its messages share an SMB structure with different commands, so completely different message formats is not the intended characteristic."
+    },
+    {
+      "id": "E699",
+      "explanation": "Remote route ведёт в сеть за другим роутером; next hop — IP этого соседнего роутера. Например, сеть 192.168.2.0/24 via 192.168.1.254 достигается через 192.168.1.254. C (connected) обозначает напрямую подключённую сеть, L (local) — собственный IP интерфейса: им не нужен промежуточный сосед для этих адресов. Поэтому remote routes — нужная категория.",
+      "explanationEn": "A remote route reaches a network beyond another router; the next hop is that neighboring router’s IP. For example, 192.168.2.0/24 via 192.168.1.254 forwards through 192.168.1.254. C (connected) marks a directly connected network, while L (local) marks the router’s own interface IP; neither needs an intermediate neighbor for those destinations. Thus remote routes is the category asked about."
+    },
+    {
+      "id": "E708",
+      "explanation": "198.133.219.162 — обычный публичный unicast-адрес в контексте задания. Он не входит в link-local 169.254/16, loopback 127/8 или multicast 224/4, а также не входит в RFC1918 private ranges. Это не 198.51.100/24, специально зарезервированный для документации.",
+      "explanationEn": "198.133.219.162 is a public unicast address in this question. It is outside link-local 169.254/16, loopback 127/8, multicast 224/4 and RFC1918 private ranges. Do not confuse it with 198.51.100/24, which is reserved for documentation."
+    },
+    {
+      "id": "E739",
+      "explanation": "Каждый пересылающий IPv4-роутер уменьшает Time-to-Live, чтобы пакет не кружил бесконечно. Differentiated Services задаёт обработку, Fragment Offset — позицию фрагмента, Header Length — длину заголовка; они не являются уменьшаемым hop-счётчиком.",
+      "explanationEn": "Each forwarding IPv4 router decrements Time-to-Live to prevent indefinite looping. Differentiated Services specifies treatment, Fragment Offset locates a fragment and Header Length gives header size; none is the decremented hop counter."
+    },
+    {
+      "id": "E744",
+      "explanation": "Предложенные блоки не пересекаются: /25 .0–.127 даёт 126 хостов, /26 .128–.191 — 62, /27 .192–.223 — 30, /30 .224–.227 — 2. Поэтому такая раскладка подходит A/B/C/D, если их требования укладываются в эти ёмкости. Требования исходной схемы отсутствуют, значит именно соответствие букв проверить нельзя; проверена арифметика VLSM, не восстановленная картинка.",
+      "explanationEn": "The proposed blocks do not overlap: /25 .0–.127 provides 126 hosts; /26 .128–.191 provides 62; /27 .192–.223 provides 30; /30 .224–.227 provides 2. This assignment fits A/B/C/D if their requirements fit those capacities. The exhibit’s host requirements are missing, so the letter-to-network mapping cannot be verified; the VLSM arithmetic can."
+    },
+    {
+      "id": "E749",
+      "explanation": "Network layer даёт логические IP-идентификаторы узлам и направляет пакеты в другие сети. Обмен между процессами — функция transport layer, физическое размещение сигналов на среде — physical layer. IP не предоставляет dedicated end-to-end connection, поэтому последний вариант противоречит connectionless.",
+      "explanationEn": "The network layer gives hosts logical IP identifiers and directs packets to other networks. Process-to-process delivery belongs to transport; placing signals on the medium belongs to physical. IP supplies no dedicated end-to-end connection, so that option contradicts connectionless operation."
+    },
+    {
+      "id": "E764",
+      "explanation": "Правильная последовательность: уменьшить TTL на 1; если получилось 0, отбросить пакет и обычно отправить ICMP Time Exceeded. Это ограничивает петлю числом переходов. TTL не увеличивается, значение 100 не является порогом, а Destination Unreachable/Parameter Problem обозначают другие причины ошибок.",
+      "explanationEn": "The correct sequence is decrement TTL by one, then discard at zero and normally return ICMP Time Exceeded. This bounds a loop by hop count. TTL is not incremented, 100 is not the expiry threshold, and Destination Unreachable/Parameter Problem describe different errors."
+    },
+    {
+      "id": "E768",
+      "explanation": "IP не устанавливает dedicated end-to-end connection и может переноситься разными L2-средами — это connectionless и media independent. Он не гарантирует доставку, не повторяет потерянные пакеты и не восстанавливает порядок потока: при необходимости это работа TCP/приложения. Сборка IP-фрагментов не равна упорядочиванию всех пакетов потока.",
+      "explanationEn": "IP requires no dedicated end-to-end connection and can run over different Layer 2 media: connectionless and media independent. It does not guarantee delivery, retransmit losses or restore stream order; TCP/applications handle that when needed. Reassembling IP fragments is not the same as ordering all packets in a stream."
+    },
+    {
+      "id": "E777",
+      "explanation": "Сохранённый ключ утверждает достижимость 192.168.100.1 и четыре hop, но без вывода tracert эти конкретные числа не подтверждены. Успешный последний ответ подтверждает достижимость на момент проверки; номера строк дают hop count. Он не гарантирует качество видеосвязи, не доказывает отсутствие gateway, а RTT нельзя называть временем передачи в одну сторону.",
+      "explanationEn": "The saved key claims reachability of 192.168.100.1 and four hops, but those specifics cannot be verified without the tracert output. A successful final reply supports reachability at that time; numbered rows give hop count. It does not guarantee videoconferencing quality, prove a missing gateway, or turn round-trip measurements into one-way transmission time."
+    }
+  ],
+  "notes": {
+    "ru": "## Проверка по разделам NetAcad 8: что ещё нужно понимать\n\n### Четыре операции L3 и решение хоста\n\n1. Адресация: каждому участвующему IP-интерфейсу нужен адрес.\n2. Инкапсуляция: источник добавляет IP-заголовок к транспортным данным.\n3. Маршрутизация: каждый роутер выбирает следующий переход по destination IP.\n4. Деинкапсуляция: конечный получатель снимает IP-заголовок и передаёт данные протоколу, указанному в Protocol/Next Header.\n\nХост различает «я сам», on-link и off-link. Loopback 127.0.0.1/::1 остаётся внутри компьютера; обычная loopback-проверка не тестирует кабель. В IPv4 on-link определяют IP и mask, в IPv6 — сведения о префиксах, обычно из RA. Default gateway IPv4 можно получить через DHCP или ввести вручную; IPv6 узнаёт default router из RA. DHCPv6 сам по себе default router не выдаёт.\n\n### Все поля заголовков без путаницы\n\n| IPv4 | Что означает |\n| --- | --- |\n| Version / IHL | Версия IP / длина IPv4-заголовка в 32-битных словах |\n| DS | DSCP — класс обработки; ECN — сигнализация перегрузки |\n| Total Length | Весь пакет, заголовок плюс payload |\n| Identification, Flags, Fragment Offset | Связь фрагментов, разрешение/наличие фрагментации, позиция фрагмента |\n| TTL | Ограничение времени жизни при пересылке |\n| Protocol | Следующий протокол: ICMP 1, TCP 6, UDP 17 |\n| Header Checksum | Проверка только IPv4-заголовка |\n| Source / Destination | Конечные IP-адреса |\n| Options / padding | Необязательные данные и выравнивание |\n\nУ IPv6 восемь основных полей: Version, Traffic Class, Flow Label, Payload Length, Next Header, Hop Limit, Source, Destination. Traffic Class соответствует классификации DS; Flow Label помечает поток для согласованной обработки. Payload Length не включает 40-байтовый основной заголовок. Next Header может указывать как TCP/UDP/ICMPv6, так и следующий extension header. Необязательные функции вынесены в extension headers, поэтому основной заголовок остаётся фиксированным.\n\n### Как читать маршрут, а не угадывать букву\n\nЗапись `O 10.2.0.0/16 [110/20] via 192.168.1.254, 00:00:12, GigabitEthernet0/0` означает: сеть /16 изучена OSPF, [administrative distance/metric], сосед next hop, возраст и выходной интерфейс. D означает EIGRP. Число внутри скобок не длина маски и не TTL.\n\nСначала выбирается наиболее длинный совпавший префикс. Например, для 10.2.3.4 маршрут 10.2.3.0/24 конкретнее 10.2.0.0/16 и default 0.0.0.0/0. Для одинакового префикса сравниваются источники маршрутов/метрики по правилам протоколов; нельзя сравнивать метрики разных протоколов как одну общую шкалу. Нет подходящего маршрута, включая default — пакет отбрасывается.\n\nStatic задаётся вручную; dynamic (OSPF/EIGRP/BGP) обменивается информацией и адаптируется к изменениям после сходимости. Можно использовать оба подхода одновременно. В Wireshark раскрой IP-слой и найди адреса, TTL/Hop Limit, Protocol/Next Header и длины; сравнение пакетов на двух сторонах роутера показывает новый L2-кадр и уменьшенный TTL.\n",
+    "en": "## NetAcad module 8 coverage: remaining essentials\n\n### Four Layer 3 operations and host decisions\n\n1. Addressing gives participating IP interfaces their addresses.\n2. Encapsulation adds an IP header to transport data at the source.\n3. Routing chooses the next hop from destination IP at each router.\n4. De-encapsulation removes the IP header at the destination and dispatches data using Protocol/Next Header.\n\nA host distinguishes itself, on-link destinations and off-link destinations. Loopback 127.0.0.1/::1 stays inside the computer and does not test a cable. IPv4 uses its address and mask for on-link decisions; IPv6 uses prefix information, normally from RA. DHCP or manual settings supply an IPv4 default gateway; IPv6 discovers a default router through RA. DHCPv6 alone does not supply a default router.\n\n### Understand every header field\n\n| IPv4 | Meaning |\n| --- | --- |\n| Version / IHL | IP version / IPv4 header length in 32-bit words |\n| DS | DSCP traffic treatment and ECN congestion indication |\n| Total Length | Entire packet, header plus payload |\n| Identification, Flags, Fragment Offset | Associate fragments, control/indicate fragmentation, locate fragments |\n| TTL | Limits lifetime during forwarding |\n| Protocol | Encapsulated protocol: ICMP 1, TCP 6, UDP 17 |\n| Header Checksum | Checks only the IPv4 header |\n| Source / Destination | Endpoint IP addresses |\n| Options / padding | Optional information and alignment |\n\nIPv6 has eight base fields: Version, Traffic Class, Flow Label, Payload Length, Next Header, Hop Limit, Source and Destination. Traffic Class provides DS-style classification; Flow Label identifies a flow for consistent treatment. Payload Length excludes the 40-byte base header. Next Header can identify TCP/UDP/ICMPv6 or another extension header. Optional functions move into extension headers, preserving a fixed base header.\n\n### Read a route instead of guessing its letter\n\n`O 10.2.0.0/16 [110/20] via 192.168.1.254, 00:00:12, GigabitEthernet0/0` identifies an OSPF-learned /16, [administrative distance/metric], next-hop neighbor, age and exit interface. D marks EIGRP. The bracketed numbers are not prefix length or TTL.\n\nLongest matching prefix comes first. For destination 10.2.3.4, 10.2.3.0/24 is more specific than 10.2.0.0/16 and default 0.0.0.0/0. Competing routes to the same prefix use route-source/metric rules; different protocols' metrics are not one common scale. With no matching route including a default, the packet is dropped.\n\nStatic routes are configured manually; dynamic protocols (OSPF/EIGRP/BGP) exchange reachability and adapt after convergence. Both approaches may coexist. In Wireshark, expand IP and identify addresses, TTL/Hop Limit, Protocol/Next Header and lengths. Comparing captures on both router sides reveals a new Layer 2 frame and reduced TTL.\n"
+  },
+  "coverage": [
+    {
+      "topic": "Addressing, encapsulation, routing, de-encapsulation",
+      "source": "NetAcad_данные/модули/08.md §8.1.1–8.1.2",
+      "status": "expanded"
+    },
+    {
+      "topic": "Connectionless, best effort, media independent and MTU",
+      "source": "NetAcad_данные/модули/08.md §8.1.3–8.1.6",
+      "status": "covered"
+    },
+    {
+      "topic": "IPv4 header fields",
+      "source": "NetAcad_данные/модули/08.md §8.2.1–8.2.2",
+      "status": "expanded"
+    },
+    {
+      "topic": "Wireshark IPv4 header inspection",
+      "source": "NetAcad_данные/модули/08.md §8.2.3",
+      "status": "method covered; original video not rewatched"
+    },
+    {
+      "topic": "IPv4 limitations and complete IPv6 header",
+      "source": "NetAcad_данные/модули/08.md §8.3.1–8.3.4",
+      "status": "expanded"
+    },
+    {
+      "topic": "Wireshark IPv6 header inspection",
+      "source": "NetAcad_данные/модули/08.md §8.3.5",
+      "status": "method covered; original video not rewatched"
+    },
+    {
+      "topic": "Host forwarding, default gateway, host route tables",
+      "source": "NetAcad_данные/модули/08.md §8.4.1–8.4.4",
+      "status": "expanded"
+    },
+    {
+      "topic": "Router forwarding, static/dynamic routing and table interpretation",
+      "source": "NetAcad_данные/модули/08.md §8.5.1–8.5.6",
+      "status": "expanded"
+    },
+    {
+      "topic": "Checks, review and module quiz",
+      "source": "NetAcad_данные/модули/08.md §8.1.7/8.2.4/8.3.6/8.4.5/8.5.7/8.6",
+      "status": "all 33 core cards reviewed; source answer selections not treated as authoritative key"
+    }
+  ],
+  "issues": [
+    {
+      "id": "E227",
+      "issue": "127.0.0.0/8 is loopback; 127.0.0.0 distractor makes the question ambiguous. Excluded from scored quizzes."
+    },
+    {
+      "id": "E210",
+      "issue": "Prompt omits Choose two although 40 octets and eight fields are both correct."
+    },
+    {
+      "ids": [
+        "E598",
+        "E608",
+        "E744",
+        "E777"
+      ],
+      "issue": "Missing original diagram/PT: retain source answer as conditional, remain ineligible."
+    },
+    {
+      "issue": "Topic8 includes cross-topic questions from modules1/3/5/6/7, IPv4 subnetting, transport ports and SMB; their explanations were individually audited, not assumed to belong to module8 source."
+    }
+  ],
+  "subsections": [
+    {
+      "id": "8.0.1",
+      "title": "Why should I take this module?",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.0.2",
+      "title": "What will I learn to do in this module?",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.1",
+      "title": "The Network Layer",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.2",
+      "title": "IP Encapsulation",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.3",
+      "title": "Characteristics of IP",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.4",
+      "title": "Connectionless",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.5",
+      "title": "Best Effort",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.6",
+      "title": "Media Independent",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.1.7",
+      "title": "Check Your Understanding - IP Characteristics",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.2.1",
+      "title": "IPv4 Packet Header",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.2.2",
+      "title": "IPv4 Packet Header Fields",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.2.3",
+      "title": "Video - Sample IPv4 Headers in Wireshark",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "8.2.4",
+      "title": "Check Your Understanding - IPv4 Packet",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.3.1",
+      "title": "Limitations of IPv4",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.3.2",
+      "title": "IPv6 Overview",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.3.3",
+      "title": "IPv4 Packet Header Fields in the IPv6 Packet Header",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.3.4",
+      "title": "IPv6 Packet Header",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.3.5",
+      "title": "Video - Sample IPv6 Headers in Wireshark",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "8.3.6",
+      "title": "Check Your Understanding - IPv6 Packet",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.4.1",
+      "title": "Host Forwarding Decision",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.4.2",
+      "title": "Default Gateway",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.4.3",
+      "title": "A Host Routes to the Default Gateway",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.4.4",
+      "title": "Host Routing Tables",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.4.5",
+      "title": "Check Your Understanding - How a Host Routes",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.5.1",
+      "title": "Router Packet Forwarding Decision",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.5.2",
+      "title": "IP Router Routing Table",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.5.3",
+      "title": "Static Routing",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.5.4",
+      "title": "Dynamic Routing",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.5.5",
+      "title": "Video- IPv4 Router Routing Tables",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "8.5.6",
+      "title": "Introduction to an IPv4 Routing Table",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.5.7",
+      "title": "Check Your Understanding - Introduction to Routing",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "8.6.1",
+      "title": "What did I learn in this module?",
+      "status": "reviewed-against-saved-source"
+    }
+  ]
+}

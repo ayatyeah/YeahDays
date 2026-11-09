@@ -1,0 +1,722 @@
+{
+  "module": 11,
+  "questions": [
+    {
+      "id": "E045",
+      "explanation": "IPv 4 обычно записывают четырьмя десятичными октетами через точки, поэтому dotted-decimal. Двоичные биты лежат в основе адреса, но dotted-binary не название привычной человекочитаемой записи; hex с двоеточиями характерен для IPv 6.",
+      "explanationEn": "IPv 4 is normally written as four decimal octets separated by dots, hence dotted-decimal. Binary bits underlie the address, but dotted-binary is not the usual human-readable notation; colon-separated hexadecimal is associated with IPv 6."
+    },
+    {
+      "id": "E046",
+      "explanation": "32 бита IPv 4 разделяются на четыре октета по 8 бит. Каждый октет даёт 2^8=256 значений, от 0 до 255, и записывается десятичным числом между точками. Поэтому не четыре бита 0/1 и не 32 hex-числа с двоеточиями.",
+      "explanationEn": "IPv 4’s 32 bits form four eight-bit octets. Each has 2^8=256 values, from 0 through 255, written in decimal with dots. The address is neither four individual 0/1 bits nor 32 hexadecimal numbers separated by colons."
+    },
+    {
+      "id": "E061",
+      "explanation": "255.255.0.0 = /16: первые два октета 10.1 остаются сетевыми, последние два обнуляются. 10.1.100.50 AND 255.255.0.0 = 10.1.0.0. 10.0.0.0 получилось бы при /8, 10.1.100.0 — при /24.",
+      "explanationEn": "255.255.0.0 is /16, preserving network octets 10.1 and zeroing the last two. 10.1.100.50 AND 255.255.0.0 = 10.1.0.0. 10.0.0.0 would require /8; 10.1.100.0 would require /24."
+    },
+    {
+      "id": "E065",
+      "explanation": "Multicast адресует выбранную группу: её участник может быть один или их несколько, но это не обязательная доставка всем. Unicast адресует один конкретный узел, broadcast — весь локальный широковещательный домен.",
+      "explanationEn": "Multicast targets a selected group, which may have one or several members, without targeting everyone. Unicast names one particular host; broadcast targets the entire local broadcast domain."
+    },
+    {
+      "id": "E086",
+      "explanation": "Subnet mask указывает, какие биты IPv 4 относятся к сети: единицы сохраняют сетевые биты при AND, нули убирают host portion. MAC относится к канальному адресу и не определяет IPv 4-префикс; правые IP-биты обычно относятся к хосту.",
+      "explanationEn": "The subnet mask identifies network bits: ones preserve them during AND, while zeros remove host bits. A MAC address belongs to Layer 2 and does not determine the IPv 4 prefix; the rightmost IP bits normally form the host portion."
+    },
+    {
+      "id": "E091",
+      "explanation": "Broadcast направляет сообщение всем узлам данного broadcast domain LAN. Multicast предназначен группе, unicast — одному адресу. Allcast не является стандартным четвёртым режимом IPv 4-доставки.",
+      "explanationEn": "Broadcast addresses every node in that LAN broadcast domain. Multicast targets a group and unicast one address. Allcast is not a standard fourth IPv 4 delivery mode."
+    },
+    {
+      "id": "E093",
+      "explanation": "Если сообщение адресовано всем узлам одного локального широковещательного домена, используется broadcast. Duplex описывает возможность одновременной передачи в двух направлениях, а не выбор получателей. Unicast и multicast адресуют одного или выбранную группу.",
+      "explanationEn": "Broadcast is used when every node in a local broadcast domain should receive the message. Duplex describes simultaneous transmission directions, not recipient selection. Unicast and multicast target one host or a selected group."
+    },
+    {
+      "id": "E100",
+      "explanation": "Multicast отправляет один поток выбранной группе получателей. Broadcast адресует всех в локальном домене, unicast — один конкретный узел. Anycast доставляет одному подходящему/ближайшему участнику группы, а не одновременно всей группе.",
+      "explanationEn": "Multicast sends to a selected group of receivers. Broadcast targets all nodes in the local domain and unicast one specific host. Anycast reaches one suitable/nearest group member rather than delivering simultaneously to all members."
+    },
+    {
+      "id": "E136",
+      "explanation": "Считаем веса единичных битов в каждом октете: 11101100 = 128+64+32+8+4 = 236; 00010001 = 16+1 = 17; 00001100 = 8+4 = 12; 00001010 = 8+2 = 10. Получаем 236.17.12.10. Октеты сохраняют исходный порядок; другие варианты дают другую сумму хотя бы в одной группе.",
+      "explanationEn": "Sum the set-bit weights in each octet: 11101100 = 128+64+32+8+4 = 236; 00010001 = 16+1 = 17; 00001100 = 8+4 = 12; 00001010 = 8+2 = 10. This gives 236.17.12.10. Preserve octet order; every other choice changes the sum in at least one group."
+    },
+    {
+      "id": "E140",
+      "explanation": "201.192.1.14 состоит из десятичных чисел, разделённых точками: это dotted decimal. Binary выглядел бы как 8-битные группы 0/1. ASCII — кодировка символов, а не название формата IPv 4-адреса.",
+      "explanationEn": "201.192.1.14 consists of decimal numbers separated by dots: dotted decimal. Binary would use groups of eight 0/1 bits. ASCII is a character encoding, not the name of this IPv 4 notation."
+    },
+    {
+      "id": "E141",
+      "explanation": "Считаем веса единичных битов в каждом октете: 11001011 = 128+64+8+2+1 = 203; 00000000 = 0; 01110001 = 64+32+16+1 = 113; 11010011 = 128+64+16+2+1 = 211. Получаем 203.0.113.211. Октеты сохраняют исходный порядок; другие варианты дают другую сумму хотя бы в одной группе.",
+      "explanationEn": "Sum the set-bit weights in each octet: 11001011 = 128+64+8+2+1 = 203; 00000000 = 0; 01110001 = 64+32+16+1 = 113; 11010011 = 128+64+16+2+1 = 211. This gives 203.0.113.211. Preserve octet order; every other choice changes the sum in at least one group."
+    },
+    {
+      "id": "E144",
+      "explanation": "Считаем веса единичных битов в каждом октете: 00001010 = 8+2 = 10; 01100100 = 64+32+4 = 100; 00010101 = 16+4+1 = 21; 00000001 = 1 = 1. Получаем 10.100.21.1. Октеты сохраняют исходный порядок; другие варианты дают другую сумму хотя бы в одной группе.",
+      "explanationEn": "Sum the set-bit weights in each octet: 00001010 = 8+2 = 10; 01100100 = 64+32+4 = 100; 00010101 = 16+4+1 = 21; 00000001 = 1 = 1. This gives 10.100.21.1. Preserve octet order; every other choice changes the sum in at least one group."
+    },
+    {
+      "id": "E148",
+      "explanation": "IPv 4 содержит четыре октета по восемь бит: 4×8=32. 128 бит — IPv 6; 64 часто встречается как длина обычного IPv 6-префикса LAN, но не IPv 4-адреса.",
+      "explanationEn": "IPv 4 contains four eight-bit octets: 4×8=32. IPv 6 has 128 bits; 64 is commonly an IPv 6 LAN prefix length, not an IPv 4 address length."
+    },
+    {
+      "id": "E271",
+      "explanation": "Маска 255.255.255.0 соответствует /24: сохраняем сетевые биты и обнуляем хостовые. 10.5.4.100 AND 255.255.255.0 = 10.5.4.0. Сам 10.5.4.100 — адрес хоста; другие предложенные сети получаются при другой длине маски.",
+      "explanationEn": "Mask 255.255.255.0 means /24: preserve network bits and zero host bits. 10.5.4.100 AND 255.255.255.0 = 10.5.4.0. 10.5.4.100 itself is a host address; the other proposed networks require different masks."
+    },
+    {
+      "id": "E272",
+      "explanation": "Маска 255.255.0.0 соответствует /16: сохраняем сетевые биты и обнуляем хостовые. 172.16.4.100 AND 255.255.0.0 = 172.16.0.0. Сам 172.16.4.100 — адрес хоста; другие предложенные сети получаются при другой длине маски.",
+      "explanationEn": "Mask 255.255.0.0 means /16: preserve network bits and zero host bits. 172.16.4.100 AND 255.255.0.0 = 172.16.0.0. 172.16.4.100 itself is a host address; the other proposed networks require different masks."
+    },
+    {
+      "id": "E273",
+      "explanation": "После AND с указанной маской сеть хоста — 10.5.4.0/24. Адреса 10.5.4.1 и 10.5.4.99 дают тот же сетевой префикс и являются хостовыми. У 10.5.0.1, 10.0.0.98, 10.5.100.4 сетевые биты отличаются; похожие остальные октеты этого не исправляют.",
+      "explanationEn": "Applying the given mask gives the host network 10.5.4.0/24. 10.5.4.1 and 10.5.4.99 produce that same prefix and are usable host addresses. 10.5.0.1, 10.0.0.98, 10.5.100.4 have different network bits; similarity in other octets does not make them local."
+    },
+    {
+      "id": "E274",
+      "explanation": "После AND с указанной маской сеть хоста — 172.16.0.0/16. Адреса 172.16.4.99 и 172.16.0.1 дают тот же сетевой префикс и являются хостовыми. У 172.17.4.99, 172.17.4.1, 172.18.4.1 сетевые биты отличаются; похожие остальные октеты этого не исправляют.",
+      "explanationEn": "Applying the given mask gives the host network 172.16.0.0/16. 172.16.4.99 and 172.16.0.1 produce that same prefix and are usable host addresses. 172.17.4.99, 172.17.4.1, 172.18.4.1 have different network bits; similarity in other octets does not make them local."
+    },
+    {
+      "id": "E275",
+      "explanation": "После AND с указанной маской сеть хоста — 192.168.1.0/24. Адреса 192.168.1.1 и 192.168.1.100 дают тот же сетевой префикс и являются хостовыми. У 192.168.0.1, 192.168.0.100, 192.168.2.1 сетевые биты отличаются; похожие остальные октеты этого не исправляют.",
+      "explanationEn": "Applying the given mask gives the host network 192.168.1.0/24. 192.168.1.1 and 192.168.1.100 produce that same prefix and are usable host addresses. 192.168.0.1, 192.168.0.100, 192.168.2.1 have different network bits; similarity in other octets does not make them local."
+    },
+    {
+      "id": "E276",
+      "explanation": "Private IPv 4 предназначены для внутренних сетей; любую организацию допускается адресовать из 10/8 без глобальной регистрации такого использования. Публичные роутеры обычно не маршрутизируют private destination. 172.99.1.1 не private: у диапазона 172.16/12 второй октет только 16–31.",
+      "explanationEn": "Private IPv 4 addresses serve internal networks, and any organization may use 10/8 internally without registering that private use globally. Public routers normally do not route private destinations. 172.99.1.1 is not private: 172.16/12 covers second octets 16–31 only."
+    },
+    {
+      "id": "E277",
+      "explanation": "Учебный ключ выбирает публичный destination для прямого доступа через Интернет и исчерпание IPv 4 как причину private addressing/IPv 6. Но первый вариант тоже технически верен: организация вправе использовать выделенные ей public addresses внутри intranet. 192.168.1.10 точно private. Поэтому задание Choose two имеет три допустимых утверждения и исключено из оцениваемого квиза; VPN/NAT также требуют оговорок к «доступу через Интернет».",
+      "explanationEn": "The course key chooses a public destination for direct Internet access and IPv 4 exhaustion as motivation for private addressing/IPv 6. However, the first statement is also technically true: an organization may use its assigned public addresses inside an intranet. 192.168.1.10 is definitely private. Thus “Choose two” has three defensible statements and is excluded from scored quizzes; VPN/NAT also qualify Internet-access wording.",
+      "correction": {
+        "answers": [
+          "To access a device over the internet, the destination IPv4 address must be a public address.",
+          "Public IPv4 address exhaustion is a reason why there are private IPv4 addresses and why organizations are transitioning to IPv6."
+        ],
+        "correct": [
+          1,
+          3
+        ],
+        "answerText": "To access a device over the internet, the destination IPv4 address must be a public address.; Public IPv4 address exhaustion is a reason why there are private IPv4 addresses and why organizations are transitioning to IPv6..",
+        "eligible": false,
+        "caution": "Три утверждения допустимы при формулировке Choose two; исключено из оцениваемого квиза."
+      }
+    },
+    {
+      "id": "E278",
+      "explanation": "RIR получают региональные адресные ресурсы от IANA и распределяют их ISP и организациям. IETF разрабатывает интернет-стандарты, IEEE — например Ethernet/Wi-Fi; Tier 1 ISP не является общим названием региональной регистратуры.",
+      "explanationEn": "RIRs receive regional address resources from IANA and allocate them to ISPs and organizations. IETF develops Internet standards, IEEE develops standards such as Ethernet/Wi-Fi, and Tier 1 ISP is not the general name for a regional registry."
+    },
+    {
+      "id": "E279",
+      "explanation": "В контексте пересылки между сетями ответ Router: он по умолчанию не переносит IPv 4 broadcast в соседнюю подсеть, ограничивая broadcast domain. L 2-switch обычно рассылает такой кадр внутри VLAN. Обычный PC вообще не является транзитным устройством: его наличие среди вариантов — упрощение формулировки курса.",
+      "explanationEn": "In the context of forwarding between networks, Router is the intended answer: it normally does not forward IPv 4 broadcasts into adjacent subnets, bounding the broadcast domain. A Layer 2 switch floods them inside its VLAN. An ordinary PC is not a transit device at all; its inclusion is a simplification in the course wording."
+    },
+    {
+      "id": "E280",
+      "explanation": "Много broadcast занимает полосу локальной сети и заставляет каждый принимающий узел обрабатывать лишние кадры, поэтому замедляются и сеть, и устройства. Это не означает, что broadcast автоматически затронет все соседние подсети: роутер обычно его туда не пересылает.",
+      "explanationEn": "Excessive broadcasts consume local bandwidth and force receiving devices to process extra frames, slowing both network and device operation. They do not automatically affect every adjacent subnet because routers normally do not forward them there."
+    },
+    {
+      "id": "E281",
+      "explanation": "255.255.255 даёт 24 единичных бита; 224 = 11100000 добавляет ещё три. Итого 27 единиц, значит /27. /25 соответствовал бы .128, /26 — .192, /28 — .240.",
+      "explanationEn": "255.255.255 supplies 24 one-bits; 224 = 11100000 adds three more. Total 27, hence /27. /25 ends in .128, /26 in .192 and /28 in .240."
+    },
+    {
+      "id": "E282",
+      "explanation": "/26 оставляет 6 host bits. Всего 2^6=64 адресов, но network и broadcast не назначаются обычным хостам: 64−2=62. Не путай общее число адресов с числом usable hosts; правило здесь для обычной подсети, не специального /31.",
+      "explanationEn": "/26 leaves 6 host bits. There are 2^6=64 total addresses, but network and broadcast are not ordinary host addresses: 64−2=62. Total addresses and usable hosts differ; this rule applies to an ordinary subnet, not a special /31 link."
+    },
+    {
+      "id": "E283",
+      "explanation": "Если хосту оставлено 5 бит из 32, сети принадлежит 32−5=27: /27, маска 255.255.255.224. Нужное число нулей в конце маски равно 5; остальные варианты оставляют другое количество host bits.",
+      "explanationEn": "Leaving 5 host bits out of 32 gives 32−5=27 network bits: /27, mask 255.255.255.224. The mask must end with 5 zero-bits; the other options leave a different number of host bits."
+    },
+    {
+      "id": "E284",
+      "explanation": "Переход /24 → /26 заимствует 2 бита, значит 2^2=4 равные подсети: .0/26, .64/26, .128/26 и .192/26. Число 64 — адресов в одной подсети, а не число подсетей.",
+      "explanationEn": "Moving /24 → /26 borrows two bits, producing 2^2=4 equal subnets: .0/26, .64/26, .128/26 and .192/26. Sixty-four is the number of addresses in each subnet, not the number of subnets."
+    },
+    {
+      "id": "E285",
+      "explanation": "/20 — двадцать единиц: 11111111.11111111.11110000.00000000 = 255.255.240.0. В третьем октете четыре единицы дают 128+64+32+16=240. 224 означало бы только /19.",
+      "explanationEn": "/20 is twenty one-bits: 11111111.11111111.11110000.00000000 = 255.255.240.0. Four ones in the third octet sum to 128+64+32+16=240. A third octet of 224 would mean /19."
+    },
+    {
+      "id": "E286",
+      "explanation": "VLSM разрешает разные длины префиксов внутри исходного блока: например /25 для большой LAN и /30 для point-to-point. Размер выбирается по требованиям. Одинаковый размер всех подсетей — FLSM; повторное деление допустимо, пока хватает бит и блоки не пересекаются.",
+      "explanationEn": "VLSM permits different prefix lengths inside a parent block, such as /25 for a large LAN and /30 for point-to-point. Requirements determine size. Equal-size subnets describe FLSM; further subdivision is allowed as long as bits remain and blocks do not overlap."
+    },
+    {
+      "id": "E287",
+      "explanation": "Побитовое AND сохраняет биты назначения под единицами маски и обнуляет host bits, получая network address. Broadcast получается, наоборот, установкой всех host bits в 1. Проверка повреждённых кадров относится к FCS, не к AND адреса и маски.",
+      "explanationEn": "Bitwise AND preserves destination bits beneath mask ones and zeros the host bits, yielding the network address. Broadcast instead sets every host bit to one. Checking damaged frames uses FCS, not an address-mask AND operation."
+    },
+    {
+      "id": "E288",
+      "explanation": "192.168.1.0/27: /27 оставляет 5 host bits. Всего 2^5=32 адресов, но network и broadcast не назначаются обычным хостам: 32−2=30. Не путай общее число адресов с числом usable hosts; правило здесь для обычной подсети, не специального /31.",
+      "explanationEn": "192.168.1.0/27: /27 leaves 5 host bits. There are 2^5=32 total addresses, but network and broadcast are not ordinary host addresses: 32−2=30. Total addresses and usable hosts differ; this rule applies to an ordinary subnet, not a special /31 link."
+    },
+    {
+      "id": "E289",
+      "explanation": "Если хосту оставлено 4 бит из 32, сети принадлежит 32−4=28: /28, маска 255.255.255.240. Нужное число нулей в конце маски равно 4; остальные варианты оставляют другое количество host bits.",
+      "explanationEn": "Leaving 4 host bits out of 32 gives 32−4=28 network bits: /28, mask 255.255.255.240. The mask must end with 4 zero-bits; the other options leave a different number of host bits."
+    },
+    {
+      "id": "E290",
+      "explanation": "В базовом разбиении IPv 4 есть network portion и host portion; границу задаёт mask/prefix. Subnet bits можно выделить внутри сетевой части при более подробном разбиении, но это не третья основная часть наряду с network/host. Physical относится к MAC, broadcast — значение адреса, а не отдельная часть.",
+      "explanationEn": "The basic IPv 4 division is network portion and host portion, separated by the mask/prefix. Subnet bits can be identified within the network portion in a more detailed hierarchy, but are not a third basic part. Physical refers to MAC; broadcast is an address value, not a separate portion."
+    },
+    {
+      "id": "E291",
+      "explanation": "/26 оставляет 6 host bits. Всего 2^6=64 адресов, но network и broadcast не назначаются обычным хостам: 64−2=62. Не путай общее число адресов с числом usable hosts; правило здесь для обычной подсети, не специального /31.",
+      "explanationEn": "/26 leaves 6 host bits. There are 2^6=64 total addresses, but network and broadcast are not ordinary host addresses: 64−2=62. Total addresses and usable hosts differ; this rule applies to an ordinary subnet, not a special /31 link."
+    },
+    {
+      "id": "E292",
+      "explanation": "/24 даёт сеть 172.17.4.0 и broadcast 172.17.4.255. 172.17.4.250 лежит между ними (.1–.254), значит host address. Private-статус 172.17.x.x этому не мешает; multicast начинается с 224–239, а не 172.",
+      "explanationEn": "/24 yields network 172.17.4.0 and broadcast 172.17.4.255. 172.17.4.250 is inside the usable .1–.254 range, making it a host address. Being private does not prevent that; multicast begins with 224–239, not 172."
+    },
+    {
+      "id": "E293",
+      "explanation": "/28 оставляет 4 host bits. Всего 2^4=16 адресов, но network и broadcast не назначаются обычным хостам: 16−2=14. Не путай общее число адресов с числом usable hosts; правило здесь для обычной подсети, не специального /31.",
+      "explanationEn": "/28 leaves 4 host bits. There are 2^4=16 total addresses, but network and broadcast are not ordinary host addresses: 16−2=14. Total addresses and usable hosts differ; this rule applies to an ordinary subnet, not a special /31 link."
+    },
+    {
+      "id": "E294",
+      "explanation": "Маска вместе с IP показывает, к какой подсети относится хост: IP AND mask = network. Она не шифрует адрес и не скрывает его от посторонних. Public/private определяется выделенными диапазонами; одного назначения маски недостаточно для уникального адреса хоста.",
+      "explanationEn": "The mask combines with IP to identify its subnet: IP AND mask = network. It does not encrypt or conceal the address. Public/private classification depends on designated ranges; a mask alone does not uniquely identify a host."
+    },
+    {
+      "id": "E295",
+      "explanation": "255.255.255.224: /27 оставляет 5 host bits. Всего 2^5=32 адресов, но network и broadcast не назначаются обычным хостам: 32−2=30. Не путай общее число адресов с числом usable hosts; правило здесь для обычной подсети, не специального /31.",
+      "explanationEn": "255.255.255.224: /27 leaves 5 host bits. There are 2^5=32 total addresses, but network and broadcast are not ordinary host addresses: 32−2=30. Total addresses and usable hosts differ; this rule applies to an ordinary subnet, not a special /31 link."
+    },
+    {
+      "id": "E480",
+      "explanation": "/27 имеет шаг 32: сеть .32 охватывает .32–.63, usable .33–.62, поэтому подходит .48; .64/27 даёт usable .65–.94, подходит .68; .96/27 даёт usable .97–.126, подходит .121. Проверяется попадание в интервал, исключая network/broadcast.",
+      "explanationEn": "A /27 advances in blocks of 32: .32 covers .32–.63 with usable .33–.62, so .48 fits; .64/27 has usable .65–.94, so .68 fits; .96/27 has usable .97–.126, so .121 fits. Check interval membership while excluding network/broadcast."
+    },
+    {
+      "id": "E481",
+      "explanation": "255.255.252.0 = /22: 22 сетевых и 10 хостовых бит. 2^10−2=1022 usable addresses. Для 172.16.128.0/22 весь блок .128.0–.131.255, пригодны .128.1–.131.254. 1024 — общий размер без вычитания двух специальных адресов.",
+      "explanationEn": "255.255.252.0 is /22, leaving ten host bits. 2^10−2=1022 usable addresses. 172.16.128.0/22 spans .128.0–.131.255, usable .128.1–.131.254. 1024 counts every address without subtracting network and broadcast."
+    },
+    {
+      "id": "E482",
+      "explanation": "IPv 4 multicast — 224.0.0.0/4, то есть 224.0.0.0–239.255.255.255. 240/4 зарезервирован, 169.254/16 — link-local, 127/8 — loopback. Это разные назначения, несмотря на общий статус специальных диапазонов.",
+      "explanationEn": "IPv 4 multicast is 224.0.0.0/4, or 224.0.0.0–239.255.255.255. 240/4 is reserved, 169.254/16 link-local and 127/8 loopback. These are distinct purposes even though all are special ranges."
+    },
+    {
+      "id": "E484",
+      "explanation": "Для 126 хостов нужно 7 бит: 2^7−2=126. Префикс 32−7=/25, маска 255.255.255.128. /24 тоже вместит, но оставит лишний host bit и больший блок; /27 и /28 слишком малы.",
+      "explanationEn": "126 hosts require seven host bits: 2^7−2=126. Thus 32−7=/25, mask 255.255.255.128. /24 would also fit but uses an unnecessarily larger block; /27 and /28 are too small."
+    },
+    {
+      "id": "E485",
+      "explanation": "25 хостам нужен /27: 32 адреса, 30 usable. .64/27 стоит на правильной границе и даёт .65–.94. /28 даёт только 14 хостов; .160/26, .224/26 и .240/27 не являются выровненными адресами сети соответствующей длины. Без схемы отдельно не подтверждается условие «не занято», поэтому карточка остаётся условной.",
+      "explanationEn": "25 hosts need /27: 32 total and 30 usable. .64/27 is aligned and provides .65–.94. /28 has only 14 hosts; .160/26, .224/26 and .240/27 are not aligned network addresses for those prefixes. The missing exhibit prevents checking the “not already used” condition, so the card remains conditional."
+    },
+    {
+      "id": "E487",
+      "explanation": "192.168.10.128/26: /26 оставляет 6 host bits. Всего 2^6=64 адресов, но network и broadcast не назначаются обычным хостам: 64−2=62. Не путай общее число адресов с числом usable hosts; правило здесь для обычной подсети, не специального /31.",
+      "explanationEn": "192.168.10.128/26: /26 leaves 6 host bits. There are 2^6=64 total addresses, but network and broadcast are not ordinary host addresses: 64−2=62. Total addresses and usable hosts differ; this rule applies to an ordinary subnet, not a special /31 link."
+    },
+    {
+      "id": "E488",
+      "explanation": "Directed broadcast адресует всех узлов конкретной подсети, например её последний адрес. Limited broadcast 255.255.255.255 ограничен своим каналом; multicast выбирает группу, unicast один хост. Название directed broadcast не означает, что роутеры обязаны его пропускать: по умолчанию пересылка обычно запрещена.",
+      "explanationEn": "A directed broadcast targets every host in a specified subnet, using that subnet’s final address. Limited broadcast 255.255.255.255 stays on-link; multicast selects a group and unicast one host. The name does not mean routers must forward it—forwarding is normally disabled by default."
+    },
+    {
+      "id": "E489",
+      "explanation": "172.16.16.0/22: маска 255.255.252.0, шаг третьего октета 256−252=4. Блок начинается с 16 и заканчивается перед 20, значит последний адрес 172.16.19.255. .16.255 обрезает блок как /24, а .20.255 уже за пределами. Эти данные полностью есть в тексте; схема для расчёта не нужна.",
+      "explanationEn": "172.16.16.0/22 uses 255.255.252.0, a third-octet block size of 256−252=4. The block starts at 16 and ends before 20, so its last address is 172.16.19.255. .16.255 treats it like /24 and .20.255 lies outside. All required numbers are in the text; no exhibit is needed.",
+      "correction": {
+        "answers": [
+          "172.16.19.255"
+        ],
+        "correct": [
+          2
+        ],
+        "answerText": "172.16.19.255.",
+        "eligible": true,
+        "caution": ""
+      }
+    },
+    {
+      "id": "E505",
+      "explanation": "240.2.6.255 входит в reserved 240/4; 172.19.20.5 — private 172.16/12; 192.0.2.123 — TEST-NET-1 192.0.2/24; 169.254.1.5 — link-local 169.254/16; 127.0.0.1 — loopback 127/8. Классификация следует из диапазона, не из того, оканчивается ли адрес на .255.",
+      "explanationEn": "240.2.6.255 lies in reserved 240/4; 172.19.20.5 in private 172.16/12; 192.0.2.123 in TEST-NET-1 192.0.2/24; 169.254.1.5 in link-local 169.254/16; 127.0.0.1 in loopback 127/8. Classification follows the range, not whether an address ends in .255."
+    },
+    {
+      "id": "E507",
+      "explanation": "192.168.1.64/26 охватывает .64–.127, usable .65–.126, поэтому .96 — хост. .32/27 заканчивается .63, .32/28 — .47, .64/29 — .71: ни одна из них .96 не содержит. При /27 сеть .96 была бы network address, но здесь выбран /26.",
+      "explanationEn": "192.168.1.64/26 spans .64–.127, usable .65–.126, so .96 is a host. .32/27 ends at .63, .32/28 at .47 and .64/29 at .71; none contains .96. With a /27 starting at .96 it would be a network address, but the chosen mask is /26."
+    },
+    {
+      "id": "E509",
+      "explanation": "Multicast получает специально определённая группа, в которую вступили получатели. Это не один fixed host, не любые узлы с одинаковым unicast IP и не «ближайший сосед»: последнее ближе к идее anycast.",
+      "explanationEn": "Multicast is received by a defined group whose receivers join it. It is not one fixed host, arbitrary hosts sharing a unicast IP, or the nearest neighbor—the latter resembles anycast rather than multicast."
+    },
+    {
+      "id": "E517",
+      "explanation": "interface vlan 1 выбирает логический Switch Virtual Interface; ip address назначает ему IP/маску, no shutdown включает его административно. Здесь не выбран физический switchport. Telnet требует ещё настроек VTY; password encryption вообще не выполняется этими командами.",
+      "explanationEn": "interface vlan 1 selects a logical Switch Virtual Interface; ip address assigns its address/mask and no shutdown administratively enables it. No physical switchport was selected. Telnet requires additional VTY configuration; these commands do not encrypt passwords."
+    },
+    {
+      "id": "E532",
+      "explanation": "Multicast предназначен selected group: не всем узлам и не единственному заранее указанному хосту. Сам по себе IP multicast не требует подтверждения каждого сообщения; надёжность зависит от протокола/приложения поверх него.",
+      "explanationEn": "Multicast targets a selected group rather than all hosts or one individually named host. IP multicast itself does not require acknowledgments for every message; reliability depends on the protocol/application above it."
+    },
+    {
+      "id": "E611",
+      "explanation": "В приведённой конфигурации gi 0/0 помечен Connects to the Store LAN и имеет 172.19.98.230/24: именно этот локальный интерфейс роутера — gateway нового узла Store. .98.1 нигде не настроен; .99.99 принадлежит Branch, а 10.98.99.254 и 209.165.200.120 — WAN/ISP. Текста достаточно без картинки.",
+      "explanationEn": "The supplied configuration labels gi 0/0 “Connects to the Store LAN” and assigns 172.19.98.230/24, making that local router interface the Store host’s gateway. .98.1 is not configured; .99.99 belongs to Branch and 10.98.99.254/209.165.200.120 to WAN/ISP. The text is sufficient without the exhibit.",
+      "correction": {
+        "answers": [
+          "172.19.98.230"
+        ],
+        "correct": [
+          0
+        ],
+        "answerText": "172.19.98.230.",
+        "eligible": true,
+        "caution": ""
+      }
+    },
+    {
+      "id": "E634",
+      "explanation": "Discover отправляет клиент, которому нужен адрес. В начальном обмене он использует IP destination 255.255.255.255 и Ethernet broadcast destination; кадр получают узлы LAN, но DHCP-сервис отвечает предложением (или relay пересылает). Source MAC — собственный MAC клиента, не FF:FF:FF:FF:FF:FF. Серверское предложение называется Offer, не Discover.",
+      "explanationEn": "A client seeking an address sends Discover. Initially it uses destination IP 255.255.255.255 and Ethernet broadcast destination; LAN nodes receive it, while the DHCP service responds with an offer (or a relay forwards it). Source MAC is the client’s own MAC, not FF:FF:FF:FF:FF:FF. The server’s offer is Offer, not Discover."
+    },
+    {
+      "id": "E685",
+      "explanation": "SVI создаётся программно для VLAN; IP и mask позволяют обращаться к самому switch по IP из сети. Это не отдельный физический интерфейс. Его рабочее состояние зависит также от административного включения и состояния VLAN/портов, поэтому нельзя обещать автоматическую готовность всех SVI или ненужность no shutdown.",
+      "explanationEn": "An SVI is a software VLAN interface; its IP/mask enables IP management of the switch itself. It is not a separate physical interface. Operational state also depends on administrative enablement and VLAN/port state, so arbitrary SVIs are not guaranteed preconfigured or independent of no shutdown."
+    },
+    {
+      "id": "E698",
+      "explanation": "Поле destination IPv 4 address определяет, направлен пакет одному хосту, multicast-группе или broadcast-получателям. Protocol — номер вложенного протокола, TTL — ограничитель переходов, Header Checksum — контроль заголовка; они не содержат адрес получателя.",
+      "explanationEn": "Destination IPv 4 address determines whether the packet targets a unicast host, multicast group or broadcast recipients. Protocol identifies the carried protocol, TTL limits hops and Header Checksum checks the header; none contains the recipient address."
+    },
+    {
+      "id": "E705",
+      "explanation": "gi 0/1 описан как Connects to the Registrar LAN и настроен 192.168.235.234/24 — это gateway нового Registrar-хоста. .235.1 отсутствует в конфигурации; .234.114 относится к Manager LAN; WAN/ISP-адреса не находятся на локальном интерфейсе Registrar. Схема не нужна: всё указано командами.",
+      "explanationEn": "gi 0/1 is described as “Connects to the Registrar LAN” and configured as 192.168.235.234/24, making it the new Registrar host’s gateway. .235.1 is not configured; .234.114 serves Manager LAN; WAN/ISP addresses are not the local Registrar interface. The commands provide all required evidence.",
+      "correction": {
+        "answers": [
+          "192.168.235.234"
+        ],
+        "correct": [
+          0
+        ],
+        "answerText": "192.168.235.234.",
+        "eligible": true,
+        "caution": ""
+      }
+    },
+    {
+      "id": "E707",
+      "explanation": "Для .77/28 шаг 16: floor(77/16)×16=64, broadcast 64+15=79. Для .17/30 шаг 4: network 16, broadcast 19. Для .35/29 шаг 8: network 32, broadcast 39. Первое число блока — network, последнее — broadcast; адреса устройств лежат между ними.",
+      "explanationEn": "For .77/28, block size 16 gives floor(77/16)×16=64 and broadcast 64+15=79. For .17/30, block size 4 gives network 16/broadcast 19. For .35/29, block size 8 gives network 32/broadcast 39. Each block’s first/last addresses are network/broadcast; the devices lie between them."
+    },
+    {
+      "id": "E709",
+      "explanation": "Если хосту оставлено 6 бит из 32, сети принадлежит 32−6=26: /26, маска 255.255.255.192. Нужное число нулей в конце маски равно 6; остальные варианты оставляют другое количество host bits.",
+      "explanationEn": "Leaving 6 host bits out of 32 gives 32−6=26 network bits: /26, mask 255.255.255.192. The mask must end with 6 zero-bits; the other options leave a different number of host bits."
+    },
+    {
+      "id": "E710",
+      "explanation": "/29 означает блоки по 8: .0–.7, .8–.15, .16–.23. .15 — последний адрес блока .8/29, то есть broadcast. Network address здесь .8, хосты .9–.14; назвать .15 обычным unicast-host нельзя.",
+      "explanationEn": "/29 creates blocks of eight: .0–.7, .8–.15, .16–.23. .15 is the final address of .8/29, therefore broadcast. The network address is .8 and usable hosts .9–.14; .15 is not an ordinary unicast host."
+    },
+    {
+      "id": "E734",
+      "explanation": "При отправке B → D в другую подсеть L 3 остаётся B IP → D IP: 172.16.10.200 → 172.16.20.200. L 2 идёт B MAC → MAC локального интерфейса роутера, а не MAC D. Сохранённый ключ использует bb → ab. Без схемы привязка MAC ab к этому интерфейсу не проверена; вывод о ролях адресов проверен.",
+      "explanationEn": "When B sends to D on another subnet, Layer 3 remains B IP → D IP: 172.16.10.200 → 172.16.20.200. Layer 2 uses B’s MAC → its local router-interface MAC, not D’s MAC. The saved key uses bb → ab. Without the exhibit, the assignment of ab to that interface is unverified; the address roles are established."
+    },
+    {
+      "id": "E762",
+      "explanation": "198.133.219.2 — public unicast в задании; 240.2.6.255 входит в reserved/experimental 240/4; 169.254.1.5 — link-local 169.254/16; 127.0.0.1 — loopback. Назначение определяется специальным префиксом, а не последним октетом.",
+      "explanationEn": "198.133.219.2 is public unicast here; 240.2.6.255 is in reserved/experimental 240/4; 169.254.1.5 is link-local 169.254/16; 127.0.0.1 is loopback. Special prefixes, not the last octet, determine their purpose."
+    },
+    {
+      "id": "E773",
+      "explanation": "10 хостам минимально нужен /28: 16 адресов,14 usable. /28 начинается на кратном 16, поэтому .208/28 и .224/28 корректны; .200/28 не выровнен. /27 больше необходимого, а .200/27 и .240/27 ещё и не сетевые границы. Без схемы нельзя независимо подтвердить, что .208 и .224 свободны.",
+      "explanationEn": "Ten hosts minimally need /28: 16 total,14 usable. /28 starts at multiples of 16, so .208/28 and .224/28 are aligned; .200/28 is not. /27 wastes more addresses, and .200/27/.240/27 are not network boundaries. The missing exhibit prevents independently verifying that .208 and .224 are unused."
+    },
+    {
+      "id": "E781",
+      "explanation": "Маска .192 = /26 даёт 62 usable адреса на подсеть; четыре подсети дают 4×62=248. Ответ 200 означал бы, что суммарно занято 48 host addresses: 248−48=200. Числа устройств на отсутствующей схеме не известны, поэтому 200 — сохранённый, но не подтверждённый результат. Нельзя подставлять его для любой схемы из четырёх /26.",
+      "explanationEn": "Mask .192 is /26, with 62 usable addresses per subnet and 4×62=248 across four. An answer of 200 implies 48 host addresses used:248−48=200. The missing diagram’s device counts are unknown, so 200 is a saved but unverified result, not a universal answer for four /26 networks."
+    },
+    {
+      "id": "E789",
+      "explanation": "Для 90 устройств /26 дал бы только 62 usable, недостаточно. /25 даёт 2^7−2=126, поэтому минимально достаточный блок —255.255.255.128. Остальные предложенные /27,/28,/29 дают 30,14,6 хостов. «Smallest» здесь означает наименьший блок адресов, вмещающий 90.",
+      "explanationEn": "For 90 devices, /26 provides only 62 usable addresses, too few. /25 provides 2^7−2=126, so 255.255.255.128 is the smallest sufficient block. The other offered /27,/28,/29 masks provide 30,14,6 hosts. “Smallest” means the smallest address block that accommodates 90."
+    }
+  ],
+  "notes": {
+    "ru": "## Аудит NetAcad 11: подсети от простого к сложному\n\n### AND и длина префикса\n\nБитовая операция: 1 AND 1 = 1; все остальные сочетания дают 0. Поэтому mask сохраняет network bits и обнуляет host bits. /24, /16 и /8 проходят по границам октетов, но большинство задач требуют границы внутри октета. Шаг блока в меняющемся октете = 256 − октет маски. Например, /22: 255.255.252.0, шаг 4 в третьем октете; 172.16.130.7 принадлежит 172.16.128.0/22, broadcast 172.16.131.255.\n\n### Сколько сетей и сколько хостов — две разные проверки\n\nДля N сетей выбери минимальное b, где 2^b ≥ N. Для H хостов выбери минимальное h, где 2^h−2 ≥ H. Новый префикс = старый+b, но при этом 32−новый префикс должен оставлять достаточно host bits.\n\n100 сетей из 172.16.0.0/16: 6 бит дают 64, 7 дают 128 → /23. В каждой 512 адресов, 510 usable; шаг 2 в третьем октете. 1000 сетей из 10.0.0.0/8: 9 бит дают 512, 10 дают 1024 → /18, маска 255.255.192.0. В каждой 16384 адреса, 16382 usable; шаг 64 в третьем октете, после 10.0.192.0/18 идёт 10.1.0.0/18.\n\n### Полный пример VLSM\n\nНужно 60, 28, 12, 2 хоста из 192.168.10.0/24. Сортируем по убыванию и выделяем: 60→.0/26 (.1–.62), 28→.64/27 (.65–.94), 12→.96/28 (.97–.110), 2→.112/30 (.113–.114). Broadcast соответственно.63, .95, .111, .115. Все начала выровнены и блоки не пересекаются. Свободное пространство после.115 нельзя называть одним произвольным CIDR-префиксом: при дальнейшей раздаче снова учитывай границы блоков.\n\n### План адресации и старые классы\n\nИсторические Class A/B/C имели default /8, /16, /24; современная CIDR-маска задаётся явно и важнее первого октета. Class D обозначал multicast 224/4, Class E — reserved 240/4. Classful-таблицы полезны для старых формулировок, но не заменяют subnet mask.\n\nСегментируют сети ради уменьшения broadcast, разделения подразделений/политик безопасности и удобного управления. До расчёта составь список LAN/WAN/DMZ, количества хостов и запаса роста. Клиентам обычно DHCP; шлюзам, серверам, принтерам и управлению сетевым оборудованием — предсказуемые адреса (static или резервирование). Исключи их из динамического пула. Public адрес можно использовать и внутри сети, если он выделен организации; private нельзя просто объявить публично маршрутизируемым.\n\nДля PT-лабы: выпиши network/prefix, usable range, broadcast иgateway каждой LAN; назначь адреса, проверь интерфейсы up/up иping локального шлюза/удалённого узла. Метод здесь объяснён; результат конкретного отсутствующего PT-файла не считается выполненным.\n",
+    "en": "## NetAcad 11 audit: subnetting from basics to planning\n\n### AND and prefix length\n\nBitwise AND gives 1 only for 1 AND 1; all other pairs give 0. Thus the mask preserves network bits and clears host bits. /24, /16, /8 align with octet boundaries, while many problems cut inside an octet. Block size in the changing octet =256 minus that mask octet. Example: /22 uses 255.255.252.0, step 4 in octet 3; 172.16.130.7 belongs to 172.16.128.0/22, broadcast 172.16.131.255.\n\n### Subnet count and host count are separate checks\n\nFor N subnets, choose the smallest b with 2^b≥N. For H hosts, choose the smallest h with 2^h−2≥H. New prefix=old prefix+b, while 32−new prefix must still leave enough host bits.\n\n100 subnets from 172.16.0.0/16: 6 bits give 64, 7 give 128→/23. Each has 512 addresses, 510 usable, with step 2 in octet 3.1000 subnets from 10.0.0.0/8: 9 bits give 512, 10 give 1024→/18, mask 255.255.192.0. Each has 16384 addresses, 16382 usable; step 64 in octet 3, so 10.0.192.0/18 is followed by 10.1.0.0/18.\n\n### Complete VLSM example\n\nFit 60, 28, 12, 2 hosts into 192.168.10.0/24. Sort largest first: 60→.0/26 (.1–.62), 28→.64/27 (.65–.94), 12→.96/28 (.97–.110), 2→.112/30 (.113–.114). Broadcasts are.63, .95, .111, .115. Every block is aligned and non-overlapping. Space after.115 is not automatically one arbitrary CIDR block; future allocation must respect boundaries again.\n\n### Address planning and historical classes\n\nHistorical Classes A/B/C used default /8, /16, /24; modern CIDR explicitly specifies the mask, which takes precedence over first-octet assumptions. Class D meant multicast 224/4, Class E reserved 240/4. Classful tables explain older wording but never replace the subnet mask.\n\nSegmentation reduces broadcasts, separates departments/security policies and simplifies management. Before calculating, inventory LAN/WAN/DMZ networks, host requirements and growth. Clients commonly use DHCP; gateways, servers, printers and infrastructure management need predictable addresses (static or reserved). Exclude these from dynamic pools. An organization may use its assigned public addresses internally; private addresses cannot simply be advertised as globally routable.\n\nFor a PT lab, record network/prefix, usable range, broadcast and gateway for each LAN; configure addresses, verify interfaces up/up and ping the local gateway/remote host. This explains the method; it does not claim completion of an unavailable PT activity.\n"
+  },
+  "coverage": [
+    {
+      "topic": "Address structure, mask, AND, network/host/broadcast",
+      "source": "NetAcad_данные/модули/11.md §11.1",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Unicast/broadcast/multicast",
+      "source": "NetAcad_данные/модули/11.md §11.2",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Public/private/special addresses, legacy classes, registries",
+      "source": "NetAcad_данные/модули/11.md §11.3",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Broadcast domains and reasons for segmentation",
+      "source": "NetAcad_данные/модули/11.md §11.4",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Octet and non-octet subnetting, block size",
+      "source": "NetAcad_данные/модули/11.md §11.5",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Subnet /16 and /8; 100 and 1000 subnet examples",
+      "source": "NetAcad_данные/модули/11.md §11.6",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Requirements, efficiency and borrowed bits",
+      "source": "NetAcad_данные/модули/11.md §11.7",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "VLSM sizing, ordering and topology assignment",
+      "source": "NetAcad_данные/модули/11.md §11.8",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Structured address design and device roles",
+      "source": "NetAcad_данные/модули/11.md §11.9",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    },
+    {
+      "topic": "Practice and module quiz",
+      "source": "NetAcad_данные/модули/11.md §11.10",
+      "status": "explained; numeric methods checked; linked PT/video activities not executed"
+    }
+  ],
+  "issues": [
+    {
+      "id": "E277",
+      "issue": "Three true options despite Choose two; exclude scored quiz."
+    },
+    {
+      "ids": [
+        "E489",
+        "E611",
+        "E705"
+      ],
+      "issue": "Previously marked missing-exhibit but complete data in text; verified and can be eligible."
+    },
+    {
+      "ids": [
+        "E485",
+        "E734",
+        "E773",
+        "E781"
+      ],
+      "issue": "Exhibit-dependent availability/MAC/host-count remains unverified; keep ineligible."
+    }
+  ],
+  "subsections": [
+    {
+      "id": "11.0.1",
+      "title": "Why should I take this module?",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.0.2",
+      "title": "What will I learn to do in this module?",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.1",
+      "title": "Network and Host Portions",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.2",
+      "title": "The Subnet Mask",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.3",
+      "title": "The Prefix Length",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.4",
+      "title": "Determining the Network - Logical AND",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.5",
+      "title": "Video - Network, Host and Broadcast Addresses",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "11.1.6",
+      "title": "Network, Host, and Broadcast Addresses",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.7",
+      "title": "Activity - ANDing to Determine the Network Address",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.1.8",
+      "title": "Check Your Understanding - IPv4 Address Structure",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.2.1",
+      "title": "Unicast",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.2.2",
+      "title": "Broadcast",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.2.3",
+      "title": "Multicast",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.2.4",
+      "title": "Activity - Unicast, Broadcast, or Multicast",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.1",
+      "title": "Public and Private IPv4 Addresses",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.2",
+      "title": "Routing to the Internet",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.3",
+      "title": "Activity - Pass or Block IPv4 Addresses",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.4",
+      "title": "Special Use IPv4 Addresses",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.5",
+      "title": "Legacy Classful Addressing",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.6",
+      "title": "Assignment of IP Addresses",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.7",
+      "title": "Activity - Public or Private IPv4 Address",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.3.8",
+      "title": "Check Your Understanding - Types of IPv4 Addresses",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.4.1",
+      "title": "Broadcast Domains and Segmentation",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.4.2",
+      "title": "Problems with Large Broadcast Domains",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.4.3",
+      "title": "Reasons for Segmenting Networks",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.4.4",
+      "title": "Check Your Understanding - Network Segmentation",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.5.1",
+      "title": "Subnet on an Octet Boundary",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.5.2",
+      "title": "Subnet within an Octet Boundary",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.5.3",
+      "title": "Video - The Subnet Mask",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "11.5.4",
+      "title": "Video - Subnet with the Magic Number",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "11.5.5",
+      "title": "Packet Tracer - Subnet an IPv4 Network",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "11.6.1",
+      "title": "Create Subnets with a Slash 16 prefix",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.6.2",
+      "title": "Create 100 Subnets with a Slash 16 prefix",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.6.3",
+      "title": "Create 1000 Subnets with a Slash 8 prefix",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.6.4",
+      "title": "Video - Subnet Across Multiple Octets",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "11.6.5",
+      "title": "Activity - Calculate the Subnet Mask",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.6.6",
+      "title": "Lab - Calculate IPv4 Subnets",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "11.7.1",
+      "title": "Subnet Private versus Public IPv4 Address Space",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.7.2",
+      "title": "Minimize Unused Host IPv4 Addresses and Maximize Subnets",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.7.3",
+      "title": "Example - Efficient IPv4 Subnetting",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.7.4",
+      "title": "Activity - Determine the Number of Bits to Borrow",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.7.5",
+      "title": "Packet Tracer - Subnetting Scenario",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "11.8.1",
+      "title": "Video - VLSM Basics",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "11.8.2",
+      "title": "Video - VLSM Example",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "11.8.3",
+      "title": "IPv4 Address Conservation",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.8.4",
+      "title": "VLSM",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.8.5",
+      "title": "VLSM Topology Address Assignment",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.8.6",
+      "title": "Activity - VLSM Practice",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.9.1",
+      "title": "IPv4 Network Address Planning",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.9.2",
+      "title": "Device Address Assignment",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "11.9.3",
+      "title": "Packet Tracer - VLSM Design and Implementation Practice",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "11.10.1",
+      "title": "Packet Tracer - Design and Implement a VLSM Addressing Scheme",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "11.10.2",
+      "title": "Lab - Design and Implement a VLSM Addressing Scheme",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "11.10.3",
+      "title": "What did I learn in this module?",
+      "status": "reviewed-against-saved-source"
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "module": 9,
+  "questions": [
+    {
+      "id": "E188",
+      "explanation": "У IPv4 multicast фиксированный Ethernet-префикс 01-00-5E, поэтому важен именно этот порядок трёх байтов. FF-FF-FF — начало broadcast FF-FF-FF-FF-FF-FF, а перестановки 01-5E-00 и FF-00-5E не являются заданным префиксом IPv4 multicast.",
+      "explanationEn": "IPv4 multicast uses the Ethernet prefix 01-00-5E in that exact byte order. FF-FF-FF begins the all-ones broadcast address; 01-5E-00 and FF-00-5E are not the defined IPv4 multicast prefix."
+    },
+    {
+      "id": "E190",
+      "explanation": "Switch читает destination MAC кадра и находит выходной порт в MAC-таблице. Repeater и hub повторяют сигнал без такого поиска, а router выбирает маршрут по адресу назначения сетевого уровня, обычно IP.",
+      "explanationEn": "A switch looks up the frame’s destination MAC to choose an output port. Repeaters and hubs repeat signals without this lookup; a router chooses a network-layer route, normally using the destination IP."
+    },
+    {
+      "id": "E191",
+      "explanation": "MAC address table связывает MAC с портом коммутатора: именно switch использует её, чтобы отправить кадр нужному получателю. Hub не выбирает отдельного получателя, router использует таблицу IP-маршрутов, modem преобразует сигналы.",
+      "explanationEn": "A MAC address table maps a MAC address to a switch port, so a switch uses it to direct a frame to its recipient. A hub does not select one destination, a router uses IP routes, and a modem converts signals."
+    },
+    {
+      "id": "E194",
+      "explanation": "Кадр пришёл через конкретный порт: его source Layer 2 address показывает, какой MAC достижим за этим портом. Поэтому коммутатор записывает source MAC входящего кадра. Destination используется для пересылки, а Layer 3 IP не является ключом MAC-таблицы.",
+      "explanationEn": "An arriving frame’s source Layer 2 address reveals which MAC is reachable through its ingress port. The switch therefore learns the source MAC of incoming frames. Destination MAC is used for forwarding, and Layer 3 IP is not the MAC table’s key."
+    },
+    {
+      "id": "E233",
+      "explanation": "Узлы в одной IP-подсети доставляют обычный unicast напрямую: destination MAC кадра — MAC конечного устройства. MAC шлюза нужен при отправке за пределы подсети. Broadcast используется для ARP-запроса при неизвестном MAC, а не как адрес назначения самого обычного кадра данных.",
+      "explanationEn": "Hosts on the same subnet deliver ordinary unicast directly, so the frame targets the destination device’s MAC. The gateway MAC is needed for an off-subnet destination. Broadcast may discover the missing MAC via ARP; it is not the normal data frame’s destination."
+    },
+    {
+      "id": "E234",
+      "explanation": "Удалённый узел нельзя достичь одним локальным Ethernet-кадром. Первый кадр поэтому адресуется локальному интерфейсу default gateway; тот маршрутизирует пакет дальше. IP назначения остаётся IP удалённого узла. Его удалённый MAC не нужен отправителю, а broadcast не доставляет обычный пакет через роутеры.",
+      "explanationEn": "A remote host cannot be reached in one local Ethernet frame. The first frame targets the local default-gateway interface, which forwards the packet onward. The destination IP remains the remote host’s IP. Its remote MAC is not needed by the sender, and broadcast does not carry normal data through routers."
+    },
+    {
+      "id": "E235",
+      "explanation": "ARP разрешает известный IPv4-адрес соседа в MAC, а IPv6 использует Neighbor Discovery (ND), включая NS/NA. DHCP выдаёт сетевые настройки, DNS переводит имена в адреса; они не выполняют это разрешение IP→MAC.",
+      "explanationEn": "ARP resolves a known neighboring IPv4 address to a MAC; IPv6 uses Neighbor Discovery (ND), including NS/NA. DHCP supplies network configuration and DNS resolves names, not the IP-to-MAC mapping asked for here."
+    },
+    {
+      "id": "E236",
+      "explanation": "ARP сначала находит MAC по IPv4 и затем хранит найденное соответствие в ARP-кэше, чтобы не повторять запрос для каждого пакета. Поэтому верны и resolving IPv4→MAC, и maintaining IPv4→MAC mappings. Доменные имена относятся к DNS, а разрешение IPv6 — к ND.",
+      "explanationEn": "ARP resolves IPv4 to MAC and caches the result so subsequent packets need not repeat the lookup. Thus both resolving IPv4-to-MAC and maintaining that mapping table are correct. Domain names belong to DNS; IPv6 address resolution belongs to ND."
+    },
+    {
+      "id": "E237",
+      "explanation": "ARP-таблица — изменяемый рабочий кэш в RAM, доступный при пересылке пакетов. Она не является загрузочным кодом ROM, образом IOS во Flash или сохранённой startup-config в NVRAM. После перезапуска динамические записи приходится узнавать заново.",
+      "explanationEn": "The ARP table is a changing working cache in RAM, consulted when packets are sent. It is not ROM boot code, the IOS image in Flash or startup-config in NVRAM. Dynamic mappings must be learned again after a restart."
+    },
+    {
+      "id": "E238",
+      "explanation": "Вопрос относится к динамически изученным ARP-записям: они временные и удаляются по таймеру. Кэш можно очистить вручную, поэтому первый вариант неверен. Статические записи существуют и не стареют автоматически, но это исключение к обычному динамическому кэшу, а не основание считать все записи постоянными.",
+      "explanationEn": "The question refers to dynamically learned ARP entries: they are temporary and age out. The cache can be cleared manually, so the first option is false. Static entries do exist and do not age automatically, but that does not make ordinary dynamic entries permanent."
+    },
+    {
+      "id": "E239",
+      "explanation": "На Cisco IOS команда show ip arp выводит IPv4→MAC соответствия. arp -a — привычная команда просмотра на ПК, arp -d удаляет записи, а show arp table не является требуемой IOS-командой среди этих вариантов.",
+      "explanationEn": "On Cisco IOS, show ip arp displays IPv4-to-MAC mappings. arp -a is a PC inspection command, arp -d deletes entries, and show arp table is not the required IOS syntax among these options."
+    },
+    {
+      "id": "E240",
+      "explanation": "ARP poisoning подсовывает ложное соответствие IP→MAC, например связывает IP шлюза с MAC атакующего, чтобы перенаправить трафик. Обычные ARP broadcasts нужны для обнаружения соседей и сами по себе не атака; hopping и starvation здесь не названия описанного механизма подмены.",
+      "explanationEn": "ARP poisoning supplies a false IP-to-MAC mapping, such as mapping the gateway IP to an attacker’s MAC to redirect traffic. Ordinary ARP broadcasts discover neighbors and are not inherently attacks; hopping and starvation do not name this mapping-spoofing mechanism."
+    },
+    {
+      "id": "E241",
+      "explanation": "Для SLAAC host запрашивает параметры через Router Solicitation, а Router Advertisement сообщает префикс и сведения о маршрутизаторе. NS/NA в первую очередь разрешают адреса соседей; NS также используется DAD, но ожидаемая пара сообщений для получения параметров SLAAC — RS/RA.",
+      "explanationEn": "For SLAAC, a host requests configuration with Router Solicitation and receives prefix/router information in Router Advertisement. NS/NA primarily resolve neighbor addresses; NS also participates in DAD, but the configuration-discovery pair asked for is RS/RA."
+    },
+    {
+      "id": "E242",
+      "explanation": "Neighbor Solicitation спрашивает MAC устройства с заданным IPv6, а Neighbor Advertisement возвращает информацию об этом соседе. Router Solicitation/Advertisement ищут маршрутизатор и параметры сети, а не заменяют эту пару для разрешения адреса обычного соседа.",
+      "explanationEn": "Neighbor Solicitation requests information for a known neighboring IPv6 address; Neighbor Advertisement supplies that neighbor’s information. Router Solicitation/Advertisement discover routers and configuration rather than performing this neighbor-resolution exchange."
+    },
+    {
+      "id": "E243",
+      "explanation": "При первоначальном разрешении адреса NS отправляется в solicited-node multicast-группу целевого IPv6: это уменьшает число узлов, обрабатывающих запрос. IPv6 не имеет broadcast. Уточнение: NS для проверки достижимости уже известного соседа может быть unicast; вопрос курса подразумевает именно address resolution.",
+      "explanationEn": "Initial address-resolution NS targets the destination IPv6 address’s solicited-node multicast group, reducing the nodes that process it. IPv6 has no broadcast. Qualification: NS used to probe a known neighbor can be unicast; this course question assumes address resolution."
+    },
+    {
+      "id": "E244",
+      "explanation": "Routing table, ARP cache и running-config — текущие изменяемые данные работающего роутера, поэтому находятся в RAM. Flash обычно хранит IOS, NVRAM — startup-config, ROM — загрузочные средства; они не заменяют оперативное хранилище этих трёх структур.",
+      "explanationEn": "The routing table, ARP cache and running-config are changing operational data, so they reside in RAM. Flash typically stores IOS, NVRAM startup-config and ROM bootstrap facilities, rather than these three live structures."
+    },
+    {
+      "id": "E245",
+      "explanation": "ARP-таблица отвечает на вопрос «какой MAC соответствует этому IPv4?». MAC→порт хранится в таблице коммутации, имя→IP — в DNS, а сеть→маршрут — в таблице маршрутизации. Эти таблицы решают разные задачи и не взаимозаменяемы.",
+      "explanationEn": "An ARP table answers “which MAC corresponds to this IPv4?” MAC-to-port belongs to the switching table, name-to-IP to DNS, and network-to-route to the routing table. They solve different problems."
+    },
+    {
+      "id": "E246",
+      "explanation": "При /24 адрес 192.168.1.255 имеет все единицы в host-части и является broadcast. Его Ethernet-назначение заранее известно: FF-FF-FF-FF-FF-FF. Поэтому это статическое служебное соответствие, а не изученный через ответ индивидуальный MAC ПК или шлюза.",
+      "explanationEn": "With /24, 192.168.1.255 has all host bits set and is the subnet broadcast. Its Ethernet destination is predetermined as FF-FF-FF-FF-FF-FF, making this a static special-purpose mapping, not a dynamically learned PC or gateway MAC."
+    },
+    {
+      "id": "E247",
+      "explanation": "arp -a показывает кэш IPv4→MAC: найди строку IP шлюза и сравни её MAC с доверенным значением. ipconfig /all показывает настройки ПК и адрес шлюза, а route print/netstat -r — маршруты; они не показывают нужное соответствие MAC шлюза.",
+      "explanationEn": "arp -a displays cached IPv4-to-MAC mappings: locate the gateway IP and compare its MAC with a trusted value. ipconfig /all shows PC configuration and the gateway IP; route print/netstat -r show routes, not the required gateway-MAC mapping."
+    },
+    {
+      "id": "E248",
+      "explanation": "Неизвестный destination MAC означает unknown unicast: switch не знает нужный порт и делает flood по разрешённым портам той же VLAN, кроме входного. Он не запускает ARP от имени отправителя и не сообщает об ошибке. «Все порты» неверно, поскольку входной исключается; адрес кадра при flood не превращается в broadcast.",
+      "explanationEn": "An unknown destination MAC causes unknown-unicast flooding through eligible ports in the same VLAN except the ingress port. The switch does not initiate ARP on the sender’s behalf or return an error. “All ports” wrongly includes ingress; flooding does not change the frame’s address into broadcast."
+    },
+    {
+      "id": "E249",
+      "explanation": "Для Ethernet MAC resolution в IPv6 отправитель использует Neighbor Solicitation, а сосед сообщает свой MAC через Neighbor Advertisement. RS/RA относятся к обнаружению роутеров и настройке; Echo Request относится к ping и сам по себе не является сообщением разрешения MAC.",
+      "explanationEn": "IPv6 Ethernet address resolution uses Neighbor Solicitation and a neighbor’s Neighbor Advertisement carrying its link-layer information. RS/RA discover routers/configuration; Echo Request is used by ping rather than being an address-resolution message."
+    },
+    {
+      "id": "E250",
+      "explanation": "ARP берёт известный IPv4 адрес устройства на своём канале и узнаёт его MAC. Через маршрутизаторы запрос не переносится, поэтому удалённый host MAC так не находят; время пути измеряют диагностикой вроде ping, а номер сети вычисляют по адресу и маске.",
+      "explanationEn": "ARP takes a known local-link IPv4 address and discovers its MAC. Requests do not traverse routers to find a remote host MAC. Round-trip time is measured with diagnostics such as ping; a network number is calculated from the address and mask."
+    },
+    {
+      "id": "E251",
+      "explanation": "Правильна функция IPv4→MAC: ARP нужен для формирования Ethernet-кадра к известному IPv4-соседу. Автоматическую выдачу IPv4 выполняет DHCP; разрешение имён и хранение их IP-соответствий относятся к DNS.",
+      "explanationEn": "IPv4-to-MAC resolution is correct: ARP supplies the Ethernet destination for a known IPv4 neighbor. DHCP assigns IPv4 configuration automatically; DNS resolves names and stores name-to-IP records."
+    },
+    {
+      "id": "E252",
+      "explanation": "Broadcast адресован всем узлам VLAN, поэтому switch разошлёт кадр по всем подходящим портам этой VLAN, кроме входного: отправитель уже имеет кадр. Специальная регистрация получателей broadcast не нужна. «Все порты» без исключения входного и без границ VLAN — неточное утверждение.",
+      "explanationEn": "Broadcast is intended for every node in the VLAN, so a switch floods eligible VLAN ports except ingress; the sender already has the frame. Broadcast receivers need no special registration. “All ports” without the ingress exception or VLAN boundary is inaccurate."
+    },
+    {
+      "id": "E253",
+      "explanation": "ARP сопоставляет IPv4 следующего локального получателя с его destination MAC для кадра. Не source MAC отправителя и не имя хоста: отправитель уже знает собственный MAC, а имена разрешает DNS.",
+      "explanationEn": "ARP maps the next local recipient’s IPv4 address to the destination MAC needed for the frame. It does not map that IP to the sender’s source MAC or a hostname: the sender already knows its MAC, and DNS resolves names."
+    },
+    {
+      "id": "E254",
+      "explanation": "Для удалённой сети следующий локальный получатель — интерфейс default gateway на LAN отправителя. ARP узнаёт именно его MAC. IP конечного узла и IP шлюза уже нужны до запроса, а MAC порта коммутатора не является адресом назначения транзитного кадра.",
+      "explanationEn": "For a remote network, the next local recipient is the default gateway’s interface on the sender’s LAN. ARP discovers that interface’s MAC. The destination/gateway IPs must already be known, and a switch port’s MAC is not the transit frame’s destination."
+    },
+    {
+      "id": "E255",
+      "explanation": "ARP даже на коммутаторе связывает IPv4 (Layer 3) с MAC (Layer 2), например для собственного управляющего IP-трафика. Не путай её с MAC-таблицей коммутатора, связывающей MAC с портом; транспортные Layer 4 порты ARP не хранит.",
+      "explanationEn": "Even on a switch, ARP maps IPv4 (Layer 3) to MAC (Layer 2), for example for its own management IP traffic. This differs from the switch’s MAC-to-port table; ARP does not store Layer 4 transport ports."
+    },
+    {
+      "id": "E256",
+      "explanation": "ARP узнаёт MAC по известному IPv4, чтобы устройство смогло создать Ethernet-кадр. Выбор пути по IP делает роутер; пересылку по MAC и обучение MAC-таблицы выполняет switch. ARP разрешает адрес, а не выполняет эти решения пересылки.",
+      "explanationEn": "ARP obtains a MAC for a known IPv4 address so the device can build an Ethernet frame. A router chooses routes by IP; a switch forwards by MAC and learns its MAC table. ARP resolves the address rather than performing those forwarding decisions."
+    },
+    {
+      "id": "E257",
+      "explanation": "FFFF.FFFF.FFFF — запись 48-битного Ethernet broadcast MAC; запрос ARP должны принять все устройства локальной LAN, пока MAC цели неизвестен. 255.255.255.255, 0.0.0.0 и 127.0.0.1 — IPv4-адреса, а 01-00-5E-00-AA-23 — multicast MAC, не broadcast.",
+      "explanationEn": "FFFF.FFFF.FFFF is the 48-bit Ethernet broadcast MAC, allowing local devices to receive the ARP request while the target MAC is unknown. 255.255.255.255, 0.0.0.0 and 127.0.0.1 are IPv4 addresses; 01-00-5E-00-AA-23 is multicast, not broadcast."
+    },
+    {
+      "id": "E491",
+      "explanation": "Modified EUI-64 выводит 64-битный interface ID из 48-битного MAC: вставляет FF:FE в середину и инвертирует U/L-бит первого байта. Случайный IID — другой способ; IPv4 и адрес от DHCPv6 не являются исходными данными EUI-64.",
+      "explanationEn": "Modified EUI-64 derives a 64-bit interface ID from the 48-bit MAC by inserting FF:FE and flipping the first byte’s U/L bit. A random IID is another method; neither IPv4 nor a DHCPv6-assigned IPv6 address is the EUI-64 input."
+    },
+    {
+      "id": "E560",
+      "explanation": "Без схемы нельзя проверить, какому интерфейсу принадлежит 00-60-2F-3A-07-CC. Сохранённый ключ верен только если это MAC следующего получателя на LAN веб-сервера: для удалённого PC1 — его локального шлюза, для локального PC1 — самого PC1. Не выбирай MAC конечного удалённого ПК только по имени адресата.",
+      "explanationEn": "Without the exhibit, ownership of 00-60-2F-3A-07-CC cannot be verified. The saved key is correct only if it is the next recipient on the server’s LAN: its local gateway for remote PC1, or PC1 itself if local. Do not select a remote endpoint’s MAC merely because it is the final recipient.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужна исходная схема: принадлежность MAC 00-60-2F-3A-07-CC не проверена."
+      }
+    },
+    {
+      "id": "E563",
+      "explanation": "01-00-5E-00-00-03 начинается с префикса IPv4 multicast 01-00-5E и имеет групповой бит. FF-FF-FF-FF-FF-FF — broadcast всем, а адреса с первыми байтами 5C и 00 имеют individual/unicast бит, поэтому не подходят.",
+      "explanationEn": "01-00-5E-00-00-03 has the IPv4 multicast prefix 01-00-5E and the group bit set. FF-FF-FF-FF-FF-FF is broadcast to all; first bytes 5C and 00 have the individual/unicast bit, so those options are not multicast."
+    },
+    {
+      "id": "E565",
+      "explanation": "Две разные операции: source MAC входящего кадра обучает таблицу MAC→порт, destination MAC затем используется для выбора выходного порта. IP-таблица не строится обычным L2-switch по кадрам, неизвестный IP не является правилом его пересылки, а по destination MAC нельзя достоверно узнать местоположение отправителя.",
+      "explanationEn": "The two operations are distinct: an incoming frame’s source MAC teaches the MAC-to-port table, and destination MAC selects the output port. An ordinary Layer 2 switch does not build IP routes from frames or forward based on unknown IPs; learning from destination MAC would not reveal the sender’s location."
+    },
+    {
+      "id": "E578",
+      "explanation": "Поскольку source MAC уже есть в таблице, новый кадр подтверждает активность устройства и обновляет таймер записи (при смене порта также обновляется порт). Новый адрес добавляют только если он ещё неизвестен. Пересылка определяется destination MAC, а не самим фактом известного source MAC.",
+      "explanationEn": "An already-known source MAC refreshes its entry’s age timer because the device has been seen again; a changed ingress port can also update the mapping. A new entry is needed only for an unknown source. Forwarding depends on destination MAC, not merely on a known source."
+    },
+    {
+      "id": "E588",
+      "explanation": "ARP request находится в Ethernet broadcast-кадре, поэтому все устройства локального broadcast domain принимают и проверяют запрос. Отвечает только владелец target IPv4 в обычном сценарии. Switch не отбрасывает такой кадр, а router не переносит его broadcast на другие интерфейсы.",
+      "explanationEn": "An ARP request is carried in an Ethernet broadcast frame, so local broadcast-domain devices receive and examine it. Normally only the target IPv4 owner replies. A switch forwards the broadcast; a router does not propagate it out other interfaces."
+    },
+    {
+      "id": "E589",
+      "explanation": "Flood нужен для destination broadcast (получатели все) и unknown destination unicast (порт получателя ещё неизвестен). Известный unicast отправляется по найденному порту. Source broadcast/multicast не является нормальным адресом отправителя Ethernet и не служит правилом выбора flood. Все действия ограничены VLAN и исключают входной порт.",
+      "explanationEn": "Flooding is needed for destination broadcast (all recipients) and unknown destination unicast (recipient port not learned). Known unicast uses its learned port. Broadcast/multicast source addresses are not normal Ethernet source addresses and are not flooding criteria. Flooding stays within the VLAN and excludes ingress."
+    },
+    {
+      "id": "E590",
+      "explanation": "Ключ «все порты, кроме 4» предполагает, что кадр пришёл на порт 4, а MAC PC3 отсутствует в таблице: unknown unicast рассылается на остальные подходящие порты VLAN. Если MAC PC3 известен, используется только его порт. Без исходной схемы и таблицы эти предпосылки проверить нельзя.",
+      "explanationEn": "“All ports except port 4” assumes ingress is port 4 and PC3’s MAC is unknown, causing unknown-unicast flooding to the other eligible VLAN ports. If PC3 is known, only its learned port is used. The original exhibit/table is required to verify those assumptions.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужны схема и MAC-таблица: входной порт 4 и отсутствие PC3 в таблице не проверены."
+      }
+    },
+    {
+      "id": "E591",
+      "explanation": "В arp -d * ключ -d означает delete, а * выбирает записи для очистки. После перенастройки роутера это убирает устаревшие IPv4→MAC соответствия, и при следующей передаче они изучаются заново. Команда не отображает кэш (-a) и не синхронизирует его с роутером.",
+      "explanationEn": "In arp -d *, -d means delete and * selects the entries to clear. This removes stale IPv4-to-MAC mappings after router reconfiguration, allowing fresh resolution on subsequent traffic. It neither displays the cache (-a) nor synchronizes it with the router."
+    },
+    {
+      "id": "E592",
+      "explanation": "Ответ R1 G0/0 верен при условии, что File_server1 находится в другой подсети, а G0/0 R1 — локальный gateway PC1. Тогда ARP запрашивает MAC шлюза, не удалённого сервера, R2 или коммутатора. Исходная схема не приложена к карточке, поэтому этот выбор интерфейса условный.",
+      "explanationEn": "R1 G0/0 is correct if File_server1 is off-subnet and R1 G0/0 is PC1’s local gateway. ARP then resolves that gateway, not the remote server, R2 or a switch. The exhibit is absent from the card, so the interface choice remains conditional.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужна схема: расположение File_server1 и локального gateway PC1 не подтверждено."
+      }
+    },
+    {
+      "id": "E593",
+      "explanation": "Destination MAC — поле, по которому L2-устройство выбирает порт пересылки. Source MAC используется для обучения таблицы, EtherType сообщает протокол полезной нагрузки, а source/destination IP находятся в сетевом пакете и не являются ключом обычной Ethernet-коммутации.",
+      "explanationEn": "Destination MAC selects the Layer 2 forwarding port. Source MAC teaches the table; EtherType identifies the payload protocol. Source/destination IP are network-packet fields rather than the key for ordinary Ethernet switching."
+    },
+    {
+      "id": "E594",
+      "explanation": "ARP узнаёт MAC локального IPv4-соседа по уже известному IPv4. Он не ищет IP неизвестного устройства и не переносит запрос через роутеры в чужую сеть. Для удалённой сети разрешается MAC своего шлюза, который находится локально.",
+      "explanationEn": "ARP discovers a local IPv4 neighbor’s MAC from its already-known IPv4 address. It does not discover an unknown IP or carry requests through routers into remote networks. Off-subnet traffic resolves the local gateway’s MAC instead."
+    },
+    {
+      "id": "E610",
+      "explanation": "Именно destination FF-FF-FF-FF-FF-FF заставляет Ethernet NIC принять broadcast-кадр. Source MAC только обозначает отправителя; EtherType 0x0806 после приёма сообщает, что внутри ARP, но сам не делает кадр адресованным всем. Обычный ARP reply — unicast, не broadcast.",
+      "explanationEn": "Destination FF-FF-FF-FF-FF-FF makes Ethernet NICs accept the broadcast frame. Source MAC merely identifies the sender; EtherType 0x0806 identifies ARP after reception but does not make the frame addressed to everyone. An ordinary ARP reply is unicast."
+    },
+    {
+      "id": "E701",
+      "explanation": "FFFF.FFFF.FFFF — Ethernet broadcast, нужный потому, что MAC искомого IPv4 ещё неизвестен. 0.0.0.0 и 255.255.255.255 относятся к IPv4, а поле destination в кадре требует MAC. AAAA.AAAA.AAAA не является broadcast; уже известный физический адрес цели устранил бы необходимость обычного запроса.",
+      "explanationEn": "FFFF.FFFF.FFFF is Ethernet broadcast, used because the target IPv4’s MAC is still unknown. 0.0.0.0 and 255.255.255.255 are IPv4 values, while a frame destination requires MAC. AAAA.AAAA.AAAA is not broadcast; an already-known target MAC would avoid the ordinary lookup."
+    },
+    {
+      "id": "E703",
+      "explanation": "Сохранённый ответ Fa0/0 RT1 требует, чтобы PC3 был удалённым, а Fa0/0 RT1 — локальным gateway PC1. Роутер отвечает своим MAC на запрос о своём IP; не пересылает ARP-broadcast к PC3 и не возвращает удалённый PC3 MAC. Без схемы нельзя подтвердить выбор Fa0/0 вместо Fa0/1.",
+      "explanationEn": "The saved RT1 Fa0/0 answer assumes PC3 is remote and RT1 Fa0/0 is PC1’s local gateway. The router replies with its own MAC for its own IP; it does not forward ARP broadcast to PC3 or return PC3’s remote MAC. The missing exhibit prevents verifying Fa0/0 versus Fa0/1.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужна схема: локальный интерфейс RT1 и подсеть PC3 не подтверждены."
+      }
+    },
+    {
+      "id": "E742",
+      "explanation": "FCS проверяет кадр, 802.2 описывает LLC, destination MAC адресует канал — это Layer 2 (FCS технически находится в trailer, не header). Source IP и TTL относятся к IP-пакету, Layer 3. Destination port выбирает приложение, TCP acknowledgment отслеживает ожидаемые байты — Layer 4.",
+      "explanationEn": "FCS checks the frame, 802.2 describes LLC and destination MAC addresses the link: Layer 2 (FCS is technically in the trailer, not header). Source IP and TTL belong to the Layer 3 IP packet. Destination port selects an application and TCP acknowledgment tracks expected bytes at Layer 4."
+    },
+    {
+      "id": "E751",
+      "explanation": "Ответ PC2 предполагает, что PC1 и PC2 находятся в одной подсети. Тогда target IPv4 в ARP принадлежит PC2, и именно он отвечает своим MAC; switch лишь переносит кадры, а gateway не отвечает вместо обычного локального получателя. Без схемы общую подсеть нельзя проверить.",
+      "explanationEn": "PC2 is the answer if PC1 and PC2 share a subnet. The ARP target IPv4 then belongs to PC2, which replies with its own MAC; a switch merely forwards and the gateway does not normally answer for that local host. The missing exhibit prevents confirming the shared subnet.",
+      "correction": {
+        "eligible": false,
+        "caution": "Нужна схема: общая подсеть PC1 и PC2 не подтверждена."
+      }
+    },
+    {
+      "id": "E754",
+      "explanation": "Без NAT destination IP обозначает конечного получателя и остаётся тем же на маршруте. MAC действует только на текущем Ethernet-канале: роутер снимает старую оболочку и создаёт новую со своим исходящим MAC и MAC следующего соседа. Поэтому изменение MAC не требует изменения IP, а количество роутеров не равно количеству замен destination IP.",
+      "explanationEn": "Without NAT, destination IP identifies the final recipient and remains unchanged along the route. MAC addresses apply only to the current Ethernet link: each router replaces the frame with its outgoing MAC and the next neighbor’s MAC. A new MAC does not require a new IP, and router count does not imply destination-IP changes."
+    },
+    {
+      "id": "E756",
+      "explanation": "Если у локального IPv4 нет записи в ARP-кэше, отправитель рассылает запрос; владелец target IPv4 отвечает — это два верных действия. Запрос не содержит уже известный multicast MAC цели. IPv4→MAC ищут в ARP-кэше, а не MAC→порт таблице switch. Без ответа отправитель не превращает сам пакет данных в broadcast: после неуспешного разрешения доставка не состоится.",
+      "explanationEn": "With no cached MAC for a local IPv4, the sender broadcasts an ARP request and the target IPv4 owner replies: these are the two correct actions. The request does not contain a known target multicast MAC. IP-to-MAC lookup uses ARP cache, not the switch’s MAC-to-port table. Failure to resolve does not turn the data packet into broadcast; delivery ultimately fails."
+    },
+    {
+      "id": "E761",
+      "explanation": "Вопрос спрашивает адрес в Ethernet-кадре, а сервер находится в удалённой сети: первый кадр адресуют MAC default gateway. IP сервера остаётся в IP-пакете. IP шлюза не помещается в поле MAC, доменное имя разрешается раньше через DNS, а MAC удалённого сервера не используется на первом локальном канале.",
+      "explanationEn": "The question asks for the Ethernet-frame destination, and the server is off-subnet: the first frame targets the default gateway’s MAC. The server IP stays in the IP packet. The gateway IP cannot fill a MAC field, DNS resolves the domain earlier, and the remote server’s MAC is not used on the first local link."
+    }
+  ],
+  "notes": {
+    "ru": "## Детали NetAcad: ARP-кадр, сбой разрешения и пять сообщений ND\n\n### Что именно находится в ARP-запросе\n\nARP передаётся прямо внутри Ethernet: отдельного IPv4-заголовка у ARP нет, хотя внутри сообщения есть IPv4 отправителя и цели. Destination MAC запроса — FF:FF:FF:FF:FF:FF; source MAC — адрес отправителя; EtherType 0x0806 сообщает, что payload нужно обработать как ARP. Broadcast-MAC определяет, кто принимает кадр, а EtherType — какой процесс его разбирает. Не путай эти два решения.\n\nВсе узлы VLAN принимают запрос, но в обычной ситуации отвечает только владелец target IPv4. В ответе destination MAC — MAC автора запроса, source MAC — MAC отвечающего устройства; это unicast. Получатель ответа сохраняет соответствие IP→MAC. Если ответа нет, MAC так и неизвестен: после попыток разрешения пакет будет отброшен, а не разослан broadcast как данные.\n\n### Динамический кэш, статические записи и нагрузка\n\nДинамические записи стареют по таймеру; срок зависит от системы. Статические записи не истекают таким способом, их удаляют административно. Очистка кэша заставляет устройство выполнить новое разрешение — она не меняет настройки адресов и не синхронизирует таблицы между устройствами. В начале общения возможна небольшая задержка на запрос/ответ. Большое число broadcast-запросов занимает канал и время обработки всех узлов; именно масштаб, а не сам факт ARP, может стать проблемой.\n\nARP не доказывает подлинность заявления «этот IP имеет такой MAC». При poisoning злоумышленник подменяет, например, строку шлюза. Сравнение `arp -a` с доверенным MAC помогает диагностировать подмену; одна неожиданная запись сама по себе ещё не доказывает атаку — интерфейс мог быть заменён.\n\n### Пятое сообщение ND и уточнение про multicast\n\nND использует пять сообщений ICMPv6: NS, NA, RS, RA и Redirect. Redirect сообщает host более подходящий next hop; подробная настройка Redirect выходит за рамки модуля, но название и назначение входят в обзор. Для первоначального поиска MAC NS идёт в solicited-node multicast. Для проверки достижимости уже известного соседа NS может быть unicast: не запоминай ошибочное правило «все NS всегда multicast».\n\n### Практикум без угадывания схемы\n\nДля каждого Ethernet-перехода выпиши четыре поля: source/destination IP, source/destination MAC. IP конечных узлов без NAT одинаковы; MAC относятся к отправителю и следующему получателю именно на этом канале. В Packet Tracer сравни PDU до и после роутера, затем ARP/neighbor cache. Коммутатор между ними не становится destination MAC транзитного кадра. Если карточка требует конкретный порт или MAC на рисунке, без рисунка можно объяснить правило, но нельзя честно проверить конкретный адрес.\n\n**Самопроверка:** ARP или IP-заголовок? Ethernet → ARP напрямую. Все принимают запрос или все отвечают? Принимают все в VLAN, отвечает владелец. Нет ответа? Доставка после попыток разрешения завершается неудачей. Какая пятая ND-команда? Redirect — лучший next hop.\n\nДля противодействия подмене enterprise-коммутаторы могут использовать Dynamic ARP Inspection (DAI), проверяющий допустимость ARP-соответствий. Курс упоминает эту защиту, но её конфигурация выходит за рамки модуля.\n",
+    "en": "## NetAcad details: ARP frames, failed resolution and all five ND messages\n\n### What an ARP request actually contains\n\nARP is carried directly in Ethernet, without a separate IPv4 header, even though the ARP message contains sender/target IPv4 addresses. The request’s destination MAC is FF:FF:FF:FF:FF:FF, its source MAC is the sender’s and EtherType 0x0806 selects ARP processing. Broadcast MAC determines who receives the frame; EtherType determines which protocol handles its payload. These are different decisions.\n\nAll VLAN nodes receive the request, but ordinarily only the target IPv4 owner replies. The reply targets the requester’s MAC and uses the responder’s source MAC: it is unicast. The requester caches the IP-to-MAC mapping. If no reply arrives, the MAC remains unknown; after resolution attempts fail, the packet is discarded rather than broadcast as ordinary data.\n\n### Dynamic cache, static entries and overhead\n\nDynamic entries expire using system-dependent timers. Static entries do not age in the same way and are removed administratively. Clearing a cache triggers fresh resolution; it does not change IP configuration or synchronize devices. Initial traffic can wait briefly for a request/reply. Numerous broadcasts consume bandwidth and processing on every node; scale, not the mere existence of ARP, creates the problem.\n\nARP does not authenticate the claim that an IP belongs to a MAC. Poisoning may replace the gateway mapping. Compare `arp -a` with a trusted MAC to investigate; one unexpected mapping is not proof of an attack because an interface might legitimately have changed.\n\n### The fifth ND message and the multicast qualification\n\nND uses five ICMPv6 messages: NS, NA, RS, RA and Redirect. Redirect informs a host of a better next hop; its detailed configuration is outside this module, but its name/purpose belong to the overview. Initial MAC resolution uses solicited-node multicast NS. A reachability probe for an already-known neighbor may use unicast NS: do not memorize “every NS is always multicast.”\n\n### Practice without guessing an absent exhibit\n\nFor each Ethernet hop, write four fields: source/destination IP and source/destination MAC. Without NAT the endpoint IPs stay the same; MACs identify the sender and next recipient on this particular link. In Packet Tracer compare PDUs before/after a router, then inspect ARP/neighbor cache. An intermediate switch does not become the transit frame’s destination MAC. If a card asks for an exhibit’s precise port/MAC, the rule can be explained without the exhibit but that specific value cannot be verified.\n\n**Self-check:** ARP or an IP header? Ethernet carries ARP directly. Does everyone receive or reply? All VLAN nodes receive; the owner replies. No reply? Delivery fails after address-resolution attempts. Fifth ND message? Redirect identifies a better next hop.\n\nEnterprise switches can use Dynamic ARP Inspection (DAI) to validate ARP mappings against trusted information. The course mentions this protection but leaves its configuration outside the module.\n"
+  },
+  "coverage": [
+    {
+      "topic": "9.0.1 Why should I take this module?",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.0.2 What will I learn to do in this module?",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.1.1 Destination on Same Network",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.1.2 Destination on Remote Network",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.1.3 Packet Tracer - Identify MAC and IP Addresses",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "objectives reviewed; downloadable activity and simulation not present in text archive, not executed"
+    },
+    {
+      "topic": "9.1.4 Check Your Understanding - MAC and IP",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "text questions checked against bank explanations; diagram-only facts remain conditional"
+    },
+    {
+      "topic": "9.2.1 ARP Overview",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.2.2 ARP Functions",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.2.3 Video - ARP Request",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "available surrounding text reviewed; video/transcript media not independently replayed"
+    },
+    {
+      "topic": "9.2.4 Video - ARP Operation - ARP Reply",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "available surrounding text reviewed; video/transcript media not independently replayed"
+    },
+    {
+      "topic": "9.2.5 Video - ARP Role in Remote Communications",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "available surrounding text reviewed; video/transcript media not independently replayed"
+    },
+    {
+      "topic": "9.2.6 Removing Entries from an ARP Table",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.2.7 ARP Tables on Networking Devices",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.2.8 ARP Issues - ARP Broadcasts and ARP Spoofing",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.2.9 Packet Tracer - Examine the ARP Table",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "objectives reviewed; downloadable activity and simulation not present in text archive, not executed"
+    },
+    {
+      "topic": "9.2.10 Check Your Understanding - ARP",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "text questions checked against bank explanations; diagram-only facts remain conditional"
+    },
+    {
+      "topic": "9.3.1 Video - IPv6 Neighbor Discovery",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "available surrounding text reviewed; video/transcript media not independently replayed"
+    },
+    {
+      "topic": "9.3.2 IPv6 Neighbor Discovery Messages",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.3.3 IPv6 Neighbor Discovery - Address Resolution",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "9.3.4 Packet Tracer - IPv6 Neighbor Discovery",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "objectives reviewed; downloadable activity and simulation not present in text archive, not executed"
+    },
+    {
+      "topic": "9.3.5 Check Your Understanding - Neighbor Discovery",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "text questions checked against bank explanations; diagram-only facts remain conditional"
+    },
+    {
+      "topic": "9.4.1 What did I learn in this module?",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "reviewed: current notes plus audit supplement explain the available text"
+    },
+    {
+      "topic": "Module Quiz - Address Resolution",
+      "source": "NetAcad_данные/модули/09.md",
+      "status": "text questions checked against bank explanations; diagram-only facts remain conditional"
+    }
+  ],
+  "issues": [
+    "Module text export dated 2026-11-07 was re-read; no new live NetAcad session claimed.",
+    "Six exhibit-based cards remain excluded because specific ports/MAC ownership cannot be verified from their standalone text.",
+    "E243 is correct for initial resolution; NS can also be unicast during neighbor reachability checks.",
+    "E238 is about dynamic cache entries; static ARP mappings are exceptions.",
+    "Source provenance Q numbers restart in each subsection; preserve IDs and full context rather than treating Q1 as globally unique.",
+    "Topic 9 bank includes bridging/module 7 and EUI-64/module 12 cross-topic questions, all reviewed."
+  ],
+  "verificationSources": [
+    "NetAcad_данные/модули/09.md",
+    "NetAcad_данные/вопросы/модули_09.md",
+    "Эндка/модули_08–16/09_конспект.md",
+    "https://www.rfc-editor.org/rfc/inline-errata/rfc4861.html"
+  ]
+}

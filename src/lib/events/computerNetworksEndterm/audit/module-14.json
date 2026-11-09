@@ -1,0 +1,664 @@
+{
+  "module": 14,
+  "questions": [
+    {
+      "id": "E068",
+      "explanation": "Sequencing помечает позиции данных, чтобы получатель восстановил исходный порядок; у TCP номера относятся к байтам. Checksum выявляет повреждения, window регулирует поток. Одна нумерация не гарантирует доставку: нужны ACK, таймеры и retransmission.",
+      "explanationEn": "Sequencing identifies data positions so the receiver can restore order; TCP numbers bytes. Checksums detect corruption and windows regulate flow. Numbering alone does not guarantee delivery—ACKs, timers and retransmission are also needed."
+    },
+    {
+      "id": "E069",
+      "explanation": "TCP обеспечивает надёжный упорядоченный байтовый поток с ACK и повторной передачей потерь. IP и Ethernet сами не дают такой end-to-end услуги, а HTTP использует транспорт. «Гарантия» не означает успех при вечном разрыве: TCP в таком случае сообщает ошибку.",
+      "explanationEn": "TCP provides a reliable ordered byte stream using acknowledgments and retransmissions. IP and Ethernet alone do not provide that end-to-end service; HTTP uses a transport. “Guarantee” does not mean success through a permanent outage—TCP eventually reports failure."
+    },
+    {
+      "id": "E070",
+      "explanation": "TCP и UDP обслуживают обмен между приложениями, используют номера портов и относятся к transport layer TCP/IP. Internet layer маршрутизирует IP-пакеты, network access обслуживает кадры/среду, application — прикладные протоколы.",
+      "explanationEn": "TCP and UDP serve application-to-application communication using ports and belong to the TCP/IP transport layer. Internet routes IP packets, network access handles frames/media and application provides application protocols."
+    },
+    {
+      "id": "E075",
+      "explanation": "Internet layer включает IP, маршрутизацию и диагностические сообщения ICMP, поэтому выбираются Internet Protocol, Routing Protocols и Messaging. File Transfer — application, Ethernet — network access. ARP address resolution в модели курса относится к network access.",
+      "explanationEn": "The Internet layer includes IP, routing and ICMP diagnostic messaging, so Internet Protocol, Routing Protocols and Messaging are selected. File Transfer is application; Ethernet is network access. The course places ARP address resolution in network access."
+    },
+    {
+      "id": "E080",
+      "explanation": "Segmentation делит поток данных на меньшие транспортные единицы. Sequencing задаёт их позиции, multiplexing перемежает несколько разговоров, duplexing описывает направления передачи. Эти операции связаны, но именно деление называется segmentation.",
+      "explanationEn": "Segmentation divides a data stream into smaller transport units. Sequencing identifies their positions, multiplexing interleaves conversations and duplexing describes transmission directions. The splitting operation specifically is segmentation."
+    },
+    {
+      "id": "E081",
+      "explanation": "Для транспортного уровня курс использует PDU segment (особенно TCP); UDP обычно называет свою единицу datagram. Packet — L 3, frame — L 2, bits — L 1. Поэтому среди данных вариантов правильный Segment.",
+      "explanationEn": "The course names the transport PDU a segment, particularly for TCP; UDP commonly calls its unit a datagram. Packet is Layer 3, frame Layer 2 and bits Layer 1. Therefore Segment is the correct offered choice."
+    },
+    {
+      "id": "E099",
+      "explanation": "Transport layer разделяет данные каждого разговора и при необходимости собирает/упорядочивает их у получателя. Network выбирает маршруты пакетов, session управляет диалогами на своём уровне, presentation — представлением. Здесь ключевые слова segment/reassemble указывают на transport.",
+      "explanationEn": "The transport layer segments each conversation and, when provided by the protocol, reassembles/orders it at the receiver. Network selects packet routes, session manages dialogs and presentation handles representation. Segment/reassemble identifies transport here."
+    },
+    {
+      "id": "E344",
+      "explanation": "В контексте TCP/IP разговор между source/destination applications отслеживает transport layer с портами; TCP также устанавливает соединение. Network связывает хосты, data link соседей на канале, physical сигналы. Слово session здесь не означает отдельный OSI Session layer, которого нет среди вариантов.",
+      "explanationEn": "In this TCP/IP context, transport tracks source/destination application conversations using ports; TCP also establishes a connection. Network connects hosts, data link link-neighbors and physical signals. “Session” here does not mean the separate OSI Session layer, which is not offered."
+    },
+    {
+      "id": "E345",
+      "explanation": "Transport отслеживает отдельные разговоры, сегментирует/собирает данные и multiplexes разговоры на общей сети. Identifying frames — работа L 2, routing information — L 3. Поэтому эти два отвлекающих варианта не входят в три обязанности транспорта.",
+      "explanationEn": "Transport tracks conversations, segments/reassembles data and multiplexes conversations across the network. Frame identification belongs to Layer 2 and routing information to Layer 3, so those distractors are not transport responsibilities."
+    },
+    {
+      "id": "E346",
+      "explanation": "UDP — best effort: сам не подтверждает доставку и не повторяет потери. TCP имеет больше полей и механизмов надёжности, чем UDP. Нельзя без условий утверждать, что TCP быстрее: производительность зависит от задачи и сети.",
+      "explanationEn": "UDP is best effort: it does not itself acknowledge delivery or retransmit losses. TCP has more fields and reliability mechanisms than UDP. TCP cannot universally be called faster; performance depends on the application and network."
+    },
+    {
+      "id": "E347",
+      "explanation": "Для медиа VoIP обычно выбирают UDP: запоздавший голосовой фрагмент часто бесполезнее небольшой потери, а handshake/retransmission добавили бы задержку. SIP — сигнализация приложения, не транспортный протокол; TCP возможен для других частей системы, но не ожидаемый транспорт голосового потока здесь.",
+      "explanationEn": "VoIP media commonly uses UDP because a late voice fragment is often less useful than tolerating a small loss, and handshake/retransmission adds delay. SIP is application signaling, not a transport protocol. TCP may serve other system functions, but is not the intended media-stream answer."
+    },
+    {
+      "id": "E348",
+      "explanation": "TCP использует sequence numbers для порядка и ACK/retransmission для надёжности. UDP не даёт этих гарантий сам; IP маршрутизирует best-effort пакеты, ICMP передаёт диагностику. Поэтому reliable same-order delivery относится к TCP.",
+      "explanationEn": "TCP uses sequence numbers for order and ACK/retransmission for reliability. UDP does not itself provide these guarantees; IP routes best-effort packets and ICMP carries diagnostics. Reliable same-order delivery therefore identifies TCP."
+    },
+    {
+      "id": "E349",
+      "explanation": "Курс группирует основной TCP-заголовок в 10 полей, минимум 20 байт без options. 4 поля/8 байт — UDP. Реальная длина TCP может увеличиваться опциями; это не означает, что фиксированный минимум составляет 40 байт.",
+      "explanationEn": "The course groups the base TCP header into ten fields occupying at least 20 bytes without options. Four fields/eight bytes describes UDP. TCP options can increase actual length, but its fixed minimum is not 40 bytes."
+    },
+    {
+      "id": "E350",
+      "explanation": "FTP использует TCP для надёжной передачи файлов; HTTP в контексте курса (HTTP/1.1 и HTTP/2) также использует TCP. TFTP и обычный VoIP media — UDP, ICMP вообще не приложение поверх TCP. Современный HTTP/3 использует QUIC/UDP, но не является подразумеваемым вариантом задания.",
+      "explanationEn": "FTP uses TCP for reliable files, and the course’s HTTP context (HTTP/1.1 and HTTP/2) also uses TCP. TFTP and typical VoIP media use UDP; ICMP is not a TCP application. Modern HTTP/3 uses QUIC/UDP but is outside this question’s intended HTTP assumption."
+    },
+    {
+      "id": "E351",
+      "explanation": "UDP не поддерживает TCP-подобное состояние соединения и передаёт datagrams best effort. TCP является connection-oriented. IP тоже best effort, но находится на internet/network layer, а вопрос требует transport protocol; ICMP — диагностика.",
+      "explanationEn": "UDP has no TCP-style connection state and sends best-effort datagrams. TCP is connection-oriented. IP is also best effort but belongs to the Internet/network layer; the question asks for a transport protocol. ICMP provides diagnostics."
+    },
+    {
+      "id": "E352",
+      "explanation": "UDP имеет четыре поля по 16 бит: Source Port, Destination Port, Length, Checksum. 4×16=64 бита=8 байт. Вариант 10 полей/20 байт описывает минимум TCP, а не UDP.",
+      "explanationEn": "UDP has four 16-bit fields: Source Port, Destination Port, Length and Checksum. 4×16=64 bits=eight bytes. Ten fields/twenty bytes describes the minimum TCP header rather than UDP."
+    },
+    {
+      "id": "E353",
+      "explanation": "TFTP использует UDP для простого обмена файлами; VoIP media — ради низкой задержки. FTP и классический HTTP используют TCP. ICMP — собственный сетевой протокол, поэтому он не является приложением, выбирающим UDP.",
+      "explanationEn": "TFTP uses UDP for simple file transfer and VoIP media for low delay. FTP and classic HTTP use TCP. ICMP is its own network-layer protocol, not an application selecting UDP."
+    },
+    {
+      "id": "E354",
+      "explanation": "Source Port и Destination Port присутствуют и в TCP, и в UDP и указывают приложения/разговоры. Sequence Number и Control Bits есть у TCP, но не UDP. Well-known port — диапазон значений номера, а не самостоятельное поле заголовка.",
+      "explanationEn": "Source Port and Destination Port exist in both TCP and UDP to identify applications/conversations. Sequence Number and Control Bits are TCP features absent from UDP. Well-known port is a range of port values, not a separate header field."
+    },
+    {
+      "id": "E355",
+      "explanation": "Socket записывается IP:port. Клиент 10.1.1.10 выбирает исходный 1099, сервер 10.1.1.254 слушает HTTP 80: 10.1.1.10:1099 ↔ 10.1.1.254:80. Обратные пары перепутали роли или порядок записи. Клиентский порт не обязательно находится только в IANA dynamic range: диапазон зависит от ОС.",
+      "explanationEn": "A socket is written IP:port. Client 10.1.1.10 uses source 1099 and server 10.1.1.254 listens on HTTP 80:10.1.1.10:1099 ↔10.1.1.254:80. Other pairs reverse roles or notation. Client ephemeral ranges depend on the OS and are not necessarily restricted to IANA’s dynamic range."
+    },
+    {
+      "id": "E356",
+      "explanation": "FTP control 21, HTTP 80 и TFTP 69 находятся в 0–1023, группе well-known/system ports. Registered —1024–49151; dynamic/private —49152–65535. Наличие разных транспортов TCP/UDP не меняет номерную группу.",
+      "explanationEn": "FTP control 21, HTTP 80 and TFTP 69 are within 0–1023, the well-known/system group. Registered spans 1024–49151; dynamic/private 49152–65535. Using TCP versus UDP does not change the numeric group."
+    },
+    {
+      "id": "E357",
+      "explanation": "netstat показывает протокол, local/foreign IP:port и состояние соединения. ipconfig /all показывает настройки интерфейсов, ping достижимость, traceroute переходы. Они не выводят требуемый список conversations/states.",
+      "explanationEn": "netstat shows protocol, local/foreign IP:port and connection state. ipconfig /all shows interface configuration, ping reachability and traceroute hops. Those do not provide the requested conversation/state list."
+    },
+    {
+      "id": "E358",
+      "explanation": "Для SMTP сервер слушает destination port 25, клиент в примере использует source 49152. Обмен местами сделал бы клиентом службу 25, а destination 80 выбрал бы HTTP. Почта имеет и другие порты/режимы; среди предложенных подразумевается SMTP 25.",
+      "explanationEn": "For SMTP, the server listens on destination port 25 while the example client uses source 49152. Reversing them swaps the service/client roles; destination 80 selects HTTP. Mail has other modes/ports, but the offered choices imply SMTP 25."
+    },
+    {
+      "id": "E359",
+      "explanation": "TCP открывает соединение SYN → SYN+ACK → ACK, поэтому используются флаги SYN и ACK. FIN закрывает направление, RST аварийно сбрасывает соединение; они не входят в обычный успешный handshake.",
+      "explanationEn": "TCP opens with SYN → SYN+ACK → ACK, using SYN and ACK flags. FIN closes a direction and RST resets a connection; neither belongs to the normal successful handshake."
+    },
+    {
+      "id": "E360",
+      "explanation": "У обычного полного TCP-закрытия четыре сообщения: FIN, ACK, затем FIN от другой стороны и ACK. Это завершает два направления одной duplex-связи. Реальные реализации могут объединить ACK+FIN, поэтому четыре — типичная учебная последовательность, не обязательный минимум каждого захвата.",
+      "explanationEn": "A normal full TCP close has four messages: FIN, ACK, then the peer’s FIN and ACK. This closes both directions of one duplex connection. Implementations may combine ACK+FIN, so four is the typical teaching sequence, not a mandatory minimum in every capture."
+    },
+    {
+      "id": "E361",
+      "explanation": "Sequence Number задаёт позицию первого байта сегмента в TCP-потоке, позволяя расположить полученные данные в исходном порядке. Порты выбирают приложение, Window Size регулирует объём, Control Bits описывают состояние/управление.",
+      "explanationEn": "Sequence Number identifies the first byte’s position in the TCP stream, allowing the receiver to restore original order. Ports select applications, Window Size regulates volume and Control Bits signal state/control."
+    },
+    {
+      "id": "E362",
+      "explanation": "TCP Window Size сообщает, сколько данных получатель способен принять без дополнительного подтверждения, и предотвращает переполнение его буфера. Sequence Number отвечает за позиции байтов; ports — за приложения. Flow control не равен выбору маршрута или handshake.",
+      "explanationEn": "TCP Window Size advertises how much data the receiver can accept without further acknowledgment, preventing buffer overload. Sequence Number identifies byte positions; ports identify applications. Flow control is not routing or handshake."
+    },
+    {
+      "id": "E363",
+      "explanation": "Обнаружив признаки congestion, отправитель уменьшает объём неподтверждённых данных и темп отправки. Увеличение объёма усугубило бы перегрузку. Варианты про изменение передачи receiving host путают направление: вопрос о реакции source на перегрузку пути к destination.",
+      "explanationEn": "On congestion signals, the sender reduces outstanding unacknowledged data and its sending rate. Increasing it would worsen congestion. Choices changing the receiving host’s transmission confuse directions; the question concerns the source reacting to congestion toward the destination."
+    },
+    {
+      "id": "E364",
+      "explanation": "Для короткого request/reply UDP экономит обмен установления соединения и имеет маленький 8-байтовый заголовок: low overhead. Flow control, гарантированная доставка и same-order delivery не встроены в UDP, поэтому не могут объяснять его выбор.",
+      "explanationEn": "For short request/reply exchanges, UDP avoids connection setup and has a small eight-byte header: low overhead. Flow control, guaranteed delivery and same-order delivery are not built into UDP, so they cannot explain choosing it."
+    },
+    {
+      "id": "E365",
+      "explanation": "В формулировке курса «reassembles in received order» означает: UDP отдаёт поступившие datagrams приложению без восстановления порядка отправки. В нём нет TCP sequence numbers/control bits для такой сортировки. Технически UDP сохраняет границы сообщений и не собирает надёжный байтовый поток; IP-фрагменты собирает IP, не UDP.",
+      "explanationEn": "The course’s “reassembles in received order” means UDP passes received datagrams to the application without restoring send order. It lacks TCP sequence numbers/control bits for that sorting. Technically UDP preserves message boundaries rather than building a reliable byte stream; IP, not UDP, reassembles IP fragments."
+    },
+    {
+      "id": "E366",
+      "explanation": "DNS-сервер принимает запрос на destination 53; source 49152 — временный порт клиента в примере. В ответе роли портов меняются.1812 относится к RADIUS, а source 53/destination 49152 описывает скорее ответ сервера, не начальный запрос.",
+      "explanationEn": "A DNS server receives the query at destination 53; source 49152 is the example client’s temporary port. Replies reverse these roles.1812 is RADIUS, while source 53/destination 49152 resembles a server reply rather than the initial query."
+    },
+    {
+      "id": "E367",
+      "explanation": "TCP three-way handshake согласует начальные sequence numbers и подтверждает готовность двух сторон: SYN,SYN-ACK,ACK. Один port number лишь идентифицирует endpoint и не устанавливает соединение. У UDP нет собственных ACK/SYN/sequence fields.",
+      "explanationEn": "TCP’s three-way handshake synchronizes initial sequence numbers and confirms both endpoints:SYN,SYN-ACK,ACK. A port number only identifies an endpoint; it does not establish a connection. UDP has no native ACK/SYN/sequence fields."
+    },
+    {
+      "id": "E368",
+      "explanation": "Well-known/system ports занимают 0–1023 включительно.0–255 и 256–1023 — только части диапазона;1024–49151 — registered. Это классификация номеров, не число одновременно разрешённых соединений.",
+      "explanationEn": "Well-known/system ports span 0–1023 inclusive.0–255 and 256–1023 are only subsets;1024–49151 is registered. This classifies port numbers, not the number of simultaneous allowed connections."
+    },
+    {
+      "id": "E369",
+      "explanation": "Socket — endpoint IP+port, например 192.168.1.1:80. Socket pair даёт оба конца разговора. MAC-адреса не входят в TCP socket, а sequence/ACK numbers описывают поток внутри соединения, не endpoint.",
+      "explanationEn": "A socket is an IP+port endpoint such as 192.168.1.1:80; a socket pair identifies both conversation ends. MAC addresses are not part of a TCP socket, and sequence/ACK numbers describe the stream rather than an endpoint."
+    },
+    {
+      "id": "E370",
+      "explanation": "Сервер различает TCP-соединения комбинацией source/destination IP и ports (и протоколом), поэтому выбирается вариант про сочетание адресов/портов. Один IP не определяет службу, MAC удалённого клиента не проходит через роутеры, gateway не разделяет приложения. У разных клиентов может быть общий public IP за NAT — различение сохраняют порты.",
+      "explanationEn": "The server distinguishes TCP connections using source/destination IP and ports (plus protocol), making the address/port-combination option best. One IP does not identify a service, remote-client MACs do not cross routers, and a gateway does not demultiplex applications. NAT clients may share a public IP but remain distinguishable by ports."
+    },
+    {
+      "id": "E371",
+      "explanation": "FTP использует TCP: потерянные байты обнаруживаются по отсутствующим ACK/sequence progress и передаются повторно. Не требуется повторять весь файл/FTP-message с начала. Утверждение о ненадёжности FTP неверно для его обычного TCP-транспорта.",
+      "explanationEn": "FTP uses TCP, which detects missing bytes from absent ACK/sequence progress and retransmits them. The entire file/FTP message need not restart. Claiming FTP lacks reliable delivery is wrong for its normal TCP transport."
+    },
+    {
+      "id": "E372",
+      "explanation": "Delay-sensitive приложения часто предпочитают UDP, чтобы не ждать retransmission/упорядочивания TCP. Если требуется надёжность, отсутствие потерь и повторная передача, TCP обычно лучше либо приложение должно реализовать это поверх UDP. UDP сам по себе не гарантирует низкую задержку сети.",
+      "explanationEn": "Delay-sensitive applications often choose UDP to avoid TCP retransmission/order waiting. If reliable loss-free retransmission is needed, TCP is normally better or the application must implement it above UDP. UDP itself does not guarantee a low-latency network."
+    },
+    {
+      "id": "E373",
+      "explanation": "TCP source при перегрузке сокращает данные в полёте до получения ACK, уменьшая congestion window. Это уменьшает нагрузку от source к destination. Уменьшение advertised window для передачи destination в обратном направлении и сокращение ACK не решают описанную задачу тем же механизмом.",
+      "explanationEn": "On congestion, the TCP source reduces in-flight data before ACKs by shrinking its congestion window. This reduces source-to-destination load. Changing the advertised window for the reverse direction or sending fewer ACKs is not the mechanism asked about."
+    },
+    {
+      "id": "E374",
+      "explanation": "TCP подтверждает полученные байты и повторно передаёт данные, которые не были подтверждены при обнаружении потерь/таймауте. UDP этого не делает сам. Порты и разделение conversations есть у обоих, поэтому identifying applications/conversations не являются отличиями TCP.",
+      "explanationEn": "TCP acknowledges received bytes and retransmits unacknowledged data when loss/timeout is detected; UDP does not do this itself. Both use ports and distinguish conversations, so identifying applications/conversations are not TCP-only differences."
+    },
+    {
+      "id": "E375",
+      "explanation": "Source port помогает отличать несколько разговоров от одного устройства, например две TCP-сессии к одному web server. Завершение обозначает FIN/RST, порядок — sequence numbers, восстановление потерь — ACK/таймеры. Port не выполняет эти три функции.",
+      "explanationEn": "The source port distinguishes conversations from one device, such as two TCP sessions to the same web server. FIN/RST signals termination, sequence numbers order bytes and ACKs/timers support loss recovery. A port does not perform those functions."
+    },
+    {
+      "id": "E376",
+      "explanation": "Для открытия используются SYN и ACK: первый SYN, ответ SYN+ACK, финальный ACK. FIN закрывает, RST сбрасывает, PSH просит передать данные приложению, URG связан с urgent indication; они не являются флагами базового handshake.",
+      "explanationEn": "Opening uses SYN and ACK:first SYN, then SYN+ACK, then ACK. FIN closes, RST resets, PSH requests delivery to the application and URG marks urgent indication. They are not the basic handshake flags."
+    },
+    {
+      "id": "E377",
+      "explanation": "Sliding window позволяет держать несколько сегментов в полёте и сдвигать разрешённый диапазон по мере ACK. Поэтому не нужно ждать отдельного ACK перед каждым следующим сегментом. Handshake только открывает соединение, socket pair только идентифицирует концы.",
+      "explanationEn": "A sliding window permits multiple segments in flight and advances the allowed range as ACKs arrive, avoiding a wait after every single segment. Handshake only opens a connection; the socket pair only identifies endpoints."
+    },
+    {
+      "id": "E378",
+      "explanation": "UDP-клиент выбирает доступный source port (обычно ephemeral, часто рандомизированный), чтобы ответы попали в нужное приложение. У UDP нет SYN, ISN, three-way handshake или advertised TCP window. Выбор порта не является установлением соединения.",
+      "explanationEn": "A UDP client chooses an available source port, typically ephemeral and often randomized, so replies reach the right application. UDP has no SYN, ISN, three-way handshake or TCP advertised window. Selecting a port is not connection establishment."
+    },
+    {
+      "id": "E379",
+      "explanation": "Обычные DNS-запросы часто используют UDP ради короткого request/reply; VoIP media — ради малой задержки. FTP, POP 3 и классический HTTP используют TCP. DNS также умеет TCP, а HTTP/3 использует UDP/QUIC: ответ отражает типичный учебный сценарий, не исключительное правило навсегда.",
+      "explanationEn": "Ordinary DNS queries often use UDP for short request/reply, and VoIP media for low delay. FTP, POP 3 and classic HTTP use TCP. DNS also supports TCP and HTTP/3 uses UDP/QUIC; the answer reflects the typical course scenario, not an exclusive universal rule."
+    },
+    {
+      "id": "E380",
+      "explanation": "192.168.1.1:80 сочетает IP и port и потому является socket endpoint.01-23-45-67-89-AB — MAC;21 — только port;10.1.1.15 — только IP. Каждому из них отдельно не хватает второй составляющей socket.",
+      "explanationEn": "192.168.1.1:80 combines IP and port, making a socket endpoint.01-23-45-67-89-AB is a MAC,21 only a port and 10.1.1.15 only an IP. Each alone lacks the second socket component."
+    },
+    {
+      "id": "E381",
+      "explanation": "Transport tracks individual application conversations with ports and protocol state where needed. Network access относится к нижнему уровню, best path — маршрутизация L 3, private/public translation — NAT. Поэтому tracking individual conversations — единственный подходящий транспортный пункт.",
+      "explanationEn": "Transport tracks individual application conversations using ports and protocol state where needed. Network access belongs below it, best-path selection is Layer 3 routing and private/public translation is NAT. Tracking individual conversations is therefore the transport responsibility."
+    },
+    {
+      "id": "E533",
+      "explanation": "В TCP/IP internet layer соответствует сетевому уровню OSI и маршрутизирует IP-пакеты между сетями. Transport разделяет приложения, network access передаёт по текущему каналу. Session не является отдельным слоем четырёхуровневой TCP/IP-модели.",
+      "explanationEn": "The TCP/IP Internet layer corresponds to OSI network and routes IP packets between networks. Transport distinguishes applications; network access transmits on the current link. Session is not a separate layer in the four-layer TCP/IP model."
+    },
+    {
+      "id": "E538",
+      "explanation": "Точное PDU-утверждение: transport передаёт segments в internet layer, который делает packets. Но общий вариант «Data is sent from internet layer to network access layer» тоже описывает реальный следующий шаг исходящей инкапсуляции. Поэтому при единственном ответе формулировка неоднозначна; карточка исключена. Обратные переходы packets к transport и frames к internet описывают приём, не отправку.",
+      "explanationEn": "The precise PDU statement is that transport passes segments to Internet, which creates packets. However, the generic “Data is sent from Internet layer to network access layer” also describes the real next outbound step. The single-answer wording is therefore ambiguous and excluded. Reverse packet/frame transitions describe reception rather than outbound encapsulation.",
+      "correction": {
+        "answers": [
+          "Segments are sent from the transport layer to the internet layer."
+        ],
+        "correct": [
+          2
+        ],
+        "answerText": "Segments are sent from the transport layer to the internet layer..",
+        "eligible": false,
+        "caution": "Два утверждения описывают исходящую инкапсуляцию; single-choice неоднозначен."
+      }
+    },
+    {
+      "id": "E582",
+      "explanation": "Network layer инкапсулирует transport PDU в IP-пакет и маршрутизирует его к destination. Размещение кадров на среде/обнаружение коллизий относятся к нижним уровням. IPv 4 header checksum существует, но общий frame-error detection не является здесь одной из двух запрошенных L 3-услуг.",
+      "explanationEn": "The network layer encapsulates transport PDUs into IP packets and routes them toward the destination. Placing frames on media and collision detection belong below it. Although IPv 4 has a header checksum, general frame error detection is not one of the two intended Layer 3 services."
+    },
+    {
+      "id": "E585",
+      "explanation": "Ping loopback проходит внутри собственного TCP/IP-стека, поэтому проверяет его работу. Он не выходит через Ethernet-кабель, не проверяет DHCP, правильность LAN-IP или end-to-end путь к другому хосту.",
+      "explanationEn": "A loopback ping stays inside the local TCP/IP stack and tests that stack. It does not traverse the Ethernet cable or verify DHCP, the configured LAN address, or end-to-end reachability to another host."
+    },
+    {
+      "id": "E612",
+      "explanation": "UDP не устанавливает транспортное соединение: клиент формирует datagram с адресами/портами и отправляет. Предварительный запрос готовности или SYN/three-way handshake не входят в UDP. Приложение может иметь собственный обмен, но это уже другой уровень.",
+      "explanationEn": "UDP establishes no transport connection: the client builds a datagram with addresses/ports and sends it. A readiness query or SYN/three-way handshake is not part of UDP. An application may implement its own exchange at a different layer."
+    },
+    {
+      "id": "E613",
+      "explanation": "Полученный FIN подтверждается ACK: сторона сообщает, что приняла запрос закрытия данного направления. Её собственный FIN закрывает обратное направление отдельно. SYN открывает соединение, RST аварийно сбрасывает — это не обычное подтверждение FIN.",
+      "explanationEn": "A received FIN is acknowledged with ACK, confirming closure of that direction. The peer’s own FIN closes the reverse direction separately. SYN opens and RST resets; neither is the normal FIN acknowledgment."
+    },
+    {
+      "id": "E614",
+      "explanation": "UDP не посылает собственных ACK и не ждёт восстановления потерь, что уменьшает протокольные задержки. Поэтому курс выбирает minimal delay и received data is unacknowledged. Это не гарантия скорости сети; UDP не отслеживает сегменты для retransmission или TCP-подобной сборки потока.",
+      "explanationEn": "UDP sends no native ACKs and does not wait for loss recovery, reducing protocol-induced delay. Hence the course selects minimal delay and unacknowledged reception. This is not a network-speed guarantee; UDP does not track segments for retransmission or TCP-style stream reassembly."
+    },
+    {
+      "id": "E616",
+      "explanation": "Window и Sequence Number поддерживают TCP flow control и упорядочивание; у UDP этих полей нет. Checksum, Source Port и Destination Port имеются в обоих заголовках, поэтому они не отличают TCP от UDP.",
+      "explanationEn": "Window and Sequence Number support TCP flow control and ordering; UDP lacks them. Checksum, Source Port and Destination Port exist in both headers, so they do not distinguish TCP from UDP."
+    },
+    {
+      "id": "E617",
+      "explanation": "Под «reassembles in received order» курс понимает передачу datagrams приложению в порядке поступления без сортировки по исходной последовательности. UDP не гарантирует одинаковый маршрут/порядок и не ждёт готовности получателя. Приложение поверх UDP может реализовать надёжность, поэтому «always unreliable applications» слишком категорично.",
+      "explanationEn": "The course’s “reassembles in received order” means passing datagrams to the application as received without restoring original order. UDP guarantees neither identical paths/order nor receiver readiness. An application above UDP can implement reliability, so “applications are always unreliable” is too absolute."
+    },
+    {
+      "id": "E619",
+      "explanation": "UDP подходит, когда важны быстрый старт/малые накладные расходы и приложение не требует гарантии доставки от транспорта. Если нужны intact,in-sequence,unduplicated данные, эти услуги предоставляет TCP или дополнительный протокол. Dynamic destination ports сами по себе не определяют выбор TCP/UDP.",
+      "explanationEn": "UDP suits quick startup/low overhead when the application does not require transport-level delivery guarantees. Intact,in-sequence,unduplicated delivery calls for TCP or an additional protocol. Dynamic destination ports alone do not determine TCP versus UDP."
+    },
+    {
+      "id": "E621",
+      "explanation": "TCP Sequence Number указывает позицию байтов и позволяет восстановить порядок сегментов. Acknowledgment Number сообщает следующий ожидаемый байт, ports выбирают приложение, а fragment numbers относятся к другой задаче IP-фрагментации.",
+      "explanationEn": "TCP Sequence Number locates bytes and permits segment reordering. Acknowledgment Number reports the next expected byte, ports select the application, and fragment numbering concerns the different task of IP fragmentation."
+    },
+    {
+      "id": "E622",
+      "explanation": "Control bits/flags SYN и ACK показывают этап handshake. Window задаёт объём, checksum проверяет сегмент, reserved отведено под расширения. Эти три поля не заменяют управляющие флаги открытия.",
+      "explanationEn": "Control bits/flags SYN and ACK indicate the handshake stage. Window gives capacity, checksum checks the segment and reserved bits support extensions. Those fields do not replace connection-opening flags."
+    },
+    {
+      "id": "E624",
+      "explanation": "Из предложенного UDP содержит Length, Source Port и Checksum. Четвёртое реальное поле — Destination Port — в списке отсутствует. Window Size, Acknowledgment Number и Sequence Number относятся к TCP; поэтому Choose three не означает, что в UDP всего три поля.",
+      "explanationEn": "The listed UDP fields are Length, Source Port and Checksum. Its actual fourth field, Destination Port, is absent from the choices. Window Size, Acknowledgment Number and Sequence Number belong to TCP; “Choose three” does not mean UDP has only three fields."
+    },
+    {
+      "id": "E625",
+      "explanation": "Transport предоставляет требуемые приложению услуги надёжности (TCP), multiplexes потоки и определяет приложения по ports. Направлять packets в destination network — L 3; форматировать представление — presentation/application; frame-error detection — L 2.",
+      "explanationEn": "Transport can supply required reliability (TCP), multiplex streams and identify applications through ports. Directing packets to destination networks belongs to Layer 3; formatting representation to presentation/application; frame error detection to Layer 2."
+    },
+    {
+      "id": "E641",
+      "explanation": "Две браузерные коммуникации различаются transport endpoints/ports, поэтому данные попадают нужному соединению и затем приложению. Впаянный MAC относится к L 2, кодирование movie/audio — к представлению данных, форматирование страницы — к приложению. Транспорт не знает вкладки напрямую: их сопоставляет браузер поверх соединений.",
+      "explanationEn": "Two browser communications are distinguished by transport endpoints/ports so data reaches the right connection and application. A burned-in MAC is Layer 2, movie/audio encoding is representation and page formatting application logic. Transport does not literally know tabs; the browser maps connections to them."
+    },
+    {
+      "id": "E642",
+      "explanation": "Учебный расчёт предполагает первый байт 1 и 1500 байт TCP-данных в каждом из трёх пакетов: получены 1–4500, следующий ожидаемый байт 4501, значит ACK 4501. Window 6000 не заставляет ждать ровно 6000 байт. Если 1500 — полный IP-пакет с заголовками либо другой начальный sequence, точный ACK изменится; эти допущения в исходнике не уточнены.",
+      "explanationEn": "The course calculation assumes first data byte 1 and 1500 TCP payload bytes in each of three packets: bytes 1–4500 arrive, so the next expected byte is 4501 and ACK=4501. Window 6000 does not require waiting for exactly 6000 bytes. If 1500 includes IP/TCP headers or the initial sequence differs, the exact ACK changes; the source leaves these assumptions implicit."
+    },
+    {
+      "id": "E687",
+      "explanation": "На transport при деинкапсуляции обрабатывается TCP segment (для UDP — datagram). Frame был обработан L 2, packet — L 3, bits — физическим уровнем. Здесь из предложенных PDU нужен segment.",
+      "explanationEn": "Transport de-encapsulation processes a TCP segment (a datagram for UDP). Layer 2 handled the frame, Layer 3 the packet and physical the bits. Among the offered PDUs, segment is correct."
+    },
+    {
+      "id": "E688",
+      "explanation": "OSI network соответствует TCP/IP internet, а transport соответствует transport с теми же основными функциями. OSI physical+data link объединены в network access; session объединён с верхними уровнями в application. Поэтому именно network и transport имеют прямые отдельные аналоги.",
+      "explanationEn": "OSI network maps directly to TCP/IP Internet, and transport to transport with the same core functions. OSI physical+data link combine into network access; session joins upper layers in application. Thus network and transport have direct separate counterparts."
+    },
+    {
+      "id": "E717",
+      "explanation": "Window size задаёт, сколько байтов может оставаться неподтверждёнными/быть принято по объявленному окну, а не общий итог битов за всю сессию. Это не один пакет «за один раз» и не random initial sequence number. Для определения смысла поля картинка не нужна.",
+      "explanationEn": "Window size bounds outstanding unacknowledged bytes according to the advertised receive window, not the session’s total bits. It is not one packet “at one time” or a random initial sequence number. No exhibit is needed to identify the field’s meaning.",
+      "correction": {
+        "answers": [
+          "the amount of data that can be sent before an acknowledgment is required"
+        ],
+        "correct": [
+          2
+        ],
+        "answerText": "the amount of data that can be sent before an acknowledgment is required.",
+        "eligible": true,
+        "caution": ""
+      }
+    },
+    {
+      "id": "E718",
+      "explanation": "414 лежит между 0 и 1023, поэтому относится к well-known/system ports. Registered начинается с 1024, private/dynamic с 49152. Public не является стандартной категорией IANA port numbers.",
+      "explanationEn": "414 is between 0 and 1023, so it is a well-known/system port. Registered starts at 1024 and private/dynamic at 49152. Public is not a standard IANA port-number category."
+    },
+    {
+      "id": "E748",
+      "explanation": "ipconfig выводит IP-конфигурацию Windows PC; /all добавляет подробности. ping проверяет достижимость, show interfaces и show ip interface brief — команды сетевых ОС Cisco, не штатный Windows-синтаксис.",
+      "explanationEn": "ipconfig displays a Windows PC’s IP configuration; /all adds details. ping tests reachability, while show interfaces and show ip interface brief are Cisco networking commands rather than normal Windows syntax."
+    },
+    {
+      "id": "E783",
+      "explanation": "Разные source ports приложений позволяют отличать параллельные исходящие разговоры; полная идентификация включает IP/ports обеих сторон и transport protocol. IP и MAC самого PC общие для многих приложений, поэтому одних этих адресов недостаточно для demultiplexing.",
+      "explanationEn": "Different application source ports distinguish simultaneous outbound conversations; the full identity includes both endpoints’ IP/ports and transport protocol. The PC’s own IP/MAC is shared across applications, so those addresses alone cannot demultiplex them."
+    }
+  ],
+  "notes": {
+    "ru": "## Аудит NetAcad 14: как работает транспорт\n\n### Два направления TCP и номера байтов\n\nTCP — двунаправленный байтовый поток; у каждого направления свои sequence/ACK. При открытии клиент отправляет SYN с ISN=x; сервер отвечает SYN+ACK с собственным ISN=y и ACK=x+1; клиент подтверждает ACK=y+1. SYN и FIN занимают по одной позиции sequence space. ACK подтверждает следующий ожидаемый байт, а не номер последнего пакета. После байтов 1001–1500 ожидается 1501. Наличие ACK не означает, что приложение уже обработало файл — это подтверждение TCP-получения.\n\nЕсли данные 1501–2000 потеряны, а 2001–2500 пришли, cumulative ACK остаётся 1501 до закрытия пробела. TCP может буферизовать поздние данные; повторная передача вызывается таймерами/сигналами потерь. Закрытие каждого направления отдельно: FIN→ACK; другое направление ещё может отправлять данные до своего FIN. RST — аварийный сброс, не обычное четырёхшаговое закрытие.\n\n### Все поля и их назначения\n\nTCP: source/destination port, sequence number, acknowledgment number, data offset (длина заголовка), reserved, control flags, window, checksum, urgent pointer; options/padding добавляются при необходимости. Курс группирует их в 10 основных полей минимум 20 байт. Flags: SYN — синхронизация, ACK — значимое acknowledgment поле, FIN — конец данных направления, RST — сброс, PSH — передача приложению, URG — urgent pointer. Checksum проверяет TCP-заголовок и данные с псевдозаголовком, а не гарантирует доставку.\n\nUDP: два порта, length, checksum, всего 8 байт. Length включает заголовокUDP и данные. Нет окна, sequence/ACK и handshake. Приложение само выбирает, как пережить потерю/перестановку. TFTP добавляет собственный обмен подтверждениями поверх UDP; это не превращает его транспорт в TCP.\n\n### Не путай MSS, MTU, receive window и congestion window\n\nMTU — размер IP-пакета на канале. MSS — максимальные TCP-данные в одном сегменте, без TCP/IP-заголовков; значение объявляется как TCP option при handshake. При MTU 1500, IPv 4 header 20 иTCP header 20 MSS=1460. При IPv 6 base 40 иTCP 20 без дополнительных заголовков —1440. Options/туннели могут уменьшать полезную нагрузку.\n\nReceive window (rwnd) защищает буфер получателя, congestion window (cwnd) ограничивает нагрузку на сеть. Фактическая отправка ограничена обоими. Sliding window продвигается с ACK и позволяет нескольким сегментам находиться в полёте. Нельзя путать окно 6000 байт с обязательным размером одного пакета или утверждать, что ACK приходит только после полного заполнения окна.\n\n### Серверы, клиенты и наблюдение\n\nСервер слушает service port, клиент выбирает доступный временный source port. Ответ сервера меняет source/destination ports местами. Один listening port может обслуживать много соединений благодаря различным socket pairs; клиенты за NAT могут иметь один public IP, но разные ports. netstat показывает local/foreign endpoints и состояния TCP; в Wireshark сравни SYN/SYN-ACK/ACK, Seq/Ack/Window и повторные передачи. В PT Simulation можно наблюдать HTTP/TCP иDNS/UDP, но это упражнение не выполнено автоматически самим чтением конспекта.\n",
+    "en": "## NetAcad 14 audit: transport in operation\n\n### Two TCP directions and byte numbers\n\nTCP is a bidirectional byte stream with separate sequence/ACK spaces per direction. Opening: client SYN with ISN=x; server SYN+ACK with ISN=y and ACK=x+1; client ACK=y+1. SYN and FIN each consume one sequence position. ACK names the next expected byte, not the last packet number. Bytes 1001–1500 lead toACK 1501. An ACK confirms TCP reception, not that the application has processed a file.\n\nIf 1501–2000 are missing but 2001–2500 arrive, cumulativeACK remains 1501 until the gap is filled. TCP may buffer later data; timers/loss signals trigger retransmission. Each direction closes separately withFIN→ACK; the reverse direction can still send until its own FIN. RST is a reset, not the ordinary four-message close.\n\n### Header fields and their jobs\n\nTCP: source/destination port, sequence number, acknowledgment number, data offset(header length), reserved bits, control flags, window, checksum, urgent pointer, plus optional options/padding. The course groups these as ten base fields occupying at least 20 bytes. Flags: SYN synchronizes, ACK validates the acknowledgment field, FIN ends one direction’s data, RST resets, PSH requests application delivery andURG enables urgent-pointer semantics. The checksum checks header/data with a pseudo-header; it does not guarantee delivery.\n\nUDP has two ports, length and checksum, totaling 8 bytes. Length includes its header and data. There is no window, sequence/ACK or handshake. Applications choose how to handle loss/reordering. TFTP adds its own acknowledgments above UDP without changing its transport into TCP.\n\n### MSS, MTU, receive window and congestion window\n\nMTU bounds an IP packet on a link. MSS is maximum TCP data in one segment, excluding TCP/IP headers; it is advertised as a TCP option during the handshake. MTU 1500 minus IPv 4 header 20 minus TCP header 20 gives MSS 1460. IPv 6 base 40 plus TCP 20 leaves 1440 without additional headers. Options/tunnels may reduce payload.\n\nReceive window(rwnd) protects the receiver’s buffer; congestion window(cwnd) limits load on the network. Actual sending is constrained by both. A sliding window advances with ACKs and allows multiple segments in flight. A 6000-byte window is neither one mandatory packet size nor a rule that ACKs occur only after filling the entire window.\n\n### Servers, clients and observation\n\nServers listen on service ports; clients choose available temporary source ports. Replies reverse source/destination ports. One listening port serves many connections through distinct socket pairs; NAT clients may share one public IP but use different ports. netstat shows local/foreign endpoints and TCP states. In Wireshark compare SYN/SYN-ACK/ACK, Seq/Ack/Window and retransmissions. PT Simulation can contrast HTTP/TCP with DNS/UDP, but reading this explanation does not itself complete a PT exercise.\n"
+  },
+  "coverage": [
+    {
+      "topic": "Transport roles, segmentation, tracking, multiplexing and protocol choice",
+      "source": "NetAcad_данные/модули/14.md §14.1.1–14.1.7",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "TCP features, complete header and applications",
+      "source": "NetAcad_данные/модули/14.md §14.2.1–14.2.5",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "UDP features, complete header and applications",
+      "source": "NetAcad_данные/модули/14.md §14.3.1–14.3.5",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "Ports, socket pairs, ranges and netstat",
+      "source": "NetAcad_данные/модули/14.md §14.4.1–14.4.5",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "Server processes, establishment and termination, handshake analysis",
+      "source": "NetAcad_данные/модули/14.md §14.5.1–14.5.6",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "Byte sequencing, cumulative ACK, loss/retransmit, flow/congestion, MSS",
+      "source": "NetAcad_данные/модули/14.md §14.6.1–14.6.8",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "UDP overhead, receive-order wording, server/client processes",
+      "source": "NetAcad_данные/модули/14.md §14.7.1–14.7.5",
+      "status": "explained; original video/PT interaction not executed"
+    },
+    {
+      "topic": "PT observation method, review and module quiz",
+      "source": "NetAcad_данные/модули/14.md §14.8.1–14.8.2",
+      "status": "explained; original video/PT interaction not executed"
+    }
+  ],
+  "issues": [
+    {
+      "id": "E538",
+      "issue": "Two defensible outbound encapsulation statements; proposed exclude."
+    },
+    {
+      "id": "E717",
+      "issue": "Generic window definition does not require exhibit; restored eligibility."
+    },
+    {
+      "ids": [
+        "E365",
+        "E617"
+      ],
+      "issue": "Preserved course answer but clarified UDP does not reassemble/reorder TCP-style byte stream."
+    },
+    {
+      "id": "E642",
+      "issue": "ACK4501 relies on implicit first-byte1 and1500-byte TCP payload assumptions; explicitly taught."
+    },
+    {
+      "ids": [
+        "E350",
+        "E353",
+        "E379"
+      ],
+      "issue": "HTTP means course HTTP/1.1 orHTTP/2; HTTP/3 caveat included."
+    }
+  ],
+  "subsections": [
+    {
+      "id": "14.0.1",
+      "title": "Why should I take this module?",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.0.2",
+      "title": "What will I learn to do in this module?",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.1",
+      "title": "Role of the Transport Layer",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.2",
+      "title": "Transport Layer Responsibilities",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.3",
+      "title": "Transport Layer Protocols",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.4",
+      "title": "Transmission Control Protocol (TCP)",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.5",
+      "title": "User Datagram Protocol (UDP)",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.6",
+      "title": "The Right Transport Layer Protocol for the Right Application",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.1.7",
+      "title": "Check Your Understanding - Transportation of Data",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.2.1",
+      "title": "TCP Features",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.2.2",
+      "title": "TCP Header",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.2.3",
+      "title": "TCP Header Fields",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.2.4",
+      "title": "Applications that use TCP",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.2.5",
+      "title": "Check Your Understanding - TCP Overview",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.3.1",
+      "title": "UDP Features",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.3.2",
+      "title": "UDP Header",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.3.3",
+      "title": "UDP Header Fields",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.3.4",
+      "title": "Applications that use UDP",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.3.5",
+      "title": "Check Your Understanding - UDP Overview",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.4.1",
+      "title": "Multiple Separate Communications",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.4.2",
+      "title": "Socket Pairs",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.4.3",
+      "title": "Port Number Groups",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.4.4",
+      "title": "The netstat Command",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.4.5",
+      "title": "Check Your Understanding - Port Numbers",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.5.1",
+      "title": "TCP Server Processes",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.5.2",
+      "title": "TCP Connection Establishment",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.5.3",
+      "title": "Session Termination",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.5.4",
+      "title": "TCP Three-way Handshake Analysis",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.5.5",
+      "title": "Video - TCP 3-Way Handshake",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "14.5.6",
+      "title": "Check Your Understanding - TCP Communication Process",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.6.1",
+      "title": "TCP Reliability - Guaranteed and Ordered Delivery",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.6.2",
+      "title": "Video - TCP Reliability - Sequence Numbers and Acknowledgments",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "14.6.3",
+      "title": "TCP Reliability - Data Loss and Retransmission",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.6.4",
+      "title": "Video - TCP Reliability - Data Loss and Retransmission",
+      "status": "video-method-explained-not-replayed"
+    },
+    {
+      "id": "14.6.5",
+      "title": "TCP Flow Control - Window Size and Acknowledgments",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.6.6",
+      "title": "TCP Flow Control - Maximum Segment Size (MSS)",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.6.7",
+      "title": "TCP Flow Control - Congestion Avoidance",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.6.8",
+      "title": "Check Your Understanding - Reliability and Flow Control",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.7.1",
+      "title": "UDP Low Overhead versus Reliability",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.7.2",
+      "title": "UDP Datagram Reassembly",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.7.3",
+      "title": "UDP Server Processes and Requests",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.7.4",
+      "title": "UDP Client Processes",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.7.5",
+      "title": "Check Your Understanding - UDP Communication",
+      "status": "reviewed-against-saved-source"
+    },
+    {
+      "id": "14.8.1",
+      "title": "Packet Tracer - TCP and UDP Communications",
+      "status": "exercise-needs-original"
+    },
+    {
+      "id": "14.8.2",
+      "title": "What did I learn in this module?",
+      "status": "reviewed-against-saved-source"
+    }
+  ]
+}

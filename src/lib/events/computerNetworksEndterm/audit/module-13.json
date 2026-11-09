@@ -1,0 +1,333 @@
+{
+  "module": 13,
+  "questions": [
+    {
+      "id": "E073",
+      "explanation": "ICMPv4 и ICMPv6 передают уведомления об ошибках обработки IPv4/IPv6-пакетов, например недостижимости назначения. IP переносит пакеты best effort; UDP не сообщает такие сетевые ошибки сам. TCP отвечает за свою надёжную доставку, но не является общим механизмом IP-диагностики. Уведомление может прийти и от промежуточного роутера, не только конечного хоста.",
+      "explanationEn": "ICMPv4 and ICMPv6 report IPv4/IPv6 packet-processing problems such as unreachable destinations. IP carries packets best effort; UDP does not provide this network-error reporting. TCP handles its own reliable delivery but is not the general IP diagnostic protocol. Reports may come from intermediate routers as well as destination hosts."
+    },
+    {
+      "id": "E098",
+      "explanation": "IP обеспечивает адресацию и пересылку на internet layer, а ICMP — диагностические сообщения этого уровня. POP и BOOTP относятся к application layer; PPP — канальная инкапсуляция, поэтому эти три варианта не подходят.",
+      "explanationEn": "IP provides addressing/forwarding at the internet layer and ICMP provides diagnostic messages for that layer. POP and BOOTP are application-layer protocols, while PPP is link-layer encapsulation, so those choices do not fit."
+    },
+    {
+      "id": "E328",
+      "explanation": "Обе версии ICMP имеют Destination Unreachable и Time Exceeded: первая сообщает о невозможной доставке, вторая — например об исчерпании TTL/Hop Limit. Hostname resolution относится к DNS, Source Unreachable не является указанным стандартным типом, а IP configuration не общее название сообщения обеих версий.",
+      "explanationEn": "Both ICMP versions have Destination Unreachable and Time Exceeded: the former reports delivery failure and the latter includes TTL/Hop Limit expiration. Hostname resolution belongs to DNS; Source Unreachable is not the listed standard type, and IP configuration is not a shared message name."
+    },
+    {
+      "id": "E329",
+      "explanation": "Хост отправляет Router Solicitation, чтобы не ждать очередного Router Advertisement и запросить сведения о роутере/префиксе. RA посылает роутер; NS/NA служат обнаружению соседей, разрешению адресов и DAD, а не запросу сетевых параметров у роутера.",
+      "explanationEn": "A host sends Router Solicitation to request router/prefix information without waiting for a periodic Router Advertisement. Routers send RA; NS/NA support neighbor discovery, address resolution and DAD rather than requesting router configuration."
+    },
+    {
+      "id": "E330",
+      "explanation": "tracert последовательно увеличивает TTL/Hop Limit и показывает отвечающие промежуточные роутеры, поэтому помогает сузить место потерь. ping проверяет конечную достижимость, а команды flushdns/displaydns работают с DNS-кэшем. Трасса даёт подсказку, но один молчащий hop не доказывает его неисправность: ответы могут фильтроваться.",
+      "explanationEn": "tracert increases TTL/Hop Limit and displays responding intermediate routers, helping narrow down where loss occurs. ping tests endpoint reachability; flushdns/displaydns operate on the DNS cache. A trace is evidence, not proof that a silent hop is broken, because responses may be filtered."
+    },
+    {
+      "id": "E331",
+      "explanation": "Ping шлюза проверяет доступность локального интерфейса роутера, не путь до файлового сервера или всех удалённых сетей. Он не получает DHCP-адрес, не разрешает DNS-имя и не просит шлюз устанавливать файловое соединение. Вариант про достижение других сетей преувеличивает результат; полностью точного ответа среди опций нет, поэтому карточка исключена из автоматического квиза.",
+      "explanationEn": "Pinging the gateway tests reachability of the router’s local interface, not the file server or all remote networks. It does not obtain DHCP addressing, resolve DNS or ask the gateway to establish a file connection. The remote-networks option overstates the result; no option is fully accurate, so the card is excluded from the automatic quiz."
+    },
+    {
+      "id": "E332",
+      "explanation": "Отличие tracert — показ промежуточных hops и времени ответа каждого. ping даёт ответ целевого устройства без списка роутеров. tracert не обязан быть быстрее и обычно посылает несколько проб на один hop, поэтому варианты «быстрее» и «один ICMP» неверны.",
+      "explanationEn": "tracert differs by showing intermediate hops and their response times. ping reports the target response without listing routers. tracert need not be faster and usually sends multiple probes per hop, so the faster/one-ICMP claims are wrong."
+    },
+    {
+      "id": "E333",
+      "explanation": "Проба с TTL 1 истекает на первом роутере, который возвращает Time Exceeded; TTL 2 выявляет следующий и так далее. Redirect предлагает другой маршрут, а Ping — название утилиты, не нужного сообщения. На конце трассы может прийти Echo Reply или Port Unreachable в зависимости от вида проб, но промежуточные hops обнаруживаются по Time Exceeded.",
+      "explanationEn": "A TTL-1 probe expires at the first router, which returns Time Exceeded; TTL 2 reveals the next router, and so on. Redirect suggests another route and Ping is a utility name, not this message. The endpoint may return Echo Reply or Port Unreachable depending on probe type, but intermediate hops are discovered through Time Exceeded."
+    },
+    {
+      "id": "E334",
+      "explanation": "Ping использует ICMP Echo Request/Echo Reply для проверки достижимости. RIP обменивается маршрутами, DNS разрешает имена, NTP синхронизирует часы; они не являются утилитой ICMP Echo из вопроса.",
+      "explanationEn": "Ping uses ICMP Echo Request/Echo Reply for reachability testing. RIP exchanges routes, DNS resolves names and NTP synchronizes clocks; none is the ICMP Echo utility asked about."
+    },
+    {
+      "id": "E335",
+      "explanation": "Общее имя ICMP охватывает ICMPv4 и ICMPv6, которые сообщают об IP-ошибках. ARP находит MAC по IPv4; DHCP выдаёт настройки; NDP — набор функций IPv6 Neighbor Discovery поверх ICMPv6, а не общий механизм ошибок для IPv4 и IPv6.",
+      "explanationEn": "ICMP covers ICMPv4 and ICMPv6 error reporting. ARP resolves IPv4 to MAC, DHCP supplies configuration, and NDP is IPv6 Neighbor Discovery carried by ICMPv6 rather than the general error protocol for both IP versions."
+    },
+    {
+      "id": "E336",
+      "explanation": "Точка (.) в IOS ping означает, что Echo Reply не получен до истечения таймера. ! означает успешный ответ, U — полученное сообщение unreachable. Таймаут не объясняет причину: пакет или ответ могли потеряться либо быть отфильтрованы.",
+      "explanationEn": "A dot (.) in IOS ping means no Echo Reply arrived before the timer expired. ! means a successful reply and U means an unreachable message was received. Timeout alone does not identify the cause; the request/reply may have been lost or filtered."
+    },
+    {
+      "id": "E337",
+      "explanation": "Успешный ping подтверждает достижимость целевого IP для Echo и измеряет RTT — время запроса туда плюс ответа обратно. Он не показывает число промежуточных роутеров, ближайший к назначению роутер или время каждого hop; для этого нужна трассировка.",
+      "explanationEn": "Successful ping demonstrates target reachability for Echo and measures RTT: request travel plus return reply time. It does not list router count, the nearest router to the destination or each hop’s delay; those require tracing."
+    },
+    {
+      "id": "E338",
+      "explanation": "127.0.0.1 — loopback собственного компьютера: ответы подтверждают работающий локальный IP-стек без выхода на кабель. Они не проверяют DHCP-адрес, NIC/канал, gateway или Интернет, поэтому заключения о внешней сети из этого теста не следуют.",
+      "explanationEn": "127.0.0.1 is the local loopback: replies confirm a working local IP stack without traffic leaving on the cable. They do not test the DHCP address, NIC/link, gateway or Internet, so no external-connectivity conclusion follows."
+    },
+    {
+      "id": "E339",
+      "explanation": "Команда ping отправляет Echo Request и ожидает Echo Reply. ICMP — протокол этих сообщений, но не название команды в данном списке; netstat показывает соединения/маршруты, ipconfig — конфигурацию IP.",
+      "explanationEn": "ping sends Echo Request and waits for Echo Reply. ICMP is the underlying protocol, not the command name in this list; netstat shows connections/routes and ipconfig shows IP configuration."
+    },
+    {
+      "id": "E340",
+      "explanation": "В IPv6 лимит переходов находится в Hop Limit; роутер уменьшает его при пересылке, и ноль вызывает отбрасывание с Time Exceeded. TTL — название поля IPv4, CRC проверяет повреждение данных, а Time Exceeded — сообщение, не поле исходного пакета.",
+      "explanationEn": "IPv6 stores the hop budget in Hop Limit; routers decrement it while forwarding, and zero causes discard with Time Exceeded. TTL is the IPv4 field name, CRC checks corruption, and Time Exceeded is a message rather than a field in the original packet."
+    },
+    {
+      "id": "E341",
+      "explanation": "ICMP сообщает источнику об ошибках обработки IP, например Destination Unreachable. ARP разрешает локальный MAC, BOOTP выдаёт загрузочные параметры, DNS переводит имена в адреса. Они не выполняют запрошенную функцию обратной связи об IP-доставке.",
+      "explanationEn": "ICMP reports IP-processing problems to the sender, for example Destination Unreachable. ARP resolves local MAC addresses, BOOTP supplies boot configuration and DNS resolves names. None performs the requested IP-delivery error feedback."
+    },
+    {
+      "id": "E342",
+      "explanation": "traceroute показывает отвечающие промежуточные роутеры и RTT, позволяя искать участок между доступной локальной сетью и удалённым сервером. ipconfig показывает настройки хоста, netstat — соединения, telnet устанавливает сеанс. Звёздочка или медленный ответ hop могут быть фильтрацией/ограничением ICMP, поэтому трасса не доказывает конкретную поломку автоматически.",
+      "explanationEn": "traceroute displays responding routers and RTTs, helping locate a suspect segment toward the remote server. ipconfig shows host settings, netstat connections, and telnet opens a session. A silent or slow hop may reflect ICMP filtering/rate limiting, so tracing does not automatically prove a specific fault."
+    },
+    {
+      "id": "E343",
+      "explanation": "Для Duplicate Address Detection узел посылает Neighbor Solicitation с проверяемым IPv6 target address до обычного использования адреса. Ответ/обнаруженный конфликт означает, что адрес уже занят. ARP в IPv6 не используется; Echo проверяет достижимость, RS запрашивает роутерские объявления.",
+      "explanationEn": "Duplicate Address Detection sends Neighbor Solicitation targeting the tentative IPv6 address before normal use. A response/conflict indicates the address is already used. IPv6 does not use ARP; Echo tests reachability and RS requests router advertisements."
+    },
+    {
+      "id": "E467",
+      "explanation": "В Windows утилита называется tracert: tracert 10.1.1.5 покажет отвечающие hops до этого IP. traceroute — имя на многих других ОС, trace не нужная команда, ping проверяет цель без списка промежуточных устройств.",
+      "explanationEn": "Windows calls the utility tracert: tracert 10.1.1.5 lists responding hops toward that IP. traceroute is the name on many other systems, trace is not the requested command, and ping tests the target without listing intermediate devices."
+    },
+    {
+      "id": "E468",
+      "explanation": "В учебном сценарии доступ по IP работает, а по имени нет: это указывает на проблему name resolution, то есть DNS. Прямой IP не требует DNS, но всё ещё использует сетевой стек и маршрут через шлюз. Это диагностический признак: реальные сайты с виртуальным хостингом/TLS могут вести себя по прямому IP иначе, поэтому применяй вывод к условиям задачи.",
+      "explanationEn": "In this exercise, IP access works while name-based access fails, pointing to DNS name resolution. Direct IP access bypasses DNS but still needs the network stack and route. This is a diagnostic clue under the stated conditions; real virtual-hosted/TLS websites can behave differently when accessed by bare IP."
+    },
+    {
+      "id": "E502",
+      "explanation": "ICMP предоставляет обратную связь об обработке IP-пакетов — ошибки и диагностические ответы. Сообщение об ошибке само не повторяет пакет и не гарантирует доставку. Обмен топологией выполняют routing protocols; разрешение доменного имени — DNS.",
+      "explanationEn": "ICMP provides feedback about IP-packet processing through error and diagnostic messages. Reporting a failure does not itself retransmit the packet or guarantee delivery. Routing protocols exchange topology; DNS resolves domain names."
+    },
+    {
+      "id": "E503",
+      "explanation": "Роутер уменьшает Hop Limit при пересылке; когда значение исчерпывается до нуля, пакет отбрасывается и обычно возвращается ICMPv6 Time Exceeded. 255 — возможное начальное значение, не условие истечения. Echo Reply означает достижение цели; получение роутером Time Exceeded не является причиной истечения этой пробы.",
+      "explanationEn": "A router decrements Hop Limit while forwarding; when it expires at zero, the packet is discarded and normally triggers ICMPv6 Time Exceeded. 255 can be an initial value, not expiration. Echo Reply signals reaching the destination, and receiving a Time Exceeded message is not what expires this probe."
+    },
+    {
+      "id": "E504",
+      "explanation": "Сохранённый ответ R1 зависит от строк отсутствующей трассировки. Обычно начинают с границы между последним отвечающим hop и следующим участком, одновременно проверяя фильтрацию и обратный маршрут. Без exhibit нельзя определить, почему нужно начать именно с R1, а не R2/ПК/коммутатора; карточка не используется в автоматическом квизе.",
+      "explanationEn": "The saved R1 answer depends on the missing trace output. Normally investigate around the last responding hop and the next segment while checking filtering and the return route. Without the exhibit, choosing R1 over R2/PC/switch is unverified; the card is excluded from the automatic quiz."
+    },
+    {
+      "id": "E511",
+      "explanation": "Если речь именно об ICMPv4 Destination Unreachable (type 3), code 0 означает network unreachable; code 1 — host, 2 — protocol, 3 — port unreachable. Но у Echo Reply type 0/code 0 значение другое. В вопросе не указан type, поэтому однозначного вывода из «code 0» нет и карточка исключена.",
+      "explanationEn": "For ICMPv4 Destination Unreachable (type 3), code 0 means network unreachable; codes 1, 2 and 3 mean host, protocol and port unreachable. However, Echo Reply type 0/code 0 means something else. The question omits type, so “code 0” is ambiguous and the card is excluded."
+    },
+    {
+      "id": "E655",
+      "explanation": "Extended ping позволяет вручную указать source IP/interface на R2 и проверить связь с H1 именно от интерфейса, который служит шлюзом H3. Обычный ping часто берёт адрес выходного интерфейса; CDP показывает соседей, а telnet/traceroute решают другие задачи. Отдельно привязку имен к портам нужно подтвердить отсутствующей схемой.",
+      "explanationEn": "Extended ping lets the administrator choose R2’s source IP/interface and test H1 specifically from H3’s gateway-facing interface. Ordinary ping often uses the outgoing-interface address; CDP lists neighbors and telnet/traceroute serve other purposes. The particular device-to-interface mapping still depends on the missing diagram."
+    },
+    {
+      "id": "E656",
+      "explanation": "tracert показывает hops и задержки ответов, поэтому помогает локализовать участок потерь/задержки. Активные TCP-соединения показывает netstat, DNS-записи — nslookup, настройки ПК — ipconfig. Молчащий hop может лишь не отвечать на пробы, поэтому результат требует дальнейшей проверки.",
+      "explanationEn": "tracert shows hops and response delays, helping localize a segment with loss/delay. netstat shows active TCP connections, nslookup DNS records, and ipconfig PC settings. A silent hop may simply not answer probes, so the result needs interpretation."
+    },
+    {
+      "id": "E657",
+      "explanation": "В классическом IOS введи ping без IP в privileged EXEC: откроется диалог, где выбираются Extended commands и Source address/interface. Изменять shutdown на ненужных портах не нужно; interface configuration не является способом выбора источника этой интерактивной команды.",
+      "explanationEn": "In classic IOS, entering ping without an IP at privileged EXEC opens a dialog where Extended commands and Source address/interface can be selected. Shutting down unused interfaces is unnecessary; entering interface configuration is not the source-selection mechanism of this interactive command."
+    },
+    {
+      "id": "E664",
+      "explanation": "Рост host-to-host ping RTT относительно baseline прямо указывает на возможное увеличение задержки пути туда и обратно. Изменение RAM не измеряет задержку; изменение bandwidth — другая характеристика; timeout отдельного hop может быть фильтрацией. RTT не показывает, на каком именно участке возникла задержка.",
+      "explanationEn": "An increase in host-to-host ping RTT compared with the baseline directly suggests greater round-trip delay. RAM is not a latency measurement, bandwidth is a different property, and a single-hop timeout may reflect filtering. RTT does not identify the exact delayed segment."
+    },
+    {
+      "id": "E667",
+      "explanation": "U означает полученное ICMP unreachable; одна возможная причина — отсутствие маршрута у роутера, поэтому формулировка «may indicate» верна. ! — успешный Echo Reply, . — таймаут. Смесь . и ! означает часть потерянных/неполученных вовремя ответов, а не обязательно unreachable.",
+      "explanationEn": "U means an ICMP unreachable was received; a router missing a route is one possible cause, so “may indicate” is accurate. ! is successful Echo Reply and . is timeout. A mixture of . and ! means some replies were absent/late, not necessarily unreachable messages."
+    },
+    {
+      "id": "E668",
+      "explanation": "Ключ -6 выбирает IPv6 для разрешения имени и трассировки. Цифра относится к версии IP, не к количеству hops, проб или миллисекунд. Для ограничения длины трассы/таймера используются другие параметры.",
+      "explanationEn": "The -6 option selects IPv6 for name resolution and tracing. The digit identifies the IP version, not the hop count, number of probes or milliseconds. Other options control hop and timeout limits."
+    },
+    {
+      "id": "E669",
+      "explanation": "Эти неудачные ping подтверждают отсутствие ожидаемых Echo Reply, но не единственную причину. Возможны неверные настройки, фильтрация, неисправность кабеля/порта/NIC или недоступный роутер. Поэтому нельзя наверняка объявить неисправной NIC, отключённым TCP/IP или выключенным роутер; нужны дополнительные тесты.",
+      "explanationEn": "The failed pings confirm missing expected Echo Replies, not a unique cause. Bad settings, filtering, a cable/port/NIC fault or an unavailable router are possible. Thus the NIC, TCP/IP or router cannot be singled out with certainty; further tests are required."
+    },
+    {
+      "id": "E673",
+      "explanation": "tracert пытается показать промежуточные hops, ping — достижимость и ответ целевого IP. Оба работают с IP, даже если вводится доменное имя. Видимость каждого hop не гарантирована из-за фильтрации, но именно обнаружение промежуточного пути отличает трассировку.",
+      "explanationEn": "tracert attempts to show intermediate hops, while ping reports target reachability/replies. Both use IP even when given a domain name. Filtering can hide hops, but discovery of the intermediate path is the distinguishing feature of tracing."
+    },
+    {
+      "id": "E682",
+      "explanation": "ping 10.1.1.1 проверяет, возвращает ли этот адрес ICMP Echo Reply, то есть достижимость назначения. Для чисто локального стека используют loopback 127.0.0.1; путь показывает tracert; тип устройства ping не определяет.",
+      "explanationEn": "ping 10.1.1.1 checks whether that address returns ICMP Echo Reply, testing destination reachability. Local-only stack testing uses loopback 127.0.0.1; tracert shows the path; ping does not identify the device type."
+    },
+    {
+      "id": "E714",
+      "explanation": "127.0.0.1 зарезервирован для loopback: пакет остаётся внутри собственного хоста и проверяет локальный IP-стек. Это не адрес удалённого компьютера, не проверка назначенного NIC адреса и не трассировка внешнего пути.",
+      "explanationEn": "127.0.0.1 is loopback: the packet stays inside the host and tests its local IP stack. It is not a remote computer’s address, a check of the NIC’s configured IP or a trace of an external path."
+    },
+    {
+      "id": "E715",
+      "explanation": "Задание «выберите два» неоднозначно. Redirect существует в обеих версиях; Router Solicitation/Advertisement также определены для IPv4 Router Discovery (RFC 1256) и для IPv6 ND, то есть технически подходят больше двух вариантов. IPv6 неизвестный Next Header сообщает как Parameter Problem, а не отдельный Protocol Unreachable. Поэтому не заучивай спорную пару: карточка исключена. Источники: RFC 1256 и RFC 4443.",
+      "explanationEn": "“Choose two” is ambiguous here. Redirect exists in both versions; Router Solicitation/Advertisement are also defined for IPv4 Router Discovery (RFC 1256) and IPv6 ND, giving more than two technically valid options. IPv6 reports an unknown Next Header through Parameter Problem, not a separate Protocol Unreachable message. Do not memorize a disputed pair; the card is excluded. Sources: RFC 1256 and RFC 4443.",
+      "correction": {
+        "answers": [
+          "Вопрос неоднозначен: Redirect, Router Solicitation и Router Advertisement существуют в обеих версиях; Protocol Unreachable не имеет одноимённого соответствия в ICMPv6."
+        ],
+        "correct": [],
+        "answerText": "Нет единственной пары: Redirect, RS и RA существуют в IPv4 и IPv6; карточка исключена.",
+        "eligible": false,
+        "caution": "Choose two неоднозначно: IPv4 RS/RA определены RFC 1256; ICMPv6 unknown Next Header — Parameter Problem (RFC 4443)."
+      }
+    },
+    {
+      "id": "E716",
+      "explanation": "Адрес 2001:db8:FACE:39::10 дан как WAN-интерфейс локального роутера. Ping проверяет достижимость именно этого интерфейса, а не удалённого сервера и не всего Интернета; путь он тоже не показывает. Предложенные варианты не формулируют это точно, поэтому карточка исключена из автоматической оценки.",
+      "explanationEn": "2001:db8:FACE:39::10 is specified as the local router’s WAN interface. Ping tests that interface’s reachability, not the remote server or the entire Internet, and it does not show the path. None of the offered choices states this accurately, so the card is excluded from automatic grading."
+    },
+    {
+      "id": "E728",
+      "explanation": "nslookup cisco.com напрямую запрашивает DNS. ping cisco.com сначала должен разрешить имя: отображение IP подтверждает успешное разрешение, даже если Echo Reply затем блокируется. ipconfig /flushdns лишь очищает кэш, net и nbtstat не являются этими двумя DNS-проверками.",
+      "explanationEn": "nslookup cisco.com directly queries DNS. ping cisco.com must first resolve the name; displaying its IP demonstrates resolution even if Echo Reply is later blocked. ipconfig /flushdns only clears the cache, and net/nbtstat are not these two DNS tests."
+    },
+    {
+      "id": "E758",
+      "explanation": "ipconfig показывает IP/mask/gateway и с /all DNS-настройки; nslookup проверяет DNS-запрос; ping адреса локального роутера проверяет связь с ним. arp -a показывает кэш соседей, tracert — hops, telnet — сеанс: они не заменяют требуемую комбинацию конфигурации, DNS и reachability.",
+      "explanationEn": "ipconfig shows IP/mask/gateway and, with /all, DNS settings; nslookup tests DNS queries; ping to the local router tests reachability. arp -a shows neighbors, tracert shows hops and telnet opens a session; they do not replace the requested combination of configuration, DNS and reachability checks."
+    },
+    {
+      "id": "E763",
+      "explanation": "ipv6 unicast-routing включает работу устройства как IPv6-роутера; на активных IPv6-интерфейсах обычно начинается отправка RA, если она не подавлена отдельно. Команда не выполняет no shutdown за все интерфейсы и не назначает им глобальные IPv6-адреса. Link-local создаётся при включении IPv6 на интерфейсе, а не этой глобальной командой как таковой.",
+      "explanationEn": "ipv6 unicast-routing enables IPv6 router operation; active IPv6-enabled interfaces normally begin sending RA unless separately suppressed. It does not execute no shutdown on every port or assign global IPv6 addresses. Link-local creation follows enabling IPv6 on an interface, not this global command by itself."
+    }
+  ],
+  "notes": {
+    "ru": "## ICMP: полный разбор сообщений и результатов\n\n### Матрица сообщений\n\n| Сообщение | Когда возникает | Что из него следует |\n|---|---|---|\n| Echo Request / Echo Reply | Проверка ping | Проверен двусторонний обмен Echo с указанным адресом |\n| Destination Unreachable | Узел/роутер не смог доставить пакет | Нужны type и code для причины; это не гарантия, что цель выключена |\n| Time Exceeded | TTL/Hop Limit исчерпан при пересылке | Проба достигла отвечающего роутера; это основа traceroute |\n| Packet Too Big (ICMPv6) | Пакет больше MTU следующего канала | Отправитель должен уменьшить размер; IPv6-роутер не фрагментирует |\n| Parameter Problem | Некорректное поле/неизвестный Next Header | Ошибка структуры/интерпретации пакета |\n| RS / RA | Поиск роутеров и объявление IPv6-параметров | Хост запрашивает, роутер объявляет префикс и сведения о gateway |\n| NS / NA | IPv6 neighbor resolution, DAD, проверка соседа | Выяснение адреса соседа или конфликт tentative-адреса |\n| Redirect | Роутер сообщает лучший локальный next hop | Это не протокол построения всей таблицы маршрутов |\n\nДля ICMPv4 Destination Unreachable type 3: code 0 network, 1 host, 2 protocol, 3 port. Не переносить эти номера на ICMPv6. ICMP сообщает об ошибке, но не повторяет потерянный пакет и не превращает IP в надёжный транспорт.\n\n### Traceroute на примере трёх роутеров\n\nПроба TTL=1 истекает на R1 → R1 возвращает Time Exceeded. TTL=2 истекает на R2, TTL=3 — на R3, TTL=4 достигает цели. Конец трассы определяется иначе: при ICMP Echo-пробах это Echo Reply, при классических UDP-пробах к закрытому порту — Port Unreachable. Поэтому фраза «все ответы трассировки — Time Exceeded» неверна.\n\nRTT каждой строки измеряется от источника до отвечающего hop и обратно. Разность соседних строк не является точным временем одного линка: маршруты ответов могут отличаться. `*` — ответ не получен вовремя, а не доказанный отказ роутера. Если более поздние hops отвечают, трафик проходит через молчащий участок.\n\n### Лестница проверки\n\n1. Loopback 127.0.0.1 / ::1: локальная реализация IP, без проверки кабеля и настроек gateway.\n2. Сосед или default gateway: связь в локальной сети; доступ дальше пока не доказан.\n3. Удалённый IP: двусторонний путь для ICMP через сеть, но не работоспособность HTTP/почты.\n4. Доменное имя: добавляет проверку DNS; `nslookup` отделяет её от Echo. Имя разрешилось, но ping молчит — DNS уже мог сработать.\n\nПервый ping иногда теряется во время ARP/ND; повтори серию и смотри процент успеха, а не один пакет. Для baseline запиши адрес источника/цели, время проверки, потери и RTT, затем сравнивай сопоставимые измерения. Рост RTT означает возможную задержку; он не измеряет пропускную способность напрямую.\n\n### Важная граница курса\n\nRS/RA особенно важны в IPv6, но исторически существуют и в IPv4 Router Discovery ([RFC 1256](https://www.rfc-editor.org/info/rfc1256/)). Поэтому вопрос банка с предложением выбрать ровно два общих ICMP-сообщения из RS, RA и Redirect неоднозначен. IPv6 unknown Next Header описан как Parameter Problem в [RFC 4443](https://www.rfc-editor.org/info/rfc4443/). Такие карточки помечены и не используются как однозначный тест.\n",
+    "en": "## ICMP: messages and result interpretation\n\n### Message matrix\n\n| Message | Trigger | What it establishes |\n|---|---|---|\n| Echo Request / Echo Reply | Ping test | Two-way Echo exchange with the specified address |\n| Destination Unreachable | A host/router cannot deliver a packet | Type and code identify the reason; it does not automatically mean the target is powered off |\n| Time Exceeded | TTL/Hop Limit expires during forwarding | The probe reached the reporting router; the basis of traceroute |\n| Packet Too Big (ICMPv6) | Packet exceeds the next link MTU | Sender must reduce size; IPv6 routers do not fragment |\n| Parameter Problem | Invalid field/unknown Next Header | Packet structure or interpretation problem |\n| RS / RA | Router discovery and IPv6 configuration | Host requests; router advertises prefix/gateway information |\n| NS / NA | IPv6 resolution, DAD and neighbor checking | Resolve a neighbor or detect a tentative-address conflict |\n| Redirect | Router suggests a better local next hop | Not a protocol for constructing the entire routing table |\n\nICMPv4 Destination Unreachable type 3 uses codes 0 network, 1 host, 2 protocol and 3 port. Do not transfer those numbers to ICMPv6. ICMP reports errors; it does not retransmit lost packets or turn IP into reliable transport.\n\n### Traceroute through three routers\n\nTTL=1 expires at R1 → R1 returns Time Exceeded. TTL=2 expires at R2, TTL=3 at R3, and TTL=4 reaches the target. Completion differs: ICMP Echo probes receive Echo Reply; classic UDP probes to a closed port receive Port Unreachable. Thus not every trace response is Time Exceeded.\n\nEach row’s RTT is measured from the source to that responder and back. Subtracting adjacent RTTs is not an exact link-delay measurement because return routes may differ. `*` means no timely response, not a proven router failure. If later hops respond, traffic passes the silent portion.\n\n### Testing ladder\n\n1. Loopback 127.0.0.1 / ::1 tests local IP implementation, not cabling or gateway settings.\n2. A neighbor/default gateway tests the local network, not further connectivity.\n3. A remote IP tests a two-way ICMP path, not HTTP/mail functionality.\n4. A domain adds DNS resolution. `nslookup` separates it from Echo; a resolved name with no ping reply may still mean DNS worked.\n\nThe first ping can time out during ARP/ND resolution; repeat a series and inspect success rate rather than one packet. Record source/target, time, loss and RTT for a baseline and compare equivalent measurements. Increased RTT suggests delay but does not directly measure bandwidth.\n\n### A course boundary worth understanding\n\nRS/RA are particularly important in IPv6, but also exist in IPv4 Router Discovery ([RFC 1256](https://www.rfc-editor.org/info/rfc1256/)). A bank question demanding exactly two shared messages from RS, RA and Redirect is therefore ambiguous. IPv6 unknown Next Header is Parameter Problem in [RFC 4443](https://www.rfc-editor.org/info/rfc4443/). Such cards are flagged and excluded from unambiguous testing.\n"
+  },
+  "coverage": [
+    {
+      "topic": "13.0.1 Why should I take this module?",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.0.2 What will I learn in this module?",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.1.1 ICMPv4 and ICMPv6 Messages",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.1.2 Host Reachability",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.1.3 Destination or Service Unreachable",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.1.4 Time Exceeded",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.1.5 ICMPv6 Messages",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.1.6 Check Your Understanding - ICMP Messages",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.2.1 Ping - Test Connectivity",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.2.2 Ping the Loopback",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.2.3 Ping the Default Gateway",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.2.4 Ping a Remote Host",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.2.5 Traceroute - Test the Path",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "13.2.6 Packet Tracer - Verify IPv4 and IPv6 Addressing",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "objectives and diagnostic workflow explained; activity not executed"
+    },
+    {
+      "topic": "13.2.7 Packet Tracer - Use Ping and Traceroute to Test Network Connectivity",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "objectives and diagnostic workflow explained; activity not executed"
+    },
+    {
+      "topic": "13.3.1 Packet Tracer - Use ICMP to Test and Correct Network Connectivity",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "objectives and diagnostic workflow explained; activity not executed"
+    },
+    {
+      "topic": "13.3.2 Lab - Use Ping and Traceroute to Test Network Connectivity",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "objectives and diagnostic workflow explained; activity not executed"
+    },
+    {
+      "topic": "13.3.3 What did I learn in this module?",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    },
+    {
+      "topic": "Module Quiz - ICMP",
+      "source": "NetAcad_данные/модули/13.md",
+      "status": "covered in existing notes plus audited supplement"
+    }
+  ],
+  "issues": [
+    {
+      "ids": [
+        "E715"
+      ],
+      "issue": "Existing correction was incomplete: IPv4 RS/RA do exist (RFC1256), so >2 valid shared messages; retain exclusion and correct explanation."
+    },
+    {
+      "ids": [
+        "E331",
+        "E511",
+        "E716"
+      ],
+      "issue": "No fully precise option or missing ICMP type; preserved exclusion and explained limitation."
+    },
+    {
+      "ids": [
+        "E504",
+        "E655"
+      ],
+      "issue": "Missing exhibit, answer not independently verifiable."
+    }
+  ]
+}

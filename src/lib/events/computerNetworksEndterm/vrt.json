@@ -1,0 +1,1698 @@
+[
+  {
+    "id": "vrt-1-01",
+    "set": 1,
+    "number": 1,
+    "prompt": "A PC is downloading a large file from a server. The TCP window is 1000 bytes. The server is sending the file using 100-byte segments. How many segments will the server send before it requires an acknowledgment from the PC?",
+    "options": [
+      "1 segment",
+      "10 segments",
+      "100 segments",
+      "1000 segments",
+      "None of the above"
+    ],
+    "answer": "10 segments",
+    "explanation": "Окно 1000 байт допускает 1000 байт неподтверждённых данных. При 100 байтах полезной нагрузки сегмента: 1000 / 100 = 10 сегментов. Это не 100 и не 1000; реальный отправитель также ограничен congestion window.",
+    "caution": "",
+    "topic": 14
+  },
+  {
+    "id": "vrt-1-02",
+    "set": 1,
+    "number": 2,
+    "prompt": "Which protocol is used by the traceroute command to send and receive echo-requests and echo-replies?",
+    "options": [
+      "SNMP",
+      "ICMP",
+      "Telnet",
+      "TCP",
+      "None of the above"
+    ],
+    "answer": "ICMP",
+    "explanation": "Echo Request и Echo Reply — типы сообщений ICMP. Однако формулировка неточна: Windows tracert отправляет ICMP Echo, а классический traceroute Unix/Cisco часто отправляет UDP-пробы; промежуточные узлы в обоих случаях отвечают ICMP Time Exceeded.",
+    "caution": "Ожидаемый ответ ICMP; не все реализации traceroute отправляют Echo Request.",
+    "topic": 13
+  },
+  {
+    "id": "vrt-1-03",
+    "set": 1,
+    "number": 3,
+    "prompt": "A network engineer is analyzing reports from a recently performed network baseline. Which situation would depict a possible latency issue?",
+    "options": [
+      "a change in the bandwidth according to the show interfaces output",
+      "a next-hop timeout from a traceroute",
+      "an increase in host-to-host ping response times",
+      "a change in the amount of RAM according to the show version output",
+      "None of the above"
+    ],
+    "answer": "An increase in host-to-host ping response times.",
+    "explanation": "Latency — задержка. Рост RTT ping по сравнению с baseline непосредственно указывает на возможный рост задержки; одно пропущенное сообщение traceroute может быть фильтрацией, а объём RAM или nominal bandwidth сами по себе не измеряют latency.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-1-04",
+    "set": 1,
+    "number": 4,
+    "prompt": "What is the advantage of using SSH over Telnet?",
+    "options": [
+      "SSH is easier to use.",
+      "SSH operates faster than Telnet.",
+      "SSH provides secure communications to access hosts.",
+      "SSH supports authentication for a connection request.",
+      "None of the above"
+    ],
+    "answer": "SSH provides secure communications to access hosts.",
+    "explanation": "SSH шифрует управляющий сеанс, включая учётные данные и команды. Telnet передаёт их открыто. Главное преимущество — защищённость, а не гарантированная скорость или простота; аутентификацию может выполнять и Telnet.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-1-05",
+    "set": 1,
+    "number": 5,
+    "prompt": "What is the usable number of host IP addresses on a network that has a /26 mask?",
+    "options": [
+      "256",
+      "254",
+      "64",
+      "62",
+      "32"
+    ],
+    "answer": "62",
+    "explanation": "/26 оставляет 32−26 = 6 host bits: 2^6 = 64 адреса. Для обычной подсети вычитаем network и broadcast: 64−2 = 62 usable host addresses.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-1-06",
+    "set": 1,
+    "number": 6,
+    "prompt": "Which factor determines TCP window size?",
+    "options": [
+      "the amount of data to be transmitted",
+      "the number of services included in the TCP segment",
+      "the amount of data the destination can process at one time",
+      "the amount of data the source is capable of sending at one time",
+      "None of the above"
+    ],
+    "answer": "The amount of data the destination can process at one time.",
+    "explanation": "Ожидаемый TCP receive window отражает свободную ёмкость буфера получателя: сколько байт он готов принять до следующего подтверждения. Это не размер всего файла и не число сервисов. Реальный объём в полёте ограничен также congestion window отправителя.",
+    "caution": "Вопрос подразумевает receiver-advertised window; congestion window — отдельный механизм.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-1-07",
+    "set": 1,
+    "number": 7,
+    "prompt": "Which piece of malicious code would be classified as a Trojan horse?",
+    "options": [
+      "malware that was written to look like a video game",
+      "malware that requires manual user intervention to spread between systems",
+      "malware that attaches itself to a legitimate program and spreads to other programs when launched",
+      "malware that can automatically spread from one system to another by exploiting a vulnerability in the target",
+      "None of the above"
+    ],
+    "answer": "Malware that was written to look like a video game.",
+    "explanation": "Trojan маскируется под полезную/безобидную программу, например игру. Virus заражает другой объект и распространяется при запуске, worm способен распространяться самостоятельно через уязвимость; именно маскировка отличает предложенный Trojan.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-1-08",
+    "set": 1,
+    "number": 8,
+    "prompt": "What do the client/server and peer-to-peer network models have in common?",
+    "options": [
+      "Both models have dedicated servers.",
+      "Both models support devices in server and client roles.",
+      "Both models require the use of TCP/IP-based protocols.",
+      "Both models are used only in the wired network environment.",
+      "None of the above"
+    ],
+    "answer": "Both models support devices in server and client roles.",
+    "explanation": "В обеих моделях есть получатель услуги (client) и предоставляющий её узел (server). P2P допускает обе роли у одного узла и не требует выделенного сервера. Ни проводная среда, ни конкретный транспорт не определяют модель.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-1-09",
+    "set": 1,
+    "number": 9,
+    "prompt": "Which type of attack involves an adversary attempting to gather information about a network to identify vulnerabilities?",
+    "options": [
+      "reconnaissance",
+      "DoS",
+      "dictionary",
+      "man-in-the-middle",
+      "None of the above"
+    ],
+    "answer": "Reconnaissance attack.",
+    "explanation": "Сбор имён, активных узлов, портов и уязвимостей — разведка перед атакой. nslookup и fping могут применяться для такого сбора, хотя сами по себе являются и законными диагностическими инструментами. DoS нарушает доступность; access/MITM означают другие действия.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-1-10",
+    "set": 1,
+    "number": 10,
+    "prompt": "By following a structured troubleshooting approach, a network administrator identified a network issue after a conversation with the user. What is the next step that the administrator should take?",
+    "options": [
+      "Verify full system functionality.",
+      "Test the theory to determine cause.",
+      "Establish a theory of probable causes.",
+      "Establish a plan of action to resolve the issue.",
+      "None of the above"
+    ],
+    "answer": "Establish a theory of probable causes.",
+    "explanation": "После первого шага identify the problem (опрос пользователя/симптомы) формируют гипотезу вероятной причины. Затем её тестируют, составляют план исправления, проверяют результат и документируют. Нельзя перескакивать сразу к плану или финальной проверке.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-1-11",
+    "set": 1,
+    "number": 11,
+    "prompt": "How are port numbers used in the TCP/IP encapsulation process?",
+    "options": [
+      "Source port numbers and destination port numbers are not necessary when UDP is the transport layer protocol being used for the communication.",
+      "Source port and destination port numbers are randomly generated.",
+      "If multiple conversations occur that are using the same service, the source port number is used to track the separate conversations.",
+      "Destination port numbers are assigned automatically and cannot be changed.",
+      "None of the above"
+    ],
+    "answer": "If multiple conversations use the same service, the source port number tracks the separate conversations.",
+    "explanation": "Порт назначения указывает сервис, например HTTP 80. Разные исходные порты помогают различить соединения одного клиента с сервисом; полная идентификация включает протокол и обе пары IP:port. UDP тоже имеет порты; серверный destination port не обязан выбираться случайно.",
+    "caution": "",
+    "topic": 14
+  },
+  {
+    "id": "vrt-1-12",
+    "set": 1,
+    "number": 12,
+    "prompt": "Which three fields are used in a UDP segment header? (Choose three.)",
+    "options": [
+      "Window Size",
+      "Length",
+      "Source Port",
+      "Acknowledgment Number",
+      "Checksum",
+      "Sequence Number"
+    ],
+    "answer": "Length; Source Port; Checksum.",
+    "explanation": "UDP содержит четыре поля: source port, destination port, length, checksum. Среди напечатанных вариантов представлены только три из них — Length, Source Port, Checksum. Window, ACK и sequence number принадлежат TCP.",
+    "caution": "",
+    "topic": 14
+  },
+  {
+    "id": "vrt-1-13",
+    "set": 1,
+    "number": 13,
+    "prompt": "A technician is to document the current configurations of all network devices in a college, including those in off-site buildings. Which protocol would be best to use to securely access the network devices?",
+    "options": [
+      "FTP",
+      "HTTP",
+      "SSH",
+      "Telnet",
+      "None of the above"
+    ],
+    "answer": "SSH",
+    "explanation": "SSH позволяет безопасно удалённо читать конфигурации устройств, в том числе за пределами здания. Telnet не шифрует сессию; обычный FTP/HTTP не являются нужным защищённым протоколом интерактивного управления IOS.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-1-14",
+    "set": 1,
+    "number": 14,
+    "prompt": "What is the purpose of ICMP messages?",
+    "options": [
+      "to inform routers about network topology changes",
+      "to ensure the delivery of an IP packet",
+      "to provide feedback of IP packet transmissions",
+      "to monitor the process of a domain Full Name to IP address resolution",
+      "None of the above"
+    ],
+    "answer": "To provide feedback about IP packet transmissions.",
+    "explanation": "ICMP передаёт диагностические сообщения и уведомления об ошибках доставки IP: например Destination Unreachable и Time Exceeded. Он не гарантирует доставку IP, не заменяет протоколы маршрутизации и не выполняет DNS-разрешение.",
+    "caution": "",
+    "topic": 13
+  },
+  {
+    "id": "vrt-1-15",
+    "set": 1,
+    "number": 15,
+    "prompt": "What is an advantage of SMB over FTP?",
+    "options": [
+      "Only with SMB can data transfers occur in both directions.",
+      "Only SMB establishes two simultaneous connections with the client, making the data transfer faster.",
+      "SMB is more reliable than FTP because SMB uses TCP and FTP uses UDP.",
+      "SMB clients can establish a long-term connection to the server.",
+      "None of the above"
+    ],
+    "answer": "SMB clients can establish a long-term connection to the server.",
+    "explanation": "SMB поддерживает длительный сеанс работы с общими файлами/принтерами. FTP тоже использует TCP и передаёт файлы в обе стороны; отдельные control/data соединения — как раз свойство FTP, а не уникальное преимущество SMB.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-1-16",
+    "set": 1,
+    "number": 16,
+    "prompt": "The application layer of the TCP/IP model performs the functions of what three layers of the OSI model? (Choose three.)",
+    "options": [
+      "physical",
+      "session",
+      "network",
+      "presentation",
+      "data link",
+      "transport"
+    ],
+    "answer": "Application; Presentation; Session.",
+    "explanation": "TCP/IP Application объединяет три верхних OSI-уровня: Application (сервис), Presentation (формат/кодирование), Session (диалог). В напечатанных вариантах отсутствует Application: выбрать три правильных варианта из предложенных невозможно. Рукописная пометка не является частью исходного списка.",
+    "caution": "Дефект задания: в напечатанном choose-three отсутствует вариант Application; есть только два правильных печатных варианта.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-1-17",
+    "set": 1,
+    "number": 17,
+    "prompt": "What is the prefix length notation for the subnet mask 255.255.255.224?",
+    "options": [
+      "/25",
+      "/26",
+      "/27",
+      "/28",
+      "None of the above"
+    ],
+    "answer": "/27",
+    "explanation": "255.255.255 даёт 24 единицы. 224 = 11100000 добавляет 3, итого 27 сетевых бит — /27.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-1-18",
+    "set": 1,
+    "number": 18,
+    "prompt": "Which two protocols may devices use in the application process that sends email? (Choose two.)",
+    "options": [
+      "HTTP",
+      "SMTP",
+      "POP",
+      "IMAP",
+      "DNS",
+      "POP3"
+    ],
+    "answer": "SMTP and DNS.",
+    "explanation": "SMTP отправляет/пересылает письмо; DNS помогает найти MX-сервер домена и его IP. POP/POP3 и IMAP получают/синхронизируют mailbox, а не отправляют новое письмо. Варианты содержат SMTP и DNS — это ожидаемая пара для процесса отправки.",
+    "caution": "Формулировка описывает весь процесс отправки: DNS помогает найти сервер, а не переносит само письмо.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-1-19",
+    "set": 1,
+    "number": 19,
+    "prompt": "A PC that is communicating with a web server has a TCP window size of 6,000 bytes when sending data and a packet size of 1,500 bytes. Which byte of information will the web server acknowledge after it has received two packets of data from the PC?",
+    "options": [
+      "3001",
+      "6001",
+      "4500",
+      "6000",
+      "None of the above"
+    ],
+    "answer": "3001 (assuming the first data byte has sequence number 1).",
+    "explanation": "Два сегмента по 1500 байт = 3000 полученных байт. TCP ACK сообщает номер следующего ожидаемого байта: при начале с 1 это 3001. 4501 относится к трём сегментам, а размер окна 6000 не означает, что уже получено 6000 байт.",
+    "caution": "Точное значение ACK зависит от начального sequence number и размера именно TCP payload; учебный ответ предполагает seq=1 и payload=1500.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-1-20",
+    "set": 1,
+    "number": 20,
+    "prompt": "What three blocks of addresses are defined by RFC 1918 for private network use? (Choose three.)",
+    "options": [
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "100.64.0.0/14",
+      "169.254.0.0/16",
+      "239.0.0.0/8"
+    ],
+    "answer": "10.0.0.0/8; 172.16.0.0/12; 192.168.0.0/16.",
+    "explanation": "Это три частных блока RFC 1918. 169.254/16 — link-local; 100.64/10 — shared CGNAT, а не RFC 1918; 239/8 — multicast. Подмена /12 диапазоном лишь 172.16/16 тоже была бы ошибкой.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-1-21",
+    "set": 1,
+    "number": 21,
+    "prompt": "What does a client do when it has UDP datagrams to send?",
+    "options": [
+      "It just sends the datagrams.",
+      "It queries the server to see if it is ready to receive data.",
+      "It sends a simplified three-way handshake to the server.",
+      "It sends to the server a segment with the SYN flag set to synchronize the conversation.",
+      "None of the above"
+    ],
+    "answer": "It just sends the datagrams.",
+    "explanation": "UDP не устанавливает соединение через SYN/handshake перед отправкой. Приложение формирует датаграммы и передаёт их; UDP сам не спрашивает сервер о готовности. Запросы/подтверждения при необходимости добавляет само приложение.",
+    "caution": "",
+    "topic": 14
+  },
+  {
+    "id": "vrt-1-22",
+    "set": 1,
+    "number": 22,
+    "prompt": "Which is the compressed format of the IPv6 address 2002:0420:00c4:1008:0025:0190:0000:0990?",
+    "options": [
+      "2002:420:c4:1008:25:190::990",
+      "2002:42:10:c400::909",
+      "2002:420::25:1090:0:99",
+      "2002:42::25:1090:0:99",
+      "None of the above"
+    ],
+    "answer": "2002:420:c4:1008:25:190::990 (valid offered form); canonical: 2002:420:c4:1008:25:190:0:990.",
+    "explanation": "Снимаем ведущие нули в каждом hextet, но сохраняем внутренние и конечные: 0420→420, 00c4→c4, 0190→190, 0990→990. Единственная нулевая группа может быть представлена :: в допустимом RFC4291 синтаксисе; рекомендованная RFC5952 каноническая запись не сокращает один нулевой hextet.",
+    "caution": "Вариант A синтаксически корректен, но не соответствует канонической рекомендации RFC5952 для одиночной нулевой группы.",
+    "topic": 12
+  },
+  {
+    "id": "vrt-1-23",
+    "set": 1,
+    "number": 23,
+    "prompt": "Which subnet mask would be used if 5 host bits are available?",
+    "options": [
+      "255.255.255.0",
+      "255.255.255.128",
+      "255.255.255.224",
+      "255.255.255.240",
+      "None of the above"
+    ],
+    "answer": "255.255.255.224",
+    "explanation": "5 host bits означают 32−5 = 27 network bits: /27 = 255.255.255.224. .192 оставляет 6 host bits, .240 — 4, поэтому они не подходят.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-1-24",
+    "set": 1,
+    "number": 24,
+    "prompt": "Which three protocols operate at the application layer of the TCP/IP model? (Choose three.)",
+    "options": [
+      "ARP",
+      "TCP",
+      "UDP",
+      "FTP",
+      "POP3",
+      "DHCP"
+    ],
+    "answer": "FTP; POP3; DHCP.",
+    "explanation": "FTP переносит файлы, POP3 получает почту, DHCP выдаёт сетевые параметры: это application-layer сервисы. TCP/UDP — transport; ARP разрешает соседние IPv4→MAC и не является одним из этих прикладных протоколов.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-1-25",
+    "set": 1,
+    "number": 25,
+    "prompt": "What type of attack may involve the use of tools such as nslookup and fping?",
+    "options": [
+      "access attack",
+      "reconnaissance attack",
+      "denial of service attack",
+      "worm attack",
+      "None of the above"
+    ],
+    "answer": "Reconnaissance attack.",
+    "explanation": "Сбор имён, активных узлов, портов и уязвимостей — разведка перед атакой. nslookup и fping могут применяться для такого сбора, хотя сами по себе являются и законными диагностическими инструментами. DoS нарушает доступность; access/MITM означают другие действия.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-2-01",
+    "set": 2,
+    "number": 1,
+    "prompt": "A user issues a ping 192.135.250.163 command and receives a response that includes a code of 1. What does this code represent?",
+    "options": [
+      "host unreachable",
+      "protocol unreachable",
+      "port unreachable",
+      "network unreachable",
+      "None of the above"
+    ],
+    "answer": "Host unreachable — if this is ICMPv4 Destination Unreachable (Type 3, Code 1).",
+    "explanation": "В ICMPv4 Destination Unreachable type=3 код 1 означает host unreachable, код 0 — network unreachable, 2 — protocol, 3 — port. Один code=1 без type не задаёт глобально однозначный смысл; ожидаемый ответ выводится из контекста и вариантов.",
+    "caution": "В вопросе пропущен ICMP type; ответ Host unreachable условен при Type 3.",
+    "topic": 13
+  },
+  {
+    "id": "vrt-2-02",
+    "set": 2,
+    "number": 2,
+    "prompt": "Which two protocols may devices use in the application process that sends email? (Choose two.)",
+    "options": [
+      "HTTP",
+      "SMTP",
+      "POP",
+      "IMAP",
+      "DNS",
+      "POP3"
+    ],
+    "answer": "SMTP and DNS.",
+    "explanation": "SMTP отправляет/пересылает письмо; DNS помогает найти MX-сервер домена и его IP. POP/POP3 и IMAP получают/синхронизируют mailbox, а не отправляют новое письмо. Варианты содержат SMTP и DNS — это ожидаемая пара для процесса отправки.",
+    "caution": "Формулировка описывает весь процесс отправки: DNS помогает найти сервер, а не переносит само письмо.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-2-03",
+    "set": 2,
+    "number": 3,
+    "prompt": "Which three protocols operate at the application layer of the TCP/IP model? (Choose three.)",
+    "options": [
+      "ARP",
+      "TCP",
+      "UDP",
+      "FTP",
+      "POP3",
+      "DHCP"
+    ],
+    "answer": "FTP; POP3; DHCP.",
+    "explanation": "FTP переносит файлы, POP3 получает почту, DHCP выдаёт сетевые параметры: это application-layer сервисы. TCP/UDP — transport; ARP разрешает соседние IPv4→MAC и не является одним из этих прикладных протоколов.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-2-04",
+    "set": 2,
+    "number": 4,
+    "prompt": "The application layer of the TCP/IP model performs the functions of what three layers of the OSI model? (Choose three.)",
+    "options": [
+      "physical",
+      "session",
+      "network",
+      "presentation",
+      "data link",
+      "transport"
+    ],
+    "answer": "Application; Presentation; Session.",
+    "explanation": "TCP/IP Application объединяет три верхних OSI-уровня: Application (сервис), Presentation (формат/кодирование), Session (диалог). В напечатанных вариантах отсутствует Application: выбрать три правильных варианта из предложенных невозможно. Рукописная пометка не является частью исходного списка.",
+    "caution": "Дефект задания: в напечатанном choose-three отсутствует вариант Application; есть только два правильных печатных варианта.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-2-05",
+    "set": 2,
+    "number": 5,
+    "prompt": "Which protocol supports Stateless Address Autoconfiguration (SLAAC) for dynamic assignment of IPv6 addresses to a host?",
+    "options": [
+      "UDPv6",
+      "DHCPv6",
+      "ICMPv6",
+      "UDP",
+      "None of the above"
+    ],
+    "answer": "ICMPv6",
+    "explanation": "SLAAC использует Router Solicitation/Advertisement, которые являются сообщениями ICMPv6 Neighbor Discovery. DHCPv6 — другой механизм выдачи адресов/параметров; IPv6 не использует ARP.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-2-06",
+    "set": 2,
+    "number": 6,
+    "prompt": "Which command can an administrator issue on a Cisco router to send debug messages to the vty lines?",
+    "options": [
+      "terminal monitor",
+      "logging console",
+      "logging buffered",
+      "logging synchronous",
+      "None of the above"
+    ],
+    "answer": "terminal monitor",
+    "explanation": "На удалённой VTY-сессии terminal monitor включает вывод syslog/debug в этот терминал. logging console относится к console, logging buffered хранит в буфере, logging synchronous меняет оформление вывода, а не включает доставку удалённой сессии.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-2-07",
+    "set": 2,
+    "number": 7,
+    "prompt": "When configuring SSH on a router to implement secure network management, a network engineer has issued the login local and transport input ssh line vty commands. What three additional configuration actions have to be performed to complete the SSH configuration? (Choose three.)",
+    "options": [
+      "Set the user privilege levels.",
+      "Generate the asymmetric RSA keys.",
+      "Configure the correct IP domain Full Name.",
+      "Configure role-based CLI access.",
+      "Create a valid local userFull Name and password database.",
+      "Manually enable SSH after the RSA keys are generated."
+    ],
+    "answer": "Generate asymmetric RSA keys; configure the IP domain name; create a valid local username/password database.",
+    "explanation": "login local требует локального пользователя, а SSH нуждается в RSA host keys; в классической IOS-процедуре для их генерации задают hostname/domain name. В условии VTY уже настроены, поэтому среди оставшихся действий нужны RSA, domain name и local user. SSH включается при готовности ключей/службы, отдельное «manually enable after keys» не требуется.",
+    "caution": "Предполагается, что hostname уже настроен; три ответа выбраны из напечатанных вариантов.",
+    "topic": 16
+  },
+  {
+    "id": "vrt-2-08",
+    "set": 2,
+    "number": 8,
+    "prompt": "What is the purpose of a small company using a protocol analyzer utility to capture network traffic on the network segments where the company is considering a network upgrade?",
+    "options": [
+      "to identify the source and destination of local network traffic",
+      "to capture the Internet connection bandwidth requirement",
+      "to document and analyze network traffic requirements on each network segment",
+      "to establish a baseline for security analysis after the network is upgraded",
+      "None of the above"
+    ],
+    "answer": "To document and analyze network traffic requirements on each network segment.",
+    "explanation": "Перед upgrade анализатор показывает реальные протоколы, объёмы и характер нагрузки на каждом сегменте. Это позволяет обосновать требуемую ёмкость и изменения. Только Internet bandwidth или security baseline после upgrade — уже более узкие/другие задачи.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-2-09",
+    "set": 2,
+    "number": 9,
+    "prompt": "Which is the compressed format of the IPv6 address 2001:0db8:0000:0000:0ab8:0001:0000:1000?",
+    "options": [
+      "2001:db8::ab8:1:0:1000",
+      "2001:db8::ab8:1",
+      "2001:db8:1::ab8:0:1",
+      "2001:db8:0:1::8:1",
+      "None of the above"
+    ],
+    "answer": "2001:db8::ab8:1:0:1000",
+    "explanation": "Удаляем leading zeros; две подряд 0000 после db8 заменяем ::. Группа 0 перед 1000 остаётся отдельно. 1000 нельзя сократить до 1, потому что удаляются только ведущие, а не конечные нули.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-2-10",
+    "set": 2,
+    "number": 10,
+    "prompt": "When applied to a router, which command would help mitigate brute-force password attacks against the router?",
+    "options": [
+      "exec-timeout 30",
+      "service password-encryption",
+      "banner motd $Max failed logins = 5$",
+      "login block-for 60 attempts 5 within 60",
+      "None of the above"
+    ],
+    "answer": "login block-for 60 attempts 5 within 60",
+    "explanation": "Команда блокирует новые попытки входа на 60 секунд после пяти неудач за 60 секунд, затрудняя перебор. exec-timeout завершает простой, service password-encryption скрывает открытый текст в конфигурации, banner лишь предупреждает — они не вводят эту блокировку.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-2-11",
+    "set": 2,
+    "number": 11,
+    "prompt": "How many valid host addresses are available on an IPv4 subnet that is configured with a /26 mask?",
+    "options": [
+      "254",
+      "190",
+      "192",
+      "62",
+      "64"
+    ],
+    "answer": "62",
+    "explanation": "/26 оставляет 32−26 = 6 host bits: 2^6 = 64 адреса. Для обычной подсети вычитаем network и broadcast: 64−2 = 62 usable host addresses.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-2-12",
+    "set": 2,
+    "number": 12,
+    "prompt": "Which factor determines TCP window size?",
+    "options": [
+      "the amount of data to be transmitted",
+      "the number of services included in the TCP segment",
+      "the amount of data the destination can process at one time",
+      "the amount of data the source is capable of sending at one time",
+      "None of the above"
+    ],
+    "answer": "The amount of data the destination can process at one time.",
+    "explanation": "Ожидаемый TCP receive window отражает свободную ёмкость буфера получателя: сколько байт он готов принять до следующего подтверждения. Это не размер всего файла и не число сервисов. Реальный объём в полёте ограничен также congestion window отправителя.",
+    "caution": "Вопрос подразумевает receiver-advertised window; congestion window — отдельный механизм.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-2-13",
+    "set": 2,
+    "number": 13,
+    "prompt": "Which transport layer feature is used to guarantee session establishment?",
+    "options": [
+      "UDP ACK flag",
+      "TCP 3-way handshake",
+      "UDP sequence number",
+      "TCP port number",
+      "None of the above"
+    ],
+    "answer": "TCP three-way handshake",
+    "explanation": "SYN → SYN/ACK → ACK согласует начало TCP-соединения и начальные номера последовательности. UDP не имеет собственного handshake/ACK/sequence numbers. Порты выбирают приложение, но сами не подтверждают установление сессии.",
+    "caution": "Слово guarantee означает механизм подтверждения установления, а не гарантию доступности сети при любой ошибке.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-2-14",
+    "set": 2,
+    "number": 14,
+    "prompt": "An administrator decides to use \"12345678!\" as the password on a newly installed router. Which statement applies to the password choice?",
+    "options": [
+      "It is weak because it uses a series of numbers or letters.",
+      "It is strong because it uses a passphrase.",
+      "It is weak since it is a word that is easily found in the dictionary.",
+      "It is strong because it uses a minimum of 10 numbers, letters and special characters.",
+      "None of the above"
+    ],
+    "answer": "It is weak because it uses a series of numbers or letters.",
+    "explanation": "12345678! содержит легко угадываемую последовательность. Один символ ! не делает такой пароль устойчивым; это не passphrase и в нём лишь девять символов, а не заявленные в другом варианте минимум десять.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-2-15",
+    "set": 2,
+    "number": 15,
+    "prompt": "What do the client/server and peer-to-peer network models have in common?",
+    "options": [
+      "Both models have dedicated servers.",
+      "Both models support devices in server and client roles.",
+      "Both models require the use of TCP/IP-based protocols.",
+      "Both models are used only in the wired network environment.",
+      "None of the above"
+    ],
+    "answer": "Both models support devices in server and client roles.",
+    "explanation": "В обеих моделях есть получатель услуги (client) и предоставляющий её узел (server). P2P допускает обе роли у одного узла и не требует выделенного сервера. Ни проводная среда, ни конкретный транспорт не определяют модель.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-2-16",
+    "set": 2,
+    "number": 16,
+    "prompt": "What is a common protocol that is used with peer-to-peer applications such as WireShare, Bearshare, and Shareaza?",
+    "options": [
+      "Ethernet",
+      "Gnutella",
+      "POP",
+      "SMTP",
+      "None of the above"
+    ],
+    "answer": "Gnutella",
+    "explanation": "WireShare/LimeWire-подобные клиенты, BearShare и Shareaza исторически используют Gnutella. Ethernet — технология канала, POP/SMTP — почта. Поддержка приложением нескольких сетей не меняет ожидаемый общий протокол в этом вопросе.",
+    "caution": "Исторические примеры программ; ответ относится к описанной учебной классификации.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-2-17",
+    "set": 2,
+    "number": 17,
+    "prompt": "What is considered the most effective way to mitigate a worm attack?",
+    "options": [
+      "Change system passwords every 30 days.",
+      "Ensure that all systems have the most current virus definitions.",
+      "Ensure that AAA is configured in the network.",
+      "Download security updates from the operating system vendor and patch all vulnerable systems.",
+      "None of the above"
+    ],
+    "answer": "Download security updates from the operating-system vendor and patch all vulnerable systems.",
+    "explanation": "Worm способен распространяться через уязвимости; установка исправлений убирает соответствующую точку заражения на всех уязвимых узлах. Одни новые антивирусные сигнатуры полезны, но не закрывают саму уязвимость; смена паролей или AAA не заменяют патчи.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-2-18",
+    "set": 2,
+    "number": 18,
+    "prompt": "Users are complaining that they are unable to browse certain websites on the Internet. An administrator can successfully ping a web server via its IP address, but cannot browse to the domain Full Name of the website. Which troubleshooting tool would be most useful in determining where the problem is?",
+    "options": [
+      "netstat",
+      "tracert",
+      "nslookup",
+      "ipconfig",
+      "None of the above"
+    ],
+    "answer": "nslookup",
+    "explanation": "Доступ к IP есть, а разрешение имени не работает — нужно проверить DNS-ответ сервера с nslookup. Ping уже подтвердил IP-достижимость; tracert исследует путь, netstat соединения, ipconfig конфигурацию, а не целевое серверное разрешение имени.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-2-19",
+    "set": 2,
+    "number": 19,
+    "prompt": "Which layer in the TCP/IP model is used for formatting, compressing, and encrypting data?",
+    "options": [
+      "internetwork",
+      "session",
+      "presentation",
+      "application",
+      "network access"
+    ],
+    "answer": "Application layer",
+    "explanation": "В TCP/IP форматы, сжатие и шифрование объединены в Application, который включает OSI Presentation/Session/Application. Если бы спрашивали именно OSI, ответом был бы Presentation; здесь модель TCP/IP, поэтому выбираем Application.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-2-20",
+    "set": 2,
+    "number": 20,
+    "prompt": "An administrator wants to create four subnetworks from the network address 192.168.1.0/24. What is the network address and subnet mask of the second useable subnet?",
+    "options": [
+      "subnetwork 192.168.1.64; subnet mask 255.255.255.192",
+      "subnetwork 192.168.1.32; subnet mask 255.255.255.240",
+      "subnetwork 192.168.1.64; subnet mask 255.255.255.240",
+      "subnetwork 192.168.1.128; subnet mask 255.255.255.192",
+      "subnetwork 192.168.1.8; subnet mask 255.255.255.224"
+    ],
+    "answer": "192.168.1.64 with subnet mask 255.255.255.192 (/26).",
+    "explanation": "Четыре равные подсети из /24 требуют 2 дополнительных бита: /26, шаг64. Сети .0, .64, .128, .192. Современная нулевая подсеть допустима, поэтому вторая — .64/26. .32/28 или .64/28 дают другой размер и не четыре равных блока.",
+    "caution": "Second usable трактуется по современной адресации с допустимой subnet zero; старое исключение zero/all-ones здесь не применяется.",
+    "topic": 11
+  },
+  {
+    "id": "vrt-2-21",
+    "set": 2,
+    "number": 21,
+    "prompt": "What kind of port must be requested from IANA in order to be used with a specific application?",
+    "options": [
+      "registered port",
+      "private port",
+      "dynamic port",
+      "source port",
+      "None of the above"
+    ],
+    "answer": "Registered port",
+    "explanation": "Registered/user ports 1024–49151 могут регистрироваться IANA для приложения. Dynamic/private порты используются временно и не закрепляются таким способом; source port — роль поля, не класс регистрации.",
+    "caution": "",
+    "topic": 14
+  },
+  {
+    "id": "vrt-2-22",
+    "set": 2,
+    "number": 22,
+    "prompt": "What three blocks of addresses are defined by RFC 1918 for private network use? (Choose three.)",
+    "options": [
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "100.64.0.0/14",
+      "169.254.0.0/16",
+      "239.0.0.0/8"
+    ],
+    "answer": "10.0.0.0/8; 172.16.0.0/12; 192.168.0.0/16.",
+    "explanation": "Это три частных блока RFC 1918. 169.254/16 — link-local; 100.64/10 — shared CGNAT, а не RFC 1918; 239/8 — multicast. Подмена /12 диапазоном лишь 172.16/16 тоже была бы ошибкой.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-2-23",
+    "set": 2,
+    "number": 23,
+    "prompt": "By following a structured troubleshooting approach, a network administrator identified a network issue after a conversation with the user. What is the next step that the administrator should take?",
+    "options": [
+      "Verify full system functionality.",
+      "Test the theory to determine cause.",
+      "Establish a theory of probable causes.",
+      "Establish a plan of action to resolve the issue.",
+      "None of the above"
+    ],
+    "answer": "Establish a theory of probable causes.",
+    "explanation": "После первого шага identify the problem (опрос пользователя/симптомы) формируют гипотезу вероятной причины. Затем её тестируют, составляют план исправления, проверяют результат и документируют. Нельзя перескакивать сразу к плану или финальной проверке.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-2-24",
+    "set": 2,
+    "number": 24,
+    "prompt": "What is the purpose of the network security authentication function?",
+    "options": [
+      "to require users to prove who they are",
+      "to determine which resources a user can access",
+      "to keep track of the actions of a user",
+      "to provide challenge and response questions",
+      "None of the above"
+    ],
+    "answer": "To require users to prove who they are.",
+    "explanation": "Authentication проверяет личность. Authorization определяет доступные ресурсы, accounting записывает действия. Challenge-response может быть методом проверки личности, но не её общей целью.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-2-25",
+    "set": 2,
+    "number": 25,
+    "prompt": "What is a key characteristic of the peer-to-peer networking model?",
+    "options": [
+      "wireless networking",
+      "social networking without the Internet",
+      "network printing using a print server",
+      "resource sharing without a dedicated server",
+      "None of the above"
+    ],
+    "answer": "Resource sharing without a dedicated server.",
+    "explanation": "P2P позволяет обычным peers отдавать свои ресурсы друг другу без выделенного сервера. Беспроводная связь, social networking без Internet или наличие print server не являются определением P2P.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-01",
+    "set": 3,
+    "number": 1,
+    "prompt": "Which address is a valid IPv6 link-local unicast address?",
+    "options": [],
+    "answer": "A valid IPv6 link-local unicast address belongs to FE80::/10; the readable candidate is FE80::1:4545:6578:ABC1.",
+    "explanation": "Этот IPv6-адрес входит в FE80::/10 — link-local unicast. FEC… относится к другому префиксу, FD… — ULA; FE0A ниже границы FE80::/10. Число hextet проверяется после раскрытия ::.",
+    "caution": "Варианты не удалось полностью прочитать. Сверяй корректную запись адреса и префикс FE80::/10; точный буквенный ключ не приводится.",
+    "topic": 12
+  },
+  {
+    "id": "vrt-3-02",
+    "set": 3,
+    "number": 2,
+    "prompt": "The application layer of the TCP/IP model performs the functions of what three layers of the OSI model? (Choose three.)",
+    "options": [
+      "physical",
+      "session",
+      "network",
+      "presentation",
+      "data link",
+      "transport"
+    ],
+    "answer": "Application; Presentation; Session.",
+    "explanation": "TCP/IP Application объединяет три верхних OSI-уровня: Application (сервис), Presentation (формат/кодирование), Session (диалог). В напечатанных вариантах отсутствует Application: выбрать три правильных варианта из предложенных невозможно. Рукописная пометка не является частью исходного списка.",
+    "caution": "Дефект задания: в напечатанном choose-three отсутствует вариант Application; есть только два правильных печатных варианта.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-03",
+    "set": 3,
+    "number": 3,
+    "prompt": "What is an example of network communication that uses the client-server model?",
+    "options": [
+      "A user uses eMule to download a file that is shared by a friend after the file location is determined.",
+      "A workstation initiates an ARP to find the MAC address of a receiving host.",
+      "A user prints a document by using a printer that is attached to a workstation of a coworker.",
+      "A workstation initiates a DNS request when the user types www.cisco.com in the address bar of a web browser.",
+      "None of the above"
+    ],
+    "answer": "A workstation initiates a DNS request when the user enters www.cisco.com in a web browser.",
+    "explanation": "DNS-клиент обращается за сервисом к DNS-серверу — это явная client/server пара. eMule и общий принтер обычного coworker-PC являются P2P-примерами курса; ARP относится к разрешению соседнего адреса.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-04",
+    "set": 3,
+    "number": 4,
+    "prompt": "A network administrator has received the IPv6 prefix 2001:DB8::/48 for subnetting. Assuming the administrator does not subnet into the interface ID portion of the address space, how many subnets can the administrator create from the /48 prefix?",
+    "options": [
+      "16",
+      "256",
+      "4096",
+      "65536",
+      "None of the above"
+    ],
+    "answer": "65,536 subnets (/64).",
+    "explanation": "Между /48 global prefix и /64 LAN остаётся 64−48 = 16 subnet bits. Число подсетей 2^16 = 65536; последние64 interface-ID bits не заимствуются. Не вычитаем два IPv4-адреса из числа IPv6-подсетей.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-3-05",
+    "set": 3,
+    "number": 5,
+    "prompt": "What is the advantage of using SSH over Telnet?",
+    "options": [
+      "SSH is easier to use.",
+      "SSH operates faster than Telnet.",
+      "SSH provides secure communications to access hosts.",
+      "SSH supports authentication for a connection request.",
+      "None of the above"
+    ],
+    "answer": "SSH provides secure communications to access hosts.",
+    "explanation": "SSH шифрует управляющий сеанс, включая учётные данные и команды. Telnet передаёт их открыто. Главное преимущество — защищённость, а не гарантированная скорость или простота; аутентификацию может выполнять и Telnet.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-3-06",
+    "set": 3,
+    "number": 6,
+    "prompt": "Which IPv6 prefix is reserved for communication between devices on the same link?",
+    "options": [
+      "FC00::/7",
+      "2001::/32",
+      "FE80::/10",
+      "FF00::/8",
+      "None of the above"
+    ],
+    "answer": "FE80::/10",
+    "explanation": "Этот префикс выделен для IPv6 link-local адресов, используемых только на одном link. FC00::/7 — ULA, допустимые между внутренними сетями; 2001… — не link-local.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-3-07",
+    "set": 3,
+    "number": 7,
+    "prompt": "What is the purpose of a small company using a protocol analyzer utility to capture network traffic on the network segments where the company is considering a network upgrade?",
+    "options": [
+      "to identify the source and destination of local network traffic",
+      "to capture the Internet connection bandwidth requirement",
+      "to document and analyze network traffic requirements on each network segment",
+      "to establish a baseline for security analysis after the network is upgraded",
+      "None of the above"
+    ],
+    "answer": "To document and analyze network traffic requirements on each network segment.",
+    "explanation": "Перед upgrade анализатор показывает реальные протоколы, объёмы и характер нагрузки на каждом сегменте. Это позволяет обосновать требуемую ёмкость и изменения. Только Internet bandwidth или security baseline после upgrade — уже более узкие/другие задачи.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-3-08",
+    "set": 3,
+    "number": 8,
+    "prompt": "Why does HTTP use TCP as the transport layer protocol?",
+    "options": [
+      "to ensure the fastest possible download speed",
+      "because HTTP is a best-effort protocol",
+      "because transmission errors can be tolerated easily",
+      "because HTTP requires reliable delivery",
+      "None of the above"
+    ],
+    "answer": "Because HTTP requires reliable delivery.",
+    "explanation": "В классическом HTTP/1.x/2 TCP даёт упорядоченный поток с повтором потерянных байтов, чтобы ресурс пришёл целиком. Это не гарантия максимальной скорости. HTTP/3 — современное исключение с QUIC/UDP; задача относится к TCP-модели курса.",
+    "caution": "Ответ для HTTP/1.x/2; не универсальное утверждение о HTTP/3.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-09",
+    "set": 3,
+    "number": 9,
+    "prompt": "A network technician issues the C:> tracert -6 www.cisco.com command on a Windows PC. What is the purpose of the -6 command option?",
+    "options": [
+      "It forces the trace to use IPv6.",
+      "It limits the trace to only 6 hops.",
+      "It sets a 6 milliseconds timeout for each replay.",
+      "It sends 6 probes within each TTL time period.",
+      "None of the above"
+    ],
+    "answer": "It forces the trace to use IPv6.",
+    "explanation": "Windows tracert -6 выбирает IPv6. Число6 не ограничивает количество hops и не означает отправку шести проб; соответствующий параметр адресного семейства для IPv4 — -4.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-3-10",
+    "set": 3,
+    "number": 10,
+    "prompt": "What source IP address does a router use by default when the traceroute command is issued?",
+    "options": [
+      "the highest configured IP address on the router",
+      "a loopback IP address",
+      "the IP address of the outbound interface",
+      "the lowest configured IP address on the router",
+      "None of the above"
+    ],
+    "answer": "The IP address of the outgoing interface.",
+    "explanation": "В обычной IOS traceroute без явно заданного source роутер выбирает исходный IP выходного интерфейса по маршруту к назначению. Extended traceroute/ping позволяет выбрать другой source; входящий интерфейс у локально созданной пробы отсутствует.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-3-11",
+    "set": 3,
+    "number": 11,
+    "prompt": "A manufacturing company subscribes to certain hosted services from its ISP. The services that are required include hosted world wide web, file transfer, and email. Which protocols represent these three key applications? (Choose three.)",
+    "options": [
+      "FTP",
+      "HTTP",
+      "DNS",
+      "SNMP",
+      "DHCP",
+      "SMTP"
+    ],
+    "answer": "HTTP; FTP; SMTP.",
+    "explanation": "Hosted web соответствует HTTP, file transfer — FTP, email sending/relay — SMTP. DNS помогает находить имена, DHCP выдаёт настройки, SNMP управляет устройствами; это другие службы.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-12",
+    "set": 3,
+    "number": 12,
+    "prompt": "Which command should be used on a Cisco router or switch to allow log messages to be displayed on remotely connected sessions using Telnet or SSH?",
+    "options": [
+      "debug all",
+      "logging synchronous",
+      "show running-config",
+      "terminal monitor",
+      "None of the above"
+    ],
+    "answer": "terminal monitor",
+    "explanation": "На удалённой VTY-сессии terminal monitor включает вывод syslog/debug в этот терминал. logging console относится к console, logging buffered хранит в буфере, logging synchronous меняет оформление вывода, а не включает доставку удалённой сессии.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-3-13",
+    "set": 3,
+    "number": 13,
+    "prompt": "What is the purpose of the network security accounting function?",
+    "options": [
+      "to require users to prove who they are",
+      "to determine which resources a user can access",
+      "to keep track of the actions of a user",
+      "to provide challenge and response questions",
+      "None of the above"
+    ],
+    "answer": "To keep track of the actions of a user.",
+    "explanation": "Accounting в AAA журналирует действия/использование: кто что сделал и когда. Authentication проверяет личность, authorization права; они не заменяют учёт действий.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-3-14",
+    "set": 3,
+    "number": 14,
+    "prompt": "A PC that is communicating with a web server has a TCP window size of 6,000 bytes when sending data and a packet size of 1,500 bytes. Which byte of information will the web server acknowledge after it has received two packets of data from the PC?",
+    "options": [
+      "3001",
+      "6001",
+      "4500",
+      "6000",
+      "None of the above"
+    ],
+    "answer": "3001 (assuming the first data byte has sequence number 1).",
+    "explanation": "Два сегмента по 1500 байт = 3000 полученных байт. TCP ACK сообщает номер следующего ожидаемого байта: при начале с 1 это 3001. 4501 относится к трём сегментам, а размер окна 6000 не означает, что уже получено 6000 байт.",
+    "caution": "Точное значение ACK зависит от начального sequence number и размера именно TCP payload; учебный ответ предполагает seq=1 и payload=1500.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-3-15",
+    "set": 3,
+    "number": 15,
+    "prompt": "[Фрагменты] A high school in New York (school A) is using videoconferencing technology ... another high school (school B) in Russia ... 198.133.219.5 ... 192.168.25.10 ... Neither school is using a VPN ... this IP will not work. Why?",
+    "options": [
+      "This is a loopback address.",
+      "This is a link-local address.",
+      "This is a private IP address.",
+      "There is an IP address conflict.",
+      "None of the above"
+    ],
+    "answer": "If 192.168.25.10 is the remote endpoint address: it is a private RFC 1918 address, not directly reachable across the public Internet.",
+    "explanation": "192.168.25.10 входит в 192.168.0.0/16. Такой адрес нельзя просто использовать как публичный адрес школы через Internet без подходящего посредника/маршрута. Виден лишь фрагмент: ответ применим, если именно этот private IP сообщён как удалённый endpoint, а не если параметры прочитаны иначе.",
+    "caution": "Неполное условие: роль адресов и полное условие требуют уточнения; ответ условный.",
+    "topic": 11
+  },
+  {
+    "id": "vrt-3-16",
+    "set": 3,
+    "number": 16,
+    "prompt": "Which factor determines TCP window size?",
+    "options": [
+      "the amount of data to be transmitted",
+      "the number of services included in the TCP segment",
+      "the amount of data the destination can process at one time",
+      "the amount of data the source is capable of sending at one time",
+      "None of the above"
+    ],
+    "answer": "The amount of data the destination can process at one time.",
+    "explanation": "Ожидаемый TCP receive window отражает свободную ёмкость буфера получателя: сколько байт он готов принять до следующего подтверждения. Это не размер всего файла и не число сервисов. Реальный объём в полёте ограничен также congestion window отправителя.",
+    "caution": "Вопрос подразумевает receiver-advertised window; congestion window — отдельный механизм.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-3-17",
+    "set": 3,
+    "number": 17,
+    "prompt": "Which three addresses are valid public addresses? (Choose three.)",
+    "options": [
+      "198.133.219.17",
+      "192.168.1.245",
+      "10.15.… (последние октеты неразборчивы)",
+      "128.107.12.117",
+      "172.31.1.25",
+      "64.104.78.227"
+    ],
+    "answer": "A, D and F — apparently 198.133.219.17; 128.107.12.117; 64.104.78.227 (confirm digits from a clearer original).",
+    "explanation": "По увеличенным исходный текст публичные unicast-варианты — A, D и F. B начинается с 192.168 (private /16), C с 10 (private /8), E с 172.31 (внутри private 172.16/12). Публичные варианты читаются как 198.133.219.17, 128.107.12.117 и 64.104.78.227; все три вне названных частных и специальных блоков. Из-за низкого разрешения точные последние цифры требуют подтверждения, хотя выбор групп A/D/F различим.",
+    "caution": "Низкое разрешение: буквенный выбор A/D/F подтверждается различимыми диапазонами; точную транскрипцию всех октетов необходимо сверить. У варианта C уверенно читается начало 10.15.; оставшиеся октеты не восстановлены. Любой адрес 10.0.0.0/8 — private.",
+    "topic": 11
+  },
+  {
+    "id": "vrt-3-18",
+    "set": 3,
+    "number": 18,
+    "prompt": "Which three statements describe a DHCP Discover message? (Choose three.)",
+    "options": [
+      "The source MAC address is 48 ones (FF-FF-FF-FF-FF-FF).",
+      "The destination IP address is 255.255.255.255.",
+      "The message comes from a server offering an IP address.",
+      "The message comes from a client seeking an IP address.",
+      "All hosts receive the message, but only a DHCP server replies.",
+      "Only the DHCP server receives the message."
+    ],
+    "answer": "The destination IP address is 255.255.255.255; the message comes from a client seeking an IP address; all local broadcast-domain hosts receive it, but DHCP servers reply.",
+    "explanation": "Начальный DHCP Discover отправляет клиент без аренды в broadcast. Его source MAC — собственный MAC, не FF:FF:FF:FF:FF:FF; all-ones адрес является destination MAC. Это не Offer сервера. Рассылка ограничена broadcast domain; между подсетями её обслуживает настроенный relay.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-19",
+    "set": 3,
+    "number": 19,
+    "prompt": "What feature of SSH makes it more secure than Telnet for a device management connection?",
+    "options": [
+      "confidentiality with IPsec",
+      "stronger password requirement",
+      "random one-time port connection",
+      "login information and data encryption",
+      "None of the above"
+    ],
+    "answer": "Login information and data encryption.",
+    "explanation": "SSH защищает и данные аутентификации, и последующий обмен. Telnet может требовать пароль, но передаёт сеанс без такого шифрования; сама возможность login не является отличием.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-3-20",
+    "set": 3,
+    "number": 20,
+    "prompt": "Which piece of malicious code would be classified as a Trojan horse?",
+    "options": [
+      "malware that was written to look like a video game",
+      "malware that requires manual user intervention to spread between systems",
+      "malware that attaches itself to a legitimate program and spreads to other programs when launched",
+      "malware that can automatically spread from one system to another by exploiting a vulnerability in the target",
+      "None of the above"
+    ],
+    "answer": "Malware that was written to look like a video game.",
+    "explanation": "Trojan маскируется под полезную/безобидную программу, например игру. Virus заражает другой объект и распространяется при запуске, worm способен распространяться самостоятельно через уязвимость; именно маскировка отличает предложенный Trojan.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-3-21",
+    "set": 3,
+    "number": 21,
+    "prompt": "What is an advantage of SMB over FTP?",
+    "options": [
+      "Only with SMB can data transfers occur in both directions.",
+      "Only SMB establishes two simultaneous connections with the client, making the data transfer faster.",
+      "SMB is more reliable than FTP because SMB uses TCP and FTP uses UDP.",
+      "SMB clients can establish a long-term connection to the server.",
+      "None of the above"
+    ],
+    "answer": "SMB clients can establish a long-term connection to the server.",
+    "explanation": "SMB поддерживает длительный сеанс работы с общими файлами/принтерами. FTP тоже использует TCP и передаёт файлы в обе стороны; отдельные control/data соединения — как раз свойство FTP, а не уникальное преимущество SMB.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-3-22",
+    "set": 3,
+    "number": 22,
+    "prompt": "[Фрагмент] Which is the compressed format of the IPv6 address 2001:0db8:0000:0000:0ab8:...?",
+    "options": [],
+    "answer": "Cannot determine the full compressed address from the visible fragment.",
+    "explanation": "Сокращение должно сохранять все 128 бит: неизвестный хвост адреса восстановить по похожему вопросу нельзя. Из видимого начала можно получить 2001:db8::ab8:…, но число нулевых групп и полный результат зависят от оставшихся hextet.",
+    "caution": "Нужен полный IPv6-адрес: фрагмента 2001:0db8:0000:0000:0ab8:… недостаточно.",
+    "topic": 12
+  },
+  {
+    "id": "vrt-3-23",
+    "set": 3,
+    "number": 23,
+    "prompt": "Which component is designed to protect against unauthorized communications to and from a computer?",
+    "options": [
+      "security center",
+      "port scanner",
+      "antispyware",
+      "firewall",
+      "None of the above"
+    ],
+    "answer": "Firewall",
+    "explanation": "Firewall разрешает или блокирует входящие/исходящие коммуникации по правилам. Antivirus ищет вредоносное ПО, а аутентификация проверяет пользователя; они не являются общим фильтром сетевого обмена.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-3-24",
+    "set": 3,
+    "number": 24,
+    "prompt": "A user executes a traceroute over IPv6. At what point would a router in the path to the destination device drop the packet?",
+    "options": [
+      "when the value of the Hop Limit field reaches zero",
+      "when the value of the Hop Limit field reaches 255",
+      "when the router receives an ICMP time exceeded message",
+      "when the target host responds with an ICMP echo reply message",
+      "None of the above"
+    ],
+    "answer": "When the Hop Limit reaches zero.",
+    "explanation": "Каждый IPv6-роутер уменьшает Hop Limit. Если при пересылке значение достигает нуля, пакет отбрасывается и обычно отправляется ICMPv6 Time Exceeded. Traceroute специально увеличивает исходный лимит проб, чтобы обнаружить последовательные hops.",
+    "caution": "",
+    "topic": 13
+  },
+  {
+    "id": "vrt-3-25",
+    "set": 3,
+    "number": 25,
+    "prompt": "Which three statements characterize UDP? (Choose three.)",
+    "options": [
+      "UDP provides basic connectionless transport layer functions.",
+      "UDP provides connection-oriented, fast transport of data at Layer 3.",
+      "UDP relies on application layer protocols for error detection.",
+      "UDP is a low overhead protocol that does not provide sequencing or flow control mechanisms.",
+      "UDP relies on IP for error detection and recovery.",
+      "UDP provides sophisticated flow control mechanisms."
+    ],
+    "answer": "Only two listed statements are fully correct: basic connectionless transport; low overhead without sequencing or flow control.",
+    "explanation": "UDP работает без установления соединения и не содержит встроенных механизмов упорядочивания/flow control. Но у UDP есть checksum: буквальное «полагается на application для error detection» неверно. Приложение может обеспечивать повтор/восстановление, IP не делает recovery. Поэтому выбрать три полностью верных варианта из этого списка нельзя.",
+    "caution": "Дефект choose-three: только два предложенных утверждения полностью верны; ошибочное утверждение про error detection нельзя преподавать как факт.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-4-01",
+    "set": 4,
+    "number": 1,
+    "prompt": "What information is used by TCP to reassemble and reorder received segments?",
+    "options": [
+      "port numbers",
+      "sequence numbers",
+      "acknowledgment numbers",
+      "fragment numbers",
+      "None of the above"
+    ],
+    "answer": "Sequence numbers.",
+    "explanation": "TCP sequence number указывает положение байтов в потоке, что позволяет восстановить порядок пришедших сегментов и обнаружить пропуски. ACK сообщает следующий ожидаемый байт, ports выбирают приложения, window регулирует допустимый объём данных.",
+    "caution": "",
+    "topic": 14
+  },
+  {
+    "id": "vrt-4-02",
+    "set": 4,
+    "number": 2,
+    "prompt": "What is true about the Server Message Block protocol?",
+    "options": [
+      "Different SMB message types have a different format.",
+      "Clients establish a long-term connection to servers.",
+      "SMB messages cannot authenticate a session.",
+      "SMB uses the FTP protocol for communication.",
+      "None of the above"
+    ],
+    "answer": "Clients establish a long-term connection to servers.",
+    "explanation": "SMB поддерживает длительные client/server-сессии для доступа к общим ресурсам. Он может аутентифицировать сессию и не использует FTP как свой протокол. В учебном описании сообщения имеют общий формат: fixed header плюс переменные параметры/данные; утверждение о несовместимых форматах каждого типа не является верным преимуществом.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-03",
+    "set": 4,
+    "number": 3,
+    "prompt": "A technician is to document the current configurations of all network devices in a college, including those in off-site buildings. Which protocol would be best to use to securely access the network devices?",
+    "options": [
+      "FTP",
+      "HTTP",
+      "SSH",
+      "Telnet",
+      "None of the above"
+    ],
+    "answer": "SSH",
+    "explanation": "SSH позволяет безопасно удалённо читать конфигурации устройств, в том числе за пределами здания. Telnet не шифрует сессию; обычный FTP/HTTP не являются нужным защищённым протоколом интерактивного управления IOS.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-4-04",
+    "set": 4,
+    "number": 4,
+    "prompt": "What feature of SSH makes it more secure than Telnet for a device management connection?",
+    "options": [
+      "confidentiality with IPsec",
+      "stronger password requirement",
+      "random one-time port connection",
+      "login information and data encryption",
+      "None of the above"
+    ],
+    "answer": "Login information and data encryption.",
+    "explanation": "SSH защищает и данные аутентификации, и последующий обмен. Telnet может требовать пароль, но передаёт сеанс без такого шифрования; сама возможность login не является отличием.",
+    "caution": "",
+    "topic": 16
+  },
+  {
+    "id": "vrt-4-05",
+    "set": 4,
+    "number": 5,
+    "prompt": "Why does HTTP use TCP as the transport layer protocol?",
+    "options": [
+      "to ensure the fastest possible download speed",
+      "because HTTP is a best-effort protocol",
+      "because transmission errors can be tolerated easily",
+      "because HTTP requires reliable delivery",
+      "None of the above"
+    ],
+    "answer": "Because HTTP requires reliable delivery.",
+    "explanation": "В классическом HTTP/1.x/2 TCP даёт упорядоченный поток с повтором потерянных байтов, чтобы ресурс пришёл целиком. Это не гарантия максимальной скорости. HTTP/3 — современное исключение с QUIC/UDP; задача относится к TCP-модели курса.",
+    "caution": "Ответ для HTTP/1.x/2; не универсальное утверждение о HTTP/3.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-06",
+    "set": 4,
+    "number": 6,
+    "prompt": "Which three addresses are valid public addresses? (Choose three.)",
+    "options": [
+      "198.133.219.17",
+      "192.168.1.245",
+      "10.15.… (последние октеты неразборчивы)",
+      "128.107.12.117",
+      "172.31.1.25",
+      "64.104.78.227"
+    ],
+    "answer": "A, D and F — apparently 198.133.219.17; 128.107.12.117; 64.104.78.227 (confirm digits from a clearer original).",
+    "explanation": "По увеличенным исходный текст публичные unicast-варианты — A, D и F. B начинается с 192.168 (private /16), C с 10 (private /8), E с 172.31 (внутри private 172.16/12). Публичные варианты читаются как 198.133.219.17, 128.107.12.117 и 64.104.78.227; все три вне названных частных и специальных блоков. Из-за низкого разрешения точные последние цифры требуют подтверждения, хотя выбор групп A/D/F различим.",
+    "caution": "Низкое разрешение: буквенный выбор A/D/F подтверждается различимыми диапазонами; точную транскрипцию всех октетов необходимо сверить. У варианта C уверенно читается начало 10.15.; оставшиеся октеты не восстановлены. Любой адрес 10.0.0.0/8 — private.",
+    "topic": 11
+  },
+  {
+    "id": "vrt-4-07",
+    "set": 4,
+    "number": 7,
+    "prompt": "A host is transmitting a unicast. Which host or hosts will receive it?",
+    "options": [
+      "one specific host",
+      "a specially defined group of hosts",
+      "all hosts on the Internet",
+      "the closest neighbor on the same network",
+      "None of the above"
+    ],
+    "answer": "One specific destination host.",
+    "explanation": "Unicast адресован одному конкретному получателю. Multicast выбирает группу, broadcast — всех в broadcast domain; промежуточные устройства могут физически увидеть/переслать кадр, но не являются его логическими получателями.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-4-08",
+    "set": 4,
+    "number": 8,
+    "prompt": "Which three layers of the OSI model provide similar network services to those provided by the application layer of the TCP/IP model? (Choose three.)",
+    "options": [
+      "physical layer",
+      "session layer",
+      "transport layer",
+      "application layer",
+      "presentation layer",
+      "data link layer"
+    ],
+    "answer": "Application layer; Presentation layer; Session layer.",
+    "explanation": "Верхний уровень TCP/IP объединяет OSI application, presentation и session. Transport и нижние уровни не входят в эту группу: они обслуживают доставку, маршрутизацию и канал.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-09",
+    "set": 4,
+    "number": 9,
+    "prompt": "What is the prefix length notation for the subnet mask 255.255.255.224?",
+    "options": [
+      "/25",
+      "/26",
+      "/27",
+      "/28",
+      "None of the above"
+    ],
+    "answer": "/27",
+    "explanation": "255.255.255 даёт 24 единицы. 224 = 11100000 добавляет 3, итого 27 сетевых бит — /27.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-4-10",
+    "set": 4,
+    "number": 10,
+    "prompt": "What is used in the EUI-64 process to create an IPv6 interface ID on an IPv6 enabled interface?",
+    "options": [
+      "the MAC address of the IPv6 enabled interface",
+      "a randomly generated 64-bit hexadecimal address",
+      "an IPv6 address that is provided by a DHCPv6 server",
+      "an IPv4 address that is configured on the interface",
+      "None of the above"
+    ],
+    "answer": "The MAC address of the IPv6-enabled interface.",
+    "explanation": "Modified EUI-64 формирует IID из 48-битного MAC: вставляет FFFE и инвертирует U/L-бит первого байта. Случайный IID — другой метод, IPv4-адрес и DHCPv6-адрес не являются входом EUI-64.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-4-11",
+    "set": 4,
+    "number": 11,
+    "prompt": "[Фрагмент] Which is the compressed form of the IPv6 address 2001:0db8:0000:0000:0ab8:0000:0000:0001?",
+    "options": [],
+    "answer": "If the transcription is exact: 2001:db8::ab8:0:0:1.",
+    "explanation": "В указанной расшифровке две одинаковые максимальные серии по две нулевые группы. Каноническое сокращение выбирает первую: 2001:db8::ab8:0:0:1. Допустима и неканоническая 2001:db8:0:0:ab8::1; нельзя использовать :: дважды. Неполное условие не позволяет безусловно подтвердить исходные группы.",
+    "caution": "Ответ условен для 2001:0db8:0000:0000:0ab8:0000:0000:0001; нужен полный читаемый адрес.",
+    "topic": 12
+  },
+  {
+    "id": "vrt-4-12",
+    "set": 4,
+    "number": 12,
+    "prompt": "Which three statements characterize UDP? (Choose three.)",
+    "options": [
+      "UDP provides basic connectionless transport layer functions.",
+      "UDP provides connection-oriented, fast transport of data at Layer 3.",
+      "UDP relies on application layer protocols for error detection.",
+      "UDP is a low overhead protocol that does not provide sequencing or flow control mechanisms.",
+      "UDP relies on IP for error detection and recovery.",
+      "UDP provides sophisticated flow control mechanisms."
+    ],
+    "answer": "Only two listed statements are fully correct: basic connectionless transport; low overhead without sequencing or flow control.",
+    "explanation": "UDP работает без установления соединения и не содержит встроенных механизмов упорядочивания/flow control. Но у UDP есть checksum: буквальное «полагается на application для error detection» неверно. Приложение может обеспечивать повтор/восстановление, IP не делает recovery. Поэтому выбрать три полностью верных варианта из этого списка нельзя.",
+    "caution": "Дефект choose-three: только два предложенных утверждения полностью верны; ошибочное утверждение про error detection нельзя преподавать как факт.",
+    "topic": 14
+  },
+  {
+    "id": "vrt-4-13",
+    "set": 4,
+    "number": 13,
+    "prompt": "How many valid host addresses are available on an IPv4 subnet that is configured with a /26 mask?",
+    "options": [
+      "254",
+      "190",
+      "192",
+      "62",
+      "64"
+    ],
+    "answer": "62",
+    "explanation": "/26 оставляет 32−26 = 6 host bits: 2^6 = 64 адреса. Для обычной подсети вычитаем network и broadcast: 64−2 = 62 usable host addresses.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-4-14",
+    "set": 4,
+    "number": 14,
+    "prompt": "Which two protocols may devices use in the application process that sends email? (Choose two.)",
+    "options": [
+      "HTTP",
+      "SMTP",
+      "POP",
+      "IMAP",
+      "DNS",
+      "POP3"
+    ],
+    "answer": "SMTP and DNS.",
+    "explanation": "SMTP отправляет/пересылает письмо; DNS помогает найти MX-сервер домена и его IP. POP/POP3 и IMAP получают/синхронизируют mailbox, а не отправляют новое письмо. Варианты содержат SMTP и DNS — это ожидаемая пара для процесса отправки.",
+    "caution": "Формулировка описывает весь процесс отправки: DNS помогает найти сервер, а не переносит само письмо.",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-15",
+    "set": 4,
+    "number": 15,
+    "prompt": "By following a structured troubleshooting approach, a network administrator identified a network issue after a conversation with the user. What is the next step that the administrator should take?",
+    "options": [
+      "Verify full system functionality.",
+      "Test the theory to determine cause.",
+      "Establish a theory of probable causes.",
+      "Establish a plan of action to resolve the issue.",
+      "None of the above"
+    ],
+    "answer": "Establish a theory of probable causes.",
+    "explanation": "После первого шага identify the problem (опрос пользователя/симптомы) формируют гипотезу вероятной причины. Затем её тестируют, составляют план исправления, проверяют результат и документируют. Нельзя перескакивать сразу к плану или финальной проверке.",
+    "caution": "",
+    "topic": 17
+  },
+  {
+    "id": "vrt-4-16",
+    "set": 4,
+    "number": 16,
+    "prompt": "What type of IPv6 address is FE80::1?",
+    "options": [
+      "loopback",
+      "link-local",
+      "multicast",
+      "global unicast",
+      "None of the above"
+    ],
+    "answer": "Link-local unicast address.",
+    "explanation": "FE80::1 лежит в FE80::/10 и действует только на локальном link. Это не ::1 loopback и не FF… multicast; за пределы link LLA не маршрутизируется.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-4-17",
+    "set": 4,
+    "number": 17,
+    "prompt": "What is the function of the HTTP GET message?",
+    "options": [
+      "to request an HTML page from a web server",
+      "to send error information from a web server to a web client",
+      "to upload content to a web server from a web client",
+      "to retrieve client email from the email server using TCP port 110",
+      "None of the above"
+    ],
+    "answer": "To request an HTML page (resource representation) from a web server.",
+    "explanation": "HTTP GET запрашивает ресурс, например HTML. Отправку данных на обработку выполняет POST, создание/замену по URI — PUT; почта на TCP110 относится к POP3.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-18",
+    "set": 4,
+    "number": 18,
+    "prompt": "How many host addresses are available on the network 172.16.128.0 with a subnet mask of 255.255.252.0?",
+    "options": [
+      "510",
+      "512",
+      "1022",
+      "1024",
+      "2046"
+    ],
+    "answer": "1022",
+    "explanation": "255.255.252.0 = /22: 10 host bits, 2^10−2 = 1022 usable. Блок 172.16.128.0/22 заканчивается 172.16.131.255; 1024 — общее число адресов, включая network и broadcast.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-4-19",
+    "set": 4,
+    "number": 19,
+    "prompt": "Which IPv6 prefix is reserved for communication between devices on the same link?",
+    "options": [
+      "FC00::/7",
+      "2001::/32",
+      "FE80::/10",
+      "FF00::/8",
+      "None of the above"
+    ],
+    "answer": "FE80::/10",
+    "explanation": "Этот префикс выделен для IPv6 link-local адресов, используемых только на одном link. FC00::/7 — ULA, допустимые между внутренними сетями; 2001… — не link-local.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-4-20",
+    "set": 4,
+    "number": 20,
+    "prompt": "Which three statements describe a DHCP Discover message? (Choose three.)",
+    "options": [
+      "The source MAC address is 48 ones (FF-FF-FF-FF-FF-FF).",
+      "The destination IP address is 255.255.255.255.",
+      "The message comes from a server offering an IP address.",
+      "The message comes from a client seeking an IP address.",
+      "All hosts receive the message, but only a DHCP server replies.",
+      "Only the DHCP server receives the message."
+    ],
+    "answer": "The destination IP address is 255.255.255.255; the message comes from a client seeking an IP address; all local broadcast-domain hosts receive it, but DHCP servers reply.",
+    "explanation": "Начальный DHCP Discover отправляет клиент без аренды в broadcast. Его source MAC — собственный MAC, не FF:FF:FF:FF:FF:FF; all-ones адрес является destination MAC. Это не Offer сервера. Рассылка ограничена broadcast domain; между подсетями её обслуживает настроенный relay.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-21",
+    "set": 4,
+    "number": 21,
+    "prompt": "A network administrator has received the IPv6 prefix 2001:DB8::/48 for subnetting. Assuming the administrator does not subnet into the interface ID portion of the address space, how many subnets can the administrator create from the /48 prefix?",
+    "options": [
+      "16",
+      "256",
+      "4096",
+      "65536",
+      "None of the above"
+    ],
+    "answer": "65,536 subnets (/64).",
+    "explanation": "Между /48 global prefix и /64 LAN остаётся 64−48 = 16 subnet bits. Число подсетей 2^16 = 65536; последние64 interface-ID bits не заимствуются. Не вычитаем два IPv4-адреса из числа IPv6-подсетей.",
+    "caution": "",
+    "topic": 12
+  },
+  {
+    "id": "vrt-4-22",
+    "set": 4,
+    "number": 22,
+    "prompt": "An administrator decides to use \"password\" as the password on a newly installed router. Which statement applies to the password choice?",
+    "options": [
+      "It is weak because it is a commonly used password.",
+      "It is weak since it is a word that is easily found in the dictionary.",
+      "It is strong because it uses a passphrase.",
+      "It is strong because it uses a minimum of 10 numbers, letters and special characters.",
+      "None of the above"
+    ],
+    "answer": "Both A and B are true: it is commonly used and is a dictionary word.",
+    "explanation": "password одновременно является крайне распространённым паролем (A) и словарным словом (B). Оба объясняют его слабость. Поэтому задание с единственным правильным ответом дефектно; выбирать один из этих двух как будто другой неверен нельзя. Ни passphrase, ни минимум десяти символов здесь нет.",
+    "caution": "Дефект single-answer: варианты A и B одновременно правильны.",
+    "topic": 16
+  },
+  {
+    "id": "vrt-4-23",
+    "set": 4,
+    "number": 23,
+    "prompt": "Which application layer protocol uses message types such as GET, PUT, and POST?",
+    "options": [
+      "DNS",
+      "DHCP",
+      "SMTP",
+      "HTTP",
+      "POP3"
+    ],
+    "answer": "HTTP",
+    "explanation": "GET, PUT и POST — методы HTTP. SMTP/POP3 — почта, DNS — имена; у них другой набор команд/сообщений.",
+    "caution": "",
+    "topic": 15
+  },
+  {
+    "id": "vrt-4-24",
+    "set": 4,
+    "number": 24,
+    "prompt": "A host is transmitting a broadcast. Which host or hosts will receive it?",
+    "options": [
+      "all hosts in the same subnet",
+      "a specially defined group of hosts",
+      "the closest neighbor on the same network",
+      "all hosts on the Internet",
+      "None of the above"
+    ],
+    "answer": "All hosts in the local broadcast domain.",
+    "explanation": "Broadcast предназначен всем host своего LAN/VLAN. Роутер обычно не пересылает его во все сети, поэтому «все host в Internet» неверно. Unicast — одному, multicast — выбранной группе.",
+    "caution": "",
+    "topic": 11
+  },
+  {
+    "id": "vrt-4-25",
+    "set": 4,
+    "number": 25,
+    "prompt": "[Фрагмент] Which is the compressed format of the IPv6 address 2002:0042:0010:c400:0000:0000:0000:0909?",
+    "options": [],
+    "answer": "If the transcription is exact: 2002:42:10:c400::909.",
+    "explanation": "Для 2002:0042:0010:c400:0000:0000:0000:0909 снимаем leading zeros и сокращаем три нулевых группы: 2002:42:10:c400::909. c400 нельзя превращать в c4. Однако исходный текст помечено как фрагмент: итог условен до подтверждения всех восьми групп.",
+    "caution": "Фрагмент/низкое разрешение: ответ условный для адреса ровно 2002:0042:0010:c400:0000:0000:0000:0909.",
+    "topic": 12
+  }
+]

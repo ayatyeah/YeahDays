@@ -26,6 +26,7 @@ const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Load
 import { PM_QUIZ2_TITLE } from "@/lib/events/projectManagement/quiz2";
 const NetworkPartStudy = dynamic(() => import("@/components/events/NetworkPartStudy"), { loading: Loading });
 const NetworksEndterm = dynamic(() => import("@/components/events/NetworksEndterm"), { loading: Loading });
+const NetworksVrt = dynamic(() => import("@/components/events/NetworksVrt"), { loading: Loading });
 const PMQuiz2 = dynamic(() => import("@/components/events/PMQuiz2"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
 const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
@@ -65,6 +66,7 @@ type View =
   | { mode: "map" }
   | { mode: "pmQuiz2" }
   | { mode: "cnEndterm" }
+  | { mode: "cnVrt" }
   | { mode: "sheet" }
   | { mode: "cards" }
   | { mode: "game" }
@@ -410,6 +412,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             </section>
           )}
           {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">PDF и пробная эндка</h2><p>Обновлённые конспекты RU/EN, самопроверка и все вопросы темы открываются в частях лекций ниже. Здесь — исходные PDF, образец преподавателя и пробный экзамен.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Открыть подготовку к эндке</Button></section>}
+          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">ВРТ — вопросы</h2><p>100 вопросов · 4 набора · ответы и объяснения</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnVrt" })}>ВРТ — вопросы</Button></section>}
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -665,6 +668,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
       )}
 
       {view.mode === "cnEndterm" && event.id === "computer-networks-endterm" && <NetworksEndterm userId={userId} onExit={toMap} />}
+      {view.mode === "cnVrt" && event.id === "computer-networks-endterm" && <NetworksVrt onExit={toMap} />}
       {view.mode === "pmQuiz2" && event.id === "project-management-test-2" && <PMQuiz2 userId={userId} onExit={toMap} />}
       {view.mode === "mock" && (
         <MockExamView

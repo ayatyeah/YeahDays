@@ -10,6 +10,7 @@ test("CN inline: lecture cards open full materials and preserve quiz progress", 
     check(saved.ok(), "existing quiz result saved for test account");
     await page.evaluate(() => {
       localStorage.setItem("yg-event-notes-length", "short");
+      localStorage.setItem("yg-event-lang", "ru");
       localStorage.setItem("yg-event-notes-mode", "scroll");
     });
     await page.reload();
@@ -20,6 +21,15 @@ test("CN inline: lecture cards open full materials and preserve quiz progress", 
     const notes = page.getByTestId("lecture-notes");
     const study = page.getByTestId("network-part-study");
     await notes.waitFor();
+    const translation = page.getByTestId("notes-fixed-translation");
+    await notes.locator("h3").last().scrollIntoViewIfNeeded();
+    check(await translation.evaluate(el => { const r = el.getBoundingClientRect(); return getComputedStyle(el).position === "fixed" && r.top >= 0 && r.bottom < innerHeight && r.right <= innerWidth; }), "translation stays visible after scrolling on mobile");
+    await translation.getByRole("button").click();
+    await notes.locator('[data-selection-notes][lang="en"]').waitFor();
+    check(await notes.locator("[data-selection-notes]").getAttribute("lang") === "en", "fixed translation switches to English");
+    await translation.getByRole("button").click();
+    await notes.locator('[data-selection-notes][lang="ru"]').waitFor();
+    check(await notes.locator("[data-selection-notes]").getAttribute("lang") === "ru", "fixed translation switches back to Russian");
     check(await notes.getAttribute("data-notes-version") === "full", "lecture card overrides old short/scroll preference");
     check((await notes.innerText()).includes("192.168.1.254"), "question-focused routing explanation is in the existing part");
     await study.getByRole("button", { name: "Самопроверка · 3", exact: true }).click();

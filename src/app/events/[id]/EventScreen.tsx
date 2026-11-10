@@ -7,6 +7,8 @@ import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
+import readerStyles from "@/components/events/network-reader.module.css";
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { useEvent } from "@/lib/events/client";
 import { completed, deepStep, draw, mergeProgress, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
@@ -772,7 +774,14 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];
         return (
           <>
-            <header>
+            {event.id === "computer-networks-endterm" && typeof document !== "undefined" && createPortal(
+              <div className={readerStyles.translate} data-no-i18n data-testid="notes-fixed-translation">
+                <Button size="sm" onClick={switchLang} aria-label={lang === "en" ? "Перевести конспект на русский" : "Перевести конспект на английский"}>
+                  {lang === "en" ? "Перевести → RU" : "Translate → EN"}
+                </Button>
+              </div>, document.body
+            )}
+            <header className={event.id === "computer-networks-endterm" ? "pt-12" : undefined}>
               <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
               <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
                 {event.lectures[view.step.lecture!].title[lang]} · часть {view.step.part! + 1} из {event.lectures[view.step.lecture!].parts.length}
@@ -800,7 +809,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
             {event.id === "computer-networks-endterm" ? <NetworkPartStudy key={part.id} module={Number(part.id.replace("cne-m", ""))} lang={lang}>
-              <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
+              <article className={readerStyles.reader} data-testid="lecture-notes" data-notes-version={notesVersion}>
                 <EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} />
               </article>
             </NetworkPartStudy> : <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>

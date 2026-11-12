@@ -1,3 +1,4 @@
+import { cloudEndtermSummary } from "@/lib/events/cloudComputingEndterm/meta";
 import { EVENTS } from "@/lib/events";
 import { steps } from "@/lib/events/engine";
 import EventsList, { type EventSummary } from "./EventsList";
@@ -23,5 +24,5 @@ export default function EventsPage() {
       practice: !!e.practice,
       steps: steps(e).map((s) => ({ id: s.id, kind: s.kind })),
     }));
-  return <EventsList events={events} />;
+  return <EventsList events={[cloudEndtermSummary, ...events]} />;
 }

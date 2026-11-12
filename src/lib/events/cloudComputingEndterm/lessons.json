@@ -1,0 +1,356 @@
+[
+  {
+    "id": "adoption",
+    "group": "Лекция 5",
+    "title": "Зачем компании переходят в облако",
+    "source": "Lecture5, slides 5–11",
+    "body": [
+      "Облако позволяет получать инфраструктуру по запросу: не ждать закупки сервера, а быстро проверить идею. Бизнес получает скорость экспериментов, возможность менять мощность и размещать сервис ближе к пользователю.",
+      "Cloud Adoption Framework — набор рекомендаций, инструментов и шаблонов для перехода. Это организационный путь: оценить цели, людей, процессы, риски и архитектуру. Сам перенос файлов ещё не делает миграцию успешной.",
+      "Облако не гарантирует экономию. Постоянно включённые лишние ресурсы, исходящий трафик и сложная миграция могут стоить дорого. Сравнивать нужно весь сценарий работы."
+    ],
+    "example": "Перед регистрацией на университетское событие нагрузка вырастает в десять раз. Вместо покупки серверов на весь год можно временно увеличить capacity.",
+    "remember": "Cloud adoption начинается с бизнес-цели, а не с выбора самой модной услуги.",
+    "english": "Cloud adoption enables agility, scalability, and faster experimentation.",
+    "check": "Почему перенос в cloud не всегда уменьшает стоимость?",
+    "answer": "Нужно учитывать потребление, трафик, миграцию, поддержку и реально освобождённые локальные ресурсы."
+  },
+  {
+    "id": "cases",
+    "group": "Лекция 5",
+    "title": "Spotify и Dropbox: два разных решения",
+    "source": "Lecture5, slides 14–17",
+    "body": [
+      "В кейсе лекции Spotify хотел освободить инженеров от обслуживания собственных дата-центров. Миграцию заранее готовили, выделили команду и разделили работу на services и data. Главная идея — инженеры работают над музыкальным продуктом.",
+      "Dropbox в кейсе пошёл в обратную сторону: при большом масштабе хранения собственная инфраструктура давала больше контроля. Это пример того, что облако — инструмент, а не обязательный конечный пункт.",
+      "Цифры и даты этих историй описывают учебные кейсы на слайдах. Из них нельзя вывести, что любая компания повторит такой же результат."
+    ],
+    "example": "Для маленького проекта арендовать хранилище обычно проще. Для огромного постоянно загруженного хранилища компания может отдельно сравнить собственную инфраструктуру.",
+    "remember": "Spotify: focus on innovation. Dropbox: control and economics at scale.",
+    "english": "The right infrastructure choice depends on business goals and scale.",
+    "check": "Какой общий урок дают противоположные миграции?",
+    "answer": "Выбирать архитектуру по требованиям, масштабу, контролю и полной стоимости; заранее готовить людей и процессы."
+  },
+  {
+    "id": "iot",
+    "group": "Лекция 5",
+    "title": "IoT, AI, blockchain и analytics",
+    "source": "Lecture5, slides 19–35",
+    "body": [
+      "IoT — устройства, которые собирают данные о физическом мире: температура, движение, состояние оборудования. Облако принимает поток, хранит его и предоставляет вычисления.",
+      "AI ищет закономерности: прогнозирует поломку или распознаёт необычное поведение. Analytics отвечает на вопросы по данным: где растут расходы, когда больше посетителей, что изменилось.",
+      "Blockchain в лекции связан с прослеживаемостью и согласованной историей операций между участниками. Облако упрощает размещение инфраструктуры, но не делает исходные данные автоматически правдивыми."
+    ],
+    "example": "В умном здании датчик отправляет температуру → cloud хранит readings → AI замечает аномалию → оператор получает уведомление.",
+    "remember": "IoT delivers data; AI produces insights; cloud provides storage and compute.",
+    "english": "IoT, AI, and cloud complement each other.",
+    "check": "Что в примере является IoT, а что AI?",
+    "answer": "Измеряющий датчик — IoT; модель, которая обнаруживает необычную температуру по истории, — AI."
+  },
+  {
+    "id": "dbaas",
+    "group": "Лекция 6",
+    "title": "DBaaS: кто обслуживает базу",
+    "source": "Lecture6, slides 5–18",
+    "body": [
+      "DBaaS — Database as a Service: провайдер обслуживает инфраструктуру базы и значительную часть её эксплуатации. Тебе не нужно покупать сервер и вручную устанавливать всё ПО. Но данные, права доступа и корректность приложения остаются твоей задачей.",
+      "На собственной машине ты отвечаешь за железо, ОС, DB engine, backup и приложение. База на EC2 убирает заботу о физическом железе, но ОС и установленную базу администрируешь ты. RDS берёт на себя ещё больше операций: патчи, автоматические backup и механизмы высокой доступности.",
+      "Managed не означает «можно ничего не настраивать»: выбирай подходящий deployment, правила доступа, хранение backup и параметры нагрузки."
+    ],
+    "example": "PostgreSQL на EC2: обновляешь ОС и PostgreSQL сам. PostgreSQL в RDS: AWS обслуживает платформу, а ты проектируешь таблицы, индексы и запросы.",
+    "remember": "EC2 database ≠ managed database.",
+    "english": "A managed database reduces operational work, but the customer still manages data and access.",
+    "check": "Кто ставит патчи Oracle на EC2 и кто в RDS?",
+    "answer": "На EC2 — клиент; в управляемом RDS обслуживание engine выполняет AWS в рамках сервиса."
+  },
+  {
+    "id": "sql",
+    "group": "Лекция 6",
+    "title": "SQL и NoSQL без путаницы",
+    "source": "Lecture6, slides 19–29",
+    "body": [
+      "Relational database хранит данные в связанных таблицах со схемой. SQL удобен для joins, ограничений и сложных транзакций: заказ, клиент, позиции заказа и оплата связаны между собой.",
+      "NoSQL объединяет несколько моделей: key-value, document, graph и другие. DynamoDB поддерживает key-value и document. Items могут иметь разные attributes; обязательны ключевые поля.",
+      "На слайдах SQL сопоставлен с vertical scaling, NoSQL — с horizontal. Это полезное упрощение для первого знакомства, но не абсолютный закон: современные реляционные системы тоже могут масштабироваться распределённо."
+    ],
+    "example": "Магазину с большим числом связей может подойти RDS. Быстрый доступ к профилю по userId можно построить на DynamoDB.",
+    "remember": "Выбирай базу по запросам к данным, а не только по слову SQL/NoSQL.",
+    "english": "Relational databases organize related tables; DynamoDB stores key-value and document data.",
+    "check": "Почему flexible schema не означает «ключ не нужен»?",
+    "answer": "Остальные attributes могут отличаться, но каждый item должен иметь заданный primary key."
+  },
+  {
+    "id": "keys",
+    "group": "Лекция 6",
+    "title": "DynamoDB: table → item → attribute",
+    "source": "Lecture6, slides 28–31; дополнение к вопросам 35, 40, 45",
+    "body": [
+      "Table — коллекция items. Item — одна запись, attribute — одно её поле. Simple primary key состоит только из partition key. Composite primary key состоит из partition key и sort key.",
+      "При simple key уникален partition key. При composite key уникальна пара. Несколько readings одного sensor могут иметь одинаковый partition key и разные timestamps.",
+      "DynamoDB использует hash partition key для распределения данных. Sort key упорядочивает записи с одинаковым partition key. Разработчик выбирает ключи, но не пишет hash-функцию размещения."
+    ],
+    "example": "(sensor-7, 10:00) и (sensor-7, 10:01) — разные items. (sensor-8, 10:00) тоже допустим. Второй независимый item (sensor-7, 10:00) создать нельзя.",
+    "remember": "Одинаковая часть ключа допустима; одинаковый полный ключ — нет.",
+    "english": "A composite primary key is the combination of the partition key and the sort key.",
+    "check": "Могут ли два sensors иметь одинаковый timestamp?",
+    "answer": "Да, если partition keys различаются: полные пары всё ещё уникальны."
+  },
+  {
+    "id": "db-choice",
+    "group": "Лекция 6",
+    "title": "RDS, Aurora, Redshift или DynamoDB",
+    "source": "Lecture6, slides 34–52",
+    "body": [
+      "RDS — управляемые реляционные базы для приложений. Aurora — реляционный engine, совместимый с MySQL или PostgreSQL. В лекции акцент на автоматизации обслуживания и доступности.",
+      "Redshift — data warehouse для аналитики больших наборов данных. Представь отчёт по всем продажам за год, а не чтение одного профиля по ключу. В лекции объясняется columnar storage и parallel processing.",
+      "DynamoDB подходит для key-value/document access с низкой задержкой. Если нужен доступ к ОС или необычная настройка DB, можно рассмотреть базу на EC2, взяв её обслуживание на себя."
+    ],
+    "example": "Оформить заказ с несколькими связанными таблицами → RDS/Aurora. Проанализировать продажи по странам → Redshift. Найти item по ключу → DynamoDB.",
+    "remember": "RDS/Aurora — relational; Redshift — analytics; DynamoDB — key-value/document.",
+    "english": "Use the right database for the access pattern and workload.",
+    "check": "Почему Redshift не является синонимом DynamoDB?",
+    "answer": "Redshift — аналитический warehouse; DynamoDB — NoSQL-база для оперативных key-value/document запросов."
+  },
+  {
+    "id": "responsibility",
+    "group": "Лекция 8",
+    "title": "Shared responsibility: OF и IN",
+    "source": "Lecture8, slides 5–14",
+    "body": [
+      "AWS отвечает за security OF the cloud: физические дата-центры, аппаратную платформу и инфраструктуру виртуализации. Клиент отвечает за security IN the cloud: свои данные, доступ, конфигурацию и приложения.",
+      "Для EC2 клиент также обновляет гостевую ОС и приложения. Для managed services граница смещается: провайдер обслуживает больше слоёв. Но владелец данных всё равно определяет, кому разрешён доступ.",
+      "Security group configuration и client-side data — ответственность клиента. Physical servers, edge infrastructure и физическая безопасность AZ — ответственность AWS."
+    ],
+    "example": "Если ты случайно открыл доступ к данным всем пользователям, наличие защищённого дата-центра не исправляет ошибку разрешений.",
+    "remember": "OF = инфраструктура AWS. IN = твои настройки и данные.",
+    "english": "Security is a shared responsibility between AWS and the customer.",
+    "check": "Кто отвечает за EC2 security group и за физическую охрану сервера?",
+    "answer": "Security group настраивает клиент; физическую безопасность инфраструктуры обеспечивает AWS."
+  },
+  {
+    "id": "iam",
+    "group": "Лекция 8",
+    "title": "Authentication, authorization и IAM",
+    "source": "Lecture8, раздел IAM; вопросы 33, 38, 39, 42",
+    "body": [
+      "Authentication проверяет личность: кто ты? Authorization проверяет права: можно ли тебе выполнить действие? Успешный вход не означает доступ ко всем ресурсам.",
+      "IAM user — identity; group — набор users; role — identity, которую можно принять и получить временные credentials; policy — документ с правилами доступа. Policies содержат Allow/Deny, actions, resources и conditions.",
+      "По умолчанию отсутствие разрешения означает deny. Explicit deny побеждает allow. Разрешения нужно давать по принципу least privilege: только необходимые действия и ресурсы.",
+      "На слайдах также выделены administrative, developer и application users. Права нужно выдавать по роли, а после ухода человека или смены задач — отзывать. MFA добавляет ещё один фактор проверки; cloud directory централизованно хранит профили и правила доступа. Аудит проверяет, соответствуют ли выданные права политике."
+    ],
+    "example": "Студент вошёл в AWS Console, но не может удалить bucket: authentication прошла, а authorization не дала DeleteBucket.",
+    "remember": "Identity — кто; policy — что разрешено.",
+    "english": "Authentication verifies identity; authorization determines permissions.",
+    "check": "Может ли allow отменить explicit deny?",
+    "answer": "Нет. Explicit deny имеет приоритет. Allow действует только в пределах остальных применимых ограничений."
+  },
+  {
+    "id": "encryption",
+    "group": "Лекция 8",
+    "title": "Шифрование и наблюдение",
+    "source": "Lecture8, разделы Encryption и Cloud Monitoring",
+    "body": [
+      "Encryption at rest защищает сохранённые данные, encryption in transit — данные при передаче. KMS помогает управлять криптографическими ключами и доступом к ним. Шифрование не заменяет IAM: разрешённый пользователь может получить расшифрованные данные.",
+      "Monitoring собирает метрики, логи и сигналы о состоянии системы. Метрика — числовой ряд (CPU, latency, errors); log — запись события. Alarm реагирует на заданное условие.",
+      "CloudWatch помогает наблюдать состояние. CloudTrail отвечает на другой вопрос: какие API-действия выполнялись и кем. Сочетание сигналов помогает обнаружить проблему и выяснить её причину.",
+      "Лекция отдельно различает encryption in use (во время обработки), client-side encryption (до отправки в cloud) и server-side encryption (на стороне сервиса). Ключи требуют собственного контроля доступа, ротации и продуманного восстановления. Потеря единственного ключа может означать потерю доступа к данным; хранить ключ рядом с данными без защиты опасно."
+    ],
+    "example": "Растёт latency → CloudWatch alarm. Нужно понять, кто изменил настройки → события CloudTrail. Нужно защитить файл на диске → encryption at rest.",
+    "remember": "Защищай данные, ограничивай доступ и наблюдай за системой одновременно.",
+    "english": "Encryption protects data; monitoring helps detect and investigate problems.",
+    "check": "Чем отличается запрос «сколько ошибок?» от «кто изменил policy?»",
+    "answer": "Первый относится к метрикам/логам мониторинга; второй — к аудиту действий."
+  },
+  {
+    "id": "careers",
+    "group": "Лекция 8",
+    "title": "Кто работает с облаком",
+    "source": "Lecture8, раздел Career Opportunities",
+    "body": [
+      "Cloud architect проектирует систему под требования: доступность, масштаб, безопасность и стоимость. Cloud developer пишет приложение и интеграции с сервисами. Operations/DevOps инженер автоматизирует сборку, deployment и эксплуатацию.",
+      "Security специалист работает с identity, разрешениями, угрозами и контролями. Data engineer строит получение, хранение и обработку данных. В маленькой команде один человек может выполнять несколько ролей.",
+      "Лекция предлагает обучение через курсы, порталы провайдеров, hands-on labs и сообщества. Практика важна: объяснить IAM policy полезнее, чем просто выучить название сервиса."
+    ],
+    "example": "Команда запускает магазин: architect выбирает компоненты, developer пишет API, operations настраивает deployment, security проверяет доступ.",
+    "remember": "Роль определяют задачи, а не список сертификатов.",
+    "english": "Cloud careers combine development, operations, security, architecture, and data skills.",
+    "check": "Кому ближе настройка повторяемого deployment?",
+    "answer": "Operations/DevOps инженеру, совместно с разработчиками."
+  },
+  {
+    "id": "pricing",
+    "group": "Лекция 10",
+    "title": "Из чего складывается счёт",
+    "source": "Lecture10, slides 5–13",
+    "body": [
+      "В лекции три основных драйвера стоимости: compute, storage и data transfer. Нужно учитывать время работы, размер и класс хранения, объём и направление передачи данных. Конкретные тарифы зависят от сервиса и региона.",
+      "Pay-as-you-go позволяет платить за потребление. Commitments/reservations дают экономические преимущества для подходящей предсказуемой нагрузки. Spot подходит для задач, которые выдерживают прерывание.",
+      "Скидки, числа и Free Tier на старых слайдах — исторические примеры. Для реального проекта проверяй текущий тариф. Сервис управления может не иметь отдельной платы, но созданные им ресурсы оплачиваются."
+    ],
+    "example": "Auto Scaling создаёт два дополнительных EC2: сам механизм не означает, что вычисления стали бесплатными.",
+    "remember": "Compute + storage + transfer; меньше простаивающих ресурсов — меньше лишних расходов.",
+    "english": "Cloud costs depend on resource consumption and the selected pricing model.",
+    "check": "Почему «оплата по потреблению» не равна «всегда дёшево»?",
+    "answer": "Можно постоянно потреблять слишком много: лишние серверы, ненужные данные и большой исходящий трафик."
+  },
+  {
+    "id": "tco",
+    "group": "Лекция 10",
+    "title": "TCO и калькуляторы",
+    "source": "Lecture10, slides 15–21",
+    "body": [
+      "TCO — Total Cost of Ownership: прямые и косвенные затраты владения системой. Для on-premises это серверы, storage, сеть, лицензии, электричество, охлаждение, помещение и труд специалистов.",
+      "Cloud estimate должен включать не только VM, но и трафик, диски, backup, поддержку и операции. Отдельно учитывай миграцию и то, какие старые затраты действительно исчезнут.",
+      "Pricing Calculator моделирует будущую конфигурацию до запуска. Он не является отчётом о том, сколько денег уже потрачено. TCO помогает сравнить варианты на одинаковом горизонте и с одинаковыми требованиями."
+    ],
+    "example": "Если аренда офиса и зарплата команды после миграции не меняются, нельзя автоматически записать их полную сумму в экономию.",
+    "remember": "Calculator = estimate. Cost report = actual spending.",
+    "english": "TCO includes both direct and indirect costs over the lifetime of a system.",
+    "check": "Что добавить к цене сервера при расчёте TCO?",
+    "answer": "Лицензии, сеть, диски, электричество, охлаждение, помещение, администрирование и обслуживание."
+  },
+  {
+    "id": "billing",
+    "group": "Лекция 10",
+    "title": "Организация аккаунтов и прав",
+    "source": "Lecture10, slides 23–31",
+    "body": [
+      "AWS Organizations объединяет accounts и помогает централизовать управление и billing. Organizational Unit (OU) группирует accounts для общей политики. IAM работает с identities и доступом к ресурсам.",
+      "Service Control Policy задаёт границы разрешённых действий для accounts; сама по себе SCP не выдаёт права пользователю. Нужны соответствующие IAM permissions. Consolidated billing объединяет финансовый обзор.",
+      "Azure RBAC строится из security principal (кто), role definition (что может) и scope (где). Scope может быть subscription, resource group или отдельный resource."
+    ],
+    "example": "Разработчику можно дать управление VM только в учебной resource group, не открывая ему все ресурсы организации.",
+    "remember": "Кто + что + где — три вопроса для RBAC.",
+    "english": "Azure RBAC combines a security principal, a role definition, and a scope.",
+    "check": "Чем IAM group отличается от Organizational Unit?",
+    "answer": "IAM group объединяет пользователей; OU в Organizations объединяет AWS accounts."
+  },
+  {
+    "id": "azure-cost",
+    "group": "Лекция 10",
+    "title": "Пять инструментов расходов Azure",
+    "source": "Lecture10, slides 32–36; вопросы 1, 3, 5–10, 23",
+    "body": [
+      "Azure Cost Management показывает расходы по сервисам, времени и другим разрезам. Azure Price Calculator оценивает будущую конфигурацию. Azure Budgets задаёт бюджет и alerts.",
+      "Azure Advisor предлагает оптимизации, включая resizing малоиспользуемых VM. Azure Exports выгружает данные о затратах, например в CSV, для внешней обработки.",
+      "Budget alerts относятся к расходам; credit alerts — к использованию кредита; department quota alerts — к расходам подразделения. При неожиданном росте расходов сообщи ответственным и найди источник, а не удаляй всё подряд."
+    ],
+    "example": "До запуска → Calculator. После запуска «куда ушли деньги?» → Cost Management. «Предупреди о пороге» → Budgets. «Что оптимизировать?» → Advisor.",
+    "remember": "Estimate / track / alert / recommend / export — пять разных задач.",
+    "english": "Cost Management tracks spending; Budgets notify; Advisor recommends optimizations.",
+    "check": "Какой инструмент нужен для анализа расходов по сервисам за месяц?",
+    "answer": "Azure Cost Management. Calculator нужен для оценки, Exports — для выгрузки."
+  },
+  {
+    "id": "availability",
+    "group": "Лекция 10",
+    "title": "Доступность, надёжность и SLA",
+    "source": "Lecture10, slides 38–49",
+    "body": [
+      "Availability — доля времени, когда сервис доступен. Reliability — способность работать как требуется в течение периода. Высокая доступность уменьшает простой, в том числе за счёт резервирования и автоматического восстановления.",
+      "Fault tolerance позволяет переживать отказы компонентов; scalability позволяет выдерживать увеличение нагрузки; recoverability — восстановиться после серьёзного сбоя. Multi-AZ помогает пережить отказ одной зоны.",
+      "SLA — формальное соглашение о сервисе, метриках, условиях и компенсациях. Это не обещание, что отказов не будет. Privacy касается обработки персональных данных, compliance — выполнения применимых требований. Сертификат провайдера не снимает обязанности с клиента."
+    ],
+    "example": "Availability 99.9% за 30 дней допускает около 43.2 минуты простоя при простом расчёте. Реальное SLA может считать доступность по своим условиям.",
+    "remember": "Multi-AZ — устойчивость; Auto Scaling — capacity; backup — восстановление.",
+    "english": "High availability minimizes downtime; an SLA defines the agreed service level.",
+    "check": "Резервная копия автоматически обеспечивает отсутствие простоя?",
+    "answer": "Нет. Backup помогает восстановлению, но восстановление занимает время; для availability нужны соответствующие работающие резервные компоненты."
+  },
+  {
+    "id": "dev",
+    "group": "AWS Developing",
+    "title": "SDLC, Console, CLI и SDK",
+    "source": "Дополнение по syllabus: Cloud Developing modules 1–2; вопросы 21, 24–25, 37, 44",
+    "body": [
+      "В шестистадийной модели из вопросов SDLC идёт plan → define → design → develop → deploy → maintain. Define фиксирует требования, design проектирует решение, develop создаёт и собирает компоненты, deploy вводит их в использование.",
+      "Console — графический интерфейс; CLI — команды; SDK — вызовы из кода, например Python boto3. Все они обращаются к API AWS. CloudShell даёт shell в браузере с credentials текущей Console-сессии.",
+      "Docker image — шаблон файловой системы и конфигурации; container — запущенный экземпляр. pull скачивает image, images перечисляет images, run создаёт и запускает container. Флаг -d запускает в фоне; процесс внутри должен продолжать работать."
+    ],
+    "example": "Python-приложение загружает файл через boto3 → SDK. Инженер вводит aws s3 ls → CLI. Docker: docker run -d nginx.",
+    "remember": "CloudTrail записывает API events, IAM разрешает действия, но это не три интерфейса вызова API.",
+    "english": "Use the Console, CLI, or SDKs to interact with AWS APIs.",
+    "check": "Почему docker pull alpine не запускает контейнер?",
+    "answer": "Pull только получает образ. Для запуска нужен docker run, для фонового режима — -d."
+  },
+  {
+    "id": "s3",
+    "group": "AWS Developing",
+    "title": "S3: buckets, objects и versioning",
+    "source": "Дополнение по syllabus: Cloud Developing module 3; вопросы 13–14, 28, 36, 43",
+    "body": [
+      "S3 — object storage. Bucket содержит objects; object key обозначает объект. Префикс в key выглядит как папка, но не превращает S3 в обычный файловый диск. Data lake, изображения и backup — типичные сценарии.",
+      "EBS — block storage, например диск EC2. EFS — shared file system. Не путай хранение backup базы в S3 и работающую базу на блочном диске.",
+      "Versioning сохраняет версии объектов. После включения можно suspend versioning, но нельзя вернуть bucket в первоначальное unversioned-состояние. Для обычных buckets имя должно быть свободно в AWS partition; занятое имя нельзя получить сменой Region."
+    ],
+    "example": "images/cat.jpg — key объекта внутри bucket. Если имя bucket занято, выбираешь другое при создании; существующий bucket не переименовывается.",
+    "remember": "Bucket → object key → object; S3 не является EBS или EFS.",
+    "english": "S3 stores objects in buckets and supports object versioning.",
+    "check": "Можно ли полностью выключить versioning после первого включения?",
+    "answer": "Вернуться в исходное unversioned-состояние нельзя; можно приостановить versioning."
+  },
+  {
+    "id": "s3-web",
+    "group": "AWS Developing",
+    "title": "Сайт на S3: доступ, CORS и адреса",
+    "source": "Дополнение к вопросам 31 и 47; AWS S3 User Guide",
+    "body": [
+      "Для static website нужны файлы, корректная конфигурация website и доступ к содержимому. Сайт из другого origin может столкнуться с CORS при fetch или работе с canvas. CORS не выдаёт право читать приватный объект.",
+      "У S3 bucket нет security group. При проблеме с изображением проверяй URL, наличие объекта, permissions и характер браузерного запроса. Обычный img не всегда требует CORS.",
+      "Website endpoint и REST endpoint — разные адреса. Нативный S3 website endpoint не поддерживает HTTPS. Для HTTPS перед website можно использовать подходящий CDN/hosting слой. Поэтому варианты на экзаменационном листе нельзя слепо считать рабочими URL."
+    ],
+    "example": "Website: http://bucket.s3-website-us-east-1.amazonaws.com. REST: https://bucket.s3.us-east-1.amazonaws.com.",
+    "remember": "CORS ≠ permissions. Website endpoint ≠ REST endpoint.",
+    "english": "CORS controls browser cross-origin access; it does not grant S3 permissions.",
+    "check": "Исправит ли CORS отсутствие права s3:GetObject?",
+    "answer": "Нет. Сначала нужен разрешённый доступ к объекту; CORS решает другую задачу."
+  },
+  {
+    "id": "ddb-api",
+    "group": "AWS Developing",
+    "title": "DynamoDB API и Streams",
+    "source": "Дополнение по syllabus: Cloud Developing module 5; вопросы 27, 32, 35, 40, 45",
+    "body": [
+      "Control plane управляет таблицами: создание, описание, изменение настроек, удаление. Data plane работает с items: читать, писать, обновлять и удалять. Batch объединяет операции над несколькими items.",
+      "Transaction нужна, когда изменения должны пройти вместе или не пройти вовсе. Не путай пакет операций с гарантией all-or-nothing.",
+      "DynamoDB Streams хранит упорядоченный поток изменений items, который можно использовать для дальнейшей обработки, например Lambda. Для проектирования таблицы сначала выясни, по каким ключам и диапазонам приложение читает данные."
+    ],
+    "example": "CreateTable → control plane. PutItem → data plane. Атомарно изменить несколько items → transaction. Обработать появившуюся запись → Streams.",
+    "remember": "Таблица как ресурс — control; данные внутри — data.",
+    "english": "Control plane operations manage tables; data plane operations access items.",
+    "check": "Почему CreateTable и PutItem относятся к разным категориям?",
+    "answer": "Первое создаёт ресурс таблицы, второе записывает данные в уже существующую таблицу."
+  },
+  {
+    "id": "rest",
+    "group": "AWS Developing",
+    "title": "REST, HTTP и API Gateway",
+    "source": "Дополнение по syllabus: Cloud Developing module 6; вопросы 26, 29–30, 41",
+    "body": [
+      "API — контракт взаимодействия программ. REST — архитектурный стиль: ресурсы, единообразный интерфейс и stateless-взаимодействие. Просто передавать данные по HTTP недостаточно, чтобы выполнить все принципы REST.",
+      "HTTP 2xx сообщает об успехе, 4xx — о проблеме запроса/доступа/ресурса, 5xx — о проблеме на серверной стороне. Несуществующий S3 bucket обычно возвращает 404 NoSuchBucket.",
+      "API Gateway принимает запрос и направляет его backend. IntegrationLatency — время ожидания backend от передачи запроса до получения ответа; общая Latency также включает работу самого Gateway."
+    ],
+    "example": "Client → API Gateway → Lambda → DynamoDB → ответ. Если Lambda долго работает, растёт IntegrationLatency.",
+    "remember": "HTTP — протокол; REST — стиль; Gateway — вход к backend.",
+    "english": "IntegrationLatency measures how long the backend takes to respond to API Gateway.",
+    "check": "Почему скорость полного ответа клиенту — не точное определение IntegrationLatency?",
+    "answer": "Потому что полный ответ включает дополнительные этапы и накладные расходы за пределами ожидания backend."
+  },
+  {
+    "id": "api-choice",
+    "group": "AWS Developing",
+    "title": "HTTP API, REST API или WebSocket",
+    "source": "Дополнение к вопросам 34 и 41; AWS API Gateway Developer Guide",
+    "body": [
+      "HTTP APIs подходят для простого HTTP proxy к Lambda или другому backend. REST APIs предлагают дополнительные возможности, например mock integrations, преобразование тела сообщений и usage plans. Выбор зависит от необходимых функций.",
+      "WebSocket API поддерживает двусторонний обмен через соединение. Сервер может отправлять новые события клиенту: сообщения чата или live-обновления.",
+      "Authentication проверяет личность вызывающего, authorization — разрешённые действия. Throttling ограничивает интенсивность запросов; это не то же самое, что backend latency или количество server errors."
+    ],
+    "example": "Чат службы поддержки → WebSocket. Простой HTTP endpoint перед Lambda → HTTP API. Варианты с mock endpoints или квотами по клиенту в этом листе → REST API.",
+    "remember": "Request/response → HTTP; постоянный двусторонний обмен → WebSocket.",
+    "english": "WebSocket APIs support real-time, bidirectional communication.",
+    "check": "Нужен ли WebSocket только для возврата номера заказа после submit?",
+    "answer": "Обычно нет: обычный HTTP request/response достаточно. WebSocket особенно полезен для новых событий без опроса."
+  }
+]

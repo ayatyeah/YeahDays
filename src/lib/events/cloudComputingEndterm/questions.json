@@ -1,0 +1,1037 @@
+[
+  {
+    "id": "cce-1",
+    "number": "1",
+    "prompt": "Which tool tracks Azure spending by service and over time?",
+    "options": [
+      "Azure Cost Management",
+      "Azure Advisor",
+      "Azure Exports",
+      "Azure Price Calculator"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Cost Management показывает фактические расходы и их изменение. Advisor рекомендует оптимизации, Exports выгружает данные, а Calculator оценивает будущую конфигурацию.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-2",
+    "number": "2",
+    "prompt": "Which option is the Amazon Web Services (AWS) customer responsible for under the AWS shared responsibility model? (Select TWO.)",
+    "options": [
+      "Security group configuration",
+      "Physical servers",
+      "Client-side data",
+      "Edge location infrastructure",
+      "Availability Zone security"
+    ],
+    "answers": [
+      0,
+      2
+    ],
+    "explanation": "Клиент настраивает security groups и защищает свои данные. Физические серверы, edge-инфраструктура и безопасность дата-центров относятся к AWS. Запомни: AWS — security OF the cloud; клиент — security IN the cloud.",
+    "topic": "security",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ]
+  },
+  {
+    "id": "cce-3",
+    "number": "3",
+    "prompt": "What are Azure Budgets used for?",
+    "options": [
+      "Creating virtual machines",
+      "Configuring networks",
+      "Setting spending limits and alerts",
+      "Exporting reports"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Budget задаёт бюджет и уведомляет о пороге. Сам по себе бюджет не является автоматическим выключателем ресурсов: остановку нужно настраивать отдельно.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-4",
+    "number": "4",
+    "prompt": "Which feature helps improve fault tolerance in AWS?",
+    "options": [
+      "Multi-AZ deployment",
+      "Cost allocation tags",
+      "Reserved Instances",
+      "IAM password policies"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Multi-AZ размещает ресурсы в нескольких Availability Zones: отказ одной зоны не обязан остановить весь сервис. Теги и Reserved Instances относятся к затратам, password policies — к доступу.",
+    "topic": "architecture",
+    "labels": [
+      "a",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-5",
+    "number": "5",
+    "prompt": "What does Azure Advisor recommend to optimize virtual machine costs?",
+    "options": [
+      "Resizing virtual machines",
+      "Deleting all virtual machines",
+      "Disabling monitoring",
+      "Creating new subscriptions"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Rightsizing: подобрать размер VM под реальную нагрузку. Если большой сервер почти простаивает, меньший может выполнять ту же работу дешевле. Удалять все VM или отключать мониторинг не требуется.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-6",
+    "number": "6",
+    "prompt": "What are budget alerts?",
+    "options": [
+      "Notifications about spending",
+      "Security reports",
+      "Network notifications",
+      "Performance notifications"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Budget alerts сообщают о фактических или прогнозируемых расходах относительно порога. Это финансовые уведомления, а не отчёты о безопасности или производительности.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-7",
+    "number": "7",
+    "prompt": "When are credit alerts sent?",
+    "options": [
+      "When network speed is exceeded",
+      "When Azure credits are consumed",
+      "When resources are deleted",
+      "When a virtual machine is created"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Credit alerts связаны с использованием доступного Azure credit. Они предупреждают об исчерпании кредита согласно условиям подписки, а не о скорости сети.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-8",
+    "number": "8",
+    "prompt": "What do department spending quota alerts monitor?",
+    "options": [
+      "Network traffic",
+      "Department spending",
+      "System performance",
+      "Security settings"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Здесь ключевое слово department: отслеживаются траты подразделения относительно его spending quota. Не путай денежную квоту с техническими лимитами CPU или сети.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-9",
+    "number": "9",
+    "prompt": "Which format can Azure Exports use to export data?",
+    "options": [
+      "PDF",
+      "JSON",
+      "CSV",
+      "XML"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Из предложенных вариантов подходит CSV: табличные данные о затратах удобно открыть в таблице или обработать программой. Вопрос спрашивает, какой формат МОЖЕТ использоваться, а не единственный формат всех современных экспортов.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-10",
+    "number": "10",
+    "prompt": "What should you do when you detect an unusual increase in Azure spending?",
+    "options": [
+      "Ignore the spending",
+      "Delete all resources",
+      "Report it to the relevant stakeholders",
+      "Disable the budget"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Сообщи ответственным и выясни причину по детализации затрат: ресурс, сервис, период и владелец. Массовое удаление может сломать систему, отключение бюджета скроет сигнал.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-11",
+    "number": "11",
+    "prompt": "Which of the following cloud concept is related to pooling and sharing of resources?",
+    "options": [
+      "Virtualization",
+      "Abstraction",
+      "Polymorphism",
+      "All of the mentioned"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Virtualization позволяет нескольким изолированным виртуальным средам использовать общий физический ресурс. Abstraction скрывает детали реализации; polymorphism — понятие программирования.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-12",
+    "number": "12",
+    "prompt": "Which of the following is Cloud Platform by Amazon?",
+    "options": [
+      "AWS",
+      "Cloudera",
+      "Azure",
+      "All of the mentioned"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "AWS означает Amazon Web Services. Azure — платформа Microsoft, Cloudera — другая компания и платформа обработки данных.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-13",
+    "number": "13",
+    "prompt": "What is the primary advantage of using AWS Snowball devices for data transfer?",
+    "options": [
+      "High-speed internet connectivity",
+      "Low-latency data processing",
+      "Secure and efficient transfer of large amounts of data to and from the cloud",
+      "Real-time data analytics"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Идея Snowball в этом учебном вопросе — физически переносить большие объёмы данных защищённым устройством, когда передача по сети неудобна. Это не способ ускорить интернет и не сервис real-time analytics.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-14a",
+    "number": "14a",
+    "prompt": "After versioning is enabled on an Amazon Simple Storage Service (Amazon S3) bucket, it can be disabled.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Versioning можно приостановить (suspend), но нельзя вернуть bucket в первоначальное unversioned-состояние. Уже существующие версии при приостановке автоматически не исчезают.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B"
+    ]
+  },
+  {
+    "id": "cce-14b",
+    "number": "14b",
+    "prompt": "Which of the following is best known service model?",
+    "options": [
+      "IaaS",
+      "PaaS",
+      "SaaS",
+      "All of the mentioned"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Все три — распространённые модели сервиса: инфраструктура, платформа и готовое приложение. Формулировка на листе неловкая, но набор вариантов явно проверяет знание всех трёх.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-15",
+    "number": "15",
+    "prompt": "Point out the wrong statement.",
+    "options": [
+      "Azure enables .NET Framework applications to run over the Internet",
+      "Cloud Computing has two distinct sets of models",
+      "Amazon has built a worldwide network of datacenters to service its search engine",
+      "None of the mentioned"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Неверно утверждение про поисковую систему Amazon. В учебной классификации два набора моделей — service models (IaaS/PaaS/SaaS) и deployment models (public/private/hybrid). Azure поддерживает размещение .NET-приложений.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-16",
+    "number": "16",
+    "prompt": "_____ refers to the location and management of the cloud’s infrastructure.",
+    "options": [
+      "Service",
+      "Application",
+      "Deployment",
+      "All of the mentioned"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Deployment model отвечает на вопрос, где находится инфраструктура и кем управляется: public, private, hybrid. Service model отвечает, какой слой услуги получает клиент.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-17",
+    "number": "17",
+    "prompt": "Which of the following statement is wrong about Amazon S3?",
+    "options": [
+      "Amazone S3 provides large quantities of reliable storage that is highly protected",
+      "Amazone S3 is highly reliable",
+      "Amazone S3 is highly available",
+      "None of the mentioned"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Среди перечисленных общих характеристик S3 нет явно ложной: сервис рассчитан на надёжное и доступное хранение. При этом безопасность конкретных данных зависит и от настроек клиента. Опечатка Amazone сохранена с листа.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-18",
+    "number": "18",
+    "prompt": "How many EC2 service zones or regions exist?",
+    "options": [
+      "2",
+      "1",
+      "3",
+      "4"
+    ],
+    "answers": [],
+    "explanation": "У вопроса нет корректного современного ответа среди 1–4. Region и Availability Zone — разные понятия, а глобальное число регионов меняется. Без даты и уточнения нельзя честно назначить один вариант. Этот вопрос сохраняется для знакомства с листом, но не влияет на оценку.",
+    "topic": "architecture",
+    "caution": "Устаревший и неоднозначный вопрос; подтверждённого ключа нет.",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-19",
+    "number": "19",
+    "prompt": "Which of the following metrics are used to support Elastic Load Balancing?",
+    "options": [
+      "CloudWatch",
+      "AWS Import/Export",
+      "Amazone Elastic Block Store",
+      "All of the mentioned"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Из вариантов подходит CloudWatch: он собирает метрики, в том числе для load balancers. Сам CloudWatch — сервис мониторинга, а не отдельная метрика; формулировка листа неточная.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-20",
+    "number": "20",
+    "prompt": "Which of the following feature is used for scaling of EC2 sites?",
+    "options": [
+      "Auto Ruling",
+      "Auto Replica",
+      "Auto Scaling",
+      "All of the mentioned"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Auto Scaling меняет число EC2 instances по правилам и нагрузке. Load balancer распределяет запросы между instances, но сам по себе их не создаёт.",
+    "topic": "architecture",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-21",
+    "number": "21",
+    "prompt": "Basic Docker Operations. Which command is “Run a container in the background from an image”",
+    "options": [
+      "$ docker images",
+      "$ docker pull alpine",
+      "$ docker pull alpine sh",
+      "None of the mentioned"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Для фонового запуска нужна команда docker run -d IMAGE с подходящим долгоживущим процессом. docker images перечисляет образы, docker pull скачивает образ. Ни одна из трёх команд не запускает контейнер в фоне.",
+    "topic": "develop",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-22",
+    "number": "22",
+    "prompt": "Software as a service (SaaS)",
+    "options": [
+      "is a cloud computing service that lets users access and use a cloud database system without purchasing and setting up their own hardware, installing their own database software, or managing the database themselves.",
+      "customers can take advantage of the scalable, easy-to-manage features that Amazon Redshift provides. Some customers use the Amazon Redshift to provide analytic capabilities to their applications.",
+      "is a fast and flexible NoSQL database service for all applications that need consistent, single-digit-millisecond latency at any scale.",
+      "there is no correct answer"
+    ],
+    "answers": [],
+    "explanation": "На листе отсутствует полноценный вопрос. A — определение DBaaS (Lecture 6, slide 5), B — сценарий Redshift для SaaS (slide 41), C — описание DynamoDB. Если имелось в виду «какой use case Redshift связан с SaaS», ожидался бы B; если «какое определение SaaS верно» — D. Без полного условия или официального ключа ответ не оцениваем.",
+    "topic": "database",
+    "caution": "Неполное условие: возможны разные трактовки.",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-23",
+    "number": "23",
+    "prompt": "Which Azure tool is used to estimate the cost of cloud services?",
+    "options": [
+      "Azure Advisor",
+      "Azure Price Calculator",
+      "Azure Budgets",
+      "Azure Exports"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Calculator оценивает будущую стоимость выбранных сервисов. Cost Management анализирует уже возникшие расходы; Budget задаёт пороги; Advisor предлагает оптимизации.",
+    "topic": "cost",
+    "labels": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  {
+    "id": "cce-24",
+    "number": "24",
+    "prompt": "The systems development lifecycle (SDLC) has six phases. The first three phases are plan, define, and design. What are the last three phases of the SDLC?",
+    "options": [
+      "Code, build, and test",
+      "Develop, deploy, and maintain",
+      "Test, deploy, and maintain",
+      "Code, build, and maintain"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "В указанной шестистадийной модели: plan → define → design → develop → deploy → maintain. Разработка создаёт и проверяет решение, deployment доставляет его пользователям, maintenance поддерживает после запуска.",
+    "topic": "develop",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-25",
+    "number": "25",
+    "prompt": "What are three ways to interact with AWS service application programming interfaces (APIs)? (Select the THREE best options.)",
+    "options": [
+      "AWS CloudTrail",
+      "AWS software development kits (SDKs)",
+      "AWS Management Console",
+      "AWS Command Line Interface (AWS CLI)",
+      "AWS Identity and Access Management (IAM)"
+    ],
+    "answers": [
+      1,
+      2,
+      3
+    ],
+    "explanation": "Console вызывает API через интерфейс, CLI — через команды, SDK — из программы. CloudTrail записывает события API, а IAM управляет правами. Выбери B, C и D вместе.",
+    "topic": "develop",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ]
+  },
+  {
+    "id": "cce-26",
+    "number": "26",
+    "prompt": "Which phrase best describes a RESTful API?",
+    "options": [
+      "An API that uses HTTP to communicate between client and server",
+      "A proxy that exists between client and server to handle common problems that occur with API-driven applications",
+      "An API that follows the principles of the Representational State Transfer style",
+      "An API that resides on the web server"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "REST расшифровывается Representational State Transfer. Важно следование архитектурным ограничениям: ресурсы, единообразный интерфейс, stateless-запросы и другие принципы. Одного HTTP недостаточно, чтобы API был RESTful.",
+    "topic": "api",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-27",
+    "number": "27",
+    "prompt": "Which statement best describes Amazon DynamoDB?",
+    "options": [
+      "An in-memory data store that can boost the performance of databases",
+      "A graph database engine that is optimized for storing billions of relationships",
+      "A relational database that is built for the cloud and is competitive with MySQL and PostgreSQL",
+      "A key-value and document database that scales horizontally and works well for internet-scale applications"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "DynamoDB — managed NoSQL key-value/document database. In-memory cache — другая категория; graph — связи; реляционная MySQL/PostgreSQL-совместимая база — Aurora.",
+    "topic": "database",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-28",
+    "number": "28",
+    "prompt": "A student is learning about Amazon Simple Storage Service (Amazon S3). During an interview, a potential employer asks the student to explain how Amazon S3 can be used as a storage solution. Which option is a use case for Amazon S3?",
+    "options": [
+      "Data lake",
+      "Block-level storage",
+      "Hosting active databases",
+      "Shared file systems"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "S3 подходит для data lake: объекты с сырыми данными разных форматов. Для блочных дисков используют EBS, для общего файлового доступа — EFS. Хранить backup базы в S3 можно, но это не значит запускать активную базу прямо на объектном хранилище.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-29",
+    "number": "29",
+    "prompt": "A developer makes an application programming interface (API) call to access an Amazon Simple Storage Service (Amazon S3) bucket that doesn't exist. Which HTTP response code does the developer receive from the AWS service?",
+    "options": [
+      "300 series",
+      "500 series",
+      "200 series",
+      "400 series"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Несуществующий bucket обычно даёт 404 NoSuchBucket — это семейство 4xx. 2xx означает успех, 5xx — ошибку сервера, 3xx — перенаправление.",
+    "topic": "api",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-30",
+    "number": "30",
+    "prompt": "What does the Amazon API Gateway integration Latency metric tell the user?",
+    "options": [
+      "Frequency of server-side errors that affect latency",
+      "Speed of the API response back to the client",
+      "Responsiveness of the backend",
+      "How often requests are throttled"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "IntegrationLatency измеряет время от передачи запроса backend до получения его ответа API Gateway. Поэтому C точнее B: полная Latency включает ещё накладные расходы самого Gateway.",
+    "topic": "api",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-31",
+    "number": "31",
+    "prompt": "A developer hosts a static website in an Amazon Simple Storage Service (Amazon S3) bucket. The website references image objects in another S3 bucket. However, these images do not display on the website. What could be the problem?",
+    "options": [
+      "Cross-Region Replication (CRR) has not been enabled on the bucket where the assets are stored.",
+      "Amazon S3 does not support object sharing between buckets.",
+      "The security group of the S3 bucket does not include an inbound rule to allow HTTP traffic on port 80.",
+      "Cross-Origin Resource Sharing (CORS) has not been enabled on the bucket where the assets are stored."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Среди предложенных ответов ожидается D: браузерные запросы из другого origin могут требовать CORS. CRR копирует данные, а у S3 bucket нет security group. Нюанс: обычный img может отображаться без CORS; CORS особенно важен для fetch и чтения изображения через canvas. Права чтения и URL тоже нужно проверять.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-32",
+    "number": "32",
+    "prompt": "Which statement describes Amazon DynamoDB application programming interface (API) control operations that can be invoked by an application?",
+    "options": [
+      "Create and manage DynamoDB tables.",
+      "Create, read, update, and delete data in a table.",
+      "Get and write batches of items in a DynamoDB table.",
+      "Make coordinated, all-or-nothing changes to multiple items both within and across tables."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Control plane управляет самими таблицами (CreateTable, DescribeTable, UpdateTable, DeleteTable). CRUD items и batch относятся к data plane; all-or-nothing изменения — transactions.",
+    "topic": "database",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-33",
+    "number": "33",
+    "prompt": "Which statements are true about evaluation logic for AWS Identity and Access Management (IAM) policies? (Select TWO.)",
+    "options": [
+      "You cannot have deny and allow statements in the same policy.",
+      "An explicit allow overrides an explicit deny.",
+      "An explicit deny overrides an explicit allow.",
+      "By default, all requests are denied.",
+      "By default, all requests are allowed."
+    ],
+    "answers": [
+      2,
+      3
+    ],
+    "explanation": "Для обычной проверки разрешений действует implicit deny, пока нет подходящего allow. Explicit deny имеет приоритет над allow. В одной policy могут быть statements обоих типов. Другие ограничения (SCP, permission boundary) тоже могут ограничивать итоговый доступ.",
+    "topic": "security",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ]
+  },
+  {
+    "id": "cce-34",
+    "number": "34",
+    "prompt": "Which option suggests the use of WebSocket APIs?",
+    "options": [
+      "An order processing application returns an order number to each customer when they submit an order.",
+      "A batch process bundles orders and sends them to a fulfillment center application.",
+      "A real-time chat application lets customers talk to customer support about their orders.",
+      "A reporting application gives the sales team access to static daily reports from their phones."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "WebSocket поддерживает двустороннее соединение: новые сообщения могут приходить без очередного HTTP-запроса клиента. Поэтому real-time chat — самый характерный сценарий.",
+    "topic": "api",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-35",
+    "number": "35",
+    "prompt": "Which component is part of an Amazon DynamoDB table?",
+    "options": [
+      "Predefined schema",
+      "SQL-based queries",
+      "Attributes",
+      "Columns"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Table содержит items, item состоит из attributes. У разных items могут различаться attributes, кроме обязательных ключевых полей. SQL-термины rows/columns не являются базовыми названиями компонентов DynamoDB.",
+    "topic": "database",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-36",
+    "number": "36",
+    "prompt": "A _____ organizes the Amazon Simple Storage Service (Amazon S3) namespace at the highest level.",
+    "options": [
+      "Bucket",
+      "Container",
+      "Region",
+      "Group"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Bucket — верхний контейнер объектов S3. Object key идентифицирует объект внутри bucket. Region определяет размещение, но не является ответом на вопрос о namespace.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-37",
+    "number": "37",
+    "prompt": "Which task is performed during the develop stage of the systems development lifecycle (SDLC)?",
+    "options": [
+      "Deficiencies are identified.",
+      "New system requirements are defined.",
+      "New components are obtained and installed.",
+      "The system is put into use."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "В develop создают или получают компоненты и собирают систему. Требования определяют в define, ввод в использование относится к deploy, а выявление эксплуатационных недостатков — к maintain.",
+    "topic": "develop",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-38",
+    "number": "38",
+    "prompt": "Which AWS Identity and Access Management (IAM) resource explicitly grants or denies permissions to a user or group of users?",
+    "options": [
+      "IAM roles",
+      "IAM users",
+      "IAM groups",
+      "IAM policies"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Policy — документ с statements Allow/Deny, действиями и ресурсами. User и group — сущности, к которым прикрепляют policies; role — принимаемая identity с временными credentials.",
+    "topic": "security",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-39",
+    "number": "39",
+    "prompt": "What is the correct term for the process of verifying a user's identity as a developer?",
+    "options": [
+      "Endorsement",
+      "Authentication",
+      "Confirmation",
+      "Authorization"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Authentication = кто ты? Authorization = что тебе разрешено? Проверка личности — authentication; проверка права выполнить действие — authorization.",
+    "topic": "security",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-40",
+    "number": "40",
+    "prompt": "An Amazon DynamoDB table called SensorReadings captures sensor readings. These readings include a sensor ID attribute that acts as the partition key, and a timestamp attribute that is the sort key. Which statement is true?",
+    "options": [
+      "The sensor ID together with the timestamp represent a simple primary key.",
+      "It is impossible for two items in the SensorReadings table to have the same partition key.",
+      "It is impossible for two items in the SensorReadings table to have the same sort key.",
+      "It is impossible for two items in the SensorReadings table to have the same primary key."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Это composite primary key = (sensor ID, timestamp). Один sensor может иметь много timestamps, и разные sensors могут иметь одинаковое время. Уникальна только полная пара. Запись с тем же полным ключом не создаёт второй независимый item.",
+    "topic": "database",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-41",
+    "number": "41",
+    "prompt": "Which use case suggests using Amazon API Gateway HTTP APIs?",
+    "options": [
+      "An application needs an API proxy in front of an AWS Lambda function.",
+      "An application must transform a response from an AWS Lambda function before returning the response to the client.",
+      "A developer wants to use mock endpoints to test their API.",
+      "A developer wants to assign different API quotas by client."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "HTTP API подходит как простой proxy к Lambda. Из перечисленных возможностей REST APIs обычно выбирают для response transformations, mock integrations и usage plans с квотами на API keys.",
+    "topic": "api",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-42",
+    "number": "42",
+    "prompt": "A systems administrator must grant a new developer permissions that are associated with the developer role. This role is associated with the developer group. Which AWS service should the administrator use to assign the new developer to the developer group?",
+    "options": [
+      "AWS Resource Access Manager (AWS RAM)",
+      "AWS Identity and Access Management (IAM)",
+      "Amazon Elastic Compute Cloud (Amazon EC2)",
+      "Amazon Simple Storage Service (Amazon S3)"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Добавлением IAM users в IAM groups и их разрешениями управляет IAM. RAM делится ресурсами, EC2 предоставляет вычисления, S3 хранит объекты. Слово role здесь употреблено как должность; технические IAM roles не добавляются в groups.",
+    "topic": "security",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-43",
+    "number": "43",
+    "prompt": "A developer wants to store image files in a bucket that is called images-bucket, but receives the error BucketAlreadyExists. Which action must the developer take to resolve this error?",
+    "options": [
+      "Bucket names are globally unique. If the requested bucket name is not available, the developer must rename the bucket.",
+      "Bucket names are unique to the Region that they are created in. If the requested bucket name is not available, the developer must create the images-bucket in a different Region.",
+      "Bucket names go to the highest bidder. The developer must outbid the current bucket owner.",
+      "The developer must contact AWS Support to request approval to use the same bucket name."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Ожидается A: для обычного S3 bucket нужно выбрать другое свободное имя (уникальность в пределах AWS partition). Уже созданный bucket переименовать нельзя: создаётся новый с другим именем. Смена Region не освобождает занятое имя.",
+    "topic": "storage",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-44",
+    "number": "44",
+    "prompt": "Which of the following is an important benefit of AWS CloudShell?",
+    "options": [
+      "You pay up front for reserved blocks of time and capacity.",
+      "You manually patch and update the environment.",
+      "Users get 500 MB of storage per region.",
+      "It inherits your credentials from the AWS Management Console."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "CloudShell использует credentials текущей Console-сессии: не нужно копировать постоянные access keys в браузерный shell. Среду обслуживает AWS; указанное 500 MB неверно. Вопрос 46 повторяет этот вопрос и удалён из уникального списка.",
+    "topic": "develop",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-45",
+    "number": "45",
+    "prompt": "Which statement about Amazon DynamoDB partitions is true?",
+    "options": [
+      "DynamoDB stores data in partitions and chooses the partition based on the range attribute.",
+      "If a table has a simple primary key (partition key only), DynamoDB stores and retrieves each item based on its hash attribute.",
+      "If a table has a composite primary key, DynamoDB will sort the items based on the sort key before selecting the partition for the item.",
+      "A developer writes a hash function to tell DynamoDB how to partition the items."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "DynamoDB применяет внутреннюю hash-функцию к partition key. Sort key упорядочивает items с одним partition key; разработчик не пишет собственный алгоритм распределения. Поэтому B.",
+    "topic": "database",
+    "labels": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ]
+  },
+  {
+    "id": "cce-47",
+    "number": "47",
+    "prompt": "A developer is using Amazon Simple Storage Service (Amazon S3) to host a static website in a bucket that is called frank-martha-cafe. This bucket is in the us-east-1 Region. Which URL is the virtual-hosted-style URL for the website?",
+    "options": [
+      "https://www.frank-martha-cafe.s3-website-us-east-1.amazonaws.com",
+      "https://frank-martha-cafe.s3-website-us-east-1.amazonaws.com",
+      "https://frank-martha-cafe.s3-us-east-1.amazonaws.com"
+    ],
+    "answers": [],
+    "explanation": "Условие смешивает website endpoint и virtual-hosted REST URL. B похож на website endpoint, но S3 website endpoints не поддерживают HTTPS. C похож на старую форму REST endpoint, который не предоставляет website-поведение (например, index document). Для website нужен http://frank-martha-cafe.s3-website-us-east-1.amazonaws.com; современный REST URL имеет вид https://frank-martha-cafe.s3.us-east-1.amazonaws.com. Без уточнения цели и официального ключа ответ не оцениваем.",
+    "topic": "storage",
+    "caution": "Варианты смешивают REST/website endpoints и HTTPS; подтверждённого корректного ответа нет.",
+    "labels": [
+      "A",
+      "B",
+      "C"
+    ]
+  }
+]

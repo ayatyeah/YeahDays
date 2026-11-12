@@ -19,6 +19,7 @@ export interface EventSummary {
   mocks: number;
   practice: boolean;
   steps: StepMeta[];
+  independentProgress?: boolean;
 }
 
 const plural = (n: number, one: string, few: string, many: string) => {
@@ -39,7 +40,7 @@ export default function EventsList({ events }: { events: EventSummary[] }) {
 
   useEffect(() => {
     if (!userId) return;
-    setPercent(Object.fromEntries(events.map((e) => { const p = loadProgress(userId, e.id); return [e.id, { ...readinessFrom(e.steps, p), earned: completedFrom(e.steps, p) }]; })));
+    setPercent(Object.fromEntries(events.filter(e => !e.independentProgress).map((e) => { const p = loadProgress(userId, e.id); return [e.id, { ...readinessFrom(e.steps, p), earned: completedFrom(e.steps, p) }]; })));
   }, [userId, events]);
 
   return (
@@ -47,7 +48,7 @@ export default function EventsList({ events }: { events: EventSummary[] }) {
       <header>
         <Link href="/learn" className="text-sm underline">← Учёба</Link>
         <h1 className="ios-title mt-3">Ивенты</h1>
-        <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности. В каждом ивенте есть ИИ-помощник ✦ — он видит, что у тебя открыто, и помогает по просьбе.</p>
+        <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности. Выбери курс, изучай материал по частям и проверяй себя.</p>
       </header>
 
       {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted); свежие — сверху */}
@@ -72,7 +73,7 @@ export default function EventsList({ events }: { events: EventSummary[] }) {
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} {plural(event.lectures, "лекция", "лекции", "лекций")}</span>
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} частей</span>
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} вопросов в банке</span>
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.steps.length} шагов</span>
+              {!event.independentProgress && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.steps.length} шагов</span>}
             </div>
             {mine && (
               <div className="mt-4">

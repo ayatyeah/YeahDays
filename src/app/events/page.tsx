@@ -1,28 +1,16 @@
-import { cloudEndtermSummary } from "@/lib/events/cloudComputingEndterm/meta";
-import { EVENTS } from "@/lib/events";
-import { steps } from "@/lib/events/engine";
-import EventsList, { type EventSummary } from "./EventsList";
+import Image from "next/image";
+import Link from "next/link";
+import { EVENT_COURSES, courseHref } from "@/lib/events/courses";
+import styles from "./courses.module.css";
 
-/**
- * Список ивентов: сводки считаются на сервере при сборке, в браузер уходят
- * только заголовки и числа — без конспектов и вопросов (иначе ~6 МБ JS).
- * Ивенты «только по ссылке» в списке не показываем (StudyEvent.unlisted);
- * свежие — сверху.
- */
 export default function EventsPage() {
-  const events: EventSummary[] = EVENTS.filter((e) => !e.unlisted)
-    .reverse()
-    .map((e) => ({
-      id: e.id,
-      title: e.title,
-      course: e.course,
-      description: e.description,
-      lectures: e.lectures.length,
-      parts: e.lectures.reduce((n, l) => n + l.parts.length, 0),
-      questions: e.lectures.reduce((n, l) => n + l.parts.reduce((m, p) => m + p.questions.length, 0), 0),
-      mocks: e.mocks?.length ?? 0,
-      practice: !!e.practice,
-      steps: steps(e).map((s) => ({ id: s.id, kind: s.kind })),
-    }));
-  return <EventsList events={[cloudEndtermSummary, ...events]} />;
+  return <section className={styles.catalog}>
+    <Link href="/learn" className={styles.back}>← Учёба</Link>
+    <header className={styles.header}><h1>Ивенты</h1><p>Выбери курс. Внутри — все его ивенты, подготовка к экзаменам и практика.</p></header>
+    <div className={styles.grid}>{EVENT_COURSES.map(course => <Link key={course.id} href={courseHref(course.id)} className={styles.course}>
+      <Image src={course.logo} width={72} height={72} alt="" className={styles.logo} />
+      <div className={styles.text}><h2 lang="en">{course.title}</h2><p>{course.description}</p><span className={styles.count}>{course.eventIds.length} {course.eventIds.length === 1 ? "ивент" : "ивента"}</span></div>
+      <span className={styles.arrow} aria-hidden="true">→</span>
+    </Link>)}</div>
+  </section>;
 }

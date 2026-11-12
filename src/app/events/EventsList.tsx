@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import type { EventCourse } from "@/lib/events/courses";
+import styles from "./courses.module.css";
 import { useSession } from "next-auth/react";
 import { completedFrom, readinessFrom, type StepMeta } from "@/lib/events/engine";
 import { preloadEvent } from "@/lib/events/client";
@@ -33,7 +36,7 @@ const plural = (n: number, one: string, few: string, many: string) => {
  * свой прогресс — он подставляется уже в браузере, поэтому до загрузки
  * показываем карточки без процентов, а не нули.
  */
-export default function EventsList({ events }: { events: EventSummary[] }) {
+export default function EventsList({ events, course }: { events: EventSummary[]; course: EventCourse }) {
   const { data } = useSession();
   const userId = data?.user?.id;
   const [percent, setPercent] = useState<Record<string, { percent: number; done: number; total: number; earned: boolean }>>({});
@@ -46,9 +49,8 @@ export default function EventsList({ events }: { events: EventSummary[] }) {
   return (
     <div className="yg-stagger mx-auto w-full max-w-3xl space-y-5 pb-6">
       <header>
-        <Link href="/learn" className="text-sm underline">← Учёба</Link>
-        <h1 className="ios-title mt-3">Ивенты</h1>
-        <p className="mt-2 text-[var(--color-muted)]">Общие учебные программы: конспекты, квизы и оценка готовности. Выбери курс, изучай материал по частям и проверяй себя.</p>
+        <Link href="/events" className="text-sm underline">← Все курсы</Link>
+        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>Ивенты курса: выбери экзамен или тренировку.</p></div></div>
       </header>
 
       {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted); свежие — сверху */}

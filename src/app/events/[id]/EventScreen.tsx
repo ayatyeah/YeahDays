@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { eventCourseHref } from "@/lib/events/courses";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -401,7 +402,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
       {view.mode === "map" && (
         <>
           <header>
-            <Link href="/events" className="text-sm underline">← Ивенты</Link>
+            <Link href={eventCourseHref(event.id)} className="text-sm underline">← Ивенты курса</Link>
             <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{event.course}</p>
             <h1 className="ios-title mt-2">{event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>

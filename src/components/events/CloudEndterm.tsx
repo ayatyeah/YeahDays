@@ -45,7 +45,7 @@ function Workspace({ userId }: { userId: string }) {
   }
   if (!ready) return <p role="status">Восстанавливаем прогресс…</p>;
   return <main className={styles.root} data-no-i18n data-testid="cloud-endterm">
-    <Link href="/events" className={styles.back}>← Все ивенты</Link>
+    <Link href="/events/courses/cloud-computing" className={styles.back}>← Ивенты Cloud Computing</Link>
     <header className={styles.header}>
       <div><p>Подготовка к эндтерму</p><h1>Cloud Computing</h1><p className={styles.subtitle}>Разобраться по частям. Проверить себя. Повторить сложное.</p></div>
       <div className={styles.progress}><strong>{progress.read.length}<span> / {lessons.length}</span></strong><span>частей прочитано</span><progress value={progress.read.length} max={lessons.length} /></div>

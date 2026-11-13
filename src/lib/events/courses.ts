@@ -4,7 +4,7 @@ export const EVENT_COURSES = [
   { id: "computer-networks", title: "Computer Networks", description: "Сети, протоколы и Cisco", logo: "/courses/computer-networks.svg", eventIds: ["computer-networks-endterm", "computer-networks-midterm"] },
   { id: "project-management", title: "Project Management", description: "Управление проектами, Agile и Scrum", logo: "/courses/project-management.svg", eventIds: ["project-management-test-2"] },
   { id: "computer-vision", title: "Computer Vision", description: "Изображения, модели и машинное зрение", logo: "/courses/computer-vision.svg", eventIds: ["computer-vision-midterm"] },
-  { id: "research-methods", title: "Research Methods and Tools", description: "Методы исследования и работа с данными", logo: "/courses/research-methods.svg", eventIds: ["research-methods-quiz-1"] },
+  { id: "research-methods", title: "Research Methods and Tools", description: "Методы исследования и работа с данными", logo: "/courses/research-methods.svg", eventIds: ["research-methods-endterm", "research-methods-quiz-1"] },
 ];
 export type EventCourse = (typeof EVENT_COURSES)[number];
 export const courseHref = (id: string) => `/events/courses/${id}`;

@@ -1,3 +1,4 @@
+import { RMT_ENDTERM_ID } from "@/lib/events/researchMethodsEndterm/meta";
 import { EVENTS } from "@/lib/events";
 import EventRoute from "./EventRoute";
 import { CLOUD_ENDTERM_ID } from "@/lib/events/cloudComputingEndterm/meta";
@@ -8,7 +9,7 @@ import { CLOUD_ENDTERM_ID } from "@/lib/events/cloudComputingEndterm/meta";
  * нужного ивента подгружает сам экран отдельным чанком (lib/events/client).
  */
 export function generateStaticParams() {
-  return [...EVENTS.map((e) => ({ id: e.id })), { id: CLOUD_ENDTERM_ID }];
+  return [...EVENTS.map((e) => ({ id: e.id })), { id: CLOUD_ENDTERM_ID }, { id: RMT_ENDTERM_ID }];
 }
 
 export default async function EventPage({ params }: { params: Promise<{ id: string }> }) {

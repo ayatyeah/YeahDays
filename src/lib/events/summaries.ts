@@ -1,3 +1,4 @@
+import { rmtEndtermSummary } from "./researchMethodsEndterm/meta";
 import { EVENTS } from "./index";
 import { steps } from "./engine";
 import { cloudEndtermSummary } from "./cloudComputingEndterm/meta";
@@ -5,7 +6,7 @@ import type { EventSummary } from "@/app/events/EventsList";
 
 /** Server-side only: return small cards, never ship all course content. */
 export function eventSummaries(): EventSummary[] {
-  return [cloudEndtermSummary, ...EVENTS.filter(e => !e.unlisted).reverse().map(e => ({
+  return [rmtEndtermSummary, cloudEndtermSummary, ...EVENTS.filter(e => !e.unlisted).reverse().map(e => ({
     id: e.id,
     title: e.title,
     course: e.course,

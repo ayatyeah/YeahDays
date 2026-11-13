@@ -408,6 +408,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             <h1 className="ios-title mt-2">{event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>
           </header>
+          {event.id === "research-methods-quiz-1" && <section className={`${panel} space-y-3`}><h2 className="text-xl font-bold">Эндтерм · Полные решения A и B</h2><p>Оригиналы с фото и полные альтернативы: qualitative-only и quantitative RCT.</p><Link href="/events/research-methods-endterm" className="underline">Открыть полный разбор →</Link></section>}
           {event.id === "project-management-test-2" && (
             <section className="space-y-3 rounded-3xl border border-lime-400/40 bg-lime-500/5 p-5" data-no-i18n>
               <p className="text-xs font-semibold uppercase tracking-widest">Отдельный квиз · Practice / Simulated</p>

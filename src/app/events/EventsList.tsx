@@ -23,6 +23,7 @@ export interface EventSummary {
   practice: boolean;
   steps: StepMeta[];
   independentProgress?: boolean;
+  workedSolutions?: number;
 }
 
 const plural = (n: number, one: string, few: string, many: string) => {
@@ -73,9 +74,10 @@ export default function EventsList({ events, course }: { events: EventSummary[];
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
               {event.mocks > 0 && <span className="rounded-xl bg-sky-500/15 px-3 py-2 font-semibold">{event.mocks} {plural(event.mocks, "пробный вариант", "пробных варианта", "пробных вариантов")}</span>}
               {event.practice && <span className="rounded-xl bg-amber-500/15 px-3 py-2 font-semibold">Практикум: тренажёр, «Найди баг», песочница</span>}
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} {plural(event.lectures, "лекция", "лекции", "лекций")}</span>
+              {event.lectures > 0 && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} {plural(event.lectures, "лекция", "лекции", "лекций")}</span>}
+              {event.workedSolutions && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.workedSolutions} полных разборов</span>}
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} частей</span>
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} вопросов в банке</span>
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} {event.workedSolutions ? "разобранных подпунктов" : "вопросов в банке"}</span>
               {!event.independentProgress && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.steps.length} шагов</span>}
             </div>
             {mine && (

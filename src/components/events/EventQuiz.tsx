@@ -11,7 +11,7 @@ import type { Lang } from "@/lib/events/types";
 import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
 
-export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; labels?: string[]; caution?: string };
+export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
@@ -82,7 +82,7 @@ export default function EventQuiz({
       </header>
 
       <section className={panel}>
-        <h2 data-selection-question lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
+        <h2 data-selection-question lang="en" className="whitespace-pre-wrap break-words text-lg font-semibold leading-snug">{item.q}</h2>
         {multi && <p className="mt-3 text-sm">Выбери {expected.length} варианта.</p>}
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => {
@@ -117,6 +117,14 @@ export default function EventQuiz({
               <p className="font-semibold">{!expected.length ? "Разбор без оценки" : matchesAnswer(picked, expected) ? "Верно" : "Неверно"}</p>
               {item.caution && <p className="mt-2">{item.caution}</p>}
               <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
+              {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Конспект: {item.studyLink.title} ↗</a>}
+              {item.optionExplanations && <details className="mt-4 border-t border-[var(--color-border)] pt-3">
+                <summary className="cursor-pointer font-semibold">Почему варианты подходят или не подходят</summary>
+                <ul className="mt-3 space-y-4">{item.options.map((option, i) => <li key={i}>
+                  <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. {option}</p>
+                  <p data-selection-question className="mt-1">{item.optionExplanations?.[i]}</p>
+                </li>)}</ul>
+              </details>}
               {item.wrong && (
                 <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
                   {item.options.map((option, i) => item.wrong?.[i] && (

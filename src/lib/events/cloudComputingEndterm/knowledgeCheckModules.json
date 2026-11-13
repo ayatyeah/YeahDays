@@ -1,0 +1,98 @@
+[
+  {
+    "module": 2,
+    "moduleTitle": "Module 2: Introduction to Developing on AWS",
+    "title": "Module 2 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 3,
+    "moduleTitle": "Module 3: Developing Storage Solutions",
+    "title": "Module 3 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 4,
+    "moduleTitle": "Module 4: Securing Access to Cloud Resources",
+    "title": "Module 4 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 5,
+    "moduleTitle": "Module 5: Developing Flexible NoSQL Solutions",
+    "title": "Module 5 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 6,
+    "moduleTitle": "Module 6: Developing REST APIs",
+    "title": "Module 6 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 7,
+    "moduleTitle": "Module 7: Developing Event-Driven Serverless Solutions",
+    "title": "Module 7 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 8,
+    "moduleTitle": "Module 8: Introducing Containers and Container Services",
+    "title": "Module 8 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 9,
+    "moduleTitle": "Module 9: Caching Information for Scalability",
+    "title": "Module 9 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 10,
+    "moduleTitle": "Module 10: Developing with Messaging Services",
+    "title": "Module 10 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 11,
+    "moduleTitle": "Module 11: Defining Workflows to Orchestrate Functions",
+    "title": "Module 11 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 12,
+    "moduleTitle": "Module 12: Developing Secure Applications on AWS",
+    "title": "Module 12 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 13,
+    "moduleTitle": "Module 13: Automating Deployment Using CI/CD Pipelines",
+    "title": "Module 13 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455",
+    "status": "extracted",
+    "questionCount": 10
+  }
+]

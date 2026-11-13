@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import lessons from "@/lib/events/cloudComputingEndterm/lessons.json";
 import questions from "@/lib/events/cloudComputingEndterm/questions.json";
+import examGuidance from "@/lib/events/cloudComputingEndterm/examAnswerGuidance.json";
 import { CLOUD_EXAM_TITLE } from "@/lib/events/cloudComputingEndterm/meta";
 import { correctAnswer, emptyProgress, parseProgress, type CloudProgress } from "@/lib/events/cloudComputingEndterm/progress";
 import Tutor from "./Tutor";
@@ -14,6 +16,9 @@ import { cloudEndtermSummary } from "@/lib/events/cloudComputingEndterm/meta";
 import EventQuiz from "./EventQuiz";
 import Button from "@/components/ui/Button";
 import styles from "./cloud-endterm.module.css";
+
+const guidance: Record<string, { title: string; optionExplanations: string[] }> = examGuidance;
+const AwsKnowledgeChecks = dynamic(() => import("./AwsKnowledgeChecks"), { loading: () => <p role="status">Открываем банк AWS…</p> });
 
 export default function CloudEndterm() {
   const { data, status } = useSession();
@@ -27,7 +32,7 @@ function Workspace({ userId }: { userId: string }) {
   const [progress, setProgress] = useState<CloudProgress>(emptyProgress);
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState(false);
-  const [tab, setTab] = useState<"learn" | "quiz">("learn");
+  const [tab, setTab] = useState<"learn" | "quiz" | "aws">("learn");
   const [query, setQuery] = useState("");
   const heading = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
@@ -43,7 +48,7 @@ function Workspace({ userId }: { userId: string }) {
   const index = Math.max(0, lessons.findIndex(l => l.id === progress.current));
   const lesson = lessons[index];
   useEffect(() => {
-    useTutorFocus.getState().setBase({ view: tab === "quiz" ? "quiz" : "read", partId: tab === "learn" ? lesson.id : undefined, step: tab === "quiz" ? CLOUD_EXAM_TITLE : lesson.title });
+    useTutorFocus.getState().setBase({ view: tab !== "learn" ? "quiz" : "read", partId: tab === "learn" ? lesson.id : undefined, step: tab === "aws" ? "AWS Cloud Developing · Knowledge Checks" : tab === "quiz" ? CLOUD_EXAM_TITLE : lesson.title });
     return () => useTutorFocus.getState().setBase({});
   }, [tab, lesson.id, lesson.title]);
   const filtered = lessons.filter(l => `${l.group} ${l.title} ${l.body.join(" ")}`.toLowerCase().includes(query.trim().toLowerCase()));
@@ -61,7 +66,9 @@ function Workspace({ userId }: { userId: string }) {
     <div className={styles.tabs} role="group" aria-label="Режим подготовки">
       <button aria-pressed={tab === "learn"} onClick={() => setTab("learn")}>Объяснения по частям</button>
       <button aria-pressed={tab === "quiz"} onClick={() => setTab("quiz")}>Вопросы с реального экзамена <span>47</span></button>
+      <button aria-pressed={tab === "aws"} onClick={() => setTab("aws")}>AWS Knowledge Checks</button>
     </div>
+    <p className="mb-6"><Link href="/events/cloud-computing-endterm/notes" target="_blank" className="underline">Конспект по 47 вопросам — открыть по частям ↗</Link></p>
     {storageError && <p role="alert">Браузер не разрешил сохранить прогресс. До закрытия страницы он останется здесь; разреши локальное хранилище для сохранения.</p>}
     {tab === "learn" ? <>
       <div className={styles.layout}>
@@ -97,7 +104,7 @@ function Workspace({ userId }: { userId: string }) {
         <a href="https://aws.amazon.com/cloudshell/faqs/" target="_blank" rel="noreferrer">AWS CloudShell</a>
         <a href="https://docs.docker.com/reference/cli/docker/container/run/" target="_blank" rel="noreferrer">Docker run</a>
       </details>
-    </> : <Exam answers={progress.answers} onAnswer={(id, value) => update({ ...progress, answers: { ...progress.answers, [id]: value } })} />}
+    </> : tab === "aws" ? <AwsKnowledgeChecks answers={progress.answers} onAnswer={(id, value) => update({ ...progress, answers: { ...progress.answers, [id]: value } })} /> : <Exam answers={progress.answers} onAnswer={(id, value) => update({ ...progress, answers: { ...progress.answers, [id]: value } })} />}
     <Tutor event={cloudEndtermSummary} userId={userId} />
     <SelectionMenu key={tab} />
     <p className={styles.footnote}>Прогресс сохраняется для твоего аккаунта в этом браузере.</p>
@@ -115,7 +122,7 @@ function Exam({ answers, onAnswer }: { answers: Record<string, number[]>; onAnsw
   function start(items = questions) { setQueue(items); setResult([]); setRun(n => n + 1); setMode("quiz"); }
   if (mode === "quiz") return <section className="space-y-5">
     <EventQuiz key={run} eventId="cloud-computing-endterm" step={{ title: { ru: CLOUD_EXAM_TITLE, en: CLOUD_EXAM_TITLE } }}
-      quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, labels: q.labels, correct: q.answers, why: { ru: q.explanation, en: q.explanation }, caution: q.caution }))}
+      quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, labels: q.labels, correct: q.answers, why: { ru: q.explanation, en: q.explanation }, caution: q.caution, optionExplanations: guidance[q.id].optionExplanations, studyLink: { href: `/events/cloud-computing-endterm/notes#${q.id}`, title: guidance[q.id].title } }))}
       lang="ru" music={music} onMusic={() => setMusic(m => !m)}
       onExit={() => { if (confirm("Выйти из теста? Текущая попытка завершится.")) setMode("intro"); }}
       onAnswer={onAnswer} onFinish={values => { setResult(values); setMode("result"); }} />

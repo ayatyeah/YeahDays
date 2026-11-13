@@ -1,0 +1,2180 @@
+[
+  {
+    "id": "aws-dev-m02-q01",
+    "module": 2,
+    "number": 1,
+    "prompt": "The systems development lifecycle (SDLC) has six phases. The first three phases are plan, define, and design. What are the last three phases of the SDLC?",
+    "options": [
+      "Code, build, and test",
+      "Code, build, and maintain",
+      "Develop, deploy, and maintain",
+      "Test, deploy, and maintain"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "In the develop phase, developers write, build, and test code. The deploy phase focuses on deploying code to production environments. The maintain phase focuses on monitoring code that's in production.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q02",
+    "module": 2,
+    "number": 2,
+    "prompt": "Which task is performed during the develop stage of the systems development lifecycle (SDLC)?",
+    "options": [
+      "New components are obtained and installed.",
+      "The system is put into use.",
+      "New system requirements are defined.",
+      "Deficiencies are identified."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "In the develop phase, a new system is developed, new components are obtained and installed, system users are trained, and all aspects of the system's performance is tested.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q03",
+    "module": 2,
+    "number": 3,
+    "prompt": "A systems administrator must grant a new developer permissions that are associated with the developer role. This role is associated with the developer group. Which AWS service should the administrator use to assign the new developer to the developer group?",
+    "options": [
+      "Amazon Simple Storage Service (Amazon S3)",
+      "Amazon Elastic Compute Cloud (Amazon EC2)",
+      "AWS Identity and Access Management (IAM)",
+      "AWS Resource Access Manager (AWS RAM)"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "IAM is used to grant permissions to users based on user, group, role, and policies.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q04",
+    "module": 2,
+    "number": 4,
+    "prompt": "Which of the following is an important benefit of AWS CloudShell?",
+    "options": [
+      "Users get 500 MB of storage per region.",
+      "You manually patch and update the environment.",
+      "You pay up front for reserved blocks of time and capacity.",
+      "It inherits your credentials from the AWS Management Console."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "CloudShell inherits your credentials from the AWS Management Console.  This means there are not key files to manage when using the AWS CLI.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q05",
+    "module": 2,
+    "number": 5,
+    "prompt": "What are three ways to interact with AWS service application programming interfaces (APIs)? (Select the THREE best options.)",
+    "options": [
+      "AWS Command Line Interface (AWS CLI)",
+      "AWS software development kits (SDKs)",
+      "AWS Management Console",
+      "AWS CloudTrail",
+      "AWS Identity and Access Management (IAM)",
+      "AWS X-Ray"
+    ],
+    "answers": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Each user interaction with an AWS service makes an API call. Users interact with AWS service APIs through the AWS Management Console, by using an AWS SDK, or through the AWS CLI.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q06",
+    "module": 2,
+    "number": 6,
+    "prompt": "Which tool enables users to control their AWS services from the command line and automate service management with scripts?",
+    "options": [
+      "AWS Identity and Access Management (IAM)",
+      "AWS X-Ray",
+      "Amazon Q Developer",
+      "AWS Tools for PowerShell"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "AWS Tools for PowerShell enables users to control their AWS services from the command line and automate service management with scripts.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q07",
+    "module": 2,
+    "number": 7,
+    "prompt": "What is Amazon Q Developer?",
+    "options": [
+      "A cloud-based integrated development environment (IDE)",
+      "A wizard that leads you through the steps to configure your integrated development environment (IDE)",
+      "A browser-based CLI",
+      "A generative AI-powered coding assistant"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Amazon Q Developer uses generative AI to accelerate coding tasks. For example, Amazon Q Developer can chat about code, provide in-line code completions, generate new code, and scan your code for security vulnerabilities.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q08",
+    "module": 2,
+    "number": 8,
+    "prompt": "Which statements describe AWS resource application programming interfaces (APIs)? (Select TWO.)",
+    "options": [
+      "They have objects for request and result data.",
+      "They provide access to resources through objects and collections.",
+      "They provide a higher-level abstraction than the low-level calls made by service client APIs.",
+      "They provide a lower-level abstraction than the higher-level calls made by service client APIs.",
+      "They have at least one class per conceptual resource."
+    ],
+    "answers": [
+      1,
+      2
+    ],
+    "explanation": "Resource APIs provide a higher-level abstraction than the low-level calls made by service client APIs. They consist of classes that represent the conceptual resources you interact with (such as service resources like Amazon S3, and individual resources like a bucket).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q09",
+    "module": 2,
+    "number": 9,
+    "prompt": "A developer is using the AWS software development kit (SDK) for Python (Boto3) and must specify the Region. Which method enables the developer specify the Region?",
+    "options": [
+      "Users cannot specify the AWS Region in the service client",
+      "By setting the Region when they instantiate the service client",
+      "By setting the AWS_PROFILE environment variable",
+      "By associating a default Region with their profile in the credentials file in the .aws folder within their \"home\" folder"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Users can set the Region when they instantiate the service client, by setting the AWS_DEFAULT_REGION environment variable, or by setting the default Region in the AWS shared configuration file.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m02-q10",
+    "module": 2,
+    "number": 10,
+    "prompt": "A developer makes an application programming interface (API) call to access an Amazon Simple Storage Service (Amazon S3) bucket that doesn't exist. Which HTTP response code does the developer receive from the AWS service?",
+    "options": [
+      "300 series",
+      "500 series",
+      "400 series",
+      "200 series"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "A 400-series response code means that the application has an error that the developer must address.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+  },
+  {
+    "id": "aws-dev-m03-q01",
+    "module": 3,
+    "number": 1,
+    "prompt": "A student is learning about Amazon Simple Storage Service (Amazon S3). During an interview, a potential employer asks the student to explain how Amazon S3 can be used as a storage solution. Which option is a use case for Amazon S3?",
+    "options": [
+      "Data lake",
+      "Block-level storage",
+      "Hosting active databases",
+      "Shared file systems"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Amazon S3 use cases include content storage and distribution, backup and restore, archiving, data lakes, disaster recovery (DR), and static website hosting.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q02",
+    "module": 3,
+    "number": 2,
+    "prompt": "A ___ organizes the Amazon Simple Storage Service (Amazon S3) namespace at the highest level.",
+    "options": [
+      "Region",
+      "Bucket",
+      "Container",
+      "Group"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "A bucket is a container for objects that are stored in Amazon S3. They organize the Amazon S3 namespace at the highest level, and they identify the account that is responsible for storage and data transfer charges.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q03",
+    "module": 3,
+    "number": 3,
+    "prompt": "A developer wants to store image files in a bucket that is called images-bucket, but receives the error BucketAlreadyExists. Which action must the developer take to resolve this error?",
+    "options": [
+      "Bucket names go to the highest bidder. The developer must outbid the current bucket owner.",
+      "Bucket names are unique to the Region that they are created in. If the requested bucket name is not available, the developer must create the images-bucket in a different Region.",
+      "The developer must contact AWS Support to request approval to use the same bucket name.",
+      "Bucket names are globally unique. If the requested bucket name is not available, the developer must rename the bucket."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Bucket names are globally unique. If the requested bucket name is not available, the developer must rename the bucket.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q04",
+    "module": 3,
+    "number": 4,
+    "prompt": "A developer is using Amazon Simple Storage Service (Amazon S3) to host a static website in a bucket that is called frank-martha-cafe. This bucket is in the us-east-1 Region. Which URL is the virtual-hosted-style URL for the website?",
+    "options": [
+      "https://frank-martha-cafe.s3-website-us-east-1.amazonaws.com",
+      "https://s3-website-us-east-1.amazonaws.com/frank-martha-cafe",
+      "https://www.frank-martha-cafe.s3-website-us-east-1.amazonaws.com",
+      "https://frank-martha-cafe.s3-us-east-1.amazonaws.com"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The virtual-hosted-style URL of a static website on Amazon S3 contains website in the endpoint URL.",
+    "caution": "Ключ курса засчитывает этот вариант, но формулировка неточна: website endpoints S3 работают по HTTP, а не HTTPS. В исходном разборе также ошибочная надпись Incorrect при засчитанном верном ответе.",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q05",
+    "module": 3,
+    "number": 5,
+    "prompt": "After versioning is enabled on an Amazon Simple Storage Service (Amazon S3) bucket, it can be disabled.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "By default, versioning is disabled in S3 buckets. After you enable versioning, you can only suspend it (you cannot disable it).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q06",
+    "module": 3,
+    "number": 6,
+    "prompt": "What is the largest size of an object that a user can upload to Amazon Simple Storage Service (Amazon S3) in a single PUT operation?",
+    "options": [
+      "100 MB",
+      "5 GB",
+      "5 TB",
+      "1 GB"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "A single PUT operation can upload or copy objects that are up to 5 GB in size.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q07",
+    "module": 3,
+    "number": 7,
+    "prompt": "A developer uses an Amazon Simple Storage Service (Amazon S3) bucket. They want to allow a certain AWS Identity and Access Management (IAM) user to perform any S3 operations on the bucket and its objects. They also want to follow AWS recommendations for granting permissions. Which mechanism should the developer apply to the bucket?",
+    "options": [
+      "Cross-Origin resource Sharing (CORS)",
+      "IAM policy",
+      "Bucket policy",
+      "Bucket access control list (ACL)"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "A bucket policy is a resource-based IAM policy that is attached to an S3 bucket. The developer can define and add a bucket policy that allows the specific IAM user to perform any S3 operations on the bucket and its objects.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q08",
+    "module": 3,
+    "number": 8,
+    "prompt": "A developer wants to allow a user to download private objects directly from an Amazon Simple Storage Service (Amazon S3) bucket without needing AWS security credentials or permissions. What can the developer share with the user to grant them time-limited access to the objects?",
+    "options": [
+      "The bucket endpoint URL",
+      "Their AWS account root user credentials",
+      "A temporary token",
+      "A presigned URL"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "A presigned URL provides access to PUT or GET objects without granting permissions to perform any other actions.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q09",
+    "module": 3,
+    "number": 9,
+    "prompt": "Which method can be used to encrypt Amazon Simple Storage Service (Amazon S3) objects in transit?",
+    "options": [
+      "Server-Side Encryption with Customer-Provided Keys (SSE-C)",
+      "Server-Side Encryption with AWS KMS-Managed Keys (SSE-KMS)",
+      "Server-Side Encryption with Amazon S3-Managed Keys (SSE-S3)",
+      "Secure Sockets Layer/Transport Layer Security (SSL/TLS)"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "SSL/TLS is one way to protect data in transit.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m03-q10",
+    "module": 3,
+    "number": 10,
+    "prompt": "A developer hosts a static website in an Amazon Simple Storage Service (Amazon S3) bucket. The website references image objects in another S3 bucket. However, these images do not display on the website. What could be the problem?",
+    "options": [
+      "Amazon S3 does not support object sharing between buckets.",
+      "Cross-Origin Resource Sharing (CORS) has not been enabled on the bucket where the assets are stored.",
+      "The security group of the S3 bucket does not include an inbound rule to allow HTTP traffic on port 80.",
+      "Cross-Region Replication (CRR) has not been enabled on the bucket where the assets are stored."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "CORS defines a way for client web applications that are loaded in one domain to interact with resources that are in a different domain.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+  },
+  {
+    "id": "aws-dev-m04-q01",
+    "module": 4,
+    "number": 1,
+    "prompt": "Which option is the Amazon Web Services (AWS) customer responsible for under the AWS shared responsibility model? (Select TWO.)",
+    "options": [
+      "Security group configuration",
+      "Physical servers",
+      "Client-side data",
+      "Edge location infrastructure",
+      "Availability Zone security"
+    ],
+    "answers": [
+      0,
+      2
+    ],
+    "explanation": "AWS is responsible for the security of the cloud (physical servers and edge location infrastructure). The customer is responsible for security in the cloud (security group configuration and client-side data).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q02",
+    "module": 4,
+    "number": 2,
+    "prompt": "Which AWS Identity and Access Management (IAM) resource explicitly grants or denies permissions to a user or group of users?",
+    "options": [
+      "IAM roles",
+      "IAM users",
+      "IAM groups",
+      "IAM policies"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "An IAM policy is a document that explicitly grants or denies permissions to a user or group of users.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q03",
+    "module": 4,
+    "number": 3,
+    "prompt": "What is the correct term for the process of verifying a user's identity as a developer?",
+    "options": [
+      "Endorsement",
+      "Authentication",
+      "Confirmation",
+      "Authorization"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Authentication refers to verifying a user’s identity.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q04",
+    "module": 4,
+    "number": 4,
+    "prompt": "Which statements about IAM user authentication are true? (Select TWO.)",
+    "options": [
+      "AWS credentials to authenticate with any supported services must be provided.",
+      "A user name and password to authenticate to the console must be provided.",
+      "A .pem or .ppk file is used to authenticate programmatically to the AWS application programming interface (API).",
+      "It is a best practice to use the account root user credentials to authenticate programmatically by using the AWS Command Line Interface (AWS CLI).",
+      "Each AWS account can have only one administrator who manages other IAM users."
+    ],
+    "answers": [
+      0,
+      1
+    ],
+    "explanation": "You need AWS credentials to authenticate with supported services. Credentials include a user name and password for console access, or an AWS access key (access key ID plus secret access key) for using AWS APIs, the AWS CLI, and AWS software development kits (SDKs).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q05",
+    "module": 4,
+    "number": 5,
+    "prompt": "Which suggestion is an Amazon Web Services (AWS) recommendation for securing AWS credentials for applications that run on Amazon Elastic Compute Cloud (Amazon EC2) instances?",
+    "options": [
+      "Embed AWS credentials in the software development kit (SDK) client code.",
+      "Store credentials in local AWS configuration files.",
+      "Create an AWS Identity and Access Management (IAM) role and attach it to the EC2 instance.",
+      "Create an AWS Identity and Access Management (IAM) user and attach it to the EC2 instance."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "AWS recommends creating an IAM role and attaching it to EC2 instances. The role allows applications to securely make API requests from EC2 instances without requiring the user to manage the security credentials that the applications use.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q06",
+    "module": 4,
+    "number": 6,
+    "prompt": "What is the format of AWS Identity and Access Management (IAM) policies that define the allowable API calls an entity can invoke?",
+    "options": [
+      "YAML Ain’t Markup Language (YAML)",
+      "Security Assertion Markup Language (SAML)",
+      "Comma-separated values (CSV)",
+      "JavaScript Object Notation (JSON)"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "An IAM policy is a JSON document that defines the effect, actions, resources, and optional conditions for the API calls an entity can invoke.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q07",
+    "module": 4,
+    "number": 7,
+    "prompt": "An administrator created an AWS Identity and Access Management (IAM) group called managers within an AWS account. A ____ policy is attached to the managers group. It allows managers to read from and write to an Amazon Simple Storage Service (Amazon S3) bucket in the same AWS account. What is this type of policy?",
+    "options": [
+      "Identity-based",
+      "Resource-based",
+      "Cross-account access",
+      "AdministratorAccess managed"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Identity-based policies are attached to the IAM user, group, or role and indicate what that identity can do.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q08",
+    "module": 4,
+    "number": 8,
+    "prompt": "Which statement reflects best practices when granting permissions to users, groups, roles, and resources?",
+    "options": [
+      "Create policies that allow broad access and then limit permissions as needed, based on usage.",
+      "Use the account root user for routine tasks that the administrator performs.",
+      "Create policies that follow the principle of least privilege.",
+      "Do not set policies for individual resources."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "When granting permissions to users, groups, roles, and resources, follow the principle of least privilege. The principle of least privilege means that you grant the minimal permissions that are required to perform a task.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q09",
+    "module": 4,
+    "number": 9,
+    "prompt": "What is the effect of the following policy statement?\"\n\n{ \"Effect\": \"Deny\", \"Action\": [ \"dynamodb:*\", \"s3:*\" ], \"NotResource\": [ \"arn:aws:dynamodb:region:account-number:table/pollynotes\", \"arn:aws:s3:::polly-notes-web\", \"arn:aws:s3:::polly-notes-mp3/*\" ] }",
+    "options": [
+      "Denies actions on DynamoDB or Amazon S3 resources except for the resources that are listed in the NotResource element",
+      "Denies the ability to write to the pollynotes DynamoDB table",
+      "Denies the ability to read from the polly-notes-web S3 bucket",
+      "Denies actions on the DynamoDB table or S3 buckets that are listed in the NotResources element"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The explicit deny (\"Effect\":\"Deny\" element) with the actions of dynamodb:* and s3:* prevents the entity from taking any action with DynamoDB or Amazon S3 resources. The exception is for those resources that are listed in the NotResource element.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m04-q10",
+    "module": 4,
+    "number": 10,
+    "prompt": "Which statements are true about evaluation logic for AWS Identity and Access Management (IAM) policies? (Select TWO.)",
+    "options": [
+      "You cannot have deny and allow statements in the same policy.",
+      "An explicit allow overrides an explicit deny.",
+      "An explicit deny overrides an explicit allow.",
+      "By default, all requests are denied.",
+      "By default, all requests are allowed."
+    ],
+    "answers": [
+      2,
+      3
+    ],
+    "explanation": "By default, all requests are denied. An explicit deny overrides an explicit allow.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+  },
+  {
+    "id": "aws-dev-m05-q01",
+    "module": 5,
+    "number": 1,
+    "prompt": "Which statement best describes Amazon DynamoDB?",
+    "options": [
+      "An in-memory data store that can boost the performance of databases",
+      "A graph database engine that is optimized for storing billions of relationships",
+      "A relational database that is built for the cloud and is compatible with MySQL and PostgreSQL",
+      "A key-value and document database that scales horizontally and works well for internet-scale applications"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Amazon DynamoDB is a key-value and document database. It is a multi-Region, multi-active, and durable database that delivers single-digit millisecond performance. It works well for internet-scale applications.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q02",
+    "module": 5,
+    "number": 2,
+    "prompt": "Which component is part of an Amazon DynamoDB table?",
+    "options": [
+      "Predefined schema",
+      "SQL-based queries",
+      "Attributes",
+      "Columns"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The basic components of DynamoDB are tables, items, attributes, and primary keys. A table contains items with attributes. A table has a primary key that uniquely identifies each item in the table.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q03",
+    "module": 5,
+    "number": 3,
+    "prompt": "An Amazon DynamoDB table called SensorReadings captures sensor readings. These readings include a sensor ID attribute that acts as the partition key, and a timestamp attribute that is the sort key. Which statement is true?",
+    "options": [
+      "The sensor ID together with the timestamp represent a simple primary key.",
+      "It is impossible for two items in the SensorReadings table to have the same partition key.",
+      "It is impossible for two items in the SensorReadings table to have the same sort key.",
+      "It is impossible for two items in the SensorReadings table to have the same primary key."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "The primary key itself, which is made up of the combination of partition key plus sort key, must be unique.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q04",
+    "module": 5,
+    "number": 4,
+    "prompt": "Which statement about Amazon DynamoDB partitions is true?",
+    "options": [
+      "DynamoDB stores data in partitions and chooses the partition based on the range attribute.",
+      "If a table has a simple primary key (partition key only), DynamoDB stores and retrieves each item based on its hash attribute.",
+      "If a table has a composite primary key, DynamoDB will sort the items based on the sort key before selecting the partition for the item.",
+      "A developer writes a hash function to tell DynamoDB how to partition the items."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "If a table has a simple primary key (partition key only), DynamoDB stores and retrieves each item based on its partition key value. The partition key of an item is also known as its hash attribute.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q05",
+    "module": 5,
+    "number": 5,
+    "prompt": "Suppose that a developer has a restaurants database table that can be queried by name (the partition key), or by name and location (the sort key). What should the developer do if they also want to query by type of cuisine and average customer rating?",
+    "options": [
+      "Set up a local secondary index on cuisine and customer rating.",
+      "Set up a global secondary index on cuisine and customer rating.",
+      "Change the primary key on the restaurant table to be a complex primary key based on cuisine and customer rating.",
+      "Perform a query that uses the cuisine and average customer rating attributes."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Global secondary indexes can be based on two entirely different attributes than the base table for the partition and sort key.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q06",
+    "module": 5,
+    "number": 6,
+    "prompt": "A video game developer who uses Amazon DynamoDB wants to ensure that players’ profiles are updated correctly when they make in-game purchases. This process requires multiple updates as part of a single user action. What is the best choice to write this developer's application to manage these complex, all-or-nothing changes?",
+    "options": [
+      "Add an Amazon DynamoDB Accelerator (DAX) cluster.",
+      "Implement global tables.",
+      "Create application code to check that all parts of the transaction were written successfully, and then roll back the update if any part failed.",
+      "Use DynamoDB transactions."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Amazon DynamoDB transactions simplify the developer experience of making coordinated, all-or-nothing changes to multiple items both within and across tables.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q07",
+    "module": 5,
+    "number": 7,
+    "prompt": "Which scenarios are example use cases for Amazon DynamoDB Streams? (Select TWO.)",
+    "options": [
+      "An application that requires the fastest possible response time for reads to support real-time bidding",
+      "An application that requires repeated reads against a large set of regional weather data to perform a long-running analysis",
+      "An application that automatically sends notifications to the mobile devices of all friends in a group when one friend uploads a new picture",
+      "An application that must monitor changes to a DynamoDB table and take action on specific changes when a value reaches a certain threshold",
+      "An application that requires an in-memory data store"
+    ],
+    "answers": [
+      2,
+      3
+    ],
+    "explanation": "Amazon DynamoDB Streams captures a time-ordered sequence of modifications in a DynamoDB table. The stream could be used to send notifications when an item is added to the table, or take an automated action based on some threshold.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q08",
+    "module": 5,
+    "number": 8,
+    "prompt": "Which statement about global tables is true?",
+    "options": [
+      "Global tables provide a managed solution for replicating tables within a single AWS Region.",
+      "Global tables use Amazon Simple Storage Service (Amazon S3) to propagate changes between replicas.",
+      "When a global table is created, Amazon DynamoDB performs all necessary tasks to create identical tables and propagate ongoing data changes to specified Regions.",
+      "With a global table, Amazon DynamoDB supports partial replication of some of the items in a table."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "When developers create a global table, they specify the AWS Regions where they want the table to be available. Then, DynamoDB performs all of the necessary tasks to create identical tables and propagate updated data.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q09",
+    "module": 5,
+    "number": 9,
+    "prompt": "How far back in days can an Amazon DynamoDB table be restored by using point-in-time recovery?",
+    "options": [
+      "The last week",
+      "The last 10 days",
+      "The last 35 days",
+      "The last calendar month"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "With point-in-time recovery, that table can be restored to any point in time during previous last 35 days.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m05-q10",
+    "module": 5,
+    "number": 10,
+    "prompt": "Which statement describes Amazon DynamoDB application programming interface (API) control operations that can be invoked by an application?",
+    "options": [
+      "Create and manage DynamoDB tables.",
+      "Create, read, update, and delete data in a table.",
+      "Get and write batches of items in a DynamoDB table.",
+      "Make coordinated, all-or-nothing changes to multiple items both within and across tables."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "These are control operations that an application can invoke using the Amazon DynamoDB API.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+  },
+  {
+    "id": "aws-dev-m06-q01",
+    "module": 6,
+    "number": 1,
+    "prompt": "Which phrase best describes a RESTful API?",
+    "options": [
+      "An API that uses HTTP to communicate between client and server",
+      "A proxy that exists between client and server to handle common problems that occur with API-driven applications",
+      "An API that follows the principles of the Representational State Transfer style",
+      "An API that resides on the web server"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "An API that adheres to Representational State Transfer (REST) principles is considered a RESTful API.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q02",
+    "module": 6,
+    "number": 2,
+    "prompt": "Which option suggests the use of WebSocket APIs?",
+    "options": [
+      "An order processing application returns an order number to each customer when they submit an order.",
+      "A batch process bundles orders and sends them to a fulfillment center application.",
+      "A real-time chat application lets customers talk to customer support about their orders.",
+      "A reporting application gives the sales team access to static daily reports from their phones."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "WebSockets APIs provide a two-way pipe. WebSockets are used for real-time, two-way communication applications, such as chat applications and streaming dashboards.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q03",
+    "module": 6,
+    "number": 3,
+    "prompt": "Which use case suggests using Amazon API Gateway HTTP APIs?",
+    "options": [
+      "An application needs an API proxy in front of an AWS Lambda function.",
+      "An application must transform a response from an AWS Lambda function before returning the response to the client.",
+      "A developer wants to use mock endpoints to test their API.",
+      "A developer wants to assign different API quotas by client."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "If a developer needs lightweight API proxy functionality, they should use HTTP APIs instead of REST in API Gateway. HTTP APIs have the lowest latency and lowest cost.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q04",
+    "module": 6,
+    "number": 4,
+    "prompt": "Which statement about Amazon API Gateway integrations is true?",
+    "options": [
+      "A first-class integration connects an API Gateway HTTP API route to an external third-party service API.",
+      "A developer can use HTTP proxy integrations to direct a route to a resource on the internet.",
+      "API Gateway cannot access resources within a virtual private cloud (VPC).",
+      "An API integration request encapsulates an HTTP request that the backend receives and is always different from the method request that the client submits."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "A developer can use HTTP proxy integrations to direct a route to a resource on the internet. This method is useful when migrating from a monolithic application to web services.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q05",
+    "module": 6,
+    "number": 5,
+    "prompt": "An application that uses Amazon API Gateway must capture contact information from a third-party client application. The client application sends given name, surname, business phone, and cell phone. The backend application database has only two fields: name and mobile phone. Which option requires the fewest application changes?",
+    "options": [
+      "Export the API definition and use it to update the client.",
+      "Use a mapping template to transform the request before it is sent to the database.",
+      "Create a usage plan that describes the fields and applies only to this client.",
+      "Use a first-class integration to connect the client to the database."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "With a mapping template, the team can use Apache Velocity Template Language to transform the incoming request before sending it to their backend. In this way, they can support the new client without modifying any application code.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q06",
+    "module": 6,
+    "number": 6,
+    "prompt": "Which elements are part of the base URI that AWS generates for an Amazon API Gateway API?",
+    "options": [
+      "Region and stage name",
+      "API identifier and version",
+      "Account ID and stage name",
+      "Region and version"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The base URI for an API Gateway API includes the API identifier, Region, and stage name.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q07",
+    "module": 6,
+    "number": 7,
+    "prompt": "Given this snippet: Which option could replace the <?> to create an API route that returns an individual product value from an online catalog?\n\naws apigatewayv2 create-route \\ --api-id 03z50l670a \\ --<?> --target arn:aws:lambda:us-east-2:AcctID:function:readFn",
+    "options": [
+      "route-key 'GET /products/{product_id}' \\",
+      "route-key 'PUT /products’",
+      "route-selection-expression '$GET/product'",
+      "route-selection-expression 'PUT /products/{proxy+}' \\"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "This option would create a GET route that could be used for retrieving the value of an individual product by using the product_id.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q08",
+    "module": 6,
+    "number": 8,
+    "prompt": "Which statement about Amazon API Gateway stages is true?",
+    "options": [
+      "Stage names are sequentially assigned based on the API version.",
+      "Any stage on any API type can be set to autodeploy.",
+      "Developers can use stage variables to connect different stages to different backends.",
+      "Developers should avoid creating different stages for each development environment."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Stage variables are used to connect different stages to different backends, for example, different AWS Lambda function versions.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q09",
+    "module": 6,
+    "number": 9,
+    "prompt": "A security team wants to know how to protect APIs in their internet application from common web exploits, like SQL injection or cross-site scripting. Which solution most directly addresses their specific concern?",
+    "options": [
+      "Set throttling limits on their API methods in Amazon API Gateway.",
+      "Set all of their APIs to use private endpoints.",
+      "Configure a JSON Web Token (JWT)-based authorizer for Amazon API Gateway.",
+      "Use AWS WAF with Amazon API Gateway."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "AWS WAF is a web application firewall that helps developers protect their APIs against common web exploits. They can use preconfigured rules that address common security risks.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m06-q10",
+    "module": 6,
+    "number": 10,
+    "prompt": "What does the Amazon API Gateway integration Latency metric tell the user?",
+    "options": [
+      "Frequency of server-side errors that affect latency",
+      "Speed of the API response back to the client",
+      "Responsiveness of the backend",
+      "How often requests are throttled"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The integrationLatency metric measures the time that it takes for the backend to provide a response to API Gateway.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+  },
+  {
+    "id": "aws-dev-m07-q01",
+    "module": 7,
+    "number": 1,
+    "prompt": "Which statement describes a characteristic of AWS Lambda?",
+    "options": [
+      "Lambda runs code only when it is activated by an event and uses only the compute resources that are needed.",
+      "A developer's methods and configuration options for ensuring high availability with Lambda are similar to their approach with Amazon Elastic Compute Cloud (Amazon EC2).",
+      "Lambda functions run in on-demand, temporary environments, and the developer controls when new environments are created or shut down.",
+      "A developer must write Lambda functions that use one of the runtimes that the Lambda service provides."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Lambda invokes function code in response to events, and functions run in temporary environments. A developer does not need to allocate idle resources to be available when the function is invoked.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q02",
+    "module": 7,
+    "number": 2,
+    "prompt": "Which constraint cannot be modified?",
+    "options": [
+      "Function timeout",
+      "Reserved concurrency",
+      "Burst quota",
+      "Regional quota"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Each Region has a burst limit, which prevents concurrency from increasing too quickly if a large spike of requests occurs in a short time period. This limit cannot be modified.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q03",
+    "module": 7,
+    "number": 3,
+    "prompt": "Which option describes how Amazon API Gateway invokes AWS Lambda?",
+    "options": [
+      "API Gateway directly invokes a function with a synchronous invocation.",
+      "Lambda processes API Gateway requests asynchronously and retries each request up to two times.",
+      "Lambda uses an event source mapping and polls API Gateway for requests.",
+      "API Gateway directly invokes a function and retries the request until it succeeds or expires."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "With API Gateway as the event source for a Lambda function, the requesting client gets a response that includes the function results immediately. This invocation is synchronous.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q04",
+    "module": 7,
+    "number": 4,
+    "prompt": "Which actions require permissions that are defined in the AWS Lambda execution role? (Select TWO.)",
+    "options": [
+      "A Lambda function writes to an Amazon DynamoDB table.",
+      "An object that is written to an Amazon Simple Storage Service (Amazon S3) bucket initiates invocation of a Lambda function.",
+      "Lambda polls an Amazon Simple Queue Service (Amazon SQS) queue for messages that initiate invocation of a Lambda function.",
+      "An Amazon API Gateway GET route initiates invocation of a Lambda function.",
+      "A message that is posted to an Amazon Simple Notification Service (Amazon SNS) topic initiates invocation of a Lambda function."
+    ],
+    "answers": [
+      0,
+      2
+    ],
+    "explanation": "The execution role gives Lambda permission to do things like writing to a DynamoDB table or polling a queue. The execution role does not define the permissions to invoke the function when using a push event source like Amazon S3 or API Gateway.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q05",
+    "module": 7,
+    "number": 5,
+    "prompt": "Which statement about the function handler in an AWS Lambda function is true?",
+    "options": [
+      "The function handler is the entry point that Lambda calls to start running the Lambda function.",
+      "The function handler method might take an event object or a context object.",
+      "The event object provides information about the event that invoked the Lambda function. It must be a predefined object that an AWS service generates.",
+      "The context object provides runtime information, and the developer must create a context object that matches the runtime that was selected for the function."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The Lambda function handler is the entry point that Lambda calls to start running the Lambda function. The handler method always takes two objects: the event object and the context object.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q06",
+    "module": 7,
+    "number": 6,
+    "prompt": "Which issue might be addressed by adding provisioned concurrency to an AWS Lambda function?",
+    "options": [
+      "Another Lambda function runs in the same account and Region. It sometimes spikes and consumes all available concurrency, causing the function to fail.",
+      "An application that uses the Lambda function responds slowly for the first few users who sign in each day. Lambda metrics show higher latency for those initial requests.",
+      "A legacy backend system fails intermittently when the developer connects to it. To avoid extra costs, they want to reduce the function's wait time when the backend fails.",
+      "The developer wants more visibility into transactions that use the Lambda function to identify bottlenecks."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The timing of the issue suggests that the first users are probably getting cold starts because the function hasn't been invoked for a while. This situation might be resolved by adding provisioned concurrency.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q07",
+    "module": 7,
+    "number": 7,
+    "prompt": "Which AWS Lambda configuration setting might a developer use to manage function errors when configuring an Amazon Simple Notification Service (Amazon SNS) topic as the event source for a Lambda function? (Select TWO.)",
+    "options": [
+      "State machines",
+      "File systems",
+      "Destinations",
+      "Virtual private cloud",
+      "Asynchronous invocations"
+    ],
+    "answers": [
+      2,
+      4
+    ],
+    "explanation": "Amazon SNS invokes Lambda asynchronously. Thus, a developer can use the asynchronous invocation settings to modify the retry settings and set an on-failure destination for failed invocations.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q08",
+    "module": 7,
+    "number": 8,
+    "prompt": "A zipped deployment package including code and custom libraries is 75 MB in size. Which AWS Lambda deployment option should be used?",
+    "options": [
+      "Copy the code into the Lambda console editor to create and deploy the function.",
+      "Upload a .zip file from an integrated development environment (IDE) to load the deployment package directly into the Lambda console.",
+      "Upload the deployment package to an Amazon Simple Storage Service (Amazon S3) bucket, and specify the bucket name and object key on the Lambda console.",
+      "Upload the deployment package to an Amazon Elastic Block Store (Amazon EBS) volume, and use the File Systems configuration to reference it."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "If the deployment package is larger than 50 MB, the recommended option is to upload the zipped deployment package to an S3 bucket in the AWS Region where the Lambda function will be created.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q09",
+    "module": 7,
+    "number": 9,
+    "prompt": "A function's Amazon Resource Name (ARN) is as follows: arn:aws:lambda:aws-region:acct-id:function:helloworld:PROD Which statement about this function is correct, based on its ARN?",
+    "options": [
+      "This ARN will invoke the immutable PROD version of the function.",
+      "This ARN will invoke the version of the function that is currently associated with the PROD alias.",
+      "This ARN will invoke the function and include the AWS Lambda layer that is named PROD.",
+      "This ARN will deploy the helloworld function into the PROD account."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The PROD alias in the ARN references the Lambda function version that is currently associated with that alias. Aliases abstract the need to know which version is being referenced.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m07-q10",
+    "module": 7,
+    "number": 10,
+    "prompt": "Users of a serverless application have reported errors that occur when they try to retrieve order information. Assuming that AWS X-Ray is enabled, what is the first step the developer might take in X-Ray to start troubleshooting the reported issues quickly?",
+    "options": [
+      "Drill down into the most recent traces to look for errors.",
+      "Search for metadata that is related to the users who are reporting issues.",
+      "Add annotations that the developer can use to start grouping and filtering traces.",
+      "Use the service map to visually locate errors across the application."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "The service map provides a quick visual representation of transactions in the application, and the developer can drill down into problem areas. This method might be a quick way to get to the cause of the issue.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+  },
+  {
+    "id": "aws-dev-m08-q01",
+    "module": 8,
+    "number": 1,
+    "prompt": "Which option describes a benefit that led the shipping industry and the software industry to use containers?",
+    "options": [
+      "Infrastructure providers can create strong dependencies between their platform and the types of containers that they choose to work with.",
+      "The abstraction of details of what's being \"shipped\" increases the agility of a system.",
+      "Increased visibility into the details of what's being \"shipped\" helps each point in the system to provide the right type of support.",
+      "The ability to use nonstandard types of containers gives producers flexibility."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Containerization is an example of how abstraction increases agility by making it possible for components to work together without knowing all of the details of each other.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q02",
+    "module": 8,
+    "number": 2,
+    "prompt": "Which options are components of a container? (Select TWO.)",
+    "options": [
+      "Host server",
+      "Runtime engine",
+      "Operating system",
+      "Application code",
+      "Virtual machine"
+    ],
+    "answers": [
+      1,
+      3
+    ],
+    "explanation": "A container is a lightweight, standalone software package that contains everything a software application needs to run, such as the application code, runtime engine, system tools, system libraries, and settings.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q03",
+    "module": 8,
+    "number": 3,
+    "prompt": "Which statement about Docker containers is true?",
+    "options": [
+      "A container is a runnable instance of an image.",
+      "A container registry is a template to launch containers.",
+      "A container image is a writeable template.",
+      "A container layer is a thin read-only layer that is associated with a running container."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "A container is a runnable instance of an image. You can start up one container or several containers based on an image.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q04",
+    "module": 8,
+    "number": 4,
+    "prompt": "Which Docker CLI command creates a container named my_app_1 from the image named node_app?",
+    "options": [
+      "docker run --name my_app_1 node_app",
+      "docker build --tag my_app_1",
+      "docker exec -it my_app_1 sh",
+      "docker images my_app_1 from node_app"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The docker run command creates a container from the image named in the command. In this case, the node_app image is used to create the my_app_1 container.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q05",
+    "module": 8,
+    "number": 5,
+    "prompt": "Which statement about a Dockerfile is true?",
+    "options": [
+      "A Dockerfile is a YAML file that provides instructions to create a container image.",
+      "Each instruction in a Dockerfile creates a read-only layer in the image.",
+      "If a developer changes the Dockerfile and rebuilds the image, all layers of the image must be rebuilt.",
+      "Developers cannot use the Dockerfile to run scripts that would run after the container is instantiated."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Each instruction in the plain text Dockerfile creates a read-only layer in the container image.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q06",
+    "module": 8,
+    "number": 6,
+    "prompt": "A developer wants to migrate a monolithic shopping website to a microservice-based application. Which option reflects a reason to choose containers?",
+    "options": [
+      "Each container can use the language and technology that are best suited for the service.",
+      "Containerized components are not isolated, so the application will evolve as a singular system.",
+      "Containers are well-suited to designs that avoid the use of temporary resources.",
+      "Containers separate your dependencies and libraries into their own objects."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Microservices should be able to evolve and scale independently. Containers can use the language and technology that are best suited for the service.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q07",
+    "module": 8,
+    "number": 7,
+    "prompt": "A developer recently built a proof-of-concept application using containers, and the business owner wants to roll it out to production. Which option reflects a primary reason that the developer might use a container orchestration service?",
+    "options": [
+      "To schedule container starts and stops and determine where to place containers",
+      "To base their containers on third-party images",
+      "To remove the requirement to use a container registry",
+      "To receive automated recommendations about how to improve their application code to run on containers"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Container orchestration services handle the scheduling and placement of containers based on the underlying hardware infrastructure and needs of the application.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q08",
+    "module": 8,
+    "number": 8,
+    "prompt": "Which statement about the Amazon Elastic Container Service (Amazon ECS) is true?",
+    "options": [
+      "Amazon ECS is a highly scalable container orchestration service that supports Docker containers.",
+      "Amazon ECS requires the use of the Amazon Elastic Container Registry (Amazon ECR) for container images.",
+      "Amazon ECS supports launching containers in Amazon EC2 or AWS Lambda.",
+      "With Amazon ECS, you can deploy applications to containers even if they have not been architected specifically to run on containers."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Amazon ECS is a highly scalable, highly performing container orchestration service that supports Docker containers.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q09",
+    "module": 8,
+    "number": 9,
+    "prompt": "What is the name for a logical collection of AWS Elastic Beanstalk components, which is conceptually similar to a folder?",
+    "options": [
+      "Environment",
+      "Platform",
+      "Application",
+      "Environment tier"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "An application is the name for a logical collection of Elastic Beanstalk components.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m08-q10",
+    "module": 8,
+    "number": 10,
+    "prompt": "A developer wants to do canary testing on a new deployment. Which AWS Elastic Beanstalk deployment policy option should the developer use?",
+    "options": [
+      "Immutable",
+      "Rolling with batch",
+      "Traffic Splitting",
+      "Blue/Green"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The traffic splitting option deploys a full set of instances like the immutable option. However, with this option, you can specify a percentage of traffic to send to the new version before automatically shifting all traffic to the new version after a period of time.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+  },
+  {
+    "id": "aws-dev-m09-q01",
+    "module": 9,
+    "number": 1,
+    "prompt": "An architect suggests that the developers implement caching on an existing application to address performance issues. Which option describes factors that the developers should consider when they decide where to add caching?",
+    "options": [
+      "Avoid caching for data queries that are slow and expensive to run.",
+      "Review the data and its access patterns. Data that changes rapidly but is infrequently accessed should be cached.",
+      "Consider the tolerance for stale data in each context where the data is used.",
+      "Add as much caching in as many places as you can as early in development as possible."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Cached data should always be treated as stale. The context might impact what is tolerable. For example, a stock price that is a few minutes old might be acceptable on a website but not when serving the stock price to a broker during a sale.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q02",
+    "module": 9,
+    "number": 2,
+    "prompt": "A developer has determined that an in-memory key-value store would improve performance of their application's queries. They want to keep the solution as simple as possible and need to support read replicas. Which option should they choose?",
+    "options": [
+      "Amazon ElastiCache for Memcached",
+      "Amazon ElastiCache for Redis",
+      "Amazon CloudFront Functions",
+      "Lambda@Edge"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The scenario describes a use case for an in-memory store such as ElastiCache. ElastiCache for Redis supports read replicas, but ElastiCache for Memcached does not.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q03",
+    "module": 9,
+    "number": 3,
+    "prompt": "Amazon ElastiCache is being added to an application to improve response times and alleviate database pressure. The backend database for the application is an Amazon Relational Database Service (Amazon RDS) database. Which task would be the responsibility of the application developer?",
+    "options": [
+      "Applying software patches to the cache instances",
+      "Writing code to check the health of the cluster before writing to the cache",
+      "Writing code that looks for the requested data in the cache and, if the data is not found, requests it from the origin",
+      "Write code to integrate the cache with the Amazon RDS instances that it will be reading from"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Developers must handle the logic to check the cache and return cached data to the requestor. They must also write code to retrieve data from the origin when the data is not available or is expired in the cache, and then update the cache with the retrieved value.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q04",
+    "module": 9,
+    "number": 4,
+    "prompt": "Which statement about Amazon ElastiCache is true?",
+    "options": [
+      "A node is a variable-size chunk of secure, network-attached RAM.",
+      "Your application connects to an ElastiCache node by using a unique address called an endpoint.",
+      "With the Memcached engine, data is partitioned across shards in a cluster.",
+      "Every node within a cluster must run the same cache engine, but the nodes can run on different instance types."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Your application connects to an ElastiCache node or cluster by using a unique address called an endpoint. You need to know the endpoint to connect to the node or cluster.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q05",
+    "module": 9,
+    "number": 5,
+    "prompt": "A developer has been asked to address complaints from customers in the London area about the performance of a web-based application that is hosted in New York. Which option might the developer implement?",
+    "options": [
+      "Use Amazon CloudFront to replicate the application code on Amazon Elastic Compute Cloud (Amazon EC2) instances in the London Region.",
+      "Set up a CloudFront distribution that can serve static content from edge locations that are closer to UK users.",
+      "Set up a CloudFront regional edge location in the London Region.",
+      "Set up one CloudFront edge location in New York and one in London."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "When a user requests content that you are serving with CloudFront, the user is routed to the edge location that provides the lowest latency (or time delay). The content is delivered with the best possible performance.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q06",
+    "module": 9,
+    "number": 6,
+    "prompt": "A developer has been asked to increase the cache hit ratio for their Amazon CloudFront distribution. Which option should they try?",
+    "options": [
+      "Include only the minimum necessary values in the cache key.",
+      "Decrease the maximum time to live (TTL) setting in a cache policy.",
+      "Decrease the max-age setting in a file's Cache-Control header.",
+      "Increase the cache hit setting in a cache policy."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Including only the minimum necessary values in the cache key can improve the cache hit ratio.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q07",
+    "module": 9,
+    "number": 7,
+    "prompt": "Which statement about Amazon CloudFront cached file expiration is true?",
+    "options": [
+      "Each file in the cache automatically expires after 24 hours, and you cannot modify this setting.",
+      "After a file expires, the next time the edge location gets a user request for the file, CloudFront forwards the request to the origin server.",
+      "When the origin receives a request, the origin sends the latest version of the file regardless of whether it is the same as the expired version in the cache.",
+      "You can control cache file duration with CloudFront cache policy settings or through Cache-Control settings in the origin file headers. However, you cannot combine these options."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "After a file expires, the next time the edge location gets a user request for the file, CloudFront forwards the request to the origin server. If the origin version is newer than the cached version, the origin sends the latest version to the cache.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q08",
+    "module": 9,
+    "number": 8,
+    "prompt": "Which use case suggests the use of Amazon CloudFront Functions?",
+    "options": [
+      "A function that redirects the viewer to a different URL and adds a custom response header",
+      "A function that uses a third-party library",
+      "A function that requires network access to use external services for processing",
+      "A function that requires access to the body of HTTP requests"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "This is an example of a lightweight function that can be implemented with CloudFront Functions.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q09",
+    "module": 9,
+    "number": 9,
+    "prompt": "Which statement reflects a benefit of lazy loading as a caching strategy?",
+    "options": [
+      "Lazy loading avoids filling up the cache with data that is not requested.",
+      "With lazy loading, data in the cache never becomes stale.",
+      "With lazy loading, every write involves two trips—a write to the cache and a write to the database—which adds latency to the process.",
+      "Lazy loading might result in cache churn. The cache might be updated often if certain records are updated repeatedly."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "With lazy loading, only requested data is cached. The advantage to this approach is that lazy loading avoids filling up the cache with data that is not requested.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m09-q10",
+    "module": 9,
+    "number": 10,
+    "prompt": "A developer has been asked whether caching might improve the performance of their online bidding application. How should they answer this question?",
+    "options": [
+      "Caching probably will not yield much performance improvement for this type of application.",
+      "Caching might improve performance by reducing the number of hits to the backend database. However, caching cannot improve performance issues that occur between the client and the web server.",
+      "Using different types of caching at each application layer might improve both the frontend and backend performance.",
+      "Caching might greatly improve performance if the application is compute heavy, but if the application is read heavy, a cache will not provide much benefit."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Caching might be applied at all application layers to accelerate retrieval of web content, accelerate application performance, and reduce the latency associated with database query requests.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+  },
+  {
+    "id": "aws-dev-m10-q01",
+    "module": 10,
+    "number": 1,
+    "prompt": "Which option describes how a message queue processes messages?",
+    "options": [
+      "The queue polls producers for new messages.",
+      "Consumers poll the queue for messages.",
+      "The queue broadcasts messages to consumers.",
+      "Consumers notify the queue when a message has been successfully processed. The queue configuration determines whether the message should be available to other consumers."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Consumers poll the queue and retrieve messages to be processed.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q02",
+    "module": 10,
+    "number": 2,
+    "prompt": "Which option describes how publish/subscribe (pub/sub) messaging works?",
+    "options": [
+      "Producers send messages to subscribers.",
+      "Subscribers poll topics for new messages.",
+      "When a topic receives a new message, the topic sends the message to the first subscriber who responds to a notification.",
+      "A new topic message is pushed out to all topic subscribers."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "When a topic receives a new message from a producer, the topic pushes that message out to its subscribers.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q03",
+    "module": 10,
+    "number": 3,
+    "prompt": "A developer wants to add an Amazon Simple Queue Service (Amazon SQS) queue to decouple incoming order requests from a backend database. Which Amazon SQS operations might be part of this update?",
+    "options": [
+      "Use the SendMessage operation with the QueueURL mapped to the database endpoint to put messages on the queue.",
+      "Use the ReceiveMessage operation with MaxNumberOfMessages set to 5 to retrieve up to 5 messages off the queue at one time.",
+      "Use the DeleteMessage operation to change the visibility of the message as soon as the ReceiptHandle is received.",
+      "Use the ReceiveMessage operation with the WaitTimeSeconds parameter set to 0 to reduce the number of empty requests."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "With ReceiveMessage, you can retrieve one or more messages from the queue. With the MaxNumberOfMessages parameter, you can retrieve up to 10 messages at one time. If this parameter is set to 5, you can retrieve up to 5 messages at a time.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q04",
+    "module": 10,
+    "number": 4,
+    "prompt": "A tester reports that Amazon Simple Queue Service (Amazon SQS) messages are being processed more than once. The developer finds that processing servers are not completing as quickly as expected, and messages are made available to other consumers before the prior consumer deletes them. Which option might reduce occurrences of this issue?",
+    "options": [
+      "Increase the visibility timeout.",
+      "Increase maxReceiveCount.",
+      "Increase MaxNumberOfMessages.",
+      "Increase the number of producers on the queue."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The visibility timeout might be expiring before a consumer has completed processing and deleted the record. Increasing the visibility timeout might provide enough time for the initial consumer to complete processing.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q05",
+    "module": 10,
+    "number": 5,
+    "prompt": "For an order-processing application that uses an Amazon Simple Queue Service (Amazon SQS) queue, a developer finds that an older version of the client generates order records that fail the backend process. The failures cause a bottleneck on the queue. How might the developer reduce the impact of the failed records?",
+    "options": [
+      "Increase the visibility timeout and set a high value for MaxNumberOfMessages.",
+      "Add a dead-letter queue and set a low maxReceiveCount.",
+      "Use long polling and set a high wait time.",
+      "Change the queue type from standard to First-In-First-Out (FIFO) and set a high throughput rate."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "By configuring a dead-letter queue with a low maxReceiveCount, the corrupt records would not continue to be retried. The messages that are sent to the dead-letter queue can be processed separately.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q06",
+    "module": 10,
+    "number": 6,
+    "prompt": "Which statement about Amazon Simple Queue Service (Amazon SQS) polling options is true?",
+    "options": [
+      "By default, when you make a ReceiveMessage API call, Amazon SQS performs long polling.",
+      "When long polling is configured, WaitTimeSeconds is set to 0.",
+      "When short polling is configured, Amazon SQS queries all of its servers.",
+      "When short polling is configured, Amazon SQS samples a subset of its servers."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "When short polling is configured, Amazon SQS samples a subset of its servers based on a weighted random distribution.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q07",
+    "module": 10,
+    "number": 7,
+    "prompt": "Which statement about Amazon Simple Notification Service (Amazon SNS) is true?",
+    "options": [
+      "An SNS topic is a logical access point, which acts as a communication channel.",
+      "A publisher can only send messages to topics that they have created.",
+      "By default, different subscribers to a topic receive different messages.",
+      "Amazon SNS defines a single delivery policy, which is applied to all delivery protocols."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "A publisher sends a message to the topic. Amazon SNS matches the topic to a list of subscribers for that topic and sends the published messages to the subscribers.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q08",
+    "module": 10,
+    "number": 8,
+    "prompt": "An Amazon Simple Notification Service (Amazon SNS) topic receives messages about orders. An AWS Lambda function that processes canceled orders is subscribed to the topic. How might the developer reduce costs by only invoking the Lambda function for canceled orders?",
+    "options": [
+      "Put an Amazon Simple Queue Service (Amazon SQS) queue in front of the Lambda function.",
+      "Separate the new order and cancel order messages to be sent by two different publishers.",
+      "Set up a filter policy so that the Lambda function subscription only receives cancel order messages.",
+      "Use the ConfirmSubscription operation to limit which messages the Lambda function receives."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "To receive a subset of the messages, assign a filter policy to the topic subscription. A filter policy is a JSON object that contains attributes that define which messages the subscriber receives.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q09",
+    "module": 10,
+    "number": 9,
+    "prompt": "A developer needs to build a custom application to put customer application log records onto an Amazon Kinesis data stream. What should they use to build the application?",
+    "options": [
+      "Use the Kinesis API.",
+      "Use the Kinesis Producer Library (KPL).",
+      "Use the Kinesis Client Library (KCL).",
+      "Use Amazon Managed Service for Apache Flink."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The KPL is a highly configurable library that helps you write to a Kinesis data stream. The library acts as an intermediary between the producer application code and the Amazon Kinesis Data Streams API actions.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m10-q10",
+    "module": 10,
+    "number": 10,
+    "prompt": "Which statement about Amazon Kinesis Data Streams is true?",
+    "options": [
+      "When a record is added to the stream, the record is available until a consumer deletes it.",
+      "The data records in a data stream are distributed into shards.",
+      "A standard data stream can have one consumer. With the enhanced fanout option, you can add multiple consumers.",
+      "A stream consumer must delete the records that it processes successfully."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The Kinesis Data Streams service adds shards to scale horizontally. Each shard has a uniquely identified sequence of data records, and Kinesis assigns a sequence number to each data record.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+  },
+  {
+    "id": "aws-dev-m11-q01",
+    "module": 11,
+    "number": 1,
+    "prompt": "Which scenario suggests the need for a task coordination service such as AWS Step Functions?",
+    "options": [
+      "A website that serves static content is expanding its reach to a global audience.",
+      "A serverless application must run a series of AWS Lambda functions that are dependent on each other.",
+      "A monolithic application that is written in Java is updating its technology stack.",
+      "A reporting application must update its calculation logic to provide more analytical data to business users."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "This application is a good candidate for using a coordination service to handle errors and timeouts. In this way, the functions themselves can focus on business logic.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q02",
+    "module": 11,
+    "number": 2,
+    "prompt": "Which statement describes a benefit of using AWS Step Functions for an application?",
+    "options": [
+      "Step Functions integrates with state machines so that developers can transition between their Step Functions workflow and their state machine workflow.",
+      "Step Functions can be configured with Amazon EC2 Auto Scaling to scale up and down.",
+      "Step Functions can be defined by using either Python or Node.js.",
+      "Developers can use Step Functions to build visual workflows."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Step Functions offers a graphical console to visualize the components of an application as a series of steps.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q03",
+    "module": 11,
+    "number": 3,
+    "prompt": "What is the role of the Task state type in AWS Step Functions?",
+    "options": [
+      "Task states are used to stop a failed workflow.",
+      "Task states perform a unit of work.",
+      "Task states provide branching logic.",
+      "Task states tell the state machine the order to perform the steps in."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Tasks do all of the work in a state machine. A task can perform work by using an activity or an AWS Lambda function.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q04",
+    "module": 11,
+    "number": 4,
+    "prompt": "An application that processes order returns must complete different steps depending on whether the return is within 30 days of purchase. Which AWS Step Functions state could a developer use to implement this logic?",
+    "options": [
+      "Parallel",
+      "Task",
+      "Choice",
+      "Wait"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "A Choice state can be used to branch code to complete different actions. The choice in this example is whether it has been more than 30 days since the purchase.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q05",
+    "module": 11,
+    "number": 5,
+    "prompt": "An application that processes order returns must run the same AWS Lambda function for each item in an order. Which AWS Step Functions state could a developer use to implement this logic?",
+    "options": [
+      "Parallel",
+      "Pass",
+      "Map",
+      "Task"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "A Map state dynamically iterates on a step for each item in an array. In this example, the developer would want the workflow to iterate on the step that runs the Lambda function for all items in an order.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q06",
+    "module": 11,
+    "number": 6,
+    "prompt": "Which statement is true for both Succeed states and Fail states?",
+    "options": [
+      "Succeed states and Fail states do not include the Next field.",
+      "The End field is not required because Succeed states and Fail states are not terminal states.",
+      "The Type field is optional for Succeed states and Fail states.",
+      "The End field is required because Succeed states and Fail states are terminal states."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Because both states are terminal states, they have no Next field.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q07",
+    "module": 11,
+    "number": 7,
+    "prompt": "An application that processes order returns must run two independent audit checks. When both checks are successfully completed, the return authorization step is run. Which AWS Step Functions state could a developer use to implement this logic?",
+    "options": [
+      "Parallel",
+      "Task",
+      "Choice",
+      "Wait"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "A developer can use a Parallel state to branch code into two independent tasks that must both complete before the next step begins.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q08",
+    "module": 11,
+    "number": 8,
+    "prompt": "How is a taskToken used in an AWS Step Functions use case that includes a manual approval step?",
+    "options": [
+      "A taskToken is generated when the workflow hits a Wait state. The taskToken tracks how long the workflow has been waiting for a task to finish.",
+      "A taskToken is used to transition between each state in the workflow and is defined in the Next field.",
+      "A taskToken is returned as part of a call to the GetActivityTask action and is used when calling the SendTaskSuccess action to associate a result with a task.",
+      "A taskToken is an output of the Success state in a synchronous Step Functions Express workflow. A taskToken is used to confirm success of all tasks."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The GetActivityTask action returns a response (including input) and a taskToken (a unique identifier for the task). The SendTaskSuccess or SendTaskFailure actions use the token to associate results with the task.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q09",
+    "module": 11,
+    "number": 9,
+    "prompt": "Which use case is a good fit for AWS Step Functions Express workflows?",
+    "options": [
+      "All workflows in the application must be auditable up to 90 days after a completed run.",
+      "The workflow requires a step that will run an application that is hosted on an Amazon Elastic Compute Cloud (Amazon EC2) instance.",
+      "The workflow takes between 30 minutes and 1 hour to run.",
+      "The workflow must support a very high rate of events that come from Internet of Things (IoT) devices."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Express workflows are designed for very fast, high-volume workloads and would be a good choice for this scenario.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m11-q10",
+    "module": 11,
+    "number": 10,
+    "prompt": "Which statement about AWS Step Functions is true?",
+    "options": [
+      "A developer can use Amazon API Gateway to associate their Step Functions APIs with methods in an API Gateway API.",
+      "Step Functions has quotas at the account level regarding the number of registered state machines, but no quotas are related to individual Step Functions runs.",
+      "Step Functions must be created in the visual editor on the Step Functions console but can be edited with the AWS SDKs.",
+      "A developer can use the Describe API action to get a summary of all state machines and the number of times that each has been run."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "A developer can associate their Step Functions APIs with API operations in API Gateway. When an HTTPS request is sent to an API operation, API Gateway invokes the developer's Step Functions API actions.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+  },
+  {
+    "id": "aws-dev-m12-q01",
+    "module": 12,
+    "number": 1,
+    "prompt": "Which statement about creating secure connections is true?",
+    "options": [
+      "Both Secure Sockets Layer (SSL) and Transport Layer Security (TLS) are standards that AWS developed for secure communications.",
+      "SSL uses certificates to establish website identity, but TLS does not.",
+      "Both SSL and TLS encrypt network communications between connected resources.",
+      "SSL is a newer version of TLS. Both are used to establish the identify of websites."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Both TLS and its predecessor SSL encrypt network communications between connected resources. TLS is typically used now although the term SSL is often still used.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q02",
+    "module": 12,
+    "number": 2,
+    "prompt": "Which step in the secure connection process is the responsibility of the certificate authority (CA)?",
+    "options": [
+      "Issue a certificate.",
+      "Verify whether the certificate is from a trusted source.",
+      "Send an encrypted session key.",
+      "Send a certificate and public key to the client."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "CAs issue certificates to specific domains.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q03",
+    "module": 12,
+    "number": 3,
+    "prompt": "Which statement about AWS Certificate Manager (ACM) is true?",
+    "options": [
+      "ACM can provision public certificates, but for private certificates, developers must produce their own certificate and connect it to ACM.",
+      "ACM manages certificate renewals for both public and private certificates.",
+      "ACM costs are based on the number of active public certificates in an AWS account.",
+      "A developer must configure a load balancer to use ACM certificates."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "ACM manages certificate renewals, which reduces the effort to ensure that certificates don't expire.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q04",
+    "module": 12,
+    "number": 4,
+    "prompt": "Which statement reflects a best practice for security credentials?",
+    "options": [
+      "Only share access keys between users in the same AWS account.",
+      "Use AWS Identity and Access Management (IAM) roles to retrieve temporary security credentials.",
+      "If there are unencrypted access keys, embed them in code that is available only to developers but not accessible to users.",
+      "Do not allow programmatic authentication to AWS services."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "A best practice is to use temporary security credentials. Use IAM roles to retrieve temporary security credentials if possible. If IAM roles are not an option, use AWS Security Token Service (AWS STS) to retrieve credentials.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q05",
+    "module": 12,
+    "number": 5,
+    "prompt": "What is the primary difference between AWS Security Token Service (AWS STS) authentication by federated users and AWS STS authentication by AWS Identity and Access Management (IAM) users?",
+    "options": [
+      "With federated users, the application calls an identity broker, but this step is skipped with IAM users.",
+      "With federated users, the first authentication is made against an IdP. With IAM users, the first authentication is made against IAM.",
+      "With federated users, the second authentication is made against an IdP. With IAM users, the second authentication is made against IAM",
+      "With federated users, applications use the temporary security credentials and token to make requests to an AWS service. No token is necessary with IAM users."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The first authentication is made against an identity provider (IdP) for federated users and against IAM for IAM users",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q06",
+    "module": 12,
+    "number": 6,
+    "prompt": "A developer has been asked to investigate how website files have been deleted from an Amazon Simple Storage Service (Amazon S3) bucket. Which approach should they take?",
+    "options": [
+      "Use AWS CloudTrail to search for information about delete object events on the S3 bucket.",
+      "Use AWS Security Token Service (AWS STS) to block deletions from the S3 bucket.",
+      "Use AWS Identity and Access Management (IAM) to search for users who have used their delete permissions on the S3 bucket.",
+      "Use the AWS STS GetSessionToken API call to retrieve information about users who deleted files from the S3 bucket."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "A developer can use CloudTrail to track the activity of authenticated users. They could search the CloudTrail event logs to find file deletion requests and the user who made them.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q07",
+    "module": 12,
+    "number": 7,
+    "prompt": "A developer has been asked to add a sign-up and sign-in service to their application. Which Amazon Cognito feature should they use?",
+    "options": [
+      "Amazon Cognito identity pool",
+      "Amazon Cognito user pool",
+      "Amazon Cognito Lambda trigger",
+      "Amazon Cognito access token"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "User pools provide sign-up and sign-in options for application users. Users can sign in to a web or mobile application and federate through a third-party identity provider (IdP).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q08",
+    "module": 12,
+    "number": 8,
+    "prompt": "A developer has been asked to reduce the security risk of users who sign in to their application with username and password pairs that they use on other websites. Which Amazon Cognito user pool feature might the developer configure?",
+    "options": [
+      "Identity tokens",
+      "Phone and email verification",
+      "Adaptive authentication",
+      "Compromised credentials check"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "This feature addresses the issue of users who reuse the same credentials for multiple websites. The feature protects users’ accounts by preventing them from reusing credentials that have been exposed elsewhere.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q09",
+    "module": 12,
+    "number": 9,
+    "prompt": "Which statement about Amazon Cognito identity pools is true?",
+    "options": [
+      "With an identity pool, users can obtain temporary, limited-privilege AWS credentials to access other AWS services.",
+      "Identity pools replace the need for a third-party identity provider.",
+      "When using Amazon Cognito identity pools, a user would not also use Amazon Cognito user pools.",
+      "Identity pools provide sign-up and sign-in functionality for mobile apps."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "With an identity pool, a user can trade an authentication token from an identity provider for temporary AWS security credentials.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m12-q10",
+    "module": 12,
+    "number": 10,
+    "prompt": "A developer plans to use Amazon Cognito user pools with Amazon API Gateway. Which step is part of the user pool authentication flow with API Gateway?",
+    "options": [
+      "A mobile app sends a request to API Gateway, and API Gateway gets JSON Web Tokens (JWTs) from the user pool.",
+      "A mobile app user authenticates with a user pool, and the user pool returns JWTs to the app.",
+      "The user pool validates the tokens against an identity pool.",
+      "Amazon Cognito invokes the API after successfully validating the permissions."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The mobile app authenticates with the user pool and gets JWTs, which the app uses to call API Gateway.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+  },
+  {
+    "id": "aws-dev-m13-q01",
+    "module": 13,
+    "number": 1,
+    "prompt": "Which option describes the philosophy of DevOps?",
+    "options": [
+      "DevOps is about teaching development and operations teams to use the same set of tools to shorten testing and deployment cycles.",
+      "DevOps is about removing barriers between development and operations functions to optimize productivity and reliability.",
+      "DevOps culture is reflected in the idea of \"Processes over people,\" which means that, with strong processes, any team member can perform any task.",
+      "DevOps culture is reflected in the idea that tight coupling leads to tighter parity between development, test, and production environments."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "With DevOps, teams work together to optimize both the productivity of developers and the reliability of operations.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q02",
+    "module": 13,
+    "number": 2,
+    "prompt": "How are DevOps practices reflected in the software development lifecycle for cloud architectures?",
+    "options": [
+      "Every phase of the software development lifecycle is automated.",
+      "Developers can use continuous integration to merge code into their local repository and connect to the test environment for authentic test scenarios.",
+      "With continuous delivery, developers can deploy code without the need for continuous monitoring.",
+      "Infrastructure tools compare local development environments to test environments and staging environments, and report on environmental differences so that the operations team can ensure parity."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Automation reduces the level of human effort in each phase and reduces errors that manual processes cause. The technical side can deliver business value to the company more quickly. This automation from beginning to end is an element of continuous deployment (CD).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q03",
+    "module": 13,
+    "number": 3,
+    "prompt": "How might a developer use AWS CodePipeline in their continuous integration and continuous deployment (CI/CD) process?",
+    "options": [
+      "Compile source code, run tests, and produce software packages that are ready to deploy.",
+      "Host Git-based repositories and provide source control.",
+      "Deploy to a variety of compute services.",
+      "Automate the steps that are required to release software based on a release model that the developer defines."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "AWS CodePipeline is a fully managed, continuous delivery service that helps developers automate their release pipelines for fast and reliable application and infrastructure updates.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q04",
+    "module": 13,
+    "number": 4,
+    "prompt": "Which statement about continuous integration and continuous delivery/deployment (CI/CD) is true?",
+    "options": [
+      "Continuous deployment reduces the risk of production bugs, but it might increase the time that it takes to deliver new features.",
+      "Continuous integration requires teams to write automated tests.",
+      "Continuous delivery extends all the way to production deployment without human intervention.",
+      "Continuous deployment extends from check-in through production, but some manual intervention occurs after code is checked in and before that code is released to customers."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Continuous integration requires teams to write automated tests that improve the quality of the software that is being released. Tests also must reduce the time that it takes to validate that the new version of the software is good.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q05",
+    "module": 13,
+    "number": 5,
+    "prompt": "A developer wants to use infrastructure as code for their Java-based web application on AWS. Which task might be part of their work?",
+    "options": [
+      "Create an Amazon Elastic Compute Cloud (Amazon EC2) instance by using AWS CodeBuild, and use AWS CodeDeploy to automatically push the application to the EC2 instance.",
+      "Create a Java AWS CloudFormation template that defines the application and database layers for the application.",
+      "Create an AWS CloudFormation template with a Resources section that defines the AWS resources for the application.",
+      "Use AWS CodePipeline to create a pipeline that automates the complete release of the application."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "CloudFormation reads template files, which provide instructions to determine which resources must be provisioned. CloudFormation constructs the resources that are listed in the template file.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q06",
+    "module": 13,
+    "number": 6,
+    "prompt": "A developer wants to use a single AWS CloudFormation template for both the test and production environments. Which section of the template might they use to support this approach?",
+    "options": [
+      "Use the Transform section to define the variables that must be changed for each environment during stack creation or update.",
+      "Use the Format Version section to define the parameters to be passed for each environment during stack creation or update.",
+      "Use the Outputs section to define each environment that the template should create during stack creation or update.",
+      "Use the Conditions section to control whether certain resources are created during stack creation or update."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "The Conditions section controls whether certain resources or resource properties are created or assigned. A developer might conditionally create a resource that depends on whether the stack is for a production or test environment.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q07",
+    "module": 13,
+    "number": 7,
+    "prompt": "Which statement about AWS CloudFormation stacks is true?",
+    "options": [
+      "Deleting a stack deletes its CloudFormation template but does not delete any resources that the most recent deployment created.",
+      "A CloudFormation stack is a unit of deployment.",
+      "An existing stack must be deleted before deploying an updated template to modify the resource parameters of that stack.",
+      "CloudFormation has some quotas that are related to the resources defined in each stack, but no quotas are related to the number of stacks themselves."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "A stack is a unit of deployment that contains the resources that a template generates.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q08",
+    "module": 13,
+    "number": 8,
+    "prompt": "A developer is building their first serverless application on AWS. What must they think about differently with respect to deploying the application?",
+    "options": [
+      "They can't replicate the production environment locally in the same way that they might with a server-based deployment.",
+      "They can't use AWS CloudFormation for infrastructure as code to deploy the application.",
+      "The steps to connect to the AWS Lambda server for debugging are different than those to connect to a traditional server.",
+      "Serverless development tools are not integrated with other AWS development tools that are used in the deployment pipeline."
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Serverless applications are deployed to an AWS account. Developers need a tool such as the AWS Serverless Application Model command line interface (AWS SAM CLI) to invoke AWS Lambda functions locally.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q09",
+    "module": 13,
+    "number": 9,
+    "prompt": "How does an AWS Serverless Application Model (AWS SAM) template differ from an AWS CloudFormation template?",
+    "options": [
+      "AWS SAM templates are written in the same language as the AWS Lambda runtime that is used in the functions that are being deployed.",
+      "The Globals section is found only in AWS SAM templates.",
+      "The Resources section in an AWS SAM template may only contain serverless resources.",
+      "The Transform declaration is not required for AWS SAM templates."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The Globals section is unique to AWS SAM and is used to define properties that are common to all serverless functions and APIs.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  },
+  {
+    "id": "aws-dev-m13-q10",
+    "module": 13,
+    "number": 10,
+    "prompt": "The following lines are in the Resources section of an AWS Serverless Application Model (AWS SAM) template. What would these lines create? Resources: Orders: Type: AWS::Serverless::SimpleTable",
+    "options": [
+      "An AWS Lambda function that is named Orders and is connected to an Amazon DynamoDB table",
+      "An Amazon DynamoDB table that is called Orders",
+      "An API GET method that reads from the Orders table",
+      "A MySQL table that is called Orders"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "SimpleTable creates a DynamoDB table by using the name that is provided (in this example, Orders).",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+  }
+]

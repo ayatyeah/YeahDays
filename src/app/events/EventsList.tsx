@@ -64,6 +64,7 @@ export default function EventsList({ events, course }: { events: EventSummary[];
             onPointerEnter={() => preloadEvent(event.id)}
             onTouchStart={() => preloadEvent(event.id)}
             href={`/events/${event.id}`}
+            data-event-card
             className="block rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 via-[var(--color-surface)] to-sky-500/10 p-5"
           >
             <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{event.course}</p>

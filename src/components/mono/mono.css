@@ -615,7 +615,8 @@ body:has(.yg-app) .companion-sheet {
 .yg-app .learning-event .learning-event-progress svg {
   color: #d4d6d8;
 }
-.yg-app[data-study] a[href^="/events/"] {
+.yg-app[data-study] a[data-event-card],
+.yg-app[data-study] a.learning-event {
   background: #171719;
   color: white;
   --color-muted: #c6c8cc;

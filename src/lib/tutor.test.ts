@@ -4,7 +4,7 @@ vi.mock("@/lib/aiUsage", () => ({ recordAiUsage: vi.fn() }));
 import { findEvent } from "@/lib/events";
 import { BUGS } from "@/lib/events/computerVision/bugs";
 import { generate } from "@/lib/visionTrainer";
-import { cleanFocus, cleanMessages, streamTutor, tutorContext, tutorInstructions } from "./tutor";
+import { findTutorEvent, cleanFocus, cleanMessages, streamTutor, tutorContext, tutorInstructions } from "./tutor";
 
 const event = findEvent("computer-vision-midterm")!;
 const part = event.lectures[0].parts[0];
@@ -127,5 +127,21 @@ describe("streamTutor", () => {
     await expect(read(stream)).rejects.toThrow();
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
+  });
+});
+
+describe("cloud endterm tutor", () => {
+  it("resolves the standalone event and its lecture notes", () => {
+    const cloud = findTutorEvent("cloud-computing-endterm")!;
+    expect(cloud).toBeDefined();
+    expect(tutorContext(cloud, { partId: cloud.lectures[0].parts[0].id })).toContain("Notes part open");
+  });
+  it("keeps multiple answers and hides the key until submission", () => {
+    const cloud = findTutorEvent("cloud-computing-endterm")!;
+    const before = cleanFocus({ quiz: { question: "Q", options: ["a", "b", "c"], correctMany: [0, 2] } });
+    expect(tutorContext(cloud, before)).toContain("NOT answered");
+    expect(before.quiz?.correctMany).toBeUndefined();
+    const after = cleanFocus({ quiz: { question: "Q", options: ["a", "b", "c"], picked: 0, pickedMany: [0, 2], correctMany: [0, 2] } });
+    expect(tutorContext(cloud, after)).toContain("Student picked A, C; correct is A, C");
   });
 });

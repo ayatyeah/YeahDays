@@ -953,3 +953,19 @@ html[data-theme="dark"] body button[data-answer-state="wrong"] {
 [data-selection-question] { -webkit-user-select: text; user-select: text; }
 
 button[data-selection-question][aria-disabled="true"] { cursor: text; }
+
+/* Keep answer geometry fixed before, during, and after grading. */
+html body button[data-quiz-answer] {
+  padding-left: 2.25rem;
+  scale: 1 !important;
+  translate: none !important;
+  transform: none !important;
+}
+.quiz-answer-mark { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); width: 1rem; }
+@keyframes yg-answer-glow {
+  from { box-shadow: 0 0 0 0 rgb(var(--answer-glow) / 35%); }
+  to { box-shadow: 0 0 0 8px rgb(var(--answer-glow) / 0%); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html body button[data-quiz-answer][data-answer-state] { animation: yg-answer-glow 480ms ease-out both; }
+}

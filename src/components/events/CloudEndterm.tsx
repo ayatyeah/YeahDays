@@ -7,6 +7,10 @@ import lessons from "@/lib/events/cloudComputingEndterm/lessons.json";
 import questions from "@/lib/events/cloudComputingEndterm/questions.json";
 import { CLOUD_EXAM_TITLE } from "@/lib/events/cloudComputingEndterm/meta";
 import { correctAnswer, emptyProgress, parseProgress, type CloudProgress } from "@/lib/events/cloudComputingEndterm/progress";
+import Tutor from "./Tutor";
+import SelectionMenu from "./SelectionMenu";
+import { useTutorFocus } from "@/lib/tutorFocus";
+import { cloudEndtermSummary } from "@/lib/events/cloudComputingEndterm/meta";
 import EventQuiz from "./EventQuiz";
 import Button from "@/components/ui/Button";
 import styles from "./cloud-endterm.module.css";
@@ -38,6 +42,10 @@ function Workspace({ userId }: { userId: string }) {
   }
   const index = Math.max(0, lessons.findIndex(l => l.id === progress.current));
   const lesson = lessons[index];
+  useEffect(() => {
+    useTutorFocus.getState().setBase({ view: tab === "quiz" ? "quiz" : "read", partId: tab === "learn" ? lesson.id : undefined, step: tab === "quiz" ? CLOUD_EXAM_TITLE : lesson.title });
+    return () => useTutorFocus.getState().setBase({});
+  }, [tab, lesson.id, lesson.title]);
   const filtered = lessons.filter(l => `${l.group} ${l.title} ${l.body.join(" ")}`.toLowerCase().includes(query.trim().toLowerCase()));
   function openLesson(id: string) {
     update({ ...progress, current: id });
@@ -90,6 +98,8 @@ function Workspace({ userId }: { userId: string }) {
         <a href="https://docs.docker.com/reference/cli/docker/container/run/" target="_blank" rel="noreferrer">Docker run</a>
       </details>
     </> : <Exam answers={progress.answers} onAnswer={(id, value) => update({ ...progress, answers: { ...progress.answers, [id]: value } })} />}
+    <Tutor event={cloudEndtermSummary} userId={userId} />
+    <SelectionMenu key={tab} />
     <p className={styles.footnote}>Прогресс сохраняется для твоего аккаунта в этом браузере.</p>
   </main>;
 }

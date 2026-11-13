@@ -166,7 +166,7 @@ function saveChat(key: string, list: Message[]) {
 
 /* ───────────── компонент ───────────── */
 
-export default function Tutor({ event, userId }: { event: StudyEvent; userId: string }) {
+export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">; userId: string }) {
   const { base, detail, label, open, ask, setOpen } = useTutorFocus();
   const locale = useLocaleStore((s) => s.locale);
   const aiAllowed = usePersonalizationStore((s) => s.data?.ai === true);

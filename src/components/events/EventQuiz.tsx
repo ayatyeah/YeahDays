@@ -6,7 +6,7 @@ import EventMusic from "@/components/EventMusic";
 import ReportQuestion from "@/components/events/ReportQuestion";
 import { cn } from "@/lib/cn";
 import { useContentLang } from "@/i18n/locale";
-import { useTutorDetail } from "@/lib/tutorFocus";
+import { openTutor, useTutorDetail } from "@/lib/tutorFocus";
 import type { Lang } from "@/lib/events/types";
 import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
@@ -43,7 +43,7 @@ export default function EventQuiz({
     onAnswer?.(item.id, value);
   }
   const answered = picked !== undefined;
-  useTutorDetail({ quiz: { question: item.q, options: item.options, picked: picked?.[0], correct: answered ? expected[0] : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
+  useTutorDetail({ quiz: { id: item.id, question: item.q, options: item.options, pickedMany: picked, correctMany: answered ? expected : undefined, picked: picked?.[0], correct: answered ? expected[0] : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
   const feedback = useRef<HTMLElement>(null);
 
   // На телефоне объяснение и кнопка «Дальше» оказываются под длинными
@@ -57,6 +57,7 @@ export default function EventQuiz({
       <header className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <button className="text-sm underline" onClick={onExit}>← Выйти</button>
+          <button className="text-sm underline" onClick={() => openTutor()}>✦ ИИ-помощник</button>
           <button
             className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm"
             aria-pressed={music}
@@ -90,20 +91,20 @@ export default function EventQuiz({
             return (
               <button
                 key={`${item.id}-${i}`}
-                data-selection-question lang="en"
+                data-selection-question data-quiz-answer lang="en"
                 data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
                 aria-disabled={answered}
                 aria-pressed={(picked ?? selected).includes(i)}
                 onClick={() => { if (!answered) { if (multi) setSelected(selected.includes(i) ? selected.filter(n => n !== i) : [...selected, i]); else submit([i]); } }}
                 className={cn(
-                  "block w-full rounded-2xl border p-3 text-left text-[15px] transition",
+                  "relative block w-full rounded-2xl border p-3 text-left text-[15px] transition",
                   right ? "border-emerald-400 bg-emerald-500/15" : wrong ? "border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
                   !answered && "hover:bg-[var(--color-surface-2)]",
                   !answered && selected.includes(i) && "border-violet-400 bg-violet-500/15",
                   answered && !right && !wrong && "opacity-60",
                 )}
               >
-                {right && "✓ "}{wrong && "✗ "}{item.labels && `${item.labels[i]}. `}{option}
+                <span className="quiz-answer-mark" aria-hidden="true">{right ? "✓" : wrong ? "✗" : ""}</span><span>{item.labels && `${item.labels[i]}. `}{option}</span>
               </button>
             );
           })}

@@ -11,6 +11,8 @@
 
 import { geminiAvailable, streamGeminiTutor } from "@/lib/geminiTutor";
 import { recordAiUsage } from "@/lib/aiUsage";
+import { cloudTutorEvent } from "@/lib/events/cloudComputingEndterm/tutor";
+import cloudQuestions from "@/lib/events/cloudComputingEndterm/questions.json";
 import { findEvent } from "@/lib/events";
 import { BUGS } from "@/lib/events/computerVision/bugs";
 import type { StudyEvent } from "@/lib/events/types";
@@ -34,7 +36,7 @@ export interface TutorFocus {
   /** Открытый блок фаст-мода. */
   fastId?: string;
   step?: string;
-  quiz?: { question: string; options: string[]; picked?: number; correct?: number; index?: number; total?: number };
+  quiz?: { id?: string; pickedMany?: number[]; correctMany?: number[]; question: string; options: string[]; picked?: number; correct?: number; index?: number; total?: number };
   mock?: { examId: string; taskId?: string; answer?: string; grade?: { score: number; points: number; missing: string[]; mistakes: string[] } };
   trainer?: { kind: TrainerKind; seed: number; inputs?: Record<string, string>; checked?: boolean };
   bug?: { id: string; line?: number; fix?: string };
@@ -60,6 +62,9 @@ export function cleanFocus(raw: unknown): TutorFocus {
   const q = f.quiz as Record<string, unknown> | undefined;
   if (q && typeof q === "object" && typeof q.question === "string" && Array.isArray(q.options)) {
     out.quiz = {
+      id: clip(q.id, 80) || undefined,
+      pickedMany: Array.isArray(q.pickedMany) ? [...new Set(q.pickedMany.filter((n): n is number => Number.isInteger(n) && n >= 0 && n < 6))].slice(0, 6) : undefined,
+      correctMany: num(q.picked) !== undefined && Array.isArray(q.correctMany) ? q.correctMany.filter((n): n is number => Number.isInteger(n) && n >= 0 && n < 6).slice(0, 6) : undefined,
       question: clip(q.question, 600),
       options: q.options.filter((o): o is string => typeof o === "string").slice(0, 6).map((o) => o.slice(0, 300)),
       picked: num(q.picked),
@@ -109,7 +114,14 @@ export function tutorContext(event: StudyEvent, focus: TutorFocus): string {
     const where = q.index !== undefined && q.total ? ` (question ${q.index + 1} of ${q.total})` : "";
     const lines = [`## Quiz question on screen${where}`, q.question, ...q.options.map((o, i) => `${String.fromCharCode(65 + i)}) ${o}`)];
     if (q.picked === undefined) lines.push("The student has NOT answered yet. Do not reveal or hint which option is correct; help with the underlying concept only.");
-    else lines.push(`Student picked ${String.fromCharCode(65 + q.picked)}; correct is ${q.correct === undefined ? "unknown" : String.fromCharCode(65 + q.correct)}.`);
+    else {
+      const source = event.id === cloudTutorEvent.id ? cloudQuestions.find(item => item.id === q.id) : undefined;
+      const picked = q.pickedMany ?? [q.picked];
+      const correct = source ? source.answers : q.correctMany ?? (q.correct === undefined ? [] : [q.correct]);
+      const letters = (values: number[]) => values.map(i => String.fromCharCode(65 + i)).join(", ");
+      lines.push(`Student picked ${letters(picked)}; correct is ${correct.length ? letters(correct) : "unknown — do not grade this disputed question"}.`);
+      if (source) lines.push(`Explanation: ${source.explanation}${source.caution ? `\nCaution: ${source.caution}` : ""}`);
+    }
     out.push(lines.join("\n"));
   }
 
@@ -210,7 +222,7 @@ export function cleanMessages(raw: unknown): TutorMessage[] {
 }
 
 export function findTutorEvent(id: unknown) {
-  return typeof id === "string" ? findEvent(id) : undefined;
+  return id === cloudTutorEvent.id ? cloudTutorEvent : typeof id === "string" ? findEvent(id) : undefined;
 }
 
 /**

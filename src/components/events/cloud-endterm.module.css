@@ -1,4 +1,4 @@
-.root { max-width: 1080px; margin: 0 auto; padding-bottom: 100px; color: var(--color-fg); --cloud-accent: #3576d3; --cloud-soft: color-mix(in srgb, var(--cloud-accent) 12%, var(--color-surface)); }
+.root { width: 100%; min-width: 0; max-width: 1080px; margin: 0 auto; padding-bottom: 100px; color: var(--color-fg); --cloud-accent: #3576d3; --cloud-soft: color-mix(in srgb, var(--cloud-accent) 12%, var(--color-surface)); }
 .root button, .root input, .root select { font: inherit; }
 .root button { cursor: pointer; min-height: 44px; border: 1px solid var(--color-border); border-radius: 12px; padding: 10px 16px; background: var(--color-surface); color: var(--color-fg); text-align: left; touch-action: manipulation; }
 .root button:disabled { cursor: default; opacity: .5; }

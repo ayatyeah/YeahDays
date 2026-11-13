@@ -7,9 +7,9 @@ import lessons from "@/lib/events/cloudComputingEndterm/lessons.json";
 import questions from "@/lib/events/cloudComputingEndterm/questions.json";
 import { CLOUD_EXAM_TITLE } from "@/lib/events/cloudComputingEndterm/meta";
 import { correctAnswer, emptyProgress, parseProgress, type CloudProgress } from "@/lib/events/cloudComputingEndterm/progress";
+import EventQuiz from "./EventQuiz";
+import Button from "@/components/ui/Button";
 import styles from "./cloud-endterm.module.css";
-
-const topics: Record<string, string> = { cost: "Расходы и Azure", architecture: "Архитектура", database: "Базы данных", security: "Безопасность", storage: "S3 и хранение", api: "API Gateway", develop: "Разработка" };
 
 export default function CloudEndterm() {
   const { data, status } = useSession();
@@ -95,58 +95,43 @@ function Workspace({ userId }: { userId: string }) {
 }
 
 function Exam({ answers, onAnswer }: { answers: Record<string, number[]>; onAnswer: (id: string, value: number[]) => void }) {
-  const [topic, setTopic] = useState("all");
-  const [mode, setMode] = useState("all");
-  const [query, setQuery] = useState("");
-  const [queue, setQueue] = useState(() => questions.map(q => q.id));
-  const [position, setPosition] = useState(0);
-  const [attempt, setAttempt] = useState(0);
-  const filtered = questions.filter(q => (topic === "all" || q.topic === topic) && `${q.prompt} ${q.options.join(" ")}`.toLowerCase().includes(query.trim().toLowerCase()));
-  const byId = new Map(questions.map(q => [q.id, q]));
-  const current = byId.get(queue[position]);
-  const graded = questions.filter(q => q.answers.length);
-  const right = graded.filter(q => answers[q.id] && correctAnswer(answers[q.id], q.answers)).length;
-  const attempted = graded.filter(q => answers[q.id]).length;
-  function move(next: number) {
-    setPosition(next);
-    requestAnimationFrame(() => { const h = document.getElementById("cloud-question-title"); h?.focus(); h?.scrollIntoView({ block: "start" }); });
-  }
-  function start(nextMode = mode, nextTopic = topic, nextQuery = query, shuffle = false) {
-    const items = questions.filter(q => (nextTopic === "all" || q.topic === nextTopic) && `${q.prompt} ${q.options.join(" ")}`.toLowerCase().includes(nextQuery.trim().toLowerCase()) && (nextMode !== "mistakes" || (q.answers.length > 0 && answers[q.id] && !correctAnswer(answers[q.id], q.answers))) && (nextMode !== "unanswered" || !answers[q.id]));
-    const ids = items.map(q => q.id);
-    if (shuffle) for (let i = ids.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [ids[i], ids[j]] = [ids[j], ids[i]]; }
-    setQueue(ids); setPosition(0); setAttempt(a => a + 1);
-  }
-  return <section className={styles.exam}>
-    <header><h2>{CLOUD_EXAM_TITLE}</h2><p>47 уникальных вопросов с фотографий. Английские формулировки и порядок вариантов сохранены. Совпадение с будущим экзаменом не подтверждено.</p><p>44 вопроса с проверкой и 3 спорных с разбором без оценки. Выбери ответ, затем открой объяснение. №14 на листе использован дважды; №46 повторяет №44.</p></header>
-    <p className={styles.score} role="status">Верно: {right} / {graded.length} · Проверено: {attempted} · Осталось: {graded.length - attempted}</p>
-    <div className={styles.filters}>
-      <label>Тема<select value={topic} onChange={e => { setTopic(e.target.value); start(mode, e.target.value); }}><option value="all">Все темы</option>{Object.entries(topics).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></label>
-      <label>Режим<select value={mode} onChange={e => { setMode(e.target.value); start(e.target.value); }}><option value="all">Все вопросы</option><option value="mistakes">Повторить ошибки</option><option value="unanswered">Без ответа</option></select></label>
-      <label>Поиск<input type="search" value={query} onChange={e => { setQuery(e.target.value); start(mode, topic, e.target.value); }} placeholder="Текст вопроса или варианта" /></label>
-    </div>
-    <div className={styles.actions}><button onClick={() => start(mode, topic, query, true)}>Перемешать вопросы</button><span>{queue.length ? `${position + 1} / ${queue.length}` : "Нет вопросов в подборке"}</span></div>
-    {current ? <QuestionCard key={`${current.id}:${attempt}`} question={current} saved={answers[current.id]} onAnswer={a => onAnswer(current.id, a)} /> : <p className={styles.example}>Здесь пока нет вопросов. Выбери «Все вопросы» или другую тему.</p>}
-    {current && <div className={styles.actions}><button disabled={position === 0} onClick={() => move(position - 1)}>Предыдущий вопрос</button><button className={styles.primary} disabled={position === queue.length - 1} onClick={() => move(position + 1)}>Следующий вопрос</button>{position === queue.length - 1 && <button onClick={() => { setMode("mistakes"); start("mistakes"); }}>Повторить ошибки</button>}</div>}
-    <details className={styles.questionList}><summary>Список уникальных вопросов ({filtered.length})</summary>{filtered.map(q => <button key={q.id} onClick={() => { setMode("all"); setQueue(filtered.map(item => item.id)); setPosition(filtered.findIndex(item => item.id === q.id)); setAttempt(a => a + 1); }} lang="en"><span>№{q.number}</span>{q.prompt}</button>)}</details>
+  const [queue, setQueue] = useState(questions);
+  const [run, setRun] = useState(0);
+  const [mode, setMode] = useState<"intro" | "quiz" | "result">("intro");
+  const [result, setResult] = useState<number[][]>([]);
+  const [music, setMusic] = useState(false);
+  const mistakes = queue.filter((q, i) => q.answers.length && !correctAnswer(result[i] ?? [], q.answers));
+  const graded = queue.filter(q => q.answers.length).length;
+  function start(items = questions) { setQueue(items); setResult([]); setRun(n => n + 1); setMode("quiz"); }
+  if (mode === "quiz") return <section className="space-y-5">
+    <EventQuiz key={run} eventId="cloud-computing-endterm" step={{ title: { ru: CLOUD_EXAM_TITLE, en: CLOUD_EXAM_TITLE } }}
+      quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, labels: q.labels, correct: q.answers, why: { ru: q.explanation, en: q.explanation }, caution: q.caution }))}
+      lang="ru" music={music} onMusic={() => setMusic(m => !m)}
+      onExit={() => { if (confirm("Выйти из теста? Текущая попытка завершится.")) setMode("intro"); }}
+      onAnswer={onAnswer} onFinish={values => { setResult(values); setMode("result"); }} />
   </section>;
-}
-
-function QuestionCard({ question: q, saved, onAnswer }: { question: { id: string; number: string; prompt: string; options: string[]; labels: string[]; answers: number[]; explanation: string; topic: string; caution?: string }; saved?: number[]; onAnswer: (a: number[]) => void }) {
-  const [selected, setSelected] = useState<number[]>([]);
-  const [revealed, setRevealed] = useState(false);
-  const multi = q.answers.length > 1;
-  const correct = correctAnswer(selected, q.answers);
-  return <article className={styles.question} data-testid="cloud-question">
-    <p className={styles.source}>Вопрос №{q.number} · {topics[q.topic]}{saved ? " · Уже отвечал — попробуй вспомнить" : ""}</p>
-    <h3 id="cloud-question-title" tabIndex={-1} lang="en">{q.prompt}</h3>
-    {multi && <p>Выбери {q.answers.length} варианта.</p>}
-    <div className={styles.options} role="group" aria-label="Варианты ответа">{q.options.map((option, i) => <button key={i} lang="en" aria-pressed={selected.includes(i)} disabled={revealed} data-correct={revealed && q.answers.includes(i) || undefined} data-wrong={revealed && q.answers.length > 0 && selected.includes(i) && !q.answers.includes(i) || undefined} onClick={() => setSelected(multi ? selected.includes(i) ? selected.filter(n => n !== i) : [...selected, i] : [i])}><span>{q.labels[i]}.</span><span>{option}</span></button>)}</div>
-    {!revealed ? <button className={styles.primary} disabled={!selected.length || (multi && selected.length !== q.answers.length)} onClick={() => { setRevealed(true); onAnswer(selected); }}>Проверить и понять</button> : <div className={styles.feedback} aria-live="polite" data-testid="cloud-explanation">
-      <strong>{!q.answers.length ? "Разбор без оценки" : correct ? "Верно" : "Разберём ошибку"}</strong>
-      {q.answers.length > 0 && <p>Ответ: {q.answers.map(i => q.labels[i]).join(", ")}</p>}
-      {q.caution && <p className={styles.caution}>{q.caution}</p>}
-      <p>{q.explanation}</p><button onClick={() => { setSelected([]); setRevealed(false); }}>Ответить ещё раз</button>
-    </div>}
-  </article>;
+  if (mode === "result") return <section className="space-y-5">
+    <div className="rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 to-sky-500/10 p-5">
+      <h2 className="text-xl font-bold">Тест завершён</h2>
+      <p className="mt-3 text-5xl font-bold tabular-nums">{graded ? Math.round((graded - mistakes.length) / graded * 100) : 0}%</p>
+      <p className="mt-3">Верных ответов: {graded - mistakes.length} из {graded} · Пройдено: {queue.length} вопросов</p>
+      {queue.length > graded && <p className="mt-2 text-sm">{queue.length - graded} спорных вопроса разобраны без оценки.</p>}
+    </div>
+    <div className="flex flex-wrap gap-3"><Button variant="primary" onClick={() => start()}>Пройти все 47 ещё раз</Button>
+      {!!mistakes.length && <Button onClick={() => start(mistakes)}>Повторить ошибки ({mistakes.length})</Button>}
+      <Button variant="ghost" onClick={() => setMode("intro")}>К тесту</Button></div>
+    {mistakes.map(q => <article key={q.id} className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-3">
+      <h3 lang="en" className="font-semibold">{q.prompt}</h3>
+      <p>Твой ответ: {(result[queue.indexOf(q)] ?? []).map(i => `${q.labels[i]}. ${q.options[i]}`).join("; ")}</p>
+      <p>Правильный ответ: {q.answers.map(i => `${q.labels[i]}. ${q.options[i]}`).join("; ")}</p><p>{q.explanation}</p>
+    </article>)}
+  </section>;
+  const savedMistakes = questions.filter(q => q.answers.length && answers[q.id] && !correctAnswer(answers[q.id], q.answers));
+  return <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-4">
+    <h2 className="text-xl font-bold">{CLOUD_EXAM_TITLE}</h2>
+    <p>47 вопросов по порядку. Выбери ответ, прочитай объяснение и нажми «Дальше». В конце — результат и повторение ошибок.</p>
+    <p className="text-sm text-[var(--color-muted)]">Оригинальные английские вопросы и варианты сохранены. 44 вопроса с проверкой, 3 спорных — с разбором без оценки.</p>
+    <div className="flex flex-wrap gap-3"><Button variant="primary" onClick={() => start()}>Начать тест — 47 вопросов</Button>
+      {!!savedMistakes.length && <Button onClick={() => start(savedMistakes)}>Повторить прошлые ошибки ({savedMistakes.length})</Button>}</div>
+  </section>;
 }

@@ -3,9 +3,7 @@ import lessons from "./lessons.json";
 
 export type CloudProgress = { read: string[]; answers: Record<string, number[]>; current: string };
 export const emptyProgress = (): CloudProgress => ({ read: [], answers: {}, current: lessons[0].id });
-export function correctAnswer(selected: number[], expected: number[]) {
-  return expected.length > 0 && selected.length === expected.length && expected.every(n => selected.includes(n));
-}
+export { matchesAnswer as correctAnswer } from "../quizAnswers";
 export function parseProgress(raw: string | null): CloudProgress {
   try {
     const data = JSON.parse(raw ?? "null");

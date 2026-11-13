@@ -33,13 +33,18 @@ export default function EventQuiz({
   const [answers, setAnswers] = useState<number[][]>([]);
   const item = quiz[index];
   const picked = answers[index];
-  const [selected, setSelected] = useState<number[]>([]);
+  const [drafts, setDrafts] = useState<Record<number, number[]>>({});
+  const selected = drafts[index] ?? [];
+  function setSelected(value: number[]) { setDrafts(previous => ({ ...previous, [index]: value })); }
   const expected = item.correct;
   const multi = expected.length > 1;
-  function submit(value: number[]) { setAnswers([...answers, value]); onAnswer?.(item.id, value); }
+  function submit(value: number[]) {
+    setAnswers(previous => { const next = [...previous]; next[index] = value; return next; });
+    onAnswer?.(item.id, value);
+  }
   const answered = picked !== undefined;
   useTutorDetail({ quiz: { question: item.q, options: item.options, picked: picked?.[0], correct: answered ? expected[0] : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
-  const feedback = useRef<HTMLDivElement>(null);
+  const feedback = useRef<HTMLElement>(null);
 
   // На телефоне объяснение и кнопка «Дальше» оказываются под длинными
   // вариантами, за краем экрана — подводим их в поле зрения сами.
@@ -106,7 +111,7 @@ export default function EventQuiz({
 
         {multi && !answered && <Button variant="primary" className="mt-4 w-full" disabled={selected.length !== expected.length} onClick={() => submit(selected)}>Проверить</Button>}
         {answered && (
-          <div ref={feedback} className="yg-rise mt-4 scroll-mb-28 space-y-3">
+          <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
               <p className="font-semibold">{!expected.length ? "Разбор без оценки" : matchesAnswer(picked, expected) ? "Верно" : "Неверно"}</p>
               {item.caution && <p className="mt-2">{item.caution}</p>}
@@ -125,15 +130,15 @@ export default function EventQuiz({
               </button>}
               <ReportQuestion key={item.id} eventId={eventId} questionId={item.id} />
             </div>
-            <Button
-              variant="primary"
-              className="w-full"
-              onClick={() => { if (index + 1 === quiz.length) onFinish(answers); else { setSelected([]); setIndex(index + 1); } }}
-            >
-              {index + 1 === quiz.length ? "Завершить квиз" : "Дальше"}
-            </Button>
           </div>
         )}
+        <nav ref={feedback} className="mt-4 flex gap-3 scroll-mb-28" aria-label="Переходы между вопросами">
+          <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Назад</Button>
+          <Button variant="primary" className="flex-1" disabled={!answered}
+            onClick={() => { if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1); }}>
+            {index + 1 === quiz.length ? "Завершить квиз" : "Дальше"}
+          </Button>
+        </nav>
       </section>
       {/* Плеер — под вопросом, а не над ним. Сверху он занимал на телефоне
           треть экрана (меньше 200×200 правила YouTube делать не дают), и

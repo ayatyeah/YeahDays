@@ -5,6 +5,8 @@ const examples = [
   { course: 'RMT', title: 'Choose the right research method', goal: 'Understand qualitative and quantitative research', exercise: 'Write one interview question and one survey question about how students choose a study app.', note: 'Compare the kind of answer each question would give you.' },
   { course: 'Cloud Comp', title: 'Find a home for your data', goal: 'Understand storage choices in the cloud', exercise: 'A student app stores profile photos and course enrolments. Choose storage for each and explain one trade-off.', note: 'Think about objects, relationships and how you will read the data.' },
   { course: 'Comp Net', title: 'Follow a packet’s journey', goal: 'Understand how devices communicate', exercise: 'Sketch the route from your laptop to a website. Label where DNS, a switch and a router help.', note: 'Explain what each device or service contributes.' },
+  { course: 'Comp Vision', title: 'Look beyond the training images', goal: 'Understand how to evaluate an image classifier', exercise: 'Plan a campus recycling classifier. Choose examples for training and a separate set of unseen images for testing.', note: 'Include different lighting and backgrounds in your test images.' },
+  { course: 'Project Management', title: 'Give your project a clear first step', goal: 'Understand task dependencies', exercise: 'Plan a student event app. Write three tasks in the order they depend on each other, then add a point for user feedback.', note: 'Which task must finish before the next one can begin?' },
 ];
 export default function StudyPreview() {
   const [index, setIndex] = useState(0);

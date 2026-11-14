@@ -254,6 +254,26 @@ html { scrollbar-color:var(--g-scroll-thumb) var(--g-scroll-track); scrollbar-wi
 }
 @media(prefers-reduced-motion:reduce) { .g-site *{animation:none!important;transition:none!important;scroll-behavior:auto!important}.g-folder:hover{transform:none} }
 @media(forced-colors:active) { *{scrollbar-color:auto}.g-preview-tabs button[aria-pressed=true],.f-nav-track>a[aria-current=page]{outline:2px solid Highlight} }
+
+/* A lighter polish of the original study-desk landing. */
+.g-site .g-preview-tabs { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:5px; }
+.g-site .g-preview-tabs button { grid-column:span 2; min-height:44px; padding:7px 9px; line-height:1.4; }
+.g-site .g-preview-tabs button:nth-child(n+4) { grid-column:span 3; }
+.g-site .g-preview-content { min-height:340px; }
+.g-site .g-public-header nav a,.g-site .g-login { display:inline-flex; align-items:center; min-height:44px; }
+.g-site .g-quiet-action { min-height:44px; }
+.g-site .g-course-strip a { min-height:44px; }
+@media(min-width:1060px) { .g-site .g-hero { padding-top:68px; padding-bottom:86px; } }
+@media(max-width:540px) {
+  .g-site .g-header-actions .g-login { display:inline-flex; min-height:44px; padding-inline:6px; }
+  .g-site .g-header-actions .f-button-small { display:none; }
+  .g-site .g-header-actions .f-theme-switch { width:44px; height:44px; }
+  .g-site .g-preview-content { min-height:400px; }
+  .g-site .g-hero-note { row-gap:8px; }
+}
+@media(max-width:360px) {
+  :root .g-site .g-hero h1 { font-size:38px!important; }
+}
 /* Course-first onboarding: explicit choices, one primary action. */
 .g-setup{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;margin-top:34px}
 .g-course-choices{min-width:0;border:0;padding:0}.g-course-choices legend{font:650 26px var(--font-manrope);letter-spacing:-.8px}

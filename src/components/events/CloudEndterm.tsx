@@ -62,22 +62,22 @@ function Workspace({ userId }: { userId: string }) {
   }
   if (!ready) return <p role="status">Restoring your progress…</p>;
   return <div className={styles.root} data-no-i18n data-testid="cloud-endterm">
-    <Link href="/events/courses/cloud-computing" className={styles.back}>← Cloud Computing events</Link>
-    <header className={styles.header}>
+    <Link href="/events/courses/cloud-computing" className={styles.back} data-reading-chrome>← Cloud Computing events</Link>
+    <header className={styles.header} data-reading-chrome>
       <div><p>Endterm revision</p><h1>Cloud Computing</h1><p className={styles.subtitle}>Understand one topic. Test yourself. Revisit what needs practice.</p></div>
       <div className={styles.progress}><strong>{progress.read.length}<span> / {lessons.length}</span></strong><span>parts read</span><progress value={progress.read.length} max={lessons.length} /></div>
     </header>
-    <div className={styles.tabs} role="group" aria-label="Study mode">
+    <div data-reading-chrome className={styles.tabs} role="group" aria-label="Study mode">
       <button aria-pressed={tab === "learn"} onClick={() => setTab("learn")}>Learn by topic</button>
       <button aria-pressed={tab === "quiz"} onClick={() => setTab("quiz")}>Exam questions <span>47</span></button>
       <button aria-pressed={tab === "aws"} onClick={() => setTab("aws")}>AWS Knowledge Checks</button>
     </div>
-    <p className="mb-6"><Link href="/events/cloud-computing-endterm/notes" target="_blank" className="underline">Open the revision notebook — 47 topics ↗</Link></p>
+    <p data-reading-chrome className="mb-6"><Link href="/events/cloud-computing-endterm/notes" target="_blank" className="underline">Open the revision notebook — 47 topics ↗</Link></p>
     {storageError && <p role="alert">Your browser could not save progress. Allow local storage to keep it after closing this page.</p>}
     {tab === "learn" ? <>
       <NotesToolbar lang={lang} onLang={setLang}/>
-      <div className={styles.layout}>
-        <aside className={styles.outline}>
+      <div className={`${styles.layout} g-cloud-reading-layout`}>
+        <aside className={styles.outline} data-reading-chrome>
           <label>Find a topic<input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="IAM, costs, DynamoDB…" /></label>
           <nav aria-label="Lecture topics">{[...new Set(filtered.map(l => l.group))].map(group => <section key={group}>
             <h2>{group}</h2>{filtered.filter(l => l.group === group).map(l => <button key={l.id} aria-current={l.id === lesson.id ? "step" : undefined} onClick={() => openLesson(l.id)}><span>{l.title}</span>{progress.read.includes(l.id) && <span aria-label="Read">✓</span>}</button>)}

@@ -1,0 +1,27 @@
+# Additional design skills: static security review
+
+Reviewed on 2026-11-14 before using new guidance. No upstream installer, script, hook, dependency installation or remote MCP was executed. No app credentials were supplied to these packages.
+
+## Scope and conclusion
+
+348 text source files were retrieved through the GitHub connector at the commits below. Inventory includes the six skill entry points, their text references, script files and the screenshot editor template. Automated checks covered instruction redirection, credentials/environment access, network destinations, process execution, file writes and hidden Unicode. Manual review concentrated on entry instructions, flagged operations, installers, outbound requests and disk-writing API handlers. This is a static review, not a full executable audit or a guarantee of safety. Binary bundles, the large Taste assets collection, external dependencies, and optional Transitions agent/CLI/refine applications are not approved by this review.
+
+| Skill / pinned source | Purpose | Findings and decision |
+| --- | --- | --- |
+| [Hallmark](https://github.com/Nutlope/hallmark/tree/04977e15f3dfd6ee4b74c887dac3eb52665d6c92/skills/hallmark) | Art direction, theme library, browser-based visual lint | No evident malicious instruction in reviewed scope. `install-hook.mjs` writes Claude settings; `imagegen.mjs` reads `TOGETHER_API_KEY` and sends prompts to `api.together.xyz`; capture scripts can operate browsers. Use design/material principles only. No hooks, API calls or scripts enabled. |
+| [UX Designer — szilu](https://github.com/szilu/ux-designer-skill/tree/c869d32fd8df7bd7fcd1db68e93bd3e89eed5161) | Usability, accessibility, mobile controls, forms, content | Documentation only in reviewed package: no executable installer or hook. Suitable guidance for visible quiz selection, uncluttered reading and touch targets. Numeric/legal claims remain references to verify when needed, not universal guarantees. |
+| [App Store Screenshots — ParthJadhav](https://github.com/ParthJadhav/app-store-screenshots/tree/e889033b68f418952cc65ba897fe2b1ec63d1564/skills/app-store-screenshots) | A separate screenshot editing/export application | Templates copy into the current directory and install packages. Migration instructions can overwrite application files. Editor endpoints write project/images/fonts to disk; their origin guard explicitly is not authentication. Never deploy this editor publicly without separate access controls. The mandatory author-showcase promotion is unrelated to our task and is not adopted. Do not scaffold it over YeahGrind. |
+| [Taste — Leonxlnx](https://github.com/Leonxlnx/taste-skill/tree/f6b76575f949707b4e3c37cd86cb44b0b98643e8/skills/taste-skill) | Strong visual direction and automated browser checks | Frontmatter has a shell Stop-hook (up to 600s); installer links live source into agent directories, so future pulls can change installed behavior. Scripts launch Chrome/CDP, write local audit output, fetch photo/icon resources and invoke child processes. No evidence of credential exfiltration in reviewed paths, but the full assets/runtime surface was not approved. Not installed or executed. |
+| [Transitions — Jakubantalik](https://github.com/Jakubantalik/transitions.dev/tree/20d70c1262bf721c0300c2946cbe1fc7605a555c/skills/transitions-dev) | CSS transitions, state changes, reduced-motion variants | The selected skill directory is text/CSS guidance; optional agent/CLI/Refine tools are separate and not enabled. Use small state-driven transitions with a reduced-motion fallback. License allows embedding/modifying transitions in a product, prohibits redistributing the library as a competing library. |
+| [Web Artifacts Builder — Anthropic](https://github.com/anthropics/skills/tree/2c5958ecac7cee2b583967a2c4981d0f4a75c579/skills/web-artifacts-builder) | Scaffold React/Vite and bundle a standalone HTML artifact | Scripts can globally install pnpm, fetch mutable package versions, rewrite configs and remove `dist`/`bundle.html`. Includes a binary shadcn bundle outside this text audit. Not needed for the existing Next.js application; do not run its scaffold/bundler here. Its suggestion to defer testing does not override our validation requirements. |
+
+No secret-stealing or system-instruction override was identified in the reviewed text. Two hidden-Unicode hits were a blank-text test fixture and a BOM-stripping expression, not concealed instructions. Instructions asking for rigid aesthetics, advertising or broad automation are treated as package defaults, not permission to change scope or disclose information.
+
+## Applied to YeahGrind
+
+- UX Designer: redundant selected-state signals, keyboard focus, 44px touch controls, reversible clean reading mode, primary actions visible above navigation.
+- Transitions: short state-driven reveals and reduced-motion handling; no perpetual decorative animation or new runtime dependency.
+- Art-direction ideas considered from Hallmark: preserve genuine brand material and avoid invented testimonials/metrics. No remote photo or generation pipeline required.
+- Screenshot editor and artifact scaffold are deliberately outside this repository's implementation.
+
+Raw review material and SHA-256 inventory: `/tmp/yeahgrind-six-skill-audit/`. Pins above are the durable source references; temporary review files can expire. No claim is made about future upstream revisions.

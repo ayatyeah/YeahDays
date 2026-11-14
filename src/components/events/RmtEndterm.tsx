@@ -1,26 +1,35 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { cases, figures, groups, modes, scenario, workedAnswers, type CaseId, type Mode } from "@/lib/events/researchMethodsEndterm/content";
 import NotesToolbar from "./NotesToolbar";
 import SelectionMenu from "./SelectionMenu";
 import styles from "./rmt-endterm.module.css";
+import Tutor from './Tutor';
+import { useTutorFocus } from '@/lib/tutorFocus';
 
 export default function RmtEndterm() {
+  const { data: session } = useSession();
   const [caseId, setCaseId] = useState<CaseId>("A");
   const [mode, setMode] = useState<Mode>("mixed");
   const [language, setLanguage] = useState<"both" | "en" | "ru">("en");
+  useEffect(() => {
+    useTutorFocus.getState().setBase({ view: 'read', partId: `rmt-${caseId}-${mode}`, step: `RMT · Case ${caseId} · ${mode}` });
+    return () => useTutorFocus.getState().setBase({});
+  }, [caseId, mode]);
   const c = cases[caseId], f = figures(caseId), answers = workedAnswers(caseId, mode);
   return <div className={styles.page} data-no-i18n>
-    <Link href="/events/courses/research-methods" className={styles.back}>← Research Methods & Tools</Link>
-    <header className={styles.header}><p className={styles.eyebrow}>RMT / Study notebook</p><h1>See the method.<br />Understand the research.</h1><p>Two source cases, worked through step by step. Explore the original mixed methods design, then see what changes in qualitative and quantitative alternatives.</p><div className={styles.badges}><span>6 worked scenarios</span><span>90 answer sections</span><span>English answers · Russian explanations</span></div></header>
-    <section className={styles.controls} aria-label="Choose your scenario">
+    <Link href="/events/courses/research-methods" className={styles.back} data-reading-chrome>← Research Methods & Tools</Link>
+    <header className={styles.header} data-reading-chrome><p className={styles.eyebrow}>RMT / Study notebook</p><h1>See the method.<br />Understand the research.</h1><p>Two source cases, worked through step by step. Explore the original mixed methods design, then see what changes in qualitative and quantitative alternatives.</p><div className={styles.badges}><span>6 worked scenarios</span><span>90 answer sections</span><span>English answers · Russian explanations</span></div></header>
+    <section data-reading-chrome className={styles.controls} aria-label="Choose your scenario">
       <div className={styles.caseButtons}>{(["A", "B"] as const).map(id => <button key={id} aria-pressed={caseId === id} onClick={() => setCaseId(id)}>Case {id}<small>{cases[id].title}</small></button>)}</div>
       <div className={styles.modeButtons}>{modes.map(m => <button key={m.id} aria-pressed={mode === m.id} onClick={() => setMode(m.id)}>{m.id === "mixed" ? "Mixed methods" : m.id === "qualitative" ? "Qualitative" : "Quantitative · RCT"}<small>{m.id === "mixed" ? "Work through the source case" : m.id === "qualitative" ? "Explore experience and context" : "Compare intervention and control"}</small></button>)}</div>
     </section>
-    <div className={styles.sticky}><nav aria-label="Tasks">{groups.map((_, i) => <a key={i} href={`#rmt-task-${i+1}`}>Task {i+1}</a>)}</nav><label>Reading language <select value={language} onChange={e => setLanguage(e.target.value as typeof language)}><option value="both">EN + RU</option><option value="en">English answers</option><option value="ru">Русский разбор</option></select></label></div>
+    <div className={`${styles.sticky} g-clean-language`}><nav aria-label="Tasks">{groups.map((_, i) => <a key={i} href={`#rmt-task-${i+1}`}>Task {i+1}</a>)}</nav><label>Reading language <select value={language} onChange={e => setLanguage(e.target.value as typeof language)}><option value="both">EN + RU</option><option value="en">English answers</option><option value="ru">Русский разбор</option></select></label></div>
     <NotesToolbar lang={language === "ru" ? "ru" : "en"} onLang={setLanguage} showLanguage={false} />
-    <SelectionMenu allowTutor={false} />
+    {session?.user?.id && <Tutor event={{ id: 'research-methods-endterm' }} userId={session.user.id}/>}
+    <SelectionMenu />
     <section className={styles.case} aria-label="Selected research scenario">
       <p className={styles.eyebrow}>{mode === "mixed" ? "Source scenario · 30 points" : "Practice scenario · adapted from the source"}</p>
       <h2>Case {caseId} · {c.title}</h2>

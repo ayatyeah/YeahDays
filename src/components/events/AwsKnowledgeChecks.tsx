@@ -21,34 +21,34 @@ export default function AwsKnowledgeChecks({ answers, onAnswer }: { answers: Rec
   if (mode === "quiz") return <EventQuiz key={run} eventId="cloud-computing-endterm"
     step={{ title: { ru: "AWS Cloud Developing · Knowledge Checks", en: "AWS Cloud Developing · Knowledge Checks" } }}
     quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, correct: q.answers, why: { ru: q.explanation, en: q.explanation }, caution: q.caution }))}
-    lang="ru" music={music} onMusic={() => setMusic(v => !v)} onAnswer={onAnswer}
-    onExit={() => { if (confirm("Выйти из теста? Текущая попытка завершится.")) setMode("intro"); }}
+    lang="en" music={music} onMusic={() => setMusic(v => !v)} onAnswer={onAnswer}
+    onExit={() => { if (confirm("Exit the quiz? This attempt will end.")) setMode("intro"); }}
     onFinish={values => { setResult(values); setMode("result"); }} />;
   if (mode === "result") return <section className="space-y-5">
     <div className="rounded-3xl border border-violet-400/30 bg-violet-500/10 p-5 space-y-3">
-      <h2 className="text-xl font-bold">Knowledge Check завершён</h2>
+      <h2 className="text-xl font-bold">Knowledge Check complete</h2>
       <p className="text-5xl font-bold">{Math.round((queue.length - mistakes.length) / queue.length * 100)}%</p>
-      <p>Верных ответов: {queue.length - mistakes.length} из {queue.length}</p>
+      <p>Correct answers: {queue.length - mistakes.length} of {queue.length}</p>
     </div>
-    <div className="flex flex-wrap gap-3"><Button onClick={() => start(queue)}>Пройти ещё раз</Button>
-      {!!mistakes.length && <Button onClick={() => start(mistakes)}>Повторить ошибки ({mistakes.length})</Button>}
-      <Button onClick={() => setMode("intro")}>К выбору модуля</Button></div>
+    <div className="flex flex-wrap gap-3"><Button onClick={() => start(queue)}>Try again</Button>
+      {!!mistakes.length && <Button onClick={() => start(mistakes)}>Review mistakes ({mistakes.length})</Button>}
+      <Button onClick={() => setMode("intro")}>Choose another module</Button></div>
     {mistakes.map(q => <article key={q.id} className="rounded-3xl border border-[var(--color-border)] p-5 space-y-3">
       <h3 lang="en" className="font-semibold whitespace-pre-wrap">{q.prompt}</h3>
-      <p>Правильный ответ: {q.answers.map(i => q.options[i]).join("; ")}</p>
+      <p>Correct answer: {q.answers.map(i => q.options[i]).join("; ")}</p>
       <p lang="en">{q.explanation}</p>
     </article>)}
   </section>;
   return <section className="rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 space-y-5" data-testid="aws-knowledge-checks">
     <h2 className="text-xl font-bold">AWS Cloud Developing — Knowledge Checks</h2>
-    <p>{questions.length} вопросов из {modules.length} проверок курса AWS Academy. Оригинальные вопросы, варианты и разборы AWS на английском. После ответа можно попросить ИИ объяснить по-русски.</p>
-    <label>Выбери модуль<select value={module} onChange={e => setModule(Number(e.target.value))}>
-      <option value={0}>Все модули — {questions.length} вопросов</option>
+    <p>{questions.length} questions from {modules.length} AWS Academy knowledge checks. Questions, options and explanations are in English. You can ask the assistant to explain an answer in Russian.</p>
+    <label>Choose a module<select value={module} onChange={e => setModule(Number(e.target.value))}>
+      <option value={0}>All modules — {questions.length} questions</option>
       {modules.map(m => <option key={m.module} value={m.module}>{m.moduleTitle}</option>)}
     </select></label>
-    <p>Пройдено в этом наборе: {selected.filter(q => answers[q.id]).length} из {selected.length}. Сначала ответ, затем разбор и следующий вопрос.</p>
-    <div className="flex flex-wrap gap-3"><Button variant="primary" onClick={() => start()}>Начать тест — {selected.length} вопросов</Button>
-      {!!savedMistakes.length && <Button onClick={() => start(savedMistakes)}>Повторить прошлые ошибки ({savedMistakes.length})</Button>}</div>
-    <p className="text-sm text-[var(--color-muted)]">Источник: <a className="underline" href="https://awsacademy.instructure.com/courses/193042/modules" target="_blank" rel="noreferrer">AWS Academy Cloud Developing, курс 193042</a>. Это отдельный банк проверок курса; совпадение с вопросами будущего экзамена не подтверждено.</p>
+    <p>Completed in this set: {selected.filter(q => answers[q.id]).length} of {selected.length}. Answer, read the explanation, then continue.</p>
+    <div className="flex flex-wrap gap-3"><Button variant="primary" onClick={() => start()}>Start quiz — {selected.length} questions</Button>
+      {!!savedMistakes.length && <Button onClick={() => start(savedMistakes)}>Review previous mistakes ({savedMistakes.length})</Button>}</div>
+    <p className="text-sm text-[var(--color-muted)]">Source: <a className="underline" href="https://awsacademy.instructure.com/courses/193042/modules" target="_blank" rel="noreferrer">AWS Academy Cloud Developing, course 193042</a>. This is a separate practice bank. It is not a prediction of future exam questions.</p>
   </section>;
 }

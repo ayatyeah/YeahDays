@@ -20,6 +20,7 @@ export default function ThemeApplier() {
     // тёмная полоса, зашитая в metadata.viewport (статична на сервере).
     const meta = document.querySelector('meta[name="theme-color"]');
     const inApp = !!document.querySelector(".yg-app");
+    if (document.querySelector('[data-atlas-site]')) { meta?.setAttribute('content', theme === 'dark' ? '#12231c' : '#f1f0e8'); return; }
     if (document.querySelector(".final-shell, .final-site, .final-auth")) { meta?.setAttribute("content", theme === "dark" ? "#141923" : "#f5f7fa"); return; }
     if (meta)
       meta.setAttribute(

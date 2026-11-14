@@ -787,14 +787,14 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
                 </Button>
               </div>, document.body
             )}
-            <header className={event.id === "computer-networks-endterm" ? "pt-12" : undefined}>
+            <header data-reading-chrome className={event.id === "computer-networks-endterm" ? "pt-12" : undefined}>
               <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
               <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
                 {event.lectures[view.step.lecture!].title[lang]} · часть {view.step.part! + 1} из {event.lectures[view.step.lecture!].parts.length}
               </p>
               <h1 className="mt-2 text-2xl font-bold">{part.title[lang]}</h1>
             </header>
-            <div className="flex flex-wrap gap-2">
+            <div data-reading-chrome className="flex flex-wrap gap-2">
               <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => notesMode("scroll", view.step)}>📜 Scroll-mode</Button>
               <SpeakButton text={part.notes[lang]} lang={lang} />
               {shelves.lectures[view.step.lecture!].parts[view.step.part!].count > 0 && (

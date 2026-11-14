@@ -12,6 +12,7 @@
 import { geminiAvailable, streamGeminiTutor } from "@/lib/geminiTutor";
 import { recordAiUsage } from "@/lib/aiUsage";
 import { cloudTutorEvent } from "@/lib/events/cloudComputingEndterm/tutor";
+import { rmtTutorEvent } from "@/lib/events/researchMethodsEndterm/tutor";
 import cloudQuestions from "@/lib/events/cloudComputingEndterm/questions.json";
 import knowledgeChecks from "@/lib/events/cloudComputingEndterm/knowledgeChecks.json";
 import { findEvent } from "@/lib/events";
@@ -223,7 +224,7 @@ export function cleanMessages(raw: unknown): TutorMessage[] {
 }
 
 export function findTutorEvent(id: unknown) {
-  return id === cloudTutorEvent.id ? cloudTutorEvent : typeof id === "string" ? findEvent(id) : undefined;
+  return id === cloudTutorEvent.id ? cloudTutorEvent : id === rmtTutorEvent.id ? rmtTutorEvent : typeof id === "string" ? findEvent(id) : undefined;
 }
 
 /**

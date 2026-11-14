@@ -131,6 +131,13 @@ describe("streamTutor", () => {
 });
 
 describe("cloud endterm tutor", () => {
+  it("loads the revision chapter selected in the clean reader", () => {
+    const cloud = findTutorEvent("cloud-computing-endterm")!;
+    const context = tutorContext(cloud, { view: "read", partId: "cce-2" });
+    expect(context).toContain("Notes part open");
+    expect(context).toContain("Shared responsibility");
+    expect(context).toContain("security IN the cloud");
+  });
   it("resolves the standalone event and its lecture notes", () => {
     const cloud = findTutorEvent("cloud-computing-endterm")!;
     expect(cloud).toBeDefined();
@@ -144,4 +151,13 @@ describe("cloud endterm tutor", () => {
     const after = cleanFocus({ quiz: { question: "Q", options: ["a", "b", "c"], picked: 0, pickedMany: [0, 2], correctMany: [0, 2] } });
     expect(tutorContext(cloud, after)).toContain("Student picked A, C; correct is A, C");
   });
+});
+
+it("uses the selected RMT design with its practice-data caveat", () => {
+  const rmt = findTutorEvent("research-methods-endterm")!;
+  const context = tutorContext(rmt, { view: "read", partId: "rmt-B-quantitative" });
+  expect(context).toContain("Case B");
+  expect(context).toContain("quantitative");
+  expect(context).toContain("Source data are fictional");
+  expect(rmt.lectures[0].parts).toHaveLength(6);
 });

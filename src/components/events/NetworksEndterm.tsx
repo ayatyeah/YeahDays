@@ -44,9 +44,9 @@ export default function NetworksEndterm({ userId, onExit }: { userId: string; on
   const pages = Math.max(1, Math.ceil(filtered.length / 20));
   const seconds = attempt ? Math.max(0,Math.ceil((attempt.deadline-now)/1000)) : 2700;
   return <div className="space-y-5" data-no-i18n data-testid="cn-endterm">
-    <Button variant="ghost" onClick={onExit}>← Back to the course</Button>
-    <h1 className="text-2xl font-bold">Computer Networks · Study notebook</h1>
-    <nav aria-label="Study sections" className="flex flex-wrap gap-2">
+    <Button data-reading-chrome variant="ghost" onClick={onExit}>← Back to the course</Button>
+    <h1 data-reading-chrome className="text-2xl font-bold">Computer Networks · Study notebook</h1>
+    <nav data-reading-chrome aria-label="Study sections" className="flex flex-wrap gap-2">
       {[["express","Quick review"],["materials","Materials"],["notes","Notes"],["bank","Question bank"],["sample","Exam sample"],["exam","Practice exam"]].map(([id,label]) => <Button key={id} variant={tab === id ? "primary" : "ghost"} aria-pressed={tab === id} onClick={() => setTab(id)}>{label}</Button>)}
     </nav>
     {tab === "express" && <NetworksExpress userId={userId} onExam={() => setTab("exam")} onReview={m => {setReviewModule(m);setTab("notes");}} />}

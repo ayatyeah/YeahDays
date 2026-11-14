@@ -56,14 +56,14 @@ export default function EventQuiz({
     <>
       <header className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <button className="text-sm underline" onClick={onExit}>← Выйти</button>
-          <button className="text-sm underline" onClick={() => openTutor()}>✦ ИИ-помощник</button>
+          <button className="text-sm underline" onClick={onExit}>← Exit quiz</button>
+          <button className="text-sm underline" onClick={() => openTutor()}>✦ AI assistant</button>
           <button
             className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm"
             aria-pressed={music}
             onClick={onMusic}
           >
-            {music ? "♪ Музыка: вкл" : "♪ Музыка: выкл"}
+            {music ? "♪ Music: on" : "♪ Music: off"}
           </button>
         </div>
         <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{step.title[tl]}</p>
@@ -77,49 +77,49 @@ export default function EventQuiz({
           >
             <div className="h-full rounded-full bg-violet-400 transition-[width]" style={{ width: `${((index + (answered ? 1 : 0)) / quiz.length) * 100}%` }} />
           </div>
-          <span className="shrink-0 text-sm tabular-nums">Вопрос {index + 1} из {quiz.length}</span>
+          <span className="shrink-0 text-sm tabular-nums">Question {index + 1} of {quiz.length}</span>
         </div>
       </header>
 
       <section className={panel}>
         <h2 data-selection-question lang="en" className="whitespace-pre-wrap break-words text-lg font-semibold leading-snug">{item.q}</h2>
-        {multi && <p className="mt-3 text-sm">Выбери {expected.length} варианта.</p>}
+        {multi && <p className="mt-3 text-sm" role="status">Choose {expected.length} answers · Selected: {(picked ?? selected).length} / {expected.length}</p>}
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => {
             const right = answered && expected.includes(i);
             const wrong = answered && picked?.includes(i) && expected.length > 0 && !expected.includes(i);
+            const chosen = (picked ?? selected).includes(i);
             return (
               <button
                 key={`${item.id}-${i}`}
                 data-selection-question data-quiz-answer lang="en"
                 data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
                 aria-disabled={answered}
-                aria-pressed={(picked ?? selected).includes(i)}
+                aria-pressed={chosen}
                 onClick={() => { if (!answered) { if (multi) setSelected(selected.includes(i) ? selected.filter(n => n !== i) : [...selected, i]); else submit([i]); } }}
                 className={cn(
                   "relative block w-full rounded-2xl border p-3 text-left text-[15px] transition",
                   right ? "border-emerald-400 bg-emerald-500/15" : wrong ? "border-red-400 bg-red-500/15" : "border-[var(--color-border)]",
                   !answered && "hover:bg-[var(--color-surface-2)]",
-                  !answered && selected.includes(i) && "border-violet-400 bg-violet-500/15",
                   answered && !right && !wrong && "opacity-60",
                 )}
               >
-                <span className="quiz-answer-mark" aria-hidden="true">{right ? "✓" : wrong ? "✗" : ""}</span><span>{item.labels && `${item.labels[i]}. `}{option}</span>
+                <span className="quiz-answer-mark" data-checkbox={multi && !answered ? "true" : undefined} aria-hidden="true">{right ? "✓" : wrong ? "✗" : chosen ? "✓" : ""}</span><span>{item.labels && `${item.labels[i]}. `}{option}</span>
               </button>
             );
           })}
         </div>
 
-        {multi && !answered && <Button variant="primary" className="mt-4 w-full" disabled={selected.length !== expected.length} onClick={() => submit(selected)}>Проверить</Button>}
+        {multi && !answered && <Button variant="primary" className="mt-4 w-full" disabled={selected.length !== expected.length} onClick={() => submit(selected)}>Check answers</Button>}
         {answered && (
           <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
-              <p className="font-semibold">{!expected.length ? "Разбор без оценки" : matchesAnswer(picked, expected) ? "Верно" : "Неверно"}</p>
+              <p className="font-semibold">{!expected.length ? "Explanation only" : matchesAnswer(picked, expected) ? "Correct" : "Not quite"}</p>
               {item.caution && <p className="mt-2">{item.caution}</p>}
               <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
-              {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Конспект: {item.studyLink.title} ↗</a>}
+              {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Study notes: {item.studyLink.title} ↗</a>}
               {item.optionExplanations && <details className="mt-4 border-t border-[var(--color-border)] pt-3">
-                <summary className="cursor-pointer font-semibold">Почему варианты подходят или не подходят</summary>
+                <summary className="cursor-pointer font-semibold">Why each option works or does not</summary>
                 <ul className="mt-3 space-y-4">{item.options.map((option, i) => <li key={i}>
                   <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. {option}</p>
                   <p data-selection-question className="mt-1">{item.optionExplanations?.[i]}</p>
@@ -141,11 +141,11 @@ export default function EventQuiz({
             </div>
           </div>
         )}
-        <nav ref={feedback} className="mt-4 flex gap-3 scroll-mb-28" aria-label="Переходы между вопросами">
-          <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Назад</Button>
+        <nav ref={feedback} className="mt-4 flex gap-3 scroll-mb-28" aria-label="Question navigation">
+          <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Back</Button>
           <Button variant="primary" className="flex-1" disabled={!answered}
             onClick={() => { if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1); }}>
-            {index + 1 === quiz.length ? "Завершить квиз" : "Дальше"}
+            {index + 1 === quiz.length ? "Finish quiz" : "Next"}
           </Button>
         </nav>
       </section>

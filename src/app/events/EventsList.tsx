@@ -26,12 +26,6 @@ export interface EventSummary {
   workedSolutions?: number;
 }
 
-const plural = (n: number, one: string, few: string, many: string) => {
-  const d = n % 10;
-  const dd = n % 100;
-  return d === 1 && dd !== 11 ? one : d >= 2 && d <= 4 && (dd < 12 || dd > 14) ? few : many;
-};
-
 /**
  * Список ивентов раздела «Учёба». Ивенты общие для всех; у каждого человека
  * свой прогресс — он подставляется уже в браузере, поэтому до загрузки
@@ -48,10 +42,10 @@ export default function EventsList({ events, course }: { events: EventSummary[];
   }, [userId, events]);
 
   return (
-    <div className="yg-stagger mx-auto w-full max-w-3xl space-y-5 pb-6">
+    <div lang="en" data-no-i18n className="yg-stagger mx-auto w-full max-w-3xl space-y-5 pb-6">
       <header>
-        <Link href="/events" className="text-sm underline">← Все курсы</Link>
-        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>Ивенты курса: выбери экзамен или тренировку.</p></div></div>
+        <Link href="/events" className="text-sm underline">← All courses</Link>
+        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>Choose a revision event or a practice session.</p></div></div>
       </header>
 
       {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted); свежие — сверху */}
@@ -66,32 +60,32 @@ export default function EventsList({ events, course }: { events: EventSummary[];
             onTouchStart={() => preloadEvent(event.id)}
             href={`/events/${event.id}`}
             data-event-card
-            className="block rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-500/15 via-[var(--color-surface)] to-sky-500/10 p-5"
+            className="f-event-card"
           >
-            <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{event.course}</p>
+            <p className="text-xs text-[var(--color-muted)]">{event.course}</p>
             <h2 className="mt-3 text-2xl font-bold">{event.title}</h2>
             <p className="mt-2 text-sm leading-relaxed">{event.description}</p>
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
-              {event.mocks > 0 && <span className="rounded-xl bg-sky-500/15 px-3 py-2 font-semibold">{event.mocks} {plural(event.mocks, "пробный вариант", "пробных варианта", "пробных вариантов")}</span>}
-              {event.practice && <span className="rounded-xl bg-amber-500/15 px-3 py-2 font-semibold">Практикум: тренажёр, «Найди баг», песочница</span>}
-              {event.lectures > 0 && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} {plural(event.lectures, "лекция", "лекции", "лекций")}</span>}
-              {event.workedSolutions && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.workedSolutions} полных разборов</span>}
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} частей</span>
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} {event.workedSolutions ? "разобранных подпунктов" : "вопросов в банке"}</span>
-              {!event.independentProgress && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.steps.length} шагов</span>}
+              {event.mocks > 0 && <span className="rounded-xl bg-sky-500/15 px-3 py-2 font-semibold">{event.mocks} practice variants</span>}
+              {event.practice && <span className="rounded-xl bg-amber-500/15 px-3 py-2 font-semibold">Practice: drills, debugging and sandbox</span>}
+              {event.lectures > 0 && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} lectures</span>}
+              {event.workedSolutions && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.workedSolutions} worked examples</span>}
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} parts</span>
+              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} {event.workedSolutions ? "worked subparts" : "questions"}</span>
+              {!event.independentProgress && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.steps.length} steps</span>}
             </div>
             {mine && (
               <div className="mt-4">
                 <div className="flex justify-between text-sm">
-                  <span>{mine.done ? `Пройдено шагов: ${mine.done} из ${mine.total}` : "Ещё не начато"}</span>
-                  <strong>{mine.earned ? "🏆 Пройден · " : ""}Готовность {mine.percent}%</strong>
+                  <span>{mine.done ? `${mine.done} of ${mine.total} steps completed` : "Not started yet"}</span>
+                  <strong>{mine.earned ? "Completed · " : ""}Readiness {mine.percent}%</strong>
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--color-surface-2)]">
                   <div className="h-full rounded-full bg-violet-400" style={{ width: `${mine.percent}%` }} />
                 </div>
               </div>
             )}
-            <p className="mt-4 font-semibold">{mine?.done ? "Продолжить →" : "Начать →"}</p>
+            <p className="mt-4 font-semibold">{mine?.done ? "Continue →" : "Start →"}</p>
           </Link>
         );
       })}

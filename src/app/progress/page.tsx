@@ -1,17 +1,3 @@
-import type { Metadata } from "next";
-import AppShell from "@/components/AppShell";
-
-/**
- * Прогресс — точка входа в оболочку приложения.
- *
- * Маршрут остаётся ради deep-link (уведомления, ярлыки манифеста, обычная
- * ссылка), но внутри приложения переключение сюда идёт без навигации:
- * это раздел одной оболочки, а не отдельная страница.
- */
-export const metadata: Metadata = {
-  title: "Прогресс — YeahGrind",
-};
-
-export default function Page() {
-  return <AppShell initialTab="progress" />;
-}
+import FinalWorkspace from '@/components/final/FinalWorkspace';
+export const metadata = { title: 'Your progress | YeahGrind' };
+export default function Page() { return <FinalWorkspace view="progress"/>; }

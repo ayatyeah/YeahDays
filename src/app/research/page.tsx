@@ -1,2 +1,3 @@
-import { redirect } from 'next/navigation';
-export default function Page(){redirect('/rmt');}
+import ResearchPage from '@/components/final/ResearchPage';
+export const metadata = { title: 'The research | YeahGrind', description: 'The research question, reported comparison and limitations behind YeahGrind.' };
+export default function Page() { return <ResearchPage/>; }

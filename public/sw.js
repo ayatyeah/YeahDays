@@ -25,8 +25,8 @@ const PRECACHE = [
   "/events",
   "/offline",
   "/manifest.webmanifest",
-  "/favicon-v3.png",
-  "/icon-192-v3.png",
+  "/favicon-v4.png",
+  "/icon-192-v4.png",
   "/logo.webp",
   "/logo-white.webp",
   "/characters/slim.webp",
@@ -336,8 +336,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || "",
-      icon: "/icon-192-v3.png",
-      badge: "/favicon-v3.png",
+      icon: "/icon-192-v4.png",
+      badge: "/favicon-v4.png",
       tag,
       // renotify true осмысленно только с тем же тегом: обновление статуса
       // задачи должно заменять прошлое уведомление, а не копиться стопкой

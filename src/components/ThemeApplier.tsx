@@ -20,6 +20,7 @@ export default function ThemeApplier() {
     // тёмная полоса, зашитая в metadata.viewport (статична на сервере).
     const meta = document.querySelector('meta[name="theme-color"]');
     const inApp = !!document.querySelector(".yg-app");
+    if (document.querySelector(".final-shell, .final-site, .final-auth")) { meta?.setAttribute("content", "#f6f8fc"); return; }
     if (meta)
       meta.setAttribute(
         "content",

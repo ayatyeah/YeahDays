@@ -25,7 +25,7 @@ export async function GET() {
   }
 
   try {
-    const [user, events, state, personalization, learning, lms, providers, research, studyWorkspace] = await Promise.all([
+    const [user, events, state, personalization, learning, lms, providers, research, studyWorkspace, finalStudy] = await Promise.all([
       prisma.user.findUnique({
         where: { id: userId },
         select: {
@@ -53,6 +53,7 @@ export async function GET() {
       prisma.account.findMany({ where: { userId }, select: { provider: true, providerAccountId: true } }),
       prisma.researchParticipant.findUnique({ where: { userId } }),
       prisma.studyWorkspace.findUnique({ where: { userId } }),
+      prisma.finalStudyWorkspace.findUnique({ where: { userId } }),
     ]);
 
     const [communityProfile, memberships, posts, attendance, reports, chat, chatHistory, challenge30, eventProgress, eventReports, socialPosts, socialLikes, following, followers] = await Promise.all([
@@ -77,7 +78,7 @@ export async function GET() {
       account: user,
       progress: state?.data ?? null,
       progressUpdatedAt: state?.clientAt ?? null,
-      personalization, learning, lms, providers, research, studyWorkspace,
+      personalization, learning, lms, providers, research, studyWorkspace, finalStudy,
       community: { profile: communityProfile, memberships, posts, attendance, reports },
       chat, chatHistory, challenge30, eventProgress, eventReports,
       social: { posts: socialPosts.map((p) => ({ ...p, media: p.media.map((m) => ({ url: `/api/media/${m.id}`, width: m.width, height: m.height, bytes: m.bytes })) })), likes: socialLikes, following, followers },

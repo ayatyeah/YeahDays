@@ -173,8 +173,8 @@ export async function showNow(item: {
     if (!reg) return false;
     await reg.showNotification(item.title, {
       body: item.body,
-      icon: "/icon-192-v3.png",
-      badge: "/favicon-v3.png",
+      icon: "/icon-192-v4.png",
+      badge: "/favicon-v4.png",
       tag: item.tag ?? "yd-now",
       data: { url: item.url ?? "/app" },
     });
@@ -224,8 +224,8 @@ async function scheduleLocally(item: NotifyItem): Promise<boolean> {
 
     const options: TriggerOptions = {
       body: item.body,
-      icon: "/icon-192-v3.png",
-      badge: "/favicon-v3.png",
+      icon: "/icon-192-v4.png",
+      badge: "/favicon-v4.png",
       tag: item.key,
       data: { url: item.url, key: item.key, taskId: item.taskId, kind: item.kind },
       showTrigger: new Ctor(item.at),

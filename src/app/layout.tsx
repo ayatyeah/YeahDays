@@ -3,7 +3,6 @@ import OrdinaryRuntime from "@/components/OrdinaryRuntime";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import HistoryNavigation from "@/components/HistoryNavigation";
 import Shell from "@/components/Shell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -45,21 +44,21 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE,
     siteName: "YeahGrind",
-    locale: "ru_RU",
-    title: "YeahGrind — одно действие в день",
-    description: "Четыре недели небольших заданий, обратной связи и видимого прогресса.",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "YeahGrind — одно действие в день" }],
+    locale: "en_US",
+    title: "YeahGrind — Make learning a practice",
+    description: "A personal study plan, focused sessions and progress you can see.",
+    images: [{ url: "/og-final.png", width: 1200, height: 630, alt: "YeahGrind — Make learning a practice" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "YeahGrind — одно действие в день",
-    description: "Четыре недели небольших заданий, обратной связи и видимого прогресса.",
-    images: ["/og.png"],
+    title: "YeahGrind — Make learning a practice",
+    description: "A personal study plan, focused sessions and progress you can see.",
+    images: ["/og-final.png"],
   },
   applicationName: "YeahGrind",
-  title: "YeahGrind — одно действие в день",
+  title: "YeahGrind — Make learning a practice",
   description:
-    "Выполняйте небольшие задания, получайте обратную связь и наблюдайте за своим прогрессом.",
+    "Turn your learning goal into concrete exercises, focused practice and personal progress.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
@@ -71,43 +70,43 @@ export const metadata: Metadata = {
     // размерам экрана — iPhone SE … 16 Pro Max, портрет.
     startupImage: [
       {
-        url: "/splash/1320x2868.png",
+        url: "/splash/1320x2868-final.png",
         media: "(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1290x2796.png",
+        url: "/splash/1290x2796-final.png",
         media: "(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1284x2778.png",
+        url: "/splash/1284x2778-final.png",
         media: "(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1242x2688.png",
+        url: "/splash/1242x2688-final.png",
         media: "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1206x2622.png",
+        url: "/splash/1206x2622-final.png",
         media: "(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1179x2556.png",
+        url: "/splash/1179x2556-final.png",
         media: "(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1170x2532.png",
+        url: "/splash/1170x2532-final.png",
         media: "(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1125x2436.png",
+        url: "/splash/1125x2436-final.png",
         media: "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/828x1792.png",
+        url: "/splash/828x1792-final.png",
         media: "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)",
       },
       {
-        url: "/splash/750x1334.png",
+        url: "/splash/750x1334-final.png",
         media: "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)",
       },
     ],
@@ -120,21 +119,21 @@ export const metadata: Metadata = {
     // ориентируются именно на него
     "mobile-web-app-capable": "yes",
   },
-  // Суффикс -v3 в именах иконок: iOS и Safari кэшируют файл по адресу и
+  // Суффикс -v4 в именах иконок: iOS и Safari кэшируют файл по адресу и
   // после смены картинки продолжали показывать старую даже у заново
   // добавленного ярлыка. Новое имя — единственный надёжный сброс.
   icons: {
     icon: [
-      { url: "/favicon-v3.png", sizes: "64x64", type: "image/png" },
-      { url: "/icon-192-v3.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512-v3.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon-v4.png", sizes: "64x64", type: "image/png" },
+      { url: "/icon-192-v4.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512-v4.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: "/apple-icon-v3.png",
+    apple: "/apple-icon-v4.png",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#255841",
+  themeColor: "#f6f8fc",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
@@ -155,7 +154,7 @@ export default async function RootLayout({
   // клиентский рендер этого атрибута расходятся намеренно; это ожидаемо
   // и не патчится React, но без флага заливает консоль лишним варнингом.
   return (
-    <html lang="ru" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
@@ -166,7 +165,6 @@ export default async function RootLayout({
         <AppModeProvider mode="normal">
         <AuthProvider>
           <ErrorBoundary>
-            <HistoryNavigation />
             <Shell>{children}</Shell>
           </ErrorBoundary>
           <OrdinaryRuntime />

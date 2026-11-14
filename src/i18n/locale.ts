@@ -6,9 +6,9 @@ import { persist } from "zustand/middleware";
 export type Locale = "ru" | "en" | "kk";
 
 export const LOCALES: { id: Locale; label: string }[] = [
+  { id: "en", label: "English" },
   { id: "ru", label: "Русский" },
   { id: "kk", label: "Қазақша" },
-  { id: "en", label: "English" },
 ];
 
 /** Тот же ключ читает инлайн-скрипт в layout.tsx — менять вместе. */
@@ -27,10 +27,10 @@ interface LocaleState {
 export const useLocaleStore = create<LocaleState>()(
   persist(
     (set) => ({
-      locale: "ru",
+      locale: "en",
       setLocale: (locale) => set({ locale }),
     }),
-    { name: LOCALE_KEY },
+    { name: LOCALE_KEY, version: 1, migrate: () => ({ locale: "en" as Locale }) },
   ),
 );
 

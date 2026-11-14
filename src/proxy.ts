@@ -15,7 +15,7 @@ export default auth(req=>{
   // API routes keep their own authentication and authorization checks.
   if(path.startsWith('/api/'))return;
   // The RMT version picker was removed: old links open the main page.
-  if(path==='/versions'||path==='/research')return NextResponse.redirect(new URL('/',req.nextUrl.origin));
+  if(path==='/versions')return NextResponse.redirect(new URL('/',req.nextUrl.origin));
   if(path.startsWith('/admin'))return;
   if(req.auth||!needsLogin(path))return;
   const to=new URL(door(req),req.nextUrl.origin);to.searchParams.set('callbackUrl',path+req.nextUrl.search);return NextResponse.redirect(to);

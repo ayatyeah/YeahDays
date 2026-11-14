@@ -1,3 +1,4 @@
+import { catalogCopy } from "./catalogCopy";
 import { rmtEndtermSummary } from "./researchMethodsEndterm/meta";
 import { EVENTS } from "./index";
 import { steps } from "./engine";
@@ -17,5 +18,5 @@ export function eventSummaries(): EventSummary[] {
     mocks: e.mocks?.length ?? 0,
     practice: !!e.practice,
     steps: steps(e).map(s => ({ id: s.id, kind: s.kind })),
-  }))];
+  }))].map(event => ({ ...event, ...catalogCopy[event.id] }));
 }

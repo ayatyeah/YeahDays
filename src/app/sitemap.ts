@@ -5,6 +5,7 @@ const SITE = "https://yeahgrind.site";
 /** Публичные страницы — те же, что открыты без входа в src/proxy.ts. */
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
+    { url: `${SITE}/research`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE}/register`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE}/login`, changeFrequency: "monthly", priority: 0.5 },

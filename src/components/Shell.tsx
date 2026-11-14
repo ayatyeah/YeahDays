@@ -9,8 +9,8 @@ import "./mono/mono.css";
 import "./dayflow/dayflow.css";
 import "./capsule-nav.css";
 import "./dayflow/polish.css";
-const AppChrome = dynamic(() => import("./AppChrome"));
-const PUBLIC = new Set(["/", "/ordinary", "/terms", "/privacy", "/login", "/login/lms", "/register", "/forgot-password", "/oauth/authorize"]);
+const AppChrome = dynamic(() => import("./final/FinalChrome"));
+const PUBLIC = new Set(["/", "/ordinary", "/terms", "/privacy", "/privacy/legacy", "/terms/legacy", "/login", "/login/lms", "/register", "/forgot-password", "/oauth/authorize"]);
 const AUTH = new Set(["/login", "/login/lms", "/register", "/forgot-password"]);
 export default function Shell({ children }: { children: React.ReactNode }) {
   const path = usePathname();

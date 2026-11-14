@@ -1,9 +1,9 @@
 {
   "id": "/app",
-  "name": "YeahGrind — одно действие в день",
+  "name": "YeahGrind \u2014 Make learning a practice",
   "short_name": "YeahGrind",
-  "description": "План на сегодня, учебные маршруты и прогресс персонажа.",
-  "start_url": "/today",
+  "description": "Personal study plans, focused practice, course events and visible progress.",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "display_override": [
@@ -12,9 +12,9 @@
     "browser"
   ],
   "orientation": "portrait",
-  "background_color": "#08080b",
-  "theme_color": "#08080b",
-  "lang": "ru",
+  "background_color": "#f6f8fc",
+  "theme_color": "#f6f8fc",
+  "lang": "en",
   "dir": "ltr",
   "prefer_related_applications": false,
   "launch_handler": {
@@ -25,92 +25,47 @@
   },
   "handle_links": "preferred",
   "categories": [
-    "productivity",
-    "lifestyle",
-    "health"
+    "education",
+    "productivity"
   ],
   "icons": [
     {
-      "src": "/icon-192-v3.png",
+      "src": "/icon-192-v4.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-512-v3.png",
+      "src": "/icon-512-v4.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/icon-maskable-512-v3.png",
+      "src": "/icon-maskable-512-v4.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/shots/deck.png",
-      "sizes": "560x1212",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Колода действий на сегодня"
-    },
-    {
-      "src": "/shots/today.png",
-      "sizes": "560x1212",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "План на день"
-    },
-    {
-      "src": "/shots/progress.png",
-      "sizes": "560x1212",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Прогресс и персонаж"
-    }
-  ],
   "shortcuts": [
     {
-      "name": "План на сегодня",
-      "short_name": "Сегодня",
-      "description": "Что взято на день и что осталось закрыть",
-      "url": "/today?source=shortcut",
-      "icons": [
-        {
-          "src": "/shortcut-today-v3.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "name": "Study plan",
+      "short_name": "Study plan",
+      "description": "Continue your next exercise",
+      "url": "/learn?source=shortcut"
     },
     {
-      "name": "Колода действий",
-      "short_name": "Колода",
-      "description": "Подобрать, что сделать прямо сейчас",
-      "url": "/app?source=shortcut",
-      "icons": [
-        {
-          "src": "/shortcut-deck-v3.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "name": "Events",
+      "short_name": "Events",
+      "description": "Open course notes and revision",
+      "url": "/events?source=shortcut"
     },
     {
-      "name": "Прогресс",
-      "short_name": "Прогресс",
-      "description": "Уровень, стрик и характеристики",
-      "url": "/progress?source=shortcut",
-      "icons": [
-        {
-          "src": "/shortcut-chart-v3.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
+      "name": "Progress",
+      "short_name": "Progress",
+      "description": "Review completed tasks and reflections",
+      "url": "/progress?source=shortcut"
     }
   ]
 }

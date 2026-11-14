@@ -1,8 +1,8 @@
 /** Never echo provider-supplied error text or tokens into the page. */
 export function oauthErrorMessage(error: string | null): string | null {
   if (!error) return null;
-  if (error === "OAuthAccountNotLinked") return "Эта учётная запись не привязана к текущему профилю. Войди привычным способом и подключи Microsoft или Google в настройках профиля.";
-  if (error === "AccessDenied") return "Вход не разрешён. Для Microsoft используй учётную запись AITU, для Google — аккаунт с подтверждённой почтой. Если доступ закрыт по ошибке, напиши владельцу сервиса.";
-  if (error === "Configuration") return "Вход временно недоступен: требуется настройка на сервере.";
-  return "Не удалось завершить вход. Попробуй ещё раз или используй другой способ входа.";
+  if (error === "OAuthAccountNotLinked") return "This identity is not linked to your profile. Sign in with your existing method, then connect Google or Microsoft in account settings.";
+  if (error === "AccessDenied") return "Sign-in was not allowed. Use an AITU Microsoft account or a Google account with a verified email. Contact the site owner if this looks wrong.";
+  if (error === "Configuration") return "Sign-in is temporarily unavailable because the provider needs configuration.";
+  return "Sign-in could not be completed. Try again or use another sign-in method.";
 }

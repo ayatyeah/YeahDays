@@ -1,0 +1,356 @@
+[
+  {
+    "id": "adoption",
+    "group": "Lecture 5",
+    "title": "Why companies move to the cloud",
+    "source": "Lecture5, slides 5–11",
+    "body": [
+      "The cloud allows you to get infrastructure on demand: instead of waiting to purchase a server, you can quickly test an idea. Businesses gain experimentation speed, the ability to change capacity, and the option to place services closer to the user.",
+      "The Cloud Adoption Framework is a set of recommendations, tools, and templates for migration. It is an organizational journey: assessing goals, people, processes, risks, and architecture. Simply transferring files does not make a migration successful.",
+      "The cloud does not guarantee savings. Constantly running unnecessary resources, outbound traffic, and complex migrations can be expensive. You need to compare the entire operational scenario."
+    ],
+    "example": "Before registering for a university event, the load increases tenfold. Instead of buying servers for the entire year, you can temporarily increase capacity.",
+    "remember": "Cloud adoption starts with a business goal, not with choosing the trendiest service.",
+    "english": "Cloud adoption enables agility, scalability, and faster experimentation.",
+    "check": "Why doesn't moving to the cloud always reduce costs?",
+    "answer": "You must account for consumption, traffic, migration, support, and the local resources actually freed up."
+  },
+  {
+    "id": "cases",
+    "group": "Lecture 5",
+    "title": "Spotify and Dropbox: two different solutions",
+    "source": "Lecture5, slides 14–17",
+    "body": [
+      "In the lecture case study, Spotify wanted to free engineers from maintaining their own data centers. The migration was prepared in advance, a team was dedicated, and the work was split into services and data. The main idea is that engineers work on the music product.",
+      "Dropbox went the opposite way in its case study: at a massive storage scale, running their own infrastructure provided more control. This is an example of how the cloud is a tool, not a mandatory final destination.",
+      "The numbers and dates in these stories describe educational case studies on slides. You cannot deduce from them that every company will achieve the exact same result."
+    ],
+    "example": "For a small project, renting storage is usually simpler. For a huge, constantly loaded storage system, a company might separately compare running its own infrastructure.",
+    "remember": "Spotify: focus on innovation. Dropbox: control and economics at scale.",
+    "english": "The right infrastructure choice depends on business goals and scale.",
+    "check": "What is the general lesson taught by these opposing migrations?",
+    "answer": "Choose architecture based on requirements, scale, control, and total cost; prepare people and processes in advance."
+  },
+  {
+    "id": "iot",
+    "group": "Lecture 5",
+    "title": "IoT, AI, blockchain and analytics",
+    "source": "Lecture5, slides 19–35",
+    "body": [
+      "IoT devices collect data about the physical world: temperature, motion, equipment status. The cloud accepts the stream, stores it, and provides computing power.",
+      "AI looks for patterns: predicts equipment failure or recognizes unusual behavior. Analytics answers questions based on data: where costs are growing, when there are more visitors, what has changed.",
+      "Blockchain in the lecture is associated with traceability and a consistent history of transactions between participants. The cloud simplifies infrastructure deployment, but it does not automatically make the source data truthful."
+    ],
+    "example": "In a smart building, a sensor sends the temperature → the cloud stores the readings → the AI notices an anomaly → an operator receives a notification.",
+    "remember": "IoT delivers data; AI produces insights; cloud provides storage and compute.",
+    "english": "IoT, AI, and cloud complement each other.",
+    "check": "In the example, what is IoT and what is AI?",
+    "answer": "The measuring sensor is IoT; the model that detects unusual temperature based on history is AI."
+  },
+  {
+    "id": "dbaas",
+    "group": "Lecture 6",
+    "title": "DBaaS: who maintains the database",
+    "source": "Lecture6, slides 5–18",
+    "body": [
+      "DBaaS (Database as a Service): the provider maintains the database infrastructure and a significant portion of its operations. You don't need to buy a server and manually install all software. However, your data, access permissions, and application correctness remain your responsibility.",
+      "On your own machine, you are responsible for the hardware, OS, DB engine, backups, and application. A database on EC2 removes the worry of physical hardware, but you still administer the OS and the installed database. RDS takes on even more operations: patches, automated backups, and high availability mechanisms.",
+      "Managed does not mean \"you don't need to configure anything\": choose the appropriate deployment, access rules, backup storage, and load parameters."
+    ],
+    "example": "PostgreSQL on EC2: you update the OS and PostgreSQL yourself. PostgreSQL in RDS: AWS maintains the platform, while you design tables, indexes, and queries.",
+    "remember": "EC2 database ≠ managed database.",
+    "english": "A managed database reduces operational work, but the customer still manages data and access.",
+    "check": "Who applies Oracle patches on EC2 and who does so in RDS?",
+    "answer": "On EC2, the client; in managed RDS, the engine maintenance is performed by AWS as part of the service."
+  },
+  {
+    "id": "sql",
+    "group": "Lecture 6",
+    "title": "SQL and NoSQL without confusion",
+    "source": "Lecture6, slides 19–29",
+    "body": [
+      "Relational databases store data in related tables with a schema. SQL is convenient for joins, constraints, and complex transactions: an order, customer, order items, and payment are linked together.",
+      "NoSQL combines several models: key-value, document, graph, and others. DynamoDB supports key-value and document models. Items can have different attributes; key fields are mandatory.",
+      "On the slides, SQL is mapped to vertical scaling, and NoSQL to horizontal scaling. This is a useful simplification for a first introduction, but not an absolute law: modern relational systems can also scale out in a distributed manner."
+    ],
+    "example": "A store with a large number of relationships may be suited for RDS. Quick access to a profile by userId can be built on DynamoDB.",
+    "remember": "Choose a database based on data access patterns, not just the words SQL/NoSQL.",
+    "english": "Relational databases organize related tables; DynamoDB stores key-value and document data.",
+    "check": "Why doesn't a flexible schema mean \"a key is not needed\"?",
+    "answer": "Other attributes may differ, but every item must have a specified primary key."
+  },
+  {
+    "id": "keys",
+    "group": "Lecture 6",
+    "title": "DynamoDB: table → item → attribute",
+    "source": "Lecture 6, slides 28–31; supplement to questions 35, 40, 45",
+    "body": [
+      "A table is a collection of items. An item is a single record, and an attribute is one of its fields. A simple primary key consists only of a partition key. A composite primary key consists of a partition key and a sort key.",
+      "With a simple key, the partition key is unique. With a composite key, the pair is unique. Multiple readings of the same sensor can have the same partition key and different timestamps.",
+      "DynamoDB uses a hash partition key to distribute data. The sort key orders records with the same partition key. The developer chooses the keys, but does not write the placement hash function."
+    ],
+    "example": "(sensor-7, 10:00) and (sensor-7, 10:01) are different items. (sensor-8, 10:00) is also allowed. A second independent item for (sensor-7, 10:00) cannot be created.",
+    "remember": "Having the same part of a key is allowed; having the same complete key is not.",
+    "english": "A composite primary key is the combination of the partition key and the sort key.",
+    "check": "Can two sensors have the same timestamp?",
+    "answer": "Yes, if the partition keys are different: the complete pairs are still unique."
+  },
+  {
+    "id": "db-choice",
+    "group": "Lecture 6",
+    "title": "RDS, Aurora, Redshift, or DynamoDB",
+    "source": "Lecture6, slides 34–52",
+    "body": [
+      "RDS consists of managed relational databases for applications. Aurora is a relational engine compatible with MySQL or PostgreSQL. The lecture emphasizes automated maintenance and availability.",
+      "Redshift is a data warehouse for analytics on large datasets. Imagine a report on all sales for the year, rather than reading a single profile by key. The lecture explains columnar storage and parallel processing.",
+      "DynamoDB is suitable for low-latency key-value/document access. If you need OS access or unusual database configuration, you can consider a database on EC2, taking on its maintenance yourself."
+    ],
+    "example": "Placing an order with multiple related tables → RDS/Aurora. Analyzing sales by country → Redshift. Finding an item by key → DynamoDB.",
+    "remember": "RDS/Aurora — relational; Redshift — analytics; DynamoDB — key-value/document.",
+    "english": "Use the right database for the access pattern and workload.",
+    "check": "Why is Redshift not synonymous with DynamoDB?",
+    "answer": "Redshift is an analytical warehouse; DynamoDB is a NoSQL database for operational key-value/document queries."
+  },
+  {
+    "id": "responsibility",
+    "group": "Lecture 8",
+    "title": "Shared responsibility: OF and IN",
+    "source": "Lecture8, slides 5–14",
+    "body": [
+      "AWS is responsible for security OF the cloud: physical data centers, the hardware platform, and virtualization infrastructure. The customer is responsible for security IN the cloud: their data, access, configuration, and applications.",
+      "For EC2, the customer also updates the guest OS and applications. For managed services, the boundary shifts: the provider maintains more layers. However, the data owner still determines who is granted access.",
+      "Security group configuration and client-side data are the client's responsibility. Physical servers, edge infrastructure, and the physical security of the AZ are AWS's responsibility."
+    ],
+    "example": "If you accidentally grant all users access to data, having a secure data center does not fix the permission error.",
+    "remember": "OF = AWS infrastructure. IN = your settings and data.",
+    "english": "Security is a shared responsibility between AWS and the customer.",
+    "check": "Who is responsible for the EC2 security group and for the physical security of the server?",
+    "answer": "The security group is configured by the client; physical infrastructure security is provided by AWS."
+  },
+  {
+    "id": "iam",
+    "group": "Lecture 8",
+    "title": "Authentication, authorization and IAM",
+    "source": "Lecture8, IAM section; questions 33, 38, 39, 42",
+    "body": [
+      "Authentication verifies identity: who are you? Authorization verifies rights: are you allowed to perform the action? Successful sign-in does not imply access to all resources.",
+      "IAM user is an identity; group is a collection of users; role is an identity that can be assumed to obtain temporary credentials; policy is a document containing access rules. Policies contain Allow/Deny, actions, resources, and conditions.",
+      "By default, the absence of a permission means deny. Explicit deny overrides allow. Permissions should be granted using the principle of least privilege: only necessary actions and resources.",
+      "The slides also highlight administrative, developer, and application users. Rights must be granted by role, and revoked after a person leaves or task assignments change. MFA adds another verification factor; the cloud directory centrally stores profiles and access rules. Auditing checks whether granted rights comply with the policy."
+    ],
+    "example": "A student signed in to the AWS Console, but cannot delete a bucket: authentication succeeded, but authorization did not grant DeleteBucket.",
+    "remember": "Identity is who; policy is what is allowed.",
+    "english": "Authentication verifies identity; authorization determines permissions.",
+    "check": "Can allow override an explicit deny?",
+    "answer": "No. Explicit deny has priority. Allow is only effective within the bounds of other applicable constraints."
+  },
+  {
+    "id": "encryption",
+    "group": "Lecture 8",
+    "title": "Encryption and monitoring",
+    "source": "Lecture8, Encryption and Cloud Monitoring sections",
+    "body": [
+      "Encryption at rest protects stored data; encryption in transit protects data in transfer. KMS helps manage cryptographic keys and access to them. Encryption does not replace IAM: an authorized user can access decrypted data.",
+      "Monitoring collects metrics, logs, and system health signals. A metric is a numerical series (CPU, latency, errors); a log is an event record. An alarm reacts to a specified condition.",
+      "CloudWatch helps observe health. CloudTrail answers a different question: what API actions were performed and by whom. Combining signals helps detect a problem and find its root cause.",
+      "The lecture separately distinguishes encryption in use (during processing), client-side encryption (before sending to the cloud), and server-side encryption (at the service side). Keys require dedicated access control, rotation, and well-designed recovery. Losing the only key can mean losing access to data; storing a key next to data without protection is dangerous."
+    ],
+    "example": "Latency rises -> CloudWatch alarm. Need to figure out who changed settings -> CloudTrail events. Need to protect a file on disk -> encryption at rest.",
+    "remember": "Protect data, restrict access, and monitor the system simultaneously.",
+    "english": "Encryption protects data; monitoring helps detect and investigate problems.",
+    "check": "What is the difference between the query \"how many errors?\" and \"who changed the policy?\"",
+    "answer": "The first refers to monitoring metrics/logs; the second to action auditing."
+  },
+  {
+    "id": "careers",
+    "group": "Lecture 8",
+    "title": "Who works with the cloud",
+    "source": "Lecture8, Career Opportunities section",
+    "body": [
+      "A cloud architect designs a system to meet requirements: availability, scale, security, and cost. A cloud developer writes applications and service integrations. An operations/DevOps engineer automates builds, deployment, and operations.",
+      "A security specialist works with identities, permissions, threats, and controls. A data engineer builds data ingestion, storage, and processing. In a small team, one person may perform multiple roles.",
+      "The lecture suggests learning through courses, provider portals, hands-on labs, and communities. Practice is important: explaining an IAM policy is more useful than simply memorizing a service name."
+    ],
+    "example": "A team launches a store: the architect chooses components, the developer writes the API, operations configures deployment, security checks access.",
+    "remember": "Roles are defined by tasks, not a list of certificates.",
+    "english": "Cloud careers combine development, operations, security, architecture, and data skills.",
+    "check": "Who is closer to setting up repeatable deployment?",
+    "answer": "The operations/DevOps engineer, in collaboration with developers."
+  },
+  {
+    "id": "pricing",
+    "group": "Lecture 10",
+    "title": "What makes up the bill",
+    "source": "Lecture10, slides 5–13",
+    "body": [
+      "The lecture identifies three main cost drivers: compute, storage, and data transfer. One must consider uptime, storage size and class, and the volume and direction of data transfer. Specific rates depend on the service and region.",
+      "Pay-as-you-go lets you pay for consumption. Commitments/reservations provide economic advantages for suitable predictable workloads. Spot suits tasks that can withstand interruption.",
+      "Discounts, numbers, and Free Tier on older slides are historical examples. For a real project, check current pricing. A management service may not have a separate fee, but the resources it creates are billed."
+    ],
+    "example": "Auto Scaling creates two additional EC2 instances: the mechanism itself does not mean computing has become free.",
+    "remember": "Compute + storage + transfer; fewer idle resources means fewer unnecessary expenses.",
+    "english": "Cloud costs depend on resource consumption and the selected pricing model.",
+    "check": "Why does \"pay-as-you-go\" not equal \"always cheap\"?",
+    "answer": "You can constantly consume too much: extra servers, unnecessary data, and high outbound traffic."
+  },
+  {
+    "id": "tco",
+    "group": "Lecture 10",
+    "title": "TCO and calculators",
+    "source": "Lecture10, slides 15–21",
+    "body": [
+      "TCO — Total Cost of Ownership: direct and indirect costs of owning a system. For on-premises, this includes servers, storage, network, licenses, electricity, cooling, facility space, and specialist labor.",
+      "A cloud estimate must include not only VMs, but also traffic, disks, backups, support, and operations. Separately account for migration and which old costs will actually disappear.",
+      "The Pricing Calculator models a future configuration before launch. It is not a report on how much money has already been spent. TCO helps compare options over the same time horizon and with identical requirements."
+    ],
+    "example": "If office rent and the team's salary do not change after migration, their full amount cannot automatically be counted as savings.",
+    "remember": "Calculator = estimate. Cost report = actual spending.",
+    "english": "TCO includes both direct and indirect costs over the lifetime of a system.",
+    "check": "What should be added to the server price when calculating TCO?",
+    "answer": "Licenses, network, disks, electricity, cooling, facility space, administration, and maintenance."
+  },
+  {
+    "id": "billing",
+    "group": "Lecture 10",
+    "title": "Organization of accounts and permissions",
+    "source": "Lecture10, slides 23–31",
+    "body": [
+      "AWS Organizations combines accounts and helps centralize management and billing. An Organizational Unit (OU) groups accounts for shared policy. IAM works with identities and resource access.",
+      "A Service Control Policy sets boundaries of allowed actions for accounts; SCP by itself does not grant permissions to a user. Appropriate IAM permissions are needed. Consolidated billing unifies financial reporting.",
+      "Azure RBAC consists of a security principal (who), role definition (what can be done), and scope (where). Scope can be a subscription, resource group, or individual resource."
+    ],
+    "example": "A developer can be granted VM management only within a training resource group, without opening all organizational resources to them.",
+    "remember": "Who + what + where — three questions for RBAC.",
+    "english": "Azure RBAC combines a security principal, a role definition, and a scope.",
+    "check": "How does an IAM group differ from an Organizational Unit?",
+    "answer": "An IAM group combines users; an OU in Organizations combines AWS accounts."
+  },
+  {
+    "id": "azure-cost",
+    "group": "Lecture 10",
+    "title": "Five Azure cost tools",
+    "source": "Lecture10, slides 32–36; questions 1, 3, 5–10, 23",
+    "body": [
+      "Azure Cost Management shows expenses by service, time, and other dimensions. Azure Price Calculator estimates future configuration. Azure Budgets sets budgets and alerts.",
+      "Azure Advisor suggests optimizations, including resizing underutilized VMs. Azure Exports exports cost data, for example, to CSV, for external processing.",
+      "Budget alerts pertain to costs; credit alerts pertain to credit usage; department quota alerts pertain to department expenses. In case of unexpected cost growth, notify the responsible parties and find the source rather than deleting everything indiscriminately."
+    ],
+    "example": "Before launch -> Calculator. After launch \"where did the money go?\" -> Cost Management. \"Warn about a threshold\" -> Budgets. \"What to optimize?\" -> Advisor.",
+    "remember": "Estimate / track / alert / recommend / export — five distinct tasks.",
+    "english": "Cost Management tracks spending; Budgets notify; Advisor recommends optimizations.",
+    "check": "What tool is needed to analyze expenses by service over a month?",
+    "answer": "Azure Cost Management. Calculator is needed for estimation, and Exports for data export."
+  },
+  {
+    "id": "availability",
+    "group": "Lecture 10",
+    "title": "Availability, Reliability, and SLA",
+    "source": "Lecture10, slides 38–49",
+    "body": [
+      "Availability is the fraction of time that a service is available. Reliability is the ability to operate as required over a period of time. High availability reduces downtime, including through redundancy and automatic recovery.",
+      "Fault tolerance allows surviving component failures; scalability allows handling increased load; recoverability allows recovering from a serious failure. Multi-AZ helps survive the failure of a single zone.",
+      "SLA is a formal agreement regarding the service, metrics, conditions, and compensation. It is not a promise that failures will not occur. Privacy concerns the processing of personal data, and compliance concerns meeting applicable requirements. A provider certificate does not relieve the customer of their responsibilities."
+    ],
+    "example": "Availability of 99.9% over 30 days allows for about 43.2 minutes of downtime in a simple calculation. A real SLA may calculate availability according to its own terms.",
+    "remember": "Multi-AZ — resilience; Auto Scaling — capacity; backup — recovery.",
+    "english": "High availability minimizes downtime; an SLA defines the agreed service level.",
+    "check": "Does a backup automatically ensure zero downtime?",
+    "answer": "No. Backup helps with recovery, but recovery takes time; availability requires corresponding operational redundant components."
+  },
+  {
+    "id": "dev",
+    "group": "AWS Developing",
+    "title": "SDLC, Console, CLI and SDK",
+    "source": "Syllabus supplement: Cloud Developing modules 1–2; questions 21, 24–25, 37, 44",
+    "body": [
+      "In the six-stage SDLC model from the questions, the flow is plan → define → design → develop → deploy → maintain. Define fixes requirements, design designs the solution, develop creates and assembles components, deploy puts them into use.",
+      "Console is the graphical interface; CLI is for commands; SDK is for code calls, such as Python boto3. All of them interface with the AWS API. CloudShell provides a browser-based shell with the credentials of the current Console session.",
+      "A Docker image is a filesystem and configuration template; a container is a running instance. pull downloads an image, images lists images, run creates and starts a container. The -d flag runs it in the background; the process inside must continue running."
+    ],
+    "example": "A Python application uploads a file via boto3 → SDK. An engineer types aws s3 ls → CLI. Docker: docker run -d nginx.",
+    "remember": "CloudTrail records API events, IAM authorizes actions, but these are not the three API call interfaces.",
+    "english": "Use the Console, CLI, or SDKs to interact with AWS APIs.",
+    "check": "Why doesn't docker pull alpine start a container?",
+    "answer": "Pull only retrieves the image. To run it, you need docker run, and for background mode — -d."
+  },
+  {
+    "id": "s3",
+    "group": "AWS Developing",
+    "title": "S3: buckets, objects and versioning",
+    "source": "Syllabus supplement: Cloud Developing module 3; questions 13–14, 28, 36, 43",
+    "body": [
+      "S3 is object storage. A bucket contains objects; an object key identifies an object. A prefix in a key looks like a folder, but it does not turn S3 into a standard file disk. Data lakes, images, and backups are typical use cases.",
+      "EBS is block storage, such as an EC2 disk. EFS is a shared file system. Do not confuse storing a database backup in S3 with a running database on a block disk.",
+      "Versioning saves object versions. Once enabled, you can suspend versioning, but you cannot return the bucket to its initial unversioned state. For regular buckets, the name must be available within the AWS partition; a taken name cannot be acquired by changing the Region."
+    ],
+    "example": "images/cat.jpg is an object key inside a bucket. If the bucket name is taken, you choose another one upon creation; an existing bucket cannot be renamed.",
+    "remember": "Bucket → object key → object; S3 is not EBS or EFS.",
+    "english": "S3 stores objects in buckets and supports object versioning.",
+    "check": "Can versioning be completely disabled after it has been enabled for the first time?",
+    "answer": "You cannot return to the initial unversioned state; you can only suspend versioning."
+  },
+  {
+    "id": "s3-web",
+    "group": "AWS Developing",
+    "title": "Website on S3: access, CORS, and URLs",
+    "source": "Supplement to questions 31 and 47; AWS S3 User Guide",
+    "body": [
+      "A static website requires files, a correct website configuration, and access to the content. A site from another origin may encounter CORS issues when fetching or working with canvas. CORS does not grant the right to read a private object.",
+      "An S3 bucket does not have a security group. If there is an issue with an image, check the URL, the existence of the object, permissions, and the nature of the browser request. A regular img tag does not always require CORS.",
+      "Website endpoint and REST endpoint are different addresses. The native S3 website endpoint does not support HTTPS. For HTTPS, a suitable CDN/hosting layer can be used in front of the website. Therefore, options on the exam sheet cannot be blindly considered working URLs."
+    ],
+    "example": "Website: http://bucket.s3-website-us-east-1.amazonaws.com. REST: https://bucket.s3.us-east-1.amazonaws.com.",
+    "remember": "CORS ≠ permissions. Website endpoint ≠ REST endpoint.",
+    "english": "CORS controls browser cross-origin access; it does not grant S3 permissions.",
+    "check": "Will CORS fix the lack of s3:GetObject permission?",
+    "answer": "No. First, authorized access to the object is required; CORS solves a different problem."
+  },
+  {
+    "id": "ddb-api",
+    "group": "AWS Developing",
+    "title": "DynamoDB API and Streams",
+    "source": "Syllabus supplement: Cloud Developing module 5; questions 27, 32, 35, 40, 45",
+    "body": [
+      "Control plane manages tables: creation, description, modification of settings, deletion. Data plane works with items: reading, writing, updating, and deleting. Batch combines operations on multiple items.",
+      "A transaction is needed when changes must either all succeed together or fail entirely. Do not confuse a batch of operations with an all-or-nothing guarantee.",
+      "DynamoDB Streams stores an ordered stream of item changes that can be used for further processing, such as with Lambda. When designing a table, first determine the keys and ranges the application uses to read data."
+    ],
+    "example": "CreateTable → control plane. PutItem → data plane. Atomically modify multiple items → transaction. Process a newly created record → Streams.",
+    "remember": "Table as a resource — control; data inside — data.",
+    "english": "Control plane operations manage tables; data plane operations access items.",
+    "check": "Why do CreateTable and PutItem belong to different categories?",
+    "answer": "The former creates the table resource, while the latter writes data into an already existing table."
+  },
+  {
+    "id": "rest",
+    "group": "AWS Developing",
+    "title": "REST, HTTP and API Gateway",
+    "source": "Syllabus supplement: Cloud Developing module 6; questions 26, 29–30, 41",
+    "body": [
+      "API is a program interaction contract. REST is an architectural style: resources, uniform interface, and stateless interaction. Simply transmitting data over HTTP is not enough to fulfill all REST principles.",
+      "HTTP 2xx indicates success, 4xx indicates a request/access/resource issue, and 5xx indicates a server-side issue. A non-existent S3 bucket typically returns 404 NoSuchBucket.",
+      "API Gateway receives a request and routes it to the backend. IntegrationLatency is the backend waiting time from request transmission to response receipt; total Latency also includes the work of the Gateway itself."
+    ],
+    "example": "Client → API Gateway → Lambda → DynamoDB → response. If Lambda takes a long time to run, IntegrationLatency increases.",
+    "remember": "HTTP is a protocol; REST is a style; Gateway is the entry point to the backend.",
+    "english": "IntegrationLatency measures how long the backend takes to respond to API Gateway.",
+    "check": "Why is the total response speed to the client not an exact definition of IntegrationLatency?",
+    "answer": "Because the complete response includes additional stages and overhead outside of waiting for the backend."
+  },
+  {
+    "id": "api-choice",
+    "group": "AWS Developing",
+    "title": "HTTP API, REST API, or WebSocket",
+    "source": "Supplement to questions 34 and 41; AWS API Gateway Developer Guide",
+    "body": [
+      "HTTP APIs are suitable for a simple HTTP proxy to Lambda or another backend. REST APIs offer additional features, such as mock integrations, message body transformation, and usage plans. The choice depends on the required functionality.",
+      "WebSocket API supports bidirectional communication over a persistent connection. The server can push new events to the client, such as chat messages or live updates.",
+      "Authentication verifies the identity of the caller, authorization verifies permitted actions. Throttling limits the rate of requests; this is not the same as backend latency or the number of server errors."
+    ],
+    "example": "Customer support chat -> WebSocket. Simple HTTP endpoint in front of Lambda -> HTTP API. Options with mock endpoints or client-based quotas in this sheet -> REST API.",
+    "remember": "Request/response -> HTTP; persistent bidirectional communication -> WebSocket.",
+    "english": "WebSocket APIs support real-time, bidirectional communication.",
+    "check": "Is a WebSocket needed just to return an order number after a submit?",
+    "answer": "Usually no: a regular HTTP request/response is sufficient. WebSocket is especially useful for unsolicited events without polling."
+  }
+]

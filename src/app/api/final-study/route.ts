@@ -6,6 +6,7 @@ import { rateLimit } from '@/lib/rateLimit';
 import { dailyLimit } from '@/lib/aiLimit';
 import { createFinalStudy, mutateFinalStudy, readProfile, standardTasks, type FinalStudy } from '@/lib/finalStudy';
 import { generateFinalTasks } from '@/lib/finalStudyAi';
+import { allowedMutationOrigin, boundedJson, RequestBodyError } from '@/lib/requestSecurity';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -24,21 +25,14 @@ export async function GET() {
 export async function POST(req: Request) {
   const userId = (await auth())?.user?.id;
   if (!userId) return json({ error: 'unauthorized' }, 401);
-  const publicUrl = new URL(req.url);
-  const host = (req.headers.get('x-forwarded-host') ?? req.headers.get('host'))?.split(',')[0].trim();
-  const proto = req.headers.get('x-forwarded-proto')?.split(',')[0].trim();
-  if (host) { publicUrl.port = ''; publicUrl.host = host; }
-  if (proto === 'https' || proto === 'http') publicUrl.protocol = `${proto}:`;
-  if (req.headers.get('origin') && req.headers.get('origin') !== publicUrl.origin) return json({ error: 'invalid_origin' }, 403);
+  if (!allowedMutationOrigin(req)) return json({ error: 'invalid_origin' }, 403);
   if (!req.headers.get('content-type')?.startsWith('application/json')) return json({ error: 'invalid_request' }, 400);
   if (!rateLimit(`final-study:${userId}`, 30, 60_000)) return json({ error: 'rate_limit' }, 429);
   let body: Record<string, unknown>;
   try {
-    const raw = await req.text();
-    if (raw.length > 6000) throw Error();
-    body = JSON.parse(raw);
+    body = await boundedJson(req);
     if (!body || !['create', 'start', 'complete', 'reflection', 'survey'].includes(String(body.action))) throw Error();
-  } catch { return json({ error: 'invalid_request' }, 400); }
+  } catch (error) { return json({ error: 'invalid_request' }, error instanceof RequestBodyError ? error.status : 400); }
   try {
     let created: FinalStudy | null = null;
     if (body.action === 'create') {

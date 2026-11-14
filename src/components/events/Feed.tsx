@@ -74,7 +74,7 @@ export default function Feed({
   const [memory, setMemory] = useState<FeedMemory>({ saved: [] });
   const [onlySaved, setOnlySaved] = useState(false);
   const [active, setActive] = useState(0);
-  const [mode, setMode] = useState<Mode>("mix");
+  const [mode, setMode] = useState<Mode>("en");
   const [rate, setRate] = useState(1);
   const [muted, setMuted] = useState(false);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -100,7 +100,7 @@ export default function Feed({
     start.current = whole ? mem.at : undefined;
     setMemory(mem);
     setItems(buildFeed(event, Math.random, mastered, scope));
-    setMode((loadPref("video-mode", "mix") as Mode) || "mix");
+    setMode((loadPref("video-mode", "en") as Mode) || "en");
     setRate(clampRate(Number(loadPref("voice-rate", "1"))));
     setMuted(loadPref("feed-muted", "off") === "on");
     if (!("speechSynthesis" in window)) return;

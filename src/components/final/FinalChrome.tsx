@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Brand, Icon } from './Brand';
 import ThemeSwitch from './ThemeSwitch';
-import './final.css';
 const navigation = [
   { href: '/app', label: 'My study', icon: 'plan', paths: ['/app', '/today', '/learn', '/calendar'] },
   { href: '/events', label: 'Courses', icon: 'book', paths: ['/events'] },

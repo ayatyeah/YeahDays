@@ -11,6 +11,9 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
+import { boundedJson, RequestBodyError } from '@/lib/requestSecurity';
+import { validNewPassword } from '@/lib/passwordPolicy';
+import { rateLimit } from '@/lib/rateLimit';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,17 +24,18 @@ export async function POST(req: Request) {
   if (!userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+  if (!rateLimit(`password-change:${userId}`, 6, 15 * 60_000)) return NextResponse.json({ error: 'Too many attempts. Try again in 15 minutes.' }, { status: 429 });
 
   let body: unknown;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
   const { currentPassword, newPassword } = (body ?? {}) as Record<string, unknown>;
   const newPasswordStr = String(newPassword ?? "");
-  if (newPasswordStr.length < 8) {
-    return NextResponse.json({ error: "Пароль — минимум 8 символов" }, { status: 400 });
+  if (!validNewPassword(newPasswordStr)) {
+    return NextResponse.json({ error: "Use at least 8 characters and at most 72 UTF-8 bytes." }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId }, select: { passwordHash: true } });

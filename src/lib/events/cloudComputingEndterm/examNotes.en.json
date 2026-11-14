@@ -1,0 +1,1194 @@
+[
+  {
+    "questionId": "cce-1",
+    "title": "Azure: seeing costs, estimating budget, and finding savings",
+    "body": [
+      "Cloud costs are conveniently broken down through four different actions: viewing already accrued amounts, estimating future configuration, getting recommendations, and exporting data. Each action has its own tool.",
+      "Cost Management contains Cost Analysis: you choose the period and analysis scope, then break down costs by services or resources. For example, if the bill has increased, you compare compute and storage costs over two weeks. This shows which category caused the growth.",
+      "Pricing Calculator helps pre-estimate the cost of selected services. Advisor suggests changes to optimize existing resources. Exports transfers cost data to storage for further processing. A hint in the question — tracks spending by service and over time: actual cost analysis is required."
+    ],
+    "optionExplanations": [
+      "Matches: Cost Management allows you to analyze costs over a period and group them by services.",
+      "Does not match: Advisor offers recommendations, such as reducing the size of an oversized VM. This is not the primary tool for viewing cost history.",
+      "Does not match: Exports exports cost data. After exporting, you can build your own report, but the answer itself describes data delivery rather than interactive cost analysis.",
+      "Does not match: Pricing Calculator estimates the future cost of a configuration; it does not show the actual historical charges of the account."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Start using Cost Analysis",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/quick-acm-cost-analysis"
+      },
+      {
+        "title": "Microsoft Learn — Cost Management exports",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-improved-exports"
+      },
+      {
+        "title": "Azure Pricing Calculator",
+        "url": "https://azure.microsoft.com/en-us/pricing/calculator/"
+      },
+      {
+        "title": "Microsoft Learn — Azure Advisor cost recommendations",
+        "url": "https://learn.microsoft.com/en-us/azure/advisor/advisor-cost-recommendations"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-2",
+    "title": "Shared responsibility between AWS and the customer",
+    "body": [
+      "The shared responsibility model divides duties between the provider and the customer. AWS protects the infrastructure that runs the cloud: buildings, physical hardware, and the underlying network. This is security OF the cloud.",
+      "The customer is responsible for the security of what they deploy and configure: data, access controls, and the configuration of used resources. This is security IN the cloud. For example, AWS provides security groups, while the customer decides which ports and traffic sources to allow for their EC2 instance.",
+      "The boundary depends on the service: when using EC2, the customer also maintains the guest OS and applications; managed services remove some of these tasks. However, moving data to the cloud does not remove responsibility for its content and access rights. In this question, you need to select two items controlled by the customer."
+    ],
+    "optionExplanations": [
+      "Matches: security group rules are set by the customer. AWS provides the mechanism, but does not choose for them who to grant access to.",
+      "Does not match: physical servers are maintained and protected by AWS.",
+      "Matches: the customer is responsible for their data and its protection, including data on the client side.",
+      "Does not match: the physical infrastructure of edge locations belongs to the AWS infrastructure.",
+      "Does not match: this refers to the security of the Availability Zone infrastructure, which AWS is responsible for. The settings of client resources within the zone remain the responsibility of the customer."
+    ],
+    "sources": [
+      {
+        "title": "AWS — Shared Responsibility Model",
+        "url": "https://aws.amazon.com/compliance/shared-responsibility-model/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-3",
+    "title": "Azure Budgets: spending thresholds and notifications",
+    "body": [
+      "A budget is a spending plan for a selected period and resource scope. It is used to compare accumulated or projected costs against a given amount and receive timely notifications.",
+      "For example, for a training project, a monthly budget and an 80% warning are set. When the condition is reached, a notification arrives: you can check running resources and decide what to change. Cost data is updated with a delay, so the budget is not an instantaneous counter.",
+      "The option spending limits and alerts should be understood as budget targets and warnings. Azure Budget itself does not block further spending and does not shut down VMs. Automatic reaction to a notification is configured separately; creating servers, configuring the network, and exporting reports are other operations."
+    ],
+    "optionExplanations": [
+      "Does not match: the budget does not create virtual machines; it tracks spending in the selected scope.",
+      "Does not match: network parameters are set in network resources, not in Budgets.",
+      "Matches: Budgets sets the budget amount and notification thresholds. The word limits here does not mean an automatic ban on overspending.",
+      "Does not match: data export is a function of Exports. The purpose of a budget is control relative to a target amount and warnings."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Create and manage budgets",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets"
+      },
+      {
+        "title": "Microsoft Learn — Cost Management exports",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-improved-exports"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-4",
+    "title": "Multi-AZ: surviving the failure of an individual zone",
+    "body": [
+      "An Availability Zone, or AZ, is an isolated infrastructure zone within an AWS region. If an entire application depends on a single zone, its failure can stop the application entirely. Multiple servers in the same zone do not eliminate this single point of failure.",
+      "Multi-AZ places necessary resources across multiple zones. For example, application instances run in two AZs, and a balancer routes requests to healthy instances. If an issue occurs in one zone, the remaining one can continue serving users.",
+      "The mere presence of a second zone does not guarantee continuous operation: suitable failover mechanisms, data replication, and sufficient capacity of the remaining resources are required. However, among the suggested options, Multi-AZ specifically reduces dependency on a single zone failure. Cost accounting and password policies solve other problems."
+    ],
+    "optionExplanations": [
+      "Matches: placement across multiple AZs reduces the impact of an individual zone failure with properly designed failover.",
+      "Does not match: cost allocation tags help allocate and analyze costs; they do not create backup resources.",
+      "Does not match: Reserved Instances are primarily a discount mechanism with a usage commitment; they do not distribute an application across zones by themselves.",
+      "Does not match: IAM password policies set requirements for passwords. This is access protection, not protection against infrastructure failure."
+    ],
+    "sources": [
+      {
+        "title": "AWS Well-Architected — Deploy the workload to multiple locations",
+        "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_fault_isolation_multiaz_region_system.html"
+      },
+      {
+        "title": "Amazon EC2 — Resilience",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/disaster-recovery-resiliency.html"
+      },
+      {
+        "title": "Amazon EC2 — Reserved Instances overview",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-reserved-instances.html"
+      },
+      {
+        "title": "AWS IAM — Account password policy",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html"
+      },
+      {
+        "title": "Amazon EC2 — Resource tags",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-5",
+    "title": "Rightsizing: matching VM to actual load",
+    "body": [
+      "A virtual machine is paid for by the selected resource size. If an application uses only a small fraction of the available power, an oversized VM can create unnecessary expenses. Matching the appropriate size is called rightsizing.",
+      "Azure Advisor analyzes VM usage and can suggest resizing it or stopping an unused resource. For example, a small training service may suffice with a cheaper VM. The recommendation must be compared with application requirements and peak loads: low average utilization does not always mean unnecessary power.",
+      "Resizing is changing the size of a specific VM, rather than deleting all servers. After making changes, it is useful to check performance. Monitoring helps make and verify the decision; creating an additional subscription does not reduce the volume of consumed compute by itself."
+    ],
+    "optionExplanations": [
+      "Matches: Advisor can recommend a VM size that better matches the load and reduces excess costs.",
+      "Does not match: deleting all VMs will destroy running compute resources. Recommendations concern specific resources, not unconditional deletion of everything.",
+      "Does not match: disabling monitoring does not reduce VM size and deprives you of data for load assessment.",
+      "Does not match: a new subscription changes resource and billing organization, but by itself does not eliminate excess VM capacity."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Optimize VM spend with Azure Advisor",
+        "url": "https://learn.microsoft.com/en-us/azure/advisor/advisor-cost-recommendations"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-6",
+    "title": "Budget alerts: when spending approaches the budget",
+    "body": [
+      "A budget is the planned amount of expenses for a selected period. A budget alert compares actual or projected costs against a set threshold and notifies responsible parties when the condition is met.",
+      "Example: the team plans to spend $200 in a month and sets an alert at 80%. Upon reaching $160, a signal arrives to check what the money is being spent on. The forecast threshold helps notice the risk of overspending even before the end of the month.",
+      "The alert itself does not stop virtual machines and does not stop charges. Cost data is updated with a delay, so the budget cannot be considered an instantaneous technical limiter.",
+      "Remember the distinction: a budget alert answers the question \"how are costs going relative to the plan?\". It does not report on CPU load, network speed, or hacking attempts."
+    ],
+    "optionExplanations": [
+      "Suitable: these are expense notifications tied to budget conditions.",
+      "Not suitable: a security report describes threats and protection, not budget spending.",
+      "Not suitable: a network notification refers to connection status or traffic; here the financial threshold is checked.",
+      "Not suitable: performance is measured, for example, by latency and CPU load. A budget alert compares costs against the budget."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Create and manage budgets",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-7",
+    "title": "Credit alerts: control of prepaid credit spending",
+    "body": [
+      "Azure credit in this context is the monetary balance for paying for cloud consumption. As paid resources are used, the available amount is spent. This is neither a technical quota nor a bank loan to purchase a server.",
+      "In the Cost Management description, the term credit alerts refers to Azure Prepayment for Enterprise Agreement. Documentation indicates notifications when 90% and 100% of the prepaid amount are spent. These conditions should not be transferred to any free or educational subscription.",
+      "Hypothetical example: out of the prepaid $1,000, $900 is spent—the 90% threshold is reached. The answer \"When Azure credits are consumed\" means consuming the credit up to the corresponding threshold, not a separate email after every charged cent.",
+      "Creating a machine can lead to future expenses, but in itself is not a condition for a credit alert. Look at the monetary balance, not the name of the resource operation."
+    ],
+    "optionExplanations": [
+      "Not suitable: network speed does not determine how much prepaid monetary credit has been used.",
+      "Suitable: notifications are associated with Azure credit spending; specific thresholds depend on the described mechanism and contract type.",
+      "Not suitable: resource deletion is a management operation, not a credit spending threshold.",
+      "Not suitable: creating a VM can increase costs, but a credit alert occurs based on a financial condition, not upon every VM creation."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Credit alerts",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending#credit-alerts"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-8",
+    "title": "Department spending: expenses of a specific department",
+    "body": [
+      "Department here is an organization unit, such as a development or marketing department. Spending quota sets a monetary guideline for its expenses. The notification shows that the department has reached the established threshold of this amount.",
+      "Example: the development department is allocated $2,000, the notification is set to 75%. The signal at $1,500 helps the manager check the expenses of their specific department without mixing them with the costs of the entire organization.",
+      "Do not confuse spending quota with a service quota: the monetary threshold is measured by amount, while a technical limit can be measured by the number of VMs or CPU cores. Even high network traffic is important here only to the extent that it increases expenses.",
+      "The question wording uses Enterprise Agreement terminology. In the current EA FAQ, Microsoft recommends department-level budgets instead of old spending limits. The educational meaning remains the same: department expenses are tracked."
+    ],
+    "optionExplanations": [
+      "Not suitable: traffic can be a source of costs, but the notification compares the department's monetary expenses with a threshold.",
+      "Suitable: department spending is precisely the expenses of the department indicated in the notification name.",
+      "Not suitable: system performance speed and resource load do not equal department expenses.",
+      "Not suitable: access and security settings relate to security, not to meeting a financial quota."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Department spending quota alerts",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending#department-spending-quota-alerts"
+      },
+      {
+        "title": "Microsoft Learn — Enterprise Agreement FAQ",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/enterprise-agreement-faq"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-9",
+    "title": "Azure Exports: exporting costs to CSV",
+    "body": [
+      "Exports in Cost Management is a mechanism for exporting cost data for further analysis. For example, you can regularly receive a set of rows with expenses and then build a report in a spreadsheet or analytical system.",
+      "CSV stores tabular data in text form: one row represents a record, fields are separated by a delimiter. A conditional record example is date, service name, and amount. Such a file is convenient to read programmatically and open in spreadsheets.",
+      "Of the formats listed in the question, CSV is suitable. The modern Exports API also supports Parquet, so the statement \"Azure can only export CSV\" would be incorrect. The question asks which of the suggested formats is possible.",
+      "Do not confuse the file format with the API request format: the export settings can be transmitted as JSON, but this does not mean that the final cost table is exported in JSON."
+    ],
+    "optionExplanations": [
+      "Not suitable: PDF is convenient for a formatted document, but is not the specified format of the Cost Management Exports dataset.",
+      "Not suitable: JSON is found in API and export configuration; this is not the format of the exported data that this test asks about.",
+      "Suitable: CSV is supported for exporting Cost Management tabular data.",
+      "Not suitable: XML is not included in the Csv and Parquet formats listing in the Exports API documentation."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Exports API, FormatType",
+        "url": "https://learn.microsoft.com/en-us/rest/api/cost-management/exports/get?view=rest-cost-management-2026-06-01"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-10",
+    "title": "Sharp cost increase: find the cause and contact the owner",
+    "body": [
+      "Unusual cost growth is a reason for investigation. It may be related to useful load growth, a new resource, a more expensive configuration, or an error. The expense chart by itself does not explain the cause.",
+      "In Cost Analysis, select the desired period and compare expenses by day, service, or resource groups. Find where the spike started, then clarify who is responsible for this resource. Owner tags and the changelog help establish context.",
+      "Example: after a release, expenses tripled. The team could have increased database power or accidentally left a test environment running. Inform the service owners and budget managers, attaching the period, resource, and magnitude of the change; together, choose a justified action.",
+      "Of the suggested actions, it is correct to notify the interested stakeholders. Deleting everything indiscriminately is dangerous for a working application. Disabling the budget removes the control signal, but does not eliminate the source of costs."
+    ],
+    "optionExplanations": [
+      "Not suitable: ignoring does not help find the cause and allows unwanted expenses to continue.",
+      "Not suitable: mass deletion does not take into account the purpose of resources and can stop the service or destroy necessary data.",
+      "Suitable: resource and budget owners can explain the change and agree on a targeted solution. The message should be backed up by expense details.",
+      "Not suitable: the budget serves for control; disabling it does not reduce resource consumption and does not fix the problem."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Identify anomalies and unexpected changes in cost",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/understand/analyze-unexpected-charges"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-11",
+    "title": "Virtualization: shared resource, separate environments",
+    "body": [
+      "Resource pooling is the combination of computing resources into a common pool from which capacities are allocated to different consumers. Sharing means the joint use of these capacities. The user needs available memory and CPU time, not necessarily a separate physical server.",
+      "Virtualization creates software representations of hardware. A hypervisor allocates physical server resources among virtual machines and isolates them from each other. For example, separate virtual machines for a website and an internal application can run on a single server.",
+      "Abstraction is a broader idea: hiding implementation details behind a clear interface. Virtualization uses abstraction, but in this question, the specific mechanism for sharing hardware is virtualization. Polymorphism refers to the behavior of software objects rather than the allocation of processor and memory."
+    ],
+    "optionExplanations": [
+      "Correct: virtualization allows multiple isolated virtual environments to share physical hardware.",
+      "Related to the topic, but less precise: abstraction hides implementation details. This is a general principle also used in virtualization, rather than an independent name for the resource allocation mechanism in this question.",
+      "Incorrect: polymorphism allows different implementations of a common software interface. It does not denote the pooling and partitioning of cloud resources.",
+      "Incorrect: not all listed concepts describe pooling and sharing; in particular, polymorphism relates to programming."
+    ],
+    "sources": [
+      {
+        "title": "AWS — What is Virtualization?",
+        "url": "https://aws.amazon.com/what-is/virtualization/"
+      },
+      {
+        "title": "NIST — Resource pooling",
+        "url": "https://csrc.nist.gov/glossary/term/resource_pooling"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-12",
+    "title": "Platforms and providers: AWS, Azure, Cloudera",
+    "body": [
+      "AWS stands for Amazon Web Services. It is Amazon's cloud platform: a set of services for computing, data storage, databases, and other tasks. The name of the platform is not equal to the name of a single product within it.",
+      "Azure is Microsoft's cloud platform. Cloudera is a separate data and AI platform provider. A product can run in someone else's cloud, but that does not make it a platform of the cloud provider itself.",
+      "For the exam, first find what is actually being asked: a company, a platform, or an individual service. Here, the keywords are by Amazon. Therefore, it is sufficient to establish the mapping Amazon → AWS; comparing the capabilities of all platforms is not required."
+    ],
+    "optionExplanations": [
+      "Correct: AWS is Amazon Web Services, Amazon's cloud platform.",
+      "Incorrect: Cloudera is a separate data and AI company and platform; it is not the name of Amazon's cloud platform.",
+      "Incorrect: Azure belongs to Microsoft, while the question asks for Amazon's platform.",
+      "Incorrect: the listed platforms belong to different providers; only AWS corresponds to Amazon."
+    ],
+    "sources": [
+      {
+        "title": "AWS — What is AWS",
+        "url": "https://aws.amazon.com/what-is-aws/"
+      },
+      {
+        "title": "Microsoft — What is Azure?",
+        "url": "https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-azure"
+      },
+      {
+        "title": "Cloudera — About us",
+        "url": "https://www.cloudera.com/about.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-13",
+    "title": "Snowball: transferring big data via a device",
+    "body": [
+      "Snowball is associated with transferring large amounts of data using a physical device. The idea is especially useful when transferring an archive over an available network connection is too slow or inconvenient. The device does not increase the bandwidth of the internet channel.",
+      "A typical academic scenario: an organization copies a large archive to the received device over a local network, then returns the device to AWS to upload the data to S3. Physical delivery becomes part of the data transfer; security is ensured by the device and data protection mechanisms.",
+      "Some Snowball Edge devices also support local compute. Therefore, processing data near the source is related to the Snowball family, but the question explicitly clarifies the advantage for data transfer: secure, efficient transfer of large volumes, rather than real-time analytics."
+    ],
+    "optionExplanations": [
+      "Incorrect: Snowball does not provide a high-speed internet connection. Its purpose is precisely the ability to transfer data without sending the entire volume over the internet.",
+      "Not the best answer: local compute is available in Snowball Edge, but low-latency processing describes processing, whereas the condition asks for the data transfer advantage.",
+      "Correct: secure transfer of a large volume of data into and out of the cloud corresponds to the primary task of the device in this academic question.",
+      "Incorrect: real-time analytics is the task of processing incoming data. It does not explain Snowball's main advantage for transferring a large archive."
+    ],
+    "sources": [
+      {
+        "title": "AWS Snowball — Secure Edge Computing and Offline Data Transfer",
+        "url": "https://aws.amazon.com/snowball/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-14a",
+    "title": "S3 Versioning: can be suspended, history cannot be canceled",
+    "body": [
+      "S3 Versioning stores multiple versions of an object with the same key. For example, re-uploading a report with the same name can create a new version while keeping the previous one. This helps restore data after accidental overwriting.",
+      "A bucket has three states: Unversioned, Enabled, and Suspended. After the first enabling of versioning, there is no return to the initial Unversioned state. You can switch between Enabled and Suspended.",
+      "Suspend means pausing versioning for subsequent operations, not automatically deleting old versions. If you need to clear past versions, this is a separate operation or Lifecycle task. In the test statement, the word disabled replaces suspended, so the answer is False."
+    ],
+    "optionExplanations": [
+      "Incorrect: True would mean the ability to return the bucket to a state where versioning was never enabled. S3 does not support this transition.",
+      "Correct: after enabling, suspension (Suspended) is available, but returning to Unversioned is not. Existing versions do not automatically disappear."
+    ],
+    "sources": [
+      {
+        "title": "Amazon S3 — Retaining multiple versions of objects with S3 Versioning",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-14b",
+    "title": "IaaS, PaaS, SaaS: how much work is left for you",
+    "body": [
+      "The cloud service model describes what the provider delivers and what the client manages. IaaS is infrastructure: compute resources, network, and storage. The client gets more control and manages the operating system and their application themselves.",
+      "PaaS is a platform for developing and running an application. The provider takes on more environment maintenance, while the developer focuses on code and data. SaaS is a ready-made application: the user works with the program's functions and settings rather than maintaining servers.",
+      "Imagine three tasks: setting up your own virtual machine — IaaS; deploying your code in a managed environment — PaaS; using a ready-made application — SaaS. The question is phrased inaccurately: best known does not set a measurable popularity rating. Based on the set of options, it checks that all three are well-known service models."
+    ],
+    "optionExplanations": [
+      "IaaS is indeed a service model. But choosing only IaaS would miss the other two correct models in this list.",
+      "PaaS is indeed a service model. It is not the only correct category among the suggested options.",
+      "SaaS is indeed a service model. It cannot be proven from the wording that it is \"the best known\"; this is not a question with a given popularity rating.",
+      "Expected answer: all three options are standard cloud service models. This is an interpretation of the academic question, not a statement of equal model popularity."
+    ],
+    "sources": [
+      {
+        "title": "AWS — Types of Cloud Computing",
+        "url": "https://aws.amazon.com/types-of-cloud-computing/"
+      },
+      {
+        "title": "Microsoft Azure — What are IaaS, PaaS, and SaaS?",
+        "url": "https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-are-iaas-paas-and-saas"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-15",
+    "title": "Cloud models and platform purposes",
+    "body": [
+      "This question looks for the incorrect statement. First, separate platforms from models: Azure and AWS are cloud platforms, while IaaS, PaaS, and SaaS are ways to provide computing capabilities to a client.",
+      "Models have two different axes. The service model describes which layer you get as a service. The deployment model describes who the cloud is intended for and how its infrastructure is organized. Therefore, \"two sets of models\" does not mean \"only two models\".",
+      "Azure App Service allows hosting ASP.NET web applications, including .NET Framework applications in a Windows environment. For example, a store website runs in Azure, and a customer opens it through a browser. The application does not run literally \"inside the Internet\": the Internet provides access to it.",
+      "AWS uses a global infrastructure to provide cloud services: compute, storage, databases, and other capabilities. The phrase claiming that this network was built to serve Amazon's search engine incorrectly describes the purpose of AWS; in this set, this is the required false statement. Do not confuse the cloud platform with shopping search on the store's website."
+    ],
+    "optionExplanations": [
+      "We do not select as false: Azure indeed supports hosting .NET Framework web applications. The phrasing \"over the Internet\" here means network access to the application, not a special way of executing code.",
+      "We do not select as false: we are talking about two categories — service models and deployment models. Within each category, there are several models.",
+      "We select: the purpose of the AWS global infrastructure is not limited to serving Amazon's search engine. The question mixes up the cloud platform with another type of product.",
+      "Does not fit: among the options there is an incorrect statement — the option about the search engine; therefore, \"none of the above\" does not meet the condition."
+    ],
+    "sources": [
+      {
+        "title": "NIST SP 800-145: The NIST Definition of Cloud Computing",
+        "url": "https://csrc.nist.gov/pubs/sp/800/145/final"
+      },
+      {
+        "title": "Microsoft Learn: Configure an ASP.NET app for Azure App Service",
+        "url": "https://learn.microsoft.com/en-us/azure/app-service/configure-language-dotnet-framework"
+      },
+      {
+        "title": "AWS Global Infrastructure",
+        "url": "https://aws.amazon.com/about-aws/global-infrastructure/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-16",
+    "title": "Deployment model: how the cloud is organized",
+    "body": [
+      "Deployment model is the cloud deployment model. It describes the organization of the cloud infrastructure: who uses it, who owns or manages it, and how its parts are connected. Location is only part of the description.",
+      "NIST defines public, private, community, and hybrid cloud. Public is available to a wide range of customers; private is intended for a single organization; community is for a group of organizations with shared requirements; hybrid combines separate cloud infrastructures.",
+      "A private cloud does not necessarily have to be in the company's office: it can reside with an external provider. Therefore, you cannot define the model solely by the servers' address. For example, a dedicated cloud for a single company remains private even if it is maintained by a contractor.",
+      "Remember two questions: deployment — \"how is the cloud organized and who is it for?\", service — \"what service layer are we getting?\". An application is already a specific program running inside the chosen scheme."
+    ],
+    "optionExplanations": [
+      "Does not fit: service model distinguishes between IaaS, PaaS, and SaaS, meaning the provided capability layer rather than the deployment organization of the cloud.",
+      "Does not fit: application is a specific application; it is not a term for classifying the location and management of cloud infrastructure.",
+      "Fits: deployment model is the deployment model; it is precisely what the study phrasing describes.",
+      "Does not fit: service and application denote other things, so all options cannot be correct simultaneously."
+    ],
+    "sources": [
+      {
+        "title": "NIST SP 800-145: The NIST Definition of Cloud Computing",
+        "url": "https://nvlpubs.nist.gov/nistpubs/legacy/sp/nistspecialpublication800-145.pdf"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-17",
+    "title": "S3: data durability, availability, and protection",
+    "body": [
+      "Amazon S3 is object storage: an application saves files as objects in a bucket and accesses them via an API. It is suitable, for example, for photos, backups, and archives, rather than replacing a standard operating system disk in all tasks.",
+      "Durability is data persistence: how low the risk is of losing an already saved object. Availability is whether you can retrieve it at the right moment. A file may be saved but temporarily unavailable; these are different properties.",
+      "For S3 Standard, AWS specifies a design durability of 99.999999999% and an availability of 99.99% per year. Objects of this class are redundantly stored in at least three Availability Zones. These characteristics cannot be automatically transferred to every S3 class: classes differ in placement and access mode.",
+      "Protection also depends on the customer: you need to correctly assign permissions and organize recovery from accidental deletion. Therefore, \"highly protected\" is a general characteristic of the service, not a promise of security under any settings. Within these general statements, there is no clearly false one; None of the mentioned is chosen."
+    ],
+    "optionExplanations": [
+      "We do not select as false: S3 is designed for scalable secure storage. At the same time, the protection of a specific bucket also depends on customer permissions; the phrase does not imply an absolute guarantee in case of erroneous configuration.",
+      "We do not select as false: high reliability is a justified general characteristic of S3, although the word reliable does not set an exact metric or storage class.",
+      "We do not select as false: S3 provides high availability. Specific metrics depend on the storage class; high availability does not mean the absence of any failures.",
+      "Fits the condition \"which statement is incorrect\": among the three general characteristics, there is no clearly false one, so \"none of the mentioned\" is chosen."
+    ],
+    "sources": [
+      {
+        "title": "AWS: What is Amazon S3?",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "title": "AWS: Data protection in Amazon S3",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataDurability.html"
+      },
+      {
+        "title": "Amazon S3 FAQs",
+        "url": "https://aws.amazon.com/s3/faqs/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-18",
+    "title": "Region and Availability Zone are different levels",
+    "body": [
+      "An AWS Region is a separate geographical area. Inside a region, there are several isolated Availability Zones, or availability zones. Therefore, regions and zones cannot be considered the same unit.",
+      "For example, us-east-1 is a region code, and us-east-1a is the designation of a zone within it. An EC2 instance is placed via a subnet in a specific zone. Multiple zones allow distributing application instances so that the failure of one location does not stop the entire application.",
+      "The number of regions and zones in the global infrastructure changes. For a numerical question, you need a date, a specific counting area, and the exact term. The number of zones in a single region is not equal to the number of regions in all of AWS.",
+      "In the original question, these clarifications are missing, and options 1–4 do not describe the current global number of AWS regions or zones. Selecting a historical key without a source is impossible. This question is useful as a term check and is kept without a score; memorizing an arbitrary figure should be avoided."
+    ],
+    "optionExplanations": [
+      "No confirmed key: 2 is not the current global number of AWS regions or zones. Without a date and counting area, this option cannot be assigned.",
+      "No confirmed key: AWS is not limited to a single region or a single zone. The question does not specify another counting object.",
+      "No confirmed key: the presence of multiple zones within a region does not make 3 the answer to the question about the global number of regions or zones.",
+      "No confirmed key: 4 cannot be considered the current global number. Even if the number was encountered in old material, without a date and context, this is not proof of the key."
+    ],
+    "sources": [
+      {
+        "title": "AWS EC2: Regions and Zones",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+      },
+      {
+        "title": "AWS: Regions",
+        "url": "https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-19",
+    "title": "CloudWatch and balancer metrics",
+    "body": [
+      "Elastic Load Balancing distributes incoming requests across targets, such as EC2 instances. To understand whether the application is working normally, observations are needed: how many requests arrive, how many targets are healthy, how fast they respond.",
+      "Amazon CloudWatch is a monitoring service, and a metric is a specific measured indicator over time. The load balancer publishes data to CloudWatch. Therefore, the original question is inaccurate: CloudWatch is not a separate metric, but the only suitable service among the options.",
+      "For Application Load Balancer, metric examples are RequestCount, HealthyHostCount, and TargetResponseTime. If response time is growing, compare it with the request flow and target status. A single line on a chart by itself does not yet prove the cause of the problem.",
+      "A CloudWatch alarm can notify when an indicator goes beyond a selected threshold. For example, the team receives a signal when backend responses deteriorate. Data transfer and block storage services solve other tasks and do not replace the balancer monitoring system."
+    ],
+    "optionExplanations": [
+      "Fits: Elastic Load Balancing publishes metrics to Amazon CloudWatch; they can be viewed there and used for alarms. Clarification: this is the name of the service, not a specific indicator.",
+      "Incorrect: AWS Import/Export refers to data migration, not to collecting and observing load balancer metrics.",
+      "Incorrect: Amazon Elastic Block Store provides block storage for EC2. An EBS volume is not an ELB monitoring service.",
+      "Incorrect: the other two services do not perform the required role, so \"all of the above\" is incorrect."
+    ],
+    "sources": [
+      {
+        "title": "AWS: CloudWatch metrics for your Application Load Balancer",
+        "url": "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-cloudwatch-metrics.html"
+      },
+      {
+        "title": "AWS: Amazon EBS volumes",
+        "url": "https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes.html"
+      },
+      {
+        "title": "AWS: Introducing AWS Import/Export for Physical Data Transfer",
+        "url": "https://aws.amazon.com/about-aws/whats-new/2009/05/20/AWS-Import-Export/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-20",
+    "title": "EC2 Auto Scaling: add servers alongside the load",
+    "body": [
+      "An EC2 instance is a virtual server. When user traffic increases, you can distribute the work among multiple application instances. Adding instances is called scale out, and reducing their number is called scale in.",
+      "Amazon EC2 Auto Scaling manages a group of servers—an Auto Scaling group. Minimum, desired capacity, and maximum are set for it. A scaling policy changes the number of instances based on load conditions; the group also replaces unhealthy instances.",
+      "Example: a training website usually runs on two servers. Before an exam, the load increases, and the policy scales the group out to four. The load balancer distributes requests between them. Auto Scaling is responsible for the number of servers, while the load balancer is responsible for traffic distribution; these mechanisms work together."
+    ],
+    "optionExplanations": [
+      "Incorrect: Auto Ruling is not the name of the AWS mechanism for scaling EC2. Rules are part of Auto Scaling policies.",
+      "Incorrect: Auto Replica is not the name of the required service. The mere presence of copies does not automatically mean changing their count based on load.",
+      "Correct: Amazon EC2 Auto Scaling launches or terminates instances according to specified policies and maintains the desired group capacity.",
+      "Incorrect: the \"all of the above\" option requires the remaining items to be correct, and the first two do not denote the required mechanism."
+    ],
+    "sources": [
+      {
+        "title": "AWS: What is Amazon EC2 Auto Scaling?",
+        "url": "https://docs.aws.amazon.com/autoscaling/ec2/userguide/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-21",
+    "title": "Docker: image, container, and background execution",
+    "body": [
+      "An image is a prepared template of the application and its files. A container is an instance created from the image with a running process. Therefore, downloading an image and starting a container are different actions: pull downloads the image, and run creates and starts the container.",
+      "To run in the background, you need the -d or --detach flag: docker run -d IMAGE. The terminal returns control, but the process inside the container continues to run. For example, docker run -d --name web nginx creates a background container with a web server.",
+      "Background mode does not make every container run indefinitely. When the main process exits, the container stops. Therefore, docker run -d alpine sh without a suitable input mode or a long-running command may exit immediately. The original options do not have docker run with the -d flag at all."
+    ],
+    "optionExplanations": [
+      "Incorrect: docker images shows local images; this command does not start containers.",
+      "Incorrect: docker pull alpine downloads the Alpine image from the registry. No process is started inside a container.",
+      "Incorrect: pull does not accept the sh command to run inside the image. Its syntax expects an image reference rather than IMAGE COMMAND; run is used for starting.",
+      "Correct: none of the suggested options perform background execution. docker run -d IMAGE with a suitable process is required."
+    ],
+    "sources": [
+      {
+        "title": "Docker: docker container run — detached mode",
+        "url": "https://docs.docker.com/reference/cli/docker/container/run/"
+      },
+      {
+        "title": "Docker: docker image pull",
+        "url": "https://docs.docker.com/reference/cli/docker/image/pull/"
+      },
+      {
+        "title": "Docker: docker image ls",
+        "url": "https://docs.docker.com/reference/cli/docker/image/ls/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-22",
+    "title": "SaaS, managed database, and analytics: distinguishing roles",
+    "body": [
+      "SaaS is a ready-to-use application that a client uses via the internet. The vendor maintains the application and infrastructure, and the user performs their task: for example, working with email or CRM. This describes a method of software delivery, not a specific database type.",
+      "A managed database provides a developer with data storage and removes some administrative tasks. You can build SaaS on top of such a database, but the phrase \"a cloud database without setting up your own server\" describes a database service, not the full definition of SaaS.",
+      "Redshift is a cloud data warehouse for analytics using SQL. DynamoDB is a managed NoSQL database with key-value and document models. For example, a store's SaaS can store operational data in DynamoDB and analyze sales in Redshift. The purpose of these components differs from the application delivery model to the client.",
+      "The original task has only the title \"Software as a service (SaaS)\" without a full question. If the definition of SaaS is requested, options A–C do not provide it. If the Redshift usage scenario for SaaS is requested, option B is relevant. Therefore, a single confirmed answer cannot be assigned here."
+    ],
+    "optionExplanations": [
+      "Describes a managed cloud database—DBaaS. This can be a component of a SaaS application, but not the general definition of SaaS.",
+      "Describes the use of Redshift for application analytics. Suitable as a scenario, including for SaaS, but not as a definition of the SaaS model itself. Without the full prompt condition, it cannot be declared the key.",
+      "Describes DynamoDB: a low-latency NoSQL database. The database can serve a SaaS application, but these concepts are not equivalent.",
+      "May be appropriate if the task was to select the exact definition of SaaS. If the question were about the Redshift scenario, the conclusion would be different. The original text is insufficient for evaluation."
+    ],
+    "sources": [
+      {
+        "title": "AWS: What is SaaS?",
+        "url": "https://aws.amazon.com/what-is/saas/"
+      },
+      {
+        "title": "AWS: What is Amazon Redshift?",
+        "url": "https://docs.aws.amazon.com/redshift/latest/mgmt/welcome.html"
+      },
+      {
+        "title": "AWS: What is Amazon DynamoDB?",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-23",
+    "title": "Azure Pricing Calculator: estimate costs before launch",
+    "body": [
+      "Azure Pricing Calculator builds a preliminary cost estimate based on the selected configuration and projected consumption. For a service, you specify the region, size, tier, and usage volume. For example, a VM running for 200 hours per month is priced differently than the same VM running for the entire month.",
+      "This is a scenario calculation: \"How much will my plan approximately cost?\". The final bill depends on actual usage and applicable terms. Therefore, before launch, you compare several configurations, and after launch, you compare actual expenses against the plan.",
+      "Distinguish between tool tasks: Calculator estimates the selected scenario, Advisor recommends improvements for existing resources, Budgets tracks spending relative to thresholds, and Exports exports data for further analysis. The question says Azure Price Calculator; the official name of the tool is Azure Pricing Calculator."
+    ],
+    "optionExplanations": [
+      "Incorrect: Advisor analyzes configuration and resource usage and suggests optimizations. This is not a cost calculator for a designed set of services.",
+      "Correct: refers to the Azure Pricing Calculator. It calculates preliminary costs based on configuration and expected usage.",
+      "Incorrect: Budgets sets a budget and alerts based on actual or forecasted expenses. This is expense control, not pricing a new configuration.",
+      "Incorrect: Exports dumps Cost Management data to storage. It does not calculate the cost of an arbitrary future solution."
+    ],
+    "sources": [
+      {
+        "title": "Microsoft: Estimate costs with the Azure pricing calculator",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/pricing-calculator"
+      },
+      {
+        "title": "Microsoft: Introduction to Azure Advisor",
+        "url": "https://learn.microsoft.com/en-us/azure/advisor/advisor-overview"
+      },
+      {
+        "title": "Microsoft: Create and manage budgets",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets"
+      },
+      {
+        "title": "Microsoft: Create and manage Cost Management exports",
+        "url": "https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-improved-exports"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-24",
+    "title": "SDLC: create, deploy, maintain",
+    "body": [
+      "SDLC describes the software development lifecycle. In the model of this study question, there are six phases: plan → define → design → develop → deploy → maintain. First, the goal and requirements are defined, then the solution is designed, implemented, delivered to users, and maintained.",
+      "Develop combines implementation work: writing code, building, and testing. Deploy transfers the prepared version to the production environment. Maintain includes system monitoring, bug fixing, and further modifications after launch.",
+      "Example: for a website, functions and structure were defined first. Then the code was written and tested — develop; the version was deployed to the server — deploy; they began tracking errors and releasing fixes — maintain. In other SDLC descriptions, testing may be a separate phase: you need to remember the model specified in the question, rather than a universal number of stages."
+    ],
+    "optionExplanations": [
+      "Does not fit: code, build, and test are development actions. Deployment and system maintenance after launch are missing here.",
+      "Fits: develop, deploy, and maintain complete the six-stage model specified in the question.",
+      "Does not fit in this model: test does not replace the entire develop phase, which includes solution creation. In other models, testing is indeed singled out separately.",
+      "Does not fit: code and build split development into actions, while deploy — delivering the finished system to users — is missing."
+    ],
+    "sources": [
+      {
+        "title": "AWS Academy Cloud Developing: Module 2 Knowledge Check — source study model",
+        "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+      },
+      {
+        "title": "AWS: What is SDLC? — phase differences between models",
+        "url": "https://aws.amazon.com/what-is/sdlc/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-25",
+    "title": "Console, CLI, and SDK: Three entry points to the AWS API",
+    "body": [
+      "An API is a set of operations that a service allows to be called programmatically. For example, S3 accepts requests to create a bucket and read an object. A single task can be performed through different interfaces: the method of access changes, but the service remains the same.",
+      "The AWS Management Console provides a graphical interface in the browser. The AWS CLI allows operations to be executed via commands and combined into scripts. The AWS SDK consists of libraries for a programming language: the application calls the library methods, and the library helps construct and send the AWS request.",
+      "For example, a list of buckets can be viewed in the Console, requested via an AWS CLI command, or retrieved from Python via the Boto3 SDK. For the exam, remember the trio of Console + CLI + SDK. CloudTrail records events for auditing; IAM determines who is allowed to perform actions. These are important services, but they have a different task."
+    ],
+    "optionExplanations": [
+      "Does not fit: CloudTrail records action events and helps figure out who did what. This is auditing, not one of the three main interfaces for executing AWS operations.",
+      "Fits: The SDK provides libraries through which the program accesses AWS service APIs.",
+      "Fits: The Management Console allows managing services via a browser interface that accesses the AWS API.",
+      "Fits: The AWS CLI invokes AWS operations using commands from the terminal; commands are convenient to use in automation scripts.",
+      "Does not fit: IAM manages identity and access rights. The fact that IAM has its own API does not turn it into a general interface for working with all services."
+    ],
+    "sources": [
+      {
+        "title": "AWS CLI: direct access to service APIs",
+        "url": "https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html"
+      },
+      {
+        "title": "CloudTrail: Console, CLI, SDK, and API events",
+        "url": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+      },
+      {
+        "title": "IAM: access management",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-26",
+    "title": "RESTful API: architectural principles, not just HTTP",
+    "body": [
+      "REST stands for Representational State Transfer. It is an architectural style for system interaction. A RESTful API is built according to its principles: separation of client and server, uniform interface, statelessness of requests regarding the saved context of previous requests, caching support, and layered organization.",
+      "A resource is an object that the application works with: a product, an order, a user. For example, GET /products/42 requests a representation of the product, and the response may contain JSON with its name and price. The URI denotes the resource, and the HTTP method denotes the action on it.",
+      "Stateless means that each request contains the information necessary to process it. This does not forbid the server from storing products in a database or verifying a token. Simply using HTTP does not yet prove REST compliance: another API style can also be built over HTTP. In the definition, look specifically for adherence to REST principles."
+    ],
+    "optionExplanations": [
+      "Insufficient: HTTP is often used by REST APIs, but HTTP support by itself does not provide REST architectural constraints.",
+      "Does not fit: this is a description of an API proxy or gateway — an intermediary component. It does not define the architectural style of the API itself.",
+      "Fits: A RESTful API follows the principles of Representational State Transfer; this is the exact definition among those offered.",
+      "Does not fit: hosting an API on a web server does not indicate whether REST principles are being followed."
+    ],
+    "sources": [
+      {
+        "title": "AWS: What is a RESTful API",
+        "url": "https://aws.amazon.com/what-is/restful-api/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-27",
+    "title": "DynamoDB and main database categories",
+    "body": [
+      "Amazon DynamoDB is a managed NoSQL database with key-value and document models. Key-value means data access by key; document allows storing complex values with nested structures. This is persistent application data storage, not just a temporary cache.",
+      "For example, an application stores a player profile: playerId key, name, score, and inventory list. DynamoDB distributes data across partitions and supports horizontal scaling. When designing, it is important to know in advance by which keys the application will read data.",
+      "Distinguish categories by task: an in-memory cache accelerates data access, a graph database works with relationships, and a relational database works with the relational model. DynamoDB belongs to key-value/document. If a question describes compatibility with MySQL and PostgreSQL, this is characteristic of Aurora, not DynamoDB."
+    ],
+    "optionExplanations": [
+      "Does not fit: this is a description of an in-memory cache. For accelerating DynamoDB reads, there is a separate DAX cache; DynamoDB itself does not reduce to just that.",
+      "Does not fit: graph databases are designed for nodes and relationships; an example in AWS is Amazon Neptune.",
+      "Does not fit: DynamoDB is not a relational MySQL/PostgreSQL database. Aurora is an example of an AWS relational database with compatibility for these engines; the word competitive in the original version is preserved.",
+      "Fits: key-value and document, horizontal scaling, and internet-scale are a matching description of DynamoDB."
+    ],
+    "sources": [
+      {
+        "title": "DynamoDB: Data models and scaling",
+        "url": "https://aws.amazon.com/documentation-overview/dynamodb/"
+      },
+      {
+        "title": "Amazon Neptune: Graph database",
+        "url": "https://aws.amazon.com/neptune/"
+      },
+      {
+        "title": "Amazon Aurora: MySQL and PostgreSQL",
+        "url": "https://aws.amazon.com/rds/aurora/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-28",
+    "title": "S3: Object storage and data lake",
+    "body": [
+      "Amazon S3 stores data as objects inside buckets. An object has content, a key, and metadata. The application accesses objects via an API; S3 does not provide a standard block disk for a server.",
+      "A data lake is a repository for large volumes of diverse data for subsequent processing. For example, a company stores application JSON events, CSV sales data, and photos in S3. Analytical tools then read the required data. This is a typical S3 scenario.",
+      "To select a service, distinguish the access interface. Block storage like EBS behaves like a disk. File storage like EFS provides a shared file system. You can store a database backup or analytics engine data in S3, but in the context of this question, this does not mean placing the files of a running traditional database on a regular S3 disk."
+    ],
+    "optionExplanations": [
+      "Fits: a data lake is a direct use case for S3 to store large arrays of data in various formats.",
+      "Does not fit: S3 is object storage, not block storage. Amazon EBS is used for EC2 block volumes.",
+      "Does not fit in this comparison: storing a database backup in S3 differs from placing the files of an actively running traditional DBMS. S3 does not provide such a DBMS with a regular block volume.",
+      "Does not fit: S3 is not a regular shared file system. In AWS, EFS and FSx, for example, are intended for shared file access."
+    ],
+    "sources": [
+      {
+        "title": "Amazon S3: Object storage and use cases",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      },
+      {
+        "title": "Amazon EBS: Block storage",
+        "url": "https://aws.amazon.com/ebs/"
+      },
+      {
+        "title": "Amazon EFS: Shared file storage",
+        "url": "https://aws.amazon.com/efs/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-29",
+    "title": "HTTP codes: Non-existent bucket and 404 error",
+    "body": [
+      "The first digit of the HTTP code shows the result class: 2xx means success, 3xx means redirection, 4xx means a problem with the client request, and 5xx means the server could not fulfill the request due to an error on its side. The class helps determine the further action.",
+      "To handle a request for a non-existent bucket, S3 defines the NoSuchBucket error with the HTTP code 404 Not Found. Therefore, the 400 series family is chosen in the question. Do not confuse it with the specific 400 Bad Request code: 404 is also part of 4xx.",
+      "For example, there is a typo in the bucket name. The developer needs to check the name and the existence of the resource; endlessly repeating the exact same request will not create the missing bucket. For diagnostics, it is useful to read both the HTTP code and the AWS error code: NoSuchBucket indicates that the bucket is missing, while NoSuchKey indicates that the object is missing."
+    ],
+    "optionExplanations": [
+      "Incorrect: 3xx is related to redirection. Specifying a missing bucket is classified as 404, not as a redirect.",
+      "Incorrect: 5xx means a server error. In the described case, the issue is accessing a missing resource.",
+      "Incorrect: 2xx means successful execution. Accessing a non-existent bucket did not complete successfully.",
+      "Correct: S3 returns NoSuchBucket with the 404 Not Found code; 404 belongs to the 4xx family."
+    ],
+    "sources": [
+      {
+        "title": "Amazon S3: error responses",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/developerguide/ErrorResponses.html"
+      },
+      {
+        "title": "AWS: NoSuchBucket and HTTP 404",
+        "url": "https://repost.aws/knowledge-center/cloudfront-troubleshoot-404-errors"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-30",
+    "title": "API Gateway: where latency is measured",
+    "body": [
+      "API Gateway accepts a client request and passes it to an integration, such as a Lambda or an HTTP server. To understand the reason for a slow response, you need to distinguish between the operation time of this integration and the processing time of the entire request by the gateway.",
+      "IntegrationLatency measures the interval from when the request is sent to the backend until its response is received by the gateway. Latency measures the interval from when the client request is received until the response is returned to the client by API Gateway, and it includes additional gateway overhead. This is not a measurement of the total network latency to the user's device.",
+      "Example: IntegrationLatency is 800 ms, and Latency is 830 ms. The main latency lies in the interaction segment with the backend. If the backend responds quickly and Latency is much higher, you should also check the processing in Gateway. Errors and request rate limits are separate signals, not the IntegrationLatency value."
+    ],
+    "optionExplanations": [
+      "Incorrect: the rate of server errors is reflected by 5XXError. IntegrationLatency measures time, not the number of errors.",
+      "Inaccurate: the response to the client relates to the more general Latency. Here, the question specifically asks about the backend integration latency.",
+      "Correct: the metric shows how long the Gateway waits for a backend response after passing the request to it.",
+      "Incorrect: throttling means limiting the request rate. Its frequency is not the integration latency."
+    ],
+    "sources": [
+      {
+        "title": "AWS: API Gateway dimensions and metrics",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-metrics-and-dimensions.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-31",
+    "title": "S3 and CORS: browser access to another origin",
+    "body": [
+      "An origin is a combination of protocol, host name, and port. A page and a resource from another bucket usually have different origins. CORS allows a server to specify which sites the browser is allowed to read responses from for requests to that resource.",
+      "For example, a page's JavaScript accesses an image from a separate S3 bucket via fetch. In the CORS configuration of the image bucket, the allowed origin of the page and the required GET method are specified. CORS settings do not replace the permission to read the object: access policies continue to apply.",
+      "In the study question, CORS is expected, but the phrasing is simplified. A regular img element can display an image from another origin without CORS. For reading a response via fetch or using pixels in a canvas, the restrictions are significant. Therefore, in a real failure, the URL and object access are also checked; the absence of an image by itself does not prove a CORS error."
+    ],
+    "optionExplanations": [
+      "Incorrect: Cross-Region Replication copies objects between regions. Such a copy is not required for a browser to access an already existing image.",
+      "Incorrect: a page can reference objects in another bucket. You need to configure access correctly and, for relevant browser requests, CORS.",
+      "Incorrect: a regular S3 bucket does not have its own security group with an inbound port 80 rule. This confuses the S3 model with EC2 network settings.",
+      "Expected answer: CORS can block reading a resource from another origin by browser code. For a regular img without additional conditions, this explanation is not sufficient."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Using cross-origin resource sharing",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/cors.html"
+      },
+      {
+        "title": "MDN: img and crossorigin",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/img"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-32",
+    "title": "DynamoDB: table management and data operations",
+    "body": [
+      "DynamoDB distinguishes between table infrastructure management and operations on its contents. The control plane is responsible for the table itself and its settings: creating, describing, modifying parameters, or deleting the table.",
+      "The data plane works with items—records inside the table. For example, PutItem writes an item, GetItem reads it, and UpdateItem changes the price. Batch operations combine working with multiple items in a single call; this does not create a table.",
+      "Imagine a warehouse: building a warehouse and changing its layout is the control plane; putting boxes in or taking them out is the data plane. A transaction is needed if multiple changes must happen together: for example, decreasing inventory and creating an order, or doing nothing at all. Therefore, the word control in the question points to table management."
+    ],
+    "optionExplanations": [
+      "Correct: creating and managing tables is the purpose of the control plane, for example, CreateTable and UpdateTable.",
+      "Incorrect: data CRUD changes the contents of the table and belongs to the data plane.",
+      "Incorrect: BatchGetItem and BatchWriteItem process groups of records rather than managing the table itself.",
+      "Incorrect: all-or-nothing consistent changes describe transactions. This is not the definition of control operations."
+    ],
+    "sources": [
+      {
+        "title": "AWS: DynamoDB API categories",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.API.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-33",
+    "title": "IAM: implicit deny, allow and explicit deny",
+    "body": [
+      "For a regular IAM user, the lack of permission means implicit deny: the request is denied because there is no matching Allow. Access to resources is not automatically granted to a new user. The root user has a special initial set of permissions, so the study rule \"all requests are denied\" refers to the basic IAM permission evaluation model.",
+      "Explicit deny is a direct denial in an applicable policy. It overrides Allow. Example: a policy allows reading S3 objects, but explicitly denies reading confidential/*. For this prefix, reading will remain denied even if another policy allows it.",
+      "A single policy can contain multiple statements, including Allow and Deny. In practice, all applicable restrictions are evaluated, including permissions boundaries and AWS Organizations policies. For the test, remember two rules: without permission, access does not appear; explicit deny takes precedence."
+    ],
+    "optionExplanations": [
+      "Incorrect: Allow and Deny can be located in different statements of the same policy.",
+      "Incorrect: in case of a conflict, the applicable explicit Deny takes precedence, not Allow.",
+      "Correct: explicit deny overrides explicit allow for the corresponding request.",
+      "Correct in the basic IAM model: implicit deny is in effect until access is explicitly granted. The special status of root does not change the expected answer of the study question.",
+      "Incorrect: default permission would contradict the principle of least privilege. A regular IAM user does not get all actions automatically."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Policy evaluation logic",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html"
+      },
+      {
+        "title": "AWS: Evaluating requests to allow or deny access",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic_policy-eval-denyallow.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-34",
+    "title": "WebSocket: two-way real-time communication",
+    "body": [
+      "In the standard HTTP model, the client sends a request, and the server returns a response. For chat, this is often not enough: a new message must arrive immediately, even if the user is not requesting anything at that moment.",
+      "WebSocket establishes a connection through which both parties can send messages. In API Gateway, the backend can send data to connected clients. This is convenient for chats, notifications, and other event-driven UI updates.",
+      "Example: a customer writes to an operator, and the operator's reply arrives in an open chat via the same connection. Retrieving the order number of a newly placed order or downloading a daily report usually fits into an HTTP request and response. WebSocket is possible there, but the conditions do not demonstrate the need for a constant two-way exchange."
+    ],
+    "optionExplanations": [
+      "Not the best choice: the client sends an order and receives an order number in response. Such an exchange is naturally implemented using a standard HTTP API.",
+      "Not the best choice: batch transmission of orders does not require an interactive two-way connection with the user.",
+      "Suitable: chat requires real-time message delivery from the client to the server and from the server to the connected client.",
+      "Not the best choice: a static daily report can be retrieved with a standard HTTP request. The mobile device itself does not inherently require a WebSocket."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Overview of WebSocket APIs in API Gateway",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-overview.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-35",
+    "title": "DynamoDB: table, item, and attribute",
+    "body": [
+      "In DynamoDB, a table groups items, and each item consists of attributes. An attribute is a named value: for example, userId, name, or score. Therefore, the memorization chain is: table -> item -> attribute.",
+      "Imagine a Players table: one item stores userId=42, name=Ali, and score=900. Another player additionally has favoriteGame. Non-key attributes can differ: there is no requirement to pre-declare an identical set of fields for all items. At the same time, the primary key of the table must be defined.",
+      "In a relational database, similar concepts are called rows and columns. To answer this question, use DynamoDB terminology: attributes. A query is an action on data, while an attribute is part of the data itself.",
+      "Do not memorize the erroneous rule that \"DynamoDB does not support SQL at all.\" The service supports the SQL-compatible PartiQL language. However, the ability to submit a query does not turn SQL-based queries into a table component."
+    ],
+    "optionExplanations": [
+      "Not suitable: a primary key schema is mandatory, but a fixed schema for all attributes of each item is not. A predefined schema is not the sought-after component.",
+      "Not suitable: queries work with data rather than constituting the table. SQL-compatible PartiQL is supported, but the question asks about the data structure.",
+      "Suitable: each item consists of attributes—named values, such as userId or score.",
+      "Not suitable: columns is a familiar term for relational tables. In the DynamoDB model, the corresponding fields are called attributes."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Core components of Amazon DynamoDB",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      },
+      {
+        "title": "AWS: PartiQL for Amazon DynamoDB",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ql-reference.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-36",
+    "title": "S3: bucket and object key",
+    "body": [
+      "Amazon S3 stores objects inside buckets. A bucket is a named container for objects: first it is created, and then files are uploaded. In the S3 educational model, it is the bucket that organizes the top-level namespace.",
+      "Inside a bucket, an object is identified by an object key. For example, in the cafe-assets bucket, there is an object with the key images/menu.jpg. The combination of the bucket name and the key allows addressing the required object; the key should not be confused with the bucket name itself.",
+      "Region refers to the region where the bucket is hosted. This is a geographical choice rather than an S3 container name. The word container describes a bucket in plain language, but the exact service term in this question is Bucket."
+    ],
+    "optionExplanations": [
+      "Suitable: a bucket is the top-level named container inside which S3 places objects.",
+      "Not suitable: this is a general description of a container. The specific name of such a resource in S3 is a bucket.",
+      "Not suitable: Region determines the placement of the bucket, but is not the object container itself.",
+      "Not suitable: Group is not the level of object organization in this S3 model."
+    ],
+    "sources": [
+      {
+        "title": "AWS: General purpose buckets overview",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingBucket.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-37",
+    "title": "SDLC: what happens during the develop phase",
+    "body": [
+      "SDLC describes the lifecycle of creating and supporting a system. In this course model, the phases follow this order: plan -> define -> design -> develop -> deploy -> maintain. First, they decide what is required and how to arrange it, then they build the system, put it into use, and maintain it.",
+      "Develop here is broader than just writing code. The team builds the system, acquires and installs components, trains users, and verifies functionality. Exactly this explanation is given in AWS Academy Module 2 Knowledge Check.",
+      "For example, for a cafe ordering system, the team during develop connects a library, builds the interface, and tests component operation. During deploy, employees begin using the finished system; during maintain, the team deals with operational issues.",
+      "The names and boundaries of phases differ across different models. AWS separately describes software SDLC with implement and test phases. Here, the question is specifically about systems SDLC in the course classification, so focus on the meaning of develop—creating and building the system."
+    ],
+    "optionExplanations": [
+      "Not suitable as the expected answer: in this question's classification, identifying flaws in a working system is associated with maintain. In practice, bugs are found earlier as well, during testing.",
+      "Not suitable: formulating new requirements belongs to define, prior to system design and assembly.",
+      "Suitable: acquiring and installing new components are part of develop in the AWS Academy course model.",
+      "Not suitable: putting the finished system into use belongs to deploy."
+    ],
+    "sources": [
+      {
+        "title": "AWS Academy: Module 2 Knowledge Check — Systems development lifecycle",
+        "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+      },
+      {
+        "title": "AWS: What is SDLC? — Software and systems lifecycle",
+        "url": "https://aws.amazon.com/what-is/sdlc/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-38",
+    "title": "IAM: who receives permissions and where rules are recorded",
+    "body": [
+      "An IAM policy is a document containing access rules. It describes allowed or denied actions and the resources they apply to. Policies are typically written in JSON; the Effect field specifies Allow or Deny.",
+      "User, group, and role help define to whom the rules apply. A user represents an individual IAM account, a group combines users, and a role is an identity that can be assumed. The permissions themselves are formulated in policies.",
+      "For example, a policy allowing read access to a specific set of S3 objects is attached to the Analysts group. An employee is added to the group, and the policy participates in evaluating their requests. The name of the Analysts group itself does not grant anything.",
+      "For memorization, separate two questions: \"to whom does access apply?\" and \"what actions are allowed?\" This task specifically asks for the document with explicit permissions and denials—IAM policies."
+    ],
+    "optionExplanations": [
+      "Not suitable: a role is an assumed identity. Its permissions are determined by policies, not by the role name.",
+      "Not suitable: a user is an IAM account to which permissions apply. The rule text is located in policies.",
+      "Not suitable: a group combines users for collective assignment of rights. Allowing and denying statements are contained in attached policies.",
+      "Suitable: policies contain rules that AWS evaluates when allowing or denying a request."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Policies and permissions in IAM",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-39",
+    "title": "Authentication and authorization: identity and rights",
+    "body": [
+      "Authentication is the verification of who is accessing the system. The user presents credentials; the system verifies them and associates the login with a specific account.",
+      "Authorization is the verification of permissions for a specific action. A successful login by itself does not grant the right to delete files, modify users, or launch servers. AWS evaluates access policies for the request.",
+      "Example: a developer successfully logged into the AWS console, but received AccessDenied when trying to delete an S3 bucket. The identity has already been verified; the permission to delete is missing. For the exam, remember two checks: \"who are you?\" — authentication; \"are you allowed this action?\" — authorization."
+    ],
+    "optionExplanations": [
+      "Endorsement — approval or support. This is not an accepted term for identity verification during system login.",
+      "Authentication — correct: this is what user identity verification by credentials is called.",
+      "Confirmation — a general word \"confirmation\". It does not denote a specific identity verification process in the AWS access model.",
+      "Authorization — checks action rights. It answers the question \"what is allowed\", rather than establishing the user's identity."
+    ],
+    "sources": [
+      {
+        "title": "AWS IAM: How IAM works",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-40",
+    "title": "DynamoDB: the full key pair is unique",
+    "body": [
+      "A primary key uniquely defines an item in a DynamoDB table. A simple key consists only of a partition key. A composite primary key consists of a partition key and a sort key; their full combination must be unique.",
+      "In SensorReadings, the sensor identifier is the partition key, and the measurement time is the sort key. Records (sensor-7, 10:00) and (sensor-7, 10:01) are permitted: one sensor sends many measurements. Record (sensor-8, 10:00) is also permitted: another sensor measures at the same time.",
+      "Two independent records with the same pair (sensor-7, 10:00) cannot exist. Therefore, uniqueness cannot be required only for the sensor ID or only for the timestamp. The sort key helps order measurements of a single sensor and select the required time range."
+    ],
+    "optionExplanations": [
+      "Incorrect: the sensor ID and timestamp form a composite primary key. A simple primary key consists of a single partition key.",
+      "Incorrect: the partition key can repeat if the sort key differs. A single sensor stores measurements at different times.",
+      "Incorrect: the same timestamp is permitted for different sensor IDs. Uniqueness of the sort key is required within a single partition key value.",
+      "Correct: two items cannot have the same full primary key, i.e., the exact same pair of sensor ID and timestamp."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Core components of Amazon DynamoDB — Primary key",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-41",
+    "title": "API Gateway: when an HTTP API is sufficient",
+    "body": [
+      "HTTP API and REST API are the names of two Amazon API Gateway products. Both can serve RESTful APIs. An HTTP API is suitable for a simple route: the client sends a request, API Gateway calls Lambda, and the result is returned to the client.",
+      "A REST API is chosen when additional features are needed, such as mock integration without a real backend, or usage plans with API keys and separate limits for clients. Example: one partner is allowed one volume of calls, another — a different one.",
+      "The question expects a simple proxy in front of Lambda. The wording about response transformation is too general: modern HTTP APIs can change headers and HTTP status codes via parameter mapping. Transforming the response body with a template is a different scenario. Therefore, one must not memorize the statement \"an HTTP API cannot change the response at all\"."
+    ],
+    "optionExplanations": [
+      "Correct for this question: HTTP API supports Lambda proxy integration and is suitable for a simple API in front of a function.",
+      "In the educational comparison, this implies transforming the response content, for which a REST API with corresponding mapping templates is chosen. Caveat: an HTTP API can also change headers and status codes; the original option is not formulated precisely enough.",
+      "Not suitable: built-in mock integration is available in REST APIs, but not in HTTP APIs.",
+      "Not suitable: separate quotas and client limits via usage plans and API keys pertain to REST APIs."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Choose between REST APIs and HTTP APIs",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html"
+      },
+      {
+        "title": "AWS: Transform API requests and responses for HTTP APIs",
+        "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-parameter-mapping.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-42",
+    "title": "IAM groups: shared developer permissions",
+    "body": [
+      "IAM manages identities and access to AWS resources. An IAM user group is a set of IAM users to whom it is convenient to assign shared permissions via policies. Adding a user to a group grants them the permissions of its policies subject to other applicable constraints.",
+      "Example: the Developers group is allowed to read a test S3 bucket. A new developer is added to this group instead of manually copying the same policy to each employee. When duties change, group membership can be modified.",
+      "In the condition, the word role is used as a developer's working role. A technical IAM role is a separate entity that is assumed via assume role; it is not a member of an IAM group. Groups contain users. The service for modifying this membership is IAM."
+    ],
+    "optionExplanations": [
+      "AWS RAM helps share supported resources among accounts and other principals. It does not manage adding an IAM user to an IAM group.",
+      "Correct: AWS IAM manages users, groups, and associated permission policies.",
+      "Amazon EC2 provides compute capacity and virtual servers. IAM group membership does not relate to EC2 management.",
+      "Amazon S3 stores objects in buckets. Its policies can regulate data access, but it adds a user to an IAM group via IAM."
+    ],
+    "sources": [
+      {
+        "title": "AWS IAM: IAM user groups",
+        "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_groups.html"
+      },
+      {
+        "title": "AWS: What is Resource Access Manager?",
+        "url": "https://docs.aws.amazon.com/ram/latest/userguide/what-is.html"
+      },
+      {
+        "title": "AWS: What is Amazon EC2?",
+        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html"
+      },
+      {
+        "title": "AWS: What is Amazon S3?",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-43",
+    "title": "Why an S3 bucket name might be taken",
+    "body": [
+      "A bucket is a container for S3 objects. Its name participates in the access address, so for a regular bucket in a shared namespace, it must be unique across accounts and regions within a single AWS partition. A partition combines a group of regions; this is more precise than the educational abbreviation \"globally unique name\".",
+      "The BucketAlreadyExists error during creation means that the requested name is unavailable. For example, images-bucket is too generic: choose a more unique name with a project identifier or a random suffix. Moving from us-east-1 to another region of the same partition does not free up the name.",
+      "The phrase rename the bucket in option A is imprecise. An already created bucket cannot be renamed: in this scenario, you need to recreate it with a different name. If data already exists in another bucket, migrating to a new bucket is a separate operation.",
+      "In modern S3, there is also an account regional namespace with a special suffix that includes the account and region. This is a separate naming mechanism; it does not make the simple name images-bucket available when choosing another region. Option A is expected for the initial educational scenario."
+    ],
+    "optionExplanations": [
+      "Expected answer. You need to choose an available name upon creation. Clarification: uniqueness applies within a partition, and an already existing bucket cannot be renamed directly.",
+      "Not suitable: a regular name in the shared global namespace is taken in all regions of the same partition. A simple region change does not resolve the conflict.",
+      "Not suitable: S3 bucket names are not distributed by a built-in auction. The error requires another available name, not a higher bid.",
+      "Not suitable: contacting support is not a way to allow two buckets to use the same taken name in a shared namespace."
+    ],
+    "sources": [
+      {
+        "title": "AWS: General purpose bucket naming rules",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html"
+      },
+      {
+        "title": "AWS: CreateBucket API",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-44",
+    "title": "CloudShell: a terminal with access from the current Console session",
+    "body": [
+      "AWS CloudShell is a browser-based terminal that launches directly from the AWS Management Console. AWS CLI and development tools are already installed in it. There is no need to first configure a separate computer just to run a few AWS commands.",
+      "The main advantage in the question is pre-authentication: the login credentials in the Console are automatically available to the new shell session. For example, after logging in under a developer role, you can open CloudShell and invoke an allowed AWS CLI command without manually copying permanent access keys. Access to resources still depends on IAM permissions.",
+      "CloudShell is provided at no additional charge for the service itself, but AWS resources created or used by commands may incur costs. For a standard environment, up to 1 GB of persistent storage is available in the home directory per region; CloudShell VPC environments do not have persistent storage.",
+      "The environment is managed by AWS: maintaining the underlying environment is not a mandatory task for the user. You can add your own tools, but this does not make manual updating of the entire platform its primary advantage. Remember the connection: Console login -> ready authentication in CloudShell."
+    ],
+    "optionExplanations": [
+      "Incorrect: CloudShell does not require purchasing reserved time and capacity blocks. There is no additional fee for CloudShell itself; resources used through it are billed separately.",
+      "Incorrect: the underlying CloudShell environment is maintained by AWS. Mandatory manual patching and updating of the environment is not an advantage of the service.",
+      "Incorrect: for a standard environment, up to 1 GB of persistent storage per region is specified, not 500 MB. For VPC environments, different conditions apply: there is no persistent storage.",
+      "Correct: a new session uses the AWS Management Console login credentials, so AWS CLI does not require separate manual key configuration."
+    ],
+    "sources": [
+      {
+        "title": "AWS: What is AWS CloudShell?",
+        "url": "https://docs.aws.amazon.com/cloudshell/latest/userguide/welcome.html"
+      },
+      {
+        "title": "AWS CloudShell FAQs",
+        "url": "https://aws.amazon.com/cloudshell/faqs/"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-45",
+    "title": "DynamoDB: partition key determines placement, sort key defines order",
+    "body": [
+      "DynamoDB distributes table data across internal partitions and manages them independently. The partition key is also called the hash attribute: the service passes its value to its internal hash function to determine record placement. The developer chooses the key attribute, but does not write DynamoDB's distribution algorithm.",
+      "A simple primary key has only a partition key. For example, for a Users table with the key userId, the value user-42 identifies the desired record. A composite key adds a sort key, also called a range attribute: it distinguishes and orders records with the same partition key.",
+      "Example of a composite key: sensorId plus timestamp. sensorId serves as input for hashing, while timestamp allows querying measurements from a single sensor for a desired period. The sort key does not replace the partition key and does not sort the entire table before selecting placement."
+    ],
+    "optionExplanations": [
+      "Incorrect: range attribute is another name for the sort key. Base distribution is determined by hashing the partition key, not by the value of the range attribute.",
+      "Correct: with a simple primary key, read and write operations are determined by the partition key, which is also called the hash attribute.",
+      "Incorrect: the statement reverses the roles of the keys. First, the partition key is used for placement; the sort key sets the order of records with the same partition key value.",
+      "Incorrect: the hash function is internal and managed by DynamoDB. The developer designs the keys and query patterns, but does not override the service algorithm."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Partitions and data distribution in DynamoDB",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html"
+      },
+      {
+        "title": "AWS: Core components of Amazon DynamoDB",
+        "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html"
+      }
+    ]
+  },
+  {
+    "questionId": "cce-47",
+    "title": "S3 website address and REST endpoint are different things",
+    "body": [
+      "In a virtual-hosted-style URL, the bucket name is in the hostname, before s3. For the REST API, the modern template looks like https://bucket-name.s3.region.amazonaws.com/key. Such an endpoint accesses S3 objects, but does not inherently include website hosting behavior.",
+      "The website endpoint contains s3-website and serves static website settings: for example, it returns a specified index document when the root is requested. For the frank-martha-cafe bucket in us-east-1, the website address is http://frank-martha-cafe.s3-website-us-east-1.amazonaws.com. It is important to check the http protocol specifically.",
+      "Direct S3 website endpoints do not support HTTPS. For a public website with HTTPS, an additional service is used, such as CloudFront or Amplify Hosting. You cannot simply replace http with https and assume the website endpoint has become secure.",
+      "The original question mixes the terms website and virtual-hosted-style, and all suggested addresses start with https. B resembles the expected educational answer in naming format, but is technically incorrect for a direct website endpoint. Therefore, this question remains with an analysis without a grade and without a fabricated definitive key."
+    ],
+    "optionExplanations": [
+      "Incorrect for the specified bucket: www. becomes part of the bucket name, although in the condition the name is frank-martha-cafe without www. Additionally, the website endpoint does not support HTTPS.",
+      "By hostname structure, this is a website endpoint of the specified bucket and region, likely intended by the creator. However, https makes the address incorrect for a direct website endpoint; http is required. We do not declare this option unambiguously correct.",
+      "This is a regional REST endpoint format with the older s3-us-east-1 spelling, not a website endpoint with s3-website. REST access does not provide the configured index document and other website behavior; HTTPS alone does not fix the confusion of concepts here."
+    ],
+    "sources": [
+      {
+        "title": "AWS: Website endpoints",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/WebsiteEndpoints.html"
+      },
+      {
+        "title": "AWS: Virtual hosting of general purpose buckets",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html"
+      }
+    ]
+  }
+]

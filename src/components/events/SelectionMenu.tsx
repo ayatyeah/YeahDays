@@ -93,13 +93,13 @@ export default function SelectionMenu({ allowTutor = true }: { allowTutor?: bool
   }, [close, stopSpeech]);
 
   async function copy(text: string) {
-    try { await navigator.clipboard.writeText(text); setNotice("Скопировано"); setError(""); }
-    catch { setError("Не удалось скопировать. Используй Ctrl+C или системное меню выделения."); }
+    try { await navigator.clipboard.writeText(text); setNotice("Copied"); setError(""); }
+    catch { setError("Could not copy. Use Ctrl+C or your browser’s selection menu."); }
   }
   function speak() {
     if (!selection) return;
     if (speaking) { stopSpeech(); return; }
-    if (!("speechSynthesis" in window)) { setError("Озвучивание недоступно в этом браузере."); return; }
+    if (!("speechSynthesis" in window)) { setError("Speech is not available in this browser."); return; }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(selection.text);
     utterance.lang = selection.lang === "ru" ? "ru-RU" : "en-US";
@@ -118,14 +118,14 @@ export default function SelectionMenu({ allowTutor = true }: { allowTutor?: bool
       const text = await translateSelection(selection.text, selection.lang, controller.signal);
       if (request.current === controller) setResult(text);
     } catch (error) {
-      if (request.current === controller && !controller.signal.aborted) setError(error instanceof Error && error.name !== "TypeError" && error.name !== "TimeoutError" ? error.message : "Переводчик не ответил. Проверь интернет и попробуй ещё раз.");
+      if (request.current === controller && !controller.signal.aborted) setError(error instanceof Error && error.name !== "TypeError" && error.name !== "TimeoutError" ? error.message : "Translation is unavailable. Check your connection and try again.");
     } finally {
       if (request.current === controller) { request.current = null; setBusy(false); }
     }
   }
   function askTutor() {
     if (!selection) return;
-    const question = `Объясни простыми словами этот фрагмент:\n\n${selection.text.slice(0, 1500)}`;
+    const question = `Explain this passage in simple English:\n\n${selection.text.slice(0, 1500)}`;
     close();
     window.getSelection()?.removeAllRanges();
     openTutorDraft(question);
@@ -134,21 +134,21 @@ export default function SelectionMenu({ allowTutor = true }: { allowTutor?: bool
   if (!selection) return null;
   const toEnglish = selection.lang.toLowerCase().split("-")[0] === "ru";
   return createPortal(
-    <div ref={panel} className={styles.panel} role="dialog" aria-label="Действия с выделенным текстом" style={{ left: selection.left, top: selection.top, "--selection-top": `${selection.top}px` } as CSSProperties} onMouseDown={(event) => { if ((event.target as Element).closest("button, a")) event.preventDefault(); }}>
-      <div className={styles.heading}><span>✦ Выделенный текст · {toEnglish ? "RU → EN" : "→ RU"}</span><button type="button" aria-label="Закрыть меню выделения" onClick={close}>×</button></div>
+    <div ref={panel} data-no-i18n className={styles.panel} role="dialog" aria-label="Selected text actions" style={{ left: selection.left, top: selection.top, "--selection-top": `${selection.top}px` } as CSSProperties} onMouseDown={(event) => { if ((event.target as Element).closest("button, a")) event.preventDefault(); }}>
+      <div className={styles.heading}><span>Selected text / {toEnglish ? "RU → EN" : "→ RU"}</span><button type="button" aria-label="Close selection menu" onClick={close}>×</button></div>
       <div className={styles.actions}>
-        <button type="button" disabled={busy} onClick={() => void translate()}>{busy ? "Перевожу…" : "Перевести выделенное"}</button>
-        <button type="button" onClick={() => void copy(selection.text)}>Копировать</button>
-        <button type="button" aria-pressed={speaking} onClick={speak}>{speaking ? "Остановить" : "Озвучить"}</button>
-        {allowTutor && <button type="button" onClick={askTutor}>Спросить ИИ…</button>}
-        {selection.translation && <button type="button" onClick={() => { request.current?.abort(); request.current = null; setBusy(false); setResultType("source"); setError(""); setResult(selection.translation); setNotice(""); }}>Русский абзац · без ИИ</button>}
+        <button type="button" disabled={busy} onClick={() => void translate()}>{busy ? "Translating…" : "Translate selection"}</button>
+        <button type="button" onClick={() => void copy(selection.text)}>Copy</button>
+        <button type="button" aria-pressed={speaking} onClick={speak}>{speaking ? "Stop speaking" : "Read aloud"}</button>
+        {allowTutor && <button type="button" onClick={askTutor}>Ask AI…</button>}
+        {selection.translation && <button type="button" onClick={() => { request.current?.abort(); request.current = null; setBusy(false); setResultType("source"); setError(""); setResult(selection.translation); setNotice(""); }}>Russian source paragraph</button>}
       </div>
-      {busy && <p role="status" className={styles.notice}>Перевожу выделенный фрагмент…</p>}
+      {busy && <p role="status" className={styles.notice}>Translating your selection…</p>}
       {result && <div className={styles.response}>
-        <strong>{resultType === "source" ? "Русская версия выделенных абзацев" : toEnglish ? "Перевод на английский" : "Перевод на русский"}</strong>
+        <strong>{resultType === "source" ? "Russian source paragraphs" : toEnglish ? "English translation" : "Russian translation"}</strong>
         <div className={styles.result}>{resultType === "source" ? <TutorText text={result} /> : <p className="whitespace-pre-wrap">{result}</p>}</div>
-        <button type="button" onClick={() => void copy(result)}>Скопировать ответ</button>
-        <small>{resultType === "source" ? "Из русской версии конспекта · показаны абзацы целиком" : "Перевод: MyMemory · без Gemini"}</small>
+        <button type="button" onClick={() => void copy(result)}>Copy translation</button>
+        <small>{resultType === "source" ? "From the original Russian notes / complete paragraphs" : "Translated by MyMemory"}</small>
       </div>}
       {error && <p role="alert" className={styles.error}>{error}</p>}
       {notice && <p role="status" className={styles.notice}>{notice}</p>}

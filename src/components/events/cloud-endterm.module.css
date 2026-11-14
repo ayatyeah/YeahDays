@@ -1,9 +1,9 @@
-.root { width: 100%; min-width: 0; max-width: 1080px; margin: 0 auto; padding-bottom: 100px; color: var(--color-fg); --cloud-accent: #3576d3; --cloud-soft: color-mix(in srgb, var(--cloud-accent) 12%, var(--color-surface)); }
+.root { width: 100%; min-width: 0; max-width: 1080px; margin: 0 auto; padding-bottom: 100px; color: var(--color-fg); --cloud-accent: var(--g-accent-text); --cloud-soft: color-mix(in srgb, var(--cloud-accent) 12%, var(--color-surface)); }
 .root button, .root input, .root select { font: inherit; }
 .root button { cursor: pointer; min-height: 44px; border: 1px solid var(--color-border); border-radius: 12px; padding: 10px 16px; background: var(--color-surface); color: var(--color-fg); text-align: left; touch-action: manipulation; }
 .root button:disabled { cursor: default; opacity: .5; }
 .root button:focus-visible, .root input:focus-visible, .root select:focus-visible, .root summary:focus-visible { outline: 3px solid var(--cloud-accent); outline-offset: 3px; }
-.root .primary { background: #2563ae; color: #fff; border-color: #2563ae; font-weight: 650; }
+.root .primary { background: var(--g-accent); color: var(--g-on-accent); border-color: var(--g-accent); font-weight: 650; }
 .back { display: inline-block; padding: 12px 0; text-decoration: underline; }
 .header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 0 28px; }
 .header h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 750; letter-spacing: -.045em; line-height: 1.1; margin: 8px 0 14px; }
@@ -18,7 +18,7 @@
 .tabs button[aria-pressed=true] { background: var(--color-surface); border-color: var(--color-border); box-shadow: 0 2px 4px #0000000c; }
 .tabs span { margin-left: 6px; font-size: .8rem; }
 .layout { display: grid; grid-template-columns: 265px minmax(0,1fr); gap: 32px; align-items: start; }
-.outline { position: sticky; top: 80px; max-height: 75vh; overflow-y: auto; padding: 2px 10px 12px 2px; scrollbar-width: thin; }
+.outline { position: sticky; top: 110px; max-height: calc(100dvh - 140px); overflow-y: auto; padding: 2px 10px 12px 2px; scrollbar-width: thin; }
 .root label { display: grid; gap: 6px; font-size: .85rem; font-weight: 600; }
 .root input, .root select { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--color-border); border-radius: 10px; padding: 10px; background: var(--color-surface); color: var(--color-fg); font-size: 16px; }
 .outline h2 { color: var(--color-muted); font-size: .8rem; font-weight: 650; margin: 22px 8px 6px; }

@@ -428,7 +428,7 @@ export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">
             onMouseDown={(e) => e.preventDefault()}
             onClick={openPanel}
             aria-label="Открыть ИИ-помощника"
-            className="press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-4 z-40 flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-violet-500 to-sky-500 px-4 font-semibold text-white shadow-[0_10px_28px_-6px_rgba(124,58,237,0.6)] lg:bottom-6"
+            className="g-tutor-launch press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-4 z-40 flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-violet-500 to-sky-500 px-4 font-semibold text-white shadow-[0_10px_28px_-6px_rgba(124,58,237,0.6)] lg:bottom-6"
           >
             <span aria-hidden className="text-lg leading-none">✦</span>
             <span className={cn("text-sm", !selection && "hidden sm:inline")}>{selection ? "Спросить про выделенное" : "Помощник"}</span>
@@ -457,10 +457,10 @@ export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">
               exit={{ y: 40, opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 340 }}
               style={mobile && vv ? { bottom: vv.bottom, height: Math.min(vv.height - 8, Math.round(vv.height * 0.92)) } : undefined}
-              className="fixed inset-x-0 bottom-0 z-[70] flex h-[88dvh] flex-col overflow-hidden rounded-t-3xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:h-[min(720px,calc(100dvh-2rem))] sm:w-[420px] sm:rounded-3xl"
+              className="g-tutor-window fixed inset-x-0 bottom-0 z-[70] flex h-[88dvh] flex-col overflow-hidden rounded-t-3xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:h-[min(720px,calc(100dvh-2rem))] sm:w-[420px] sm:rounded-3xl"
             >
               <header className="flex items-start gap-3 border-b border-[var(--color-border)] px-4 pb-3 pt-3">
-                <div aria-hidden className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-white">✦</div>
+                <div aria-hidden className="g-tutor-mark mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-white">✦</div>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold leading-tight">ИИ-помощник</p>
                   <button
@@ -603,7 +603,7 @@ export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">
                       ■
                     </button>
                   ) : (
-                    <button type="submit" disabled={!input.trim() || available === false || quotaExhausted} aria-label="Отправить" className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-lg font-bold text-white disabled:opacity-40">
+                    <button type="submit" disabled={!input.trim() || available === false || quotaExhausted} aria-label="Отправить" className="g-tutor-send flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-lg font-bold text-white disabled:opacity-40">
                       ↑
                     </button>
                   )}

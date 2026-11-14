@@ -22,3 +22,4 @@
 .actions > button:last-child:nth-child(5) { grid-column: 1 / -1; text-align: center; font-weight: 500; }
 
 .translatorHint { display: block; font-size: 10px; font-weight: 400; opacity: .75; margin-top: 2px; }
+.panel{background:var(--g-paper);color:var(--g-text);border-color:var(--g-border);box-shadow:var(--g-shadow)}.heading,.notice,.response small{color:var(--g-muted)}.actions button,.actions a,.response>button{background:var(--g-inset);color:var(--g-text)}.actions>:first-child{background:var(--g-accent);color:var(--g-on-accent)}.panel button:focus-visible,.panel a:focus-visible{outline-color:var(--g-accent-text)}.response{border-color:var(--g-border)}.heading button{min-height:44px;min-width:44px}.error{color:var(--g-text)}

@@ -36,9 +36,9 @@ describe("суточный лимит ИИ в базе", () => {
     expect([...db.rows.keys()].sort()).toEqual(["tutor-day:u1|2026-10-10", "tutor-day:u1|2026-10-11", "tutor-day:u2|2026-10-10"]);
   });
 
-  it("если база недоступна — не роняет запрос, а считает в памяти", async () => {
+  it("denies paid AI requests when the durable counter is unavailable", async () => {
     const broken: LimitDb = { aiLimit: { upsert: vi.fn().mockRejectedValue(new Error("relation does not exist")), deleteMany: vi.fn() } };
-    expect(await dailyLimitWith(broken, "report:fallback-user", 1, now)).toBe(true);
+    expect(await dailyLimitWith(broken, "report:fallback-user", 1, now)).toBe(false);
     expect(await dailyLimitWith(broken, "report:fallback-user", 1, now)).toBe(false);
   });
 });

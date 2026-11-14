@@ -9,6 +9,8 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/owner";
+import { boundedJson, RequestBodyError } from "@/lib/requestSecurity";
+import { validNewPassword } from "@/lib/passwordPolicy";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,13 +28,13 @@ export async function POST(
 
   let body: unknown;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
   const password = String((body as Record<string, unknown> | null)?.password ?? "");
-  if (password.length < 8) {
-    return NextResponse.json({ error: "Пароль — минимум 8 символов" }, { status: 400 });
+  if (!validNewPassword(password)) {
+    return NextResponse.json({ error: "Use at least 8 characters and no more than 72 UTF-8 bytes." }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { id }, select: { id: true } });

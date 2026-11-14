@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Brand } from './Brand';
-import './final.css';
 export default function LegalPage({ kind }: { kind: 'privacy' | 'terms' }) {
   const privacy = kind === 'privacy';
   return <div className="final-site" lang="en" data-no-i18n><header className="f-site-header"><Brand/><Link className="f-text-link" href="/app">Open workspace</Link></header><main className="f-legal"><Link href="/" className="f-text-link">Back to YeahGrind</Link><h1>{privacy ? 'Your data and privacy' : 'Using YeahGrind'}</h1><p className="f-section-kicker">Study workspace update · 14 November 2026</p>{privacy ? <>

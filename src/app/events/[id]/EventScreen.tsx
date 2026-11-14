@@ -3,11 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { eventCourseHref } from "@/lib/events/courses";
+import { catalogCopy } from "@/lib/events/catalogCopy";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Button from "@/components/ui/Button";
 const EventNotes = dynamic(() => import("@/components/EventNotes"), { loading: Loading });
+import NotesToolbar from "@/components/events/NotesToolbar";
 import readerStyles from "@/components/events/network-reader.module.css";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
@@ -403,22 +405,22 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
       {view.mode === "map" && (
         <>
           <header>
-            <Link href={eventCourseHref(event.id)} className="text-sm underline">← Ивенты курса</Link>
+            <Link href={eventCourseHref(event.id)} className="text-sm underline">← Course materials</Link>
             <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{event.course}</p>
-            <h1 className="ios-title mt-2">{event.title}</h1>
-            <p className="mt-2 text-sm text-[var(--color-muted)]">{event.description}</p>
+            <h1 className="ios-title mt-2">{catalogCopy[event.id]?.title ?? event.title}</h1>
+            <p className="mt-2 text-sm text-[var(--color-muted)]">{catalogCopy[event.id]?.description ?? event.description}</p>
           </header>
           {event.id === "research-methods-quiz-1" && <section className={`${panel} space-y-3`}><h2 className="text-xl font-bold">Эндтерм · Полные решения A и B</h2><p>Оригиналы с фото и полные альтернативы: qualitative-only и quantitative RCT.</p><Link href="/events/research-methods-endterm" className="underline">Открыть полный разбор →</Link></section>}
           {event.id === "project-management-test-2" && (
             <section className="space-y-3 rounded-3xl border border-lime-400/40 bg-lime-500/5 p-5" data-no-i18n>
-              <p className="text-xs font-semibold uppercase tracking-widest">Отдельный квиз · Practice / Simulated</p>
+              <p className="text-xs font-semibold uppercase tracking-widest">Extra practice · Simulated quiz</p>
               <h2 className="break-words text-xl font-black">{PM_QUIZ2_TITLE}</h2>
-              <p className="text-sm">50 новых сценарных вопросов по лекциям 4–8 · A–E · 60 минут на тренировку. Разбор каждого варианта и ошибок по темам — после сдачи.</p>
-              <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "pmQuiz2" })}>Открыть Квиз 2</Button>
+              <p className="text-sm">50 scenario questions from lectures 4–8 · A–E · 60 minutes. Review each option and your mistakes after finishing.</p>
+              <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "pmQuiz2" })}>Open Quiz 2</Button>
             </section>
           )}
-          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">PDF и пробная эндка</h2><p>Обновлённые конспекты RU/EN, самопроверка и все вопросы темы открываются в частях лекций ниже. Здесь — исходные PDF, образец преподавателя и пробный экзамен.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Открыть подготовку к эндке</Button></section>}
-          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">ВРТ — вопросы</h2><p>100 вопросов · 4 набора · ответы и объяснения</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnVrt" })}>ВРТ — вопросы</Button></section>}
+          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">Slides & practice exam</h2><p>Find English and Russian notes, self-checks and topic questions in the lectures below. Explore original slides, the instructor’s sample and a practice exam here.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Explore exam practice</Button></section>}
+          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">VRT question sets</h2><p>100 questions · 4 sets · answers and explanations</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnVrt" })}>VRT question sets</Button></section>}
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -448,7 +450,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               </Button>
             </section>
           )}
-          <NoReading event={event} drill={loaded ? drill : null} sim={sim} onFeed={openFeed} onDrill={() => setView({ mode: "drill" })} onExam={event.exam ? startExam : undefined} />
+          <details className="g-study-extras"><summary>More ways to study</summary><NoReading event={event} drill={loaded ? drill : null} sim={sim} onFeed={openFeed} onDrill={() => setView({ mode: "drill" })} onExam={event.exam ? startExam : undefined} /></details>
           {!online && (
             <p role="status" className="rounded-2xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm">
               Нет сети. Конспекты и квизы работают, результаты сохраняются на устройстве и отправятся, когда появится интернет.
@@ -794,11 +796,6 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             </header>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => notesMode("scroll", view.step)}>📜 Scroll-mode</Button>
-              {part.shortNotes ? <div role="group" aria-label="Язык конспекта" className="flex gap-2" data-no-i18n>
-                {(["ru", "en"] as const).map(value => <Button key={value} size="sm" aria-pressed={lang === value} variant={lang === value ? "primary" : "ghost"} onClick={() => { setLang(value); savePref("lang", value); }}>{value.toUpperCase()}</Button>)}
-              </div> : <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
-                {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
-              </Button>}
               <SpeakButton text={part.notes[lang]} lang={lang} />
               {shelves.lectures[view.step.lecture!].parts[view.step.part!].count > 0 && (
                 <Button size="sm" variant="primary" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "feed", scope: { kind: "part", lecture: view.step.lecture!, part: view.step.part! }, back: view })}>
@@ -808,9 +805,10 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={() => setView({ mode: "video", step: view.step })}>▶ Смотреть как видео</Button>
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
+            <NotesToolbar lang={lang} onLang={value => { setLang(value); savePref("lang", value); }} />
             {event.id === "computer-networks-endterm" && <NetworkStoryClip key={part.id} partId={part.id} />}
-            {part.shortNotes && <div role="group" aria-label="Объём конспекта" className="flex flex-wrap gap-2" data-no-i18n>
-              {([['short', 'Краткий конспект'], ['full', 'Полный конспект']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
+            {part.shortNotes && <div role="group" aria-label="Notes detail" className="flex flex-wrap gap-2" data-no-i18n>
+              {([['short', 'Quick notes'], ['full', 'Full notebook']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
             {event.id === "computer-networks-endterm" ? <NetworkPartStudy key={part.id} module={Number(part.id.replace("cne-m", ""))} lang={lang}>
               <article className={readerStyles.reader} data-testid="lecture-notes" data-notes-version={notesVersion}>
@@ -868,7 +866,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             </header>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
-                {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
+                {lang === "en" ? "Read in Russian" : "Read in English"}
               </Button>
               <SpeakButton text={part.notes[lang]} lang={lang} />
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
@@ -915,7 +913,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
           </header>
           <div className="flex flex-wrap gap-2">
             <Button size="sm" className="h-auto min-h-9 whitespace-normal" onClick={switchLang}>
-              {lang === "en" ? "Перевести на русский" : "Показать оригинал (English)"}
+              {lang === "en" ? "Read in Russian" : "Read in English"}
             </Button>
             <SpeakButton text={event.cheatSheet[lang]} lang={lang} />
           </div>

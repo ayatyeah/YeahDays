@@ -9,6 +9,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { rateLimit, clientIp } from "@/lib/rateLimit";
 import { notifyNewUser } from "@/lib/telegram";
+import { boundedJson, RequestBodyError } from '@/lib/requestSecurity';
+import { validNewPassword } from '@/lib/passwordPolicy';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,9 +29,9 @@ export async function POST(req: Request) {
 
   let body: unknown;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
 
   const { name, email, username, password, birthYear } = (body ?? {}) as Record<string, unknown>;
@@ -42,10 +44,10 @@ export async function POST(req: Request) {
   const passwordStr = String(password ?? "");
   const birthYearNum = Number(birthYear);
 
-  if (!nameStr) {
+  if (!nameStr || nameStr.length > 100) {
     return NextResponse.json({ error: "Укажи имя" }, { status: 400 });
   }
-  if (!EMAIL_RE.test(emailStr)) {
+  if (emailStr.length > 254 || !EMAIL_RE.test(emailStr)) {
     return NextResponse.json({ error: "Некорректный email" }, { status: 400 });
   }
   if (!USERNAME_RE.test(usernameStr)) {
@@ -54,8 +56,8 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   }
-  if (passwordStr.length < 8) {
-    return NextResponse.json({ error: "Пароль — минимум 8 символов" }, { status: 400 });
+  if (!validNewPassword(passwordStr)) {
+    return NextResponse.json({ error: "Use at least 8 characters and at most 72 UTF-8 bytes." }, { status: 400 });
   }
   if (!Number.isInteger(birthYearNum) || birthYearNum < 1900 || birthYearNum > CURRENT_YEAR) {
     return NextResponse.json({ error: "Некорректный год рождения" }, { status: 400 });

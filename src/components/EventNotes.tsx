@@ -113,5 +113,5 @@ export default function EventNotes({ text, lang, translation }: { text: string; 
   flushList();
   flushTable();
 
-  return <div data-selection-notes lang={lang} className="space-y-3 text-[15px] leading-relaxed">{blocks}</div>;
+  return <div data-selection-notes lang={lang} className="g-rich-notes space-y-3 text-[15px] leading-relaxed">{blocks}</div>;
 }

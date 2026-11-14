@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { needsLogin } from '@/lib/publicPaths';
 import { APP_MODE_COOKIE } from '@/lib/appMode';
+import { allowedMutationOrigin } from '@/lib/requestSecurity';
 /**
  * Куда вести гостя с закрытой страницы. Кука yg-version (её ставит
  * /api/app-mode каждому вошедшему при каждом открытии приложения, живёт
@@ -12,6 +13,8 @@ import { APP_MODE_COOKIE } from '@/lib/appMode';
 const door=(req:{cookies:{has:(name:string)=>boolean}})=>req.cookies.has(APP_MODE_COOKIE)?'/login':'/register';
 export default auth(req=>{
   const path=req.nextUrl.pathname;
+  // OAuth callback form posts are checked by Auth.js state/PKCE validation.
+  if(path.startsWith('/api/') && !path.startsWith('/api/auth/callback/') && !allowedMutationOrigin(req)) return NextResponse.json({error:'invalid_origin'},{status:403,headers:{'Cache-Control':'private, no-store'}});
   // API routes keep their own authentication and authorization checks.
   if(path.startsWith('/api/'))return;
   // The RMT version picker was removed: old links open the main page.

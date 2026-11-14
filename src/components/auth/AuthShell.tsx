@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useCopy } from '@/i18n/useCopy';
 import { Brand } from '@/components/final/Brand';
 import ThemeSwitch from '@/components/final/ThemeSwitch';
-import '@/components/final/final.css';
 export type AuthMode = 'login' | 'register';
 export const authInput = 'f-auth-input';
 export const authPrimary = 'f-button w-full';

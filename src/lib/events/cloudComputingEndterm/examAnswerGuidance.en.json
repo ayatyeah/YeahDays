@@ -1,0 +1,425 @@
+{
+  "cce-1": {
+    "title": "Azure: see costs, estimate budget, and find savings",
+    "optionExplanations": [
+      "Matches: Cost Management allows you to analyze expenses over a period and group them by service.",
+      "Does not match: Advisor offers recommendations, such as downsizing an oversized VM. This is not the primary tool for viewing cost history.",
+      "Does not match: Exports unloads cost data. After exporting, you can build your own report, but the answer itself describes data delivery rather than interactive expense analysis.",
+      "Does not match: Pricing Calculator estimates the future cost of a configuration; it does not show the account's actual historical charges."
+    ]
+  },
+  "cce-2": {
+    "title": "AWS and customer shared responsibility",
+    "optionExplanations": [
+      "Matches: security group rules are set by the customer. AWS provides the mechanism, but does not choose for them who to grant access to.",
+      "Does not match: physical servers are maintained and secured by AWS.",
+      "Matches: the customer is responsible for their data and its protection, including client-side data.",
+      "Does not match: the physical infrastructure of edge locations belongs to the AWS infrastructure.",
+      "Does not match: this refers to the infrastructure security of the Availability Zone, which AWS is responsible for. The settings of customer resources within the zone remain the customer's responsibility."
+    ]
+  },
+  "cce-3": {
+    "title": "Azure Budgets: spending thresholds and alerts",
+    "optionExplanations": [
+      "Does not match: a budget does not create virtual machines; it tracks expenses within the selected scope.",
+      "Does not match: network parameters are set in network resources, not in Budgets.",
+      "Matches: Budgets sets a budget amount and notification thresholds. The word limits here does not mean an automatic ban on overspending.",
+      "Does not match: data export is an Exports function. The purpose of a budget is control relative to a target amount and warnings."
+    ]
+  },
+  "cce-4": {
+    "title": "Multi-AZ: surviving the failure of an individual zone",
+    "optionExplanations": [
+      "Matches: deployment across multiple AZs reduces the impact of an individual zone failure with properly designed failover.",
+      "Does not match: cost allocation tags help allocate and analyze expenses; they do not create backup resources.",
+      "Does not match: Reserved Instances are primarily a discount mechanism with a commitment to use; by itself, it does not distribute the application across zones.",
+      "Does not match: IAM password policies set requirements for passwords. This is access protection, not protection against infrastructure failure."
+    ]
+  },
+  "cce-5": {
+    "title": "Rightsizing: matching a VM to the actual workload",
+    "optionExplanations": [
+      "Matches: Advisor can recommend a VM size that better matches the workload and reduces excess costs.",
+      "Does not match: deleting all VMs will destroy running compute resources. Recommendations apply to specific resources, not unconditional deletion of everything.",
+      "Does not match: disabling monitoring does not reduce VM size and deprives you of data to assess the load.",
+      "Does not match: a new subscription changes resource and billing organization, but by itself does not eliminate excess VM capacity."
+    ]
+  },
+  "cce-6": {
+    "title": "Budget alerts: when expenses approach the budget",
+    "optionExplanations": [
+      "Matches: these are cost notifications tied to budget conditions.",
+      "Does not match: a security report describes threats and protection, not budget spending.",
+      "Does not match: a network alert relates to connection status or traffic; here a financial threshold is being checked.",
+      "Does not match: performance is measured by latency and CPU utilization, for example. A budget alert compares costs against the budget."
+    ]
+  },
+  "cce-7": {
+    "title": "Credit alerts: controlling prepaid credit consumption",
+    "optionExplanations": [
+      "Does not match: network speed does not determine how much prepaid monetary credit has been used.",
+      "Matches: notifications are associated with Azure credit consumption; specific thresholds depend on the described mechanism and contract type.",
+      "Does not match: resource deletion is a management operation, not a credit consumption threshold.",
+      "Does not match: creating a VM can increase costs, but a credit alert is triggered by a financial condition, not every time a VM is created."
+    ]
+  },
+  "cce-8": {
+    "title": "Department spending: expenses of a specific department",
+    "optionExplanations": [
+      "Does not match: traffic can be a source of costs, but the notification compares the department's monetary expenses with a threshold.",
+      "Matches: department spending refers precisely to the department's expenses indicated in the notification name.",
+      "Does not match: system speed and resource load are not equal to department expenses.",
+      "Does not match: access and security settings relate to security, not to fulfilling a financial quota."
+    ]
+  },
+  "cce-9": {
+    "title": "Azure Exports: exporting costs to CSV",
+    "optionExplanations": [
+      "Does not match: PDF is convenient for a formatted document, but is not the specified format for the Cost Management Exports dataset.",
+      "Does not match: JSON is found in API and export configurations; it is not the format of the exported data this test asks about.",
+      "Matches: CSV is supported for exporting Cost Management tabular data.",
+      "Does not match: XML is not included in the Csv and Parquet format enumeration in the Exports API documentation."
+    ]
+  },
+  "cce-10": {
+    "title": "Sharp spike in expenses: finding the cause and contacting the owner",
+    "optionExplanations": [
+      "Does not match: ignoring does not help figure out the cause and allows unwanted expenses to continue.",
+      "Does not match: mass deletion does not consider resource purpose and can stop a service or destroy necessary data.",
+      "Matches: resource and budget owners can explain the change and agree on a targeted solution. The message should be backed by cost breakdown details.",
+      "Does not match: a budget serves for control; disabling it does not reduce resource consumption or fix the problem."
+    ]
+  },
+  "cce-11": {
+    "title": "Virtualization: shared resource, separate environments",
+    "optionExplanations": [
+      "Matches: virtualization allows multiple isolated virtual environments to share physical hardware.",
+      "Related to the topic, but less precisely: abstraction hides implementation details. This is a general principle also used in virtualization, not the independent name of the resource allocation mechanism in this question.",
+      "Does not match: polymorphism allows implementing a common software interface in different ways. It does not denote the pooling and partitioning of cloud resources.",
+      "Does not match: not all listed concepts describe pooling and sharing; in particular, polymorphism relates to programming."
+    ]
+  },
+  "cce-12": {
+    "title": "Platforms and providers: AWS, Azure, Cloudera",
+    "optionExplanations": [
+      "Matches: AWS is Amazon Web Services, Amazon's cloud platform.",
+      "Does not match: Cloudera is a separate company and data/AI platform; it is not the name of Amazon's cloud platform.",
+      "Does not match: Azure belongs to Microsoft, while the condition asks for the Amazon platform.",
+      "Does not match: the listed platforms belong to different providers; only AWS corresponds to Amazon."
+    ]
+  },
+  "cce-13": {
+    "title": "Snowball: migrating big data via a device",
+    "optionExplanations": [
+      "Does not match: Snowball does not provide high-speed internet connectivity. Its point is precisely the ability to migrate data without sending the entire volume over the internet.",
+      "Not the best answer: local computing is available with Snowball Edge, but low-latency processing describes processing, whereas the condition asks about the advantage of data migration.",
+      "Matches: secure migration of a large volume of data to and from the cloud matches the main task of the device in this study question.",
+      "Does not match: real-time analytics is the task of processing incoming data. It does not explain Snowball's main advantage for transferring a large archive."
+    ]
+  },
+  "cce-14a": {
+    "title": "S3 Versioning: can be suspended, history cannot be deleted",
+    "optionExplanations": [
+      "Incorrect: True would mean the ability to return a bucket to a state where versioning was never enabled. S3 does not support such a transition.",
+      "Correct: after enabling, suspension is available (Suspended), but not a return to Unversioned. Existing versions do not automatically disappear."
+    ]
+  },
+  "cce-14b": {
+    "title": "IaaS, PaaS, SaaS: how much work is left for you",
+    "optionExplanations": [
+      "IaaS is indeed a service model. But choosing only IaaS will skip the other two correct models in this list.",
+      "PaaS is indeed a service model. It is not the only correct category among the proposed options.",
+      "SaaS is indeed a service model. From the phrasing, it cannot be proven that it is the \"most famous\"; this is not a question with a given popularity rating.",
+      "Expected answer: all three options are standard cloud service models. This is the interpretation of a study question, not a statement of equal popularity of the models."
+    ]
+  },
+  "cce-15": {
+    "title": "Cloud models and platform purpose",
+    "optionExplanations": [
+      "Do not select as false: Azure does support hosting .NET Framework web applications. The phrase \"over the Internet\" here means network access to the application, not a special way of executing code.",
+      "Do not select as false: we are talking about two categories — service models and deployment models. Inside each category, there are several models.",
+      "Select: the purpose of the global AWS infrastructure does not boil down to serving Amazon's search engine. The question mixes up the cloud platform with another type of product.",
+      "Incorrect: among the options there is an incorrect statement — the option about the search engine; therefore, \"none of the above\" does not answer the condition."
+    ]
+  },
+  "cce-16": {
+    "title": "Deployment model: how the cloud is organized",
+    "optionExplanations": [
+      "Incorrect: service model distinguishes between IaaS, PaaS, and SaaS, which is the provided layer of capabilities, rather than the organization of cloud deployment.",
+      "Incorrect: application is a specific application; this is not a term for classifying the location and management of cloud infrastructure.",
+      "Correct: deployment model is what the study phrasing describes.",
+      "Incorrect: service and application denote other things, so all options cannot be correct at the same time."
+    ]
+  },
+  "cce-17": {
+    "title": "S3: durability, availability, and data protection",
+    "optionExplanations": [
+      "Do not select as false: S3 is designed for scalable secure storage. At the same time, the protection of a specific bucket also depends on client permissions; the phrase does not mean an absolute guarantee in case of incorrect configuration.",
+      "Do not select as false: high reliability is a justified general characteristic of S3, although the word reliable does not specify an exact indicator or storage class.",
+      "Do not select as false: S3 provides high availability. Specific metrics depend on the storage class; high availability does not mean the absence of any failures.",
+      "Fits the condition \"which statement is false\": among the three general characteristics, there is no clearly false one, so \"none of the above\" is selected."
+    ]
+  },
+  "cce-18": {
+    "title": "Region and Availability Zone are different levels",
+    "optionExplanations": [
+      "No confirmed key: 2 is not the current global number of AWS regions or zones. Without a date and scope of counting, this option cannot be assigned.",
+      "No confirmed key: AWS is not limited to one region or one zone. The question does not specify another counting object.",
+      "No confirmed key: the presence of multiple zones within a region does not make 3 the answer to the question about the global number of regions or zones.",
+      "No confirmed key: 4 cannot be considered the current global number. Even if the number was found in old material, without a date and context, this is not proof of the key."
+    ]
+  },
+  "cce-19": {
+    "title": "CloudWatch and balancer metrics",
+    "optionExplanations": [
+      "Correct: Elastic Load Balancing publishes metrics to Amazon CloudWatch; there they can be viewed and used for alarms. Clarification: this is the name of the service, not a specific metric.",
+      "Incorrect: AWS Import/Export refers to data transfer, not to collecting and monitoring balancer metrics.",
+      "Incorrect: Amazon Elastic Block Store provides block storage for EC2. An EBS volume is not an ELB monitoring service.",
+      "Incorrect: the other two services do not perform the required role, so \"all of the above\" is incorrect."
+    ]
+  },
+  "cce-20": {
+    "title": "EC2 Auto Scaling: add servers along with the load",
+    "optionExplanations": [
+      "Incorrect: Auto Ruling is not the name of the AWS mechanism for scaling EC2. Rules are part of Auto Scaling policies.",
+      "Incorrect: Auto Replica is not the name of the required service. The mere presence of copies does not yet mean an automatic change in their number according to the load.",
+      "Correct: Amazon EC2 Auto Scaling launches or terminates instances according to specified policies and maintains the required group capacity.",
+      "Incorrect: the option \"all of the above\" requires the rest of the items to be correct, and the first two do not denote the required mechanism."
+    ]
+  },
+  "cce-21": {
+    "title": "Docker: image, container, and background startup",
+    "optionExplanations": [
+      "Incorrect: docker images shows local images; this command does not start containers.",
+      "Incorrect: docker pull alpine downloads the Alpine image from the registry. Running a process inside a container is not performed.",
+      "Incorrect: pull does not accept the sh command to run inside the image. Its syntax expects an image reference, not an IMAGE COMMAND; run is used to start.",
+      "Correct: none of the proposed options perform background startup. docker run -d IMAGE with a suitable process is required."
+    ]
+  },
+  "cce-22": {
+    "title": "SaaS, managed database, and analytics: distinguishing roles",
+    "optionExplanations": [
+      "Describes a managed cloud database — DBaaS. This can be a component of a SaaS application, but not the general definition of SaaS.",
+      "Describes the use of Redshift for application analytics. Suitable as a scenario, including for SaaS, but not as a definition of the SaaS model itself. Without the full condition, it cannot be declared the key.",
+      "Describes DynamoDB: a low-latency NoSQL database. The database can serve a SaaS application, but these concepts are not equivalent.",
+      "May be appropriate if it was required to choose the exact definition of SaaS. When asked about the Redshift scenario, the conclusion would be different. The source text is insufficient for evaluation."
+    ]
+  },
+  "cce-23": {
+    "title": "Azure Pricing Calculator: estimate costs before launch",
+    "optionExplanations": [
+      "Incorrect: Advisor analyzes configuration and resource usage and suggests optimizations. This is not a cost calculator for a designed set of services.",
+      "Correct: refers to the Azure Pricing Calculator. It calculates the estimated cost based on configuration and expected usage.",
+      "Incorrect: Budgets sets a budget and notifications based on actual or forecasted expenses. This is cost control, not pricing a new configuration.",
+      "Incorrect: Exports unloads Cost Management data to storage. It does not calculate the cost of an arbitrary future solution."
+    ]
+  },
+  "cce-24": {
+    "title": "SDLC: create, deploy, maintain",
+    "optionExplanations": [
+      "Incorrect: code, build, and test are development actions. Deployment and system maintenance after launch are missing here.",
+      "Correct: develop, deploy, and maintain complete the six-stage model specified in the question.",
+      "Incorrect in this model: test does not replace the entire develop stage, which includes creating the solution. In other models, testing is indeed singled out separately.",
+      "Incorrect: code and build break down development into actions, while deploy — delivery of the finished system to users — is missing."
+    ]
+  },
+  "cce-25": {
+    "title": "Console, CLI, and SDK: three entrances to the AWS API",
+    "optionExplanations": [
+      "Incorrect: CloudTrail records action events and helps figure out who did what. This is auditing, not one of the three main AWS operational interfaces.",
+      "Correct: The SDK provides libraries through which a program accesses AWS service APIs.",
+      "Correct: The Management Console allows you to manage services via a browser interface that calls the AWS API.",
+      "Correct: The AWS CLI invokes AWS operations using terminal commands; these commands are convenient to use in automation scripts.",
+      "Incorrect: IAM manages identity and access permissions. The fact that IAM has its own API does not turn it into a general interface for working with all services."
+    ]
+  },
+  "cce-26": {
+    "title": "RESTful API: architectural principles, not just HTTP",
+    "optionExplanations": [
+      "Insufficient: HTTP is often used by REST APIs, but HTTP support by itself does not ensure REST architectural constraints.",
+      "Incorrect: This is a description of an API proxy or gateway, which is an intermediate component. It does not define the architectural style of the API itself.",
+      "Correct: A RESTful API follows Representational State Transfer principles; this is the exact definition among the choices offered.",
+      "Incorrect: The location of an API on a web server does not indicate whether REST principles are being followed."
+    ]
+  },
+  "cce-27": {
+    "title": "DynamoDB and main database categories",
+    "optionExplanations": [
+      "Incorrect: This is a description of an in-memory cache. DAX is a separate cache used to speed up reads in DynamoDB; DynamoDB itself is not reduced to it.",
+      "Incorrect: Graph databases are designed for nodes and relationships; an AWS example is Amazon Neptune.",
+      "Incorrect: DynamoDB is not a relational MySQL/PostgreSQL database. Aurora is an example of an AWS relational database with compatibility for these engines; the word competitive is kept in the original version.",
+      "Correct: Key-value and document, horizontal scaling, and internet scale correspond to the description of DynamoDB."
+    ]
+  },
+  "cce-28": {
+    "title": "S3: object storage and data lake",
+    "optionExplanations": [
+      "Correct: A data lake is a direct use case for S3 to store large amounts of data in various formats.",
+      "Incorrect: S3 is object storage, not block storage. Amazon EBS is used for EC2 block volumes.",
+      "Incorrect in this comparison: Storing a database backup in S3 is different from hosting files for an actively running traditional DBMS. S3 does not provide such a DBMS with a standard block volume.",
+      "Incorrect: S3 is not a regular shared file system. EFS and FSx, for example, are intended for shared file access in AWS."
+    ]
+  },
+  "cce-29": {
+    "title": "HTTP codes: non-existent bucket and 404 error",
+    "optionExplanations": [
+      "Incorrect: 3xx is related to redirection. Specifying a missing bucket is classified as a 404, not a redirect.",
+      "Incorrect: 5xx means a server error. In the described case, the problem is accessing a missing resource.",
+      "Incorrect: 2xx means successful execution. Accessing a non-existent bucket did not complete successfully.",
+      "Correct: S3 returns NoSuchBucket with a 404 Not Found code; 404 belongs to the 4xx family."
+    ]
+  },
+  "cce-30": {
+    "title": "API Gateway: where latency is measured",
+    "optionExplanations": [
+      "Incorrect: 5XXError reflects the frequency of server errors. IntegrationLatency measures time, not the number of errors.",
+      "Inaccurate: The response to the client falls under the more general Latency metric. Here, the question specifically asks for backend integration latency.",
+      "Correct: This metric shows how long the Gateway waits for a backend response after forwarding the request to it.",
+      "Incorrect: Throttling means limiting the rate of requests. Its frequency is not integration latency."
+    ]
+  },
+  "cce-31": {
+    "title": "S3 and CORS: browser access to a different origin",
+    "optionExplanations": [
+      "Incorrect: Cross-Region Replication copies objects between regions. Such a copy is not required for a browser to access an already existing image.",
+      "Incorrect: A page can reference objects from another bucket. You need to configure access properly and, for corresponding browser requests, configure CORS.",
+      "Incorrect: A standard S3 bucket does not have its own security group with an inbound port 80 rule. This confuses the S3 model with EC2 network settings.",
+      "Expected answer: CORS can block reading a resource from a different origin using browser code. For a regular img tag without additional conditions, this explanation is insufficient."
+    ]
+  },
+  "cce-32": {
+    "title": "DynamoDB: table management and data operations",
+    "optionExplanations": [
+      "Correct: Creating and managing tables is the purpose of the control plane, such as CreateTable and UpdateTable.",
+      "Incorrect: Data CRUD operations change the contents of a table and belong to the data plane.",
+      "Incorrect: BatchGetItem and BatchWriteItem process groups of items, rather than managing the table itself.",
+      "Incorrect: All-or-nothing consistent changes describe transactions. This is not the definition of control operations."
+    ]
+  },
+  "cce-33": {
+    "title": "IAM: implicit deny, allow and explicit deny",
+    "optionExplanations": [
+      "Incorrect: Allow and Deny can be located in different statements of the same policy.",
+      "Incorrect: In case of a conflict, an applicable explicit Deny takes precedence, not Allow.",
+      "Correct: An explicit deny overrides an explicit allow for a given request.",
+      "Correct in the basic IAM model: implicit deny applies until access is explicitly granted. The special status of the root user does not change the expected answer to the training question.",
+      "Incorrect: Default permission would contradict the principle of least privilege. A regular IAM user does not get all actions automatically."
+    ]
+  },
+  "cce-34": {
+    "title": "WebSocket: real-time bidirectional exchange",
+    "optionExplanations": [
+      "Not the best choice: The client sends an order and receives an order number in response. Such an exchange is naturally implemented using a regular HTTP API.",
+      "Not the best choice: Batch transfer of orders does not require an interactive two-way connection with the user.",
+      "Correct: A chat requires real-time message delivery from the client to the server and from the server to the connected client.",
+      "Not the best choice: A static daily report can be retrieved via a standard HTTP request. A mobile device by itself does not require WebSockets."
+    ]
+  },
+  "cce-35": {
+    "title": "DynamoDB: table, item, and attribute",
+    "optionExplanations": [
+      "Incorrect: A primary key schema is mandatory, but not a fixed schema for all attributes of every item. A predefined schema is not the requested component.",
+      "Incorrect: Queries work with data rather than comprising the table. SQL-compatible PartiQL is supported, but the question asks about data structure.",
+      "Correct: Each item consists of attributes—named values such as userId or score.",
+      "Incorrect: Columns is a familiar term from relational tables. In the DynamoDB model, the corresponding fields are called attributes."
+    ]
+  },
+  "cce-36": {
+    "title": "S3: bucket and object key",
+    "optionExplanations": [
+      "Correct: A bucket is the top-level named container inside which S3 places objects.",
+      "Incorrect: This is a general container description. The specific name of such a resource in S3 is a bucket.",
+      "Incorrect: Region defines the location of a bucket, but is not the object container itself.",
+      "Incorrect: Group is not an object organization level in this S3 model."
+    ]
+  },
+  "cce-37": {
+    "title": "SDLC: what happens during the develop phase",
+    "optionExplanations": [
+      "Incorrect as the expected answer: In this question's classification, identifying flaws in a working system is related to maintain. In practice, bugs are found earlier, during testing.",
+      "Incorrect: Formulating new requirements belongs to define, before designing and building the system.",
+      "Correct: Obtaining and installing new components are part of develop in the AWS Academy course model.",
+      "Incorrect: Putting the completed system into use belongs to deploy."
+    ]
+  },
+  "cce-38": {
+    "title": "IAM: who gets permissions and where rules are recorded",
+    "optionExplanations": [
+      "Incorrect: A role is an assumed identity. Its permissions are determined by policies, not by the role's name.",
+      "Incorrect: user is an IAM identity to which permissions are applied. The rule text is located in policies.",
+      "Incorrect: group combines users for a common purpose of rights assignment. Allow and deny statements are contained in attached policies.",
+      "Correct: policies contain rules that AWS evaluates when allowing or denying a request."
+    ]
+  },
+  "cce-39": {
+    "title": "Authentication and authorization: identity and rights",
+    "optionExplanations": [
+      "Endorsement is approval or support. This is not an accepted term for identity verification upon login.",
+      "Authentication is correct: this is precisely what verifying a user's identity based on credentials is called.",
+      "Confirmation is a general word. It does not denote a specific identity verification process in the AWS access model.",
+      "Authorization checks rights for an action. It answers the question \"what is allowed\" rather than establishing the user's identity."
+    ]
+  },
+  "cce-40": {
+    "title": "DynamoDB: the complete key pair is unique",
+    "optionExplanations": [
+      "Incorrect: sensor ID and timestamp form a composite primary key. A simple primary key consists of a single partition key.",
+      "Incorrect: the partition key can repeat if the sort key is different. A single sensor stores measurements at different times.",
+      "Incorrect: the same timestamp is allowed for different sensor IDs. Uniqueness of the sort key is required within a single partition key value.",
+      "Correct: two items cannot have the same complete primary key, meaning the exact same pair of sensor ID and timestamp."
+    ]
+  },
+  "cce-41": {
+    "title": "API Gateway: when an HTTP API is sufficient",
+    "optionExplanations": [
+      "Correct for this question: HTTP API supports Lambda proxy integration and is suitable for a simple API in front of a function.",
+      "In the study comparison, this implies transforming the response content, for which REST API with appropriate mapping templates is chosen. Caveat: HTTP API can also change headers and status code; the original formulation is not precise enough.",
+      "Incorrect: built-in mock integration exists in REST APIs, but not in HTTP APIs.",
+      "Incorrect: separate quotas and limits for clients via usage plans and API keys relate to REST APIs."
+    ]
+  },
+  "cce-42": {
+    "title": "IAM groups: shared developer permissions",
+    "optionExplanations": [
+      "AWS RAM helps share supported resources between accounts and other recipients. It does not manage adding an IAM user to an IAM group.",
+      "Correct: AWS IAM manages users, groups, and associated permission policies.",
+      "Amazon EC2 provides compute capacity and virtual servers. IAM group membership is not related to EC2 management.",
+      "Amazon S3 stores objects in buckets. Its policies can regulate data access, but adding a user to an IAM group is done via IAM."
+    ]
+  },
+  "cce-43": {
+    "title": "Why an S3 bucket name might be taken",
+    "optionExplanations": [
+      "Expected answer. You need to choose an available name upon creation. Clarification: uniqueness applies within a partition, and an existing bucket cannot be directly renamed.",
+      "Incorrect: a standard name in the shared global namespace is taken across all regions of the same partition. A simple region change does not resolve the conflict.",
+      "Incorrect: S3 bucket names are not distributed by a built-in auction. The error requires another available name, not a higher bid.",
+      "Incorrect: contacting support is not a way to allow two buckets to use the same taken name in a shared namespace."
+    ]
+  },
+  "cce-44": {
+    "title": "CloudShell: a terminal with access of the current Console session",
+    "optionExplanations": [
+      "Incorrect: CloudShell does not require purchasing reserved blocks of time and capacity. CloudShell itself incurs no additional fee; resources used through it are billed separately.",
+      "Incorrect: the base CloudShell environment is maintained by AWS. Mandatory manual fixing and updating of the environment is not a service advantage.",
+      "Incorrect: the regular environment offers up to 1 GB of persistent storage per region, not 500 MB. Different conditions apply to VPC environments: there is no persistent storage.",
+      "Correct: a new session uses the AWS Management Console sign-in credentials, so AWS CLI does not require separate manual key configuration."
+    ]
+  },
+  "cce-45": {
+    "title": "DynamoDB: partition key determines placement, sort key defines order",
+    "optionExplanations": [
+      "Incorrect: range attribute is another name for sort key. Base distribution is determined by hashing the partition key, not by the range attribute value.",
+      "Correct: with a simple primary key, reads and writes are determined by the partition key, which is also called the hash attribute.",
+      "Incorrect: the statement reverses the key roles. First, the partition key is used for placement; the sort key defines the order of items with the same partition key value.",
+      "Incorrect: the hash function is internal and managed by DynamoDB. The developer designs keys and query patterns, but does not replace the service's algorithm."
+    ]
+  },
+  "cce-47": {
+    "title": "S3 website address and REST endpoint are different things",
+    "optionExplanations": [
+      "Incorrect for the specified bucket: www. becomes part of the bucket name, whereas the condition specifies the name frank-martha-cafe without www. Additionally, the website endpoint does not support HTTPS.",
+      "By hostname structure, this is the website endpoint of the specified bucket and region, likely intended by the author. However, https makes the address incorrect for a direct S3 website endpoint; http is needed. We do not declare this option unequivocally correct.",
+      "This is a form of regional REST endpoint with the old s3-us-east-1 spelling, rather than a website endpoint with s3-website. REST access does not provide the configured index document and other website behavior; HTTPS by itself does not fix the confusion of concepts here."
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "name": "lessons",
+    "sourceSha256": "ef87ad0e2a7cdd1533962ce12505897a573e2b772c23160aa7e31a5c8f3a6a69",
+    "englishSha256": "f22ae329e3fa79326316001bbdcbed91b6fd98418ea2dd6dc015a511b021931a",
+    "translatedStrings": 197,
+    "numericDifferences": 0
+  },
+  {
+    "name": "examNotes",
+    "sourceSha256": "3de0f53ddcd17d021a2008304b103d6b4243d842f7c3c15a7bd8619844359acd",
+    "englishSha256": "e7b0d6ecd4cb02d9de25c0492c172cbc4b349e8e015263b6319fef34056ec79d",
+    "translatedStrings": 407,
+    "numericDifferences": 3
+  },
+  {
+    "name": "examAnswerGuidance",
+    "sourceSha256": "a35c82cbceb3f375ad7c17ee675b14f11df423f8edd8bfcdbed45020396ed282",
+    "englishSha256": "3ac24e235e56f329da39ef53c866df11774d72a192f200946c34b912af148d9a",
+    "translatedStrings": 235,
+    "numericDifferences": 0
+  },
+  {
+    "name": "questions",
+    "sourceSha256": "8c98d7a822086c31917523ee7d6fe6e73d49895dc7909bce01fa01f24fe096c0",
+    "englishSha256": "ac29150a65f6b03ff1ce6b7ced0f88c089321b34580a839e1cd76e9af5efe986",
+    "translatedStrings": 50,
+    "numericDifferences": 0
+  },
+  {
+    "name": "computerNetworksEndterm/express",
+    "sourceSha256": "3ee20c254d9d8d9909425d078f777c19fa5aec7692fe30494d2138d6fb265611",
+    "englishSha256": "5639b04d78836bf178c46348be57c2425385db93e759f8c07156f3d5994aedc6",
+    "translatedStrings": 48
+  }
+]

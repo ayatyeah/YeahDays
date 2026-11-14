@@ -43,6 +43,12 @@ it('keeps an existing plan on repeat creation',async()=>{
  expect((await response.json()).study.tasks[0].completedAt).toBe(data.tasks[0].completedAt);expect(m.ai).not.toHaveBeenCalled();expect(m.create).not.toHaveBeenCalled();
 });
 it('honors the public origin behind Railway TLS termination',async()=>{
- const req=new Request('http://internal:8080/api/final-study',{method:'POST',headers:{'content-type':'application/json','origin':'https://example.test','x-forwarded-host':'example.test','x-forwarded-proto':'https'},body:JSON.stringify({action:'create',profile})});
+ const req=new Request('http://internal:8080/api/final-study',{method:'POST',headers:{'content-type':'application/json','origin':'https://yeahgrind.site','x-forwarded-host':'yeahgrind.site','x-forwarded-proto':'https'},body:JSON.stringify({action:'create',profile})});
  expect((await POST(req)).status).toBe(200);
+});
+
+it('rejects a forged forwarded origin and bounds request bytes', async()=>{
+ expect((await post({action:'create',profile},{origin:'https://attacker.test','x-forwarded-host':'attacker.test','x-forwarded-proto':'https'})).status).toBe(403);
+ expect((await post({action:'create',profile,extra:'a'.repeat(7000)})).status).toBe(413);
+ expect(m.ai).not.toHaveBeenCalled();expect(m.create).not.toHaveBeenCalled();
 });

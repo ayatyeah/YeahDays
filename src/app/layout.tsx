@@ -1,8 +1,10 @@
 import { AppModeProvider } from "@/components/AppModeProvider";
 import OrdinaryRuntime from "@/components/OrdinaryRuntime";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
+import "@/components/final/final.css";
+import "@/components/final/studio.css";
 import Shell from "@/components/Shell";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -25,6 +27,8 @@ const THEME_INIT_SCRIPT = `(function(){try{var raw=localStorage.getItem('yeahday
  * 2,5 секунды он показывается в любом случае — даже если словарь не пришёл.
  * Ключ хранилища — LOCALE_KEY из src/i18n/locale.ts.
  */
+
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -154,7 +158,7 @@ export default async function RootLayout({
   // клиентский рендер этого атрибута расходятся намеренно; это ожидаемо
   // и не патчится React, но без флага заливает консоль лишним варнингом.
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
       <body>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

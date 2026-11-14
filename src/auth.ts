@@ -77,15 +77,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
       },
     })] : []),
-    Google({
-      // Без этого Google-вход с email, уже зарегистрированным по паролю,
-      // падает с OAuthAccountNotLinked вместо входа в тот же аккаунт — а
-      // именно так люди и будут привязывать Google из профиля. Цена —
-      // если кто-то заранее зарегистрировал чужой email своим паролем,
-      // сработает автослияние; при отсутствии подтверждения email на
-      // регистрации это осознанный риск (см. src/app/api/auth/register).
-      allowDangerousEmailAccountLinking: true,
-    }),
+    // Existing identities continue to work; new linking requires an authenticated
+    // session. A password registration alone does not prove ownership of its email.
+    Google({ allowDangerousEmailAccountLinking: false }),
     Credentials({
       credentials: {
         identifier: { label: "Email или логин" },
@@ -94,7 +88,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials, request) {
         const identifier = String(credentials?.identifier ?? "").trim();
         const password = String(credentials?.password ?? "");
-        if (!identifier || !password) return null;
+        if (!identifier || identifier.length > 254 || !password || password.length > 1024) return null;
 
         /*
          * Считаем ПРОВАЛЫ, а не попытки, и по двум ключам сразу: по
@@ -146,9 +140,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
      * рождения у такого аккаунта пустые, как и у вошедших через Microsoft;
      * пароль можно задать позже в профиле.
      *
-     * Почта должна быть подтверждена самим Google. По ней же Google-вход
-     * попадает в уже существующий аккаунт (allowDangerousEmailAccountLinking
-     * выше), и неподтверждённый адрес позволил бы войти в чужой.
+     * Почта должна быть подтверждена самим Google. Автоматическое объединение
+     * по совпадению email выключено: привязка требует уже открытой сессии.
      *
      * Если человек уже вошёл (жмёт «Привязать Google» из профиля) — это
      * привязка к ТЕКУЩЕЙ сессии: Auth.js линкует identity к session.user.id
@@ -203,7 +196,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email },
           select: { banned: true },
         });
-        // Аккаунта нет — Auth.js создаст его; есть — войдёт в него, если он не заблокирован.
+        // New users may register. An existing, unlinked email requires explicit linking.
         if (existing?.banned) return false;
       }
       return true;

@@ -1,0 +1,170 @@
+[
+  {
+    "id": "recall-1",
+    "module": 8,
+    "question": "Why is a remote route associated with a next hop, while C and L are not?",
+    "answer": "A remote network is not directly connected: packets are forwarded to a neighboring router. C is a connected network, and L is the local IP of the interface. S and O indicate the source of the route rather than a separate local/remote category.",
+    "english": "What routing table entry has a next hop?"
+  },
+  {
+    "id": "recall-2",
+    "module": 8,
+    "question": "A PC sends a packet to a server on another network. Whose destination IP and MAC are in the first frame?",
+    "answer": "The IP belongs to the remote server; the MAC belongs to the local default gateway. The router changes the data link encapsulation for the next segment; without NAT, the destination IPs remain unchanged.",
+    "english": "Remote destination: server IP, gateway MAC."
+  },
+  {
+    "id": "recall-3",
+    "module": 8,
+    "question": "Is MTU a speed or a size? Who reports the IP constraint?",
+    "answer": "It is the maximum packet size on a link; the constraint comes from the data link layer. IPv4 can fragment when DF=0. An IPv6 router does not fragment: it returns Packet Too Big.",
+    "english": "MTU comes from the data link layer."
+  },
+  {
+    "id": "recall-4",
+    "module": 9,
+    "question": "How does a switch learn and decide where to forward a frame?",
+    "answer": "It learns using the source MAC and the incoming port. It looks up the destination MAC. Known unicast goes to the specific port; unknown unicast and broadcast go to all ports in the VLAN except the incoming one.",
+    "english": "Learn source; forward by destination."
+  },
+  {
+    "id": "recall-5",
+    "module": 9,
+    "question": "ARP and Neighbor Discovery: requests and destination addresses?",
+    "answer": "An ARP Request is an Ethernet broadcast, and the response is usually unicast. IPv6 uses ICMPv6 NS/NA and multicast instead of ARP; RS/RA are used for router discovery and network parameters.",
+    "english": "ARP = IPv4→MAC; NS/NA = IPv6 neighbors."
+  },
+  {
+    "id": "recall-6",
+    "module": 10,
+    "question": "How do you configure and save an IOS interface IP?",
+    "answer": "enable → configure terminal → interface g0/0 → ip address 192.168.1.1 255.255.255.0 → no shutdown → end → copy running-config startup-config. Verification: show ip interface brief and show ip route.",
+    "english": "Save RAM running-config to NVRAM startup-config."
+  },
+  {
+    "id": "recall-7",
+    "module": 10,
+    "question": "Why do Layer 2 switches need an SVI and an ip default-gateway?",
+    "answer": "An SVI with an IP/subnet mask is needed to manage the switch itself. The gateway is needed for its management traffic to reach other networks. User Ethernet frames are switched based on MAC addresses and do not require an IP on the switch.",
+    "english": "Management IP is not required for Layer 2 forwarding."
+  },
+  {
+    "id": "recall-8",
+    "module": 11,
+    "question": "192.168.10.77/27: network, broadcast, hosts, and their count?",
+    "answer": "5 bits remain: block size of 32, 30 hosts. Boundaries are 0, 32, 64, 96: .77 falls into .64–.95. Network is .64, broadcast is .95, hosts are .65–.94.",
+    "english": "Network .64; broadcast .95; 30 hosts."
+  },
+  {
+    "id": "recall-9",
+    "module": 11,
+    "question": "Five subnets: how many borrowed bits? And for 90 hosts: what is the prefix?",
+    "answer": "For 5 subnets: 2\u0012=4 is too small, 2\u0013=8 is sufficient — 3 bits. For 90 hosts: 2⁶−2=62 is too small, 2⁷−2=126 is sufficient — 7 host bits, /25.",
+    "english": "Subnet count: 2^b. Ordinary host count: 2^h−2."
+  },
+  {
+    "id": "recall-10",
+    "module": 11,
+    "question": "Name RFC 1918 and distinguish 169.254 from a public IP.",
+    "answer": "Private: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16. 169.254/16 is link-local, often assigned after a DHCP failure. Not every address outside RFC 1918 is public: there are loopback, multicast, and other special blocks.",
+    "english": "Private ≠ link-local; public ≠ merely not private."
+  },
+  {
+    "id": "recall-11",
+    "module": 12,
+    "question": "What remains of 2001:db8:1:2:abcd::7 with a /64 prefix?",
+    "answer": "The first 4 hextets form the network 2001:db8:1:2::/64. The last 64 bits form the interface ID abcd:0:0:7. If a /48 is allocated for the subnet ID, there are 16 bits here.",
+    "english": "Expand :: before dividing the prefix and interface ID."
+  },
+  {
+    "id": "recall-12",
+    "module": 12,
+    "question": "Who provides the IPv6 default gateway: RA or DHCPv6?",
+    "answer": "Router Advertisement. SLAAC forms an address from the advertised prefix and interface ID; DHCPv6 can provide an address and/or other settings. DAD via NS checks for uniqueness.",
+    "english": "RA supplies the default router; DAD detects duplicates."
+  },
+  {
+    "id": "recall-13",
+    "module": 12,
+    "question": "ff02::1, ff02::2, fe80::/10, ::1 — what are these?",
+    "answer": "ff02::1 is all-nodes link-local, ff02::2 is all-routers link-local, fe80::/10 is link-local, ::1 is loopback. IPv6 does not use broadcasts.",
+    "english": "All nodes; all routers; link-local; loopback."
+  },
+  {
+    "id": "recall-14",
+    "module": 13,
+    "question": "How does ping differ from traceroute? What does * mean?",
+    "answer": "Ping (Echo Request/Reply) checks reachability and RTT. Traceroute modifies TTL/Hop Limit and uses Time Exceeded messages to discover hops. * indicates no response within the timeout period; filtering can occur even when the route is operational.",
+    "english": "A timeout is not proof that the router is down."
+  },
+  {
+    "id": "recall-15",
+    "module": 13,
+    "question": "What does ping 127.0.0.1 prove? Why use an extended ping?",
+    "answer": "Loopback tests the local IP stack rather than the cable or gateway. An extended ping in IOS allows you to select the source address/interface and verify reachability specifically from it.",
+    "english": "Loopback tests the local stack; extended ping selects the source."
+  },
+  {
+    "id": "recall-16",
+    "module": 14,
+    "question": "TCP received bytes 4001–4500. What is the ACK?",
+    "answer": "4501 — the next expected byte. The ACK is not the number of the last received byte. Numbering allows detection of gaps and data reordering.",
+    "english": "ACK means next expected byte."
+  },
+  {
+    "id": "recall-17",
+    "module": 14,
+    "question": "TCP vs UDP: connection, ordering, header, retransmissions?",
+    "answer": "TCP: handshake SYN→SYN/ACK→ACK, ordering, acknowledgments, and retransmissions; header is at least 20 bytes. UDP: no handshake, 8 bytes, no built-in ordering/loss recovery. UDP checksum detects errors but does not ensure delivery.",
+    "english": "UDP trades built-in reliability for lower overhead."
+  },
+  {
+    "id": "recall-18",
+    "module": 14,
+    "question": "Are receive window and congestion control the same thing?",
+    "answer": "No. Flow control limits the sender based on the receiver's capabilities (receive window). Congestion control responds to network congestion. Both can limit the volume of data in flight.",
+    "english": "Receiver capacity versus network congestion."
+  },
+  {
+    "id": "recall-19",
+    "module": 15,
+    "question": "DNS A/AAAA/NS/MX and commands: what are they for?",
+    "answer": "A→IPv4, AAAA→IPv6, NS→authoritative name servers, MX→mail servers. nslookup performs DNS queries. DNS uses UDP and TCP port 53; not just UDP.",
+    "english": "MX points to mail exchange; AAAA resolves IPv6."
+  },
+  {
+    "id": "recall-20",
+    "module": 15,
+    "question": "How do you distinguish SMTP, POP3, IMAP, FTP, and SMB?",
+    "answer": "SMTP sends mail; POP3 downloads it; IMAP synchronizes server folders. FTP transfers files using separate control/data connections. SMB provides persistent file and printer sharing.",
+    "english": "Send mail, download mail, sync mail, transfer files, share resources."
+  },
+  {
+    "id": "recall-21",
+    "module": 15,
+    "question": "DORA, HTTP GET/POST/PUT, and main ports?",
+    "answer": "DHCP Discover→Offer→Request→ACK, UDP server port 67 / client port 68. GET reads a resource; POST sends data for processing; PUT sets a resource at a given URI. HTTP 80, HTTPS 443, DNS 53, SMTP 25, POP3 110, IMAP 143, FTP control 21, SSH 22, Telnet 23.",
+    "english": "Know the service destination port, not a random client source port."
+  },
+  {
+    "id": "recall-22",
+    "module": 16,
+    "question": "Authentication, authorization, accounting: examples?",
+    "answer": "Authentication verifies identity (login). Authorization grants permissions (Read-only or Edit). Accounting logs actions in a journal. Having permission to edit a folder is an example of authorization.",
+    "english": "Who are you? What may you do? What did you do?"
+  },
+  {
+    "id": "recall-23",
+    "module": 16,
+    "question": "Reconnaissance, access, DoS, and malware — how to distinguish them?",
+    "answer": "Port scanning/network mapping is reconnaissance; unauthorized entry is access; service unavailability due to an attack is DoS. A worm spreads independently, a virus attaches to an infected object, a Trojan disguises itself as useful software, and spyware collects data.",
+    "english": "Classify the action, not just a scary word in the scenario."
+  },
+  {
+    "id": "recall-24",
+    "module": 16,
+    "question": "What is required for SSH in IOS? Why doesn't password-encryption replace SSH?",
+    "answer": "Hostname, domain name, RSA keys, local username/secret; under VTY, login local and transport input ssh. SSH encrypts the network session. service password-encryption only obscures plaintext passwords in the configuration; legacy Type 7 is reversible.",
+    "english": "SSH encrypts transport; Type7 obscures stored configuration passwords."
+  }
+]

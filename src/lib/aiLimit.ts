@@ -6,8 +6,8 @@
  * потолок расходов OpenAI. Здесь счётчик лежит в Postgres (AiLimit): ключ и
  * сутки по UTC, как у учёта расхода в lib/aiUsage.
  *
- * Если базы нет или таблица ещё не создана — работаем по памяти, как раньше:
- * лучше пустить человека, чем уронить ответ из-за счётчика.
+ * If the durable counter is unavailable, deny paid AI requests. A restart
+ * must never reset the effective spending limit.
  */
 
 import { rateLimit } from "@/lib/rateLimit";
@@ -43,7 +43,7 @@ export async function dailyLimitWith(db: LimitDb, key: string, limit: number, no
     if (Math.random() < 0.02) void db.aiLimit.deleteMany({ where: { day: { lt: utcDay(new Date(now.getTime() - DAY)) } } }).catch(() => {});
     return row.count <= limit;
   } catch {
-    return rateLimit(key, limit, DAY);
+    return false;
   }
 }
 
@@ -55,6 +55,6 @@ export async function dailyLimit(key: string, limit: number): Promise<boolean> {
     const { prisma } = await import("@/lib/db");
     return await dailyLimitWith(prisma as unknown as LimitDb, key, limit);
   } catch {
-    return rateLimit(key, limit, DAY);
+    return false;
   }
 }

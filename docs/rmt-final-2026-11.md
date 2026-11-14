@@ -29,3 +29,7 @@ A private local archive of the original workspace (including untracked files and
 Use `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. New tests cover generation schema, task ordering/idempotence, owner isolation, authentication/origin checks, explicit consent, provider failures, key rotation and cooldowns. Browser QA uses an explicitly separate local PostgreSQL database and disposable account: real Gemini task generation, start/completion, reflection persistence, reload, survey and export, plus desktop/mobile navigation. The `.env` database is production: always override `DATABASE_URL` for local functional testing.
 
 Brand assets are reproducible with `node scripts/brand/rmt-final.mjs`.
+
+## Follow-up design revision
+
+The user's review keeps the original YG logo and PWA icons. Main navigation is reduced to My study, Courses and Progress, with account and theme controls alongside. Courses retains Research Methods and Tools, Cloud Computing, Computer Networks, Computer Vision and Project Management. Setup selects a course directly; difficulty is optional. The next task is prominent, while the full plan and optional feedback expand on demand. Light/dark preferences persist through the existing theme store and apply to the new landing, workspace, navigation, forms and research screens.

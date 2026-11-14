@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 export function Brand({ href = '/' }: { href?: string }) {
-  return <Link href={href} className="f-brand" aria-label="YeahGrind home"><span className="f-brand-mark" aria-hidden="true">y<span>.</span></span><span>YeahGrind</span></Link>;
+  return <Link href={href} className="f-brand" aria-label="YeahGrind home"><Image className="f-original-logo" src="/logo.webp" alt="" width={44} height={33} priority/><span>YeahGrind</span></Link>;
 }
 export function Icon({ name, size = 22 }: { name: string; size?: number }) {
   const paths: Record<string, React.ReactNode> = {

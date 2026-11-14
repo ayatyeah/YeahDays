@@ -47,13 +47,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "YeahGrind — Make learning a practice",
     description: "A personal study plan, focused sessions and progress you can see.",
-    images: [{ url: "/og-final.png", width: 1200, height: 630, alt: "YeahGrind — Make learning a practice" }],
+    images: [{ url: "/og-final.png?v=original-yg", width: 1200, height: 630, alt: "YeahGrind — Make learning a practice" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "YeahGrind — Make learning a practice",
     description: "A personal study plan, focused sessions and progress you can see.",
-    images: ["/og-final.png"],
+    images: ["/og-final.png?v=original-yg"],
   },
   applicationName: "YeahGrind",
   title: "YeahGrind — Make learning a practice",
@@ -70,43 +70,43 @@ export const metadata: Metadata = {
     // размерам экрана — iPhone SE … 16 Pro Max, портрет.
     startupImage: [
       {
-        url: "/splash/1320x2868-final.png",
+        url: "/splash/1320x2868-final.png?v=original-yg",
         media: "(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1290x2796-final.png",
+        url: "/splash/1290x2796-final.png?v=original-yg",
         media: "(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1284x2778-final.png",
+        url: "/splash/1284x2778-final.png?v=original-yg",
         media: "(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1242x2688-final.png",
+        url: "/splash/1242x2688-final.png?v=original-yg",
         media: "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1206x2622-final.png",
+        url: "/splash/1206x2622-final.png?v=original-yg",
         media: "(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1179x2556-final.png",
+        url: "/splash/1179x2556-final.png?v=original-yg",
         media: "(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1170x2532-final.png",
+        url: "/splash/1170x2532-final.png?v=original-yg",
         media: "(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/1125x2436-final.png",
+        url: "/splash/1125x2436-final.png?v=original-yg",
         media: "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
       },
       {
-        url: "/splash/828x1792-final.png",
+        url: "/splash/828x1792-final.png?v=original-yg",
         media: "(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)",
       },
       {
-        url: "/splash/750x1334-final.png",
+        url: "/splash/750x1334-final.png?v=original-yg",
         media: "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)",
       },
     ],
@@ -119,16 +119,16 @@ export const metadata: Metadata = {
     // ориентируются именно на него
     "mobile-web-app-capable": "yes",
   },
-  // Суффикс -v4 в именах иконок: iOS и Safari кэшируют файл по адресу и
+  // Суффикс -v3 в именах иконок: iOS и Safari кэшируют файл по адресу и
   // после смены картинки продолжали показывать старую даже у заново
   // добавленного ярлыка. Новое имя — единственный надёжный сброс.
   icons: {
     icon: [
-      { url: "/favicon-v4.png", sizes: "64x64", type: "image/png" },
-      { url: "/icon-192-v4.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512-v4.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon-v3.png", sizes: "64x64", type: "image/png" },
+      { url: "/icon-192-v3.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512-v3.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: "/apple-icon-v4.png",
+    apple: "/apple-icon-v3.png",
   },
 };
 

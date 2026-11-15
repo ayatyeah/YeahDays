@@ -6,6 +6,7 @@ import FeatureStack from './FeatureStack';
 
 export default function FinalLanding() {
   return <div className="final-site g-site p-site" lang="en" data-no-i18n>
+    <div className="p-ambient-light" aria-hidden="true"><i/><i/></div>
     <a className="f-skip" href="#main-content">Skip to content</a>
     <header className="g-public-header p-public-header"><Brand/><nav aria-label="Website navigation"><a href="#how-it-works">How it works</a><a href="#features">Features</a><a href="#project">The project</a></nav><div className="g-header-actions"><ThemeSwitch/><Link href="/login" className="g-login">Log in</Link><Link href="/register" className="f-button f-button-small">Start learning</Link></div></header>
     <main id="main-content">
@@ -20,6 +21,6 @@ export default function FinalLanding() {
         ['Can I just read my notes?', 'Of course. Open the library and choose a notebook. Clean mode clears the navigation while keeping your language controls and assistant available.'],
       ].map(([question,answer]) => <details key={question} name="prime-faq"><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></section>
       <section className="p-close"><h2>Make a little<br/>progress today.</h2><p>One goal. A clear next step. A place to come back to.</p><Link href="/register" className="f-button">Start learning <Icon name="arrow" size={20}/></Link></section>
-    </main><footer className="g-footer p-footer"><div><Brand/><p>A student project by YeahGrinders.</p></div><nav aria-label="Footer"><Link href="/research">Research</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></nav><span>© 2026 YeahGrind</span></footer>
+    </main><footer className="g-footer p-footer"><div><Brand/><p>A student project by YeahGrinders.</p></div><nav aria-label="Footer"><Link href="/research">Research</Link><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></nav><span>© 2026 YeahGrind</span><label className="p-motion-toggle"><input type="checkbox" aria-label="Pause background and card animation"/><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 3h3v10H4zm5 0h3v10H9z"/></svg><span className="p-motion-on" aria-hidden="true">Pause motion</span><span className="p-motion-off" aria-hidden="true">Resume motion</span></label></footer>
   </div>;
 }

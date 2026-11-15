@@ -2,7 +2,7 @@
 :root {
   --g-bg:#f5f7fc; --g-paper:#fff; --g-inset:#edf0f8; --g-text:#1c2331; --g-muted:#55627b; --g-border:#dce3f0;
   --g-accent:#3154df; --g-accent-hover:#2442ba; --g-accent-text:#294bc8; --g-accent-soft:#e9edff; --g-on-accent:#fff;
-  --g-research:#ece5ff; --g-cloud:#dcecff; --g-network:#e1efe1; --g-vision:#ffeadb; --g-project:#fbe1eb;
+  --g-research:#ece5ff; --g-cloud:#dcecff; --g-network:#e1efe1; --g-vision:#ffeadb; --g-project:#fbe1eb; --g-philosophy:#eee6d6;
   --p-paper:#fdfdff; --p-page-edge:#cfd3df; --p-cover-edge:#a6a2da; --p-paper-light:#fff; --p-paper-shade:#eef0f7;
   --p-texture:rgba(48,61,97,.028); --p-book-shadow:rgba(37,48,82,.18); --p-navy:#1c2331;
   --p-radius:24px; --p-bookmark:#aaa0e1; --p-sky-bookmark:#9abce9;
@@ -11,7 +11,7 @@
 :root[data-theme="dark"] {
   --g-bg:#131923; --g-paper:#1d2533; --g-inset:#283244; --g-text:#f0f3fc; --g-muted:#b1bed3; --g-border:#364257;
   --g-accent:#355de8; --g-accent-hover:#456df6; --g-accent-text:#b6c7ff; --g-accent-soft:#293758; --g-on-accent:#fff;
-  --g-research:#34304c; --g-cloud:#253b53; --g-network:#2a4038; --g-vision:#49392f; --g-project:#473142;
+  --g-research:#34304c; --g-cloud:#253b53; --g-network:#2a4038; --g-vision:#49392f; --g-project:#473142; --g-philosophy:#413b30;
   --p-paper:#202938; --p-page-edge:#435067; --p-cover-edge:#655f92; --p-paper-light:#293344; --p-paper-shade:#1b2330;
   --p-texture:rgba(223,234,255,.025); --p-book-shadow:rgba(0,0,0,.38); --p-navy:#edf2ff;
   --p-feature-notes:#302d43; --p-feature-practice:#25384c; --p-feature-plan:#2b3d33; --p-feature-assistant:#45352c; --p-feature-progress:#402f3d;
@@ -333,7 +333,7 @@ html { overflow-x:clip; scroll-behavior:smooth; }
 }
 
 /* Six final notebooks share the reading controls and the existing paper layout. */
-.p-folder[data-course="philosophy"] { --g-folder-color: #eee6d6; }
+[data-course="philosophy"] { --g-folder-color:var(--g-philosophy); }
 .g-final-guide { margin-block: 1.25rem 2rem; }
 .g-final-guide > .f-button { margin-top: 1.25rem; }
 .g-note-sources a { overflow-wrap: anywhere; }

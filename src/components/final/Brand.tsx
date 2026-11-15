@@ -5,6 +5,10 @@ export function Brand({ href = '/' }: { href?: string }) {
 }
 export function Icon({ name, size = 22 }: { name: string; size?: number }) {
   const paths: Record<string, React.ReactNode> = {
+    search: <><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></>,
+    chevron: <path d="m9 5 7 7-7 7"/>,
+    expand: <><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M3 3l6 6m12-6-6 6M3 21l6-6m12 6-6-6"/></>,
+    translate: <><path d="M3 5h11M8 2v3m4 0c0 6-4 10-9 12M5 9c2 4 4 6 8 8m1 4 4-11 4 11m-6.5-4h5"/></>,
     home: <><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></>,
     plan: <><path d="M8 5H5a2 2 0 0 0-2 2v13h16V7a2 2 0 0 0-2-2h-3"/><rect x="8" y="3" width="6" height="4" rx="1"/><path d="m7 12 1 1 2-2m3 1h3M7 16h9"/></>,
     events: <><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h3m4 0h3m-10 3h3"/></>,

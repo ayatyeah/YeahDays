@@ -6,7 +6,7 @@ test('Квиз ПМ: отдельный вариант, сохранение, с
   const {page,browser,errors}=await session({user,serviceWorkers:'block',initScript:"localStorage.setItem('yd-install-dismissed','1')"});
   const open=async()=>{
     await openSection(page,'/events/project-management-test-2');
-    await page.getByRole('button',{name:'Открыть Квиз 2',exact:true}).click();
+    await page.getByRole('button',{name:'Open Quiz 2',exact:true}).click();
     await page.getByTestId('pm-quiz2').waitFor();
   };
   try {
@@ -26,7 +26,7 @@ test('Квиз ПМ: отдельный вариант, сохранение, с
     await page.getByRole('radio').nth(1).check();
     await page.getByRole('button',{name:'← Назад',exact:true}).click();
     check(await page.getByRole('radio').nth(2).isChecked(),'можно вернуться к ответу');
-    await page.reload(); await page.getByRole('button',{name:'Открыть Квиз 2',exact:true}).click();
+    await page.reload(); await page.getByRole('button',{name:'Open Quiz 2',exact:true}).click();
     await page.getByTestId('quiz2-question').waitFor();
     check(await page.getByRole('radio').nth(2).isChecked(),'ответ сохранён после перезагрузки');
     mkdirSync('artifacts/pm-quiz2',{recursive:true});
@@ -51,9 +51,10 @@ test('Квиз ПМ: отдельный вариант, сохранение, с
       a.startedAt=Date.now()-3600000-1000; a.deadline=a.startedAt+3600000;
       localStorage.setItem(key,JSON.stringify(a));
     },user.id);
-    await page.reload(); await page.getByRole('button',{name:'Открыть Квиз 2',exact:true}).click();
+    await page.reload(); await page.getByRole('button',{name:'Open Quiz 2',exact:true}).click();
     await page.getByTestId('quiz2-result').waitFor();
     check((await page.getByTestId('quiz2-result').innerText()).includes('автоматически'),'просроченная попытка автоматически сдаётся после возвращения');
-    check(!errors.some(e=>/hydration|Minified React error|Uncaught/i.test(e)),'нет ошибок React');
+    const reactErrors=errors.filter(e=>/hydration|Minified React error|Uncaught/i.test(e));
+    check(!reactErrors.length,`нет ошибок React${reactErrors.length ? ': '+reactErrors.join('\n') : ''}`);
   } finally { await browser.close(); }
 });

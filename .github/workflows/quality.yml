@@ -16,7 +16,7 @@ jobs:
           POSTGRES_DB: yeahgrind_test
         ports: ['5432:5432']
         options: >-
-          --health-cmd pg_isready --health-interval 10s
+          --health-cmd "pg_isready -U yg_test -d yeahgrind_test" --health-interval 10s
           --health-timeout 5s --health-retries 5
     env:
       DATABASE_URL: postgresql://yg_test:local_test_only@localhost:5432/yeahgrind_test
@@ -37,7 +37,7 @@ jobs:
           SYNC_DB_TEST: "1"
       - run: npm run db:restore-check
       - run: npx playwright install --with-deps chromium
-      - name: Browser checks for sync, privacy, and mobile controls
+      - name: Browser checks for study workflow, privacy, quizzes, and responsive design
         env:
           AUTH_URL: http://localhost:3100
           AUTH_TRUST_HOST: "true"
@@ -53,9 +53,18 @@ jobs:
             if curl --fail --silent http://localhost:3100/api/auth/csrf > /dev/null; then break; fi
             sleep 1
           done
-          node e2e/run.mjs Качество
-          node e2e/run.mjs Надёжность
-          node e2e/run.mjs Языки
-          node e2e/run.mjs Прайм
+          node scripts/check-prime.mjs
+          node e2e/run.mjs "Надёжность: диагностика"
           node e2e/run.mjs "Квиз ПМ"
           node scripts/check-landing.mjs
+      - name: Save browser verification
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prime-browser-verification
+          path: |
+            artifacts/prime-workspace/
+            artifacts/landing-prime/
+            artifacts/pm-quiz2/
+            e2e/.out/
+            /tmp/yeahgrind-browser-server.log

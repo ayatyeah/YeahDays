@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { PHASES, type FinalStudy, type FinalTask, type StudyProfile } from '@/lib/finalStudy';
 import { Icon } from './Brand';
 import { EVENT_COURSES } from '@/lib/events/courses';
+import StudyDesk from './StudyDesk';
 
 const errors: Record<string, string> = {
   ai_unavailable: 'AI could not create your plan right now. Retry, or choose Standard plan to continue with shared exercises. Your goal is still here.',
@@ -26,16 +27,18 @@ function Workspace({ view }: { view: FinalView }) {
   const { data: session, status } = useSession();
   const [study, setStudy] = useState<FinalStudy | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [reload, setReload] = useState(0);
   const [notice, setNotice] = useState('');
   const [selected, setSelected] = useState('');
+  const [showSetup, setShowSetup] = useState(false);
   useEffect(() => {
     if (status !== 'authenticated') return;
     const controller = new AbortController();
-    setLoading(true); setError('');
-    fetch('/api/final-study', { cache: 'no-store', signal: controller.signal }).then(async r => { if (!r.ok) throw Error('unavailable'); return r.json(); }).then(data => setStudy(data.study)).catch(e => { if (e.name !== 'AbortError') setError('unavailable'); }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    setLoading(true); setLoadError(false); setError('');
+    fetch('/api/final-study', { cache: 'no-store', signal: controller.signal }).then(async r => { if (!r.ok) throw Error('unavailable'); return r.json(); }).then(data => setStudy(data.study)).catch(e => { if (e.name !== 'AbortError') { setError('unavailable'); setLoadError(true); } }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [status, reload]);
   async function act(action: string, extra: Record<string, unknown> = {}) {
@@ -49,7 +52,7 @@ function Workspace({ view }: { view: FinalView }) {
       if (action === 'complete') { setSelected(''); setNotice('Task completed. 10 XP added to your progress.'); }
       if (action === 'reflection') setNotice('Reflection saved.');
       if (action === 'survey') setNotice('Your feedback has been saved.');
-      if (action === 'create') setNotice('Your study plan is ready. Let’s take the first step.');
+      if (action === 'create') { setNotice('Your study plan is ready. Let’s take the first step.'); setShowSetup(false); }
       return true;
     } catch (e) { setError(e instanceof Error ? e.message : 'unavailable'); return false; }
     finally { setBusy(false); }
@@ -60,10 +63,11 @@ function Workspace({ view }: { view: FinalView }) {
   const course = EVENT_COURSES.find(c => c.title === study?.profile.topic);
   if (status === 'unauthenticated') return <div className="f-empty"><h1>Your study space</h1><p>Sign in to save your plan.</p><Link className="f-button" href="/login">Sign in</Link></div>;
   return <div className="f-workspace f-simple-workspace" lang="en" data-no-i18n>
-    <div className="f-page-heading"><div><span className="f-section-kicker">{view === 'progress' ? 'Your effort, made visible' : `Good to see you${session?.user?.name ? ', ' + session.user.name.split(' ')[0] : ''}.`}</span><h1>{view === 'progress' ? 'Your progress.' : 'Your study desk.'}</h1></div>{study && <Link href="/progress" className="f-study-counter"><Icon name="spark" size={18}/><strong>{completed * 10} XP</strong><span>{completed}/9 tasks</span></Link>}</div>
-    {error && <div className="f-alert" role="alert"><p>{errors[error] ?? 'This change could not be saved. Please try again.'}</p>{error === 'unavailable' && <button disabled={busy} onClick={() => setReload(n => n + 1)}>Try again</button>}{error === 'unauthorized' && <Link href="/login">Sign in</Link>}</div>}
+    {(view !== 'dashboard' || showSetup) && <div className="f-page-heading"><div><span className="f-section-kicker">{view === 'progress' ? 'Your effort, made visible' : `Good to see you${session?.user?.name ? ', ' + session.user.name.split(' ')[0] : ''}.`}</span><h1>{view === 'progress' ? 'Your progress.' : 'Your study desk.'}</h1></div>{study && <Link href="/progress" className="f-study-counter"><Icon name="spark" size={18}/><strong>{completed * 10} XP</strong><span>{completed}/9 tasks</span></Link>}</div>}
+    {showSetup && !study && <button type="button" className="p-back-to-desk" onClick={() => setShowSetup(false)}>← Back to my study desk</button>}
+    {error && <div className="f-alert" role="alert"><p>{errors[error] ?? 'This change could not be saved. Please try again.'}</p>{loadError && <button disabled={busy} onClick={() => setReload(n => n + 1)}>Try again</button>}{error === 'unauthorized' && <Link href="/login">Sign in</Link>}</div>}
     {notice && <p className="f-success" role="status"><Icon name="check" size={18}/>{notice}</p>}
-    {loading || status === 'loading' ? <div className="f-loading" role="status"><span/>Opening your study space…</div> : !study ? (!error || error !== 'unavailable') && (view === 'progress' ? <section className="f-empty g-progress-empty"><Icon name="spark" size={34}/><h2>Every step starts somewhere.</h2><p>Create your study plan, then watch your progress grow here.</p><Link href="/app" className="f-button">Create my study plan<Icon name="arrow" size={18}/></Link></section> : <Setup busy={busy} act={act}/>) : view === 'progress' ? <Progress study={study} busy={busy} act={act}/> : <>
+    {loading || status === 'loading' ? <div className="f-loading" role="status"><span/>Opening your study space…</div> : loadError ? null : view === 'dashboard' && (!showSetup || study) ? <StudyDesk study={study} onCreate={() => setShowSetup(true)}/> : !study ? (view === 'progress' ? <section className="f-empty g-progress-empty"><Icon name="spark" size={34}/><h2>Every step starts somewhere.</h2><p>Create your study plan, then watch your progress grow here.</p><Link href="/app" className="f-button">Create my study plan<Icon name="arrow" size={18}/></Link></section> : <Setup busy={busy} act={act}/>) : view === 'progress' ? <Progress study={study} busy={busy} act={act}/> : <>
       <section className="f-current-goal"><div><span>{study.profile.topic}</span><h2>{study.profile.goal}</h2></div><span className="f-pill"><Icon name={study.source === 'ai' ? 'spark' : 'plan'} size={15}/>{study.source === 'ai' ? 'Personalized' : 'Standard'}</span></section>
       <div className="f-simple-study-grid"><div>
         {!next && <p className="f-success"><Icon name="check" size={18}/>All nine tasks complete. You can revisit your work below.</p>}

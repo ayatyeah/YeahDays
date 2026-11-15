@@ -427,11 +427,11 @@ export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">
             exit={{ scale: 0.8, opacity: 0 }}
             onMouseDown={(e) => e.preventDefault()}
             onClick={openPanel}
-            aria-label="Открыть ИИ-помощника"
+            aria-label="Ask assistant"
             className="g-tutor-launch press fixed bottom-[calc(6rem+var(--install-offset,0px))] right-4 z-40 flex h-12 items-center gap-2 rounded-full bg-gradient-to-br from-violet-500 to-sky-500 px-4 font-semibold text-white shadow-[0_10px_28px_-6px_rgba(124,58,237,0.6)] lg:bottom-6"
           >
             <span aria-hidden className="text-lg leading-none">✦</span>
-            <span className={cn("text-sm", !selection && "hidden sm:inline")}>{selection ? "Спросить про выделенное" : "Помощник"}</span>
+            <span className="text-sm" data-no-i18n>{selection ? "Ask about selection" : "Ask assistant"}</span>
           </motion.button>
         )}
       </AnimatePresence>

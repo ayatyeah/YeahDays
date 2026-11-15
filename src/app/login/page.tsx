@@ -64,7 +64,7 @@ function LoginForm() {
     <AuthShell mode="login" title={tx("Войти в YeahGrind")} subtitle={tx("Рады видеть снова — план на сегодня уже ждёт.")} callbackUrl={callbackUrl}>
       {providerError && <div className="mb-4"><AuthError>{providerError}</AuthError></div>}
 
-      <form onSubmit={submit} className="flex flex-col gap-4">
+      <form method="post" onSubmit={submit} className="flex flex-col gap-4">
         <AuthField label={tx("Email или логин")}>
           <input name="identifier" placeholder="you@example.com" autoComplete="username" required autoFocus className={authInput} />
         </AuthField>

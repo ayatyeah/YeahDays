@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
           <p className="mt-2 text-[15px] leading-snug text-[#b4b8ae]">{tx("Я свяжусь с тобой в Telegram и помогу восстановить доступ.")}</p>
         </div>
       ) : (
-        <form onSubmit={submit} className="flex flex-col gap-4">
+        <form method="post" onSubmit={submit} className="flex flex-col gap-4">
           <AuthField label={tx("Email от аккаунта")}>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required autoFocus className={authInput} />
           </AuthField>

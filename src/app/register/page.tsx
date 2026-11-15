@@ -83,7 +83,7 @@ function RegisterForm() {
 
       <AuthDivider>{tx("или по почте")}</AuthDivider>
 
-      <form onSubmit={submit} className="flex flex-col gap-4">
+      <form method="post" onSubmit={submit} className="flex flex-col gap-4">
         <AuthField label={tx("Как тебя зовут")}>
           <input name="name" placeholder={tx("Имя")} autoComplete="given-name" maxLength={40} required className={authInput} />
         </AuthField>

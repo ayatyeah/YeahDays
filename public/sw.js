@@ -10,9 +10,9 @@ const BUILD = new URL(self.location.href).searchParams.get("v") || "dev";
 /** Оболочка приложения: HTML разделов и то, без чего экран не соберётся. */
 const SHELL = `yg-shell-${BUILD}`;
 /** Неизменяемые ассеты сборки (/_next/static/**) — живут между версиями. */
-const STATIC = "yg-static-lecture-v1";
+const STATIC = "yg-static-lecture-v2";
 /** Картинки и иконки — тоже переживают деплой. */
-const MEDIA = "yg-media-lecture-v1";
+const MEDIA = "yg-media-lecture-v2";
 
 const PRECACHE = [
   "/app",

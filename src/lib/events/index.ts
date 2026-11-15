@@ -1,10 +1,8 @@
-import { event as computerNetworksEndterm } from "./computerNetworksEndterm/event";
 import type { StudyEvent } from "./types";
 import { event as researchMethods } from "./researchMethods/event";
 import { event as computerNetworks } from "./computerNetworks/event";
 import { event as cloudComputing } from "./cloudComputing/event";
 import { event as computerVision } from "./computerVision/event";
-import { event as projectDefense } from "./projectDefense/event";
 import { event as projectManagement } from "./projectManagement/event";
 
 /**
@@ -15,7 +13,7 @@ import { event as projectManagement } from "./projectManagement/event";
  * нужный ивент отдельным чанком (lib/events/client.ts), а списки получают
  * лёгкие сводки с сервера — иначе каждая страница тянула бы ~6 МБ контента.
  */
-export const EVENTS: StudyEvent[] = [researchMethods, computerNetworks, cloudComputing, computerVision, projectDefense, projectManagement, computerNetworksEndterm];
+export const EVENTS: StudyEvent[] = [researchMethods, computerNetworks, cloudComputing, computerVision, projectManagement];
 
 export function findEvent(id: string): StudyEvent | undefined {
   return EVENTS.find((e) => e.id === id);

@@ -1,0 +1,421 @@
+{
+  "event": {
+    "id": "philosophy-final",
+    "course": "Philosophy",
+    "title": "Final preparation",
+    "description": "Final study guide and source-linked lecture notes for Philosophy.",
+    "counts": {
+      "part": 0,
+      "lecture": 0,
+      "final": 0
+    },
+    "lectures": [
+      {
+        "id": "ph-final-l1",
+        "title": {
+          "en": "Week 1 — What philosophical thinking does",
+          "ru": "Неделя 1 — Задачи философского мышления"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l1-review",
+            "title": {
+              "en": "Week 1 — What philosophical thinking does",
+              "ru": "Неделя 1 — Задачи философского мышления"
+            },
+            "notes": {
+              "en": "## From an opinion to an argument\nPhilosophy examines basic assumptions about reality, knowledge, value and human life. An opinion states a preference; an argument supplies reasons that another person can examine. Ask what a claim means, which premises support it and what would challenge it. Critical doubt is a method of testing a belief, not a rule that every belief is false.\n\n## The three lenses you will use in the final\nOntology asks what exists and what kind of thing something is. Epistemology asks how a claim is known and justified. Axiology studies value; ethics addresses action, obligations and the good. A claim that an AI system is a person is ontological; a claim that a benchmark proves understanding is epistemological; a claim that the system should be deployed is evaluative.\n\n## Thinkers and traditions\nSocratic questioning exposes assumptions through dialogue. Descartes uses methodological doubt to seek a secure starting point. The lecture also introduces Arab-Muslim falsafa, including al-Farabi and Ibn Sina, alongside Indian and Chinese traditions. Treat these as distinct arguments and traditions rather than interchangeable names for wisdom.\n\n## Use the idea in an IT analysis\nIdentify one specific claim in the news. Define its central term, give a reason for accepting it, develop the strongest relevant objection and state what survives that objection. Refer to a thinker only when the idea changes your analysis.\n\n## Common mistake\nA paragraph full of famous names can still contain no argument. Explain the premise, apply it to a concrete detail and draw a limited conclusion.",
+              "ru": "## От мнения к аргументу\nФилософия исследует базовые предположения о реальности, знании, ценностях и человеческой жизни. Мнение выражает позицию; аргумент даёт проверяемые основания. Уточни смысл утверждения, его предпосылки и возможное возражение. Критическое сомнение проверяет убеждение, а не объявляет всё ложным.\n\n## Три перспективы для финала\nОнтология спрашивает, что существует и какова природа этого объекта. Эпистемология — откуда знание и чем оно обосновано. Аксиология изучает ценности, этика — поступки, обязанности и благо. «ИИ — личность» является онтологическим утверждением; «benchmark доказывает понимание» — эпистемологическим; «систему следует внедрить» — оценочным.\n\n## Мыслители и традиции\nСократические вопросы выявляют предположения через диалог. Декарт использует методическое сомнение для поиска надёжного основания. Лекция также вводит falsafa, аль-Фараби и Ибн Сину, индийские и китайские традиции. Это разные аргументы и подходы, а не взаимозаменяемые имена мудрецов.\n\n## Применение к IT\nВыбери конкретное утверждение новости. Определи центральное понятие, приведи основание, разверни существенное возражение и объясни, что остаётся после него. Имя философа нужно только там, где его идея действительно влияет на анализ.\n\n## Частая ошибка\nСписок известных имён не заменяет аргумент. Объясни предпосылку, примени её к детали новости и сделай ограниченный вывод."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l2",
+        "title": {
+          "en": "Week 2 — Being, substance and virtual reality",
+          "ru": "Неделя 2 — Бытие, субстанция и виртуальная реальность"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l2-review",
+            "title": {
+              "en": "Week 2 — Being, substance and virtual reality",
+              "ru": "Неделя 2 — Бытие, субстанция и виртуальная реальность"
+            },
+            "notes": {
+              "en": "## What kind of existence?\nOntology distinguishes questions about what exists from questions about how we know it. A digital object can depend on physical infrastructure while also having social or institutional significance. Do not move from “virtual” to “unreal” without explaining which sense of reality you mean.\n\n## Substance and difference\nMonism explains reality through one fundamental substance or principle; dualism distinguishes two; pluralism allows many. Descartes distinguishes thinking and extended substance. Spinoza treats individual things as modes of one substance. Leibniz develops a plurality of monads. These positions propose different accounts of unity and difference, not a ranking of how many objects exist.\n\n## Plato, Aristotle and Heidegger\nPlato distinguishes intelligible forms from changing sensible things. Aristotle analyses concrete beings through matter and form, and explains causes in several senses. Heidegger shifts attention toward the meaning of being and human being-in-the-world. Use the distinction relevant to the case instead of compressing all three into “reality is subjective.”\n\n## Virtual reality as a test case\nA simulated environment raises two separate issues: what the environment is made of and what the experience means for its participant. A digital representation may have real consequences for identity, property or relationships without being identical to the thing represented. Descartes' skeptical scenarios test certainty about experience; they do not establish that an actual system is a simulation.\n\n## Essay move\nState an ontological thesis, explain the philosophical distinction behind it, apply it to one feature of the IT news and consider a rival account. Keep moral recommendations for the later value analysis.",
+              "ru": "## О каком существовании речь?\nОнтология отличает вопрос о существующем от вопроса о способе его познания. Цифровой объект может зависеть от физической инфраструктуры и одновременно иметь социальное значение. Нельзя переходить от «виртуального» к «нереальному», не уточнив смысл реальности.\n\n## Субстанция и различия\nMonism объясняет мир одним фундаментальным началом, dualism различает два, pluralism допускает множество. Декарт различает мыслящую и протяжённую субстанции. Спиноза рассматривает вещи как модусы одной субстанции. Лейбниц предлагает множество монад. Речь об основаниях единства и различия, а не просто о количестве объектов.\n\n## Платон, Аристотель и Хайдеггер\nПлатон отличает умопостигаемые формы от изменчивых чувственных вещей. Аристотель анализирует конкретное сущее через материю и форму, различая виды причин. Хайдеггер обращается к смыслу бытия и человеческому бытию-в-мире. Не своди разные позиции к фразе «реальность субъективна».\n\n## Виртуальная реальность\nРаздели устройство среды и значение опыта для участника. Цифровое представление может иметь реальные последствия для идентичности, собственности и отношений, не совпадая с изображаемым предметом. Скептические сценарии Декарта проверяют достоверность опыта, а не доказывают, что конкретная система — симуляция.\n\n## Ход эссе\nСформулируй онтологический тезис, объясни философское различие, примени его к детали новости и рассмотри альтернативу. Моральные рекомендации оставь для анализа ценностей."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l3",
+        "title": {
+          "en": "Week 3 — Knowledge, justification and truth",
+          "ru": "Неделя 3 — Знание, обоснование и истина"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l3-review",
+            "title": {
+              "en": "Week 3 — Knowledge, justification and truth",
+              "ru": "Неделя 3 — Знание, обоснование и истина"
+            },
+            "notes": {
+              "en": "## Information is not automatically knowledge\nData can be recorded observations; information organizes them; knowledge requires an account of what they mean and why a claim deserves acceptance. A confident statement is not stronger evidence simply because a machine produced it. Separate the knower, the object of inquiry and the method used.\n\n## Rationalism and empiricism\nRationalist approaches emphasize reason and its organizing principles; empiricist approaches emphasize experience. Kant examines how experience and the structures of understanding interact. These distinctions help analyse whether a technological claim rests on measurement, a formal inference or assumptions built into a model.\n\n## Justification and its limits\nThe traditional justified-true-belief analysis asks for belief, truth and justification. Gettier-style problems show why accidentally true, apparently justified beliefs complicate that account. In an IT argument, ask whether the evidence supports the conclusion for the right reason or whether a shortcut, bias or coincidence explains the apparent success.\n\n## Theories of truth\nCorrespondence connects truth with how things are. Coherence asks how a claim fits an integrated system of beliefs. Pragmatic approaches examine truth through inquiry and practical consequences. They are not synonyms for popularity, internal consistency of any fiction, or whatever is profitable.\n\n## Analysing a technology claim\nIdentify the evidence, collection method, uncertainty and possible error. A model's high score may support a narrow performance claim while leaving a broader claim about understanding unproved. Consider misinformation, missing context and the difference between an observation and its interpretation.\n\n## Essay move\nChoose a claim from the news and explain what would count as adequate evidence for it. Give a counterargument and state the remaining limit of knowledge.",
+              "ru": "## Информация не становится знанием автоматически\nДанные могут быть зафиксированными наблюдениями, информация их организует, а знание требует объяснения смысла и оснований утверждения. Уверенный машинный ответ сам по себе не сильнее других свидетельств. Разделяй познающего субъекта, объект и метод.\n\n## Рационализм и эмпиризм\nРационализм подчёркивает разум и его принципы, эмпиризм — опыт. Кант рассматривает взаимодействие опыта со структурами понимания. Эти различия позволяют понять, основано ли IT-утверждение на измерении, формальном выводе или заложенных в модель предположениях.\n\n## Обоснование и его границы\nТрадиционная схема justified true belief требует убеждения, истинности и обоснования. Проблемы Геттиера показывают трудность случайно истинных, кажущихся обоснованными убеждений. При анализе IT проверь, поддерживается ли вывод по правильной причине или успех объясняется shortcut, смещением либо совпадением.\n\n## Теории истины\nCorrespondence связывает истину с положением дел. Coherence — с согласованностью системы убеждений. Pragmatic approaches рассматривают истину через исследование и практические последствия. Это не то же самое, что популярность, непротиворечивость любой выдумки или прибыльность.\n\n## Анализ технологического утверждения\nНазови данные, способ получения, неопределённость и возможную ошибку. Высокий score может поддерживать узкий вывод о работе модели, но не широкое утверждение о понимании. Различай наблюдение и интерпретацию, учитывай дезинформацию и недостающий контекст.\n\n## Ход эссе\nВыбери утверждение новости и объясни достаточные для него свидетельства. Приведи контраргумент и обозначь оставшуюся границу знания."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l4",
+        "title": {
+          "en": "Week 4 — Science, technology and human agency",
+          "ru": "Неделя 4 — Наука, техника и человеческое действие"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l4-review",
+            "title": {
+              "en": "Week 4 — Science, technology and human agency",
+              "ru": "Неделя 4 — Наука, техника и человеческое действие"
+            },
+            "notes": {
+              "en": "## Science and engineering ask related questions\nScience develops and tests explanations; engineering designs interventions under practical constraints. Deduction derives consequences from premises; induction generalizes from observations; modelling represents selected features of a system. A successful simulation is evidence about a model under assumptions, not an automatic proof about every real setting.\n\n## Technology as a system\nAn instrumental view treats technology as a means used for a purpose. A socio-technical view also examines institutions, incentives, users and practices. A recommendation algorithm includes more than code: its chosen objective, available data and interface shape its effects. Explain these links before declaring a tool neutral or harmful.\n\n## Extension and framing\nMcLuhan's account of technologies as extensions of human capacities helps examine memory, communication and perception. Heidegger's critique asks how technological ways of revealing can frame people and nature as resources. These are analytical perspectives; neither establishes that every digital service has the same consequences.\n\n## Determinism and responsibility\nTechnological determinism gives technology a dominant role in social change. An agency-focused account asks who designed the system, which alternatives existed and what can be changed. Saying “the algorithm decided” does not identify responsibility. Examine the decisions of designers, operators and institutions.\n\n## Digital identity and attention\nInterfaces, profiles and automated rankings can shape how people present themselves and what becomes visible. Efficiency, privacy, fairness and meaningful choice may conflict. Distinguish a claimed benefit from evidence that it occurs, then explain which values guide your evaluation.\n\n## Essay move\nAnalyse one design choice as a connection between technical architecture and a human consequence. Give an alternative explanation rather than assuming the technology inevitably produces that consequence.",
+              "ru": "## Наука и инженерия\nНаука строит и проверяет объяснения, инженерия проектирует решения при практических ограничениях. Дедукция выводит следствия из предпосылок, индукция обобщает наблюдения, моделирование представляет выбранные свойства системы. Успешная симуляция относится к модели и её предположениям, а не доказывает всё о реальном мире.\n\n## Техника как система\nИнструментальный взгляд рассматривает технологию как средство. Социотехнический учитывает институты, стимулы, пользователей и практики. Рекомендательный алгоритм включает не только код: objective, данные и интерфейс влияют на последствия. Объясни связи до оценки нейтральности или вреда.\n\n## Расширение способностей и framing\nМаклюэн рассматривает технологии как расширения человеческих возможностей — памяти, общения и восприятия. Критика Хайдеггера спрашивает, как технологический способ раскрытия превращает человека и природу в ресурс. Это перспективы анализа, а не доказательство одинаковых последствий любого сервиса.\n\n## Детерминизм и ответственность\nТехнологический детерминизм придаёт технологии определяющую роль в изменении общества. Подход через agency спрашивает, кто проектировал систему, какие были альтернативы и что можно изменить. «Решил алгоритм» не объясняет ответственность. Рассмотри решения разработчиков, операторов и организаций.\n\n## Идентичность и внимание\nИнтерфейсы, профили и рейтинги влияют на самопрезентацию и видимость информации. Эффективность, приватность, справедливость и осмысленный выбор могут конфликтовать. Отличай заявленную пользу от доказанной и объясняй основание оценки.\n\n## Ход эссе\nСвяжи одно техническое решение с человеческим последствием и рассмотрением альтернатив. Не объявляй последствия неизбежными без аргумента."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l5",
+        "title": {
+          "en": "Week 5 — Human nature and digital identity",
+          "ru": "Неделя 5 — Человек и цифровая идентичность"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l5-review",
+            "title": {
+              "en": "Week 5 — Human nature and digital identity",
+              "ru": "Неделя 5 — Человек и цифровая идентичность"
+            },
+            "notes": {
+              "en": "## What makes a human person?\nPhilosophical anthropology examines human nature, embodiment, consciousness, culture and social relationships. An account of what a person is differs from a measurement of one ability. A system that imitates speech may raise questions about intelligence without settling personhood or moral status.\n\n## Several accounts of the self\nCartesian dualism separates mind and body; materialist approaches relate mental life to physical processes. Existentialism emphasizes lived choice and responsibility. Buddhist no-self challenges a fixed, independent self; Confucian relational thinking emphasizes roles and humane relationships. Keep the differences visible instead of using “Eastern” and “Western” as rigid descriptions of every thinker.\n\n## Traditions discussed in the lecture\nThe lecture connects Arab-Muslim thought with reason and human development and discusses Kazakh thinkers through moral character, knowledge and social life. Abai's ideal of the whole person connects reason, will and feeling; Shakarim's concern with conscience supports ethical self-examination. Apply a specific concept rather than making broad claims about all members of a culture.\n\n## Homo ludens and gamification\nHuizinga's account emphasizes play as a cultural activity with rules and meaning. Digital gamification imports selected game elements into other activities. A reward system can invite participation, but it can also substitute point-seeking for the original purpose. Analyse the activity, participant's agency and meaning of the rules.\n\n## Digital identity\nAn online profile is a representation formed through choices, records and platform categories. It can affect real relationships while leaving much of the person unrepresented. The philosophical question is not simply whether the profile is accurate, but which account of the self it assumes.\n\n## Essay move\nIdentify the model of the human being implied by a technology. Contrast it with another account and explain a consequence for how the technology should be evaluated.",
+              "ru": "## Что делает человека личностью?\nФилософская антропология изучает природу человека, телесность, сознание, культуру и отношения. Объяснение личности отличается от измерения отдельной способности. Имитация речи поднимает вопрос об интеллекте, но не решает автоматически вопрос о личности или моральном статусе.\n\n## Разные понимания self\nДуализм Декарта разделяет сознание и тело; материалистические подходы связывают психическую жизнь с физическими процессами. Экзистенциализм подчёркивает выбор и ответственность. Буддийский no-self проблематизирует постоянное независимое «я», конфуцианское мышление выделяет отношения и роли. Не превращай «Восток» и «Запад» в одинаковые характеристики всех мыслителей.\n\n## Традиции лекции\nАрабо-мусульманская мысль связана с разумом и развитием человека; казахские мыслители обсуждаются через нравственность, знание и общество. Идеал цельного человека у Абая связывает разум, волю и чувство; внимание Шакарима к совести позволяет анализировать моральную ответственность. Применяй конкретное понятие вместо обобщения о всех представителях культуры.\n\n## Homo ludens и геймификация\nХёйзинга рассматривает игру как культурную деятельность с правилами и смыслом. Геймификация переносит игровые элементы в другие занятия. Награды могут поддерживать участие, но также заменять исходную цель погоней за баллами. Анализируй смысл правил и свободу участника.\n\n## Цифровая идентичность\nПрофиль создаётся выборами человека, записями и категориями платформы. Он влияет на реальные отношения, не представляя всю личность. Важно выяснить не только точность профиля, но и заложенное в него понимание человека.\n\n## Ход эссе\nОпредели модель человека, которую предполагает технология. Сопоставь с альтернативой и выведи следствие для её оценки."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l6",
+        "title": {
+          "en": "Week 6 — Values, ethics and responsibility",
+          "ru": "Неделя 6 — Ценности, этика и ответственность"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l6-review",
+            "title": {
+              "en": "Week 6 — Values, ethics and responsibility",
+              "ru": "Неделя 6 — Ценности, этика и ответственность"
+            },
+            "notes": {
+              "en": "## Describe values before judging\nAxiology studies what is valuable and how values relate. Distinguish a descriptive claim about what people prefer from a normative claim about what deserves protection. Name the affected people and the competing values: usefulness, freedom, dignity, privacy, justice or security. “There are ethical issues” does not identify the conflict.\n\n## Three ethical approaches\nConsequentialism evaluates outcomes; utilitarian approaches consider overall welfare and the distribution of benefits and harms. Deontology examines duties and constraints, including whether persons are treated merely as means. Virtue ethics asks about character, practical wisdom and the habits encouraged by an action. Each provides a different reason, not a different label for the same personal opinion.\n\n## Test your preferred answer\nA useful system can still violate a duty. A strict rule can have harmful consequences. An admirable intention does not guarantee a fair institution. State the strongest relevant counterargument and explain why your conclusion remains justified, or narrow it accordingly.\n\n## Professional and social responsibility\nThe lecture connects general ethics to professional, business, biomedical and IT settings. Competence and honesty matter alongside consequences. Algorithmic decisions can distribute opportunities unevenly; analyse who benefits, who bears errors and who can challenge an outcome. Human rights and dignity are ethical considerations here; this notebook is not a statement of a particular legal rule.\n\n## Essay move\nMake a conditional recommendation tied to an ethical principle. Explain the trade-off and the safeguard that follows from your argument, instead of writing only that technology is both good and bad.",
+              "ru": "## Сначала назови ценности\nАксиология изучает ценное и отношения между ценностями. Описание предпочтений отличается от нормативного утверждения о том, что нужно защищать. Назови затронутых людей и конфликтующие ценности: пользу, свободу, достоинство, приватность, справедливость, безопасность. Фраза «есть этические проблемы» ещё не объясняет конфликт.\n\n## Три этических подхода\nConsequentialism оценивает последствия; утилитаризм рассматривает общее благополучие, выгоды и вред. Deontology анализирует обязанности и ограничения, в том числе отношение к человеку только как к средству. Virtue ethics изучает характер, практическую мудрость и привычки, поощряемые действием. Это разные основания вывода, а не ярлыки личного мнения.\n\n## Проверь своё решение\nПолезная система может нарушать обязанность, строгое правило — иметь плохие последствия, хорошее намерение — не создавать справедливого института. Приведи сильный контраргумент и объясни, почему вывод остаётся обоснованным, либо сузь его.\n\n## Профессиональная ответственность\nЛекция связывает этику с профессиональной, деловой, медицинской и IT-деятельностью. Важны компетентность и честность. Алгоритмы могут неравномерно распределять возможности: кто получает пользу, кто несёт последствия ошибок, кто может оспорить результат? Права и достоинство здесь рассматриваются как этические основания, а не изложение конкретной нормы права.\n\n## Ход эссе\nДай условную рекомендацию, вытекающую из принципа. Объясни компромисс и необходимую защитную меру вместо фразы «технологии имеют плюсы и минусы»."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l7",
+        "title": {
+          "en": "Week 7 — Freedom, choice and responsibility",
+          "ru": "Неделя 7 — Свобода, выбор и ответственность"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l7-review",
+            "title": {
+              "en": "Week 7 — Freedom, choice and responsibility",
+              "ru": "Неделя 7 — Свобода, выбор и ответственность"
+            },
+            "notes": {
+              "en": "## Two meanings of freedom\nNegative liberty concerns the absence of interference. Positive freedom concerns the capacity or control needed to direct one's life. A platform may formally permit an action while a person lacks the skills, access or resources to use that option. Conversely, an intervention justified as empowerment may impose unwanted control.\n\n## Determinism and moral choice\nDeterminism concerns whether events follow from preceding conditions. The philosophical debate about free will asks what kind of control is needed for responsibility. Avoid inferring that prediction eliminates agency, or that unpredictability proves freedom. Existentialist thinking emphasizes responsibility for choices and the difficulty of evading it.\n\n## Political and social dimensions\nThe lecture discusses Locke through natural rights and liberalism, then examines political, economic and cultural forms of freedom. It also connects independence and creativity to Kazakh thought and the Alash movement. Distinguish freedom of action from the institutional conditions that make it meaningful.\n\n## Digital application\nA recommendation system may widen available options while steering attention. To analyse freedom, ask whether people understand the influence, can refuse it and retain realistic alternatives. Consent is philosophically weak when it is merely a click without meaningful choice. Explain the specific limitation rather than claiming all personalization removes freedom.\n\n## Essay move\nSpecify which sense of freedom is at stake. Give a reason for a proposed restriction or protection, consider the rival freedom it affects, and justify a proportionate conclusion.",
+              "ru": "## Два смысла свободы\nNegative liberty — отсутствие вмешательства. Positive freedom — способность или контроль, необходимые для управления своей жизнью. Платформа может разрешать действие, но человеку не хватает доступа, навыков или ресурсов. И наоборот, вмешательство под видом расширения возможностей может навязывать контроль.\n\n## Детерминизм и моральный выбор\nДетерминизм рассматривает зависимость событий от предшествующих условий. Спор о free will спрашивает, какой контроль нужен для ответственности. Предсказуемость сама по себе не отменяет agency, а непредсказуемость не доказывает свободу. Экзистенциальный подход подчёркивает ответственность за выбор.\n\n## Политическое и социальное измерение\nЛекция связывает Локка с естественными правами и либерализмом, рассматривает политическую, экономическую и культурную свободу, а также независимость, творчество и движение Алаш. Разделяй свободу действия и институциональные условия её реализации.\n\n## Цифровой пример\nРекомендации могут расширять выбор и одновременно направлять внимание. Понимает ли человек влияние, может ли отказаться и есть ли реальные альтернативы? Один клик без осмысленного выбора — слабое философское основание согласия. Покажи конкретное ограничение, не объявляя любую персонализацию уничтожением свободы.\n\n## Ход эссе\nУкажи смысл свободы, обоснуй предлагаемую защиту или ограничение, рассмотри затронутую альтернативную свободу и сделай соразмерный вывод."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l8",
+        "title": {
+          "en": "Week 8 — Art, representation and digital creativity",
+          "ru": "Неделя 8 — Искусство, изображение и цифровое творчество"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l8-review",
+            "title": {
+              "en": "Week 8 — Art, representation and digital creativity",
+              "ru": "Неделя 8 — Искусство, изображение и цифровое творчество"
+            },
+            "notes": {
+              "en": "## Art does more than copy\nAesthetics examines beauty, interpretation, expression and artistic experience. Art can represent a world, transform perception, communicate meaning or challenge familiar categories. An evaluation of technical realism is only one possible judgement; it does not exhaust artistic value.\n\n## Mimesis and its critics\nPlato's discussion raises questions about imitation and its distance from knowledge. Aristotle gives imitation a constructive role in understanding and artistic experience. When analysing a generated image, distinguish the depicted thing, the representation and the viewer's response. A convincing image need not be evidence that its depicted event happened.\n\n## Different accounts of judgement\nKant examines aesthetic judgement and disinterested pleasure; Hegel relates art to the expression of spirit in historical forms. Later perspectives in the lecture examine creativity, disclosure and simulacra. Use these distinctions to ask how an image acquires meaning, not just whether it looks attractive.\n\n## Digital creativity\nA generated work raises questions about intention, authorship, training material and interpretation. The ontological question concerns what kind of work it is; the epistemological question concerns what viewers can infer from it; the axiological question concerns value and responsibility. Do not treat these as one undifferentiated debate about whether AI is good.\n\n## Culture and context\nThe lecture also discusses Kazakh musical and artistic traditions. Cultural meaning depends on practices and interpretation, not only on reproducing a surface pattern. Explain which context is retained or lost in a digital transformation.\n\n## Essay move\nAnalyse one representational choice, compare two accounts of artistic value and justify your conclusion with reference to the actual news item.",
+              "ru": "## Искусство не только копирует\nЭстетика изучает прекрасное, интерпретацию, выражение и художественный опыт. Искусство представляет мир, меняет восприятие, передаёт смысл и оспаривает привычные категории. Техническая реалистичность — лишь одно измерение оценки.\n\n## Mimesis и критика\nПлатон ставит вопрос о подражании и его отношении к знанию. Аристотель признаёт конструктивную роль подражания в понимании и художественном опыте. При анализе сгенерированной картинки разделяй изображённое, само изображение и реакцию зрителя. Убедительное изображение не доказывает реальность события.\n\n## Разные оценки искусства\nКант рассматривает эстетическое суждение и незаинтересованное удовольствие; Гегель связывает искусство с историческими формами выражения духа. Другие подходы лекции обсуждают творчество, раскрытие и симулякры. Эти различия помогают анализировать смысл, а не только привлекательность.\n\n## Цифровое творчество\nГенерация поднимает вопросы намерения, авторства, обучающих материалов и интерпретации. Онтологический вопрос — что это за произведение, эпистемологический — какие выводы допустимы, аксиологический — каковы ценность и ответственность. Не смешивай их в один спор «хорош ли ИИ».\n\n## Культурный контекст\nЛекция рассматривает также казахские музыкальные и художественные традиции. Их смысл зависит от практик и интерпретации, а не только воспроизведения внешнего узора. Объясни, какой контекст сохраняется или теряется при цифровом преобразовании.\n\n## Ход эссе\nВыбери конкретное изобразительное решение, сопоставь два понимания художественной ценности и свяжи вывод с новостью."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l9",
+        "title": {
+          "en": "Week 9 — Philosophy of religion",
+          "ru": "Неделя 9 — Философия религии"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l9-review",
+            "title": {
+              "en": "Week 9 — Philosophy of religion",
+              "ru": "Неделя 9 — Философия религии"
+            },
+            "notes": {
+              "en": "## Three different activities\nReligious practice, theology and philosophy of religion are related but distinct. Philosophy of religion examines concepts, arguments and interpretations about religious belief. Analysing an argument does not require endorsing or dismissing the community that holds it.\n\n## Arguments and objections\nCosmological arguments reason from features such as change, causation or contingency. Teleological arguments reason from apparent order or purpose. Ontological arguments reason from the concept of a necessary or maximal being. Distinguish their premises: an objection to an inference from design is not automatically an objection to every cosmological argument.\n\n## The problem of evil\nThe problem examines the relation between suffering and claims about divine knowledge, power and goodness. A careful analysis identifies the precise claims in tension and evaluates proposed replies. The lecture presents these debates as philosophical problems, not experimentally settled conclusions.\n\n## Explanatory approaches\nThe course also introduces accounts of religion through cultural evolution and structural patterns, associated with Tylor and Lévi-Strauss. An explanation of a belief's social origin differs from evaluating its truth. Avoid assuming that an account of origins alone proves or disproves the belief.\n\n## Application to technology\nClaims that technology will provide salvation, complete control or ultimate meaning can be examined as claims with assumptions and limits. Do not equate technical success with metaphysical proof. Consider pluralism and respectful treatment of different worldviews when a digital system makes choices about religious or cultural material.\n\n## Essay move\nReconstruct an argument fairly, identify its premise, formulate a relevant objection and explain a limited conclusion. Apply religious philosophy only when it actually illuminates the news.",
+              "ru": "## Три разных занятия\nРелигиозная практика, теология и философия религии связаны, но не совпадают. Философия религии анализирует понятия, аргументы и интерпретации. Разбор довода не требует ни принятия, ни отрицания сообщества верующих.\n\n## Аргументы и возражения\nCosmological arguments исходят из изменения, причинности или случайности существования. Teleological — из порядка и целесообразности. Ontological — из понятия необходимого или максимально совершенного бытия. Различай предпосылки: возражение против design argument не опровергает автоматически все космологические аргументы.\n\n## Проблема зла\nОна рассматривает отношение страдания к утверждениям о божественном знании, могуществе и благости. Назови точные положения, создающие напряжение, и оцени предложенные ответы. Это философские споры, а не экспериментально закрытые вопросы.\n\n## Объяснительные подходы\nКурс также вводит культурно-эволюционные и структурные объяснения религии, связанные с Тайлором и Леви-Строссом. Объяснение социального происхождения убеждения отличается от оценки его истинности. Одно происхождение само по себе не доказывает и не опровергает убеждение.\n\n## Применение к технологиям\nОбещания технологического спасения, полного контроля или окончательного смысла имеют предпосылки и границы. Технический успех не является метафизическим доказательством. При анализе цифровых решений о религиозном и культурном содержании учитывай плюрализм и уважение разных мировоззрений.\n\n## Ход эссе\nЧестно восстанови аргумент, выдели предпосылку, сформулируй релевантное возражение и ограниченный вывод. Используй тему религии только если она помогает понять новость."
+            },
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "ph-final-l10",
+        "title": {
+          "en": "Week 10 — Society, culture and history",
+          "ru": "Неделя 10 — Общество, культура и история"
+        },
+        "parts": [
+          {
+            "id": "ph-final-l10-review",
+            "title": {
+              "en": "Week 10 — Society, culture and history",
+              "ru": "Неделя 10 — Общество, культура и история"
+            },
+            "notes": {
+              "en": "## Different explanations of historical change\nPhilosophy of history asks about direction, causation and meaning in social change. Marx's historical materialism emphasizes relations of production and social conflict. Civilizational approaches, including Spengler and Toynbee, use different units and patterns of development. These are interpretive frameworks; do not present their broad predictions as established facts.\n\n## Political power and social order\nThe lecture contrasts approaches to political authority and examines Machiavelli, Hobbes and later debates. Ask what view of human motivation an argument assumes, which institution it supports and what objection follows. A recommendation to strengthen control requires a justification beyond saying that control is technically possible.\n\n## Competing accounts of the contemporary world\nFukuyama's end-of-history thesis and Huntington's civilizational account offer different interpretations of modern political development. Compare their explanatory premises and limits rather than using either as a slogan. A single technology news item cannot validate a universal theory of history.\n\n## Culture and social memory\nThe course discusses nomadic life, language, cultural codes and Kazakh historical experience. A cultural code concerns shared practices and meanings; it does not make every individual identical. Digital preservation can broaden access while changing the context in which a tradition is encountered.\n\n## Information society\nPost-industrial and information-society accounts emphasize knowledge, services, networks and changing forms of work. Global platforms concentrate some resources while enabling new connections. Analyse who controls infrastructure and visibility, which skills matter and which groups are excluded. More information does not automatically produce more equal power.\n\n## Essay move\nConnect an IT development to a specific institution or social relationship. Explain the mechanism of change, compare a rival interpretation and defend a conclusion that fits the scale of the evidence.",
+              "ru": "## Объяснения исторических изменений\nФилософия истории спрашивает о направлении, причинах и смысле общественных изменений. Исторический материализм Маркса выделяет производственные отношения и социальный конфликт. Цивилизационные подходы Шпенглера и Тойнби используют другие единицы и модели развития. Это интерпретационные схемы, а не автоматически доказанные предсказания.\n\n## Власть и порядок\nЛекция сопоставляет подходы к политической власти, включая Макиавелли, Гоббса и последующие споры. Какое понимание человека предполагается? Какой институт оно оправдывает? Какое возникает возражение? Техническая возможность контроля сама по себе не оправдывает его усиление.\n\n## Конкурирующие современные объяснения\nТезис Фукуямы о конце истории и цивилизационный подход Хантингтона по-разному описывают политическое развитие. Сравни предпосылки и границы, не превращая теории в лозунги. Одна IT-новость не подтверждает универсальную модель истории.\n\n## Культура и память\nКурс обсуждает кочевой образ жизни, язык, культурные коды и казахский исторический опыт. Культурный код связан с общими практиками и смыслами, но не делает всех людей одинаковыми. Цифровое сохранение расширяет доступ и одновременно меняет контекст знакомства с традицией.\n\n## Информационное общество\nПостиндустриальные подходы выделяют знания, услуги, сети и изменение труда. Глобальные платформы создают связи и концентрируют часть ресурсов. Кто контролирует инфраструктуру и видимость? Какие навыки становятся важными? Кто исключён? Больше информации не означает автоматически более равное распределение власти.\n\n## Ход эссе\nСвяжи технологическое изменение с конкретным институтом или отношением. Покажи механизм, сравни альтернативу и сделай вывод в пределах имеющихся свидетельств."
+            },
+            "questions": []
+          }
+        ]
+      }
+    ]
+  },
+  "guide": {
+    "en": "## Final format\nA handwritten philosophical-analytical essay based on a short IT news item, completed in 50 minutes. The criteria require at least 350 words. The separate policy calls 350 words recommended; follow the explicit minimum in the criteria when practising.\n\n## Build five connected sections\n- Introduction: identify the news and a specific philosophical problem in 2–3 sentences.\n- Ontology: analyse being, reality and the nature of the entities involved.\n- Epistemology: analyse knowledge, evidence, truth and the limits of the method.\n- Axiology: analyse values, ethical conflicts and responsibilities.\n- Conclusion: defend your own position using the preceding analysis.\n\n## Inside each analytical section\nUse thesis → philosophical premise with argument and counterargument → application to a concrete detail of the news → conclusion. Explain thinkers' ideas rather than listing their names. A retelling of the news is not philosophical analysis.\n\n## Practise the timing\nReserve about 5 minutes to read and plan, 35–40 minutes to write, and 5–10 minutes to check within the 50-minute total. Check all three lenses, counterarguments, clear transitions, word count and legible handwriting.\n\n## Rubric and exam conditions\nProblem identification: 10%; philosophical analysis: 45%; concepts and argumentation: 20%; own position and conclusions: 15%; structure and clarity: 10%. The policy prohibits devices, internet, AI tools, notes and dictionaries during the exam. Bring identification and a blue or black pen. Use these notes for preparation, then practise independently.",
+    "ru": "## Формат финала\nРукописное философско-аналитическое эссе по короткой IT-новости за 50 минут. Критерии требуют минимум 350 слов. Отдельная policy называет 350 рекомендованной длиной; при подготовке следуй явному минимуму критериев.\n\n## Пять связанных частей\n- Introduction: за 2–3 предложения назови новость и конкретную философскую проблему.\n- Ontology: проанализируй бытие, реальность и природу затронутых объектов.\n- Epistemology: знание, свидетельства, истину и границы метода.\n- Axiology: ценности, этические конфликты и ответственность.\n- Conclusion: обоснуй собственную позицию предыдущим анализом.\n\n## Внутри аналитической части\nТезис → философское основание с аргументом и контраргументом → применение к конкретной детали новости → вывод. Объясняй идеи философов, не перечисляй имена. Пересказ новости не заменяет анализ.\n\n## Репетиция времени\nОколо 5 минут на чтение и план, 35–40 на написание и 5–10 на проверку в пределах общих 50 минут. Проверь три перспективы, контраргументы, переходы, объём и читаемость.\n\n## Рубрика и условия\nПроблема — 10%; философский анализ — 45%; понятия и аргументация — 20%; собственная позиция и выводы — 15%; структура и ясность — 10%. Policy запрещает устройства, интернет, AI, конспекты и словари на экзамене. Нужны документ и синяя/чёрная ручка. Используй конспект для подготовки, затем тренируйся самостоятельно."
+  },
+  "sources": [
+    {
+      "id": "73892",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73892",
+      "title": "Документ 130 (2).pdf",
+      "sha256": "7f4f0b03cc288a46087d8041d9ecf63aa28fb783e18dae4d60df8c828070c98d",
+      "lectureId": "",
+      "pages": ""
+    },
+    {
+      "id": "73595",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73595",
+      "title": "Lecture 1 (1).pdf",
+      "sha256": "142a28512cd0c5d73da4b6908349f6bdc7eb8d2952a37c0a46869b90feb22fff",
+      "lectureId": "ph-final-l1",
+      "pages": "2–42"
+    },
+    {
+      "id": "73226",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73226",
+      "title": "Learn (3).pdf",
+      "sha256": "9fc6b6af92976ea7d368e812ec2d29ad37fec2cd6d393286e3525d30e1e1cf0e",
+      "lectureId": "ph-final-l2",
+      "pages": "3–47"
+    },
+    {
+      "id": "73237",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73237",
+      "title": "Epistemology LEARN (2).pdf",
+      "sha256": "9265ef16a29130eb296714093885a13fb880cd41271b6af0c60e3bf09254c003",
+      "lectureId": "ph-final-l3",
+      "pages": "4–64"
+    },
+    {
+      "id": "73240",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73240",
+      "title": "Lecture 4 (1).pdf",
+      "sha256": "fd099a66f805f710991be388d29738a3cfcc7606c4686adad1f3212505745a0d",
+      "lectureId": "ph-final-l4",
+      "pages": "3–54"
+    },
+    {
+      "id": "73242",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73242",
+      "title": "Lecture 5 (4).pdf",
+      "sha256": "2ab9e9d005c9396d4c88caeb908dbff83d23320b5b14c544bb5a3455526421a7",
+      "lectureId": "ph-final-l5",
+      "pages": "3–77"
+    },
+    {
+      "id": "88564",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88564",
+      "title": "Lecture 6 (5).pdf",
+      "sha256": "6f2984b9786c85b85bed7080dee0848c66e868ff8fb8050a40fade1566636774",
+      "lectureId": "ph-final-l6",
+      "pages": "2–40"
+    },
+    {
+      "id": "88568",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88568",
+      "title": "Lecture 7   (2).pdf",
+      "sha256": "bbda247d0a3b3349b99fdc27a1e170b00d4a322a7354fb787eb75220cd447777",
+      "lectureId": "ph-final-l7",
+      "pages": "5–38"
+    },
+    {
+      "id": "88571",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88571",
+      "title": "Lecture 8 (1).pdf",
+      "sha256": "11e9f8e2d336a55c41798d635151ad7fc9d4895618ed5c25297a081722a2e47d",
+      "lectureId": "ph-final-l8",
+      "pages": "2–49"
+    },
+    {
+      "id": "88575",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88575",
+      "title": "PHILOSOPHY OF RELIGION.pptx.pdf",
+      "sha256": "8261ad34417bf6d24c6b17f7473388a15d41c754044dac87547a168594e667e5",
+      "lectureId": "ph-final-l9",
+      "pages": "3–46"
+    },
+    {
+      "id": "88578",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88578",
+      "title": "Lecture 9-2.pdf",
+      "sha256": "8101b7937d4a36021cb681cc4fb0374e381fa8ee2077da9fe84dee9633cbaa08",
+      "lectureId": "ph-final-l10",
+      "pages": "1–60; the later repeated appendix is excluded"
+    },
+    {
+      "id": "96207",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=96207",
+      "title": "Final_Exam_Criteria.pdf",
+      "sha256": "7c1effc0647f89ab65ad1eca4cd3e3af4e03d6577e33e66ed159a6c9f9800922",
+      "lectureId": "",
+      "pages": ""
+    },
+    {
+      "id": "98483",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=98483",
+      "title": "Exam Policy_Philosophy_1 trim. 2026-2027.pdf",
+      "sha256": "4c5b25911b3c8d18d4e8f587e5a2562293082a14f8d5ddac82d8dc247d9f42e1",
+      "lectureId": "",
+      "pages": ""
+    },
+    {
+      "id": "73233",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73233",
+      "title": "CHAPTER 1.pdf",
+      "sha256": "f0b8cfa9ff7247347f39e976aa2308919d2a77e382338401d37c6c67ffef221d",
+      "lectureId": "ph-final-l1",
+      "pages": ""
+    },
+    {
+      "id": "73235",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73235",
+      "title": "CHAPTER 2 (2).pdf",
+      "sha256": "7e189414f868fcfd6e870c117b45a1526c0632d0b6a138e7583b6b9f27a8ff65",
+      "lectureId": "ph-final-l2",
+      "pages": ""
+    },
+    {
+      "id": "73239",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73239",
+      "title": "CHAPTER 3 (2).pdf",
+      "sha256": "bce7753e53166371eee1f27130282f918ff9f37b7e166c211ccdae69ea96105f",
+      "lectureId": "ph-final-l3",
+      "pages": ""
+    },
+    {
+      "id": "73241",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73241",
+      "title": "CHAPTER 4.pdf",
+      "sha256": "8eec3b412eb077bc8ccc6bfd316a2bce5a69e8a2423c38d3c4751e0aecb7650d",
+      "lectureId": "ph-final-l4",
+      "pages": ""
+    },
+    {
+      "id": "73243",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=73243",
+      "title": "CHAPTER 5.pdf",
+      "sha256": "7acbfc2c62b343f12ae09ed1fc41e9454d3eef9901caf735cd780c3dadf2197b",
+      "lectureId": "ph-final-l5",
+      "pages": ""
+    },
+    {
+      "id": "88565",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88565",
+      "title": "CHAPTER 6 (2).pdf",
+      "sha256": "5394fe7a57aa0229b045487f934db6527516f23492e6fdfb924b6910bd4f79d5",
+      "lectureId": "ph-final-l6",
+      "pages": ""
+    },
+    {
+      "id": "88569",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88569",
+      "title": "CHAPTER 7 (1).pdf",
+      "sha256": "e1c870ae18af8379ad222dfef0da3b11d59e7fd45cb85994319003c06c5c5378",
+      "lectureId": "ph-final-l7",
+      "pages": ""
+    },
+    {
+      "id": "88572",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88572",
+      "title": "CHAPTER 8 (1).pdf",
+      "sha256": "9974c870b2f1d48691485387e963f40b9a3925759fb0a7dbf8b91757ff84c2de",
+      "lectureId": "ph-final-l8",
+      "pages": ""
+    },
+    {
+      "id": "88577",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88577",
+      "title": "CHAPTER 9.pdf",
+      "sha256": "908db06034eeefafba59edf1fbd46d2fbd66ed78bd97fe8cb17717476dc7502f",
+      "lectureId": "ph-final-l9",
+      "pages": ""
+    },
+    {
+      "id": "88583",
+      "url": "https://lms.astanait.edu.kz/mod/resource/view.php?id=88583",
+      "title": "CHAPTER 10.pdf",
+      "sha256": "72676a74470a66d7a5d7bb266b8de6aa160e79053e60e81eaa37615841f48007",
+      "lectureId": "ph-final-l10",
+      "pages": ""
+    }
+  ],
+  "practiceId": null,
+  "reviewedAt": "2026-11-15",
+  "coverage": {
+    "en": "10 study units · LMS materials checked 15 Nov 2026",
+    "ru": "10 учебных блоков · LMS проверен 15 ноября 2026"
+  }
+}

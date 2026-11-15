@@ -1,7 +1,3 @@
-# Computer Networks — full study notes
-
-Explanations based on lectures 5–10 and available NetAcad text. Consult the original course for diagrams, videos and Packet Tracer activities.
-
 ## 8. Network layer: how a packet reaches another network
 
 **Key idea:** IP addresses and forwards packets between networks. A router selects the next hop using the destination IP and its routing table.
@@ -47,33 +43,6 @@ Check with IOS `show ip route`; on Windows, `route print` or `netstat -r`.
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### Connected, local and remote routes: the next hop
-
-A **next hop** is the neighboring router's IP address used to forward a packet toward its destination. A **remote route** reaches a network that is not directly attached. Thus “What routing table entry has a next hop address associated with a destination network?” expects **remote routes**.
-
-| Entry | Meaning | Example |
-| --- | --- | --- |
-| C — connected | Network attached to an interface | C 192.168.1.0/24, GigabitEthernet0/0 |
-| L — local | The router's own interface address | L 192.168.1.1/32, GigabitEthernet0/0 |
-| S — static | Manually configured route to a remote network | S 192.168.2.0/24 via 192.168.1.254 |
-| O — OSPF | Route learned through OSPF | O 192.168.3.0/24 via 192.168.1.254 |
-
-For destination 192.168.2.10, forward to neighbor 192.168.1.254. The packet still targets 192.168.2.10; the Ethernet frame targets the neighbor's MAC. C needs no intermediate router on that network. L means the router itself, not any local PC. S/O describe the route's source; remote describes the network's location. Some remote static routes specify an exit interface rather than an explicit next-hop IP.
-
-### IP fields and MTU
-
-IPv4 Version is 4 bits (0100). Protocol identifies ICMP (1), TCP (6) or UDP (17). The IPv4 checksum covers only its header. Routers decrement TTL; expiration discards the packet and normally generates ICMP Time Exceeded. IPv6 has a fixed 40-byte base header, Hop Limit and no base-header checksum.
-
-MTU limits **packet size, not transmission speed**. The data link supplies this constraint to the network layer; Ethernet commonly supports a 1500-byte IP packet. IPv4 may fragment for a smaller outgoing MTU unless DF forbids it. IPv6 routers return Packet Too Big; the sender adjusts packet size.
-
-### Addresses and related revision
-
-An ordinary MAC address has 48 bits (12 hex digits); IPv4 has 32 bits, IPv6 128. Ethernet places destination MAC before source MAC; IP places source IP before destination IP. Without NAT, endpoint IPs remain while routers replace link encapsulation. OSPF/BGP learn routes; IP carries packets.
-
-Binary octet weights are 128, 64, 32, 16, 8, 4, 2, 1: 192 = 11000000; 168 = 10101000; 11 = 00001011; 10 = 00001010. Five subnets require 3 borrowed bits (8 choices). 2662 hosts require 12 host bits (4094 usable addresses), hence /20. A Layer 2 switch needs an IP for management. 127.0.0.1 tests the local stack. Voice and video are delay-sensitive.
-
 ## NetAcad module 8 coverage: remaining essentials
 
 ### Four Layer 3 operations and host decisions
@@ -109,8 +78,6 @@ Longest matching prefix comes first. For destination 10.2.3.4, 10.2.3.0/24 is mo
 
 Static routes are configured manually; dynamic protocols (OSPF/EIGRP/BGP) exchange reachability and adapt after convergence. Both approaches may coexist. In Wireshark, expand IP and identify addresses, TTL/Hop Limit, Protocol/Next Header and lengths. Comparing captures on both router sides reveals a new Layer 2 frame and reduced TTL.
 
-
----
 
 ## 9. ARP and ND: finding the MAC address
 
@@ -152,20 +119,6 @@ ARP spoofing/poisoning falsifies IP→MAC mappings and can redirect traffic thro
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### How a switch decides
-
-A switch **learns source MAC** and ingress port, but forwards by **destination MAC**. A known source refreshes its entry timer. Known unicast uses the matching port; unknown unicast and broadcast are flooded within the VLAN except the ingress port. If the destination is on the ingress port, the frame is filtered rather than sent back.
-
-ARP caches IPv4-to-MAC mappings in RAM; dynamic entries expire. A static broadcast entry such as 192.168.1.255 → FF:FF:FF:FF:FF:FF is not by itself evidence of an attack. IPv4 multicast MAC starts with 01:00:5E; it is a group address, unlike Ethernet broadcast FF:FF:FF:FF:FF:FF.
-
-### Which address should be resolved?
-
-Compare source and destination networks using the mask. Same subnet: resolve the destination host. Different subnet: resolve the gateway. ARP does not discover an Internet server's remote MAC. IPv6 Neighbor Solicitation normally uses solicited-node multicast; Neighbor Advertisement supplies the neighbor's address. DAD also uses NS to detect duplicates. Router Solicitation seeks routers; Router Advertisement supplies network configuration.
-
-MAC, FCS and 802.2 belong to Layer 2; IP and TTL to Layer 3; ports and TCP ACK to Layer 4.
-
 ## NetAcad details: ARP frames, failed resolution and all five ND messages
 
 ### What an ARP request actually contains
@@ -192,8 +145,6 @@ For each Ethernet hop, write four fields: source/destination IP and source/desti
 
 Enterprise switches can use Dynamic ARP Inspection (DAI) to validate ARP mappings against trusted information. The course mentions this protection but leaves its configuration outside the module.
 
-
----
 
 ## 10. Configuring Cisco IOS
 
@@ -277,22 +228,6 @@ In classic IOS, `service password-encryption` hides plaintext passwords using we
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### IOS modes and startup
-
-`R1>` is user EXEC with limited inspection commands. `enable` enters privileged EXEC (`R1#`). `configure terminal` enters `(config)#`; `line console 0` enters `(config-line)#`, and `interface g0/0` enters `(config-if)#`. `exit` moves up one level; `end` or Ctrl+Z returns to privileged EXEC.
-
-Boot sequence: POST/bootstrap → IOS (usually Flash) → startup-config from NVRAM. A missing startup configuration may trigger the setup dialog. `copy running-config startup-config` saves changes. Reversing it **loads and merges** the saved configuration into the running one. `show version` reports IOS/hardware; `show ip interface brief` reports addresses and states (up/up means physical and line protocol are operational); `show ip route` lists routes and exit interfaces.
-
-### Switch management and passwords
-
-An SVI is a logical VLAN interface, not a physical port. A Layer 2 switch's SVI address/mask supports management; `ip default-gateway` enables its own management traffic to remote subnets. This does not turn it into an IP router.
-
-Console is local out-of-band access; SSH/Telnet use the network and AUX may use a modem. A line `password` requires `login`; `login local` uses the local username database. `enable secret` protects privileged EXEC, not the console login. `service password-encryption` obscures plaintext in configuration, but legacy Type 7 is easily reversible.
-
-Course hostname rules: start with a letter, end with a letter/digit, no spaces, letters/digits/hyphens, fewer than 64 characters. Example: RM-3-Switch-2A4.
-
 ## Understanding check: router setup and diagnosis
 
 ### When no shutdown is not enough
@@ -331,8 +266,6 @@ Explain without notes why an SVI address does not guarantee SSH, why local ping 
 
 The archive contains lab descriptions and video headings 10.4.1–10.4.2, but empty transcripts for those videos. Their unseen contents and unavailable PT-file answers are not represented as independently rechecked here.
 
-
----
 
 ## 11. IPv4 and subnetting
 
@@ -389,20 +322,6 @@ Not all of 172/8 is private. A subnet’s broadcast is its last address, which d
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### Classify an address using its mask
-
-An address can be host, network or broadcast depending on the prefix. 192.168.1.96 is a network address with /27 but a host in 192.168.1.64/26. 192.168.1.15/29 is the broadcast of .8/29. For .17/30: network .16, hosts .17–.18, broadcast .19. For .35/29: network .32, hosts .33–.38, broadcast .39.
-
-/20 means 255.255.240.0. /26 leaves 6 host bits: 64 total and 62 ordinary usable addresses; a /24 splits into four /26 networks. 90 or 126 hosts need /25 (128 total, 126 usable); 2662 need /20. Allocate VLSM largest first and count remaining space using allocated blocks, not just the number of computers.
-
-### Special addresses and delivery
-
-Unicast targets one host, multicast a selected group, broadcast a broadcast domain. Limited broadcast 255.255.255.255 differs from a subnet's directed broadcast. Routers normally do not forward broadcasts between networks; VLANs/subnets bound their propagation.
-
-169.254.0.0/16 is link-local and often indicates no DHCP response. DHCP Discover may use source 0.0.0.0 and destination 255.255.255.255. 127/8 is loopback. 192.0.2/24, 198.51.100/24 and 203.0.113/24 are documentation networks; 240/4 is reserved. Not being RFC 1918 does not automatically make an address ordinary public unicast. IANA coordinates global resources; RIRs allocate regional blocks to providers and organizations.
-
 ## NetAcad 11 audit: subnetting from basics to planning
 
 ### AND and prefix length
@@ -427,8 +346,6 @@ Segmentation reduces broadcasts, separates departments/security policies and sim
 
 For a PT lab, record network/prefix, usable range, broadcast and gateway for each LAN; configure addresses, verify interfaces up/up and ping the local gateway/remote host. This explains the method; it does not claim completion of an unavailable PT activity.
 
-
----
 
 ## 12. IPv6
 
@@ -470,20 +387,6 @@ Coexistence: dual stack runs both stacks; tunneling places a packet inside anoth
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### Prefix, subnet ID and interface ID
-
-A global unicast address can be divided into the provider's global routing prefix, the organization's subnet ID and the host interface ID. A /48 allocation with /64 LANs leaves 16 subnet bits; /32 to /64 leaves 32. An ordinary /64 uses the last 64 bits for the interface ID. Do not confuse the subnet ID with the entire network prefix.
-
-2001:db8::1000:a9cd:47ff:fe57:fe94 expands to 2001:db8:0000:1000:a9cd:47ff:fe57:fe94. Its /64 network is 2001:db8:0:1000::/64; its interface ID is a9cd:47ff:fe57:fe94. Splitting 2001:db8::/48 into /52 borrows 4 bits: 16 subnets, with fourth hextets 0000, 1000, …, f000. The last is 2001:db8:0:f000::/52.
-
-### Easily confused addresses and messages
-
-fe80::/10 is link-local and cannot be routed off-link. ff02::1 targets all link-local nodes; ff02::2 targets all routers. Hosts send RS; routers send RA. ND uses solicited-node multicast with prefix ff02::1:ff00:0/104. IPv6 has no broadcast.
-
-An interface ID may be random or derived using modified EUI-64: split the MAC, insert ff:fe and invert the first byte's U/L bit. SLAAC does not require a MAC-derived ID. IPv6 removes address-conservation pressure for NAT, but does not replace a firewall. /64 is the normal LAN prefix, not a mandatory size for every IPv6 link.
-
 ## Practical IPv6 configuration and precise terminology
 
 ### ULA, LLA and documentation addresses
@@ -521,8 +424,6 @@ SLAAC constructs the address on the host; SLAAC plus stateless DHCPv6 adds serve
 For allocation 2001:db8:acad::/48, assign LANs 2001:db8:acad:1::/64, :2::/64 and :3::/64. Change subnet ID while retaining 64 IID bits. Do not subtract IPv4-style network/broadcast addresses when counting IPv6 subnets; IPv6 has no broadcast. FF02::1 targets all link-local nodes; FF02::2 routers. Solicited-node multicast uses a unicast/anycast address’s final 24 bits to narrow NS recipients: …:1234:5678 maps to FF02::1:FF34:5678. Missing-exhibit problems require actual site/sub-site/subnet field widths before a result such as 16 or 256 can be computed.
 
 
----
-
 ## 13. ICMP, ping and traceroute
 
 ICMP reports IP errors and assists diagnosis. It does not guarantee delivery and does not replace TCP.
@@ -541,20 +442,6 @@ Trap: “ICMP code 0” is insufficient without a type. ICMPv4 Type 3/Code 0 mea
 
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
-
-## Question-bank study supplement
-
-### What ping and traceroute actually prove
-
-Successful ping shows reachability and round-trip time (RTT), not that every application works. Higher RTT than a baseline indicates increased delay. A timeout can result from ICMP filtering, addressing, missing routes or faults; it does not identify a unique cause.
-
-For IOS extended ping, enter `ping` without a destination, enable extended commands and select a source address/interface. This tests reachability from that source rather than the usual outgoing-interface address. Windows `tracert -6` explicitly selects IPv6.
-
-### ICMP needs both type and code
-
-ICMPv4 Echo Reply is type 0/code 0; Destination Network Unreachable is type 3/code 0. “Code 0” alone is ambiguous. TTL/Hop Limit expiration produces Time Exceeded. An unknown IPv6 Next Header may produce Parameter Problem. Pinging ::1 or 127.0.0.1 tests the local stack, not a cable or ISP.
-
-`ipv6 unicast-routing` enables IPv6 forwarding; routers normally send RA on suitable interfaces. Check the command in `show running-config`. In diagram questions, identify the actual gateway/interface first: a server address and a gateway address serve different purposes.
 
 ## ICMP: messages and result interpretation
 
@@ -590,10 +477,8 @@ The first ping can time out during ARP/ND resolution; repeat a series and inspec
 
 ### A course boundary worth understanding
 
-RS/RA are particularly important in IPv6, but also exist in IPv4 Router Discovery ([RFC 1256](https://www.rfc-editor.org/info/rfc1256/)). A bank question demanding exactly two shared messages from RS, RA and Redirect is therefore ambiguous. IPv6 unknown Next Header is Parameter Problem in [RFC 4443](https://www.rfc-editor.org/info/rfc4443/). Such cards are flagged and excluded from unambiguous testing.
+RS/RA are particularly important in IPv6, but also exist in IPv4 Router Discovery ([RFC 1256](https://www.rfc-editor.org/info/rfc1256/)). IPv6 unknown Next Header is Parameter Problem in [RFC 4443](https://www.rfc-editor.org/info/rfc4443/).
 
-
----
 
 ## 14. TCP and UDP
 
@@ -635,20 +520,6 @@ UDP is useful when low delay matters more than retransmitting old data, or when 
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### Headers, ports and connections
-
-UDP has an 8-byte header with four fields: source port, destination port, length and checksum. TCP has a minimum 20-byte header; sequence number, acknowledgment, flags and window support functions absent from UDP. UDP neither restores original order nor retransmits lost datagrams. Its checksum detects errors; it does not guarantee delivery.
-
-Well-known ports: 0–1023; registered: 1024–49151; dynamic/private: 49152–65535. Client source ports distinguish application conversations. Operating systems may use their own ephemeral range: not every temporary source port must be >=49152. Connections are distinguished by protocol, source/destination IP and source/destination port.
-
-`netstat` shows connections, addresses/ports and states; `netstat -r` shows routes; `ipconfig` shows IP configuration. Destination port 80 usually indicates HTTP, 25 SMTP and 53 DNS. A client's source port need not equal the server's service port.
-
-### ACK, windows and closing
-
-ACK identifies the next expected **byte**: bytes 4001–4500 lead to ACK 4501. The receive window limits unacknowledged data according to receiver capacity (flow control); congestion control responds to network congestion. Opening: SYN → SYN/ACK → ACK. Typical closing: FIN → ACK in each direction; some messages can combine. TCP segmentation belongs to transport, IP fragmentation to the network layer.
-
 ## NetAcad 14 audit: transport in operation
 
 ### Two TCP directions and byte numbers
@@ -673,8 +544,6 @@ Receive window(rwnd) protects the receiver’s buffer; congestion window(cwnd) l
 
 Servers listen on service ports; clients choose available temporary source ports. Replies reverse source/destination ports. One listening port serves many connections through distinct socket pairs; NAT clients may share one public IP but use different ports. netstat shows local/foreign endpoints and TCP states. In Wireshark compare SYN/SYN-ACK/ACK, Seq/Ack/Window and retransmissions. PT Simulation can contrast HTTP/TCP with DNS/UDP, but reading this explanation does not itself complete a PT exercise.
 
-
----
 
 ## 15. Application layer
 
@@ -722,26 +591,6 @@ Client/server: the client initiates a request and the server provides a service.
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
 
-## Question-bank study supplement
-
-### Roles and application layers
-
-In client/server, the client initiates a request even when **uploading to the server**. In P2P, a participant can act as both client and server; resources are decentralized and no dedicated server is required. A home PC sharing a folder or printer is an example. These are application roles, not physical locations.
-
-TCP/IP application combines OSI application (application protocols), presentation (formats, encoding and compression: GIF/JPG/MKV) and session (dialog establishment/maintenance). Outgoing web data follows HTTP → TCP → IP → Ethernet; incoming data is decoded in reverse.
-
-### DNS, mail and files
-
-DNS A maps to IPv4; AAAA to IPv6; NS identifies authoritative name servers; MX identifies domain mail servers. An out-of-zone query need not fail immediately: recursion, forwarding or referral may resolve it. `nslookup` queries DNS and displays the selected server. The top-level domain in www.cisco.com is .com. DNS uses UDP and TCP 53: ordinary queries often use UDP, zone transfers TCP, but clients can also use TCP.
-
-SMTP sends mail; POP3 downloads it (retaining a server copy is configurable); IMAP synchronizes server folders for multiple devices and centralized storage. FTP has separate control/data connections: control TCP 21, server data port 20 in active mode; passive mode negotiates another port. FTP supports upload and download. SMB supports persistent file/printer sharing connections and is not limited to Windows.
-
-### HTTP and DHCP scenarios
-
-GET requests a resource; POST submits data for processing, often for uploads; PUT creates/replaces the resource at a known URI. HTTPS protects HTTP with TLS; plain HTTP does not encrypt. Course questions assume HTTP/1.1 or HTTP/2 over reliable TCP; HTTP/3 uses QUIC over UDP.
-
-DHCP automates address, mask, gateway and DNS settings. Server UDP 67, client UDP 68. A home router commonly supplies DHCP. An automatic 169.254.x.x address instead of the expected lease suggests DHCP did not succeed; it does not uniquely prove a server fault. TFTP uses UDP 69, unlike FTP.
-
 ## The complete web, DNS and DHCP lease sequence
 
 ### From URL to page
@@ -770,8 +619,6 @@ P2P applications need a user interface and background resource-sharing service. 
 
 **Self-check:** Explain URL→DNS→TCP→HTTP, DNS TTL, Request after Offer, IP assignment versus MAC resolution, IMAP versus SMTP, and why uploading does not make the client the server.
 
-
----
 
 ## 16. Security
 
@@ -811,26 +658,6 @@ Physical threats: hardware — physical damage; environmental — temperature/hu
 
 Source: the corresponding NetAcad module and Lectures 5–10; the general notes include introductory explanations.
 
-
-## Question-bank study supplement
-
-### Identify threats by the action
-
-Information theft steals documents/databases; identity theft impersonates someone, such as applying for credit; data loss/manipulation destroys or changes records; disruption of service prevents legitimate access. These are consequences. Reconnaissance maps systems/ports; access attacks gain unauthorized access; DoS disrupts or overloads service. One incident can include multiple stages.
-
-A virus attaches to an infected program/object; a worm spreads independently through vulnerabilities; a Trojan masquerades as useful software; spyware secretly collects information. Patches close worm vulnerabilities, while antivirus helps detect malicious code. Slow performance alone does not prove a worm. Man-in-the-middle intercepts or modifies communication between endpoints.
-
-### AAA and filtering
-
-Authentication asks who you are; authorization determines permitted actions; accounting records your actions. Read-only for everyone and Edit only for administrators is authorization. A firewall restricts traffic; stateful inspection relates replies to existing connections. Packet filtering can inspect IP, protocol and transport ports; URL filtering uses web addresses/categories. Modern application filtering identifies applications beyond port numbers, although an older bank question simplifies it to ports.
-
-A DMZ separates externally accessible servers from the internal network. A VPN provides a protected remote tunnel. Layered security combines controls, such as perimeter firewall, internal IPS and endpoint protection. Backups enable recovery; secure them with permissions/passwords and test restoration.
-
-### SSH and physical threats
-
-SSH TCP 22 encrypts login and data; Telnet TCP 23 does not. IOS SSH needs a hostname, domain name, RSA keys and a local user; VTY requires `login local` and `transport input ssh`. `login block-for 180 attempts 2 within 30` blocks login for 180 seconds after two failures within 30 seconds. `exec-timeout` limits console/VTY idle sessions. Personal names such as RobErT remain weak passwords despite mixed case.
-
-Environmental threats involve temperature/humidity; electrical threats involve voltage/power; hardware threats involve physical damage; maintenance threats involve handling errors, ESD, poor cabling/labels or missing spares. An OS technological vulnerability differs from an incorrect ACL configuration and a weak security policy.
 
 ## Security: omitted course topics and practical meaning
 

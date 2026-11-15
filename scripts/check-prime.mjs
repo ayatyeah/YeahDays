@@ -33,7 +33,7 @@ try {
   await login(page, user);
   await go('/app');
   await page.getByRole('button', { name: 'Create my study plan', exact: true }).waitFor();
-  check('five original courses retained', await page.locator('.p-folder').count() === 5);
+  check('five original courses and philosophy available', await page.locator('.p-folder').count() === 6);
   await shot('app-desktop');
   await page.getByRole('button', { name: 'Create my study plan', exact: true }).click();
   await page.locator('#study-goal').fill('Understand cloud storage choices');
@@ -99,31 +99,28 @@ try {
     const nav = await page.locator('.f-mobile-dock').boundingBox();
     const assistant = await page.locator('.g-tutor-launch').boundingBox();
     check(`assistant above mobile nav ${width}`, assistant && nav && assistant.y + assistant.height + 10 <= nav.y);
+    const overflow = await page.evaluate(() => [...document.querySelectorAll('main *')].map(el => ({ tag: el.tagName, class: el.className, width: el.getBoundingClientRect().width, right: el.getBoundingClientRect().right })).filter(el => el.right > innerWidth + 2 && el.width > innerWidth).slice(0, 12));
+    if (overflow.length) console.log({ width, overflow });
     check(`notes have no horizontal overflow ${width}`, await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   }
   await go('/app');
   await page.setViewportSize({ width: 390, height: 844 });
   await shot('app-mobile-dark');
   check('three mobile destinations', await page.locator('.f-mobile-dock a').count() === 3);
-  await go('/events/cloud-computing-endterm');
-  await page.getByRole('button', { name: 'Exam questions', exact: false }).click();
-  await page.getByRole('button', { name: 'Start quiz — 47 questions', exact: true }).click();
-  // Reach the first actual multiple-answer question through the public UI.
-  for (let index = 0; index < 47; index++) {
-    await page.locator('[data-quiz-answer]').first().waitFor();
-    if (await page.getByRole('button', { name: 'Check answers', exact: true }).count()) break;
-    await page.locator('[data-quiz-answer]').first().click();
-    await page.getByRole('button', { name: 'Next', exact: true }).click();
+  for (const slug of ['research-methods', 'cloud-computing', 'computer-networks', 'computer-vision', 'project-management', 'philosophy']) {
+    await go(`/events/${slug}-final`);
+    await page.locator('.g-notes-articles .g-note-paper').first().waitFor();
+    check(`${slug} final guide available`, await page.locator('#final-guide-title').isVisible());
+    check(`${slug} source links available`, await page.locator('a[href^="https://lms.astanait.edu.kz/"]').count() > 1);
+    check(`${slug} fits mobile`, await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
   }
-  const options = page.locator('[data-quiz-answer]');
-  const unselectedBackground = await options.first().evaluate(el => getComputedStyle(el).backgroundColor);
-  await options.nth(0).click(); await options.nth(1).click();
-  check('two quiz choices remain selected', await page.locator('[data-quiz-answer][aria-pressed=true]').count() === 2);
-  check('selected choices have visible checkmarks', (await options.first().locator('.quiz-answer-mark').innerText()) === '✓');
-  check('selected choice has distinct background', await options.first().evaluate(el => getComputedStyle(el).backgroundColor) !== unselectedBackground);
-  await shot('quiz-selection-dark');
-  await options.nth(0).click();
-  check('quiz choice can be deselected', await page.locator('[data-quiz-answer][aria-pressed=true]').count() === 1);
+  await shot('philosophy-final-mobile');
+  for (const path of ['/events-data/yeahtrack-defense', '/events-data/computer-networks-endterm', '/events/computer-networks-endterm/question-bank.md', '/events/computer-networks-endterm/core-250.md', '/events/computer-networks-endterm/sample.pdf']) {
+    check(`retired material unavailable ${path}`, (await context.request.get(path)).status() === 404);
+  }
+  await go('/events/cloud-computing-endterm');
+  check('old cloud link opens final notebook', new URL(page.url()).pathname === '/events/cloud-computing-final');
+  check('old exam bank entry removed', await page.getByRole('button', { name: 'Exam questions', exact: false }).count() === 0);
   check('no runtime errors', errors.length === 0);
   writeFileSync(`${out}/verification.json`, JSON.stringify({ checks, errors }, null, 2));
   console.log(JSON.stringify({ checks, errors }, null, 2));

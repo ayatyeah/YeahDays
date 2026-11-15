@@ -1,22 +1,11 @@
-import { catalogCopy } from "./catalogCopy";
-import { rmtEndtermSummary } from "./researchMethodsEndterm/meta";
-import { EVENTS } from "./index";
-import { steps } from "./engine";
-import { cloudEndtermSummary } from "./cloudComputingEndterm/meta";
-import type { EventSummary } from "@/app/events/EventsList";
+import { FINAL_NOTEBOOKS } from './finals';
+import type { EventSummary } from '@/app/events/EventsList';
 
-/** Server-side only: return small cards, never ship all course content. */
+/** The library opens final preparation; authored practice remains inside each notebook. */
 export function eventSummaries(): EventSummary[] {
-  return [rmtEndtermSummary, cloudEndtermSummary, ...EVENTS.filter(e => !e.unlisted).reverse().map(e => ({
-    id: e.id,
-    title: e.title,
-    course: e.course,
-    description: e.description,
-    lectures: e.lectures.length,
-    parts: e.lectures.reduce((n, l) => n + l.parts.length, 0),
-    questions: e.lectures.reduce((n, l) => n + l.parts.reduce((m, p) => m + p.questions.length, 0), 0),
-    mocks: e.mocks?.length ?? 0,
-    practice: !!e.practice,
-    steps: steps(e).map(s => ({ id: s.id, kind: s.kind })),
-  }))].map(event => ({ ...event, ...catalogCopy[event.id] }));
+  return FINAL_NOTEBOOKS.map(({ event }) => ({
+    id: event.id, title: event.title, course: event.course, description: event.description,
+    lectures: event.lectures.length, parts: event.lectures.reduce((total, lecture) => total + lecture.parts.length, 0),
+    questions: 0, mocks: 0, practice: false, steps: [], independentProgress: true,
+  }));
 }

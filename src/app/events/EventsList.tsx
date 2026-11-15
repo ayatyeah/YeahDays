@@ -45,7 +45,7 @@ export default function EventsList({ events, course }: { events: EventSummary[];
     <div lang="en" data-no-i18n className="yg-stagger mx-auto w-full max-w-3xl space-y-5 pb-6">
       <header>
         <Link href="/events" className="text-sm underline">← All courses</Link>
-        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>Choose a revision event or a practice session.</p></div></div>
+        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>Prepare for your final with the course guide and lecture notebook.</p></div></div>
       </header>
 
       {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted); свежие — сверху */}
@@ -68,10 +68,10 @@ export default function EventsList({ events, course }: { events: EventSummary[];
             <div className="mt-4 flex flex-wrap gap-2 text-sm">
               {event.mocks > 0 && <span className="rounded-xl bg-sky-500/15 px-3 py-2 font-semibold">{event.mocks} practice variants</span>}
               {event.practice && <span className="rounded-xl bg-amber-500/15 px-3 py-2 font-semibold">Practice: drills, debugging and sandbox</span>}
-              {event.lectures > 0 && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} lectures</span>}
+              {event.lectures > 0 && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.lectures} study units</span>}
               {event.workedSolutions && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.workedSolutions} worked examples</span>}
               <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{parts} parts</span>
-              <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} {event.workedSolutions ? "worked subparts" : "questions"}</span>
+              {questions > 0 && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{questions} {event.workedSolutions ? "worked subparts" : "questions"}</span>}
               {!event.independentProgress && <span className="rounded-xl bg-[var(--color-bg)] px-3 py-2">{event.steps.length} steps</span>}
             </div>
             {mine && (

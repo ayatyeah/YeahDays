@@ -1,7 +1,8 @@
-import { notFound } from 'next/navigation';
-import CloudNotesReader from '@/components/events/CloudNotesReader';
+import { notFound, redirect } from 'next/navigation';
+import { findFinalEvent } from '@/lib/events/finals';
 export function generateStaticParams() { return [{ id: 'cloud-computing-endterm' }]; }
-export default async function ExamNotesPage({ params }: { params: Promise<{ id: string }> }) {
-  if ((await params).id !== 'cloud-computing-endterm') notFound();
-  return <CloudNotesReader/>;
+export default async function NotesPage({ params }: { params: Promise<{ id: string }> }) {
+  const notebook = findFinalEvent((await params).id);
+  if (!notebook) notFound();
+  redirect(`/events/${notebook.event.id}`);
 }

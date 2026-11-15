@@ -10,8 +10,6 @@ import { useSession } from "next-auth/react";
 import Button from "@/components/ui/Button";
 const EventNotes = dynamic(() => import("@/components/EventNotes"), { loading: Loading });
 import NotesToolbar from "@/components/events/NotesToolbar";
-import readerStyles from "@/components/events/network-reader.module.css";
-import { createPortal } from "react-dom";
 import { cn } from "@/lib/cn";
 import { useEvent } from "@/lib/events/client";
 import { completed, deepStep, draw, mergeProgress, nextStep, readiness, record, steps, type Progress, type QuizQuestion, type Step } from "@/lib/events/engine";
@@ -22,7 +20,6 @@ import EventLeaderboard, { type LeaderRow } from "@/components/events/EventLeade
 import EventPlan from "@/components/events/EventPlan";
 const Flashcards = dynamic(() => import("@/components/events/Flashcards"), { loading: Loading });
 const LectureVideo = dynamic(() => import("@/components/events/LectureVideo"), { loading: Loading });
-const NetworkStoryClip = dynamic(() => import("@/components/events/NetworkStoryClip"), { loading: Loading });
 const MockExamView = dynamic(() => import("@/components/events/MockExams"), { loading: Loading });
 const MockList = dynamic(() => import("@/components/events/MockExams").then(m => m.MockList), { loading: Loading });
 const VisionTrainer = dynamic(() => import("@/components/events/VisionTrainer"), { loading: Loading });
@@ -31,9 +28,6 @@ const OpenCVSandbox = dynamic(() => import("@/components/events/OpenCVSandbox"),
 const FastMode = dynamic(() => import("@/components/events/FastMode"), { loading: Loading });
 const Drill = dynamic(() => import("@/components/events/Drill"), { loading: Loading });
 import { PM_QUIZ2_TITLE } from "@/lib/events/projectManagement/quiz2";
-const NetworkPartStudy = dynamic(() => import("@/components/events/NetworkPartStudy"), { loading: Loading });
-const NetworksEndterm = dynamic(() => import("@/components/events/NetworksEndterm"), { loading: Loading });
-const NetworksVrt = dynamic(() => import("@/components/events/NetworksVrt"), { loading: Loading });
 const PMQuiz2 = dynamic(() => import("@/components/events/PMQuiz2"), { loading: Loading });
 const ExamSim = dynamic(() => import("@/components/events/ExamSim"), { loading: Loading });
 const Feed = dynamic(() => import("@/components/events/Feed"), { loading: Loading });
@@ -72,8 +66,6 @@ const percent = (value: number) => `${Math.round(value * 100)}%`;
 type View =
   | { mode: "map" }
   | { mode: "pmQuiz2" }
-  | { mode: "cnEndterm" }
-  | { mode: "cnVrt" }
   | { mode: "sheet" }
   | { mode: "cards" }
   | { mode: "game" }
@@ -410,7 +402,6 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             <h1 className="ios-title mt-2">{catalogCopy[event.id]?.title ?? event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{catalogCopy[event.id]?.description ?? event.description}</p>
           </header>
-          {event.id === "research-methods-quiz-1" && <section className={`${panel} space-y-3`}><h2 className="text-xl font-bold">Эндтерм · Полные решения A и B</h2><p>Оригиналы с фото и полные альтернативы: qualitative-only и quantitative RCT.</p><Link href="/events/research-methods-endterm" className="underline">Открыть полный разбор →</Link></section>}
           {event.id === "project-management-test-2" && (
             <section className="space-y-3 rounded-3xl border border-lime-400/40 bg-lime-500/5 p-5" data-no-i18n>
               <p className="text-xs font-semibold uppercase tracking-widest">Extra practice · Simulated quiz</p>
@@ -419,8 +410,6 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "pmQuiz2" })}>Open Quiz 2</Button>
             </section>
           )}
-          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">Slides & practice exam</h2><p>Find English and Russian notes, self-checks and topic questions in the lectures below. Explore original slides, the instructor’s sample and a practice exam here.</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnEndterm" })}>Explore exam practice</Button></section>}
-          {event.id === "computer-networks-endterm" && <section className={`${panel} space-y-3`} data-no-i18n><h2 className="text-xl font-bold">VRT question sets</h2><p>100 questions · 4 sets · answers and explanations</p><Button className="h-auto min-h-11 whitespace-normal" onClick={() => setView({ mode: "cnVrt" })}>VRT question sets</Button></section>}
           <QuickLinks
             event={event}
             onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
@@ -675,8 +664,6 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         </>
       )}
 
-      {view.mode === "cnEndterm" && event.id === "computer-networks-endterm" && <NetworksEndterm userId={userId} onExit={toMap} />}
-      {view.mode === "cnVrt" && event.id === "computer-networks-endterm" && <NetworksVrt onExit={toMap} />}
       {view.mode === "pmQuiz2" && event.id === "project-management-test-2" && <PMQuiz2 userId={userId} onExit={toMap} />}
       {view.mode === "mock" && (
         <MockExamView
@@ -780,13 +767,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         const part = event.lectures[view.step.lecture!].parts[view.step.part!];
         return (
           <>
-            {event.id === "computer-networks-endterm" && typeof document !== "undefined" && createPortal(
-              <div className={readerStyles.translate} data-no-i18n data-testid="notes-fixed-translation">
-                <Button size="sm" onClick={switchLang} aria-label={lang === "en" ? "Перевести конспект на русский" : "Перевести конспект на английский"}>
-                  {lang === "en" ? "Перевести → RU" : "Translate → EN"}
-                </Button>
-              </div>, document.body
-            )}
+
             <header data-reading-chrome className={event.id === "computer-networks-endterm" ? "pt-12" : undefined}>
               <button className="text-sm underline" onClick={toMap}>← К маршруту</button>
               <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
@@ -806,17 +787,12 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
             <NotesToolbar lang={lang} onLang={value => { setLang(value); savePref("lang", value); }} />
-            {event.id === "computer-networks-endterm" && <NetworkStoryClip key={part.id} partId={part.id} />}
             {part.shortNotes && <div role="group" aria-label="Notes detail" className="flex flex-wrap gap-2" data-no-i18n>
               {([['short', 'Quick notes'], ['full', 'Full notebook']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
-            {event.id === "computer-networks-endterm" ? <NetworkPartStudy key={part.id} module={Number(part.id.replace("cne-m", ""))} lang={lang}>
-              <article className={readerStyles.reader} data-testid="lecture-notes" data-notes-version={notesVersion}>
-                <EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} />
-              </article>
-            </NetworkPartStudy> : <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
-              <EventNotes text={part.notes[lang]} lang={lang} />
-            </article>}
+            <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
+              <EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} />
+            </article>
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>
               Начать квиз по этой части · {view.step.count} вопросов
             </Button>
@@ -887,7 +863,6 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
         const part = lecture.parts[view.step.part!];
         if (event.id === "computer-networks-endterm") return <>
           <button className="text-sm underline" onClick={() => setView({ mode: "read", step: view.step })}>← К конспекту</button>
-          <NetworkStoryClip key={part.id} partId={part.id} initiallyOpen />
           <Button variant="primary" onClick={() => startQuiz(view.step)}>Начать квиз по этой части</Button>
         </>;
         return (

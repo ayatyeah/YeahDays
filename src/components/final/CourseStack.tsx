@@ -6,6 +6,7 @@ import { Icon } from './Brand';
 import s from './course-stack.module.css';
 
 const stories: Record<string, { label: string; description: string; topics: string[]; idea: string; path: string[] }> = {
+  'philosophy': { label: 'Philosophy', description: 'Look closely at what a claim assumes. Connect reality, knowledge and values to a position you can defend.', topics: ['Ontology', 'Epistemology', 'Axiology'], idea: 'A question worth thinking through.', path: ['A claim', 'An argument', 'Your position'] },
   'cloud-computing': {
     label: 'Cloud Comp', description: 'Find the right home for your data. Connect storage, security and costs to the decisions behind a working app.',
     topics: ['AWS & Azure', 'Storage', 'Shared responsibility'], idea: 'Give your ideas room to grow.', path: ['Your app', 'Cloud services', 'Room to scale'],
@@ -29,7 +30,7 @@ const stories: Record<string, { label: string; description: string; topics: stri
 };
 
 export default function CourseStack() {
-  return <ol className={s.stack} aria-label="Explore five courses">
+  return <ol className={s.stack} aria-label="Explore six courses">
     {EVENT_COURSES.map((course, index) => {
       const story = stories[course.id];
       return <li className={s.card} data-course={course.id} key={course.id} style={{ '--stack-index': index } as CSSProperties}>

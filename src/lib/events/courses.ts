@@ -1,15 +1,16 @@
 /** Lightweight navigation metadata. Keep lecture banks out of client navigation. */
 export const EVENT_COURSES = [
-  { id: "cloud-computing", title: "Cloud Computing", description: "Cloud services, AWS and Azure", logo: "/courses/cloud-computing.svg", eventIds: ["cloud-computing-endterm", "cloud-computing-midterm"] },
-  { id: "computer-networks", title: "Computer Networks", description: "Networks, protocols and Cisco", logo: "/courses/computer-networks.svg", eventIds: ["computer-networks-endterm", "computer-networks-midterm"] },
-  { id: "project-management", title: "Project Management", description: "Projects, Agile and Scrum", logo: "/courses/project-management.svg", eventIds: ["project-management-test-2"] },
-  { id: "computer-vision", title: "Computer Vision", description: "Images, models and machine vision", logo: "/courses/computer-vision.svg", eventIds: ["computer-vision-midterm"] },
-  { id: "research-methods", title: "Research Methods and Tools", description: "Research design, methods and data", logo: "/courses/research-methods.svg", eventIds: ["research-methods-endterm", "research-methods-quiz-1"] },
+  { id: "cloud-computing", title: "Cloud Computing", description: "Cloud services, AWS and Azure", logo: "/courses/cloud-computing.svg", eventIds: ["cloud-computing-final"] },
+  { id: "computer-networks", title: "Computer Networks", description: "Networks, protocols and Cisco", logo: "/courses/computer-networks.svg", eventIds: ["computer-networks-final"] },
+  { id: "project-management", title: "Project Management", description: "Projects, Agile and Scrum", logo: "/courses/project-management.svg", eventIds: ["project-management-final"] },
+  { id: "computer-vision", title: "Computer Vision", description: "Images, models and machine vision", logo: "/courses/computer-vision.svg", eventIds: ["computer-vision-final"] },
+  { id: "research-methods", title: "Research Methods and Tools", description: "Research design, methods and data", logo: "/courses/research-methods.svg", eventIds: ["research-methods-final"] },
+  { id: "philosophy", title: "Philosophy", description: "Reality, knowledge, values and an argued position", logo: "/courses/philosophy.svg", eventIds: ["philosophy-final"] },
 ];
 export type EventCourse = (typeof EVENT_COURSES)[number];
 export const courseHref = (id: string) => `/events/courses/${id}`;
 export function courseForEvent(eventId: string) {
-  return EVENT_COURSES.find(course => course.eventIds.includes(eventId));
+  return EVENT_COURSES.find(course => course.eventIds.includes(eventId) || eventId.startsWith(`${course.id}-`));
 }
 export function eventCourseHref(eventId: string) {
   const course = courseForEvent(eventId);

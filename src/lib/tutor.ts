@@ -1,3 +1,4 @@
+import { findFinalEvent } from "@/lib/events/finals";
 /**
  * ИИ-помощник по подготовке в ивенте: отвечает на вопросы человека и видит,
  * что сейчас открыто — часть конспекта, вопрос квиза, подпункт пробного
@@ -11,10 +12,6 @@
 
 import { geminiAvailable, streamGeminiTutor } from "@/lib/geminiTutor";
 import { recordAiUsage } from "@/lib/aiUsage";
-import { cloudTutorEvent } from "@/lib/events/cloudComputingEndterm/tutor";
-import { rmtTutorEvent } from "@/lib/events/researchMethodsEndterm/tutor";
-import cloudQuestions from "@/lib/events/cloudComputingEndterm/questions.json";
-import knowledgeChecks from "@/lib/events/cloudComputingEndterm/knowledgeChecks.json";
 import { findEvent } from "@/lib/events";
 import { BUGS } from "@/lib/events/computerVision/bugs";
 import type { StudyEvent } from "@/lib/events/types";
@@ -117,12 +114,10 @@ export function tutorContext(event: StudyEvent, focus: TutorFocus): string {
     const lines = [`## Quiz question on screen${where}`, q.question, ...q.options.map((o, i) => `${String.fromCharCode(65 + i)}) ${o}`)];
     if (q.picked === undefined) lines.push("The student has NOT answered yet. Do not reveal or hint which option is correct; help with the underlying concept only.");
     else {
-      const source = event.id === cloudTutorEvent.id ? [...cloudQuestions, ...knowledgeChecks].find(item => item.id === q.id) : undefined;
       const picked = q.pickedMany ?? [q.picked];
-      const correct = source ? source.answers : q.correctMany ?? (q.correct === undefined ? [] : [q.correct]);
+      const correct = q.correctMany ?? (q.correct === undefined ? [] : [q.correct]);
       const letters = (values: number[]) => values.map(i => String.fromCharCode(65 + i)).join(", ");
       lines.push(`Student picked ${letters(picked)}; correct is ${correct.length ? letters(correct) : "unknown — do not grade this disputed question"}.`);
-      if (source) lines.push(`Explanation: ${source.explanation}${source.caution ? `\nCaution: ${source.caution}` : ""}`);
     }
     out.push(lines.join("\n"));
   }
@@ -224,7 +219,14 @@ export function cleanMessages(raw: unknown): TutorMessage[] {
 }
 
 export function findTutorEvent(id: unknown) {
-  return id === cloudTutorEvent.id ? cloudTutorEvent : id === rmtTutorEvent.id ? rmtTutorEvent : typeof id === "string" ? findEvent(id) : undefined;
+  if (typeof id !== "string") return undefined;
+  const notebook = findFinalEvent(id);
+  if (!notebook) return findEvent(id);
+  return { ...notebook.event, lectures: [
+    { id: "final-guide", title: { en: "Final preparation guide", ru: "Подготовка к финалу" },
+      parts: [{ id: "final-guide", title: { en: "Format and preparation", ru: "Формат и подготовка" }, notes: notebook.guide, questions: [] }] },
+    ...notebook.event.lectures,
+  ] };
 }
 
 /**

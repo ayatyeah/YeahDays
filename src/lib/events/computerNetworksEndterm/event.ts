@@ -1,5 +1,4 @@
 import type { StudyEvent } from "../types";
-import bank from "./bank.json";
 import { fullRu, fullEn } from "./full-notes";
 
 
@@ -35,22 +34,15 @@ const summariesRu: Record<number, string> = {
 const mapping = [[5,8,9,10],[6,11],[7,12,13],[8,14],[9,15],[10,16]];
 export const event: StudyEvent = {
   id: "computer-networks-endterm", title: "Подготовка к эндтерму", course: "Computer Networks",
-  description: "Лекции 5–10, конспекты по модулям 8–16, 558 карточек из доступной выгрузки NetAcad, образец преподавателя и тренировка письменной эндки на 45 минут. Вопросы — на английском, разбор — на русском.",
-  counts: { part: 8, lecture: 18, final: 45 },
+  description: "Lecture notes on network layers, addressing, configuration and security.",
+  counts: { part: 0, lecture: 0, final: 0 },
   lectures: mapping.map(([lecture, ...modules]) => ({
     id: `cne-l${lecture}`, title: { en: `Lecture ${lecture} — ${modules.map(m => topics[m].split(" · ")[0]).join(" / ")}`, ru: `Лекция ${lecture} — ${modules.map(m => topics[m].split(" · ")[1]).join(" / ")}` },
     parts: modules.map(m => ({
       id: `cne-m${m}`, title: { en: `Module ${m} — ${topics[m].split(" · ")[0]}`, ru: `Модуль ${m} — ${topics[m].split(" · ")[1]}` },
       notes: { ru: fullRu[String(m)], en: fullEn[String(m)] },
       shortNotes: { ru: `## Главное по теме\n${summariesRu[m]}\n\n> Это краткая версия для повторения. Выбери «Полный конспект» выше, чтобы прочитать объяснения, таблицы и примеры.\n\n## Источник\nЛекция ${lecture}; модуль NetAcad ${m}.`, en: `## Key concepts\n${summaries[m]}\n\n> This is the concise revision version. Select “Полный конспект” above for detailed explanations, tables and examples.\n\n## Source\nLecture ${lecture}; NetAcad module ${m}.` },
-      questions: bank.filter(q => q.topic === m && q.eligible && q.correct.length === 1 && !q.options.some(o => /\b(both a and b|all of the above|none of the above)\b/i.test(o))).map(q => ({
-        id: `cne-${q.id}`, q: q.prompt, options: q.options, answer: q.correct[0],
-        why: { ru: `${q.explanation}\nИсточник: ${q.source}.`, en: `${q.explanationEn}\nSource: ${q.source}.` },
-      })),
+      questions: [],
     })),
   })),
-  cheatSheet: {
-    ru: "## Формат эндки\n45 минут · 30 вопросов · 100 баллов.\n- 20 MCQ × 3 балла.\n- 5 вопросов с двумя/тремя верными ответами × 4 балла.\n- 5 открытых вопросов × 4 балла.\n## Что повторить в первую очередь\n- TCP/UDP, handshake, ACK, flow control.\n- DNS, DHCP DORA, HTTP/HTTPS, SMTP/POP3/IMAP.\n- IOS: интерфейсы, шлюз, SSH, сохранение конфигурации.\n- IPv4 subnetting и VLSM, IPv6 и ICMP.\n## Образец преподавателя\n- Для пяти сетей: 3 заимствованных бита, 2³ = 8.\n- Private IPv4: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16.\n- IP: connectionless, best effort, media independent.\n> Банк — весь доступный тематический отбор, не скрытый банк Cisco и не список гарантированных вопросов эндки.\n## Быстрая проверка\n- /27: 32 адреса, 30 хостов; 192.168.10.77 относится к сети .64, broadcast .95.\n- IOS: show ip interface brief, show ip route; сохранить copy running-config startup-config.\n- SSH шифрует управление. Для VTY нужны login local и transport input ssh.",
-    en: "## Exam format\n45 minutes · 30 questions · 100 points.\n- 20 single-answer MCQs × 3 points.\n- 5 multiple-answer MCQs × 4 points.\n- 5 open questions × 4 points.\n## Priorities\n- TCP/UDP, handshake, ACK and flow control.\n- DNS, DHCP DORA, HTTP/HTTPS and email protocols.\n- IOS interfaces, gateway, SSH and saving configuration.\n- IPv4 subnetting/VLSM, IPv6 and ICMP.\n## Instructor sample\n- Five networks require three borrowed bits.\n- RFC 1918: 10/8, 172.16/12, 192.168/16.\n- IP: connectionless, best effort, media independent.\n> The bank is the available thematic selection, not Cisco’s complete hidden bank or a prediction of the exam.\n## Quick check\n- /27: 32 addresses, 30 hosts; 192.168.10.77 belongs to network .64, broadcast .95.\n- IOS: show ip interface brief, show ip route; save with copy running-config startup-config.\n- SSH encrypts management. Configure login local and transport input ssh on the VTY lines.",
-  },
 };

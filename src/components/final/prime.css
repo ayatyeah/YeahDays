@@ -155,7 +155,7 @@ html { overflow-x:clip; scroll-behavior:smooth; }
 .p-desk-section-title { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:29px; }
 :root .p-desk-section-title h2 { font-size:27px; letter-spacing:-.045em; font-weight:750; }
 .p-desk-section-title>a { display:flex; align-items:center; gap:8px; color:var(--g-muted); min-height:44px; font-size:12px; }
-.p-folders { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:18px; }
+.p-folders { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
 .p-folder { position:relative; display:flex; flex-direction:column-reverse; justify-content:space-between; min-height:178px; border:1px solid color-mix(in srgb,var(--g-folder-color) 75%,var(--g-muted)); background:linear-gradient(130deg,var(--g-folder-color),color-mix(in srgb,var(--g-folder-color) 72%,var(--g-paper))); border-radius:0 14px 14px 14px; padding:25px 18px 16px; box-shadow:0 5px 8px #1c304908; transition:transform 180ms,box-shadow 180ms; }
 .p-folder:hover { transform:translateY(-4px); box-shadow:0 10px 20px #1c304914; }
 .p-folder-tab { position:absolute; top:-13px; left:-1px; height:14px; width:42%; background:var(--g-folder-color); border:1px solid color-mix(in srgb,var(--g-folder-color) 75%,var(--g-muted)); border-bottom:0; border-radius:10px 12px 0 0; }
@@ -331,3 +331,13 @@ html { overflow-x:clip; scroll-behavior:smooth; }
   .p-ambient-light,.p-motion-toggle { display:none; }
   .p-site :is(.p-cover,.p-notebook-paper,.p-book-spread>div,.p-feature-paper,.p-feature-pair>div,.p-project-mark,.p-assistant-preview)::after { display:none; }
 }
+
+/* Six final notebooks share the reading controls and the existing paper layout. */
+.p-folder[data-course="philosophy"] { --g-folder-color: #eee6d6; }
+.g-final-guide { margin-block: 1.25rem 2rem; }
+.g-final-guide > .f-button { margin-top: 1.25rem; }
+.g-note-sources a { overflow-wrap: anywhere; }
+.g-notes-articles { grid-template-columns:minmax(0,1fr); }
+.g-note-paper { min-width:0; max-width:100%; }
+.g-rich-notes>h3::before { flex-shrink:0; white-space:nowrap; }
+@media (max-width:700px) { .g-notes-layout { grid-template-columns:minmax(0,1fr); } }

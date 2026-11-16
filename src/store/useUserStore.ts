@@ -1,5 +1,6 @@
 "use client";
 
+import { validEventAppearance, type EventAppearance } from "@/lib/eventAppearance";
 import { useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -407,7 +408,9 @@ interface UserState {
   todos: Todo[];
   /** что и когда напоминать */
   notify: NotifyPrefs;
+  eventAppearance?: EventAppearance;
 
+  setEventAppearance: (appearance: EventAppearance) => void;
   setName: (name: string) => void;
   setGoal: (stat: StatKey, value: number) => void;
   setMood: (mood: Partial<DailyMood>) => void;
@@ -505,6 +508,7 @@ export interface SyncData {
   schedule: Record<string, Record<string, string>>;
   todos: Todo[];
   notify: NotifyPrefs;
+  eventAppearance?: EventAppearance;
 }
 
 /** Вытащить синхронизируемый снимок из состояния (источник правды для partialize). */
@@ -523,6 +527,7 @@ export function pickSync(s: SyncData): SyncData {
     schedule: s.schedule,
     todos: s.todos,
     notify: s.notify,
+    ...(validEventAppearance(s.eventAppearance) ? { eventAppearance: s.eventAppearance } : {}),
     name: s.name,
     createdAt: s.createdAt,
     plan: s.plan,
@@ -545,6 +550,7 @@ function makeId() {
 }
 
 export const initial = {
+  eventAppearance: undefined as EventAppearance | undefined,
   name: "Странник",
   createdAt: Date.now(),
   plan: [] as PlannedTask[],
@@ -611,6 +617,8 @@ export const useUserStore = create<UserState>()(
 
       return {
       ...initial,
+
+      setEventAppearance: (appearance) => { if (validEventAppearance(appearance)) touch({ eventAppearance: appearance }); },
 
       setName: (name) => touch({ name: name.trim() || "Странник" }),
 
@@ -1084,6 +1092,7 @@ export const useUserStore = create<UserState>()(
             v && typeof v === "object" ? (v as T) : fallback;
           return {
             ...d,
+            eventAppearance: validEventAppearance(d.eventAppearance) ? d.eventAppearance : undefined,
             goals: { ...DEFAULT_GOALS, ...obj(d.goals, {}) },
             history: {
               ...emptyHistory(),
@@ -1310,6 +1319,7 @@ export function selectCompleted(plan: PlannedTask[]) {
  * не должен проиграть last-write-wins и быть затёртым пустышкой.
  */
 export function hasProgress(s: Partial<SyncData>): boolean {
+  if (validEventAppearance(s.eventAppearance)) return true;
   if (Array.isArray(s.plan) && s.plan.some((t) => t?.completed)) return true;
   if (Array.isArray(s.todos) && s.todos.length > 0) return true;
   if (Array.isArray(s.challenges) && s.challenges.length > 0) return true;

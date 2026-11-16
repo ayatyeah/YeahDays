@@ -25,3 +25,20 @@ it("binds a valid merge to the session owner", async () => {
  const result = await PUT(new Request("http://local/api/state", { method: "PUT", body: JSON.stringify({ protocol: 2, userId: "someone-else", data, base: null, baseRevision: 0 }) }));
  expect(result.status).toBe(200); expect(mock.merge).toHaveBeenCalledWith("owner", null, data);
 });
+it('rejects forged or invalid appearance owners before saving account data', async () => {
+ for (const eventAppearance of [{ owner: 'someone-else', design: 'ocean' }, { owner: 'owner', design: 'invalid' }]) {
+  const data = { updatedAt: 1, todos: [], plan: [], quests: [], challenges: [], customActions: [], eventAppearance };
+  const response = await PUT(new Request('http://local/api/state', { method:'PUT', body:JSON.stringify({ protocol:2, data, base:null, baseRevision:0 }) }));
+  expect(response.status).toBe(400);
+ }
+ expect(mock.merge).not.toHaveBeenCalled();
+});
+it('saves and reads appearance from the authenticated account on another device', async () => {
+ const data = { updatedAt: 1, todos: [], plan: [], quests: [], challenges: [], customActions: [], eventAppearance:{ owner:'owner', design:'sunset' } };
+ mock.merge.mockResolvedValue({ data, revision:9 });
+ expect((await PUT(new Request('http://local/api/state', { method:'PUT', body:JSON.stringify({ protocol:2, userId:'forged', data, base:null, baseRevision:0 }) }))).status).toBe(200);
+ mock.findUnique.mockResolvedValue({ data, revision:9 });
+ const loaded = await (await GET(new Request('http://local/api/state?userId=forged'))).json();
+ expect(loaded.data.eventAppearance.design).toBe('sunset');
+ expect(mock.findUnique).toHaveBeenLastCalledWith({where:{userId:'owner'}});
+});

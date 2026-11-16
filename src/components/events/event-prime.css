@@ -184,3 +184,56 @@
 :root .p-shell[data-clean-mode=true]:has(.prime-event[data-event-design]) { background:var(--g-bg); }
 :root .p-shell[data-clean-mode=true] .prime-event[data-event-design] .g-note-paper { border:0; background:transparent; box-shadow:none; }
 :root .p-shell[data-clean-mode=true] .prime-event[data-event-design] .prime-tutor-rail { display:none; }
+
+/* Readable controls and a compact reading surface, including 390px phones. */
+.prime-event { --ep-control-border:#927ca8; --ep-active:linear-gradient(160deg,#7652e8 0%,#592bfa 48%,#3216dc 100%); }
+.prime-event[data-event-design=ocean] { --ep-control-border:#588980; }
+.prime-event[data-event-design=sunset] { --ep-control-border:#aa7765; }
+:root[data-theme=dark] .prime-event { --ep-control-border:#a28aba; }
+:root[data-theme=dark] .prime-event[data-event-design=ocean] { --ep-control-border:#72a99c; }
+:root[data-theme=dark] .prime-event[data-event-design=sunset] { --ep-control-border:#bc8d80; }
+:root .prime-event[data-event-design] :is(.prime-mode-tabs button,.prime-recall-actions button,.prime-tutor-rail button,.prime-check-yourself,.g-note-pagination a,.g-language-options button,.g-translator-toggle,.p-inline-clean-toggle),
+:root .prime-event[data-event-design] nav:is([aria-label="Preparation sections"],[aria-label="Разделы подготовки"],[aria-label="Event sections"]) :is(a,button) {
+  border:1px solid var(--ep-control-border); min-height:44px; line-height:1.35;
+}
+:root .prime-event .prime-mode-tabs button { color:var(--ep-ink); }
+:root .prime-event .prime-mode-tabs button[aria-pressed=true] { color:#25104e; }
+:root .prime-event[data-event-design=ocean] .prime-mode-tabs button[aria-pressed=true],
+:root .prime-event[data-event-design=sunset] .prime-mode-tabs button[aria-pressed=true] { color:var(--ep-ink); }
+:root .prime-event .g-notes-page :is(select,input[type=search]),:root .prime-event .prime-recall textarea { border-color:var(--ep-control-border); font-size:16px; }
+:root .prime-event .g-note-paper { scroll-margin-top:280px; }
+:root .prime-event :is(.g-note-paper,[data-testid="lecture-notes"]) :is(p,li) { font-size:17px; line-height:1.75; overflow-wrap:break-word; }
+:root .prime-event .g-note-pagination { flex-wrap:wrap; }
+:root .prime-event .g-note-pagination a { white-space:normal; }
+
+/* Clean mode keeps language and translation within reach, not a stack of menus. */
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-page>nav,
+:root .p-shell[data-clean-mode=true] .prime-event .g-reader-heading,
+:root .p-shell[data-clean-mode=true] .prime-event .g-reader-back,
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-page>div:has(>label>input[type=search]),
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-page>div>nav:is([aria-label="Preparation sections"],[aria-label="Разделы подготовки"]) { display:none; }
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-page>div:has(>.g-notes-tools) { display:block; position:sticky; top:8px; padding:4px 0; border-radius:0; z-index:30; background:var(--g-bg); }
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-toolbar { border:0; border-bottom:1px solid var(--ep-line); border-radius:0; box-shadow:none; background:var(--g-bg); padding:4px 0 8px; }
+:root .p-shell[data-clean-mode=true] .prime-event .g-note-paper { padding:20px 0; scroll-margin-top:96px; }
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-page { max-width:780px; }
+:root .p-shell[data-clean-mode=true] .prime-event .prime-mode-tabs { box-shadow:none; background:var(--ep-paper); }
+@media(max-width:760px) {
+  :root .p-shell:has(.prime-event)>.f-content { padding-inline:16px; }
+  :root .prime-event .g-reader-heading { margin:14px 0 20px; }
+  :root .prime-event .g-reader-heading h1 { font-size:28px; line-height:1.15; }
+  :root .prime-event .g-notes-page>div:has(>.g-notes-tools) { display:contents; }
+  :root .prime-event .g-notes-tools { position:sticky; top:94px; z-index:30; margin:8px 0 18px; background:var(--ep-paper); border-radius:18px; }
+  :root .prime-event .g-notes-toolbar { padding:8px; gap:6px; border-radius:18px; box-shadow:0 3px 10px #00000012; }
+  :root .prime-event .g-note-paper,:root .prime-event [data-testid="lecture-notes"] { padding:20px 16px; }
+  :root .prime-event .g-note-paper h2 { font-size:25px!important; }
+  :root .prime-event .prime-mode-tabs { border-radius:18px; gap:5px; padding:5px; }
+  :root .prime-event .prime-mode-tabs button { border-radius:13px; padding:9px 4px; font-size:13px; gap:4px; }
+  :root .prime-event .prime-recall-actions { flex-direction:column; }
+  :root .prime-event .prime-recall-actions button { width:100%; font-size:14px; padding:12px; }
+  :root .prime-event .g-note-paper { scroll-margin-top:190px; }
+  :root .p-shell[data-clean-mode=true] .prime-event .g-notes-tools { position:static; margin:0; border-radius:0; background:var(--g-bg); }
+  :root .p-shell[data-clean-mode=true] .prime-event .g-notes-page>div:has(>.g-notes-tools) { display:block; }
+  :root .p-shell[data-clean-mode=true] .prime-event .g-note-paper { padding:16px 0; scroll-margin-top:96px; }
+}
+/* Floating chat entry points must not cover the page during focused reading. */
+:root .p-shell[data-clean-mode=true]:has(.prime-event) :is(.g-tutor-launch,.p-global-assistant) { display:none; }

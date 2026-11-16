@@ -46,7 +46,12 @@ export function mergeValue(base: unknown, local: unknown, remote: unknown): unkn
   return base === undefined && remote !== undefined ? remote : local;
 }
 export function mergeSnapshots<T>(base: T | null, local: T, remote: T): T {
-  return mergeValue(base ?? undefined, local, remote) as T;
+  const merged = mergeValue(base ?? undefined, local, remote) as T;
+  // Older clients omit this preference. Absence is not a request to reset it.
+  if (object(merged) && object(remote) && object(local) && local.eventAppearance === undefined && remote.eventAppearance !== undefined) {
+    (merged as Obj).eventAppearance = remote.eventAppearance;
+  }
+  return merged;
 }
 export function sameSnapshot(a: unknown, b: unknown): boolean {
   if (!object(a) || !object(b)) return equal(a, b);

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { resolveAnonymousUserId } from "@/lib/anonymousUser";
+import { validEventAppearance } from "@/lib/eventAppearance";
 import { mergeUserState } from "@/lib/userState";
 
 
@@ -82,6 +83,9 @@ export async function PUT(req: Request) {
       !["todos", "plan", "customActions", "quests", "challenges"].every(k =>
         Array.isArray(data[k]) && (data[k] as unknown[]).every(v => record(v) && typeof v.id === "string"))) {
     return NextResponse.json({ error: "Invalid state" }, { status: 400 });
+  }
+  if (data.eventAppearance !== undefined && (!validEventAppearance(data.eventAppearance) || data.eventAppearance.owner !== userId)) {
+    return NextResponse.json({ error: "Invalid appearance preference" }, { status: 400 });
   }
   try {
     const result = await mergeUserState(userId, body.base as Record<string, unknown> | null, data);

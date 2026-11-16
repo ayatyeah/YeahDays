@@ -1,11 +1,9 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import { eventDesignForUser, useThemeStore } from '@/store/useThemeStore';
+import { useEventDesign } from '@/store/useEventDesign';
 
-/** Account-scoped appearance, shared by every event on this browser. */
+/** Account-synced appearance, shared by every event and device. */
 export default function EventDesignFrame({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
-  const design = useThemeStore(s => eventDesignForUser(s.eventDesignByUser, session?.user?.id));
+  const { design } = useEventDesign();
   return <div className="prime-event" data-event-design={design}>{children}</div>;
 }

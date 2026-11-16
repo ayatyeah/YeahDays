@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react";
 import { getUserId } from "@/lib/userId";
 import { useUserStore, useHydrated, pickSync, hasProgress, selectTotalXp, selectStreak, type SyncData } from "@/store/useUserStore";
 import { getLevelProgress } from "@/lib/leveling";
+import { useThemeStore } from "@/store/useThemeStore";
+import { EVENT_DESIGNS, validEventAppearance } from "@/lib/eventAppearance";
 import { useSyncStatus } from "@/store/useSyncStatus";
 import { mergeSnapshots, sameSnapshot } from "@/lib/syncMerge";
 
@@ -33,6 +35,10 @@ export default function StateSync() {
       const saved = JSON.parse(localStorage.getItem(key) ?? "null");
       if (saved?.data && Number.isSafeInteger(saved.revision)) checkpoint = saved;
     } catch { /* local state still works without storage */ }
+    const pendingAppearance = account ? useThemeStore.getState().pendingEventDesignByUser[account] : undefined;
+    if (account && pendingAppearance && EVENT_DESIGNS.includes(pendingAppearance)) {
+      useUserStore.getState().setEventAppearance({ owner: account, design: pendingAppearance });
+    }
     let applying = false;
     let pending: Promise<void> | null = null;
     let again = false;
@@ -46,6 +52,15 @@ export default function StateSync() {
       const current = pickSync(useUserStore.getState());
       // Preserve edits made after request dispatch; send them in the next pass.
       const merged = mergeSnapshots(sent, current, next.data);
+      const pendingDesign = account ? useThemeStore.getState().pendingEventDesignByUser[account] : undefined;
+      if (account && pendingDesign && EVENT_DESIGNS.includes(pendingDesign)) {
+        if (next.data.eventAppearance?.owner === account && next.data.eventAppearance.design === pendingDesign) {
+          useThemeStore.getState().acknowledgeEventDesign(account, pendingDesign);
+        } else {
+          // An explicit local choice outranks an older response, including initial load.
+          merged.eventAppearance = { owner: account, design: pendingDesign };
+        }
+      }
       checkpoint = next;
       try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* retry next session conservatively */ }
       if (!sameSnapshot(current, merged)) {
@@ -68,6 +83,11 @@ export default function StateSync() {
           const remote = await response.json();
           if (controller.signal.aborted) return;
           local = pickSync(useUserStore.getState());
+          const legacy = account ? useThemeStore.getState().eventDesignByUser[account] : undefined;
+          if (account && !validEventAppearance(remote.data?.eventAppearance) && !validEventAppearance(local.eventAppearance) && legacy && EVENT_DESIGNS.includes(legacy)) {
+            useUserStore.getState().setEventAppearance({ owner: account, design: legacy });
+            local = pickSync(useUserStore.getState());
+          }
           if (remote.data && !hasProgress(local)) {
             accept(remote, local);
             settled();

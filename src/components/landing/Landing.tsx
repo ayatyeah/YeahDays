@@ -238,7 +238,7 @@ export default function Landing() {
           className={styles.brand}
           aria-label="YeahGrind — главная"
         >
-          <Image src="/logo.webp" alt="" width={31} height={29} />
+          <Image src="/logo-oyu-v2.png" alt="" width={31} height={29} />
           YeahGrind
         </Link>
         <nav className={styles.desktopNav} aria-label="Основная навигация">
@@ -787,7 +787,7 @@ export default function Landing() {
       <footer className={styles.footer}>
         <div className={styles.footerTop}>
           <Link href="/" className={styles.brand}>
-            <Image src="/logo.webp" alt="" width={28} height={26} />
+            <Image src="/logo-oyu-v2.png" alt="" width={28} height={26} />
             YeahGrind
           </Link>
           <p className={styles.footerMascot}>

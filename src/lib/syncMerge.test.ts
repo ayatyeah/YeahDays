@@ -34,3 +34,15 @@ describe("offline devices", () => {
 it("ignores PostgreSQL JSONB object key order and timestamps", () => {
  expect(sameSnapshot({ todos: [{ id: "a", done: true }], updatedAt: 1 }, { updatedAt: 2, todos: [{ done: true, id: "a" }] })).toBe(true);
 });
+
+it('syncs appearance across devices without losing tasks and ignores older-client omission', () => {
+ const base = { todos: [task('a')], eventAppearance: { owner: 'owner', design: 'prime' } };
+ const phone = { ...base, eventAppearance: { owner: 'owner', design: 'ocean' } };
+ const desktop = { ...base, todos: [task('a'), task('b')] };
+ const saved = mergeSnapshots(base, phone, desktop);
+ expect(saved.eventAppearance.design).toBe('ocean');
+ expect(saved.todos).toHaveLength(2);
+ const staleClient = { todos: [task('a'), task('b')] };
+ expect(mergeSnapshots<Record<string, unknown>>(base, staleClient, saved).eventAppearance).toEqual(saved.eventAppearance);
+ expect(mergeSnapshots(null, { ...phone, eventAppearance: { owner: 'owner', design: 'sunset' } }, saved).eventAppearance.design).toBe('ocean');
+});

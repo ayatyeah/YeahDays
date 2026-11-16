@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Button from "@/components/ui/Button";
 const EventNotes = dynamic(() => import("@/components/EventNotes"), { loading: Loading });
+import sectionStyles from "@/components/events/notebook-navigation.module.css";
 import NotesToolbar from "@/components/events/NotesToolbar";
 import { cn } from "@/lib/cn";
 import { useEvent } from "@/lib/events/client";
@@ -178,6 +179,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
   const [progress, setProgress] = useState<Progress>({});
   const [loaded, setLoaded] = useState(false);
   const [view, setView] = useState<View>({ mode: "map" });
+  const [mapSection, setMapSection] = useState<"overview" | "lectures" | "practice" | "progress">("overview");
   const [lang, setLang] = useState<Lang>("en");
   const [music, setMusic] = useState(true);
   const top = useRef<HTMLDivElement>(null);
@@ -296,13 +298,13 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
   }
 
   // В подготовке к сетям карта ведёт в полный конспект с материалами части.
-  // Остальные ивенты сохраняют выбранный режим чтения.
+  // Вход из карты всегда открывает одну тему; лента доступна отдельным действием.
   function open(step: Step) {
     if (step.kind === "part" && sourceEvent.id === "computer-networks-endterm") {
       setNotesVersion("full");
       savePref("notes-length", "full");
       setView({ mode: "read", step });
-    } else if (step.kind === "part") setView({ mode: loadPref("notes-mode", "read") === "scroll" ? "scroll" : "read", step });
+    } else if (step.kind === "part") setView({ mode: "read", step });
     else startQuiz(step);
   }
 
@@ -343,6 +345,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
 
   /** Из строки лекций и маршрута: раскрыть секцию и показать её под строкой. */
   function jump(target: string) {
+    setMapSection(target === "route-final" || target === "route-extra" || target === "mocks" ? "practice" : "lectures");
     setOpened((o) => ({ ...o, [target]: true }));
     requestAnimationFrame(() => document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
@@ -362,6 +365,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
 
   function toMap() {
     setDrill(loadDrill(userId, event.id));
+    if ("step" in view && view.step.kind === "part") setMapSection("lectures");
     setView({ mode: "map" });
   }
 
@@ -402,6 +406,10 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             <h1 className="ios-title mt-2">{catalogCopy[event.id]?.title ?? event.title}</h1>
             <p className="mt-2 text-sm text-[var(--color-muted)]">{catalogCopy[event.id]?.description ?? event.description}</p>
           </header>
+          <nav className={`${sectionStyles.navigation} ${sectionStyles.eventNavigation}`} aria-label="Event sections">
+            {([['overview', 'Обзор', 'Overview'], ['lectures', 'Лекции', 'Lectures'], ['practice', 'Практика', 'Practice'], ['progress', 'Прогресс', 'Progress']] as const).map(([id, ru, en]) => <button key={id} type="button" aria-pressed={mapSection === id} onClick={() => setMapSection(id)}>{tl === 'ru' ? ru : en}</button>)}
+          </nav>
+          {mapSection === "overview" && <>
           {event.id === "project-management-test-2" && (
             <section className="space-y-3 rounded-3xl border border-lime-400/40 bg-lime-500/5 p-5" data-no-i18n>
               <p className="text-xs font-semibold uppercase tracking-widest">Extra practice · Simulated quiz</p>
@@ -412,7 +420,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
           )}
           <QuickLinks
             event={event}
-            onMocks={() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            onMocks={() => jump("mocks")}
             onView={(mode) => (mode === "feed" ? openFeed() : setView({ mode }))}
             onExam={event.exam ? startExam : undefined}
             onScroll={startScroll}
@@ -477,6 +485,8 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             )}
           </section>
 
+          </>}
+          {mapSection === "lectures" && <>
           <LectureBar
             items={[
               ...event.lectures.map((lecture, li) => ({
@@ -542,6 +552,8 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             );
           })}
 
+          </>}
+          {mapSection === "practice" && <>
           <section id="route-final" className={cn(panel, "scroll-mt-16")}>
             <h2 className="text-lg font-bold">Финал</h2>
             <p className="text-sm text-[var(--color-muted)]">Вопросы вперемешку со всех лекций — как на настоящем квизе.</p>
@@ -623,6 +635,8 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
             </section>
           )}
 
+          </>}
+          {mapSection === "progress" && <>
           {loaded && <EventPlan event={event} progress={progress} />}
 
           {loaded && (
@@ -661,6 +675,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               Сбросить прогресс
             </Button>
           )}
+          </>}
         </>
       )}
 
@@ -689,7 +704,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
           onLang={switchLang}
           onExit={toMap}
           onFinal={() => open(list[list.length - 1])}
-          onMocks={event.mocks?.length ? () => { toMap(); window.setTimeout(() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" }), 150); } : undefined}
+          onMocks={event.mocks?.length ? () => { toMap(); setMapSection("practice"); window.setTimeout(() => document.getElementById("mocks")?.scrollIntoView({ behavior: "smooth", block: "start" }), 150); } : undefined}
           onSheet={event.cheatSheet ? () => setView({ mode: "sheet" }) : undefined}
         />
       )}

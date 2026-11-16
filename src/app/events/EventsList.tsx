@@ -45,7 +45,7 @@ export default function EventsList({ events, course }: { events: EventSummary[];
     <div lang="en" data-no-i18n className="yg-stagger mx-auto w-full max-w-3xl space-y-5 pb-6">
       <header>
         <Link href="/events" className="text-sm underline">← All courses</Link>
-        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>Prepare for your final with the course guide and lecture notebook.</p></div></div>
+        <div className={styles.courseHeading}><Image src={course.logo} width={72} height={72} alt="" /><div><h1 lang="en">{course.title}</h1><p>{course.id === 'philosophy' ? 'Learn to write your final essay, one paragraph at a time. Beginner steps, practice cases and AI feedback.' : 'Prepare for your final with the course guide and lecture notebook.'}</p></div></div>
       </header>
 
       {/* ивенты «только по ссылке» в списке не показываем (см. StudyEvent.unlisted); свежие — сверху */}

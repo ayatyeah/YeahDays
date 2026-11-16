@@ -59,7 +59,7 @@ export default function Logo({ variant = "color", glow, className }: LogoProps) 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={effective === "white" ? "/logo-white.webp" : "/logo-oyu-v2.png"}
+      src={effective === "white" ? "/logo-white.webp" : "/logo-oyu-v3.png"}
       alt="YeahGrind"
       draggable={false}
       onClick={onTap}
@@ -73,7 +73,7 @@ export function LogoLoader() {
   return (
     <div className="flex flex-1 items-center justify-center">
       <motion.img
-        src="/logo-oyu-v2.png"
+        src="/logo-oyu-v3.png"
         alt="YeahGrind"
         draggable={false}
         className={cn("h-14 w-auto select-none object-contain", GLOW)}

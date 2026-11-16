@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import Button from "@/components/ui/Button";
 const EventNotes = dynamic(() => import("@/components/EventNotes"), { loading: Loading });
 import sectionStyles from "@/components/events/notebook-navigation.module.css";
+import TopicLearningModes from "@/components/events/TopicLearningModes";
 import NotesToolbar from "@/components/events/NotesToolbar";
 import { cn } from "@/lib/cn";
 import { useEvent } from "@/lib/events/client";
@@ -806,7 +807,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               {([['short', 'Quick notes'], ['full', 'Full notebook']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
             <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
-              <EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} />
+              <TopicLearningModes key={view.step.id} title={part.title[lang]} lang={lang}><EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} /></TopicLearningModes>
             </article>
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>
               Начать квиз по этой части · {view.step.count} вопросов

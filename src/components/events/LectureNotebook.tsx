@@ -13,6 +13,7 @@ import { useTutorFocus } from '@/lib/tutorFocus';
 import NotesToolbar from './NotesToolbar';
 import SelectionMenu from './SelectionMenu';
 import Tutor from './Tutor';
+import TopicLearningModes, { TopicTutorRail } from './TopicLearningModes';
 import styles from './notebook-navigation.module.css';
 const CvFinalPrep = dynamic(() => import('./CvFinalPrep'));
 const NetworkStoryClip = dynamic(() => import('./NetworkStoryClip'));
@@ -52,18 +53,22 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
   }
   const filtered = parts.filter(part => `${part.title[lang]} ${part.notes[lang]}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
 
+  const selected = parts.find(part => part.id === activePart) ?? parts[0];
+  const topicIndex = parts.findIndex(part => part.id === activePart);
+
   return <div className="g-notes-page" data-no-i18n>
     <Link className="g-reader-back" href={eventCourseHref(event.id)}>← {event.course}</Link>
     <header className="g-reader-heading"><div><p>{event.course} / Final preparation</p><h1>{ru ? `Подготовка к финалу · ${event.course}` : `${event.course} · Final preparation`}</h1><p>{notebook.coverage[lang]}</p></div><span><Icon name="book" size={20}/>{parts.length} parts</span></header>
     <div className={styles.controls}>
     <nav className={styles.navigation} aria-label={ru ? 'Разделы подготовки' : 'Preparation sections'}>
       {([
-        ['overview', ru ? 'Обзор финала' : 'Overview', '01'],
-        ['practice', ru ? 'Практика' : 'Practice', '02'],
-        ['lectures', ru ? 'Лекции' : 'Lectures', '03'],
-        ['files', ru ? 'Материалы' : 'Materials', '04'],
-      ] as const).map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><small>{number}</small>{title}</a>)}
+        ['overview', ru ? 'Обзор' : 'Overview', 'home'],
+        ['practice', ru ? 'Практика' : 'Practice', 'research'],
+        ['lectures', ru ? 'Лекции' : 'Lectures', 'book'],
+        ['files', ru ? 'Материалы' : 'Materials', 'plan'],
+      ] as const).map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon name={number} size={20}/>{title}</a>)}
     </nav>
+    {section === 'lectures' && <div className="prime-topic-position"><span>{ru ? 'Сейчас открыто' : 'Currently reading'}</span><strong>{ru ? `Тема ${topicIndex + 1} из ${parts.length}` : `Topic ${topicIndex + 1} of ${parts.length}`}</strong><meter min={0} max={parts.length} value={topicIndex + 1} aria-label={ru ? 'Положение в конспекте, не оценка знаний' : 'Position in notes, not mastery'}/></div>}
     <NotesToolbar lang={lang} onLang={setLang}/>
     </div>
     {section === 'overview' && <>
@@ -87,8 +92,8 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       <label>{ru ? 'Найти тему' : 'Find a topic'}<input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder={ru ? 'Название или ключевое слово…' : 'Title or keyword…'}/></label>
       <label>{ru ? 'Открытая тема' : 'Current topic'}<select value={activePart} onChange={e => selectTopic(e.target.value)}>{parts.map((part, i) => <option key={part.id} value={part.id}>{i + 1}. {part.title[lang]}</option>)}</select></label>
     </div>
-    <div className="g-notes-layout">
-      <aside className={styles.topics} aria-label={ru ? 'Содержание лекций' : 'Lecture contents'}>
+    <div className={`g-notes-layout${session?.user?.id ? " prime-has-rail" : ""}`}>
+      <aside className={`${styles.topics} prime-topic-outline`} aria-label={ru ? 'Содержание лекций' : 'Lecture contents'}>
         {event.lectures.map(lecture => {
           const topics = lecture.parts.filter(part => filtered.includes(part));
           return topics.length > 0 ? <details key={lecture.id} open={!!query || lecture.parts.some(part => part.id === activePart)}><summary>{lecture.title[lang]}</summary><nav>{topics.map(part => <a key={part.id} href={`#${part.id}`} aria-current={activePart === part.id ? true : undefined} onClick={() => setActivePart(part.id)}>{part.title[lang]}</a>)}</nav></details> : null;
@@ -97,11 +102,12 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       </aside>
       <div className="g-notes-articles">{parts.map((part, i) => (part.id === activePart) && <article id={part.id} key={part.id} className="g-note-paper">
         <div className="g-note-meta"><span>Part {i + 1} of {parts.length}</span><Icon name="book" size={18}/></div>
-        <div data-selection-notes lang={lang}><h2 data-selection-translation={lang === 'en' ? part.title.ru : undefined}>{part.title[lang]}</h2><EventNotes text={part.notes[lang]} lang={lang} translation={lang === 'en' ? part.notes.ru : undefined}/></div>
+        <h2 data-selection-translation={lang === 'en' ? part.title.ru : undefined}>{part.title[lang]}</h2><TopicLearningModes key={part.id} title={part.title[lang]} lang={lang} signedIn={!!session?.user?.id}><div data-selection-notes lang={lang}><EventNotes text={part.notes[lang]} lang={lang} translation={lang === 'en' ? part.notes.ru : undefined}/></div></TopicLearningModes>
         <details className="g-note-sources"><summary>{lang === 'en' ? 'Source lecture & reading' : 'Лекция и материалы'}</summary><ul>{notebook.sources.filter(source => source.lectureId === event.lectures.find(lecture => lecture.parts.some(p => p.id === part.id))?.id).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}{source.pages ? ` · ${source.pages}` : ''}<Icon name="arrow" size={15}/></a></li>)}</ul></details>
         {event.id === 'computer-networks-final' && part.id.startsWith('cne-') && <NetworkStoryClip partId={part.id}/>}
         <nav className="g-note-pagination" aria-label={`Navigation for part ${i + 1}`}>{i > 0 ? <a href={`#${parts[i - 1].id}`} onClick={() => setActivePart(parts[i - 1].id)}>← {ru ? 'Предыдущая тема' : 'Previous part'}</a> : <span/>}{i < parts.length - 1 ? <a href={`#${parts[i + 1].id}`} onClick={() => setActivePart(parts[i + 1].id)}>{ru ? 'Следующая тема' : 'Next part'} →</a> : <a href="#workspace-content">Back to top ↑</a>}</nav>
       </article>)}</div>
+      {session?.user?.id && selected && <TopicTutorRail title={selected.title[lang]} lang={lang}/>}
     </div>
     </>}
     {session?.user?.id && <Tutor event={{ id: event.id }} userId={session.user.id}/>}

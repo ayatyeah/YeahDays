@@ -1,0 +1,110 @@
+/* Prime v3: sculpted pearl surfaces, violet controls, a quiet page for real learning. */
+.prime-event {
+  --ep-ink:#21173e; --ep-muted:#65537d; --ep-line:#dfcfee; --ep-paper:#fffaff;
+  --ep-wash:#f1e7fb; --ep-pearl:linear-gradient(145deg,#fffefe 2%,#f8efff 68%,#fff0ef);
+  --ep-pill:linear-gradient(180deg,#fffaff,#f0e4fa); --ep-active:linear-gradient(160deg,#9273ff 0%,#592bfa 42%,#3216dc 100%);
+  --ep-shadow:inset 0 2px 1px #ffffff,0 3px 2px #aa8fc342,0 10px 24px #78529e20;
+  --g-text:var(--ep-ink); --g-muted:var(--ep-muted); --g-paper:var(--ep-paper); --g-border:var(--ep-line); --g-accent-text:#5425ce;
+  color:var(--ep-ink); isolation:isolate; padding:6px 0 32px;
+}
+:root .p-shell:has(.prime-event) { background:radial-gradient(ellipse at 12% 5%,#dbc7ff88,transparent 50%),radial-gradient(ellipse at 98% 22%,#ffd9df88,transparent 48%),#f3eafa; }
+:root .p-shell:has(.prime-event) .f-navigation { background:linear-gradient(160deg,#fffcffed,#eee0f8ed); border-color:#fff; box-shadow:var(--ep-shadow,0 6px 20px #78529e24); border-radius:32px; }
+:root .prime-event .g-notes-page { max-width:1440px; margin:auto; }
+:root .prime-event .g-reader-heading { margin:20px 0 26px; gap:24px; }
+:root .prime-event .g-reader-heading h1 { font-size:clamp(27px,3vw,42px); letter-spacing:-.045em; color:var(--ep-ink); }
+:root .prime-event .g-reader-heading p { color:var(--ep-muted); }
+:root .prime-event .g-reader-heading>span { border:1px solid #fff; background:var(--ep-pill); padding:12px 18px; border-radius:99px; box-shadow:var(--ep-shadow); white-space:nowrap; }
+:root .prime-event nav[aria-label="Preparation sections"],:root .prime-event nav[aria-label="Разделы подготовки"],:root .prime-event nav[aria-label="Event sections"] { border-radius:28px; padding:7px; background:var(--ep-pill); border:1px solid #fff; box-shadow:var(--ep-shadow); gap:8px; }
+:root .prime-event nav[aria-label="Preparation sections"] a,:root .prime-event nav[aria-label="Разделы подготовки"] a,:root .prime-event nav[aria-label="Event sections"] button { min-height:48px; border:1px solid #fff; border-radius:99px; background:var(--ep-pill); box-shadow:inset 0 2px 0 #ffffff,0 2px 3px #9e7db440; color:var(--ep-ink); font-size:15px; }
+:root .prime-event nav a[aria-current="page"],:root .prime-event nav[aria-label="Event sections"] button[aria-pressed="true"] { color:#fff; background:var(--ep-active); border-color:#d9c5ff; box-shadow:inset 0 2px 2px #ffffff66,0 4px 8px #5e27ce3b; }
+:root .prime-event .g-notes-toolbar { background:var(--ep-pearl); border:1px solid #fff; border-radius:23px; box-shadow:var(--ep-shadow); }
+:root .prime-event .g-language-options { background:#dfcef459; border-radius:99px; padding:4px; }
+:root .prime-event .g-language-options button { border-radius:99px!important; }
+:root .prime-event .g-language-options button[aria-pressed=true] { color:#4d22c7!important; background:linear-gradient(160deg,#eee0ff,#d9c4ff)!important; box-shadow:inset 0 1px 0 #fff,0 2px 4px #7147ac28; }
+:root .prime-event .g-note-paper,:root .prime-event .g-event-workspace section.rounded-3xl,:root .prime-event .g-event-workspace details.yg-fold,:root .prime-event [data-testid="lecture-notes"] { border:1px solid #fff; border-radius:30px; background:var(--ep-pearl); box-shadow:var(--ep-shadow); padding:28px; }
+:root .prime-event .g-note-paper h2 { font-size:clamp(25px,2.1vw,34px)!important; line-height:1.2!important; color:var(--ep-ink); }
+:root .prime-event .g-note-paper p { font-family:inherit; font-size:17px; line-height:1.8; }
+:root .prime-event .g-notes-layout { grid-template-columns:220px minmax(0,1fr); gap:22px; }
+:root .prime-event .prime-topic-outline { display:block; align-self:start; margin:0; padding:12px 16px; border:1px solid #fff; border-radius:28px; background:var(--ep-pearl); box-shadow:var(--ep-shadow); max-height:70dvh; overflow:auto; }
+.prime-topic-outline details + details { border-top:1px solid var(--ep-line); }
+.prime-topic-outline summary { line-height:1.5; font-size:14px; }
+:root .prime-event .prime-topic-outline a { font-size:13px; line-height:1.5; border-radius:16px; min-height:44px; }
+:root .prime-event .prime-topic-outline a[aria-current=true] { background:linear-gradient(145deg,#ece1ff,#dbccfb); color:#482589; box-shadow:inset 0 1px 0 #fff; }
+.prime-topic-position { display:flex; flex-wrap:wrap; align-items:center; gap:6px 18px; padding:8px 12px 14px; color:var(--ep-muted); font-size:12px; }
+.prime-topic-position strong { margin-left:auto; color:var(--ep-ink); }
+.prime-topic-position meter { width:100%; height:8px; border:0; border-radius:99px; background:#e4d7f4; }
+.prime-topic-position meter::-webkit-meter-bar { background:#e4d7f4; border:0; border-radius:99px; }
+.prime-topic-position meter::-webkit-meter-optimum-value { background:var(--ep-active); border-radius:99px; }
+.prime-mode-tabs { display:flex; gap:4px; padding:5px; margin:8px 0 24px; border-radius:99px; background:var(--ep-pill); border:1px solid #fff; box-shadow:var(--ep-shadow); }
+.prime-mode-tabs button { display:flex; align-items:center; justify-content:center; gap:7px; flex:1; min-width:0; min-height:44px; padding:9px; border-radius:99px; font-weight:650; font-size:14px; cursor:pointer; }
+.prime-mode-tabs button[aria-pressed=true] { background:linear-gradient(165deg,#c7a9ff,#9367fb); color:#25104e; box-shadow:inset 0 2px 1px #fff9,0 3px 7px #865ac741; }
+.prime-check-yourself,.prime-recall-actions button { display:flex; align-items:center; justify-content:center; gap:14px; min-height:48px; border-radius:99px; padding:12px 24px; background:var(--ep-active); color:#fff; font-weight:700; box-shadow:inset 0 2px 1px #fff6,0 4px 7px #5823c933; border:1px solid #c7b3ff; cursor:pointer; }
+.prime-check-yourself { width:100%; margin-top:28px; }
+.prime-recall { border-radius:22px; padding:22px; background:var(--ep-wash); margin-bottom:24px; }
+.prime-recall label { display:block; font-size:13px; font-weight:650; margin:18px 0 8px; }
+.prime-recall textarea { display:block; width:100%; padding:16px; border:1px solid var(--ep-line); border-radius:19px; background:var(--ep-paper); color:var(--ep-ink); font:inherit; font-size:16px; resize:vertical; }
+.prime-recall-actions { display:flex; flex-wrap:wrap; gap:12px; margin:16px 0; }
+.prime-recall-actions button { font-size:13px; }
+.prime-recall-actions button:disabled { opacity:.45; cursor:not-allowed; }
+.prime-recall small,.prime-tutor-rail small { display:block; color:var(--ep-muted); font-size:12px; line-height:1.6; }
+.prime-tutor-rail { align-self:start; padding:24px 20px; border:1px solid #fff; border-radius:32px; background:linear-gradient(150deg,#fdf5ff,#ead8ff 60%,#ffdbc5); box-shadow:var(--ep-shadow); }
+:root .prime-event .prime-tutor-rail h2 { color:var(--ep-ink); font-size:24px; line-height:1.15; letter-spacing:-.04em; margin:18px 0 12px; }
+.prime-tutor-rail p { font-size:14px; line-height:1.6; color:var(--ep-muted); margin-bottom:24px; }
+.prime-tutor-gem { display:grid; place-items:center; width:66px; height:66px; border-radius:22px; color:#fff; background:linear-gradient(135deg,#faf1ff,#cfa6ff 35%,#9657ef 65%,#e9ccff); box-shadow:inset 0 1px 2px #fff,0 8px 14px #9752d542; transform:rotate(-8deg); }
+.prime-tutor-gem svg { filter:drop-shadow(0 3px 3px #8b36d1); }
+.prime-tutor-rail button { display:flex; align-items:center; gap:10px; width:100%; min-height:52px; padding:12px 13px; margin-top:12px; border:1px solid #fff; border-radius:20px; background:var(--ep-pill); box-shadow:var(--ep-shadow); font-weight:650; font-size:13px; text-align:left; cursor:pointer; }
+.prime-tutor-rail button svg:last-child { margin-left:auto; }
+.prime-tutor-rail .prime-tutor-question { min-height:100px; align-items:flex-start; margin:28px 0 12px; font-weight:500; }
+.prime-tutor-rail .prime-tutor-question svg { align-self:flex-end; }
+:root .prime-event .g-note-pagination { margin-top:22px; gap:12px; }
+:root .prime-event .g-note-pagination a { display:flex; align-items:center; min-height:44px; padding:10px 16px; border:1px solid #fff; border-radius:99px; background:var(--ep-pill); box-shadow:var(--ep-shadow); color:var(--ep-ink); }
+:root .prime-event .g-tutor-launch { background:var(--ep-active); border:1px solid #d6bfff; box-shadow:inset 0 1px 0 #fff8,0 6px 18px #6d3bb552; }
+:root .p-shell:has(.prime-event) .g-tutor-window { background:var(--ep-pearl,#fbf5ff); border-color:#fff; box-shadow:0 15px 70px #5c39865c; }
+:root .prime-event :is(button,a,input,textarea,select):focus-visible { outline:3px solid #854bea; outline-offset:3px; }
+@media(min-width:1200px) { :root .prime-event .g-notes-layout.prime-has-rail { grid-template-columns:200px minmax(0,1fr) 225px; } }
+@media(max-width:1199px) { .prime-tutor-rail { grid-column:2; } }
+@media(max-width:760px) {
+  :root .prime-event .g-notes-layout { display:flex; flex-direction:column; gap:18px; }
+  :root .prime-event .g-notes-articles { width:100%; order:0; }
+  :root .prime-event .prime-topic-outline { width:100%; max-height:320px; order:1; }
+  .prime-tutor-rail { width:100%; order:2; }
+  :root .prime-event .g-note-paper,:root .prime-event [data-testid="lecture-notes"] { padding:22px 18px; border-radius:25px; }
+  :root .prime-event .g-note-paper p { font-size:16px; }
+  .prime-mode-tabs { margin-bottom:20px; gap:0; }
+  .prime-mode-tabs button { font-size:12px; padding:8px 5px; gap:5px; }
+  .prime-mode-tabs button svg { width:16px; height:16px; }
+  .prime-topic-position { display:none; }
+  :root .prime-event nav[aria-label="Preparation sections"],:root .prime-event nav[aria-label="Разделы подготовки"],:root .prime-event nav[aria-label="Event sections"] { gap:6px; border-radius:24px; }
+  :root .prime-event nav[aria-label] a,:root .prime-event nav[aria-label="Event sections"] button { font-size:13px; }
+  .prime-recall { padding:16px; }
+}
+:root[data-theme=dark] .prime-event {
+  --ep-ink:#f4ecff; --ep-muted:#c2b1d8; --ep-line:#514266; --ep-paper:#261d37; --ep-wash:#30243f;
+  --ep-pearl:linear-gradient(145deg,#30263f,#251c35 70%,#362333); --ep-pill:linear-gradient(180deg,#423052,#30233e);
+  --ep-shadow:inset 0 1px 0 #ffffff14,0 3px 2px #0003,0 10px 24px #0003; --g-accent-text:#ceafff;
+}
+:root[data-theme=dark] .p-shell:has(.prime-event) { background:radial-gradient(ellipse at 10% 0,#4c2d6b55,transparent 65%),#191222; }
+:root[data-theme=dark] .p-shell:has(.prime-event) .f-navigation { background:linear-gradient(160deg,#30243fed,#251a34ed); border-color:#514266; }
+:root[data-theme=dark] .prime-event :is(.g-note-paper,.g-notes-toolbar,.prime-topic-outline,.prime-tutor-rail,.prime-mode-tabs,.g-reader-heading>span),:root[data-theme=dark] .prime-event nav[aria-label] { border-color:var(--ep-line); }
+:root[data-theme=dark] .prime-event .prime-tutor-rail { background:linear-gradient(145deg,#342147,#352149 65%,#492e38); }
+:root[data-theme=dark] .prime-event .prime-topic-outline a[aria-current=true] { background:#50336c; color:#f4ecff; box-shadow:none; }
+:root[data-theme=dark] .prime-event nav[aria-label] :is(a,button),:root[data-theme=dark] .prime-event .prime-tutor-rail button,:root[data-theme=dark] .prime-event .g-note-pagination a { border-color:#655079; }
+:root[data-theme=dark] .prime-event .g-language-options button[aria-pressed=true] { color:#f4ecff!important; background:#583b78!important; }
+:root .p-shell[data-clean-mode=true] .prime-event .prime-tutor-rail,:root .p-shell[data-clean-mode=true] .prime-event .prime-topic-outline,:root .p-shell[data-clean-mode=true] .prime-event .prime-topic-position { display:none; }
+:root .p-shell[data-clean-mode=true]:has(.prime-event) { background:var(--g-bg); }
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-layout { display:block; }
+:root .p-shell[data-clean-mode=true] .prime-event .g-note-paper { border:0; box-shadow:none; background:transparent; }
+:root .p-shell:has(.prime-event)>.f-content { max-width:1500px; }
+:root .prime-event .g-notes-page>div:has(>nav[aria-label="Preparation sections"]),:root .prime-event .g-notes-page>div:has(>nav[aria-label="Разделы подготовки"]) { background:var(--ep-wash); border-radius:28px; padding:7px; }
+:root .prime-event .g-notes-page select,:root .prime-event .g-notes-page input[type=search] { background:var(--ep-pearl); border:1px solid var(--ep-line); border-radius:99px; color:var(--ep-ink); min-height:46px; box-shadow:inset 0 1px 2px #fff,0 3px 7px #9a71c014; }
+:root[data-theme=dark] .p-shell:has(.prime-event) .g-tutor-window { background:linear-gradient(145deg,#30263f,#251c35); border-color:#655079; }
+:root .p-shell[data-clean-mode=true] .prime-event .g-notes-page>div:has(>nav) { background:var(--g-bg); }
+@media(max-width:760px) { :root .prime-event .g-notes-page>div:has(>nav) { padding:4px; } }
+:root .prime-event .g-event-workspace button[data-variant=primary] { border-radius:99px; background:var(--ep-active); color:#fff; box-shadow:inset 0 1px 1px #fff6,0 4px 8px #7046af30; }
+:root .prime-event .g-event-workspace button[data-variant=surface] { border-radius:99px; background:var(--ep-pill); box-shadow:var(--ep-shadow); color:var(--ep-ink); }
+:root .prime-event .prime-philosophy { --ph-border:var(--ep-line); }
+:root .prime-event .prime-philosophy>section,:root .prime-event .prime-philosophy>details,:root .prime-event .prime-philosophy section section { padding:26px; border-radius:28px; border:1px solid var(--ep-line); background:var(--ep-pearl); box-shadow:var(--ep-shadow); }
+:root .prime-event .prime-philosophy nav[aria-label] { display:flex; flex-wrap:wrap; box-shadow:var(--ep-shadow); }
+:root .prime-event .prime-philosophy nav[aria-label] button { border:1px solid var(--ep-line); background:var(--ep-pill); color:var(--ep-ink); border-radius:99px; }
+:root .prime-event .prime-philosophy nav[aria-label] button[aria-pressed=true] { background:var(--ep-active); color:#fff; box-shadow:inset 0 1px 1px #fff6,0 3px 7px #7046af30; }
+@media(max-width:760px) { :root .prime-event .prime-philosophy>section,:root .prime-event .prime-philosophy>details { padding:20px 16px; } }

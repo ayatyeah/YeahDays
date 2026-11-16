@@ -13,6 +13,7 @@ import { useTutorFocus } from '@/lib/tutorFocus';
 import NotesToolbar from './NotesToolbar';
 import SelectionMenu from './SelectionMenu';
 import Tutor from './Tutor';
+const CvFinalPrep = dynamic(() => import('./CvFinalPrep'));
 const NetworkStoryClip = dynamic(() => import('./NetworkStoryClip'));
 
 /** Reading-only course materials: no assessment bank is imported by this view. */
@@ -48,6 +49,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       <details className="g-note-sources"><summary>{lang === 'en' ? 'Syllabus & final instructions' : 'Силлабус и требования финала'}</summary><ul>{notebook.sources.filter(source => !source.lectureId).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="arrow" size={15}/></a></li>)}</ul></details>
       {notebook.practiceId && <Link className="f-button" href={`/events/${notebook.practiceId}`}>{lang === 'en' ? 'Practise lecture concepts' : 'Потренировать понятия лекций'}<Icon name="arrow" size={17}/></Link>}
     </section>
+    {event.id === 'computer-vision-final' && <CvFinalPrep lang={lang} signedIn={!!session?.user?.id}/>}
     <div className="g-notes-layout">
       <aside className="g-notes-outline"><label>Find a topic<input type="search" name="notes-search" autoComplete="off" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search your notes…"/></label><nav aria-label="Notebook contents">{filtered.map(part => <a key={part.id} href={`#${part.id}`} aria-current={activePart === part.id ? true : undefined} lang={lang}><span>{parts.indexOf(part) + 1}</span>{part.title[lang]}</a>)}</nav>{!filtered.length && <p>No topics found. Try another search.</p>}</aside>
       <div className="g-notes-articles">{parts.map((part, i) => <article id={part.id} key={part.id} className="g-note-paper">

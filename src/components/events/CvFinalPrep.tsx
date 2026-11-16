@@ -22,7 +22,7 @@ export default function CvFinalPrep({ lang, signedIn }: { lang: 'ru' | 'en'; sig
   return <section className="g-note-paper" aria-labelledby="cv-prep-title">
     <div className="g-note-meta"><span>CV / Final lab</span><span>{ru ? 'Подготовка до экзамена' : 'Before-exam preparation'}</span></div>
     <h2 id="cv-prep-title">{ru ? 'От конспекта к самостоятельному проекту.' : 'From notes to an independent project.'}</h2>
-    <p>{ru ? 'Пять практических блоков: объяснение, упражнение и репетиция с ИИ. Лекции 1–10 — ниже. Упражнения авторские, не вопросы преподавателя.' : 'Five practical units: explanations, exercises and AI rehearsal. Lectures 1–10 follow below. Exercises are original practice, not instructor questions.'}</p>
+    <p>{ru ? 'Пять практических блоков: объяснение, упражнение и репетиция с ИИ. Теория находится во вкладке «Лекции». Упражнения авторские, не вопросы преподавателя.' : 'Five practical units: explanations, exercises and AI rehearsal. Theory is in the Lectures tab. Exercises are original practice, not instructor questions.'}</p>
     <div className="flex flex-wrap gap-2 my-5" role="group" aria-label={ru ? 'Блок подготовки' : 'Preparation unit'}>
       {CV_PREP.map(item => <button key={item.id} type="button" className="f-button" aria-pressed={active === item.id} onClick={() => setActive(item.id)} style={{ opacity: active === item.id ? 1 : 0.7 }}>{item.title[lang]}</button>)}
     </div>

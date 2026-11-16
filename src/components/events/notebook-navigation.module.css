@@ -1,0 +1,22 @@
+.navigation { display:flex; gap:6px; padding:6px; margin:18px 0; background:var(--g-inset); border:1px solid var(--g-border); border-radius:16px; overflow-x:auto; }
+.navigation a { flex:1; display:flex; align-items:center; justify-content:center; gap:9px; min-height:48px; padding:10px 16px; border-radius:11px; color:var(--g-muted); font-weight:650; white-space:nowrap; text-decoration:none; }
+.navigation a[aria-current=page] { background:var(--g-paper); color:var(--g-accent-text); box-shadow:0 2px 6px #0000000a; }
+.navigation a:focus-visible,.topics a:focus-visible { outline:2px solid var(--g-accent); outline-offset:2px; }
+.navigation small { font-size:11px; opacity:.7; }
+.topics { display:grid; gap:14px; margin:18px 0; }
+.topics summary { cursor:pointer; font-weight:650; padding:12px 0; }
+.topics nav { display:grid; gap:6px; padding-bottom:12px; }
+.topics a { display:block; padding:10px 12px; border-radius:9px; text-decoration:none; }
+.topics a[aria-current=true] { background:var(--g-accent-soft); color:var(--g-accent-text); font-weight:650; }
+.chooser { display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin:18px 0; }
+.chooser label { display:grid; gap:7px; flex:1; min-width:0; font-size:13px; font-weight:650; }
+.chooser select,.chooser input { width:100%; min-height:46px; padding:10px 12px; border:1px solid var(--g-border); border-radius:10px; background:var(--g-paper); color:var(--g-text); font:inherit; }
+.files { display:grid; gap:12px; }
+.files a { overflow-wrap:anywhere; }
+@media(max-width:600px) { .navigation { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3px; overflow:visible; } .navigation a { padding:10px 12px; font-size:13px; } .navigation small { display:none; } .chooser { align-items:stretch; flex-direction:column; } }
+
+.controls { position:sticky; top:102px; z-index:30; background:var(--g-bg); padding-top:4px; margin-bottom:20px; }
+.controls .navigation { margin:0 0 8px; }
+.controls :global(.g-notes-tools) { position:static; }
+:global(.p-shell[data-clean-mode=true]) .controls { top:8px; }
+@media(max-width:760px) { .controls { top:94px; } }

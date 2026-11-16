@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
-import { useThemeStore } from "@/store/useThemeStore";
 
 /** Сколько раз подряд нужно попасть по знаку, чтобы открылась консоль. */
 const TAPS_TO_CONSOLE = 10;
@@ -12,7 +11,7 @@ const TAPS_TO_CONSOLE = 10;
 const TAP_WINDOW_MS = 800;
 
 interface LogoProps {
-  /** color — фирменный градиент; white — чистый белый знак */
+  /** Legacy callers may request either variant; both now use approved ornamental YG. */
   variant?: "color" | "white";
   /** мягкое неоновое свечение через CSS (для крупных мест) */
   glow?: boolean;
@@ -22,17 +21,8 @@ interface LogoProps {
 const GLOW =
   "[filter:drop-shadow(0_0_18px_rgba(160,120,255,0.45))_drop-shadow(0_0_34px_rgba(249,90,110,0.25))]";
 
-/**
- * Логотип YeahGrind. Чёткая «YG»; свечение — опциональный CSS-эффект.
- *
- * variant="white" просят места, рассчитанные на тёмный фон (шапки,
- * сайдбар) — на светлой теме белый знак на белом просто исчезнет,
- * поэтому здесь он принудительно подменяется на цветной, независимо
- * от того, что попросил вызывающий компонент.
- */
-export default function Logo({ variant = "color", glow, className }: LogoProps) {
-  const theme = useThemeStore((s) => s.theme);
-  const effective = variant === "white" && theme === "light" ? "color" : variant;
+/** Approved ornamental YG is shared by every theme and surface. */
+export default function Logo({ glow, className }: LogoProps) {
   const router = useRouter();
   const taps = useRef(0);
   const lastTap = useRef(0);
@@ -59,7 +49,7 @@ export default function Logo({ variant = "color", glow, className }: LogoProps) 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src={effective === "white" ? "/logo-white.webp" : "/logo-oyu-v5.png"}
+      src="/logo-oyu-v5.webp"
       alt="YeahGrind"
       draggable={false}
       onClick={onTap}
@@ -73,7 +63,7 @@ export function LogoLoader() {
   return (
     <div className="flex flex-1 items-center justify-center">
       <motion.img
-        src="/logo-oyu-v5.png"
+        src="/logo-oyu-v5.webp"
         alt="YeahGrind"
         draggable={false}
         className={cn("h-14 w-auto select-none object-contain", GLOW)}

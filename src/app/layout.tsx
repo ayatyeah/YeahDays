@@ -125,16 +125,16 @@ export const metadata: Metadata = {
     // ориентируются именно на него
     "mobile-web-app-capable": "yes",
   },
-  // Суффикс -v3 в именах иконок: iOS и Safari кэшируют файл по адресу и
+  // Суффикс -oyu-v5 в именах иконок: iOS и Safari кэшируют файл по адресу и
   // после смены картинки продолжали показывать старую даже у заново
   // добавленного ярлыка. Новое имя — единственный надёжный сброс.
   icons: {
     icon: [
-      { url: "/favicon-v3.png", sizes: "64x64", type: "image/png" },
-      { url: "/icon-192-v3.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512-v3.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon-oyu-v5.png", sizes: "64x64", type: "image/png" },
+      { url: "/icon-192-oyu-v5.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512-oyu-v5.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: "/apple-icon-v3.png",
+    apple: "/apple-icon-oyu-v5.png",
   },
 };
 

@@ -16,6 +16,7 @@ import { YgIcon } from "@/components/yg-icons";
 import { useUserStore } from "@/store/useUserStore";
 import { buildIcs } from "@/lib/icsExport";
 import { useThemeStore } from "@/store/useThemeStore";
+import EventDesignSettings from "@/components/EventDesignSettings";
 import LanguageSwitcher from "@/i18n/LanguageSwitcher";
 
 /**
@@ -87,6 +88,8 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
               </div>
             </div>
           </Group>
+
+          <EventDesignSettings />
 
           <Group title={tx("Расписание")}>
             <div className="inset-group">

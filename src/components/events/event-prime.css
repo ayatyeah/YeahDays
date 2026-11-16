@@ -108,3 +108,79 @@
 :root .prime-event .prime-philosophy nav[aria-label] button { border:1px solid var(--ep-line); background:var(--ep-pill); color:var(--ep-ink); border-radius:99px; }
 :root .prime-event .prime-philosophy nav[aria-label] button[aria-pressed=true] { background:var(--ep-active); color:#fff; box-shadow:inset 0 1px 1px #fff6,0 3px 7px #7046af30; }
 @media(max-width:760px) { :root .prime-event .prime-philosophy>section,:root .prime-event .prime-philosophy>details { padding:20px 16px; } }
+
+/* Alternate study desks share controls and reading order, not a forced layout. */
+.prime-event[data-event-design=ocean] {
+  --ep-ink:#123840; --ep-muted:#47686b; --ep-line:#a9d5ce; --ep-paper:#f8fffd; --ep-wash:#e0f2ed;
+  --ep-pearl:linear-gradient(145deg,#ffffff,#effbf7 75%,#def4ee);
+  --ep-pill:linear-gradient(180deg,#ffffff,#e0f3ed); --ep-active:linear-gradient(155deg,#008575,#006756 85%);
+  --ep-shadow:inset 0 2px 1px #fff,0 3px 2px #669d9329,0 12px 26px #285f5520;
+  --ep-selection:#c6e9df; --ep-accent:#006756; --g-accent-text:#006756; --g-accent-soft:#d4eee5; --g-inset:#e0f2ed;
+}
+.prime-event[data-event-design=sunset] {
+  --ep-ink:#542e4a; --ep-muted:#795567; --ep-line:#e6b7a4; --ep-paper:#fff9f1; --ep-wash:#fbe7da;
+  --ep-pearl:linear-gradient(135deg,#fffdf6,#fff3e7 75%,#ffe9dc);
+  --ep-pill:linear-gradient(180deg,#fffaf2,#ffe4d2); --ep-active:linear-gradient(155deg,#923f65,#682744 85%);
+  --ep-shadow:inset 0 2px 1px #fff9ed,0 3px 2px #ad6e4e29,0 12px 26px #955f4520;
+  --ep-selection:#f7cdbb; --ep-accent:#803050; --g-accent-text:#803050; --g-accent-soft:#fbe1d3; --g-inset:#fbe7da;
+}
+:root .p-shell:has(.prime-event[data-event-design=ocean]) { background:radial-gradient(ellipse at 12% 0,#a7e5d66b,transparent 60%),#eaf7f3; }
+:root .p-shell:has(.prime-event[data-event-design=sunset]) { background:radial-gradient(ellipse at 95% 0,#f6b99c88,transparent 60%),#f9e7da; }
+:root .p-shell:has(.prime-event[data-event-design=ocean]) .f-navigation { background:linear-gradient(150deg,#fafffd,#d7eee7); border-color:#a9d5ce; box-shadow:0 8px 24px #285f551c; }
+:root .p-shell:has(.prime-event[data-event-design=sunset]) .f-navigation { background:linear-gradient(150deg,#fffaf2,#ffe4d2); border-color:#e6b7a4; box-shadow:0 8px 24px #955f451c; }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .g-language-options { background:var(--ep-wash); }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .g-language-options button[aria-pressed=true] { background:var(--ep-selection)!important; color:var(--ep-ink)!important; }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .prime-topic-outline a[aria-current=true],
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .prime-mode-tabs button[aria-pressed=true] { background:var(--ep-selection); color:var(--ep-ink); box-shadow:inset 0 1px 0 #fff6,0 3px 7px #00000012; }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) :is(.prime-tutor-rail,.prime-tutor-gem) { background:var(--ep-pearl); }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .prime-tutor-gem { color:var(--ep-accent); box-shadow:var(--ep-shadow); }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .prime-tutor-gem svg { filter:none; }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) :is(.prime-check-yourself,.prime-recall-actions button,.g-tutor-launch),
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) nav[aria-label] :is(a,button) { border-color:var(--ep-line); }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) nav a[aria-current=page],
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) nav[aria-label="Event sections"] button[aria-pressed=true] { box-shadow:inset 0 2px 2px #fff5,0 4px 8px #0002; }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) :is(button,a,input,textarea,select):focus-visible { outline-color:var(--ep-accent); }
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .prime-topic-position meter,
+:root .prime-event:is([data-event-design=ocean],[data-event-design=sunset]) .prime-topic-position meter::-webkit-meter-bar { background:var(--ep-selection); }
+/* Ocean: generous studio canvas, ink navigation and a low coaching desk. */
+:root .prime-event[data-event-design=ocean] .prime-topic-outline { background:#153d43; color:#f0fffa; border-color:#31585c; box-shadow:0 10px 26px #12384024; }
+:root .prime-event[data-event-design=ocean] .prime-topic-outline a { color:#d3eee5; }
+:root .prime-event[data-event-design=ocean] .prime-topic-outline details+details { border-color:#496d70; }
+:root .prime-event[data-event-design=ocean] .g-note-paper { border-radius:36px; }
+@media(min-width:1000px) {
+  :root .prime-event[data-event-design=ocean] .g-notes-layout.prime-has-rail { grid-template-columns:200px minmax(0,1fr); }
+  :root .prime-event[data-event-design=ocean] .prime-tutor-rail { grid-column:2; display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; padding:22px; }
+  :root .prime-event[data-event-design=ocean] .prime-tutor-rail h2 { margin:0; }
+  :root .prime-event[data-event-design=ocean] .prime-tutor-rail .prime-tutor-gem { display:none; }
+  :root .prime-event[data-event-design=ocean] .prime-tutor-rail p { margin:0; }
+  :root .prime-event[data-event-design=ocean] .prime-tutor-rail button { margin:0; }
+  :root .prime-event[data-event-design=ocean] .prime-tutor-rail .prime-tutor-question { min-height:52px; }
+}
+/* Sunset: soft notebook pages, attached tabs and a coral margin bookmark. */
+:root .prime-event[data-event-design=sunset] .g-note-paper { border-radius:12px 32px 32px 12px; border-inline-start:5px solid #dc886c; }
+:root .prime-event[data-event-design=sunset] .prime-recall { border-inline-start:3px solid #dc886c; background:var(--ep-wash); }
+:root .prime-event[data-event-design=sunset] :is(.prime-mode-tabs,.prime-topic-outline) { border-radius:20px; }
+:root .prime-event[data-event-design=sunset] nav:is([aria-label="Preparation sections"],[aria-label="Разделы подготовки"],[aria-label="Event sections"]) { border-radius:24px 24px 12px 12px; }
+:root .prime-event[data-event-design=sunset] nav:is([aria-label="Preparation sections"],[aria-label="Разделы подготовки"],[aria-label="Event sections"]) :is(a,button) { border-radius:20px 20px 10px 10px; }
+:root[data-theme=dark] .prime-event[data-event-design=ocean] {
+  --ep-ink:#e7f8f2; --ep-muted:#b1d1c8; --ep-line:#3e6863; --ep-paper:#142e30; --ep-wash:#1a3b3b;
+  --ep-pearl:linear-gradient(145deg,#203d3f,#142e30); --ep-pill:linear-gradient(180deg,#294c4b,#1b3839);
+  --ep-selection:#285b50; --ep-accent:#8be0c6; --g-accent-text:#8be0c6; --g-accent-soft:#285b50; --g-inset:#1a3b3b;
+}
+:root[data-theme=dark] .prime-event[data-event-design=sunset] {
+  --ep-ink:#fff1e6; --ep-muted:#dcc0b6; --ep-line:#73514e; --ep-paper:#35272c; --ep-wash:#493137;
+  --ep-pearl:linear-gradient(145deg,#463037,#35272c); --ep-pill:linear-gradient(180deg,#573b43,#3c2b32);
+  --ep-selection:#6b414a; --ep-accent:#ffc1a6; --g-accent-text:#ffc1a6; --g-accent-soft:#6b414a; --g-inset:#493137;
+}
+:root[data-theme=dark] .p-shell:has(.prime-event[data-event-design=ocean]) { background:radial-gradient(ellipse at 12% 0,#244e4544,transparent 60%),#102526; }
+:root[data-theme=dark] .p-shell:has(.prime-event[data-event-design=sunset]) { background:radial-gradient(ellipse at 95% 0,#71463c44,transparent 60%),#281c22; }
+:root[data-theme=dark] .p-shell:has(.prime-event[data-event-design=ocean]) :is(.f-navigation,.g-tutor-window) { background:#193436; border-color:#3e6863; }
+:root[data-theme=dark] .p-shell:has(.prime-event[data-event-design=sunset]) :is(.f-navigation,.g-tutor-window) { background:#3c2b32; border-color:#73514e; }
+@media(max-width:760px) {
+  :root .prime-event[data-event-design=ocean] .g-note-paper { border-radius:26px; }
+  :root .prime-event[data-event-design=sunset] .g-note-paper { border-radius:12px 24px 24px 12px; border-inline-start-width:3px; }
+}
+/* Clean reading remains distraction-free in every design. */
+:root .p-shell[data-clean-mode=true]:has(.prime-event[data-event-design]) { background:var(--g-bg); }
+:root .p-shell[data-clean-mode=true] .prime-event[data-event-design] .g-note-paper { border:0; background:transparent; box-shadow:none; }
+:root .p-shell[data-clean-mode=true] .prime-event[data-event-design] .prime-tutor-rail { display:none; }

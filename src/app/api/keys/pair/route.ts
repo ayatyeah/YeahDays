@@ -12,6 +12,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { boundedJson, RequestBodyError } from "@/lib/requestSecurity";
 import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { resolveAnonymousUserId } from "@/lib/anonymousUser";
@@ -32,9 +33,9 @@ async function resolveUserId(fallback?: unknown): Promise<string> {
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
-  } catch {
-    body = {};
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
 
   const userId = await resolveUserId(body.userId);

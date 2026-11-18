@@ -242,11 +242,14 @@ export async function runDispatch(now: Date = new Date()) {
   let expired = 0;
   const scheduled = await scheduleProactive(now);
 
+  // A transient failure is retried on a later tick, not repeatedly in this batch.
+  const attempted: string[] = [];
   for (let processed = 0; processed < BATCH; processed += 25) {
     const due = await prisma.scheduledNotification.findMany({
       where: {
         user: ordinaryUsers,
         sentAt: null,
+        ...(attempted.length ? { id: { notIn: attempted } } : {}),
         fireAt: { lte: now, gte: new Date(now.getTime() - GRACE_MS) },
       },
       orderBy: { fireAt: "asc" },
@@ -262,6 +265,7 @@ export async function runDispatch(now: Date = new Date()) {
     });
 
     for (const item of due) {
+      attempted.push(item.id);
       const subs = item.user?.pushSubs ?? [];
       if (subs.length === 0) {
         // подписок нет — строка мертва, держать её незачем
@@ -294,6 +298,7 @@ export async function runDispatch(now: Date = new Date()) {
       }
 
       let delivered = false;
+      let retryableFailure = false;
 
       for (const sub of subs) {
         // тихие часы считаем по времени КОНКРЕТНОГО устройства: телефон и
@@ -327,10 +332,18 @@ export async function runDispatch(now: Date = new Date()) {
           expired++;
           continue;
         }
-        if (res === "failed") failed++;
+        if (res === "failed") { failed++; retryableFailure = true; }
         if (res === "sent") delivered = true;
       }
 
+      // Do not replay successful deliveries to other devices. With the current
+      // account-level queue we can retry safely only if no device accepted it.
+      if (!delivered && retryableFailure) {
+        await prisma.scheduledNotification.updateMany({
+          where: { id: item.id, sentAt: now },
+          data: { sentAt: null },
+        });
+      }
       if (delivered) sent++;
       else skipped++;
     }

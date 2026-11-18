@@ -48,8 +48,10 @@ function prefsOf(data: unknown) {
 
 
 /** Контекст дня из серверного снимка прогресса. */
-function dayContext(data: unknown, today: string): DayContext {
+function dayContext(data: unknown, today: string): DayContext & { dailyGoal: number } {
   const snap = (data ?? {}) as SnapshotShape;
+  const dailyGoal = typeof snap.dailyGoal === "number" && Number.isFinite(snap.dailyGoal)
+    ? Math.min(10, Math.max(1, Math.round(snap.dailyGoal))) : 2;
   const plan = Array.isArray(snap.plan) ? snap.plan : [];
   const todays = plan.filter((t) => t?.date === today);
   const doneToday = todays.filter((t) => t?.completed).length;
@@ -79,7 +81,7 @@ function dayContext(data: unknown, today: string): DayContext {
   const goal = nextGoal({
     totalXp,
     takenToday: todays.length,
-    dailyGoal: snap.dailyGoal ?? 2,
+    dailyGoal,
     streak,
     toGreenDay: null,
   });
@@ -88,7 +90,7 @@ function dayContext(data: unknown, today: string): DayContext {
       ? goal.short
       : null;
 
-  return { doneToday, plannedToday: todays.length, streak, goalShort };
+  return { doneToday, plannedToday: todays.length, streak, goalShort, dailyGoal };
 }
 
 export async function runDigest(now: Date = new Date()) {
@@ -144,7 +146,7 @@ export async function runDigest(now: Date = new Date()) {
       const ctx = dayContext(sub.user?.state?.data, today);
 
       // вечером не дёргаем тех, кто уже закрыл норму дня
-      if (kind === "evening" && ctx.doneToday >= 3) {
+      if (kind === "evening" && ctx.doneToday >= ctx.dailyGoal) {
         skipped++;
         continue;
       }
@@ -176,7 +178,14 @@ export async function runDigest(now: Date = new Date()) {
         expired++;
         continue;
       }
-      if (res === "failed") failed++;
+      if (res === "failed") {
+        failed++;
+        // Release only our own claim so the next tick can retry this device.
+        await prisma.pushSubscription.updateMany({
+          where: { id: sub.id, lastSentAt: now, lastKind: kind },
+          data: { lastSentAt: sub.lastSentAt, lastKind: sub.lastKind },
+        });
+      }
       if (res === "sent") sent++;
       else skipped++;
     }

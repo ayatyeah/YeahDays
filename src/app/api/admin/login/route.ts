@@ -13,6 +13,7 @@
 import { NextResponse } from "next/server";
 import { ADMIN_COOKIE, credentialsValid, issueToken } from "@/lib/adminSession";
 import { clientIp, failureLimit } from "@/lib/rateLimit";
+import { boundedJson, RequestBodyError } from "@/lib/requestSecurity";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,9 +21,9 @@ export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
-  } catch {
-    body = {};
+    body = await boundedJson(req, 6000);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
   const username = String(body.username ?? "").slice(0, 64);
   const password = String(body.password ?? "").slice(0, 200);

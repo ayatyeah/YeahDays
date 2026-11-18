@@ -20,6 +20,7 @@ import { prisma } from "@/lib/db";
 import { auth } from "@/auth";
 import { blockedIds } from "@/lib/communityDb";
 import { rateLimit } from "@/lib/rateLimit";
+import { boundedJson, RequestBodyError } from "@/lib/requestSecurity";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -88,9 +89,9 @@ export async function PUT(req: Request) {
 
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
 
   const num = (v: unknown, max: number) => {
@@ -119,9 +120,9 @@ export async function POST(req: Request) {
 
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
-  } catch {
-    body = {};
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
   const invite = String(body.invite ?? "").trim().toUpperCase().slice(0, 16);
   if (invite) return acceptInvite(userId, invite);
@@ -130,25 +131,28 @@ export async function POST(req: Request) {
   if (!code) return NextResponse.json({ error: "Нужен код" }, { status: 400 });
 
   try {
-    const row = await prisma.pairingCode.findUnique({ where: { code } });
-    if (!row || row.consumedAt || row.expiresAt.getTime() < Date.now()) {
-      return NextResponse.json({ error: "Код не найден или истёк" }, { status: 404 });
-    }
-    if (row.userId === userId) {
-      return NextResponse.json({ error: "Это твой собственный код" }, { status: 400 });
-    }
-
-    if ((await blockedIds(userId)).includes(row.userId)) return NextResponse.json({ error: "Приглашение недоступно" }, { status: 403 });
-    await prisma.$transaction([
-      befriend(userId, row.userId),
-      prisma.pairingCode.update({
-        where: { code },
+    const blocked = await blockedIds(userId);
+    const result = await prisma.$transaction(async (tx) => {
+      const row = await tx.pairingCode.findUnique({ where: { code } });
+      if (!row || row.consumedAt || row.apiKeyId || row.expiresAt.getTime() <= Date.now()) {
+        return { status: 404, error: "Код не найден или истёк" };
+      }
+      if (row.userId === userId) return { status: 400, error: "Это твой собственный код" };
+      if (blocked.includes(row.userId)) return { status: 403, error: "Приглашение недоступно" };
+      const claimed = await tx.pairingCode.updateMany({
+        where: { code, consumedAt: null, apiKeyId: null, expiresAt: { gt: new Date() } },
         data: { consumedAt: new Date() },
-      }),
-    ]);
+      });
+      if (claimed.count !== 1) return { status: 404, error: "Код не найден или истёк" };
+      await tx.friendship.createMany({
+        data: [{ userId, friendId: row.userId }, { userId: row.userId, friendId: userId }], skipDuplicates: true,
+      });
+      return { status: 200, friendId: row.userId };
+    });
+    if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.status });
 
     await ensureStats(userId);
-    const stats = await prisma.publicStats.findUnique({ where: { userId: row.userId } });
+    const stats = await prisma.publicStats.findUnique({ where: { userId: result.friendId } });
     return NextResponse.json({ ok: true, name: stats?.name || "Без имени" });
   } catch (e) {
     console.error("social POST failed:", e);
@@ -223,9 +227,9 @@ export async function DELETE(req: Request) {
 
   let body: Record<string, unknown>;
   try {
-    body = await req.json();
-  } catch {
-    body = {};
+    body = await boundedJson(req);
+  } catch (error) {
+    return NextResponse.json({ error: "Invalid request" }, { status: error instanceof RequestBodyError ? error.status : 400 });
   }
   const friendId = String(body.friendId ?? "").slice(0, 64);
   if (!friendId) return NextResponse.json({ error: "Нужен friendId" }, { status: 400 });

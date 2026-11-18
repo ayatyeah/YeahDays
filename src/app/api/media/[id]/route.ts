@@ -2,8 +2,8 @@
  * GET /api/media/<id> — отдать фото.
  *
  * Только вошедшим: сообщество закрыто от внешнего мира, и прямая ссылка
- * на картинку не должна открываться без аккаунта. Картинка по id никогда
- * не меняется, поэтому браузер может хранить её сколько угодно.
+ * на картинку не должна открываться без аккаунта. Доступ проверяется заново:
+ * скрытие профиля и блокировки могут измениться после первого просмотра.
  */
 
 import { auth } from "@/auth";
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
   // Владельцу фото нужны для разбора жалоб, а в консоль он может входить и без обычной сессии.
   const viewer = (await auth())?.user?.id;
-  const admin = !viewer && (await requireAdmin());
+  const admin = await requireAdmin();
   if (!viewer && !admin) return new Response(null, { status: 401 });
   const { id } = await context.params;
   try {
@@ -24,8 +24,18 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
     // Скрыл себя — фото перестают отдаваться другим, как и посты; автору и владельцу сервиса они видны.
     const withheld = media && media.userId !== viewer && !admin && (media.user.banned || media.user.communityProfile?.hidden);
     if (!media || withheld) return new Response(null, { status: 404 });
+    if (viewer && media.userId !== viewer && !admin) {
+      const blocked = await prisma.communityProfile.findFirst({
+        where: { OR: [
+          { userId: viewer, blocked: { has: media.userId } },
+          { userId: media.userId, blocked: { has: viewer } },
+        ] },
+        select: { userId: true },
+      });
+      if (blocked) return new Response(null, { status: 404 });
+    }
     return new Response(Buffer.from(media.data), {
-      headers: { "Content-Type": media.mime, "Cache-Control": "private, max-age=31536000, immutable", "X-Content-Type-Options": "nosniff" },
+      headers: { "Content-Type": media.mime, "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" },
     });
   } catch {
     return new Response(null, { status: 503 });

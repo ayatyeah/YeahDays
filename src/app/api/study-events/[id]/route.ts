@@ -18,6 +18,8 @@ import { Prisma } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
 import { findEvent } from "@/lib/events";
+import { findFinalEvent } from "@/lib/events/finals";
+import awsQuestionCounts from "@/lib/events/awsCloudDeveloping/optionCounts.json";
 import { mergeProgress, readiness, sanitizeProgress, type Progress } from "@/lib/events/engine";
 import type { StudyEvent } from "@/lib/events/types";
 import { friendIds, publicNames } from "@/lib/friends";
@@ -28,10 +30,11 @@ export const dynamic = "force-dynamic";
 
 type Context = { params: Promise<{ id: string }> };
 
-async function resolve(context: Context) {
+async function resolve(context: Context, report = false): Promise<{ error: NextResponse } | { userId: string; event: StudyEvent }> {
   const userId = (await auth())?.user?.id;
   if (!userId) return { error: NextResponse.json({ error: "Войди в аккаунт" }, { status: 401 }) };
-  const event = findEvent((await context.params).id);
+  const id = (await context.params).id;
+  const event = findEvent(id) ?? (report ? findFinalEvent(id)?.event : undefined);
   if (!event) return { error: NextResponse.json({ error: "Такого ивента нет" }, { status: 404 }) };
   return { userId, event };
 }
@@ -73,14 +76,16 @@ export async function PUT(req: Request, context: Context) {
     const text = await req.text();
     if (text.length > 20_000) throw new Error("too large");
     body = JSON.parse(text);
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("invalid body");
   } catch {
     return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
   }
   try {
     const key = { userId_eventId: { userId: r.userId, eventId: r.event.id } };
     const row = await prisma.$transaction(async (tx) => {
-      // Блокировка строки: два устройства, сохраняющие одновременно, иначе
-      // слили бы каждое со старой версией и одно затёрло бы другое.
+      // A row lock alone does not protect the first save: no row exists yet.
+      // Serialize every save for this user/event before reading or creating it.
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${JSON.stringify(["event-progress", r.userId, r.event.id])}, 0))::text`;
       await tx.$queryRaw`SELECT 1 FROM "EventProgress" WHERE "userId" = ${r.userId} AND "eventId" = ${r.event.id} FOR UPDATE`;
       const stored = await tx.eventProgress.findUnique({ where: key });
       const merged: Progress = mergeProgress(sanitizeProgress(r.event, stored?.data), sanitizeProgress(r.event, body.progress));
@@ -95,17 +100,21 @@ export async function PUT(req: Request, context: Context) {
 }
 
 export async function POST(req: Request, context: Context) {
-  const r = await resolve(context);
+  const r = await resolve(context, true);
   if ("error" in r) return r.error;
   if (!rateLimit(`event-report:${r.userId}`, 10, 3_600_000)) return NextResponse.json({ error: "Слишком много сообщений за час" }, { status: 429 });
   let body: { questionId?: unknown; text?: unknown };
   try {
     body = JSON.parse((await req.text()).slice(0, 4000));
+    if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("invalid body");
   } catch {
     return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
   }
   const text = typeof body.text === "string" ? body.text.trim() : "";
-  const known = r.event.lectures.some((l) => l.parts.some((p) => p.questions.some((q) => q.id === body.questionId)));
+  const known = typeof body.questionId === "string" && (
+    r.event.lectures.some((l) => l.parts.some((p) => p.questions.some((q) => q.id === body.questionId))) ||
+    (r.event.id === "cloud-computing-final" && Object.hasOwn(awsQuestionCounts, body.questionId))
+  );
   if (!known) return NextResponse.json({ error: "Такого вопроса нет" }, { status: 400 });
   if (text.length < 5 || text.length > 500) return NextResponse.json({ error: "Опиши ошибку: от 5 до 500 символов" }, { status: 400 });
   try {

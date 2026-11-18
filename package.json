@@ -31,7 +31,7 @@
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "framer-motion": "^12.42.2",
-    "next": "^16.2.10",
+    "next": "^16.4.5",
     "next-auth": "^5.0.0-beta.32",
     "prisma": "^6.2.1",
     "react": "^19.2.7",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@next/eslint-plugin-next": "^16.2.10",
+    "@next/eslint-plugin-next": "^16.4.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "26.1.1",
     "@types/react": "^19.2.17",

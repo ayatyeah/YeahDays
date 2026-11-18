@@ -61,7 +61,7 @@ export async function sendPush(
         keys: { p256dh: target.p256dh, auth: target.auth },
       },
       JSON.stringify(payload),
-      { TTL: 6 * 3600 },
+      { TTL: 6 * 3600, timeout: 10_000 },
     );
     return "sent";
   } catch (e) {

@@ -10,6 +10,7 @@ import { openTutor, useTutorDetail } from "@/lib/tutorFocus";
 import type { Lang } from "@/lib/events/types";
 import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
+import styles from "./event-quiz.module.css";
 
 export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
@@ -45,12 +46,22 @@ export default function EventQuiz({
   }
   const answered = picked !== undefined;
   useTutorDetail({ quiz: { id: item.id, question: item.q, options: item.options, pickedMany: picked, correctMany: answered ? expected : undefined, picked: picked?.[0], correct: answered ? expected[0] : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
-  const feedback = useRef<HTMLElement>(null);
+  const feedback = useRef<HTMLDivElement>(null);
+  const questionHeading = useRef<HTMLHeadingElement>(null);
+  const previousIndex = useRef(index);
 
-  // На телефоне объяснение и кнопка «Дальше» оказываются под длинными
-  // вариантами, за краем экрана — подводим их в поле зрения сами.
   useEffect(() => {
-    if (answered) feedback.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    const navigated = previousIndex.current !== index;
+    previousIndex.current = index;
+    // Back can open an already answered question: navigation still wins over
+    // feedback scrolling, so its heading is not skipped.
+    const target = navigated ? questionHeading.current : answered ? feedback.current : null;
+    if (!target) return;
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({
+      block: "start",
+      behavior: navigated || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    });
   }, [answered, index]);
 
   return (
@@ -83,7 +94,7 @@ export default function EventQuiz({
       </header>
 
       <section className={panel}>
-        <h2 data-selection-question lang="en" className="whitespace-pre-wrap break-words text-lg font-semibold leading-snug">{item.q}</h2>
+        <h2 ref={questionHeading} tabIndex={-1} data-selection-question lang="en" className={cn(styles.scrollTarget, "whitespace-pre-wrap break-words text-lg font-semibold leading-snug")}>{item.q}</h2>
         {multi && <p className="mt-3 text-sm" role="status">Choose {expected.length} answers · Selected: {(picked ?? selected).length} / {expected.length}</p>}
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => {
@@ -114,7 +125,7 @@ export default function EventQuiz({
         {multi && !answered && <Button variant="primary" className="mt-4 w-full" disabled={selected.length !== expected.length} onClick={() => submit(selected)}>Check answers</Button>}
         {answered && (
           <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
-            <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
+            <div ref={feedback} tabIndex={-1} role="status" className={cn(styles.scrollTarget, "rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm")}>
               <p className="font-semibold">{!expected.length ? "Explanation only" : matchesAnswer(picked, expected) ? "Correct" : "Not quite"}</p>
               {item.caution && <p className="mt-2">{item.caution}</p>}
               <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
@@ -142,7 +153,7 @@ export default function EventQuiz({
             </div>
           </div>
         )}
-        <nav ref={feedback} className="mt-4 flex gap-3 scroll-mb-28" aria-label="Question navigation">
+        <nav className="mt-4 flex gap-3 scroll-mb-28" aria-label="Question navigation">
           <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Back</Button>
           <Button variant="primary" className="flex-1" disabled={!answered}
             onClick={() => { if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1); }}>

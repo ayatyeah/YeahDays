@@ -5,6 +5,7 @@ import { useCopy } from "@/i18n/useCopy";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { signOut } from "@/lib/signOut";
+import { clearAccountBrowserData } from "@/lib/accountBrowserData";
 import Modal from "./ui/Modal";
 import Button from "./ui/Button";
 
@@ -51,9 +52,7 @@ export default function DataControls() {
       if (!res.ok) throw new Error();
       // локальные данные тоже стираем, иначе синхронизация вернёт их обратно
       try {
-        localStorage.removeItem("yeahdays-store");
-        localStorage.removeItem("yd-uid");
-        localStorage.removeItem("yd-event-queue");
+        if (session?.user?.id) clearAccountBrowserData(session.user.id, localStorage, sessionStorage);
       } catch {}
       await signOut({ callbackUrl: "/" });
     } catch {

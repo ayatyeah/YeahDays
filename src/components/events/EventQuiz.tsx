@@ -15,7 +15,7 @@ export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { co
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false,
 }: {
   eventId: string;
   step: Pick<Step, "title">;
@@ -23,6 +23,7 @@ export default function EventQuiz({
   lang: Lang;
   music: boolean;
   onLang?: () => void;
+  explainOptionsOpen?: boolean;
   onMusic: () => void;
   onExit: () => void;
   onFinish: (answers: number[][]) => void;
@@ -118,8 +119,8 @@ export default function EventQuiz({
               {item.caution && <p className="mt-2">{item.caution}</p>}
               <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
               {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Study notes: {item.studyLink.title} ↗</a>}
-              {item.optionExplanations && <details className="mt-4 border-t border-[var(--color-border)] pt-3">
-                <summary className="cursor-pointer font-semibold">Why each option works or does not</summary>
+              {item.optionExplanations && <details open={explainOptionsOpen || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
+                <summary className="cursor-pointer font-semibold">{explainOptionsOpen ? "Почему каждый вариант подходит или не подходит" : "Why each option works or does not"}</summary>
                 <ul className="mt-3 space-y-4">{item.options.map((option, i) => <li key={i}>
                   <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. {option}</p>
                   <p data-selection-question className="mt-1">{item.optionExplanations?.[i]}</p>

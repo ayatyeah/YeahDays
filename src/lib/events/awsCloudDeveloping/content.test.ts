@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import questions from './questions.json';
 import modules from './modules.json';
+import explanations from './explanations.ru.json';
 import counts from './optionCounts.json';
 import { parseAwsAnswers } from './progress';
 import { matchesAnswer } from '../quizAnswers';
@@ -22,6 +23,17 @@ describe('restored AWS Cloud Developing course checks', () => {
         expect(new Set(q.answers).size).toBe(q.answers.length);
         for(const answer of q.answers) expect(q.options[answer]).toBeTruthy();
         expect(q.explanation.length).toBeGreaterThan(20);
+      }
+    }
+  });
+  it('provides a Russian explanation for every original answer option', () => {
+    expect(Object.keys(explanations).sort()).toEqual(questions.map(q => q.id).sort());
+    for (const q of questions) {
+      const explanation = explanations[q.id as keyof typeof explanations];
+      expect(explanation.options).toHaveLength(q.options.length);
+      for (const text of [explanation.summary, ...explanation.options]) {
+        expect(text.length).toBeGreaterThan(35);
+        expect(text).toMatch(/[А-Яа-я]/);
       }
     }
   });

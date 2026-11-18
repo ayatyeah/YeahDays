@@ -12,6 +12,8 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import AuthProvider from "@/components/AuthProvider";
 import ThemeApplier from "@/components/ThemeApplier";
 import SessionGuard from "@/components/SessionGuard";
+import { PERFORMANCE_INIT_SCRIPT } from "@/lib/clientPerformance";
+import "@/components/final/performance.css";
 
 /**
  * Ставим data-theme ДО гидрации React — иначе у вернувшегося пользователя
@@ -163,7 +165,7 @@ export default async function RootLayout({
     <html lang="en" className={`${inter.variable} ${manrope.variable} ${reader.variable}`} suppressHydrationWarning>
       <body>
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT + PERFORMANCE_INIT_SCRIPT }} />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
 
         <ThemeApplier />

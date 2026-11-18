@@ -1,0 +1,14 @@
+html[data-performance="light"] :is(.f-navigation, .f-mobile-dock) {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background: var(--f-paper);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root :is(.f-navigation, .f-mobile-dock) {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background: var(--f-paper);
+  }
+}

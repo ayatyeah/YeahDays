@@ -14616,5 +14616,6 @@
   "Which AWS pricing characteristic states that you pay less per GB for services like Amazon S3 as your usage volume grows?": "Какая характеристика ценообразования AWS гласит, что вы платите меньше за ГБ для таких сервисов, как Amazon S3, по мере роста объема использования?",
   "Tiered pricing": "Многоуровневое ценообразование",
   "On-Demand pricing": "Оплата по требованию",
-  "Split the file into two 3.5 GB files before uploading.": "Разделить файл на два файла по 3,5 ГБ перед загрузкой."
+  "Split the file into two 3.5 GB files before uploading.": "Разделить файл на два файла по 3,5 ГБ перед загрузкой.",
+  "An AZ contains one or more discrete data centers within a single geographic Region.": "AZ содержит один или несколько отдельных дата-центров внутри одного географического региона."
 }

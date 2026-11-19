@@ -1,0 +1,6 @@
+.quiz { min-width: 0; scroll-margin-top: 120px; }
+.bank { margin-top: 24px; }
+.bank details { margin-top: 14px; padding: 14px; border: 1px solid var(--color-border); border-radius: 16px; overflow-wrap: anywhere; }
+.bank summary { cursor: pointer; min-height: 44px; padding: 8px 0; }
+.bank ol { padding-left: 24px; }
+.bank a { text-decoration: underline; }

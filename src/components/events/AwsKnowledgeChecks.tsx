@@ -6,6 +6,7 @@ import developingExplanations from '@/lib/events/awsCloudDeveloping/explanations
 import developingModules from '@/lib/events/awsCloudDeveloping/modules.json';
 import { parseAwsAnswers, type AwsAnswers } from '@/lib/events/awsCloudDeveloping/progress';
 import { matchesAnswer } from '@/lib/events/quizAnswers';
+import { topicForQuestion } from '@/lib/events/awsStudy/topics';
 import { shuffle } from '@/lib/events/engine';
 import EventQuiz from './EventQuiz';
 import styles from './aws-knowledge-checks.module.css';
@@ -72,7 +73,7 @@ function Workspace({ userId, lang, course, onCourse }: Props & { course: CourseI
     {savedNotice}
     <EventQuiz key={run} eventId="cloud-computing-final"
       step={{ title: { ru: `AWS ${bank.title} · ${queue.length} вопросов`, en: `AWS ${bank.title} · ${queue.length} questions` } }}
-      quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, correct: q.answers, why: { ru: russian[q.id].summary, en: q.explanation }, optionExplanations: russian[q.id].options, caution: q.caution, studyLink: { href: q.source, title: `AWS Academy · Module ${q.module}` } }))}
+      quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, correct: q.answers, why: { ru: russian[q.id].summary, en: q.explanation }, optionExplanations: russian[q.id].options, caution: q.caution, studyLink: { href: `/events/cloud-computing-final#aws-notes/${topicForQuestion(q).id}`, title: topicForQuestion(q).title } }))}
       lang={explanationLang} onLang={() => setExplanationLang(v => v === 'ru' ? 'en' : 'ru')} explainOptionsOpen music={music} onMusic={() => setMusic(v => !v)} onAnswer={save}
       onExit={() => setMode('intro')}
       onFinish={values => { setResult(values); setMode('result'); }}/>

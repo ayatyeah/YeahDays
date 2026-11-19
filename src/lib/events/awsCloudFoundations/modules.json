@@ -1,0 +1,82 @@
+[
+  {
+    "module": 1,
+    "moduleTitle": "Module 1: Cloud Concepts Overview",
+    "title": "Module 1 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 2,
+    "moduleTitle": "Module 2: Cloud Economics and Billing",
+    "title": "Module 2 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 3,
+    "moduleTitle": "Module 3: AWS Global Infrastructure Overview",
+    "title": "Module 3 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 4,
+    "moduleTitle": "Module 4: AWS Cloud Security",
+    "title": "Module 4 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 5,
+    "moduleTitle": "Module 5: Networking and Content Delivery",
+    "title": "Module 5 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 6,
+    "moduleTitle": "Module 6: Compute",
+    "title": "Module 6 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 7,
+    "moduleTitle": "Module 7: Storage",
+    "title": "Module 7 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 8,
+    "moduleTitle": "Module 8: Databases",
+    "title": "Module 8 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 9,
+    "moduleTitle": "Module 9: Cloud Architecture",
+    "title": "Module 9 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303",
+    "status": "extracted",
+    "questionCount": 10
+  },
+  {
+    "module": 10,
+    "moduleTitle": "Module 10: Auto Scaling and Monitoring",
+    "title": "Module 10 Knowledge Check",
+    "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391",
+    "status": "extracted",
+    "questionCount": 10
+  }
+]

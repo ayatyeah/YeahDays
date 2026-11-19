@@ -65,7 +65,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
     <nav className={styles.navigation} aria-label={ru ? 'Разделы подготовки' : 'Preparation sections'}>
       {([
         ['lectures', ru ? 'Лекции' : 'Lectures', 'book'],
-        ['practice', ru ? 'Практика' : 'Practice', 'research'],
+        ['practice', event.id === 'cloud-computing-final' ? 'AWS Knowledge Checks' : ru ? 'Практика' : 'Practice', 'research'],
         ['overview', ru ? 'Требования' : 'Exam guide', 'home'],
         ['files', ru ? 'Материалы' : 'Materials', 'plan'],
       ] as const).filter(([id]) => id !== 'practice' || event.id !== 'philosophy-final').map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon name={number} size={20}/>{title}</a>)}
@@ -79,7 +79,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       <h2 id="final-guide-title">{lang === 'en' ? 'Know what you are preparing for.' : 'Что именно нужно подготовить.'}</h2>
       <EventNotes text={notebook.guide[lang]} lang={lang}/>
       <details className="g-note-sources"><summary>{lang === 'en' ? 'Syllabus & final instructions' : 'Силлабус и требования финала'}</summary><ul>{notebook.sources.filter(source => !source.lectureId).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="arrow" size={15}/></a></li>)}</ul></details>
-      {event.id === 'cloud-computing-final' && <a className="f-button" href="#practice" onClick={() => setSection('practice')}>{ru ? 'AWS Knowledge Checks · 120 вопросов' : 'AWS Knowledge Checks · 120 questions'}<Icon name="arrow" size={17}/></a>}
+      {event.id === 'cloud-computing-final' && <a className="f-button" href="#practice" onClick={() => setSection('practice')}>{ru ? 'AWS Knowledge Checks · 220 вопросов' : 'AWS Knowledge Checks · 220 questions'}<Icon name="arrow" size={17}/></a>}
 
     </section>
     </>}

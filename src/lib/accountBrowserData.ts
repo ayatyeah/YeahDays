@@ -1,7 +1,7 @@
 /** Known account-owned browser records only. Never use localStorage.clear():
  * this origin may contain another account's offline work and device preferences. */
 const exactPrefixes = [
-  'yg-aws-one-day-v1:', 'yg-aws-developing-checks-v1:', 'yg-trainer:', 'yg-bughunt:',
+  'yg-aws-one-day-v1:', 'yg-aws-developing-checks-v1:', 'yg-aws-foundations-checks-v1:', 'yg-trainer:', 'yg-bughunt:',
   'yg-pm-quiz2:v1:', 'yg-philosophy-v1:', 'yg-sync-v2:', 'yd-linked:',
   'yg-lesson-visits:', 'yg-learning-visits:',
   'yg-event-game-binary:', 'yg-event-game-switch:',

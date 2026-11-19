@@ -19,6 +19,12 @@ beforeEach(() => {
 });
 
 describe('question reports', () => {
+  it('accepts Foundations reports only in Cloud Computing', async () => {
+    const body = { questionId: 'aws-found-m10-q10', text: 'Please check this answer.' };
+    expect((await POST(request('POST', body), context('cloud-computing-final'))).status).toBe(200);
+    expect((await POST(request('POST', body), context('computer-vision-final'))).status).toBe(400);
+    expect((await POST(request('POST', { ...body, questionId: 'aws-found-m11-q01' }), context('cloud-computing-final'))).status).toBe(400);
+  });
   it('accepts an actual AWS question attached to the final notebook', async () => {
     const body = { questionId: 'aws-dev-m02-q01', text: 'Please check this answer.' };
     const response = await POST(request('POST', body), context('cloud-computing-final'));

@@ -1,23 +1,36 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import questions from '@/lib/events/awsCloudDeveloping/questions.json';
-import explanations from '@/lib/events/awsCloudDeveloping/explanations.ru.json';
-import modules from '@/lib/events/awsCloudDeveloping/modules.json';
+import developingQuestions from '@/lib/events/awsCloudDeveloping/questions.json';
+import developingExplanations from '@/lib/events/awsCloudDeveloping/explanations.ru.json';
+import developingModules from '@/lib/events/awsCloudDeveloping/modules.json';
 import { parseAwsAnswers, type AwsAnswers } from '@/lib/events/awsCloudDeveloping/progress';
 import { matchesAnswer } from '@/lib/events/quizAnswers';
 import { shuffle } from '@/lib/events/engine';
 import EventQuiz from './EventQuiz';
 import styles from './aws-knowledge-checks.module.css';
+import foundationQuestions from '@/lib/events/awsCloudFoundations/questions.json';
+import foundationExplanations from '@/lib/events/awsCloudFoundations/explanations.ru.json';
+import foundationModules from '@/lib/events/awsCloudFoundations/modules.json';
+import foundationCounts from '@/lib/events/awsCloudFoundations/optionCounts.json';
 
-const russian: Record<string, { summary: string; options: string[] }> = explanations;
+const courses = {
+  foundations: { title: 'Cloud Foundations', id: '188512', questions: foundationQuestions, explanations: foundationExplanations, modules: foundationModules, counts: foundationCounts, storage: 'yg-aws-foundations-checks-v1', collected: '19 ноября 2026', range: '1–10' },
+  developing: { title: 'Cloud Developing', id: '193042', questions: developingQuestions, explanations: developingExplanations, modules: developingModules, counts: undefined, storage: 'yg-aws-developing-checks-v1', collected: '13 ноября 2026', range: '2–13' },
+};
+type CourseId = keyof typeof courses;
+
 type Props = { userId: string; lang: 'en' | 'ru' };
 export default function AwsKnowledgeChecks(props: Props) {
-  return <Workspace key={props.userId} {...props}/>;
+  const [course, setCourse] = useState<CourseId>('foundations');
+  return <Workspace key={`${props.userId}:${course}`} {...props} course={course} onCourse={setCourse}/>;
 }
-function Workspace({ userId, lang }: Props) {
+function Workspace({ userId, lang, course, onCourse }: Props & { course: CourseId; onCourse: (course: CourseId) => void }) {
+  const bank = courses[course];
+  const { questions, modules } = bank;
+  const russian: Record<string, { summary: string; options: string[] }> = bank.explanations;
   const ru = lang === 'ru';
-  const storageKey = `yg-aws-developing-checks-v1:${userId}`;
+  const storageKey = `${bank.storage}:${userId}`;
   const [answers, setAnswers] = useState<AwsAnswers>({});
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState(false);
@@ -31,10 +44,10 @@ function Workspace({ userId, lang }: Props) {
   const [explanationLang, setExplanationLang] = useState<'ru' | 'en'>('ru');
   const [practice, setPractice] = useState<'all' | 'random' | 'errors'>('all');
   useEffect(() => {
-    try { setAnswers(parseAwsAnswers(localStorage.getItem(storageKey))); }
+    try { setAnswers(parseAwsAnswers(localStorage.getItem(storageKey), bank.counts)); }
     catch { setStorageError(true); }
     setReady(true);
-  }, [storageKey]);
+  }, [storageKey, bank.counts]);
   function save(id: string, value: number[]) {
     const next = { ...answers, [id]: value };
     setAnswers(next);
@@ -51,14 +64,14 @@ function Workspace({ userId, lang }: Props) {
     setMenuOpen(false); setQueue(items); setResult([]); setRun(n => n + 1); setMode('quiz');
   }
   const savedNotice = storageError ? <p role="alert">{ru ? 'Не удалось сохранить ответы в браузере. Можно продолжать, но после закрытия прогресс может потеряться.' : 'Answers could not be saved in this browser. You can continue, but progress may be lost when you leave.'}</p> : null;
-  const heading = module ? modules.find(m => m.module === module)!.moduleTitle : practice === 'random' ? 'Случайные 30' : practice === 'errors' ? 'Работа над ошибками' : 'Все модули · 120 вопросов';
+  const heading = module ? modules.find(m => m.module === module)!.moduleTitle : practice === 'random' ? 'Случайные 30' : practice === 'errors' ? 'Работа над ошибками' : `Все модули · ${questions.length} вопросов`;
   function navigate(nextModule: number, nextPractice: typeof practice = 'all') {
     setModule(nextModule); setPractice(nextPractice); setMode('intro'); setMenuOpen(false);
   }
   const content = mode === 'quiz' ? <section className={styles.quiz} aria-label="AWS Knowledge Check" data-no-i18n>
     {savedNotice}
     <EventQuiz key={run} eventId="cloud-computing-final"
-      step={{ title: { ru: `AWS Cloud Developing · ${queue.length} вопросов`, en: `AWS Cloud Developing · ${queue.length} questions` } }}
+      step={{ title: { ru: `AWS ${bank.title} · ${queue.length} вопросов`, en: `AWS ${bank.title} · ${queue.length} questions` } }}
       quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, correct: q.answers, why: { ru: russian[q.id].summary, en: q.explanation }, optionExplanations: russian[q.id].options, caution: q.caution, studyLink: { href: q.source, title: `AWS Academy · Module ${q.module}` } }))}
       lang={explanationLang} onLang={() => setExplanationLang(v => v === 'ru' ? 'en' : 'ru')} explainOptionsOpen music={music} onMusic={() => setMusic(v => !v)} onAnswer={save}
       onExit={() => setMode('intro')}
@@ -72,10 +85,11 @@ function Workspace({ userId, lang }: Props) {
       <button className="f-button f-button-outline" onClick={() => setMode('intro')}>{ru ? 'К модулям' : 'Back to modules'}</button></div>
     {mistakes.map(q => <article className={styles.review} key={q.id} lang="en"><h3>{q.prompt}</h3><p><strong>Correct:</strong> {q.answers.map(i => q.options[i]).join('; ')}</p><p lang="ru">{russian[q.id].summary}</p><details><summary>Разбор всех вариантов</summary>{q.options.map((option, i) => <div key={i}><p>{q.answers.includes(i) ? '✓' : '✗'} {option}</p><p lang="ru">{russian[q.id].options[i]}</p></div>)}</details>{q.caution && <p>{q.caution}</p>}</article>)}
   </section> : <section className="g-note-paper" data-testid="aws-knowledge-checks" data-no-i18n>
-    <p className="f-section-kicker">AWS Academy · Cloud Developing</p>
+    <p className="f-section-kicker">AWS Academy · {bank.title}</p>
     <h2>{heading}</h2>
+    <a className={styles.source} href={`https://awsacademy.instructure.com/courses/${bank.id}/modules`} target="_blank" rel="noreferrer">Открыть исходный курс · {bank.id} ↗</a>
     <p>Оригинальные английские вопросы и варианты AWS Academy. После ответа — русский разбор принципа и каждого варианта; оригинальное объяснение AWS доступно по кнопке переключения языка.</p>
-    <p className="f-fine">Модули 2–13, по 10 вопросов · выгрузка от 13 ноября 2026. Это проверки курса, а не подтверждённый список будущего экзамена. Русские разборы подготовлены для обучения; спорные формулировки курса отмечены отдельно.</p>
+    <p className="f-fine">Модули {bank.range}, по 10 вопросов · выгрузка от {bank.collected}. Это проверки курса, а не подтверждённый список будущего экзамена. Русские разборы подготовлены для обучения; спорные и исторические формулировки поясняются отдельно. Текст вопросов, порядок и текст вариантов сохранены как в курсе.</p>
     <p aria-live="polite">{ru ? 'Отвечено' : 'Answered'}: {selected.length - unseen.length} / {selected.length} · {ru ? 'Верно' : 'Correct'}: {selected.filter(q => matchesAnswer(answers[q.id], q.answers)).length}</p>
     {savedNotice}
     <div className={styles.actions}>
@@ -90,11 +104,13 @@ function Workspace({ userId, lang }: Props) {
   </section>;
   return <div className={styles.layout} data-no-i18n>
     <aside className={styles.sidebar}>
-      <button className={styles.mobileToggle} aria-expanded={menuOpen} aria-controls="aws-course-navigation" onClick={() => setMenuOpen(v => !v)}>Разделы курса <span>{menuOpen ? '−' : '+'}</span></button>
+      <button className={styles.mobileToggle} aria-expanded={menuOpen} aria-controls="aws-course-navigation" onClick={() => setMenuOpen(v => !v)}>{bank.title} · разделы <span>{menuOpen ? '−' : '+'}</span></button>
       <nav id="aws-course-navigation" aria-label="AWS: практика и модули" className={`${styles.navigation} ${menuOpen ? styles.open : ''}`}>
-        <p className={styles.navHeading}>Практика</p>
-        {([{id:'all', title:'Все вопросы', count:120}, {id:'random', title:'Случайные 30', count:30}, {id:'errors', title:'Мои ошибки', count:questions.filter(q => answers[q.id] && !matchesAnswer(answers[q.id], q.answers)).length}] as const).map(item => <button key={item.id} aria-current={!module && practice === item.id ? 'page' : undefined} onClick={() => navigate(0, item.id)}><span>{item.title}</span><small>{item.count}</small></button>)}
-        <p className={styles.navHeading}>Модули курса</p>
+        <p className={styles.navHeading}>Два курса · 220 вопросов</p>
+        {(Object.entries(courses) as [CourseId, typeof courses[CourseId]][]).map(([id, item]) => <button key={id} aria-pressed={course === id} className={styles.courseButton} onClick={() => onCourse(id)}><span>{item.title}<small>{item.modules.length} Knowledge Checks · {item.id}</small></span><strong>{item.questions.length}</strong></button>)}
+        <p className={styles.navHeading}>Практика · {bank.title}</p>
+        {([{id:'all', title:'Все вопросы', count:questions.length}, {id:'random', title:'Случайные 30', count:30}, {id:'errors', title:'Мои ошибки', count:questions.filter(q => answers[q.id] && !matchesAnswer(answers[q.id], q.answers)).length}] as const).map(item => <button key={item.id} aria-current={!module && practice === item.id ? 'page' : undefined} onClick={() => navigate(0, item.id)}><span>{item.title}</span><small>{item.count}</small></button>)}
+        <p className={styles.navHeading}>{bank.title} · модули</p>
         {modules.map(m => { const bank=questions.filter(q => q.module===m.module); const correct=bank.filter(q => matchesAnswer(answers[q.id], q.answers)).length; return <button key={m.module} aria-current={module===m.module ? 'page' : undefined} onClick={() => navigate(m.module)}><span>{m.moduleTitle}<small>{correct} / 10 верно</small></span></button>; })}
       </nav>
     </aside>

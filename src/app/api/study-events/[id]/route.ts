@@ -20,6 +20,7 @@ import { prisma } from "@/lib/db";
 import { findEvent } from "@/lib/events";
 import { findFinalEvent } from "@/lib/events/finals";
 import awsQuestionCounts from "@/lib/events/awsCloudDeveloping/optionCounts.json";
+import foundationQuestionCounts from "@/lib/events/awsCloudFoundations/optionCounts.json";
 import { mergeProgress, readiness, sanitizeProgress, type Progress } from "@/lib/events/engine";
 import type { StudyEvent } from "@/lib/events/types";
 import { friendIds, publicNames } from "@/lib/friends";
@@ -113,7 +114,7 @@ export async function POST(req: Request, context: Context) {
   const text = typeof body.text === "string" ? body.text.trim() : "";
   const known = typeof body.questionId === "string" && (
     r.event.lectures.some((l) => l.parts.some((p) => p.questions.some((q) => q.id === body.questionId))) ||
-    (r.event.id === "cloud-computing-final" && Object.hasOwn(awsQuestionCounts, body.questionId))
+    (r.event.id === "cloud-computing-final" && (Object.hasOwn(awsQuestionCounts, body.questionId) || Object.hasOwn(foundationQuestionCounts, body.questionId)))
   );
   if (!known) return NextResponse.json({ error: "Такого вопроса нет" }, { status: 400 });
   if (text.length < 5 || text.length > 500) return NextResponse.json({ error: "Опиши ошибку: от 5 до 500 символов" }, { status: 400 });

@@ -1,0 +1,1817 @@
+[
+  {
+    "id": "aws-found-m01-q01",
+    "module": 1,
+    "number": 1,
+    "prompt": "What are the advantages of cloud computing over computing on-premises? (Select the best answer.)",
+    "options": [
+      "Avoid large capital purchases",
+      "Use on-demand capacity",
+      "Go global in minutes",
+      "Increase speed and agility",
+      "All of the above"
+    ],
+    "answers": [
+      4
+    ],
+    "explanation": "With cloud computing, all of these are possible.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q02",
+    "module": 1,
+    "number": 2,
+    "prompt": "What is the pricing model that enables AWS customers to pay for resources on an as-needed basis? (Select the best answer.)",
+    "options": [
+      "Pay as you decommission",
+      "Pay as you go",
+      "Pay as you buy",
+      "Pay as you reserve"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "With AWS, you pay for resources as you go.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q03",
+    "module": 1,
+    "number": 3,
+    "prompt": "Which of these is NOT a cloud computing model? (Select the best answer.)",
+    "options": [
+      "Platform as a service",
+      "Infrastructure as a service",
+      "System administration as a service",
+      "Software as a service"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "System administration as a service is not a cloud computing model.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q04",
+    "module": 1,
+    "number": 4,
+    "prompt": "True or False? AWS owns and maintains the network-connected hardware required for application services, while you provision and use what you need.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "It’s true that AWS owns and maintains the hardware, while you provision and use what you need.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q05",
+    "module": 1,
+    "number": 5,
+    "prompt": "Which of these is NOT a benefit of cloud computing over on-premises computing? (Select the best answer.)",
+    "options": [
+      "Increase speed and agility",
+      "Pay for racking, stacking, and powering servers",
+      "Eliminate guessing on your infrastructure capacity needs",
+      "Trade capital expense for variable expense",
+      "Benefit from massive economies of scale"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Paying for racking, stacking and powering servers is not a benefit of cloud computing over on-premises computing.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q06",
+    "module": 1,
+    "number": 6,
+    "prompt": "Which of the following are NOT benefits of AWS Cloud computing? (Choose two.)",
+    "options": [
+      "Multiple procurement cycles",
+      "High availability",
+      "High latency",
+      "Temporary and disposable resources",
+      "Fault-tolerant databases"
+    ],
+    "answers": [
+      0,
+      2
+    ],
+    "explanation": "High-latency and multiple procurement cycles are not benefits of AWS Cloud computing.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q07",
+    "module": 1,
+    "number": 7,
+    "prompt": "Which of the following is a compute service? (Select the best answer)",
+    "options": [
+      "Amazon VPC",
+      "Amazon S3",
+      "Amazon EC2",
+      "Amazon CloudFront",
+      "Amazon Redshift"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Amazon EC2 is a compute service.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q08",
+    "module": 1,
+    "number": 8,
+    "prompt": "True or False? Cloud computing provides a simple way to access servers, storage, databases, and a broad set of application services over the internet. You own the network-connected hardware required for these services and Amazon Web Services provisions what you need.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "One of the key benefits of cloud computing is the opportunity to replace upfront capital infrastructure expenses with low variable costs that scale with your business.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q09",
+    "module": 1,
+    "number": 9,
+    "prompt": "Economies of scale result from ______. (Select the best answer.)",
+    "options": [
+      "having many different cloud providers",
+      "having hundreds of thousands of customers aggregated in the cloud",
+      "having hundreds of cloud services available over the internet",
+      "having to invest heavily in data centers and servers"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Economies of scale results from having hundreds of thousands of customers aggregated in the cloud.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m01-q10",
+    "module": 1,
+    "number": 10,
+    "prompt": "Which of these are ways to access AWS core services? (Choose three.)",
+    "options": [
+      "Technical support calls",
+      "AWS Marketplace",
+      "AWS Management Console",
+      "AWS Command Line Interface (AWS CLI)",
+      "Software Development Kits (SDKs)"
+    ],
+    "answers": [
+      2,
+      3,
+      4
+    ],
+    "explanation": "The three ways to access AWS core services is with the AWS Management Console, the AWS Command Line Interface and Software Development Kits.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+  },
+  {
+    "id": "aws-found-m02-q01",
+    "module": 2,
+    "number": 1,
+    "prompt": "For certain services like Amazon Elastic Compute Cloud (Amazon EC2) and Amazon Relational Database Service (Amazon RDS), you can invest in reserved capacity. What options are available for Reserved Instances? (Choose three.)",
+    "options": [
+      "AURI",
+      "MURI",
+      "NURI",
+      "PURI",
+      "DURI"
+    ],
+    "answers": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Reserved Instances are available in AURI, NURI, and PURI.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q02",
+    "module": 2,
+    "number": 2,
+    "prompt": "Where can a customer go to get more details about Amazon Elastic Compute Cloud (Amazon EC2) billing activity that took place 3 months ago? (Select the best answer.)",
+    "options": [
+      "Amazon EC2 dashboard",
+      "AWS Cost Explorer",
+      "AWS Trusted Advisor dashboard",
+      "AWS CloudTrail logs stored in Amazon Simple Storage Service (Amazon S3)"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "AWS Cost Explorer can give you more details about Amazon EC2 billing activity for the past 3 months.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q03",
+    "module": 2,
+    "number": 3,
+    "prompt": "True or false? To receive the discounted rate associated with Reserved Instances, you must make a full, upfront payment for the term of the agreement. (Select the best answer.)",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "To receive the discounted rate associated with Reserved Instances, you do not need to make a full, upfront payment.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q04",
+    "module": 2,
+    "number": 4,
+    "prompt": "Which statement is true about the pricing model on AWS? (Select the best answer.)",
+    "options": [
+      "In most cases, there is a per gigabyte charge for inbound data transfer.",
+      "Storage is typically charged per gigabyte.",
+      "Compute is typically charged as a monthly fee based on instance type.",
+      "Outbound charges are free up to a per account limit."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Storage is typically charged based on how many gigabytes you use. For services that use tiered pricing, the per gigabyte cost is less when you use more.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q05",
+    "module": 2,
+    "number": 5,
+    "prompt": "What are the four support plans offered by AWS Support? (Select the best answer.)",
+    "options": [
+      "Basic, Developer, Business, Enterprise",
+      "Basic, Startup, Business, Enterprise",
+      "Free, Bronze, Silver, Gold",
+      "All support is free"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The four support plans offered by AWS Support are Basic, Developer, Business, and Enterprise.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q06",
+    "module": 2,
+    "number": 6,
+    "prompt": "What AWS tool lets you explore AWS services and create an estimate for the cost of your use cases on AWS? (Select the best answer.)",
+    "options": [
+      "AWS Pricing Calculator",
+      "AWS Budgets",
+      "AWS Cost and Usage Report",
+      "AWS Billing Dashboard"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The AWS Pricing Calculator lets you model your solutions before building them, explore the price points and calculations behind your estimate, and find the available instance types and contract terms that meet your needs.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q07",
+    "module": 2,
+    "number": 7,
+    "prompt": "As AWS grows, the cost of doing business is reduced and savings are passed back to the customer with lower pricing. What is this optimization called? (Select the best answer.)",
+    "options": [
+      "Expenditure awareness",
+      "Economies of scale",
+      "Matching supply and demand",
+      "EC2 Right Sizing"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "As AWS grows, the general cost of doing business is reduced and savings are passed back to the customer due to economies of scale.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q08",
+    "module": 2,
+    "number": 8,
+    "prompt": "True or false? AWS offers some services at no charge, such as, Amazon Virtual Private Cloud, AWS Identity and Access Management, Consolidated Billing, AWS Elastic Beanstalk, automatic scaling, AWS OpsWorks and AWS CloudFormation. However, you might be charged for other AWS services that you use in conjunction with these services.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "AWS offers these services at no charge, though you might be charged for other AWS services that you use in conjunction with these services.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q09",
+    "module": 2,
+    "number": 9,
+    "prompt": "What are benefits of using AWS Organizations? (Choose two.)",
+    "options": [
+      "Replaces existing AWS Identity and Access Management (IAM) policies with service control policies (SCPs), which are simpler to manage",
+      "Provides the ability to create groups of accounts and then attach policies to a group",
+      "Provides the ability to create an unlimited number of nested organizational units (OUs) to support your desired structure",
+      "Simplifies automating account creation and management by using APIs",
+      "Prevents any restrictions from being put on the root user that is associated with the main organization in an account"
+    ],
+    "answers": [
+      1,
+      3
+    ],
+    "explanation": "With AWS Organizations, you can create groups of accounts and then attach policies to a group. You can use the API to automate account creation and management.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m02-q10",
+    "module": 2,
+    "number": 10,
+    "prompt": "True or false? Unlimited services are available with the AWS Free Tier to new AWS customers for 12 months following their AWS sign-up date. (Select the best answer.)",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The AWS Free Tier applies to certain services and options.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+  },
+  {
+    "id": "aws-found-m03-q01",
+    "module": 3,
+    "number": 1,
+    "prompt": "Which component of the AWS Global Infrastructure does Amazon CloudFront use to ensure low-latency delivery? (Select the best answer.)",
+    "options": [
+      "AWS Regions",
+      "AWS edge locations",
+      "AWS Availability Zones",
+      "Amazon Virtual Private Cloud (Amazon VPC)"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Amazon CloudFront uses AWS edge locations to ensure low-latency delivery.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q02",
+    "module": 3,
+    "number": 2,
+    "prompt": "You can run applications and workloads from a Region closer to the end users to_______ latency.",
+    "options": [
+      "increase",
+      "decrease"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "You can run applications and workloads from a Region closer to the end users to decrease latency.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q03",
+    "module": 3,
+    "number": 3,
+    "prompt": "True or False? Networking, storage, compute, and databases are examples of service categories that AWS offers.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "These are examples of service categories that AWS offers.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q04",
+    "module": 3,
+    "number": 4,
+    "prompt": "Which of the following are geographic areas that host two or more Availability Zones? (Select the best answer.)",
+    "options": [
+      "AWS Origins",
+      "AWS Regions",
+      "Compute zones",
+      "Edge locations"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "AWS Regions host two or more availability zones.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q05",
+    "module": 3,
+    "number": 5,
+    "prompt": "______ means the infrastructure has built-in component redundancy and ______ means that resources dynamically adjust to increases or decreases in capacity requirements.",
+    "options": [
+      "No human intervention, fault tolerant",
+      "Elastic and scalable, no human intervention",
+      "Fault tolerant, elastic and scalable",
+      "Fault tolerant, no human intervention",
+      "Elastic and scalable, fault tolerant"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Fault tolerant means the infrastructure has built-in component redundancy and elastic and scalable means that resources dynamically adjust to increases or decreases in capacity requirements.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q06",
+    "module": 3,
+    "number": 6,
+    "prompt": "True or False? Availability Zones within a Region are connected through low-latency links.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "It's true that Availability Zones within a Region are connected through low-latency links.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q07",
+    "module": 3,
+    "number": 7,
+    "prompt": "Which of these statements about Availability Zones is not true? (Select the best answer.)",
+    "options": [
+      "Availability Zones are designed for fault isolation.",
+      "Availability Zones are made up of one or more data centers.",
+      "A data center can be used for more than one Availability Zone.",
+      "Availability Zones are connected to each other using high-speed private links."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "A data center cannot be used for more than one Availability Zone.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q08",
+    "module": 3,
+    "number": 8,
+    "prompt": "What is true about Regions? (Choose two.)",
+    "options": [
+      "All Regions are located in one specific geographic area.",
+      "Each Region is located in a separate geographic area.",
+      "A Region is a physical location that has multiple Availability Zones.",
+      "They are the physical locations of your customers."
+    ],
+    "answers": [
+      1,
+      2
+    ],
+    "explanation": "Each Region is located in a separate geographic area and is a physical location that has multiple Availability Zones.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q09",
+    "module": 3,
+    "number": 9,
+    "prompt": "AWS highly recommends provisioning your compute resources across _______ Availability Zones. (Select the best answer.)",
+    "options": [
+      "no",
+      "all",
+      "multiple",
+      "single"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "AWS highly recommends provisioning your compute resources across multiple Availability Zones.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m03-q10",
+    "module": 3,
+    "number": 10,
+    "prompt": "True or False? Edge locations are only located in the same general area as Regions.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Edge locations do not need to be located in the same general area as Regions.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+  },
+  {
+    "id": "aws-found-m04-q01",
+    "module": 4,
+    "number": 1,
+    "prompt": "In the shared responsibility model, AWS is responsible for providing what? (Select the best answer.)",
+    "options": [
+      "Security of the cloud",
+      "Security to the cloud",
+      "Security for the cloud",
+      "Security in the cloud"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "In the shared responsibility model, AWS is responsible for providing security of the cloud.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q02",
+    "module": 4,
+    "number": 2,
+    "prompt": "In the shared responsibility model, which of the following are examples of \"security in the cloud”? (Choose two.)",
+    "options": [
+      "Compliance with compute security standards and regulations",
+      "Physical security of the facilities in which the services operate",
+      "Security group configurations",
+      "Encryption of data at rest and data in transit",
+      "Protecting the global infrastructure"
+    ],
+    "answers": [
+      2,
+      3
+    ],
+    "explanation": "“Encryption of data at rest and data in transit” and ”Security group configurations” are examples of security in the cloud.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q03",
+    "module": 4,
+    "number": 3,
+    "prompt": "Which of the following is the responsibility of AWS under the AWS shared responsibility model? (Select the best answer.)",
+    "options": [
+      "Configuring third-party applications",
+      "Maintaining physical hardware",
+      "Security application access and data",
+      "Managing custom Amazon Machine Images (AMIs)"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Maintaining physical hardware is the responsibility of AWS under the shared responsibility model.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q04",
+    "module": 4,
+    "number": 4,
+    "prompt": "When creating an AWS Identity and Access Management (IAM) policy, what are the two types of access that can be granted to a user? (Choose two.)",
+    "options": [
+      "Institutional access",
+      "Authorized access",
+      "Programmatic access",
+      "AWS Management Console access",
+      "Administrative root access"
+    ],
+    "answers": [
+      2,
+      3
+    ],
+    "explanation": "When creating an IAM policy, a user can be granted AWS Management Console access and programmatic access.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q05",
+    "module": 4,
+    "number": 5,
+    "prompt": "True or False? AWS Organizations enables you to consolidate multiple AWS accounts so that you centrally manage them.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "True. AWS Organizations enables you to consolidate multiple AWS accounts so that you centrally manage them.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q06",
+    "module": 4,
+    "number": 6,
+    "prompt": "Which of the following are best practices to secure your account using AWS Identity and Access Management (IAM)? (Choose two.)",
+    "options": [
+      "Provide users with default administrative privileges.",
+      "Leave unused and unnecessary users and credentials in place.",
+      "Manage access to AWS resources.",
+      "Avoid using IAM groups to grant the same access permissions to multiple users.",
+      "Define fine-grained access rights."
+    ],
+    "answers": [
+      2,
+      4
+    ],
+    "explanation": "Managing access to AWS resources and defining fine-grained access rights are best practices when securing accounts with AWS IAM.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q07",
+    "module": 4,
+    "number": 7,
+    "prompt": "Which of the following should be done by the AWS account root user? (Select the best answer.)",
+    "options": [
+      "Secure access for applications",
+      "Integrate with other AWS services",
+      "Change granular permissions",
+      "Change the AWS support plan"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Changing the AWS support plan can only be done by the AWS account root user. The other tasks are done with IAM.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q08",
+    "module": 4,
+    "number": 8,
+    "prompt": "After initial login, what does AWS recommend as the best practice for the AWS account root user? (Select the best answer.)",
+    "options": [
+      "Delete the AWS account root user",
+      "Revoke all permissions on the AWS account root user",
+      "Restrict permission on the AWS account root user",
+      "Delete the access keys of the AWS account root user"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "After initial login, AWS recommends deleting the access keys of the AWS account root user as the best practice.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q09",
+    "module": 4,
+    "number": 9,
+    "prompt": "How would a system administrator add an additional layer of login security to a user's AWS Management Console? (Select the best answer.)",
+    "options": [
+      "Use Amazon Cloud Directory",
+      "Audit AWS Identity and Access Management (IAM) roles",
+      "Enable multi-factor authentication",
+      "Enable AWS CloudTrail"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "To add an additional layer of login security to a user's AWS Management Console, enable multi-factor authentication.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m04-q10",
+    "module": 4,
+    "number": 10,
+    "prompt": "True or False? AWS Key Management Service (AWS KMS) enables you to assess, audit, and evaluate the configurations of your AWS resources.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "AWS Key Management Service (AWS KMS) is a service that allows you to create and manage encryption keys and control the use of encryption across a wide range of AWS services and in your applications.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+  },
+  {
+    "id": "aws-found-m05-q01",
+    "module": 5,
+    "number": 1,
+    "prompt": "With Amazon Virtual Private Cloud (Amazon VPC), what is the smallest size subnet you can have in a VPC? (Select the best answer.)",
+    "options": [
+      "/26",
+      "/28",
+      "/30",
+      "/24"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "The smallest size subnet you can have in a VPC is /28.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q02",
+    "module": 5,
+    "number": 2,
+    "prompt": "With Amazon Virtual Private Cloud (Amazon VPC), what is the maximum size IP address range you can have in a VPC? (Select the best answer.)",
+    "options": [
+      "/24",
+      "/30",
+      "/16",
+      "/28"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The maximum size IP address range you can have in a VPC is /16.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q03",
+    "module": 5,
+    "number": 3,
+    "prompt": "You need to allow resources in a private subnet to access the internet. Which of the following must be present to enable this access? (Select the best answer.)",
+    "options": [
+      "Route tables",
+      "Network access control lists",
+      "NAT gateway",
+      "Security groups"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "If you need to allow resources in a private subnet to access the internet, a NAT gateway must be present to enable this access.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q04",
+    "module": 5,
+    "number": 4,
+    "prompt": "Which AWS networking service enables a company to create a virtual network within AWS? (Select the best answer.)",
+    "options": [
+      "Amazon Route 53",
+      "AWS Direct Connect",
+      "Amazon Virtual Private Cloud (Amazon VPC)",
+      "AWS Config"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Amazon Virtual Private Cloud enables a company to create a virtual network within AWS.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q05",
+    "module": 5,
+    "number": 5,
+    "prompt": "True or False? Private subnets have direct access to the internet.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Private subnets do not have direct access to the internet.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q06",
+    "module": 5,
+    "number": 6,
+    "prompt": "Which component of AWS Global Infrastructure does Amazon CloudFront use to ensure low-latency delivery? (Select the best answer.)",
+    "options": [
+      "AWS Regions",
+      "Amazon Virtual Private Cloud (Amazon VPC)",
+      "AWS edge locations",
+      "AWS Availability Zones"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "To ensure low-latency delivery, Amazon CloudFront uses AWS edge locations.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q07",
+    "module": 5,
+    "number": 7,
+    "prompt": "Which of the following is an optional security control that can be applied at the subnet layer of a VPC? (Select the best answer.)",
+    "options": [
+      "Web application firewall",
+      "Network ACL",
+      "Security group",
+      "Firewall"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "A network ACL is an optional security control that can be applied at the subnet layer of a VPC.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q08",
+    "module": 5,
+    "number": 8,
+    "prompt": "What happens when you use Amazon Virtual Private Cloud (Amazon VPC) to create a new VPC? (Select the best answer.)",
+    "options": [
+      "An internet gateway is created by default.",
+      "A main route table is created by default.",
+      "Three subnets are created by default: one for each Availability Zone.",
+      "Three subnets are created by default in one Availability Zone."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "When you create a VPC, a route table is created by default. You must manually create subnets and an internet gateway.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q09",
+    "module": 5,
+    "number": 9,
+    "prompt": "Which of the following can be used to protect Amazon Elastic Compute Cloud (Amazon EC2) instances hosted in AWS? (Select the best answer.)",
+    "options": [
+      "Security group",
+      "Internet Gateway",
+      "AMI",
+      "All of the above"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "A security group acts as a virtual firewall for your instance to control inbound and outbound traffic",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m05-q10",
+    "module": 5,
+    "number": 10,
+    "prompt": "You are a solutions architect who works at a large retail company that is migrating its existing infrastructure to AWS. You recommend that they use a custom VPC. When you create a VPC, you assign it to an IPv4 Classless Inter-Domain Routing (CIDR) block of 10.0.1.0/24 (which has 256 total IP addresses). How many IP addresses are available? (Select the best answer.)",
+    "options": [
+      "250",
+      "256",
+      "251",
+      "246"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The subnet has 256 IP addresses but only 251 are available because 5 are reserved.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+  },
+  {
+    "id": "aws-found-m06-q01",
+    "module": 6,
+    "number": 1,
+    "prompt": "Why is AWS more economical than traditional data centers for applications with varying compute workloads? (Select the best answer)",
+    "options": [
+      "Amazon EC2 costs are billed on a monthly basis.",
+      "Customers retain full administrative access to their Amazon EC2 instances.",
+      "Customers can permanently run enough instances to handle peak workloads.",
+      "Amazon EC2 instances can be launched on-demand when needed."
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "AWS is more economical than traditional data centers with varying compute workloads because Amazon EC2 instances can be launched on-demand.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q02",
+    "module": 6,
+    "number": 2,
+    "prompt": "If your project requires monthly reports that iterate through very large amounts of data, which Amazon Elastic Compute Cloud (Amazon EC2) purchasing option should you consider? (Select the best answer)",
+    "options": [
+      "Spot Instances",
+      "Scheduled Reserved Instances",
+      "Dedicated Hosts",
+      "On-Demand Instances"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "If your project requires you to run monthly reports that iterate through very large amounts of data, you should consider purchasing Scheduled Reserved Instances.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q03",
+    "module": 6,
+    "number": 3,
+    "prompt": "What is included in an Amazon Machine Image (AMI)? (Select the best answer)",
+    "options": [
+      "A template for the root volume for the instance",
+      "Launch permissions that control which AWS accounts can use the AMI to launch instances.",
+      "A block device mapping that specifies the volumes to attach to the instance when it's launched",
+      "All of the above"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "An Amazon Machine Image (AMI) includes all of these.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q04",
+    "module": 6,
+    "number": 4,
+    "prompt": "Which Amazon Elastic Compute Cloud (Amazon EC2) feature ensures your instances will not share a physical host with instances from any other AWS customer? (Select the best answer)",
+    "options": [
+      "Amazon VPC",
+      "Placement groups",
+      "Dedicated Instances",
+      "Reserved Instances"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Dedicated Instances ensure your instances will not share a physical host with instances from any other AWS customer.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q05",
+    "module": 6,
+    "number": 5,
+    "prompt": "Which of the following services is a serverless compute service in AWS? (Select the best answer)",
+    "options": [
+      "AWS Config",
+      "AWS Lambda",
+      "AWS OpsWorks",
+      "Amazon EC2"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "AWS Lambda is a compute service that lets you run code without provisioning or managing servers.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q06",
+    "module": 6,
+    "number": 6,
+    "prompt": "What is the service provided by AWS that enables developers to easily deploy and manage applications in the cloud? (Select the best answer)",
+    "options": [
+      "Amazon Elastic Container Service",
+      "AWS Elastic Beanstalk",
+      "AWS Opswork",
+      "AWS CloudFormation"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Elastic Beanstalk is an AWS compute service option. It is a Platform as a Service (or PaaS) that facilitates quick deployment, scaling and managing of your web applications and services.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q07",
+    "module": 6,
+    "number": 7,
+    "prompt": "Your web application needs four instances to support steady traffic all of the time. On the last day of the month, the traffic triples. What is the most cost-effective way to handle this pattern? (Select the best answer)",
+    "options": [
+      "Run 12 Reserved Instances all of the time.",
+      "Run four On-Demand Instances constantly, then add eight more On-Demand Instances on the last day of each month.",
+      "Run four Reserved Instances constantly, then add eight On-Demand Instances on the last day of each month.",
+      "Run four On-Demand Instances constantly, then add eight Reserved Instances on the last day of each month."
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Reserved Instances provide cost savings when you can commit to running instances full time, such as to handle the base traffic. On-Demand instances provide the flexibility to handle traffic spikes.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q08",
+    "module": 6,
+    "number": 8,
+    "prompt": "True or False? Containers contain an entire operating system.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Containers are smaller than virtual machines, and do not contain an entire operating system.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q09",
+    "module": 6,
+    "number": 9,
+    "prompt": "Which Amazon EC2 option is best for long-term workloads with predictable usage patterns? (Select the best answer)",
+    "options": [
+      "Spot Instances",
+      "On-Demand Instances",
+      "Reserved Instances"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Reserved instances would be the best EC2 option for long-term workloads with predictable usage patterns.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m06-q10",
+    "module": 6,
+    "number": 10,
+    "prompt": "Which of the following must be specified when launching a new Amazon Elastic Compute Cloud (Amazon EC2) Windows instance? (Choose two)",
+    "options": [
+      "Password for the administrator account",
+      "The Amazon EC2 instance ID",
+      "Amazon EC2 instance type",
+      "Amazon Machine Image (AMI)"
+    ],
+    "answers": [
+      2,
+      3
+    ],
+    "explanation": "AWS assigns the EC2 instance ID as part of the launch process and the administrator password, which is encrypted via the public key. The instance type defines the virtual hardware and the AMI defines the initial software state. Both must be specified on launch.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+  },
+  {
+    "id": "aws-found-m07-q01",
+    "module": 7,
+    "number": 1,
+    "prompt": "True or False? Amazon Simple Storage Service (Amazon S3) is an object storage suitable for the storage of flat files like Microsoft Word documents, photos, etc.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "It’s true that S3 is an object storage suitable for the storage of 'flat' files like Word documents, photos, et",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q02",
+    "module": 7,
+    "number": 2,
+    "prompt": "Amazon S3 replicates all objects ______. (Select the best answer)",
+    "options": [
+      "on multiple volumes within an Availability Zone",
+      "in multiple Availability Zones within the same Region",
+      "across multiple Regions for higher durability",
+      "on multiple S3 buckets"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "S3 replicates all objects in multiple availability zones within the same region.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q03",
+    "module": 7,
+    "number": 3,
+    "prompt": "Which of the following can be used as a storage class for an S3 object lifecycle policy? (Choose three)",
+    "options": [
+      "S3 - Standard Access",
+      "AWS Storage Gateway",
+      "S3 - Infrequent Access",
+      "Simple Storage Service Glacier",
+      "S3 - Reduced Redundancy Storage",
+      "Amazon Dynamo DB"
+    ],
+    "answers": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Glacier, S3 Infrequent Access and S3 Standard Access can be used as a storage class for an S3 object lifecycle policy.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q04",
+    "module": 7,
+    "number": 4,
+    "prompt": "The name of an S3 bucket must be unique _________. (Select the best answer)",
+    "options": [
+      "worldwide across all AWS accounts",
+      "within a Region",
+      "across all your AWS accounts",
+      "within your AWS account"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "The name of an S3 bucket must be unique worldwide across all AWS accounts.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q05",
+    "module": 7,
+    "number": 5,
+    "prompt": "You can use Amazon Elastic File System (Amazon EFS) to: (Select the best answer)",
+    "options": [
+      "provide simple, scalable, elastic file storage for use only within AWS.",
+      "implement storage for Amazon EC2 instances that multiple virtual machines can access at the same time.",
+      "host a robust CDN to deliver entire web sites with dynamic, static, and streaming content.",
+      "generate user-specific content."
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "You can use EFS to implement storage for EC2 instances that multiple virtual machines can access at the same time.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q06",
+    "module": 7,
+    "number": 6,
+    "prompt": "Amazon Elastic Block Store (Amazon EBS) is recommended when data _______ and _______. (Choose two)",
+    "options": [
+      "requires object-level storage",
+      "must be quickly accessible, requiring long-term persistence",
+      "requires an encryption solution",
+      "needs to be stored in a different Availability Zone than the one the EC2 instance is in"
+    ],
+    "answers": [
+      1,
+      2
+    ],
+    "explanation": "Amazon EBS is recommended when data must be quickly accessible, requiring long-term persistence and requires an encryption solution.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q07",
+    "module": 7,
+    "number": 7,
+    "prompt": "True or False? By default, all data stored in Amazon S3 is viewable by the public.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "By default, all data stored in S3 is not viewable by the public.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q08",
+    "module": 7,
+    "number": 8,
+    "prompt": "Regarding Amazon S3 Glacier, what is a Vault? (Select the best answer)",
+    "options": [
+      "The rules that determine who may (or may not) access archives",
+      "An object (photos, videos, files, or documents)",
+      "A container for storing archives",
+      "A policy that identifies who can access content stored in Glacier"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "The vault in Amazon Glacier is a container for storing archives.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q09",
+    "module": 7,
+    "number": 9,
+    "prompt": "True or False? When you create a bucket in Amazon S3, it is associated with a specific AWS Region.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "When you create a bucket in Amazon S3, it is associated with a specific AWS Region.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m07-q10",
+    "module": 7,
+    "number": 10,
+    "prompt": "Which of the following are features of Amazon Elastic Block Store (Amazon EBS)? (Choose two)",
+    "options": [
+      "Amazon EBS volumes can be encrypted transparently to workloads on the attached instance.",
+      "Data stored on Amazon EBS is automatically replicated within an Availability Zone.",
+      "Amazon EBS data is automatically backed up to tape.",
+      "Data on an Amazon EBS volume is lost when the attached instance is stopped."
+    ],
+    "answers": [
+      0,
+      1
+    ],
+    "explanation": "Amazon EBS volumes persist when the instance is stopped. The data is automatically replicated within an Availability Zone, can be encrypted upon creation and used by an instance, as if they were not encrypted.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+  },
+  {
+    "id": "aws-found-m08-q01",
+    "module": 8,
+    "number": 1,
+    "prompt": "You are designing an ecommerce web application that will scale to hundreds of thousands of concurrent users. Which database technology is best suited to hold the session state in this example?",
+    "options": [
+      "Amazon Relational Database Service (Amazon RDS)",
+      "Amazon DynamoDB",
+      "Amazon Redshift",
+      "Amazon Simple Storage Service (Amazon S3)"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "NoSQL databases like Amazon DynamoDB excel at scaling to hundreds of thousands of requests with key/value access to user profile and session.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q02",
+    "module": 8,
+    "number": 2,
+    "prompt": "You need to find an item in an Amazon DynamoDB table using an attribute other than the item’s primary key. Which of the following operations should you use? (Select the best answer.)",
+    "options": [
+      "PutItem",
+      "Scan",
+      "Query",
+      "GetItem"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "To find an item in a DynamoDB table other than the item's primary key, you would use the scan operation.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q03",
+    "module": 8,
+    "number": 3,
+    "prompt": "In Amazon DynamoDB, what does the query operation enable you to do? (Select the best answer.)",
+    "options": [
+      "Query a table using the partition key and an optional sort key filter",
+      "Query any secondary indexes that exist for a table",
+      "Efficiently retrieve items from a table or secondary index",
+      "All of the above"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "In Amazon DynamoDB, the query operation allows you to do all of these things.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q04",
+    "module": 8,
+    "number": 4,
+    "prompt": "Which AWS Cloud service is best suited for analyzing your data by using standard structured query language (SQL) and your existing business intelligence (BI) tools? (Select the best answer.)",
+    "options": [
+      "Amazon Relational Database Service (Amazon RDS)",
+      "Amazon Simple Storage Service Glacier",
+      "Amazon DynamoDB",
+      "Amazon Redshift"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Amazon Redshift is best suited for analyzing data.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q05",
+    "module": 8,
+    "number": 5,
+    "prompt": "In Amazon DynamoDB, an attribute is ______. (Select the best answer.)",
+    "options": [
+      "a fundamental data element",
+      "a collection of items",
+      "a collection of attributes"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "In Amazon DynamoDB, an attribute is a fundamental data element.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q06",
+    "module": 8,
+    "number": 6,
+    "prompt": "If you are developing an application that requires a database with extremely fast performance, fast scalability, and flexibility in the database schema, which service should you consider? (Select the best answer.)",
+    "options": [
+      "Amazon Relational Database Service (Amazon RDS)",
+      "Amazon ElastiCache",
+      "Amazon DynamoDB",
+      "Amazon Redshift"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "If you are developing an application that requires a database with extremely fast performance, fast scalability, and flexibility in the database schema, consider Amazon DynamoDB.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q07",
+    "module": 8,
+    "number": 7,
+    "prompt": "Which of the following use cases is appropriate for using Amazon Relational Database Service (Amazon RDS)? (Select the best answer.)",
+    "options": [
+      "Massive read/write rates",
+      "Simple GET or PUT requests",
+      "Complex transactions",
+      "All of the above"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Use Amazon RDS when your application requires complex transactions or complex queries.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q08",
+    "module": 8,
+    "number": 8,
+    "prompt": "A company has an application, which consists of a .NET layer that connects to a MySQL database. They want to move this application on to AWS and use AWS features such as high availability and automated backups. Which of the following would be an ideal database for this use case? (Select the best answer)",
+    "options": [
+      "Amazon DynamoDB",
+      "Amazon Redshift",
+      "Amazon RDS",
+      "Amazon Aurora"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Amazon Aurora is a MySQL- and PostgreSQL-compatible relational database that would be ideal for this use case.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q09",
+    "module": 8,
+    "number": 9,
+    "prompt": "True or false? Amazon RDS automatically patches the database software and backs up your database, storing the backups for a user-defined retention period and enabling point-in-time recovery.",
+    "options": [
+      "True",
+      "False"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Amazon RDS automatically patches the database software and backs up",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m08-q10",
+    "module": 8,
+    "number": 10,
+    "prompt": "What should you consider when choosing a database type? (Select the best answer.)",
+    "options": [
+      "Data size",
+      "Data access period",
+      "Query frequency",
+      "Highly available",
+      "All of the above"
+    ],
+    "answers": [
+      4
+    ],
+    "explanation": "When choosing a database type, you should consider all of these!",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+  },
+  {
+    "id": "aws-found-m09-q01",
+    "module": 9,
+    "number": 1,
+    "prompt": "Which of the following is not one of the four areas of the performance efficiency pillar of the AWS Well-Architected Framework? (Select the best answer.)",
+    "options": [
+      "Tradeoffs",
+      "Selection",
+      "Traceability",
+      "Monitoring"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Traceability is not one of the four areas of the Performance Efficiency pillar of the AWS Well-Architected Framework.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q02",
+    "module": 9,
+    "number": 2,
+    "prompt": "Which of the following is a principle when designing cloud-based systems? (Select the best answer.)",
+    "options": [
+      "Build tightly-coupled components",
+      "Make infrequent, large batch changes",
+      "Assume everything will fail",
+      "Use as many services as possible"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Assume everything will fail.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q03",
+    "module": 9,
+    "number": 3,
+    "prompt": "Which of the following are pillars of the AWS Well-Architected Framework? (Choose three.)",
+    "options": [
+      "Security",
+      "Persistence",
+      "Operational Excellence",
+      "Cost Optimization"
+    ],
+    "answers": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "Operational excellence, security, and cost optimization are pillars of the AWS Well-Architected Framework.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q04",
+    "module": 9,
+    "number": 4,
+    "prompt": "Which design principles are recommended when considering performance efficiency? (Choose two.)",
+    "options": [
+      "Use serverless architectures",
+      "Democratize advanced technologies",
+      "Match supply with demand",
+      "Enable traceability",
+      "Analyze and attribute expenditure"
+    ],
+    "answers": [
+      0,
+      1
+    ],
+    "explanation": "“Use serverless architectures” and “democratize advanced technologies” are design principles that are recommended when considering performance efficiency.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q05",
+    "module": 9,
+    "number": 5,
+    "prompt": "AWS Trusted Advisor provides insight regarding which five categories of an AWS account? (Select the best answer.)",
+    "options": [
+      "Performance, cost optimization, access control, connectivity, security",
+      "Security, fault tolerance, high availability, connectivity, service limits",
+      "Security, access control, high availability, performance, service limits",
+      "Performance, cost optimization, security, fault tolerance, service limits"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "Performance, cost optimization, security, fault tolerance, and service limits are the five categories.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q06",
+    "module": 9,
+    "number": 6,
+    "prompt": "What is the focus of the sustainability pillar of the Well-Architected Framework? (Select the best answer.)",
+    "options": [
+      "Designing workloads that recover quickly from failures",
+      "Minimizing the environmental impacts of running cloud workloads",
+      "Avoiding unnecessary costs in cloud workloads",
+      "Automating updates to cloud workloads"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Key topics of the sustainability pillar include a shared responsibility model for sustainability, understanding impact, and maximizing utilization to minimize required resources and reduce downstream impacts.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q07",
+    "module": 9,
+    "number": 7,
+    "prompt": "After you move to the AWS Cloud, you want to ensure that the right security settings are put in place. Which online tool can assist in security compliance? (Select the best answer.)",
+    "options": [
+      "Amazon Kinesis",
+      "AWS Support",
+      "AWS Trusted Advisor",
+      "Amazon CloudWatch"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "AWS Trusted Advisor is an online resource to help you reduce cost, increase performance, and improve security by optimizing your AWS environment.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q08",
+    "module": 9,
+    "number": 8,
+    "prompt": "Which of the following is a measure of your system’s ability to provide functionality when desired by the user? (Select the best answer.)",
+    "options": [
+      "Availability",
+      "Fault Tolerance",
+      "Reliability",
+      "Performance efficiency"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Reliability is a measure of your system’s ability to provide functionality when desired by the user.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q09",
+    "module": 9,
+    "number": 9,
+    "prompt": "What is defined as the ability for a system to remain operational even if some of the components of that system fail? (Select the best answer.)",
+    "options": [
+      "High durability",
+      "Fault tolerance",
+      "High availability",
+      "High durability"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "Fault tolerance is the ability for a system to remain operational even if some of the components of that system fail.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m09-q10",
+    "module": 9,
+    "number": 10,
+    "prompt": "Which of the following best describes a system that can withstand some measures of degradation, experiences minimal downtime, and requires minimal human intervention? (Select the best answer.)",
+    "options": [
+      "Scalable",
+      "Fault-tolerant",
+      "Elastic",
+      "Highly available"
+    ],
+    "answers": [
+      3
+    ],
+    "explanation": "A highly available system is always available, without the need for human intervention.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+  },
+  {
+    "id": "aws-found-m10-q01",
+    "module": 10,
+    "number": 1,
+    "prompt": "Which of the following AWS tools help your application scale up or down based on demand? (Choose two.)",
+    "options": [
+      "Availability Zones",
+      "Amazon EC2 Auto Scaling",
+      "AWS CloudFormation",
+      "Elastic Load Balancing",
+      "AWS Config"
+    ],
+    "answers": [
+      1,
+      3
+    ],
+    "explanation": "Amazon EC2 Auto Scaling and Elastic Load Balancing help your application scale up or down based on demand.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q02",
+    "module": 10,
+    "number": 2,
+    "prompt": "Which service would you use to send alerts based on Amazon CloudWatch alarms? (Select the best answer.)",
+    "options": [
+      "Amazon Simple Notification Service (Amazon SNS)",
+      "AWS CloudTrail",
+      "AWS Trusted Advisor",
+      "Amazon Route 53"
+    ],
+    "answers": [
+      0
+    ],
+    "explanation": "Amazon SNS is the service you'd use to send alerts based on Amazon CloudWatch alarms.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q03",
+    "module": 10,
+    "number": 3,
+    "prompt": "Which of the following are characteristics of Amazon EC2 Auto Scaling? (Choose three.)",
+    "options": [
+      "Only supports dynamic scaling",
+      "Responds to changing conditions by adding or terminating instances",
+      "Delivers push notifications",
+      "Launches instances from a specified Amazon Machine Image (AMI)",
+      "Enforces a minimum number of running Amazon EC2 instances"
+    ],
+    "answers": [
+      1,
+      3,
+      4
+    ],
+    "explanation": "Amazon EC2 Auto Scaling responds to changing conditions by adding or terminating instances, launches instances from an AMI, and enforces a minimum number of running Amazon EC2 instances.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q04",
+    "module": 10,
+    "number": 4,
+    "prompt": "Which of the following must be configured on an Elastic Load Balancing load balancer to expect incoming traffic? (Select the best answer.)",
+    "options": [
+      "A port",
+      "A network interface",
+      "A listener",
+      "An instance"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "You configure the load balancer to accept incoming traffic by specifying one or more listeners.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q05",
+    "module": 10,
+    "number": 5,
+    "prompt": "Which of the following elements are used to create an Amazon EC2 Auto Scaling launch configuration? (Choose three.)",
+    "options": [
+      "Amazon Machine Image (AMI)",
+      "Load balancer",
+      "Instance type",
+      "Virtual private cloud (VPC) and subnets",
+      "Amazon Elastic Block Store (Amazon EBS) volumes"
+    ],
+    "answers": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "You specify the AMI, instance type, and EBS volumes when you create an Auto Scaling launch configuration.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q06",
+    "module": 10,
+    "number": 6,
+    "prompt": "Which of the following services can help you collect important metrics from Amazon Relational Database Service (Amazon RDS) and Amazon Elastic Compute Cloud (Amazon EC2) instances? (Select the best answer.)",
+    "options": [
+      "Amazon CloudFront",
+      "Amazon CloudSearch",
+      "Amazon CloudWatch",
+      "AWS CloudTrail",
+      "Amazon EC2 Auto Scaling"
+    ],
+    "answers": [
+      2
+    ],
+    "explanation": "Amazon CloudWatch is a monitoring service for AWS cloud resources and the applications you run on AWS.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q07",
+    "module": 10,
+    "number": 7,
+    "prompt": "Which of the following are elements of an Auto Scaling group? (Choose three.)",
+    "options": [
+      "Minimum size",
+      "Health checks",
+      "Desired capacity",
+      "Maximum size"
+    ],
+    "answers": [
+      0,
+      2,
+      3
+    ],
+    "explanation": "You can specify the minimum and maximum number of instances in each Auto Scaling group as well as desired capacity.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q08",
+    "module": 10,
+    "number": 8,
+    "prompt": "There is an audit at your company and they need to have a log of all access to AWS resources in the account. Which of the following services can assist in providing these details? (Select the best answer.)",
+    "options": [
+      "Amazon CloudWatch",
+      "AWS CloudTrail",
+      "Amazon Elastic Compute Cloud (Amazon EC2)",
+      "Amazon Simple Notification Service (Amazon SNS)"
+    ],
+    "answers": [
+      1
+    ],
+    "explanation": "AWS CloudTrail is a service that enables governance, compliance, operational auditing, and risk auditing of your AWS account.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q09",
+    "module": 10,
+    "number": 9,
+    "prompt": "In Elastic Load Balancing, when the load balancer detects an unhealthy target, which of the following are true? (Choose three.)",
+    "options": [
+      "Stops routing traffic to that target",
+      "Triggers an alarm",
+      "Resumes routing traffic when it detects that the target is healthy again",
+      "Resumes routing traffic when manually restarted",
+      "Routes traffic to a healthy target"
+    ],
+    "answers": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "When the load balancer detects an unhealthy target, it stops routing traffic to that target and sends it to a healthy target. It then resumes routing traffic to that target when it detects that the target is healthy again.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  },
+  {
+    "id": "aws-found-m10-q10",
+    "module": 10,
+    "number": 10,
+    "prompt": "What are the three types of load balancers that Elastic Load Balancing offers?",
+    "options": [
+      "Internet Load Balancer",
+      "Application Load Balancer",
+      "Network Load Balancer",
+      "Compute Load Balancer",
+      "Classic Load Balancer",
+      "Auto Scaling Load Balancer"
+    ],
+    "answers": [
+      1,
+      2,
+      4
+    ],
+    "explanation": "ELB offers three types of load balancers: Application Load Balancer, Network Load Balancer, and Classic Load Balancer.",
+    "caution": "",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+  }
+]

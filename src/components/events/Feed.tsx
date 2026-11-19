@@ -1,4 +1,5 @@
 "use client";
+import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
 import { AnimatePresence, motion } from "framer-motion";
@@ -473,7 +474,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
             {card.questions.map((_, i) => <span key={i} className={cn("h-1.5 flex-1 rounded-full", i < index || (i === index && picked !== null) ? "bg-amber-300" : "bg-white/20")} />)}
           </div>
         )}
-        <h2 data-selection-question lang="en" className="mt-3 text-xl font-bold leading-snug">{q.q}</h2>
+        <h2 data-selection-question lang="en" className="mt-3 text-xl font-bold leading-snug"><QuestionText>{q.q}</QuestionText></h2>
         <div className="mt-5 space-y-2">
           {q.options.map((option, i) => {
             const ok = picked !== null && i === q.correct;
@@ -491,7 +492,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
                   picked !== null && !ok && !bad && "opacity-50",
                 )}
               >
-                {ok && "✓ "}{bad && "✗ "}{option}
+                {ok && "✓ "}{bad && "✗ "}<QuestionText>{option}</QuestionText>
               </button>
             );
           })}

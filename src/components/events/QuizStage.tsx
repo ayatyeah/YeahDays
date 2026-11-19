@@ -1,11 +1,12 @@
 'use client';
 import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { QuestionLanguage } from './QuestionLanguage';
 import DenYouTube from './DenYouTube';
 import { denVideos, youtubeVideoId } from '@/lib/events/denVideos';
 import styles from './quiz-stage.module.css';
 
 /** Video stays mounted across questions; it never downloads before opting in. */
-export default function QuizStage({ children }: { children: ReactNode }) {
+export default function QuizStage({ children, questionTexts }: { children: ReactNode; questionTexts?: string[] }) {
   const [enabled, setEnabled] = useState(false);
   const [source, setSource] = useState(denVideos[0].id);
   const [custom, setCustom] = useState('');
@@ -28,7 +29,7 @@ export default function QuizStage({ children }: { children: ReactNode }) {
     if (video.current) observer.observe(video.current);
     return () => { observer.disconnect(); resume.current = false; document.removeEventListener('visibilitychange', visibility); };
   }, [enabled, source]);
-  return <div className={styles.stage}>
+  const content = <div className={styles.stage}>
     <div className={styles.toolbar}><button type="button" aria-pressed={enabled} aria-controls={id} onClick={() => { setFailed(false); setEnabled(value => !value); }}>▸ DenMode{enabled ? ' · вкл' : ''}</button></div>
     <div className={enabled ? `${styles.split} ${source !== 'local' ? styles.youtubeSplit : ''}` : styles.solo}>
       <div className={styles.question}>{children}</div>
@@ -41,4 +42,5 @@ export default function QuizStage({ children }: { children: ReactNode }) {
       </aside>}
     </div>
   </div>;
+  return <QuestionLanguage sourceTexts={questionTexts}>{content}</QuestionLanguage>;
 }

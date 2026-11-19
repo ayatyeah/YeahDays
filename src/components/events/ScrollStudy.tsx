@@ -1,4 +1,5 @@
 "use client";
+import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -313,7 +314,7 @@ export default function ScrollStudy({
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]" aria-hidden>
               <div className="h-full bg-amber-400" style={{ width: `${(done / quiz.length) * 100}%` }} />
             </div>
-            <h2 data-selection-question lang="en" className="mt-4 text-xl font-bold leading-snug">{q.q}</h2>
+            <h2 data-selection-question lang="en" className="mt-4 text-xl font-bold leading-snug"><QuestionText>{q.q}</QuestionText></h2>
             <div className="mt-5 space-y-2">
               {q.options.map((option, o) => {
                 const ok = picked !== null && o === q.correct;
@@ -331,7 +332,7 @@ export default function ScrollStudy({
                       picked !== null && !ok && !bad && "opacity-50",
                     )}
                   >
-                    {ok && "✓ "}{bad && "✗ "}{option}
+                    {ok && "✓ "}{bad && "✗ "}<QuestionText>{option}</QuestionText>
                   </button>
                 );
               })}

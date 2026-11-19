@@ -1,4 +1,5 @@
 "use client";
+import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 import ErrorReview from "./ErrorReview";
 import { missedQuestions, reviewDelay, readyForReview, creditReview } from "@/lib/events/errorReview";
@@ -116,7 +117,7 @@ export default function EventQuiz({
         setReviewAt(missedQuestions(quiz, answers, nextMastered).length ? answers.filter(Boolean).length + reviewDelay() : null);
         advance();
       }}/> : <section className={panel}>
-        <h2 ref={questionHeading} tabIndex={-1} data-selection-question lang="en" className={cn(styles.scrollTarget, "whitespace-pre-wrap break-words text-lg font-semibold leading-snug")}>{item.q}</h2>
+        <h2 ref={questionHeading} tabIndex={-1} data-selection-question lang="en" className={cn(styles.scrollTarget, "whitespace-pre-wrap break-words text-lg font-semibold leading-snug")}><QuestionText>{item.q}</QuestionText></h2>
         {multi && <p className="mt-3 text-sm" role="status">Choose {expected.length} answers · Selected: {(picked ?? selected).length} / {expected.length}</p>}
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => {
@@ -138,7 +139,7 @@ export default function EventQuiz({
                   answered && !right && !wrong && "opacity-60",
                 )}
               >
-                <span className="quiz-answer-mark" data-checkbox={multi && !answered ? "true" : undefined} aria-hidden="true">{right ? "✓" : wrong ? "✗" : chosen ? "✓" : ""}</span><span>{item.labels && `${item.labels[i]}. `}{option}</span>
+                <span className="quiz-answer-mark" data-checkbox={multi && !answered ? "true" : undefined} aria-hidden="true">{right ? "✓" : wrong ? "✗" : chosen ? "✓" : ""}</span><span>{item.labels && `${item.labels[i]}. `}<QuestionText>{option}</QuestionText></span>
               </button>
             );
           })}
@@ -155,7 +156,7 @@ export default function EventQuiz({
               {item.optionExplanations && <details open={explainOptionsOpen || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
                 <summary className="cursor-pointer font-semibold">{explainOptionsOpen ? "Почему каждый вариант подходит или не подходит" : "Why each option works or does not"}</summary>
                 <ul className="mt-3 space-y-4">{item.options.map((option, i) => <li key={i}>
-                  <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. {option}</p>
+                  <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. <QuestionText>{option}</QuestionText></p>
                   <p data-selection-question className="mt-1">{item.optionExplanations?.[i]}</p>
                 </li>)}</ul>
               </details>}
@@ -163,7 +164,7 @@ export default function EventQuiz({
                 <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
                   {item.options.map((option, i) => item.wrong?.[i] && (
                     <li key={i} className={cn("text-[13px]", picked?.includes(i) ? "text-[var(--color-strength)]" : "text-[var(--color-fg-dim)]")}>
-                      <span data-selection-question lang="en" className="font-medium">✗ {option}</span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
+                      <span data-selection-question lang="en" className="font-medium">✗ <QuestionText>{option}</QuestionText></span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
                     </li>
                   ))}
                 </ul>

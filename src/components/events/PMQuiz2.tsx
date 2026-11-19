@@ -1,4 +1,5 @@
 "use client";
+import { QuestionLanguage, QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
 import { useEffect, useRef, useState } from "react";
@@ -73,7 +74,7 @@ export default function PMQuiz2({ userId, onExit }: { userId: string; onExit: ()
       <p className="text-sm">Вопросы на английском. Ответы и подробный русский разбор откроются после сдачи. Можно пропускать вопросы и возвращаться. По окончании времени попытка сдаётся автоматически.</p>
       <p className="text-sm text-[var(--color-muted)]">Ответы сохраняются в этом браузере для твоего аккаунта. Между устройствами эта попытка не переносится. Таймер продолжает идти, даже если закрыть страницу. Для расчётов хватит черновика.</p>
       <Button onClick={start}>Начать 60 минут</Button>
-    </section> : submitted ? <>
+    </section> : submitted ? <QuestionLanguage>
       <section className={panel} data-testid="quiz2-result">
         <h2 className="text-2xl font-bold">Результат: {score} / 50</h2>
         <p>{Math.round(score / 50 * 100)}% · отвечено {answered} / 50 · тренировочный эквивалент: {(score / 50 * 18).toFixed(2)} / 18 баллов</p>
@@ -89,28 +90,28 @@ export default function PMQuiz2({ userId, onExit }: { userId: string; onExit: ()
       <label className="flex min-h-11 items-center gap-3"><input type="checkbox" checked={onlyErrors} onChange={e => setOnlyErrors(e.target.checked)} />Только ошибки и пропуски</label>
       {questions.map((q,i) => (!onlyErrors || !correct(i)) && <section key={q.id} className={panel} data-testid="quiz2-review">
         <h3 className="font-bold">{i+1}. {correct(i) ? "Верно" : attempt.answers[i] === null ? "Пропущено" : "Ошибка"} · Lecture {q.lecture}</h3>
-        <p data-selection-question lang="en"><b>Scenario:</b> {q.scenario}</p><p data-selection-question lang="en"><b>Question:</b> {q.question}</p>
+        <p data-selection-question lang="en"><b>Scenario:</b> <QuestionText>{q.scenario}</QuestionText></p><p data-selection-question lang="en"><b>Question:</b> <QuestionText>{q.question}</QuestionText></p>
         <p className="text-sm"><b>Разбор:</b> {q.detailed_russian_explanation}</p>
         <ol className="space-y-3">{q.options.map((o,j) => <li key={o} className="rounded-xl border border-[var(--color-border)] p-3 text-sm">
-          <p data-selection-question lang="en"><b>{letters[j]}. {o}</b></p>
+          <p data-selection-question lang="en"><b>{letters[j]}. <QuestionText>{o}</QuestionText></b></p>
           <p className="my-1 font-semibold">{q.correct_option === letters[j] ? "✓ Правильный ответ" : "Неверный вариант"}{attempt.answers[i] === j ? " · Твой ответ" : ""}</p>
           <p>{q.per_option_explanations[j]}</p>
         </li>)}</ol>
         <p className="break-words text-xs text-[var(--color-muted)]">Источник: {q.source_pdf} · слайд {q.source_pages.join(", ")}.</p>
       </section>)}
       {onlyErrors && score === 50 && <p>Ошибок нет. Все 50 ответов верны.</p>}
-    </> : <>
+    </QuestionLanguage> : <>
       <div className="sticky top-2 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
         <span>Отвечено: <b>{answered} / 50</b></span><span role="timer" aria-label="Оставшееся время" className="font-bold tabular-nums">{Math.floor(seconds/60)}:{String(seconds%60).padStart(2,"0")}</span>
       </div>
       <details className="rounded-2xl border border-[var(--color-border)] p-3"><summary className="min-h-11 cursor-pointer py-2 font-semibold">Перейти к вопросу · {index+1} / 50</summary><nav aria-label="Номера вопросов" className="grid grid-cols-5 gap-2 sm:grid-cols-10">{questions.map((q,i) => <button key={q.id} aria-label={`Вопрос ${i+1}${attempt.answers[i] === null ? ", без ответа" : ", отвечен"}`} aria-current={index===i ? "step" : undefined} onClick={() => setIndex(i)} className={`min-h-11 rounded-xl border text-sm ${index===i ? "border-[var(--color-fg)] font-black" : "border-[var(--color-border)]"} ${attempt.answers[i] !== null ? "bg-[var(--color-surface-2)]" : ""}`}>{i+1}{attempt.answers[i] !== null ? " ✓" : ""}</button>)}</nav></details>
       <QuizStage><section className={panel} data-testid="quiz2-question">
         <p className="font-semibold">Вопрос {index+1} из 50</p>
-        <p data-selection-question lang="en"><b>Scenario:</b> {question.scenario}</p>
-        <fieldset className="space-y-3" lang="en"><legend data-selection-question lang="en" className="mb-3"><b>Question:</b> {question.question}</legend>
+        <p data-selection-question lang="en"><b>Scenario:</b> <QuestionText>{question.scenario}</QuestionText></p>
+        <fieldset className="space-y-3" lang="en"><legend data-selection-question lang="en" className="mb-3"><b>Question:</b> <QuestionText>{question.question}</QuestionText></legend>
           {question.options.map((o,j) => <label data-selection-question lang="en" key={`${question.id}-${j}`} className="flex min-h-12 cursor-pointer items-start gap-3 rounded-2xl border border-[var(--color-border)] p-3 has-[:checked]:bg-[var(--color-surface-2)]">
             <input type="radio" className="mt-1 shrink-0" name={question.id} value={j} checked={attempt.answers[index] === j} onChange={() => { const active=current.current; if(active) persist(answerQuiz2(active,index,j,Date.now())); }} />
-            <span data-selection-question lang="en">{letters[j]}. {o}</span>
+            <span data-selection-question lang="en">{letters[j]}. <QuestionText>{o}</QuestionText></span>
           </label>)}
         </fieldset>
         <div className="flex flex-wrap justify-between gap-2"><Button disabled={index===0} onClick={() => setIndex(i=>i-1)}>← Назад</Button><Button disabled={index===49} onClick={() => setIndex(i=>i+1)}>Дальше →</Button></div>

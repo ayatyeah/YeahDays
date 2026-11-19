@@ -1,4 +1,5 @@
 "use client";
+import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
 import { useEffect, useRef, useState } from "react";
@@ -158,7 +159,7 @@ export default function Drill({
 
         <QuizStage><section className={panel}>
           {card?.level === 1 && !answered && <p className="mb-2 text-xs font-semibold text-amber-500">↺ Ты здесь ошибался — попробуй ещё раз</p>}
-          <h2 data-selection-question lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
+          <h2 data-selection-question lang="en" className="text-lg font-semibold leading-snug"><QuestionText>{item.q}</QuestionText></h2>
           <div className="mt-4 space-y-2">
             {item.options.map((option, i) => {
               const right = answered && i === item.correct;
@@ -178,7 +179,7 @@ export default function Drill({
                     answered && !right && !wrong && "opacity-60",
                   )}
                 >
-                  {right && "✓ "}{wrong && "✗ "}{option}
+                  {right && "✓ "}{wrong && "✗ "}<QuestionText>{option}</QuestionText>
                 </button>
               );
             })}
@@ -207,7 +208,7 @@ export default function Drill({
                   <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
                     {item.options.map((option, i) => item.wrong?.[i] && (
                       <li key={i} className={cn("text-[13px]", i === picked ? "text-[var(--color-strength)]" : "text-[var(--color-fg-dim)]")}>
-                        <span data-selection-question lang="en" className="font-medium">✗ {option}</span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
+                        <span data-selection-question lang="en" className="font-medium">✗ <QuestionText>{option}</QuestionText></span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
                       </li>
                     ))}
                   </ul>

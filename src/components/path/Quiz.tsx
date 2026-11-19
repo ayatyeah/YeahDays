@@ -1,4 +1,5 @@
 "use client";
+import { QuestionText } from "@/components/events/QuestionLanguage";
 import QuizStage from "@/components/events/QuizStage";
 import { useCopy } from "@/i18n/useCopy";
 
@@ -115,14 +116,14 @@ export default function Quiz({ goalId, kind, unitId, onDone, onClose }: { goalId
   const outcome = result?.outcome;
   const answered = !!result;
   return (
-    <QuizStage><section className="path-card path-stack" aria-label={TITLE[kind]}>
+    <QuizStage questionTexts={[item.stem,...(item.kind === "mcq" ? item.options : [])]}><section className="path-card path-stack" aria-label={TITLE[kind]}>
       <div className="path-row">
         <span className="path-eyebrow">{TITLE[kind]}</span>
         <span className="path-grow" />
         <span className="path-muted">{tx("Вопрос ")}{item.number}{kind === "placement" ? tx(" из {0}", {"0": item.max}) : tx(" · максимум {0}", {"0": item.max})}</span>
       </div>
       <p className="path-muted" data-no-i18n>{item.skill}</p>
-      <h2 style={{ fontSize: 18, lineHeight: 1.4 }} data-no-i18n>{item.stem}</h2>
+      <h2 style={{ fontSize: 18, lineHeight: 1.4 }} data-no-i18n><QuestionText>{item.stem}</QuestionText></h2>
 
       {item.kind === "mcq" ? (
         <div className="path-stack" role="group" aria-label={tx("Варианты ответа")}>
@@ -130,7 +131,7 @@ export default function Quiz({ goalId, kind, unitId, onDone, onClose }: { goalId
             const state = !answered ? "" : i === outcome?.correctIndex ? "right" : i === choice ? "wrong" : "";
             return (
               <button key={i} data-answer-state={state === "right" ? "correct" : state === "wrong" ? "wrong" : undefined} className={`path-option ${state}`} aria-pressed={choice === i} disabled={answered || busy} onClick={() => setChoice(i)} data-no-i18n>
-                {o}
+                <QuestionText>{o}</QuestionText>
               </button>
             );
           })}

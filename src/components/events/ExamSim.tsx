@@ -1,4 +1,5 @@
 "use client";
+import { QuestionLanguage, QuestionText } from "./QuestionLanguage";
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
@@ -59,7 +60,7 @@ export default function ExamSim({
   const picked = answers[index];
 
   return (
-    <div className="space-y-4 pb-10">
+    <QuestionLanguage><div className="space-y-4 pb-10">
       <header className="sticky top-2 z-10 space-y-2 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]/95 p-3 backdrop-blur">
         <div className="flex items-center justify-between gap-3">
           <button className="text-sm underline" onClick={() => { if (confirm("Прервать пробный тест? Ответы не сохранятся.")) onExit(); }}>← Прервать</button>
@@ -81,7 +82,7 @@ export default function ExamSim({
             {flags.includes(index) ? "⚑ Вернуться" : "⚐ Отметить"}
           </button>
         </div>
-        <h2 data-selection-question lang="en" className="mt-3 text-lg font-semibold leading-snug">{item.q}</h2>
+        <h2 data-selection-question lang="en" className="mt-3 text-lg font-semibold leading-snug"><QuestionText>{item.q}</QuestionText></h2>
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => (
             <button
@@ -94,7 +95,7 @@ export default function ExamSim({
                 picked === i ? "border-sky-400 bg-sky-500/15" : "border-[var(--color-border)] hover:bg-[var(--color-surface-2)]",
               )}
             >
-              {option}
+              <QuestionText>{option}</QuestionText>
             </button>
           ))}
         </div>
@@ -132,6 +133,6 @@ export default function ExamSim({
           Сдать тест
         </Button>
       </section>
-    </div>
+    </div></QuestionLanguage>
   );
 }

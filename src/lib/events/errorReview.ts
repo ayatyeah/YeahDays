@@ -14,3 +14,12 @@ export function shuffledOptions(length: number, random = Math.random) {
 export function readyForReview<T extends { id: string }>(mistakes: T[], answeredAt: Record<string, number>, answeredCount: number) {
   return mistakes.filter(q => answeredCount - (answeredAt[q.id] ?? Infinity) >= 2);
 }
+
+/** Replace the original mistake, so every score consumer sees one corrected answer. */
+export function creditReview<T extends { id: string; correct: number[] }>(questions: T[], answers: number[][], id: string, selected: number[]) {
+  const index = questions.findIndex(q => q.id === id);
+  if (index < 0 || answers[index] === undefined || !matchesAnswer(selected, questions[index].correct) || matchesAnswer(answers[index], questions[index].correct)) return answers;
+  const next = [...answers];
+  next[index] = [...selected];
+  return next;
+}

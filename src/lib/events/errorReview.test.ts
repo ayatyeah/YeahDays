@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { missedQuestions, reviewDelay, shuffledOptions, readyForReview } from './errorReview';
+import { missedQuestions, reviewDelay, shuffledOptions, readyForReview, creditReview } from './errorReview';
 import { matchesAnswer } from './quizAnswers';
 
 describe('spaced error reinforcement', () => {
@@ -29,5 +29,28 @@ describe('spaced error reinforcement', () => {
       const expected = [0,length-1];
       expect(matchesAnswer(order.filter(original=>expected.includes(original)),expected)).toBe(true);
     }
+  });
+});
+
+
+describe('review score correction', () => {
+  const questions = [{id:'single',correct:[2]}, {id:'multi',correct:[0,3]}, {id:'last',correct:[1]}];
+  const score = (answers: number[][]) => questions.filter((q,i) => matchesAnswer(answers[i],q.correct)).length;
+  it('increases the final score exactly once and removes the corrected mistake', () => {
+    const original = [[0],[0,3],[1]];
+    const corrected = creditReview(questions, original, 'single', [2]);
+    expect(score(original)).toBe(2);
+    expect(score(corrected)).toBe(3);
+    expect(original[0]).toEqual([0]);
+    expect(missedQuestions(questions, corrected, [])).toEqual([]);
+    expect(creditReview(questions, corrected, 'single', [2])).toBe(corrected);
+  });
+  it('uses original answer keys after shuffling and rejects partial or wrong answers', () => {
+    const answers = [[2],[1],[1]];
+    expect(creditReview(questions,answers,'multi',[0])).toBe(answers);
+    expect(creditReview(questions,answers,'multi',[1,3])).toBe(answers);
+    expect(score(creditReview(questions,answers,'multi',[3,0]))).toBe(3);
+    expect(creditReview(questions,answers,'missing',[0])).toBe(answers);
+    expect(creditReview(questions,[], 'single',[2])).toEqual([]);
   });
 });

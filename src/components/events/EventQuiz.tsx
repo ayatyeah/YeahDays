@@ -1,7 +1,7 @@
 "use client";
 import QuizStage from "./QuizStage";
 import ErrorReview from "./ErrorReview";
-import { missedQuestions, reviewDelay, readyForReview } from "@/lib/events/errorReview";
+import { missedQuestions, reviewDelay, readyForReview, creditReview } from "@/lib/events/errorReview";
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
@@ -107,7 +107,10 @@ export default function EventQuiz({
         </div>
       </header>
 
-      <QuizStage>{reviewing ? <ErrorReview candidates={missed} onDone={id => {
+      <QuizStage>{reviewing ? <ErrorReview candidates={missed} onCorrect={(id, selected) => {
+        const corrected = creditReview(quiz, answers, id, selected);
+        if (corrected !== answers) { setAnswers(corrected); onAnswer?.(id, selected); }
+      }} onDone={id => {
         const nextMastered = id ? [...mastered, id] : mastered;
         setMastered(nextMastered); setReviewing(false);
         setReviewAt(missedQuestions(quiz, answers, nextMastered).length ? answers.filter(Boolean).length + reviewDelay() : null);

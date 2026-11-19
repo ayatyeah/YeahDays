@@ -18,6 +18,7 @@ import styles from './notebook-navigation.module.css';
 const AwsKnowledgeChecks = dynamic(() => import('./AwsKnowledgeChecks'), { loading: () => <p role="status">Opening AWS Knowledge Checks…</p> });
 const AwsStudyDay = dynamic(() => import('./AwsStudyDay'), { loading: () => <p role="status">Загружаем подготовку AWS…</p> });
 const AwsCourseMaterials = dynamic(() => import('./AwsCourseMaterials'), { loading: () => <p role="status">Загружаем модули AWS…</p> });
+const CloudLectureReader = dynamic(() => import('./CloudLectureReader'));
 const NetworkTests = dynamic(() => import('./NetworkTests'));
 const NetworkStoryClip = dynamic(() => import('./NetworkStoryClip'));
 
@@ -26,7 +27,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
   const { data: session } = useSession();
   const parts = useMemo(() => event.lectures.flatMap(lecture => lecture.parts), [event]);
   const [activePart, setActivePart] = useState(parts[0]?.id);
-  const [lang, setLang] = useState<'en' | 'ru'>('en');
+  const [lang, setLang] = useState<'en' | 'ru'>(event.id === 'cloud-computing-final' ? 'ru' : 'en');
   const [query, setQuery] = useState('');
   const isCloud = event.id === 'cloud-computing-final';
   const isCv = event.id === 'computer-vision-final';
@@ -38,7 +39,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       if (event.id === 'cloud-computing-final' && (hash.split('/')[0] === 'one-day' || hash.split('/')[0] === 'aws-notes')) setSection(hash.split('/')[0] as 'one-day' | 'aws-notes');
       else if (event.id === 'cloud-computing-final' && hash.startsWith('files/')) setSection('files');
       else if ((hash === 'practice' && event.id !== 'philosophy-final') || hash === 'files') setSection(hash);
-      else if (hash === 'lectures' || parts.some(part => part.id === hash)) {
+      else if ((event.id === 'cloud-computing-final' && hash.startsWith('lectures/')) || hash === 'lectures' || parts.some(part => part.id === hash)) {
         setSection('lectures');
         if (parts.some(part => part.id === hash)) setActivePart(hash);
       } else if (!hash) setSection('lectures');
@@ -49,10 +50,11 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
     return () => window.removeEventListener('hashchange', sync);
   }, [parts, event.id]);
   useEffect(() => {
+    if (isCloud && section === 'lectures') return;
     useTutorFocus.getState().setBase({ view: 'read', partId: section === 'lectures' ? activePart : section === 'overview' ? 'final-guide' : undefined, step: `${event.course} · ${section}` });
     useTutorFocus.getState().setDetail({});
     return () => useTutorFocus.getState().setBase({});
-  }, [section, activePart, event.course]);
+  }, [section, activePart, event.course, isCloud]);
   function selectTopic(id: string) {
     setActivePart(id);
     setSection('lectures');
@@ -78,8 +80,8 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       ] as const).filter(([id]) => (id !== 'one-day' && id !== 'aws-notes') || event.id === 'cloud-computing-final').filter(([id]) => id !== 'practice' || event.id !== 'philosophy-final').map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon name={number} size={20}/>{title}</a>)}
     </nav>}
     {isCloud && <h1 className={styles.sectionTitle}>{({ lectures: 'Лекции', practice: 'Квиз · 220 вопросов', files: 'Модули AWS', 'aws-notes': 'Конспекты AWS', 'one-day': 'Подготовка за 1 день', overview: 'Требования к экзамену' })[section]}</h1>}
-    {section === 'lectures' && <div className="prime-topic-position"><span>{ru ? 'Сейчас открыто' : 'Currently reading'}</span><strong>{ru ? `Тема ${topicIndex + 1} из ${parts.length}` : `Topic ${topicIndex + 1} of ${parts.length}`}</strong><meter min={0} max={parts.length} value={topicIndex + 1} aria-label={ru ? 'Положение в конспекте, не оценка знаний' : 'Position in notes, not mastery'}/></div>}
-    {!(isCloud && section === 'files') && <NotesToolbar lang={lang} onLang={setLang}/>}
+    {section === 'lectures' && !isCloud && <div className="prime-topic-position"><span>{ru ? 'Сейчас открыто' : 'Currently reading'}</span><strong>{ru ? `Тема ${topicIndex + 1} из ${parts.length}` : `Topic ${topicIndex + 1} of ${parts.length}`}</strong><meter min={0} max={parts.length} value={topicIndex + 1} aria-label={ru ? 'Положение в конспекте, не оценка знаний' : 'Position in notes, not mastery'}/></div>}
+    {!(isCloud && section === 'files') && <NotesToolbar lang={lang} onLang={setLang} showLanguage={!(isCloud && section === 'practice')}/>}
     </div>
     {section === 'overview' && <>
     <section id="final-guide" className="g-note-paper g-final-guide" aria-labelledby="final-guide-title" lang={lang}>
@@ -100,7 +102,8 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       <div className={styles.files}>{isCv && <a className="f-button" href={`/events/computer-vision-final/notes-${lang}.md`} download>{ru ? 'Скачать полный конспект' : 'Download complete notes'}</a>}
       {notebook.sources.map(source => <a key={source.id} href={source.url} target="_blank" rel="noreferrer">{source.title}</a>)}</div>
     </section>}
-    {section === 'lectures' && <>
+    {section === 'lectures' && isCloud && <CloudLectureReader event={event} notebook={notebook} lang={lang} signedIn={!!session?.user?.id}/>}
+    {section === 'lectures' && !isCloud && <>
     <div className={styles.chooser}>
       <label>{ru ? 'Найти тему' : 'Find a topic'}<input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder={ru ? 'Название или ключевое слово…' : 'Title or keyword…'}/></label>
       <label>{ru ? 'Открытая тема' : 'Current topic'}<select value={activePart} onChange={e => selectTopic(e.target.value)}>{parts.map((part, i) => <option key={part.id} value={part.id}>{i + 1}. {part.title[lang]}</option>)}</select></label>

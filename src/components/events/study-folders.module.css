@@ -1,0 +1,19 @@
+.grid {display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px 18px;margin:2rem 0}
+.folder {position:relative;display:flex;flex-direction:column;gap:.7rem;min-height:155px;padding:1.3rem;border:1px solid var(--g-border);border-radius:0 16px 16px 16px;background:var(--g-inset);color:var(--g-text);text-decoration:none;overflow-wrap:anywhere}
+.folder:before {content:'';position:absolute;top:-12px;left:-1px;width:38%;height:12px;background:var(--g-inset);border:1px solid var(--g-border);border-bottom:0;border-radius:9px 9px 0 0}
+.folder strong {font-size:1.15rem;line-height:1.4}.folder small {color:var(--g-muted)}
+.folder:hover {border-color:var(--g-text)}
+.back {display:inline-flex;align-items:center;min-height:44px;color:var(--g-text);scroll-margin-top:220px}
+.mode {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem;margin:1rem 0 1.5rem}
+.mode a {display:flex;align-items:center;justify-content:center;min-height:48px;padding:.7rem;text-decoration:none;border:1px solid var(--g-border);border-radius:12px;color:var(--g-text);background:var(--g-paper);font-weight:600;text-align:center}
+.mode a[aria-current] {background:var(--g-inset);border-color:var(--g-text)}
+.layout {display:grid;grid-template-columns:minmax(200px,260px) minmax(0,1fr);gap:1.2rem;align-items:start}
+.contents {display:grid;gap:.5rem}.contents a {display:block;padding:.8rem;border:1px solid transparent;border-radius:12px;color:var(--g-text);line-height:1.5;min-height:44px;text-decoration:none}
+.contents a[aria-current] {background:var(--g-inset);border-color:var(--g-border);font-weight:600}
+.brief {padding:1.25rem;border:1px solid var(--g-border);border-radius:16px;background:var(--g-paper);margin:1rem 0;line-height:1.7}
+.brief h3 {font-size:1.15rem;font-weight:650;margin-bottom:.7rem}
+.heading {font-size:clamp(1.4rem,3vw,2rem);line-height:1.35;margin:.7rem 0;font-weight:650}
+.root {min-width:0}.root :is(a,button):focus-visible {outline:2px solid var(--g-text);outline-offset:3px}
+.mobileTopic {display:none}
+@media(max-width:760px){.layout {grid-template-columns:1fr}.contents {display:none}.mobileTopic {display:grid;gap:.5rem;margin:1rem 0}.mobileTopic select{width:100%;min-height:48px;padding:.6rem;border:1px solid var(--g-border);border-radius:12px;background:var(--g-paper);color:var(--g-text)}}
+@media(max-width:420px){.grid {grid-template-columns:1fr}.mode {gap:.4rem}.mode a {font-size:.9rem}}

@@ -14,3 +14,15 @@
 @keyframes den-wrong { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 @media(max-width: 700px) { .split { grid-template-columns: minmax(0,1fr); gap: 12px; } .player { position: static; grid-row: 1; flex-direction: row; flex-wrap: wrap; justify-content: center; } .player video { width: 84px; height: 182px; } .player span,.player small { max-width: 130px; } }
 @media(prefers-reduced-motion: reduce) { .stage [data-answer-state] { animation: none; } }
+.youtubeSplit { grid-template-columns: minmax(0,1fr) minmax(240px,340px); }
+.source,.custom,.youtube { width: 100%; min-width: 0; font-size: 13px; }
+.source { display: grid; gap: 6px; }
+.source select,.custom input { width: 100%; min-width: 0; min-height: 44px; padding: 8px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-surface); color: var(--color-fg); }
+.custom summary { cursor: pointer; padding: 8px 0; }
+.custom form { display: grid; gap: 8px; }
+.custom button { min-height: 44px; border-radius: 10px; border: 1px solid var(--color-border); }
+.youtube { display: grid; gap: 8px; }
+.youtubeFrame { width: 100%; height: 210px; min-width: 200px; overflow: hidden; border-radius: 12px; background: #111; }
+.youtubeFrame iframe { display: block; width: 100%; height: 100%; }
+.youtube a { text-decoration: underline; }
+@media(max-width:700px) { .youtubeSplit { grid-template-columns: minmax(0,1fr); } }

@@ -1,3 +1,4 @@
+import { plainLessons } from './lessons';
 import { describe, expect, it } from 'vitest';
 import { studyTopics, studyMinutes, topicForQuestion } from './topics';
 import { studyQuestions, studyExplanations, studyPracticeSet } from './bank';
@@ -7,6 +8,7 @@ import developing from '../awsCloudDeveloping/questions.json';
 describe('two-course one-day preparation', () => {
   it('covers all 220 original questions exactly once in 11 thematic notes', () => {
     expect(studyTopics).toHaveLength(11);
+    expect(Object.keys(plainLessons).sort()).toEqual(studyTopics.map(t => t.id).sort());
     expect(studyMinutes).toBe(600);
     const covered = studyTopics.flatMap(t => {
       const questions = studyPracticeSet({}, [t.id], 'all');

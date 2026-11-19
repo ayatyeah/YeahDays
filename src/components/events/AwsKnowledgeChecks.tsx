@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import developingQuestions from '@/lib/events/awsCloudDeveloping/questions.json';
 import developingExplanations from '@/lib/events/awsCloudDeveloping/explanations.ru.json';
 import developingModules from '@/lib/events/awsCloudDeveloping/modules.json';
@@ -43,6 +43,13 @@ function Workspace({ userId, lang, course, onCourse }: Props & { course: CourseI
   const [music, setMusic] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [explanationLang, setExplanationLang] = useState<'ru' | 'en'>('ru');
+  const quizRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (mode !== 'quiz') return;
+    const heading = quizRef.current?.querySelector<HTMLHeadingElement>('h2');
+    heading?.focus({ preventScroll: true });
+    heading?.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }, [mode, run]);
   const [practice, setPractice] = useState<'all' | 'random' | 'errors'>('all');
   useEffect(() => {
     try { setAnswers(parseAwsAnswers(localStorage.getItem(storageKey), bank.counts)); }
@@ -69,7 +76,7 @@ function Workspace({ userId, lang, course, onCourse }: Props & { course: CourseI
   function navigate(nextModule: number, nextPractice: typeof practice = 'all') {
     setModule(nextModule); setPractice(nextPractice); setMode('intro'); setMenuOpen(false);
   }
-  const content = mode === 'quiz' ? <section className={styles.quiz} aria-label="AWS Knowledge Check" data-no-i18n>
+  const content = mode === 'quiz' ? <section ref={quizRef} className={styles.quiz} aria-label="AWS Knowledge Check" data-no-i18n>
     {savedNotice}
     <EventQuiz key={run} eventId="cloud-computing-final"
       step={{ title: { ru: `AWS ${bank.title} · ${queue.length} вопросов`, en: `AWS ${bank.title} · ${queue.length} questions` } }}

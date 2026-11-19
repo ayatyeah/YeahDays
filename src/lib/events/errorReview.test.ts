@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { missedQuestions, reviewDelay, shuffledOptions } from './errorReview';
+import { missedQuestions, reviewDelay, shuffledOptions, readyForReview } from './errorReview';
 import { matchesAnswer } from './quizAnswers';
 
 describe('spaced error reinforcement', () => {
@@ -14,6 +14,12 @@ describe('spaced error reinforcement', () => {
     expect(missedQuestions(questions,answers,[]).map(q=>q.id)).toEqual(['wrong']);
     expect(missedQuestions(questions,answers,['wrong'])).toEqual([]);
     expect(answers[0]).toEqual([0]);
+  });
+  it('never selects a fresh mistake while an older mistake is due', () => {
+    const mistakes = [{id:'old'},{id:'fresh'},{id:'recent'}];
+    expect(readyForReview(mistakes,{old:1,recent:2,fresh:3},3)).toEqual([{id:'old'}]);
+    expect(readyForReview([{id:'fresh'}],{fresh:3},4)).toEqual([]);
+    expect(readyForReview([{id:'fresh'}],{fresh:3},5)).toEqual([{id:'fresh'}]);
   });
   it('changes option positions while preserving original keys, including multiple correct answers', () => {
     for (const length of [2,4,5,6]) for (const random of [()=>0,()=>.999999,Math.random]) {

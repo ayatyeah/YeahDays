@@ -1,7 +1,7 @@
 "use client";
 import QuizStage from "./QuizStage";
 import ErrorReview from "./ErrorReview";
-import { missedQuestions, reviewDelay } from "@/lib/events/errorReview";
+import { missedQuestions, reviewDelay, readyForReview } from "@/lib/events/errorReview";
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
@@ -36,6 +36,7 @@ export default function EventQuiz({
   const tl = useContentLang();
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[][]>([]);
+  const [answeredAt, setAnsweredAt] = useState<Record<string, number>>({});
   const [reviewAt, setReviewAt] = useState<number | null>(null);
   const [reviewing, setReviewing] = useState(false);
   const [mastered, setMastered] = useState<string[]>([]);
@@ -49,6 +50,7 @@ export default function EventQuiz({
   function submit(value: number[]) {
     setAnswers(previous => { const next = [...previous]; next[index] = value; return next; });
     if (answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answers.filter(Boolean).length + 1 + reviewDelay());
+    if (answers[index] === undefined) setAnsweredAt(previous => ({ ...previous, [item.id]: answers.filter(Boolean).length + 1 }));
     onAnswer?.(item.id, value);
   }
   const answered = picked !== undefined;
@@ -71,7 +73,7 @@ export default function EventQuiz({
     });
   }, [answered, index]);
 
-  const missed = missedQuestions(quiz, answers, mastered);
+  const missed = readyForReview(missedQuestions(quiz, answers, mastered), answeredAt, answers.filter(Boolean).length);
   function advance() {
     if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1);
   }

@@ -10,3 +10,7 @@ export function shuffledOptions(length: number, random = Math.random) {
   if (length > 1 && order.every((value, i) => value === i)) order.push(order.shift()!);
   return order;
 }
+
+export function readyForReview<T extends { id: string }>(mistakes: T[], answeredAt: Record<string, number>, answeredCount: number) {
+  return mistakes.filter(q => answeredCount - (answeredAt[q.id] ?? Infinity) >= 2);
+}

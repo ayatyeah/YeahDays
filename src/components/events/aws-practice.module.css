@@ -12,3 +12,14 @@
 .panel summary {min-height:44px;cursor:pointer;overflow-wrap:anywhere}
 .note {color:var(--g-muted);font-size:.85rem}
 @media(max-width:540px){.fields {grid-template-columns:1fr}.actions {flex-direction:column}}
+.selectionSummary {font-size:.95rem;color:var(--g-muted)}
+.primaryActions {display:grid;grid-template-columns:minmax(120px,.65fr) minmax(0,1.35fr);gap:.75rem;margin:1.2rem 0}
+.primaryActions button,.filterFooter button {min-height:48px;padding:.8rem 1rem;border:1px solid var(--g-border);border-radius:12px;cursor:pointer;font:inherit;font-weight:600}
+.filterToggle {display:flex;align-items:center;justify-content:space-between;gap:1rem;background:var(--g-paper);color:var(--g-text)}
+.startButton {background:var(--g-text);color:var(--g-paper)}
+.primaryActions button:disabled,.filterFooter button:disabled {opacity:.5;cursor:default}
+.filtersPanel {border-top:1px solid var(--g-border);padding-top:.2rem;margin-top:1rem}
+.filtersPanel[hidden] {display:none}
+.filterFooter {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin:1rem 0}
+.filterFooter button {background:var(--g-inset);color:var(--g-text)}
+@media(max-width:380px){.primaryActions{grid-template-columns:1fr}.filterFooter{align-items:stretch;flex-direction:column}}

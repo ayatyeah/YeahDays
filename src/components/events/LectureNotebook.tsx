@@ -17,6 +17,7 @@ import TopicLearningModes, { TopicTutorRail } from './TopicLearningModes';
 import styles from './notebook-navigation.module.css';
 const AwsKnowledgeChecks = dynamic(() => import('./AwsKnowledgeChecks'), { loading: () => <p role="status">Opening AWS Knowledge Checks…</p> });
 const AwsStudyDay = dynamic(() => import('./AwsStudyDay'), { loading: () => <p role="status">Загружаем подготовку AWS…</p> });
+const AwsTermsQuiz = dynamic(() => import('./AwsTermsQuiz'));
 const AwsTerms = dynamic(() => import('./AwsTerms'), { loading: () => <p role="status">Загружаем словарь AWS…</p> });
 const AwsCourseMaterials = dynamic(() => import('./AwsCourseMaterials'), { loading: () => <p role="status">Загружаем модули AWS…</p> });
 const CloudLectureReader = dynamic(() => import('./CloudLectureReader'));
@@ -32,13 +33,14 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
   const [query, setQuery] = useState('');
   const isCloud = event.id === 'cloud-computing-final';
   const isCv = event.id === 'computer-vision-final';
-  const [section, setSection] = useState<'overview' | 'practice' | 'lectures' | 'files' | 'one-day' | 'aws-notes' | 'terms'>('lectures');
+  const [section, setSection] = useState<'overview' | 'practice' | 'lectures' | 'files' | 'one-day' | 'aws-notes' | 'terms' | 'terms-quiz'>('lectures');
   const ru = lang === 'ru';
+  const showNotesToolbar = !isCloud || !['practice', 'files', 'terms', 'terms-quiz'].includes(section);
   useEffect(() => {
     const sync = () => {
       const hash = window.location.hash.slice(1);
       if (event.id === 'cloud-computing-final' && (hash.split('/')[0] === 'one-day' || hash.split('/')[0] === 'aws-notes')) setSection(hash.split('/')[0] as 'one-day' | 'aws-notes');
-      else if (event.id === 'cloud-computing-final' && hash === 'terms') setSection('terms');
+      else if (event.id === 'cloud-computing-final' && (hash === 'terms' || hash === 'terms-quiz')) setSection(hash);
       else if (event.id === 'cloud-computing-final' && hash.startsWith('files/')) setSection('files');
       else if ((hash === 'practice' && event.id !== 'philosophy-final') || hash === 'files') setSection(hash);
       else if ((event.id === 'cloud-computing-final' && hash.startsWith('lectures/')) || hash === 'lectures' || parts.some(part => part.id === hash)) {
@@ -70,7 +72,8 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
   return <div className="g-notes-page" data-no-i18n>
     <Link className={`g-reader-back ${styles.courseBack}`} href={eventCourseHref(event.id)}>← {isCloud ? 'Назад к папкам Cloud Computing' : event.course}</Link>
     {!isCloud && <header className="g-reader-heading"><div><p>{event.course} / Final preparation</p><h1>{ru ? `Подготовка к финалу · ${event.course}` : `${event.course} · Final preparation`}</h1><p>{notebook.coverage[lang]}</p></div><span><Icon name="book" size={20}/>{parts.length} parts</span></header>}
-    <div className={styles.controls}>
+    {isCloud && <h1 className={styles.sectionTitle}>{({ 'terms-quiz': 'Квиз по терминам', terms: 'Термины AWS', lectures: 'Лекции', practice: 'Квиз · 220 вопросов', files: 'Модули AWS', 'aws-notes': 'Конспекты AWS', 'one-day': 'Подготовка за 1 день', overview: 'Требования к экзамену' })[section]}</h1>}
+    {(!isCloud || showNotesToolbar) && <div className={styles.controls}>
     {!isCloud && <nav className={styles.navigation} aria-label={ru ? 'Разделы подготовки' : 'Preparation sections'}>
       {([
         ['lectures', ru ? 'Лекции' : 'Lectures', 'book'],
@@ -81,10 +84,9 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
         ['files', ru ? 'Материалы' : 'Materials', 'plan'],
       ] as const).filter(([id]) => (id !== 'one-day' && id !== 'aws-notes') || event.id === 'cloud-computing-final').filter(([id]) => id !== 'practice' || event.id !== 'philosophy-final').map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon name={number} size={20}/>{title}</a>)}
     </nav>}
-    {isCloud && <h1 className={styles.sectionTitle}>{({ terms: 'Термины AWS', lectures: 'Лекции', practice: 'Квиз · 220 вопросов', files: 'Модули AWS', 'aws-notes': 'Конспекты AWS', 'one-day': 'Подготовка за 1 день', overview: 'Требования к экзамену' })[section]}</h1>}
     {section === 'lectures' && !isCloud && <div className="prime-topic-position"><span>{ru ? 'Сейчас открыто' : 'Currently reading'}</span><strong>{ru ? `Тема ${topicIndex + 1} из ${parts.length}` : `Topic ${topicIndex + 1} of ${parts.length}`}</strong><meter min={0} max={parts.length} value={topicIndex + 1} aria-label={ru ? 'Положение в конспекте, не оценка знаний' : 'Position in notes, not mastery'}/></div>}
-    {!(isCloud && (section === 'files' || section === 'terms')) && <NotesToolbar lang={lang} onLang={setLang} showLanguage={!(isCloud && section === 'practice')}/>}
-    </div>
+    {showNotesToolbar && <NotesToolbar lang={lang} onLang={setLang}/>}
+    </div>}
     {section === 'overview' && <>
     <section id="final-guide" className="g-note-paper g-final-guide" aria-labelledby="final-guide-title" lang={lang}>
       <div className="g-note-meta"><span>{lang === 'en' ? 'Start here · Your final' : 'Начни здесь · Твой финал'}</span><Icon name="plan" size={18}/></div>
@@ -97,6 +99,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
     </>}
     {section === 'practice' && (event.id === 'cloud-computing-final' ? (session?.user?.id ? <AwsKnowledgeChecks userId={session.user.id} lang={lang}/> : <section className="g-note-paper"><Link className="f-button" href="/login">{ru ? 'Войти для прохождения AWS Knowledge Checks' : 'Sign in for AWS Knowledge Checks'}</Link></section>) : <NetworkTests lang={lang}/> )}
     {(section === 'one-day' || section === 'aws-notes') && event.id === 'cloud-computing-final' && (session?.user?.id ? <AwsStudyDay key={`${session.user.id}:${section}`} userId={session.user.id} notesOnly={section === 'aws-notes'}/> : <section className="g-note-paper"><Link className="f-button" href="/login">Войти для подготовки AWS</Link></section>)}
+    {section === 'terms-quiz' && isCloud && <AwsTermsQuiz/>}
     {section === 'terms' && isCloud && <AwsTerms/>}
     {section === 'files' && isCloud && <AwsCourseMaterials/>}
     {section === 'files' && <section className="g-note-paper">

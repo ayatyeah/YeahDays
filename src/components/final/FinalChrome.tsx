@@ -7,9 +7,9 @@ import ThemeSwitch from './ThemeSwitch';
 import { useState } from 'react';
 import { ReadingModeContext } from './ReadingMode';
 const navigation = [
-  { href: '/app', label: 'My study', icon: 'home', paths: ['/app', '/today', '/learn', '/calendar'] },
+  { href: '/app', label: 'Today', icon: 'home', paths: ['/app', '/today', '/learn', '/calendar'] },
   { href: '/events', label: 'Courses', icon: 'book', paths: ['/events'] },
-  { href: '/events/all', label: 'Events', icon: 'events', paths: ['/events/all'] },
+  { href: '/progress', label: 'Progress', icon: 'progress', paths: ['/progress'] },
 ];
 export default function FinalChrome({ children }: { children: React.ReactNode }) {
   const path = usePathname();

@@ -12,6 +12,7 @@ export default function AwsTerms() {
   const found = visible.reduce((sum, section) => sum + section.terms.length, 0);
   return <section className={styles.root} lang="ru" aria-label="Словарь AWS">
     <p>Словарь по Cloud Foundations и Cloud Developing с дополнительной картой типов баз данных. Всего карточек: {total}. В каждой — объяснение, пример и важное различие. Это учебное объяснение, а не полный каталог всех продуктов AWS.</p>
+    <a className="f-button" href="#terms-quiz">Проверить себя · {total} вопросов →</a>
     <div className={styles.filters}>
       <label>Найти термин<input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Например: DynamoDB, очередь, ключ"/></label>
       <label>Раздел<select value={category} onChange={event => setCategory(event.target.value)}><option value="all">Все разделы</option>{sections.map(section => <option key={section.id} value={section.id}>{section.title}</option>)}</select></label>

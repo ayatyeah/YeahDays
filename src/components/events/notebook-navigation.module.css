@@ -15,7 +15,8 @@
 .files a { overflow-wrap:anywhere; }
 @media(max-width:600px) { .navigation { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:3px; overflow:visible; } .navigation a,.navigation button { padding:10px 12px; font-size:13px; } .navigation small { display:none; } .chooser { align-items:stretch; flex-direction:column; } }
 
-.controls { position:sticky; top:102px; z-index:30; background:var(--g-bg); padding-top:4px; margin-bottom:20px; }
+/* Event themes can differ from the app theme; also override the global clean-mode surface. */
+.controls { position:sticky; top:102px; z-index:30; background:var(--ep-paper,var(--g-bg))!important; padding-top:4px; margin-bottom:20px; }
 .controls .navigation { margin:0 0 8px; }
 .controls :global(.g-notes-tools) { position:static; }
 :global(.p-shell[data-clean-mode=true]) .controls { top:8px; }
@@ -32,5 +33,5 @@
 @media(min-width:601px) and (max-width:1100px){.controls .navigation:has(a[href="#one-day"]){grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:600px){.controls .navigation{grid-template-columns:repeat(2,minmax(0,1fr))}.controls .navigation a,.controls .navigation button{min-height:52px;padding:10px 8px;gap:6px;font-size:12px}.controls .navigation svg{width:16px;height:16px}.controls :global(.g-notes-toolbar){display:grid;grid-template-columns:minmax(0,1fr) 44px 44px;gap:6px;align-items:center;padding:10px}.controls :global(.g-notes-toolbar)>span{display:none}.controls :global(.g-language-options){display:flex;min-width:0;justify-content:center}.controls :global(.g-language-options) button{min-height:44px;min-width:0;flex:1;padding-inline:6px!important}.controls :global(.g-translator-toggle),.controls :global(.p-inline-clean-toggle){width:44px;min-width:44px;height:44px;margin:0;padding:10px!important;justify-content:center;order:initial}.controls :global(.p-inline-clean-toggle) span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.controls :global(.p-inline-clean-toggle) svg{display:block!important;flex-shrink:0}.controls :global(.g-translator-toggle) span{display:none}}
 .controls .navigation{grid-auto-rows:1fr}.controls .navigation a,.controls .navigation button{height:100%!important;min-height:52px!important}
-.sectionTitle {font-size:1.2rem;font-weight:650;margin:0;padding:.5rem 0;line-height:1.4}
+.sectionTitle {font-size:1.2rem;font-weight:650;margin:0 0 20px;padding:.5rem 0;line-height:1.4;color:var(--g-text);background:transparent}
 .courseBack {scroll-margin-top:260px;scroll-margin-bottom:120px}

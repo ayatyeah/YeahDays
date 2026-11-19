@@ -1,0 +1,9 @@
+.panel h2 {font-size:clamp(1.2rem,3vw,1.6rem);font-weight:650;line-height:1.4;margin:1rem 0;scroll-margin-top:250px}
+.back {display:inline-flex;align-items:center;min-height:44px;color:var(--g-text);text-decoration:underline;line-height:1.5}
+.explanation {white-space:pre-line}
+.launch {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:.75rem;margin:1.1rem 0}
+.launch button {min-height:48px;display:flex;align-items:center;justify-content:center;gap:.6rem;border:1px solid var(--g-border);border-radius:12px;padding:.8rem 1rem;background:var(--g-inset);color:var(--g-text);font:inherit;font-weight:650;cursor:pointer}
+.launch .start {background:var(--g-text);color:var(--g-paper);border-color:var(--g-text)}
+.launch button:disabled {opacity:.5;cursor:default}
+.filters {padding-top:.25rem;border-top:1px solid var(--g-border)}
+.filters[hidden] {display:none}

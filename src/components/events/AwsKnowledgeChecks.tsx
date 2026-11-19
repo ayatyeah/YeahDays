@@ -48,7 +48,7 @@ function Workspace({ userId, lang, course, onCourse }: Props & { course: CourseI
     if (mode !== 'quiz') return;
     const heading = quizRef.current?.querySelector<HTMLHeadingElement>('h2');
     heading?.focus({ preventScroll: true });
-    heading?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    quizRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
   }, [mode, run]);
   const [practice, setPractice] = useState<'all' | 'random' | 'errors'>('all');
   useEffect(() => {

@@ -50,7 +50,8 @@ export default function AwsStudyDay({ userId, notesOnly = false }: { userId: str
     if (!ready) return;
     const target = heading.current ?? quizFrame.current?.querySelector<HTMLHeadingElement>('h2');
     target?.focus({ preventScroll: true });
-    target?.scrollIntoView({ block: 'start', behavior: 'instant' });
+    const scrollTarget = queue.length && !result ? quizFrame.current : target;
+    scrollTarget?.scrollIntoView({ block: 'start', behavior: 'instant' });
   }, [active, queue.length, result, ready]);
   function save(id: string, value: number[]) {
     setAnswers(previous => ({ ...previous, [id]: value }));

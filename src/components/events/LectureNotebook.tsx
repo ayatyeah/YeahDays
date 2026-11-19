@@ -16,7 +16,7 @@ import Tutor from './Tutor';
 import TopicLearningModes, { TopicTutorRail } from './TopicLearningModes';
 import styles from './notebook-navigation.module.css';
 const AwsKnowledgeChecks = dynamic(() => import('./AwsKnowledgeChecks'), { loading: () => <p role="status">Opening AWS Knowledge Checks…</p> });
-const CvFinalPrep = dynamic(() => import('./CvFinalPrep'));
+const NetworkTests = dynamic(() => import('./NetworkTests'));
 const NetworkStoryClip = dynamic(() => import('./NetworkStoryClip'));
 
 /** Reading-only course materials: no assessment bank is imported by this view. */
@@ -27,21 +27,22 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
   const [lang, setLang] = useState<'en' | 'ru'>('en');
   const [query, setQuery] = useState('');
   const isCv = event.id === 'computer-vision-final';
-  const [section, setSection] = useState<'overview' | 'practice' | 'lectures' | 'files'>('overview');
+  const [section, setSection] = useState<'overview' | 'practice' | 'lectures' | 'files'>('lectures');
   const ru = lang === 'ru';
   useEffect(() => {
     const sync = () => {
       const hash = window.location.hash.slice(1);
-      if (hash === 'practice' || hash === 'files') setSection(hash);
+      if ((hash === 'practice' && event.id !== 'philosophy-final') || hash === 'files') setSection(hash);
       else if (hash === 'lectures' || parts.some(part => part.id === hash)) {
         setSection('lectures');
         if (parts.some(part => part.id === hash)) setActivePart(hash);
-      } else if (!hash || hash === 'overview' || hash === 'final-guide') setSection('overview');
+      } else if (!hash) setSection('lectures');
+      else if (hash === 'overview' || hash === 'final-guide') setSection('overview');
     };
     sync();
     window.addEventListener('hashchange', sync);
     return () => window.removeEventListener('hashchange', sync);
-  }, [parts]);
+  }, [parts, event.id]);
   useEffect(() => {
     useTutorFocus.getState().setBase({ view: 'read', partId: section === 'lectures' ? activePart : section === 'overview' ? 'final-guide' : undefined, step: `${event.course} · ${section}` });
     useTutorFocus.getState().setDetail({});
@@ -63,11 +64,11 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
     <div className={styles.controls}>
     <nav className={styles.navigation} aria-label={ru ? 'Разделы подготовки' : 'Preparation sections'}>
       {([
-        ['overview', ru ? 'Обзор' : 'Overview', 'home'],
-        ['practice', ru ? 'Практика' : 'Practice', 'research'],
         ['lectures', ru ? 'Лекции' : 'Lectures', 'book'],
+        ['practice', ru ? 'Практика' : 'Practice', 'research'],
+        ['overview', ru ? 'Требования' : 'Exam guide', 'home'],
         ['files', ru ? 'Материалы' : 'Materials', 'plan'],
-      ] as const).map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon name={number} size={20}/>{title}</a>)}
+      ] as const).filter(([id]) => id !== 'practice' || event.id !== 'philosophy-final').map(([id, title, number]) => <a key={id} href={`#${id}`} aria-current={section === id ? 'page' : undefined} onClick={() => setSection(id)}><Icon name={number} size={20}/>{title}</a>)}
     </nav>
     {section === 'lectures' && <div className="prime-topic-position"><span>{ru ? 'Сейчас открыто' : 'Currently reading'}</span><strong>{ru ? `Тема ${topicIndex + 1} из ${parts.length}` : `Topic ${topicIndex + 1} of ${parts.length}`}</strong><meter min={0} max={parts.length} value={topicIndex + 1} aria-label={ru ? 'Положение в конспекте, не оценка знаний' : 'Position in notes, not mastery'}/></div>}
     <NotesToolbar lang={lang} onLang={setLang}/>
@@ -79,10 +80,10 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       <EventNotes text={notebook.guide[lang]} lang={lang}/>
       <details className="g-note-sources"><summary>{lang === 'en' ? 'Syllabus & final instructions' : 'Силлабус и требования финала'}</summary><ul>{notebook.sources.filter(source => !source.lectureId).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}<Icon name="arrow" size={15}/></a></li>)}</ul></details>
       {event.id === 'cloud-computing-final' && <a className="f-button" href="#practice" onClick={() => setSection('practice')}>{ru ? 'AWS Knowledge Checks · 120 вопросов' : 'AWS Knowledge Checks · 120 questions'}<Icon name="arrow" size={17}/></a>}
-      {notebook.practiceId && <Link className="f-button" href={`/events/${notebook.practiceId}`}>{lang === 'en' ? 'Practise lecture concepts' : 'Потренировать понятия лекций'}<Icon name="arrow" size={17}/></Link>}
+
     </section>
     </>}
-    {section === 'practice' && (event.id === 'cloud-computing-final' ? (session?.user?.id ? <AwsKnowledgeChecks userId={session.user.id} lang={lang}/> : <section className="g-note-paper"><Link className="f-button" href="/login">{ru ? 'Войти для прохождения AWS Knowledge Checks' : 'Sign in for AWS Knowledge Checks'}</Link></section>) : isCv ? <CvFinalPrep lang={lang} signedIn={!!session?.user?.id}/> : <section className="g-note-paper"><h2>{ru ? 'От чтения к практике' : 'From reading to practice'}</h2><p>{ru ? 'Выбери одну тему, прочитай её и закрой конспект. Объясни идею своими словами, приведи пример, затем вернись и проверь пробелы.' : 'Choose one topic, read it, then close the notes. Explain the idea in your own words, give an example, then return and check what you missed.'}</p><a className="f-button" href="#lectures" onClick={() => setSection('lectures')}>{ru ? 'Выбрать тему' : 'Choose a topic'}</a>{notebook.practiceId && <Link className="f-button" href={`/events/${notebook.practiceId}`}>{ru ? 'Открыть тренажёр курса' : 'Open course practice'}</Link>}<p>{ru ? 'После своей попытки попроси помощника проверить объяснение или задать уточняющий вопрос.' : 'After your attempt, ask the assistant to check your explanation or ask a follow-up question.'}</p></section>)}
+    {section === 'practice' && (event.id === 'cloud-computing-final' ? (session?.user?.id ? <AwsKnowledgeChecks userId={session.user.id} lang={lang}/> : <section className="g-note-paper"><Link className="f-button" href="/login">{ru ? 'Войти для прохождения AWS Knowledge Checks' : 'Sign in for AWS Knowledge Checks'}</Link></section>) : <NetworkTests lang={lang}/> )}
     {section === 'files' && <section className="g-note-paper">
       <h2>{ru ? 'Материалы под рукой' : 'Your study materials'}</h2>
       <p>{ru ? 'Оригиналы лекций и требования преподавателя собраны здесь. Конспекты по темам — во вкладке «Лекции».' : 'Original lectures and instructor requirements are collected here. Topic notes are in the Lectures tab.'}</p>

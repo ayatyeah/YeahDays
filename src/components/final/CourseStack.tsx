@@ -30,7 +30,7 @@ const stories: Record<string, { label: string; description: string; topics: stri
 };
 
 export default function CourseStack() {
-  return <ol className={s.stack} aria-label="Explore six courses">
+  return <ol className={s.stack} aria-label="Explore courses">
     {EVENT_COURSES.map((course, index) => {
       const story = stories[course.id];
       return <li className={s.card} data-course={course.id} key={course.id} style={{ '--stack-index': index } as CSSProperties}>

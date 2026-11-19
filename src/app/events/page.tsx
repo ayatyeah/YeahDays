@@ -8,7 +8,7 @@ export default function EventsPage() {
     <header className={styles.header}><span className="f-section-kicker">Your learning library</span><h1>Your course library.</h1><p>Make yourself at home. Your notes, revision and practice are right here.</p></header>
     <div className={styles.grid}>{EVENT_COURSES.map(course => <Link key={course.id} href={courseHref(course.id)} className={styles.course} data-course={course.id}>
       <Image src={course.logo} width={72} height={72} alt="" className={styles.logo} />
-      <div className={styles.text}><h2 lang="en">{course.title}</h2><p>{course.description}</p><span className={styles.count}>{course.eventIds.length} {course.eventIds.length === 1 ? "event" : "events"}</span></div>
+      <div className={styles.text}><h2 lang="en">{course.title}</h2><p>{course.description}</p><span className={styles.count}>{course.id === 'philosophy' ? 'Lectures & essay practice' : 'Lectures & tests'}</span></div>
       <span className={styles.arrow} aria-hidden="true">→</span>
     </Link>)}</div>
   </section>;

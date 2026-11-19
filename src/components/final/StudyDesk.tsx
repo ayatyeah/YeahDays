@@ -4,10 +4,9 @@ import { EVENT_COURSES } from '@/lib/events/courses';
 import type { FinalStudy } from '@/lib/finalStudy';
 import { Icon } from './Brand';
 import PrimeNotebook from './PrimeNotebook';
-const courseOrder = ['research-methods','cloud-computing','computer-networks','computer-vision','project-management','philosophy'];
 const labels: Record<string,string> = { 'research-methods':'RMT','cloud-computing':'Cloud Comp','computer-networks':'Comp Net','computer-vision':'Comp Vision','project-management':'Project Management','philosophy':'Philosophy' };
 export function CourseShelf() {
-  return <section className="p-course-shelf" aria-labelledby="desk-courses-title"><div className="p-desk-section-title"><h2 id="desk-courses-title">Your courses</h2><Link href="/events">Open library<Icon name="arrow" size={17}/></Link></div><div className="p-folders">{courseOrder.map(id => { const course=EVENT_COURSES.find(c=>c.id===id)!; return <Link href={`/events/courses/${id}`} key={id} className="p-folder" data-course={id}><span className="p-folder-tab" aria-hidden="true"/><Image src={course.logo} width={52} height={52} alt=""/><span><strong>{labels[id]}</strong><small>Final preparation</small></span><Icon name="chevron" size={18}/></Link>; })}</div></section>;
+  return <section className="p-course-shelf" aria-labelledby="desk-courses-title"><div className="p-desk-section-title"><h2 id="desk-courses-title">Your courses</h2><Link href="/events">Open library<Icon name="arrow" size={17}/></Link></div><div className="p-folders">{EVENT_COURSES.map(course => { const id=course.id; return <Link href={`/events/courses/${id}`} key={id} className="p-folder" data-course={id}><span className="p-folder-tab" aria-hidden="true"/><Image src={course.logo} width={52} height={52} alt=""/><span><strong>{labels[id]}</strong><small>Final preparation</small></span><Icon name="chevron" size={18}/></Link>; })}</div></section>;
 }
 export default function StudyDesk({ study, onCreate }: { study: FinalStudy | null; onCreate: () => void }) {
   const next=study?.tasks.find(t=>!t.completedAt);

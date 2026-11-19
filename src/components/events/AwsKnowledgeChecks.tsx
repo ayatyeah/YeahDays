@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
-import { dayPracticeSet, type DayPracticeKind } from '@/lib/events/awsCloudDeveloping/practiceSets';
 import questions from '@/lib/events/awsCloudDeveloping/questions.json';
 import explanations from '@/lib/events/awsCloudDeveloping/explanations.ru.json';
 import modules from '@/lib/events/awsCloudDeveloping/modules.json';
@@ -12,7 +10,6 @@ import { shuffle } from '@/lib/events/engine';
 import EventQuiz from './EventQuiz';
 import styles from './aws-knowledge-checks.module.css';
 
-const AwsOneDay = dynamic(() => import('./AwsOneDay'), { loading: () => <p role="status">Загружаю план подготовки…</p> });
 const russian: Record<string, { summary: string; options: string[] }> = explanations;
 type Props = { userId: string; lang: 'en' | 'ru' };
 export default function AwsKnowledgeChecks(props: Props) {
@@ -32,8 +29,7 @@ function Workspace({ userId, lang }: Props) {
   const [music, setMusic] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [explanationLang, setExplanationLang] = useState<'ru' | 'en'>('ru');
-  const [practice, setPractice] = useState<'all' | 'random' | 'errors' | 'day'>('all');
-  const [dayStage, setDayStage] = useState('plan');
+  const [practice, setPractice] = useState<'all' | 'random' | 'errors'>('all');
   useEffect(() => {
     try { setAnswers(parseAwsAnswers(localStorage.getItem(storageKey))); }
     catch { setStorageError(true); }
@@ -54,9 +50,6 @@ function Workspace({ userId, lang }: Props) {
     if (!items.length) return;
     setMenuOpen(false); setQueue(items); setResult([]); setRun(n => n + 1); setMode('quiz');
   }
-  function startDay(modules: number[], kind: DayPracticeKind) {
-    start(dayPracticeSet(answers, modules, kind));
-  }
   const savedNotice = storageError ? <p role="alert">{ru ? 'Не удалось сохранить ответы в браузере. Можно продолжать, но после закрытия прогресс может потеряться.' : 'Answers could not be saved in this browser. You can continue, but progress may be lost when you leave.'}</p> : null;
   const heading = module ? modules.find(m => m.module === module)!.moduleTitle : practice === 'random' ? 'Случайные 30' : practice === 'errors' ? 'Работа над ошибками' : 'Все модули · 120 вопросов';
   function navigate(nextModule: number, nextPractice: typeof practice = 'all') {
@@ -76,9 +69,9 @@ function Workspace({ userId, lang }: Props) {
     {savedNotice}
     <div className={styles.actions}><button className="f-button" onClick={() => start(queue)}>{ru ? 'Пройти ещё раз' : 'Try again'}</button>
       {mistakes.length > 0 && <button className="f-button f-button-outline" onClick={() => start(mistakes)}>{ru ? 'Повторить ошибки' : 'Retry mistakes'} ({mistakes.length})</button>}
-      <button className="f-button f-button-outline" onClick={() => setMode('intro')}>{practice === 'day' ? 'Вернуться к плану дня' : ru ? 'К модулям' : 'Back to modules'}</button></div>
+      <button className="f-button f-button-outline" onClick={() => setMode('intro')}>{ru ? 'К модулям' : 'Back to modules'}</button></div>
     {mistakes.map(q => <article className={styles.review} key={q.id} lang="en"><h3>{q.prompt}</h3><p><strong>Correct:</strong> {q.answers.map(i => q.options[i]).join('; ')}</p><p lang="ru">{russian[q.id].summary}</p><details><summary>Разбор всех вариантов</summary>{q.options.map((option, i) => <div key={i}><p>{q.answers.includes(i) ? '✓' : '✗'} {option}</p><p lang="ru">{russian[q.id].options[i]}</p></div>)}</details>{q.caution && <p>{q.caution}</p>}</article>)}
-  </section> : practice === 'day' ? <AwsOneDay userId={userId} answers={answers} ready={ready} active={dayStage} onNavigate={setDayStage} onPractice={startDay}/> : <section className="g-note-paper" data-testid="aws-knowledge-checks" data-no-i18n>
+  </section> : <section className="g-note-paper" data-testid="aws-knowledge-checks" data-no-i18n>
     <p className="f-section-kicker">AWS Academy · Cloud Developing</p>
     <h2>{heading}</h2>
     <p>Оригинальные английские вопросы и варианты AWS Academy. После ответа — русский разбор принципа и каждого варианта; оригинальное объяснение AWS доступно по кнопке переключения языка.</p>
@@ -99,8 +92,6 @@ function Workspace({ userId, lang }: Props) {
     <aside className={styles.sidebar}>
       <button className={styles.mobileToggle} aria-expanded={menuOpen} aria-controls="aws-course-navigation" onClick={() => setMenuOpen(v => !v)}>Разделы курса <span>{menuOpen ? '−' : '+'}</span></button>
       <nav id="aws-course-navigation" aria-label="AWS: практика и модули" className={`${styles.navigation} ${menuOpen ? styles.open : ''}`}>
-        <p className={styles.navHeading}>Подготовка</p>
-        <button aria-current={practice === 'day' ? 'page' : undefined} onClick={() => navigate(0, 'day')}><span>Глубокое изучение за 1 день<small>6 блоков · около 8 часов</small></span></button>
         <p className={styles.navHeading}>Практика</p>
         {([{id:'all', title:'Все вопросы', count:120}, {id:'random', title:'Случайные 30', count:30}, {id:'errors', title:'Мои ошибки', count:questions.filter(q => answers[q.id] && !matchesAnswer(answers[q.id], q.answers)).length}] as const).map(item => <button key={item.id} aria-current={!module && practice === item.id ? 'page' : undefined} onClick={() => navigate(0, item.id)}><span>{item.title}</span><small>{item.count}</small></button>)}
         <p className={styles.navHeading}>Модули курса</p>

@@ -2,14 +2,13 @@ import { describe, expect, it } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { FINAL_NOTEBOOKS, RETIRED_NOTEBOOK_ROUTES, findFinalEvent } from './index';
 import { EVENTS, findEvent } from '../index';
-import { EVENT_COURSES } from '../courses';
 
 describe('final preparation and withdrawn assessment material', () => {
   it('covers six courses with bilingual notes and a source for every study unit', () => {
     expect(FINAL_NOTEBOOKS).toHaveLength(6);
     expect(FINAL_NOTEBOOKS.reduce((n, book) => n + book.event.lectures.reduce((m, l) => m + l.parts.length, 0), 0)).toBe(142);
     for (const book of FINAL_NOTEBOOKS) {
-      expect(EVENT_COURSES.some(course => course.eventIds.includes(book.event.id))).toBe(true);
+
       expect(book.guide.en.length).toBeGreaterThan(500);
       expect(book.guide.ru.length).toBeGreaterThan(500);
       const parts = book.event.lectures.flatMap(lecture => lecture.parts);

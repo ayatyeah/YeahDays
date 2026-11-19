@@ -1,0 +1,1477 @@
+[
+  {
+    "id": "foundations",
+    "title": "Cloud Foundations",
+    "source": "https://awsacademy.instructure.com/courses/188512/modules",
+    "modules": [
+      {
+        "number": 1,
+        "title": "Module 1 - Cloud Concepts Overview",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638139"
+          },
+          {
+            "title": "Section 1 Video - Introduction to cloud computing",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638145"
+          },
+          {
+            "title": "Section 2 Video - Advantages of the Cloud",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638153"
+          },
+          {
+            "title": "Section 3 Video - Introduction to AWS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638158"
+          },
+          {
+            "title": "Section 4 Video - Moving to the AWS Cloud",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638165"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638174"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638182"
+          },
+          {
+            "title": "Module 1 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638187"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 2,
+        "title": "Module 2 - Cloud Economics and Billing",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638213"
+          },
+          {
+            "title": "Section 1 Video - Fundamentals of Pricing",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638225"
+          },
+          {
+            "title": "Section 2 Video - Total Cost of Ownership",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638236"
+          },
+          {
+            "title": "Section 2 Case Study",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638248"
+          },
+          {
+            "title": "Section 3 Video - AWS Organizations",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638259"
+          },
+          {
+            "title": "Section 4 Video - AWS Billing",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638268"
+          },
+          {
+            "title": "Console Demonstration - Billing Dashboard",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638279"
+          },
+          {
+            "title": "Section 5 Video - Technical Support Models",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638286"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638294"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638305"
+          },
+          {
+            "title": "Module 2 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638313"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 3,
+        "title": "Module 3 - AWS Global Infrastructure Overview",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638349"
+          },
+          {
+            "title": "Section 1 Video - AWS Global Infrastructure",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638371"
+          },
+          {
+            "title": "Section 2 Video - AWS Services",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638394"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638407"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638418"
+          },
+          {
+            "title": "Module 3 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638425"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 4,
+        "title": "Module 4 - AWS Cloud Security",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638446"
+          },
+          {
+            "title": "Section 1 Video - AWS Shared Responsibility Model",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638457"
+          },
+          {
+            "title": "Section 2 Video - AWS IAM",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638466"
+          },
+          {
+            "title": "Console Demonstration - Identity and Access Management",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638476"
+          },
+          {
+            "title": "Section 3 Video - Securing a New AWS Account",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638488"
+          },
+          {
+            "title": "Section 4 Video - Securing Accounts",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638500"
+          },
+          {
+            "title": "Section 5 Video - Securing Data",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638509"
+          },
+          {
+            "title": "Section 6 Video - Working to Ensure Compliance",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638519"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638529"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638542"
+          },
+          {
+            "title": "Lab - 1 Introduction to AWS IAM",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638547"
+          },
+          {
+            "title": "Module 4 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638556"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 5,
+        "title": "Module 5 - Networking and Content Delivery",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638575"
+          },
+          {
+            "title": "Section 1 Video - Networking Basics",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638585"
+          },
+          {
+            "title": "Section 2 Video - Amazon VPC",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638593"
+          },
+          {
+            "title": "Console Demonstration - VPC Wizard",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638606"
+          },
+          {
+            "title": "Section 3 Video - VPC Networking",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638618"
+          },
+          {
+            "title": "Section 4 Video - VPC Security",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638630"
+          },
+          {
+            "title": "Section 5 Video - Route 53",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638641"
+          },
+          {
+            "title": "Section 6 Video - CloudFront",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638651"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638663"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638673"
+          },
+          {
+            "title": "Lab - 2 Build your VPC and Launch a Web Server",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638679"
+          },
+          {
+            "title": "Module 5 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638689"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 6,
+        "title": "Module 6 - Compute",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638717"
+          },
+          {
+            "title": "Section 1 Video - Compute Services Overview",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638731"
+          },
+          {
+            "title": "Section 2 Video - Amazon EC2 Part 1",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638744"
+          },
+          {
+            "title": "Section 3 Video - Amazon EC2 Part 2",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638753"
+          },
+          {
+            "title": "Section 4 Video - Amazon EC2 Part 3",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638763"
+          },
+          {
+            "title": "Console Demonstration - EC2",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638775"
+          },
+          {
+            "title": "Lab - 3 Introduction to Amazon EC2",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638782"
+          },
+          {
+            "title": "Section 5 Video - Amazon EC2 Cost Optimization",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638794"
+          },
+          {
+            "title": "Section 6 Video - Container Services",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638806"
+          },
+          {
+            "title": "Section 7 Video - Introduction to AWS Lambda",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638818"
+          },
+          {
+            "title": "Activity - AWS Lambda",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638825"
+          },
+          {
+            "title": "Section 8 Video - Introduction to AWS Elastic Beanstalk",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638840"
+          },
+          {
+            "title": "Activity - AWS Elastic Beanstalk",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638847"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638861"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638872"
+          },
+          {
+            "title": "Module 6 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638880"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 7,
+        "title": "Module 7 - Storage",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638905"
+          },
+          {
+            "title": "Section 1 Video - AWS EBS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638916"
+          },
+          {
+            "title": "Console Demonstrations - EBS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638930"
+          },
+          {
+            "title": "Lab - 4 Working with EBS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638934"
+          },
+          {
+            "title": "Section 2 Video - AWS S3",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638948"
+          },
+          {
+            "title": "Console Demonstration S3",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638959"
+          },
+          {
+            "title": "Section 3 Video - AWS EFS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638968"
+          },
+          {
+            "title": "Console Demonstrations - S3 and EFS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638978"
+          },
+          {
+            "title": "Section 4 Video - AWS S3 Glacier",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18638991"
+          },
+          {
+            "title": "Console Demonstrations - Glacier",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639001"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639013"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639024"
+          },
+          {
+            "title": "Module 7 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639030"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 8,
+        "title": "Module 8 - Databases",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639057"
+          },
+          {
+            "title": "Section 1 Video - Amazon RDS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639069"
+          },
+          {
+            "title": "Console Demonstration - RDS",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639081"
+          },
+          {
+            "title": "Lab - 5 Build a Database Server",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639086"
+          },
+          {
+            "title": "Section 2 Video - Amazon DynamoDB",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639102"
+          },
+          {
+            "title": "Console Demonstration - DynamoDB",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639113"
+          },
+          {
+            "title": "Section 3 Video - Amazon Redshift",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639125"
+          },
+          {
+            "title": "Section 4 Video - Amazon Aurora",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639139"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639152"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639163"
+          },
+          {
+            "title": "Module 8 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639171"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 9,
+        "title": "Module 9 - Cloud Architecture",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639188"
+          },
+          {
+            "title": "Section 1 Video - AWS Well-Architected Framework Design Principles",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639200"
+          },
+          {
+            "title": "Section 2 Video  - Operational Excellence",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639208"
+          },
+          {
+            "title": "Section 3 Video - Security",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639220"
+          },
+          {
+            "title": "Section 4 Video - Reliability",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639233"
+          },
+          {
+            "title": "Section 5 Video - Performance Efficiency",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639241"
+          },
+          {
+            "title": "Section 6 Video - Cost Optimization",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639256"
+          },
+          {
+            "title": "Section 7 Video - Reliability",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639265"
+          },
+          {
+            "title": "Section 8 Video - AWS Trusted Advisor",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639279"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639288"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639300"
+          },
+          {
+            "title": "Module 9 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639303"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 10,
+        "title": "Module 10 - Auto Scaling and Monitoring",
+        "items": [
+          {
+            "title": "Introduction Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639326"
+          },
+          {
+            "title": "Section 1 Video - Elastic Load Balancing",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639339"
+          },
+          {
+            "title": "Section 2 Video - Amazon CloudWatch",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639350"
+          },
+          {
+            "title": "Section 3 Video - Amazon EC2 Auto Scaling",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639359"
+          },
+          {
+            "title": "Wrap Up Video",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639367"
+          },
+          {
+            "title": "Lab - 6 Scale & Load Balance your Architecture",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639372"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639385"
+          },
+          {
+            "title": "Module 10 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/188512/modules/items/18639391"
+          }
+        ],
+        "readings": []
+      }
+    ]
+  },
+  {
+    "id": "developing",
+    "title": "Cloud Developing",
+    "source": "https://awsacademy.instructure.com/courses/193042/modules",
+    "modules": [
+      {
+        "number": 1,
+        "title": "Module 1:  Welcome to AWS Academy Cloud Developing",
+        "items": [
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107186"
+          },
+          {
+            "title": "Part 1: Course objectives and overview",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107194"
+          },
+          {
+            "title": "Part 2: Course objectives and overview",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107203"
+          },
+          {
+            "title": "Café business case introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107210"
+          },
+          {
+            "title": "Roles in cloud computing",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107218"
+          },
+          {
+            "title": "Module 1 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107228"
+          }
+        ],
+        "readings": []
+      },
+      {
+        "number": 2,
+        "title": "Module 2:  Introduction to Developing on AWS",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107248"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107262"
+          },
+          {
+            "title": "Systems development lifecycle",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107272"
+          },
+          {
+            "title": "Steps to get started developing on AWS",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107284"
+          },
+          {
+            "title": "Demonstration: AWS CLI installation",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107291"
+          },
+          {
+            "title": "Part 1: Fundamentals of working with the AWS SDKs",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107299"
+          },
+          {
+            "title": "Part 2: Fundamentals of working with the AWS SDKs",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107309"
+          },
+          {
+            "title": "Introduction to Amazon Q Developer",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107321"
+          },
+          {
+            "title": "Lab 2.1: Exploring AWS CloudShell and an IDE",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107329"
+          },
+          {
+            "title": "Module 2 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107341"
+          },
+          {
+            "title": "Module 2 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107349"
+          }
+        ],
+        "readings": [
+          {
+            "title": "AWS SDK Code Examples",
+            "url": "https://docs.aws.amazon.com/code-library/latest/ug/what-is-code-library.html"
+          },
+          {
+            "title": "AWS Developer Center",
+            "url": "https://aws.amazon.com/developer/"
+          },
+          {
+            "title": "Tools to Build on AWS",
+            "url": "https://aws.amazon.com/developer/tools/"
+          },
+          {
+            "title": "Amazon Q Developer User Guide",
+            "url": "https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/what-is.html"
+          },
+          {
+            "title": "AWS Command Line Interface",
+            "url": "https://aws.amazon.com/cli/"
+          }
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Module 3: Developing Storage Solutions",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107386"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107407"
+          },
+          {
+            "title": "Introducing Amazon S3",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107426"
+          },
+          {
+            "title": "Creating S3 buckets",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107447"
+          },
+          {
+            "title": "Part 1: Working with S3 objects",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107460"
+          },
+          {
+            "title": "Part 2: Working with S3 objects",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107467"
+          },
+          {
+            "title": "Protecting data and managing access to Amazon S3 resources",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107474"
+          },
+          {
+            "title": "Lab 3.1: Working with Amazon S3",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107480"
+          },
+          {
+            "title": "Module 3 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107488"
+          },
+          {
+            "title": "Module 3 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107495"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Amazon S3",
+            "url": "https://aws.amazon.com/s3/"
+          },
+          {
+            "title": "AWS Global Cloud Infrastructure",
+            "url": "https://aws.amazon.com/about-aws/global-infrastructure/"
+          },
+          {
+            "title": "Amazon S3 User Guide",
+            "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+          },
+          {
+            "title": "Amazon S3 FAQs",
+            "url": "https://aws.amazon.com/s3/faqs/"
+          }
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Module 4: Securing Access to Cloud Resources",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107517"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107528"
+          },
+          {
+            "title": "Shared responsibility model",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107537"
+          },
+          {
+            "title": "Introducing IAM",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107549"
+          },
+          {
+            "title": "Authenticating with IAM",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107559"
+          },
+          {
+            "title": "Demonstration: Configuring Cross-Account Access to AWS Resources",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107566"
+          },
+          {
+            "title": "Part 1: Authorizing with IAM",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107574"
+          },
+          {
+            "title": "Part 2: Authorizing with IAM",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107582"
+          },
+          {
+            "title": "Module 4 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107591"
+          },
+          {
+            "title": "Demonstration: Creating IAM Users and IAM Groups",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107599"
+          },
+          {
+            "title": "Module 4 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107605"
+          }
+        ],
+        "readings": [
+          {
+            "title": "IAM FAQs",
+            "url": "https://aws.amazon.com/iam/faqs/"
+          },
+          {
+            "title": "IAM Tutorials",
+            "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorials.html"
+          }
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Module 5: Developing Flexible NoSQL Solutions",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107626"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107637"
+          },
+          {
+            "title": "Introducing AWS database options",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107645"
+          },
+          {
+            "title": "Key concepts for DynamoDB",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107653"
+          },
+          {
+            "title": "Partitions and data distribution",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107662"
+          },
+          {
+            "title": "Secondary indexes",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107674"
+          },
+          {
+            "title": "Read/write throughput",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107685"
+          },
+          {
+            "title": "Streams and global tables",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107692"
+          },
+          {
+            "title": "Backup and restore",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107701"
+          },
+          {
+            "title": "Part 1: Basic operations for DynamoDB tables",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107710"
+          },
+          {
+            "title": "Part 2: Basic operations for DynamoDB tables",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107721"
+          },
+          {
+            "title": "Lab 5.1: Working with DynamoDB",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107726"
+          },
+          {
+            "title": "Module 5 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107739"
+          },
+          {
+            "title": "Module 5 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107747"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Partitions and Data Distribution",
+            "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.Partitions.html"
+          },
+          {
+            "title": "Improving Data Access with Secondary Indexes in DynamoDB",
+            "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html"
+          },
+          {
+            "title": "Amazon DynamoDB API Reference",
+            "url": "https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/Welcome.html"
+          }
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Module 6: Developing REST APIs",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107773"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107781"
+          },
+          {
+            "title": "Introducing APIs",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107790"
+          },
+          {
+            "title": "Part 1: Introducing API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107800"
+          },
+          {
+            "title": "Part 2: Introducing API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107809"
+          },
+          {
+            "title": "Creating a REST API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107821"
+          },
+          {
+            "title": "Part 1: Integrating with API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107832"
+          },
+          {
+            "title": "Part 2: Integrating with API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107841"
+          },
+          {
+            "title": "Part 3: Integrating with API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107853"
+          },
+          {
+            "title": "Part 4: Integrating with API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107864"
+          },
+          {
+            "title": "Deploying an API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107873"
+          },
+          {
+            "title": "Part 1: Controlling access to a REST API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107882"
+          },
+          {
+            "title": "Part 2: Controlling access to a REST API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107892"
+          },
+          {
+            "title": "Part 3: Controlling access to a REST API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107904"
+          },
+          {
+            "title": "Part 4: Controlling access to a REST API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107910"
+          },
+          {
+            "title": "Monitoring a REST API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107919"
+          },
+          {
+            "title": "Optimizing API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107929"
+          },
+          {
+            "title": "Lab 6.1: Developing REST APIs with API Gateway",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107934"
+          },
+          {
+            "title": "Module 6 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107945"
+          },
+          {
+            "title": "Module 6 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107952"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Whitepaper: Security Overview of Amazon API Gateway",
+            "url": "https://docs.aws.amazon.com/whitepapers/latest/security-overview-amazon-api-gateway/abstract-and-introduction.html"
+          },
+          {
+            "title": "API Gateway HTTP APIs",
+            "url": "https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html"
+          },
+          {
+            "title": "Amazon API Gateway FAQs",
+            "url": "https://aws.amazon.com/api-gateway/faqs/"
+          }
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Module 7: Developing Event-Driven Serverless Solutions",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107973"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107981"
+          },
+          {
+            "title": "Introducing serverless computing",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107991"
+          },
+          {
+            "title": "Introducing Lambda",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19107999"
+          },
+          {
+            "title": "Invoking Lambda functions",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108007"
+          },
+          {
+            "title": "Setting permissions for Lambda",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108020"
+          },
+          {
+            "title": "Authoring and configuring Lambda functions",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108028"
+          },
+          {
+            "title": "Deploying Lambda functions",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108037"
+          },
+          {
+            "title": "Monitoring and debugging tools for application developers",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108048"
+          },
+          {
+            "title": "Demonstration: Using X-Ray with Lambda",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108056"
+          },
+          {
+            "title": "Lab 7.1: Creating Lambda Functions Using the AWS SDK for Python",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108063"
+          },
+          {
+            "title": "Module 7 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108076"
+          },
+          {
+            "title": "Module 7 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108081"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Best Practices for Working with AWS Lambda Functions",
+            "url": "https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html"
+          },
+          {
+            "title": "Amazon CloudWatch User Guide",
+            "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html"
+          }
+        ]
+      },
+      {
+        "number": 8,
+        "title": "Module 8: Introducing Containers and Container Services",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108101"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108113"
+          },
+          {
+            "title": "Introducing containers",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108119"
+          },
+          {
+            "title": "Part 1: Introducing Docker containers",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108131"
+          },
+          {
+            "title": "Part 2: Introducing Docker containers",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108141"
+          },
+          {
+            "title": "Lab 8.1: Migrating a Web Application to Docker Containers",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108146"
+          },
+          {
+            "title": "Using containers for microservices",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108155"
+          },
+          {
+            "title": "Part 1: Introducing AWS container services",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108161"
+          },
+          {
+            "title": "Part 2: Introducing AWS container services",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108169"
+          },
+          {
+            "title": "Part 1: Deploying applications with AWS Elastic Beanstalk",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108180"
+          },
+          {
+            "title": "Part 2: Deploying applications with AWS Elastic Beanstalk",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108188"
+          },
+          {
+            "title": "Lab 8.2: Running Containers on a Managed Service",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108191"
+          },
+          {
+            "title": "Module 8 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108200"
+          },
+          {
+            "title": "Module 8 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108204"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Docker CLI reference",
+            "url": "https://docs.docker.com/reference/cli/docker/"
+          },
+          {
+            "title": "Amazon Elastic Container Service (Amazon ECS)",
+            "url": "https://aws.amazon.com/ecs/"
+          },
+          {
+            "title": "Amazon Elastic Container Registry (Amazon ECR)",
+            "url": "https://aws.amazon.com/ecr/"
+          },
+          {
+            "title": "AWS Fargate",
+            "url": "https://aws.amazon.com/fargate/"
+          }
+        ]
+      },
+      {
+        "number": 9,
+        "title": "Module 9: Caching Information for Scalability",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108223"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108229"
+          },
+          {
+            "title": "Part 1: Caching overview",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108238"
+          },
+          {
+            "title": "Part 2: Caching overview",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108245"
+          },
+          {
+            "title": "Part 1: Caching with ElastiCache",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108253"
+          },
+          {
+            "title": "Part 2: Caching with ElastiCache",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108259"
+          },
+          {
+            "title": "Lab 9.1: Caching Application Data with ElastiCache",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108263"
+          },
+          {
+            "title": "Part 1: Caching with CloudFront",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108275"
+          },
+          {
+            "title": "Part 2: Caching with CloudFront",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108282"
+          },
+          {
+            "title": "Part 3: Caching with CloudFront",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108289"
+          },
+          {
+            "title": "Part 4: Caching with CloudFront",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108295"
+          },
+          {
+            "title": "Caching strategies",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108301"
+          },
+          {
+            "title": "Lab 9.2: Implementing CloudFront for Caching and Application Security",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108303"
+          },
+          {
+            "title": "Module 9 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108309"
+          },
+          {
+            "title": "Module 9 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108313"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Comparing Redis and Memcached",
+            "url": "https://aws.amazon.com/elasticache/redis-vs-memcached/"
+          },
+          {
+            "title": "Amazon ElastiCache User Guide",
+            "url": "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/WhatIs.html"
+          },
+          {
+            "title": "ElastiCache Terminology",
+            "url": "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/WhatIs.Terms.html"
+          },
+          {
+            "title": "Amazon CloudFront Developer Guide",
+            "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html"
+          }
+        ]
+      },
+      {
+        "number": 10,
+        "title": "Module 10: Developing with Messaging Services",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108324"
+          },
+          {
+            "title": "Student guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108332"
+          },
+          {
+            "title": "Part 1: Processing requests asynchronously",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108335"
+          },
+          {
+            "title": "Part 2: Processing requests asynchronously",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108339"
+          },
+          {
+            "title": "Introducing Amazon SQS",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108342"
+          },
+          {
+            "title": "Part 1: Working with Amazon SQS messages",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108345"
+          },
+          {
+            "title": "Part 2: Working with Amazon SQS messages",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108349"
+          },
+          {
+            "title": "Part 1: Configuring Amazon SQS queues",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108352"
+          },
+          {
+            "title": "Part 2: Configuring Amazon SQS queues",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108356"
+          },
+          {
+            "title": "Introducing Amazon SNS",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108360"
+          },
+          {
+            "title": "Developing with Amazon SNS",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108362"
+          },
+          {
+            "title": "Demonstration: Working with Amazon Messaging Services",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108364"
+          },
+          {
+            "title": "Part 1: Introducing Amazon Kinesis Data Streams",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108367"
+          },
+          {
+            "title": "Part 2: Introducing Amazon Kinesis Data Streams",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108370"
+          },
+          {
+            "title": "Lab 10.1: Implementing a Messaging System Using Amazon SNS and Amazon SQS",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108372"
+          },
+          {
+            "title": "Module 10 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108373"
+          },
+          {
+            "title": "Module 10 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108374"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Using dead-letter queues in Amazon SQS",
+            "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html"
+          },
+          {
+            "title": "Amazon SQS Developer Guide",
+            "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+          },
+          {
+            "title": "Common Amazon SNS Scenarios",
+            "url": "https://docs.aws.amazon.com/sns/latest/dg/sns-common-scenarios.html"
+          },
+          {
+            "title": "Amazon SNS API Reference",
+            "url": "https://docs.aws.amazon.com/sns/latest/api/welcome.html"
+          }
+        ]
+      },
+      {
+        "number": 11,
+        "title": "Module 11: Defining Workflows to Orchestrate Functions",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108381"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108384"
+          },
+          {
+            "title": "Coordinating tasks in distributed applications",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108386"
+          },
+          {
+            "title": "Introducing Step Functions",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108389"
+          },
+          {
+            "title": "State types",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108391"
+          },
+          {
+            "title": "Step Functions use cases",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108395"
+          },
+          {
+            "title": "Step Functions API",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108397"
+          },
+          {
+            "title": "Demonstration: Creating Simple Calculators by Using Step Functions",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108399"
+          },
+          {
+            "title": "Lab 11.1: Orchestrating Serverless Functions with Step Functions",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108402"
+          },
+          {
+            "title": "Module 11 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108405"
+          },
+          {
+            "title": "Module 11 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108408"
+          }
+        ],
+        "readings": [
+          {
+            "title": "AWS Steps Functions",
+            "url": "https://aws.amazon.com/step-functions/"
+          },
+          {
+            "title": "AWS Step Functions Developer Guide",
+            "url": "https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html"
+          },
+          {
+            "title": "AWS Step Functions Use Cases",
+            "url": "https://aws.amazon.com/step-functions/use-cases/"
+          },
+          {
+            "title": "AWS Step Functions API Reference",
+            "url": "https://docs.aws.amazon.com/step-functions/latest/apireference/Welcome.html"
+          }
+        ]
+      },
+      {
+        "number": 12,
+        "title": "Module 12: Developing Secure Applications on AWS",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108414"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108416"
+          },
+          {
+            "title": "Securing network connections",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108419"
+          },
+          {
+            "title": "Part 1: Authenticating with AWS Security Token Service (AWS STS)",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108422"
+          },
+          {
+            "title": "Part 2: Authenticating with AWS Security Token Service (AWS STS)",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108425"
+          },
+          {
+            "title": "Part 1: Authenticating with Amazon Cognito",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108427"
+          },
+          {
+            "title": "Part 2: Authenticating with Amazon Cognito",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108430"
+          },
+          {
+            "title": "Lab 12.1: Implementing Application Authentication Using Amazon Cognito",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108431"
+          },
+          {
+            "title": "Module 12 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108435"
+          },
+          {
+            "title": "Module 12 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108436"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Blog Post: Use AWS Secrets Manager to Simplify the Management of Private Certificates",
+            "url": "https://aws.amazon.com/blogs/security/use-aws-secrets-manager-to-simplify-the-management-of-private-certificates/"
+          },
+          {
+            "title": "AWS Certificate Manager",
+            "url": "https://aws.amazon.com/certificate-manager/"
+          },
+          {
+            "title": "Security Best Practices in IAM",
+            "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html"
+          },
+          {
+            "title": "Amazon Cognito Developer Guide",
+            "url": "https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html"
+          }
+        ]
+      },
+      {
+        "number": 13,
+        "title": "Module 13: Automating Deployment Using CI/CD Pipelines",
+        "items": [
+          {
+            "title": "Introduction",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108441"
+          },
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108443"
+          },
+          {
+            "title": "Introducing DevOps",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108444"
+          },
+          {
+            "title": "Using AWS code services for continuous integration and continuous delivery (CI/CD)",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108446"
+          },
+          {
+            "title": "Deploying applications with AWS CloudFormation",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108449"
+          },
+          {
+            "title": "Deploying applications with the AWS Serverless Application Model (AWS SAM)",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108451"
+          },
+          {
+            "title": "Lab 13.1: Automating Application Deployment Using a CI/CD Pipeline",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108452"
+          },
+          {
+            "title": "Module 13 Wrap-up video",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108454"
+          },
+          {
+            "title": "Module 13 Knowledge Check",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108455"
+          }
+        ],
+        "readings": [
+          {
+            "title": "Whitepaper: Overview of Deployment Options on AWS",
+            "url": "https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/introduction.html"
+          },
+          {
+            "title": "Build a Serverless Web Application using Generative AI Tutorial",
+            "url": "https://aws.amazon.com/getting-started/hands-on/build-serverless-web-app-lambda-amplify-bedrock-cognito-gen-ai/"
+          }
+        ]
+      },
+      {
+        "number": 14,
+        "title": "Module 14: Bridging to Certification",
+        "items": [
+          {
+            "title": "Student Guide",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108459"
+          },
+          {
+            "title": "Certifications and Resources",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108460"
+          },
+          {
+            "title": "Additional Certification Resources",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108462"
+          },
+          {
+            "title": "Certification Preparation",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108463"
+          },
+          {
+            "title": "Certification Discussion",
+            "url": "https://awsacademy.instructure.com/courses/193042/modules/items/19108465"
+          }
+        ],
+        "readings": [
+          {
+            "title": "AWS Certified Developer – Associate Exam Guide",
+            "url": "https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Exam-Guide.pdf"
+          },
+          {
+            "title": "AWS Certified Developer – Associate Sample Exam Questions",
+            "url": "https://d1.awsstatic.com/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Sample-Questions.pdf"
+          },
+          {
+            "title": "AWS Well-Architected",
+            "url": "https://aws.amazon.com/architecture/well-architected/"
+          },
+          {
+            "title": "AWS Documentation",
+            "url": "https://docs.aws.amazon.com/"
+          }
+        ]
+      }
+    ]
+  }
+]

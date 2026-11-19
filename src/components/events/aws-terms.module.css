@@ -1,0 +1,11 @@
+.root{min-width:0;line-height:1.7;color:var(--g-text)}
+.filters{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:12px;align-items:end;margin:1.5rem 0}
+.filters label{display:grid;gap:6px;font-weight:600;min-width:0}
+.filters input,.filters select,.filters button{min-height:48px;padding:10px 12px;border:1px solid var(--g-border);border-radius:12px;background:var(--g-paper);color:var(--g-text);font:inherit;width:100%;min-width:0}
+.filters button{cursor:pointer}.filters button:disabled{opacity:.5;cursor:default}
+.root :is(input,select,button,a,summary):focus-visible{outline:2px solid var(--g-text);outline-offset:3px}
+.section{margin:2rem 0}.section h2{font-size:clamp(1.3rem,3vw,1.7rem);font-weight:650;line-height:1.35;margin-bottom:1rem;scroll-margin-top:200px}
+.cards{display:grid;gap:14px}.card{padding:1.2rem;border:1px solid var(--g-border);border-radius:16px;background:var(--g-paper);overflow-wrap:anywhere}
+.card dt{font-size:1.1rem;font-weight:700;line-height:1.5}.card dd{margin:0}.card p{margin:.65rem 0 0}.distinction{border-top:1px solid var(--g-border);padding-top:.65rem;color:var(--g-muted)}
+.empty,.sources{padding:1rem;border:1px solid var(--g-border);border-radius:14px}.sources summary{cursor:pointer;min-height:44px;align-content:center}.sources a{color:var(--g-text);text-decoration:underline}
+@media(max-width:700px){.filters{grid-template-columns:1fr}.card{padding:1rem}}

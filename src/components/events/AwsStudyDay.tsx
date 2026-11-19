@@ -14,6 +14,7 @@ import navigation from './aws-knowledge-checks.module.css';
 
 type SelfChecks = Record<string, 'repeat' | 'understood'>;
 export default function AwsStudyDay({ userId, notesOnly = false }: { userId: string; notesOnly?: boolean }) {
+  const [targetQuestion, setTargetQuestion] = useState('');
   const [active, setActive] = useState('plan');
   const [answers, setAnswers] = useState<AwsAnswers>({});
   const [checks, setChecks] = useState<SelfChecks>({});
@@ -30,7 +31,8 @@ export default function AwsStudyDay({ userId, notesOnly = false }: { userId: str
   const checkKey = `yg-aws-one-day-v2:${userId}`;
   useEffect(() => {
     const sync = () => {
-      const id = window.location.hash.split('/')[1];
+      const [, id, question] = window.location.hash.split('/');
+      setTargetQuestion(question ?? '');
       setQueue([]); setResult(null); setMenuOpen(false); setQuery('');
       setActive(studyTopics.some(t => t.id === id) ? id! : 'plan');
     };
@@ -48,11 +50,13 @@ export default function AwsStudyDay({ userId, notesOnly = false }: { userId: str
   }, [userId, checkKey]);
   useEffect(() => {
     if (!ready) return;
-    const target = heading.current ?? quizFrame.current?.querySelector<HTMLHeadingElement>('h2');
+    const note = targetQuestion ? document.getElementById(`note-${targetQuestion}`) : null;
+    if (note instanceof HTMLDetailsElement) note.open = true;
+    const target = note ?? heading.current ?? quizFrame.current?.querySelector<HTMLHeadingElement>('h2');
     target?.focus({ preventScroll: true });
     const scrollTarget = queue.length && !result ? quizFrame.current : target;
     scrollTarget?.scrollIntoView({ block: 'start', behavior: 'instant' });
-  }, [active, queue.length, result, ready]);
+  }, [active, targetQuestion, queue.length, result, ready]);
   function save(id: string, value: number[]) {
     setAnswers(previous => ({ ...previous, [id]: value }));
     const key = `${courseStorage[id.startsWith('aws-found-') ? 'foundations' : 'developing']}:${userId}`;
@@ -99,7 +103,7 @@ export default function AwsStudyDay({ userId, notesOnly = false }: { userId: str
         <div className={styles.actions}><button className="f-button" onClick={() => { setQueue([]); setResult(null); }}>← Вернуться к конспекту</button>{missed.length > 0 && <button className="f-button f-button-outline" onClick={() => { setQueue(missed); setResult(null); setRun(n => n + 1); }}>Повторить ошибки · {missed.length}</button>}</div>
         <p>Разбери причину ошибки, затем попробуй снова без подсказок.</p>{missed.map(q => <article className={styles.concept} key={q.id}><h3 lang="en">{q.prompt}</h3><p>{studyExplanations[q.id].summary}</p><button className="f-button f-button-outline" onClick={() => navigate(topicForQuestion(q).id)}>Конспект: {topicForQuestion(q).title}</button></article>)}
       </section> : <div ref={quizFrame} className={navigation.quiz}><EventQuiz key={run} eventId="cloud-computing-final" step={{ title: { ru: `Закрепление · ${queue.length} вопросов`, en: `Practice · ${queue.length} questions` } }}
-        quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, correct: q.answers, why: { ru: studyExplanations[q.id].summary, en: q.explanation }, optionExplanations: studyExplanations[q.id].options, caution: q.caution, studyLink: { href: `/events/cloud-computing-final#aws-notes/${topicForQuestion(q).id}`, title: topicForQuestion(q).title } }))}
+        quiz={queue.map(q => ({ id: q.id, q: q.prompt, options: q.options, correct: q.answers, why: { ru: studyExplanations[q.id].summary, en: q.explanation }, optionExplanations: studyExplanations[q.id].options, caution: q.caution, studyLink: { href: `/events/cloud-computing-final#aws-notes/${topicForQuestion(q).id}/${q.id}`, title: topicForQuestion(q).title } }))}
         lang="ru" explainOptionsOpen music={music} onMusic={() => setMusic(v => !v)} onAnswer={save} onExit={() => setQueue([])} onFinish={setResult}/></div>
       : topic ? <article className="g-note-paper">
         <button className="f-button f-button-outline" onClick={() => navigate('plan')}>← {notesOnly ? 'Все конспекты' : 'План дня'}</button>
@@ -116,7 +120,7 @@ export default function AwsStudyDay({ userId, notesOnly = false }: { userId: str
         <h3>Конспект разборов · 20 исходных вопросов</h3><p>Вопросы и варианты оставлены на английском без изменений. Внутри каждого разбора — принцип решения и объяснение каждого варианта по-русски. Исторические и спорные формулировки отмечены в объяснениях.</p>
         <label className={styles.note}>Найти вопрос в этой теме<input className={styles.search} type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Сервис, термин или текст вопроса"/></label>
         {!filtered.length && <p>По этому запросу вопросов нет.</p>}
-        {filtered.map(q => <details className={styles.questionNote} key={q.id}><summary><small>Модуль {q.module} · вопрос {q.number}</small><span lang="en">{q.prompt}</span></summary><p>{studyExplanations[q.id].summary}</p>{q.options.map((option, i) => <section key={i}><h4 lang="en">{q.answers.includes(i) ? '✓' : '✗'} {option}</h4><p><strong>{q.answers.includes(i) ? 'Почему подходит: ' : 'Почему не подходит: '}</strong>{studyExplanations[q.id].options[i]}</p></section>)}{q.caution && <p>{q.caution}</p>}<a href={q.source} target="_blank" rel="noreferrer">Исходный Knowledge Check ↗</a></details>)}
+        {filtered.map(q => <details id={`note-${q.id}`} tabIndex={-1} style={{ scrollMarginTop: 160 }} className={styles.questionNote} key={q.id}><summary><small>Модуль {q.module} · вопрос {q.number}</small><span lang="en">{q.prompt}</span></summary><p>{studyExplanations[q.id].summary}</p>{q.options.map((option, i) => <section key={i}><h4 lang="en">{q.answers.includes(i) ? '✓' : '✗'} {option}</h4><p><strong>{q.answers.includes(i) ? 'Почему подходит: ' : 'Почему не подходит: '}</strong>{studyExplanations[q.id].options[i]}</p></section>)}{q.caution && <p>{q.caution}</p>}<a href={q.source} target="_blank" rel="noreferrer">Исходный Knowledge Check ↗</a></details>)}
         <p>Самооценка: отмечай «понял», только если можешь объяснить выбор и альтернативы без текста.</p><div className={styles.actions}><button className="f-button f-button-outline" disabled={!ready} aria-pressed={checks[active] === 'repeat'} onClick={() => mark('repeat')}>Нужно повторить</button><button className="f-button f-button-outline" disabled={!ready} aria-pressed={checks[active] === 'understood'} onClick={() => mark('understood')}>Могу объяснить</button></div>
         <div className={styles.actions}><button className="f-button" onClick={() => navigate(studyTopics[studyTopics.indexOf(topic) + 1]?.id || 'plan')}>Следующая тема →</button></div>
       </article> : <section className="g-note-paper">

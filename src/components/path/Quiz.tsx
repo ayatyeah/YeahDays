@@ -1,4 +1,5 @@
 "use client";
+import QuizStage from "@/components/events/QuizStage";
 import { useCopy } from "@/i18n/useCopy";
 
 /**
@@ -114,7 +115,7 @@ export default function Quiz({ goalId, kind, unitId, onDone, onClose }: { goalId
   const outcome = result?.outcome;
   const answered = !!result;
   return (
-    <section className="path-card path-stack" aria-label={TITLE[kind]}>
+    <QuizStage><section className="path-card path-stack" aria-label={TITLE[kind]}>
       <div className="path-row">
         <span className="path-eyebrow">{TITLE[kind]}</span>
         <span className="path-grow" />
@@ -128,7 +129,7 @@ export default function Quiz({ goalId, kind, unitId, onDone, onClose }: { goalId
           {item.options.map((o, i) => {
             const state = !answered ? "" : i === outcome?.correctIndex ? "right" : i === choice ? "wrong" : "";
             return (
-              <button key={i} className={`path-option ${state}`} aria-pressed={choice === i} disabled={answered || busy} onClick={() => setChoice(i)} data-no-i18n>
+              <button key={i} data-answer-state={state === "right" ? "correct" : state === "wrong" ? "wrong" : undefined} className={`path-option ${state}`} aria-pressed={choice === i} disabled={answered || busy} onClick={() => setChoice(i)} data-no-i18n>
                 {o}
               </button>
             );
@@ -197,6 +198,6 @@ export default function Quiz({ goalId, kind, unitId, onDone, onClose }: { goalId
           <div className="path-row"><button className="path-btn small" onClick={report} disabled={reportText.trim().length < 3}>{tx("Отправить")}</button><button className="path-btn ghost small" onClick={() => setReporting(false)}>{tx("Отмена")}</button></div>
         </div>
       )}
-    </section>
+    </section></QuizStage>
   );
 }

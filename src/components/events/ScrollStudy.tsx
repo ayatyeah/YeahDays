@@ -1,4 +1,5 @@
 "use client";
+import QuizStage from "./QuizStage";
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -307,7 +308,7 @@ export default function ScrollStudy({
       return (
         // my-auto, а не justify-center: когда разбор длинный, карточка прокручивается, а не обрезается сверху.
         <div className="absolute inset-0 flex flex-col overflow-y-auto px-5 pb-14 pt-20">
-          <div className="mx-auto my-auto w-full max-w-xl">
+          <div className="mx-auto my-auto w-full max-w-4xl"><QuizStage>
             <p className="text-xs font-semibold uppercase tracking-widest text-amber-600 dark:text-amber-300">{`Вопрос ${item.k + 1} из ${quiz.length} · ${item.step.title[lang]}`}</p>
             <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--color-surface-2)]" aria-hidden>
               <div className="h-full bg-amber-400" style={{ width: `${(done / quiz.length) * 100}%` }} />
@@ -343,7 +344,7 @@ export default function ScrollStudy({
                 <button className="mt-3 rounded-full bg-[var(--color-fg)] px-4 py-2 text-sm font-semibold text-[var(--color-bg)]" onClick={() => scrollTo(i + 1)}>Дальше ↓</button>
               </div>
             )}
-          </div>
+          </QuizStage></div>
         </div>
       );
     }

@@ -40,6 +40,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
     const sync = () => {
       const hash = window.location.hash.slice(1);
       if (event.id === 'cloud-computing-final' && (hash.split('/')[0] === 'one-day' || hash.split('/')[0] === 'aws-notes')) setSection(hash.split('/')[0] as 'one-day' | 'aws-notes');
+      else if (event.id === 'cloud-computing-final' && hash.startsWith('terms/')) setSection('terms');
       else if (event.id === 'cloud-computing-final' && (hash === 'terms' || hash === 'terms-quiz')) setSection(hash);
       else if (event.id === 'cloud-computing-final' && hash.startsWith('files/')) setSection('files');
       else if ((hash === 'practice' && event.id !== 'philosophy-final') || hash === 'files') setSection(hash);

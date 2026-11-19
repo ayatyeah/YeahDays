@@ -1,4 +1,5 @@
 "use client";
+import QuizStage from "./QuizStage";
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
@@ -465,7 +466,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
 
   return (
     <div className="absolute inset-0 flex flex-col overflow-y-auto bg-gradient-to-b from-amber-600/25 via-[#07070b] to-[#07070b] px-5 pb-16 pt-28">
-      <div className="mx-auto my-auto w-full max-w-xl">
+      <div className="mx-auto my-auto w-full max-w-4xl"><QuizStage>
         <p className="text-xs font-semibold uppercase tracking-widest text-amber-300">{card.about ? "✅ " : ""}{title}</p>
         {card.questions.length > 1 && (
           <div className="mt-3 flex gap-1.5" aria-hidden>
@@ -510,7 +511,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
             )}
           </div>
         )}
-      </div>
+      </QuizStage></div>
     </div>
   );
 }

@@ -1,0 +1,16 @@
+.card { padding: clamp(18px,3vw,32px); border: 2px solid #8b5cf6; border-radius: 24px; background: var(--color-surface); color: var(--color-fg); display: grid; gap: 18px; }
+.card h2 { font-size: 24px; font-weight: 800; scroll-margin-top: 140px; }
+.card h3 { font-size: 18px; font-weight: 700; }
+.card p { line-height: 1.6; white-space: pre-line; }
+.card button { min-height: 44px; padding: 12px 18px; border: 1px solid var(--color-border); border-radius: 14px; background: var(--color-surface-2); color: inherit; cursor: pointer; }
+.card button:disabled { cursor: default; }
+.options { display: grid; gap: 10px; }
+.options button { text-align: left; }
+.options button[aria-pressed=true] { outline: 2px solid #8b5cf6; outline-offset: 1px; }
+.card .skip { font-size: 13px; background: transparent; }
+.scene { height: 110px; display: grid; place-items: center; perspective: 600px; }
+.dice { width: 68px; height: 68px; position: relative; transform-style: preserve-3d; transform: rotateX(-12deg) rotateY(16deg); }
+.face { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 12px; background: #fff; border: 2px solid #ddd6fe; color: #5b21b6; font-size: 56px; line-height: 1; backface-visibility: hidden; }
+.rolling { animation: dice-roll 850ms ease-out; }
+@keyframes dice-roll { 0% { transform: rotateX(-12deg) rotateY(16deg); } 45% { transform: translateY(-25px) rotateX(300deg) rotateY(400deg); } 100% { transform: rotateX(708deg) rotateY(736deg); } }
+@media(prefers-reduced-motion:reduce) { .rolling { animation: none; } }

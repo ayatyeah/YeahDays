@@ -1,4 +1,5 @@
 "use client";
+import QuizStage from "./QuizStage";
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
@@ -103,7 +104,7 @@ export default function PMQuiz2({ userId, onExit }: { userId: string; onExit: ()
         <span>Отвечено: <b>{answered} / 50</b></span><span role="timer" aria-label="Оставшееся время" className="font-bold tabular-nums">{Math.floor(seconds/60)}:{String(seconds%60).padStart(2,"0")}</span>
       </div>
       <details className="rounded-2xl border border-[var(--color-border)] p-3"><summary className="min-h-11 cursor-pointer py-2 font-semibold">Перейти к вопросу · {index+1} / 50</summary><nav aria-label="Номера вопросов" className="grid grid-cols-5 gap-2 sm:grid-cols-10">{questions.map((q,i) => <button key={q.id} aria-label={`Вопрос ${i+1}${attempt.answers[i] === null ? ", без ответа" : ", отвечен"}`} aria-current={index===i ? "step" : undefined} onClick={() => setIndex(i)} className={`min-h-11 rounded-xl border text-sm ${index===i ? "border-[var(--color-fg)] font-black" : "border-[var(--color-border)]"} ${attempt.answers[i] !== null ? "bg-[var(--color-surface-2)]" : ""}`}>{i+1}{attempt.answers[i] !== null ? " ✓" : ""}</button>)}</nav></details>
-      <section className={panel} data-testid="quiz2-question">
+      <QuizStage><section className={panel} data-testid="quiz2-question">
         <p className="font-semibold">Вопрос {index+1} из 50</p>
         <p data-selection-question lang="en"><b>Scenario:</b> {question.scenario}</p>
         <fieldset className="space-y-3" lang="en"><legend data-selection-question lang="en" className="mb-3"><b>Question:</b> {question.question}</legend>
@@ -113,7 +114,7 @@ export default function PMQuiz2({ userId, onExit }: { userId: string; onExit: ()
           </label>)}
         </fieldset>
         <div className="flex flex-wrap justify-between gap-2"><Button disabled={index===0} onClick={() => setIndex(i=>i-1)}>← Назад</Button><Button disabled={index===49} onClick={() => setIndex(i=>i+1)}>Дальше →</Button></div>
-      </section>
+      </section></QuizStage>
       {confirm ? <section className={panel} aria-label="Подтверждение сдачи">
         <p>Сдать попытку? Без ответа: {50-answered}. После сдачи изменить ответы нельзя.</p>
         <div className="flex flex-wrap gap-3"><Button onClick={() => { const active=current.current; if(active) persist(finishQuiz2(active,Date.now())); setConfirm(false); }}>Подтвердить сдачу</Button><Button variant="ghost" onClick={() => setConfirm(false)}>Продолжить решать</Button></div>

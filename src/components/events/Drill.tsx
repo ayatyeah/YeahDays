@@ -1,4 +1,5 @@
 "use client";
+import QuizStage from "./QuizStage";
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
@@ -155,7 +156,7 @@ export default function Drill({
           </div>
         </header>
 
-        <section className={panel}>
+        <QuizStage><section className={panel}>
           {card?.level === 1 && !answered && <p className="mb-2 text-xs font-semibold text-amber-500">↺ Ты здесь ошибался — попробуй ещё раз</p>}
           <h2 data-selection-question lang="en" className="text-lg font-semibold leading-snug">{item.q}</h2>
           <div className="mt-4 space-y-2">
@@ -218,7 +219,7 @@ export default function Drill({
               </Button>
             </div>
           )}
-        </section>
+        </section></QuizStage>
       </div>
     );
   }

@@ -1,10 +1,17 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useNotebookHash } from './useNotebookHash';
 import sections from '@/lib/events/awsTerms/terms.json';
 import styles from './aws-terms.module.css';
 
 const total = sections.reduce((sum, section) => sum + section.terms.length, 0);
 export default function AwsTerms() {
+  const hash = useNotebookHash();
+  useEffect(() => {
+    const target = document.getElementById(`term-${hash.split('/')[1]}`);
+    target?.focus({ preventScroll: true });
+    target?.scrollIntoView({ block: 'start', behavior: 'instant' });
+  }, [hash]);
   const [query, setQuery] = useState('');
   const [category, setCategory] = useState('all');
   const needle = query.trim().toLocaleLowerCase();
@@ -22,7 +29,7 @@ export default function AwsTerms() {
     {found === 0 && <p className={styles.empty}>Совпадений нет. Попробуй сокращение (S3, RDS, IAM), русское название или выбери «Все разделы».</p>}
     {visible.map(section => <section key={section.id} className={styles.section} aria-labelledby={`terms-${section.id}`}>
       <h2 id={`terms-${section.id}`}>{section.title}</h2>
-      <dl className={styles.cards}>{section.terms.map(term => <div className={styles.card} key={term.id}>
+      <dl className={styles.cards}>{section.terms.map(term => <div id={`term-${term.id}`} tabIndex={-1} style={{ scrollMarginTop: 160 }} className={styles.card} key={term.id}>
         <dt>{term.name}</dt><dd><p>{term.meaning}</p><p><strong>Пример:</strong> {term.example}</p><p className={styles.distinction}><strong>Важно различать:</strong> {term.distinction}</p></dd>
       </div>)}</dl>
     </section>)}

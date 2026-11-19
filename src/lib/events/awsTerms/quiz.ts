@@ -13,7 +13,7 @@ export const termQuestions = sections.flatMap((section, sectionIndex) => section
     options: options.map(option => option.meaning), correct: [position],
     why: { ru: `${term.meaning}\n\nПример: ${term.example}\n\nВажно: ${term.distinction}`, en: `${term.meaning}\n\nПример: ${term.example}\n\nВажно: ${term.distinction}` },
     optionExplanations: options.map(option => option.id === term.id ? `Верно. ${term.example} ${term.distinction}` : `Здесь описан термин «${option.name}»: ${option.example} Вопрос о «${term.name}». Его пример: ${term.example} Различие, которое стоит запомнить: ${term.distinction}`),
-    studyLink: { href: '#terms', title: `Словарь: ${term.name}` },
+    studyLink: { href: `#terms/${term.id}`, title: `Словарь: ${term.name}` },
   };
 }));
 export const termOptionCounts = Object.fromEntries(termQuestions.map(question => [question.id, question.options.length]));

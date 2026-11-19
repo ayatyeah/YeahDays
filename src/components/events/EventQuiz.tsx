@@ -1,4 +1,7 @@
 "use client";
+import QuizStage from "./QuizStage";
+import ErrorReview from "./ErrorReview";
+import { missedQuestions, reviewDelay } from "@/lib/events/errorReview";
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
@@ -33,6 +36,9 @@ export default function EventQuiz({
   const tl = useContentLang();
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[][]>([]);
+  const [reviewAt, setReviewAt] = useState<number | null>(null);
+  const [reviewing, setReviewing] = useState(false);
+  const [mastered, setMastered] = useState<string[]>([]);
   const item = quiz[index];
   const picked = answers[index];
   const [drafts, setDrafts] = useState<Record<number, number[]>>({});
@@ -42,6 +48,7 @@ export default function EventQuiz({
   const multi = expected.length > 1;
   function submit(value: number[]) {
     setAnswers(previous => { const next = [...previous]; next[index] = value; return next; });
+    if (answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answers.filter(Boolean).length + 1 + reviewDelay());
     onAnswer?.(item.id, value);
   }
   const answered = picked !== undefined;
@@ -63,6 +70,11 @@ export default function EventQuiz({
       behavior: navigated || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
     });
   }, [answered, index]);
+
+  const missed = missedQuestions(quiz, answers, mastered);
+  function advance() {
+    if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1);
+  }
 
   return (
     <>
@@ -93,7 +105,12 @@ export default function EventQuiz({
         </div>
       </header>
 
-      <section className={panel}>
+      <QuizStage>{reviewing ? <ErrorReview candidates={missed} onDone={id => {
+        const nextMastered = id ? [...mastered, id] : mastered;
+        setMastered(nextMastered); setReviewing(false);
+        setReviewAt(missedQuestions(quiz, answers, nextMastered).length ? answers.filter(Boolean).length + reviewDelay() : null);
+        advance();
+      }}/> : <section className={panel}>
         <h2 ref={questionHeading} tabIndex={-1} data-selection-question lang="en" className={cn(styles.scrollTarget, "whitespace-pre-wrap break-words text-lg font-semibold leading-snug")}>{item.q}</h2>
         {multi && <p className="mt-3 text-sm" role="status">Choose {expected.length} answers · Selected: {(picked ?? selected).length} / {expected.length}</p>}
         <div className="mt-4 space-y-2">
@@ -156,11 +173,11 @@ export default function EventQuiz({
         <nav className="mt-4 flex gap-3 scroll-mb-28" aria-label="Question navigation">
           <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Back</Button>
           <Button variant="primary" className="flex-1" disabled={!answered}
-            onClick={() => { if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1); }}>
+            onClick={() => { if (reviewAt !== null && answers.filter(Boolean).length >= reviewAt && missed.length) setReviewing(true); else advance(); }}>
             {index + 1 === quiz.length ? "Finish quiz" : "Next"}
           </Button>
         </nav>
-      </section>
+      </section>}</QuizStage>
       {/* Плеер — под вопросом, а не над ним. Сверху он занимал на телефоне
           треть экрана (меньше 200×200 правила YouTube делать не дают), и
           варианты ответа уезжали за край. Позиция в дереве не меняется от

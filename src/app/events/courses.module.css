@@ -20,3 +20,5 @@
 .moduleFolders a {display:grid;align-content:start;gap:7px;min-height:120px;padding:18px;background:var(--g-paper);border:1px solid var(--g-border);border-radius:4px 16px 16px 16px;text-decoration:none}
 .moduleFolders a:hover,.moduleFolders a:focus-visible {border-color:var(--g-accent-text)}
 .moduleFolders small,.moduleFolders span {color:var(--g-muted);font-size:13px}
+.reading {scroll-margin-top:8rem;line-height:1.75;overflow-wrap:anywhere}
+.reading :is(p,ul,ol,table) {margin-block:.75rem}

@@ -341,3 +341,10 @@ html { overflow-x:clip; scroll-behavior:smooth; }
 .g-note-paper { min-width:0; max-width:100%; }
 .g-rich-notes>h3::before { flex-shrink:0; white-space:nowrap; }
 @media (max-width:700px) { .g-notes-layout { grid-template-columns:minmax(0,1fr); } }
+
+@media (760px < width <= 880px) {
+  :root .p-shell .f-navigation-wrap { padding-inline: 16px; }
+  :root .p-shell .f-navigation { padding-inline: 14px; gap: 10px; }
+  :root .p-shell .f-nav-track > a { padding-inline: 8px; }
+  :root .p-shell .f-nav-tools { gap: 8px; }
+}

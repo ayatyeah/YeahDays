@@ -166,7 +166,7 @@ function saveChat(key: string, list: Message[]) {
 
 /* ───────────── компонент ───────────── */
 
-export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">; userId: string }) {
+export default function Tutor({ event, userId, showLauncher = true }: { event: Pick<StudyEvent, "id">; userId: string; showLauncher?: boolean }) {
   const { base, detail, label, open, ask, setOpen } = useTutorFocus();
   const locale = useLocaleStore((s) => s.locale);
   const aiAllowed = usePersonalizationStore((s) => s.data?.ai === true);
@@ -418,7 +418,7 @@ export default function Tutor({ event, userId }: { event: Pick<StudyEvent, "id">
   return createPortal(
     <>
       <AnimatePresence>
-        {!open && (
+        {!open && showLauncher && (
           <motion.button
             key="fab"
             type="button"

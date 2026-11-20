@@ -1,4 +1,5 @@
 'use client';
+import { cloneElement, useId, type ReactElement } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCopy } from '@/i18n/useCopy';
@@ -8,8 +9,14 @@ export type AuthMode = 'login' | 'register';
 export const authInput = 'f-auth-input';
 export const authPrimary = 'f-button w-full';
 export const authSecondary = 'f-button f-button-outline w-full';
-export function AuthField({ label, hint, aside, children }: { label: string; hint?: string; aside?: React.ReactNode; children: React.ReactNode }) {
-  return <label className="f-auth-field"><span><span>{label}</span>{aside}</span>{children}{hint && <small>{hint}</small>}</label>;
+export function AuthField({ label, hint, aside, children }: { label: string; hint?: string; aside?: React.ReactNode; children: ReactElement<{ id?: string; "aria-describedby"?: string }> }) {
+  const generatedId = useId();
+  const id = children.props.id || generatedId;
+  const description = [children.props['aria-describedby'], hint && id + '-hint'].filter(Boolean).join(' ') || undefined;
+  return <div className="f-auth-field"><span><label htmlFor={id}>{label}</label>{aside}</span>
+    {cloneElement(children, {id, 'aria-describedby': description})}
+    {hint && <small id={id + '-hint'}>{hint}</small>}
+  </div>;
 }
 export function AuthDivider({ children }: { children: React.ReactNode }) { return <div className="f-auth-divider"><span/>{children}<span/></div>; }
 export function AuthError({ children }: { children: React.ReactNode }) { const tx = useCopy(); return <p role="alert" className="f-auth-error">{typeof children === 'string' ? tx(children) : children}</p>; }

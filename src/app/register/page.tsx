@@ -59,16 +59,16 @@ function RegisterForm() {
         setBusy(false);
         return;
       }
-
-      if (!(await credentialsSignIn(email, password))) {
-        // Аккаунт создан, но автовход не сработал — не тупик, просто на /login.
-        router.push("/login");
-        return;
-      }
-      enterApp(callbackUrl);
     } catch {
       setError(tx("Сеть недоступна, попробуй ещё раз"));
       setBusy(false);
+      return;
+    }
+    // Registration succeeded even if the separate auto-login request fails.
+    if (await credentialsSignIn(email, password).catch(() => false)) {
+      enterApp(callbackUrl);
+    } else {
+      router.replace(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     }
   }
 

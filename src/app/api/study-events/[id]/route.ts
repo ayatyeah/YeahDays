@@ -114,6 +114,7 @@ export async function POST(req: Request, context: Context) {
   const text = typeof body.text === "string" ? body.text.trim() : "";
   const known = typeof body.questionId === "string" && (
     r.event.lectures.some((l) => l.parts.some((p) => p.questions.some((q) => q.id === body.questionId))) ||
+    (r.event.id === "computer-networks-final" && (await import("@/lib/events/networkFinal/quizzes")).networkReportQuestion(body.questionId)) ||
     (r.event.id === "cloud-computing-final" && (Object.hasOwn(awsQuestionCounts, body.questionId) || Object.hasOwn(foundationQuestionCounts, body.questionId)))
   );
   if (!known) return NextResponse.json({ error: "Такого вопроса нет" }, { status: 400 });

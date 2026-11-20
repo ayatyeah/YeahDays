@@ -19,6 +19,14 @@ beforeEach(() => {
 });
 
 describe('question reports', () => {
+  it('accepts network archive, topic and VRT questions only in their own final', async () => {
+    for (const id of ['module-01-1', 'E029', 'vrt-1-01']) {
+      const body = { questionId: id, text: 'Please review the question.' };
+      expect((await POST(request('POST', body), context('computer-networks-final'))).status).toBe(200);
+      expect((await POST(request('POST', body), context('philosophy-final'))).status).toBe(400);
+    }
+    expect((await POST(request('POST', {questionId:'wrong-id', text:'Missing question'}), context('computer-networks-final'))).status).toBe(400);
+  });
   it('accepts Foundations reports only in Cloud Computing', async () => {
     const body = { questionId: 'aws-found-m10-q10', text: 'Please check this answer.' };
     expect((await POST(request('POST', body), context('cloud-computing-final'))).status).toBe(200);

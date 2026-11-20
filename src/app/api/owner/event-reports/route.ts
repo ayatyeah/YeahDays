@@ -19,10 +19,13 @@ export async function GET() {
   try {
     const reports = await prisma.eventReport.findMany({ orderBy: { createdAt: "desc" }, take: 100 });
     const questions = new Map(EVENTS.flatMap((e) => e.lectures.flatMap((l) => l.parts.flatMap((p) => p.questions.map((q) => [q.id, q] as const)))));
+    const findNetworkQuestion = reports.some(report => report.eventId === "computer-networks-final")
+      ? (await import("@/lib/events/networkFinal/quizzes")).networkReportQuestion : undefined;
     return NextResponse.json({
       reports: reports.map((r) => {
+        const network = r.eventId === "computer-networks-final" ? findNetworkQuestion?.(r.questionId) : undefined;
         const q = questions.get(r.questionId);
-        return { id: r.id, questionId: r.questionId, question: q?.q ?? "(вопрос удалён)", answer: q ? q.options[q.answer] : "", text: r.text, status: r.status, createdAt: r.createdAt };
+        return { id: r.id, questionId: r.questionId, question: network?.q ?? q?.q ?? "(вопрос удалён)", answer: network ? network.correct.map(i => network.options[i]).join(", ") : q ? q.options[q.answer] : "", text: r.text, status: r.status, createdAt: r.createdAt };
       }),
     }, { headers: { "Cache-Control": "no-store" } });
   } catch {

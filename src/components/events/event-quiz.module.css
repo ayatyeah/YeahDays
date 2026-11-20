@@ -18,8 +18,8 @@
   background: var(--color-surface);
   box-shadow: 0 4px 20px #0002;
 }
-@media (max-width: 768px) {
-  .navigation { bottom: calc(78px + env(safe-area-inset-bottom)); }
+@media (max-width: 760px) {
+  .navigation { bottom: var(--g-reader-control-bottom, calc(16px + env(safe-area-inset-bottom))); }
 }
 
 /* The quiz toolbar exposes the assistant while the answer navigation owns this space. */

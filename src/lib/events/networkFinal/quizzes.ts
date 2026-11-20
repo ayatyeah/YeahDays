@@ -41,3 +41,13 @@ export function questionsFor(group: string): EventQuizQuestion[] {
     return {id:q.id,q:q.prompt,options:q.options,correct:!q.caution && indices.every(i=>i>=0) ? indices : [], caution:q.caution,why:bilingual(q.answer+' — '+q.explanation)};
   });
 }
+
+let reportQuestions: Map<string, EventQuizQuestion> | undefined;
+export function networkReportQuestion(id: string) {
+  if (!reportQuestions) {
+    reportQuestions = new Map(groups.flatMap(group =>
+      questionsFor(group.id).map(question => [question.id, question] as const)
+    ));
+  }
+  return reportQuestions.get(id);
+}

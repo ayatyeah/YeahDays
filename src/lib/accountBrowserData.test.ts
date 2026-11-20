@@ -8,8 +8,8 @@ function storage(entries: Record<string, string>) {
 
 describe('deleted account browser data', () => {
   it('removes account study records, tutor chats and reading positions without touching another account', () => {
-    const owned = ['yg-aws-one-day-v1:alice','yg-aws-developing-checks-v1:alice','yg-aws-foundations-checks-v1:alice','yg-tutor:alice:cloud-computing-final', 'yg-mock:alice:course:exam', 'yg-event:alice:course','yg-sync-v2:alice','yg-lesson-draft:alice:skill:quest','yg-event-achievement:alice:course','yg-event-game-binary:alice','yg-philosophy-v1:alice'];
-    const keep = ['yg-aws-one-day-v1:bob','yg-tutor:alice2:course','unrelated:alice','yeahdays-theme','yg-story:story-id','yg-event-lang'];
+    const owned = ['yg-cn-bank:alice:Модуль 01','yg-aws-one-day-v1:alice','yg-aws-developing-checks-v1:alice','yg-aws-foundations-checks-v1:alice','yg-tutor:alice:cloud-computing-final', 'yg-mock:alice:course:exam', 'yg-event:alice:course','yg-sync-v2:alice','yg-lesson-draft:alice:skill:quest','yg-event-achievement:alice:course','yg-event-game-binary:alice','yg-philosophy-v1:alice'];
+    const keep = ['yg-cn-bank:bob:Модуль 01','yg-aws-one-day-v1:bob','yg-tutor:alice2:course','unrelated:alice','yeahdays-theme','yg-story:story-id','yg-event-lang'];
     const local = storage(Object.fromEntries([...owned,...keep].map(key => [key,'saved'])));
     const session = storage({ 'yg-reading-position:alice:skill:quest:lesson':'35', 'yg-reading-position:bob:skill:quest:lesson':'70' });
     clearAccountBrowserData('alice',local,session);

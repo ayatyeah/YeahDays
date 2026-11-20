@@ -39,9 +39,6 @@ export default function PasswordInput({
         onClick={() => setShown((v) => !v)}
         aria-label={shown ? tx("Скрыть пароль") : tx("Показать пароль")}
         aria-pressed={shown}
-        // tabIndex={-1}: при переходе по Tab от пароля ждут кнопку «Войти»,
-        // а не глазок
-        tabIndex={-1}
         className="press absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-xl text-[var(--color-muted)] transition hover:text-[var(--color-fg-dim)]"
       >
         <YgIcon name={shown ? "eye-off" : "eye"} className="h-5 w-5" />

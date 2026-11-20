@@ -6,6 +6,7 @@ import ErrorReview from "./ErrorReview";
 import { missedQuestions, reviewDelay, readyForReview, creditReview } from "@/lib/events/errorReview";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Button from "@/components/ui/Button";
 import EventMusic from "@/components/EventMusic";
 import ReportQuestion from "@/components/events/ReportQuestion";
@@ -37,8 +38,11 @@ export default function EventQuiz({
   onAnswer?: (id: string, answer: number[]) => void;
 }) {
   const tl = useContentLang();
+  const [navigationHost, setNavigationHost] = useState<HTMLElement | null>(null);
+  useEffect(() => { setNavigationHost(document.body); }, []);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[][]>([]);
+  const answeredCount = answers.filter(Boolean).length;
   const [answeredAt, setAnsweredAt] = useState<Record<string, number>>({});
   const [reviewAt, setReviewAt] = useState<number | null>(null);
   const [reviewing, setReviewing] = useState(false);
@@ -52,8 +56,8 @@ export default function EventQuiz({
   const multi = expected.length > 1;
   function submit(value: number[]) {
     setAnswers(previous => { const next = [...previous]; next[index] = value; return next; });
-    if (reviewDuringQuiz && answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answers.filter(Boolean).length + 1 + reviewDelay());
-    if (answers[index] === undefined) setAnsweredAt(previous => ({ ...previous, [item.id]: answers.filter(Boolean).length + 1 }));
+    if (reviewDuringQuiz && answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answeredCount + 1 + reviewDelay());
+    if (answers[index] === undefined) setAnsweredAt(previous => ({ ...previous, [item.id]: answeredCount + 1 }));
     onAnswer?.(item.id, value);
   }
   const answered = picked !== undefined;
@@ -73,7 +77,7 @@ export default function EventQuiz({
     target.scrollIntoView({ block: "start", behavior: "instant" });
   }, [index]);
 
-  const missed = readyForReview(missedQuestions(quiz, answers, mastered), answeredAt, answers.filter(Boolean).length);
+  const missed = readyForReview(missedQuestions(quiz, answers, mastered), answeredAt, answeredCount);
   function advance() {
     if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1);
   }
@@ -97,11 +101,12 @@ export default function EventQuiz({
           <div
             className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"
             role="progressbar"
+            aria-label="Answered questions"
             aria-valuemin={0}
             aria-valuemax={quiz.length}
-            aria-valuenow={index + (answered ? 1 : 0)}
+            aria-valuenow={answeredCount}
           >
-            <div className="h-full rounded-full bg-violet-400 transition-[width]" style={{ width: `${((index + (answered ? 1 : 0)) / quiz.length) * 100}%` }} />
+            <div className="h-full rounded-full bg-violet-400 transition-[width]" style={{ width: `${(answeredCount / quiz.length) * 100}%` }} />
           </div>
           <span className="shrink-0 text-sm tabular-nums">Question {index + 1} of {quiz.length}</span>
         </div>
@@ -113,7 +118,7 @@ export default function EventQuiz({
       }} onDone={id => {
         const nextMastered = id ? [...mastered, id] : mastered;
         setMastered(nextMastered); setReviewing(false);
-        setReviewAt(missedQuestions(quiz, answers, nextMastered).length ? answers.filter(Boolean).length + reviewDelay() : null);
+        setReviewAt(missedQuestions(quiz, answers, nextMastered).length ? answeredCount + reviewDelay() : null);
         advance();
       }}/> : <section className={panel}>
         <h2 ref={questionHeading} tabIndex={-1} data-selection-question lang="en" className={cn(styles.scrollTarget, "whitespace-pre-wrap break-words text-lg font-semibold leading-snug")}><QuestionText>{item.q}</QuestionText></h2>
@@ -139,6 +144,7 @@ export default function EventQuiz({
                 )}
               >
                 <span className="quiz-answer-mark" data-checkbox={multi && !answered ? "true" : undefined} aria-hidden="true">{right ? "✓" : wrong ? "✗" : chosen ? "✓" : ""}</span><span>{item.labels && `${item.labels[i]}. `}<QuestionText>{option}</QuestionText></span>
+                {(right || wrong) && <span className="sr-only">{right ? " — correct answer" : " — incorrect answer"}</span>}
               </AnswerOption>
             );
           })}
@@ -175,13 +181,13 @@ export default function EventQuiz({
             </div>
           </div>
         )}
-        <nav className={styles.navigation} aria-label="Question navigation">
+        {navigationHost && createPortal(<nav className={styles.navigation} aria-label="Question navigation">
           <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Back</Button>
           <Button variant="primary" className="flex-1" disabled={!answered}
-            onClick={() => { if (reviewAt !== null && answers.filter(Boolean).length >= reviewAt && missed.length) setReviewing(true); else advance(); }}>
+            onClick={() => { if (reviewAt !== null && answeredCount >= reviewAt && missed.length) setReviewing(true); else advance(); }}>
             {index + 1 === quiz.length ? "Finish quiz" : "Next"}
           </Button>
-        </nav>
+        </nav>, navigationHost)}
       </section>}</QuizStage>
       {/* Плеер — под вопросом, а не над ним. Сверху он занимал на телефоне
           треть экрана (меньше 200×200 правила YouTube делать не дают), и

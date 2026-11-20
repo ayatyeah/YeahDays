@@ -8,7 +8,7 @@ const exactPrefixes = [
   'yg-event-game-binary:', 'yg-event-game-switch:',
 ];
 const nestedPrefixes = [
-  'yg-tutor:', 'yg-event:', 'yg-event-exam:', 'yg-event-drill:', 'yg-event-scroll:',
+  'yg-cn-bank:', 'yg-tutor:', 'yg-event:', 'yg-event-exam:', 'yg-event-drill:', 'yg-event-scroll:',
   'yg-event-feed:', 'yg-fast:', 'yg-mock:', 'yg-event-achievement:', 'yg-lesson-draft:',
 ];
 type BrowserStorage = Pick<Storage, 'length' | 'key' | 'getItem' | 'removeItem'>;

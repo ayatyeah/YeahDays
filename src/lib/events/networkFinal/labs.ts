@@ -1,7 +1,7 @@
 /** Revision cases based on the submitted lab reports. The answer describes the observed scenario. */
 export const labs = [
   { week: 1, activity: "1.5.7 и 2.9.1", task: "Новый ПК подключили к коммутатору. Как доказать, что он вошёл в нужную LAN?",
-    answer: "В топологии три LAN: Central, Branch и Home Office. В Central новый ПК получил адрес сети 10.2.0.0/24, шлюз 10.2.0.1 и адрес DNS через DHCP. Зелёный индикатор подтверждает линк. Проверь параметры клиента и отправь ping сначала шлюзу, затем узлу другой сети." },
+    answer: "В топологии три LAN: Central, Branch и Home Office. В Central новый ПК получил адрес сети 10.2.0.0/24, шлюз 10.2.0.1 и адрес DNS через DHCP. Зелёный индикатор подтверждает линк. Проверь параметры клиента и отправь ping сначала шлюзу, затем узлу другой сети. В 2.9.1 IOS отклонила interface vlan 1 в режиме EXEC. Чтобы задать IP управления, перейди через enable и configure terminal к interface vlan 1. В режиме (config-if)# введи ip address с адресом и маской, затем no shutdown. После end проверь show ip interface brief." },
   { week: 2, activity: "3.5.5 и 3.7.9–10", task: "Как связать события браузера с полями PDU и кадрами в Wireshark?",
     answer: "В Simulation в записи DNS-запроса порт назначения UDP 53. После разрешения имени клиент устанавливает TCP-соединение и обращается к HTTP-серверу на порт 80. Для отдельной проверки пути отфильтруй ICMP: при ping трёх внешних узлов адреса IPv4 назначения разные, но во всех исходящих Ethernet-кадрах MAC назначения принадлежит одному шлюзу." },
   { week: 3, activity: "4.6.5 и 4.7.1", task: "Кабель подключён, а сайт на PC7 не открывается. С чего начать?",

@@ -1,0 +1,17 @@
+{
+  "id": "cloud-final-2026-11-20-batch-01",
+  "title": "Cloud Computing · пакет 1",
+  "questions": [
+    {
+      "prompt": "Which AWS service provides object storage?",
+      "promptRu": "Какой сервис AWS предоставляет объектное хранилище?",
+      "options": ["Amazon S3", "Amazon EC2", "Amazon RDS", "Amazon Route 53"],
+      "optionsRu": ["Amazon S3", "Amazon EC2", "Amazon RDS", "Amazon Route 53"],
+      "answers": [0],
+      "explanationRu": "S3 хранит данные как объекты в бакетах. Например, в нём можно хранить фотографии и резервные копии.",
+      "optionExplanationsRu": ["S3 — объектное хранилище; соответствует условию.", "EC2 предоставляет виртуальные серверы, а не объектное хранилище.", "RDS — управляемые реляционные базы данных.", "Route 53 предоставляет DNS и маршрутизацию запросов по DNS, а не хранение объектов."],
+      "topic": "Хранение",
+      "source": "ПРИМЕР ФОРМАТА — заменить данными с фотографии"
+    }
+  ]
+}

@@ -20,6 +20,8 @@ function load(lang: Language) {
   }).finally(()=>pending.delete(lang)));
   return pending.get(lang)!;
 }
+const Overrides = createContext<Partial<Record<Language,Dictionary>>>({});
+export function QuestionTranslations({translations,children}:{translations:Partial<Record<Language,Dictionary>>;children:ReactNode}) {return <Overrides.Provider value={translations}>{children}</Overrides.Provider>;}
 const Context = createContext<{lang:Language; dictionary:Dictionary; loading:boolean}>({lang:'en',dictionary:{},loading:true});
 export function QuestionLanguage({ children, sourceTexts = [] }: { children: ReactNode; sourceTexts?: string[] }) {
   const lang = useSyncExternalStore(subscribe, () => selectedLanguage, () => 'en' as Language);
@@ -28,11 +30,13 @@ export function QuestionLanguage({ children, sourceTexts = [] }: { children: Rea
   const [failed,setFailed]=useState(false);
   const [retry,setRetry]=useState(0);
   const textKey = JSON.stringify(sourceTexts);
+  const overrideKey = JSON.stringify(useContext(Overrides)[lang] ?? {});
   useEffect(()=>{
     let alive=true;setLoading(true);setFailed(false);
     const controller = new AbortController();
     load(lang).then(async data=>{
-      const missing = [...new Set(JSON.parse(textKey) as string[])].filter(text => (/[а-яё]/i.test(text)?'ru':'en')!==lang && !data[text]);
+      const known = {...data,...JSON.parse(overrideKey) as Dictionary};
+      const missing = [...new Set(JSON.parse(textKey) as string[])].filter(text => (/[а-яё]/i.test(text)?'ru':'en')!==lang && !known[text]);
       if(missing.length){
         const response=await fetch('/api/quiz-language',{method:'POST',signal:controller.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({language:lang,texts:missing})});
         if(!response.ok)throw Error('translation');
@@ -41,8 +45,8 @@ export function QuestionLanguage({ children, sourceTexts = [] }: { children: Rea
       if(alive){setDictionary(data);setLoading(false);}
     }).catch(()=>{if(alive){setDictionary({});setLoading(false);setFailed(true);}});
     return ()=>{alive=false;controller.abort();};
-  },[lang,retry,textKey]);
-  return <Context.Provider value={{lang,dictionary:dictionaries.get(lang) ?? dictionary,loading}}>
+  },[lang,retry,textKey,overrideKey]);
+  return <Context.Provider value={{lang,dictionary:{...(dictionaries.get(lang) ?? dictionary),...JSON.parse(overrideKey) as Dictionary},loading}}>
     <div className={`quiz-language ${styles.controls}`} data-no-i18n role="group" aria-label="Question language">
       <button type="button" aria-pressed={lang==='en'} onClick={()=>selectLanguage('en')}>English</button>
       <button type="button" aria-pressed={lang==='ru'} onClick={()=>selectLanguage('ru')}>Русский</button>

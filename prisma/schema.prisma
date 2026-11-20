@@ -1200,3 +1200,12 @@ model RuntimeSignal {
   @@id([hour, build, route, kind, code, status, duration])
   @@index([hour])
 }
+
+// Photo-transcribed practice batches, managed online without a redeploy.
+model FinalLeakBatch {
+  id String @id
+  title String
+  data Json
+  published Boolean @default(true)
+  createdAt DateTime @default(now())
+}

@@ -22,3 +22,7 @@
 .moduleFolders small,.moduleFolders span {color:var(--g-muted);font-size:13px}
 .reading {scroll-margin-top:8rem;line-height:1.75;overflow-wrap:anywhere}
 .reading :is(p,ul,ol,table) {margin-block:.75rem}
+
+.readingLanguage {display:flex;gap:4px;width:max-content;margin:6px 0 16px;padding:3px;border:1px solid var(--g-border);border-radius:14px}
+.readingLanguage button {padding:8px 16px;min-height:44px;border-radius:11px;cursor:pointer}
+.readingLanguage button[aria-pressed=true] {background:var(--g-accent);color:var(--g-on-accent)}

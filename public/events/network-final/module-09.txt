@@ -1,0 +1,307 @@
+# Вопросы: 09 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+What destination MAC address would be included in a frame sent from a source device to a destination device on the same local network?
+
+A broadcast MAC address of FF-FF-FF-FF-FF-FF.
+
+The MAC address of the destination device.
+
+The MAC address of the local router interface.
+
+##### Question 2
+
+What destination MAC address would be included in a frame sent from a source device to a destination device on a remote local network?
+
+A broadcast MAC address of FF-FF-FF-FF-FF-FF.
+
+The MAC address of the destination device.
+
+The MAC address of the local router interface.
+
+##### Question 3
+
+What two protocols are used to determine the MAC address of a known destination device IP address (IPv4 and IPv6)?
+
+DHCP
+
+ARP
+
+DNS
+
+ND
+
+##### Question 1
+
+What two functions are provided by ARP? (Choose two.)
+
+Maintains a table of IPv4 address to domain names
+
+Maintains a table of IPv4 to MAC address mappings
+
+Maintains a table of IPv6 to MAC address mappings
+
+Resolves IPv4 addresses to domain names
+
+Resolves IPv4 addresses to MAC addresses
+
+Resolves IPv6 addresses to MAC addresses
+
+##### Question 2
+
+Where is the ARP table stored on a device?
+
+ROM
+
+Flash
+
+NVRAM
+
+RAM
+
+##### Question 3
+
+Which statement is true about ARP?
+
+An ARP cache cannot be manually deleted.
+
+ARP entries are cached permanently.
+
+ARP entries are cached temporarily.
+
+##### Question 4
+
+Which command could be used on a Cisco router to view its ARP table?
+
+arp -a
+
+arp -d
+
+show arp table
+
+show ip arp
+
+##### Question 5
+
+What is an attack using ARP?
+
+ARP broadcasts
+
+ARP hopping attacks
+
+ARP poisoning
+
+ARP starvation
+
+##### Question 1
+
+Which two ICMPv6 messages are used in SLAAC?
+
+Neighbor advertisement
+
+Neighbor solicitation
+
+Router advertisement
+
+Router solicitation
+
+##### Question 2
+
+Which two ICMPv6 messages are used in to determine the MAC address of a known IPv6 address?
+
+Neighbor advertisement
+
+Neighbor solicitation
+
+Router advertisement
+
+Router solicitation
+
+##### Question 3
+
+To what type of address are ICMPv6 neighbor solicitation messages sent?
+
+Unicast
+
+Multicast
+
+Broadcast
+
+##### Question 1
+
+Which router component holds the routing table, ARP cache, and running configuration file?
+
+RAM
+
+Flash
+
+NVRAM
+
+ROM
+
+##### Question 2
+
+What type of information is contained in an ARP table?
+
+Switch ports associated with destination MAC addresses
+
+Domain name to IPv4 address mappings
+
+Routes to reach destination networks
+
+IPv4 address to MAC address mappings
+
+##### Question 3
+
+A PC is configured to obtain an IPv4 address automatically from network 192.168.1.0/24. The network administrator issues the
+
+arp -a
+
+command and notices an entry of 192.168.1.255 ff-ff-ff-ff-ff-ff. Which statement describes this entry?
+
+This is a static map entry.
+
+This is a dynamic map entry.
+
+This entry refers to the PC itself.
+
+This entry maps to the default gateway.
+
+##### Question 4
+
+A cybersecurity analyst believes an attacker is spoofing the MAC address of the default gateway to perform a man-in-the-middle attack. Which command should the analyst use to view the MAC address a host is using to reach the default gateway?
+
+ipconfig /all
+
+route print
+
+netstat -r
+
+arp -a
+
+##### Question 5
+
+What will a Layer 2 switch do when the destination MAC address of a received frame is not in the MAC table?
+
+It initiates an ARP request.
+
+It broadcasts the frame out of all ports on the switch.
+
+It notifies the sending host that the frame cannot be delivered.
+
+It forwards the frame out of all ports except for the port at which the frame was received.
+
+##### Question 6
+
+Which two ICMPv6 messages are used during the Ethernet MAC address resolution process? (Choose two.)
+
+Router solicitation
+
+Router advertisement
+
+Neighbor solicitation
+
+Neighbor advertisement
+
+Echo request
+
+##### Question 7
+
+How does the ARP process use an IPv4 address?
+
+To determine the MAC address of the remote destination host
+
+To determine the MAC address of a device on the same network
+
+To determine the amount of time a packet takes when traveling from source to destination
+
+To determine the network number based on the number of bits in the IPv4 address
+
+##### Question 8
+
+What is one function of the ARP protocol?
+
+Obtaining an IPv4 address automatically
+
+Mapping a domain name to its IP address
+
+Resolving an IPv4 address to a MAC address
+
+Maintaining a table of domain names with their resolved IP addresses
+
+##### Question 9
+
+Which action is taken by a Layer 2 switch when it receives a Layer 2 broadcast frame?
+
+It drops the frame.
+
+It sends the frame to all ports except the port on which it received the frame.
+
+It sends the frame to all ports that are registered to forward broadcasts.
+
+It sends the frame to all ports.
+
+##### Question 10
+
+What addresses are mapped by ARP?
+
+IPv4 address to a destination MAC address
+
+Destination IPv4 address to the source MAC address
+
+Destination IPv4 address to the destination host name
+
+Destination MAC address to the source IPv4 address
+
+##### Question 11
+
+When an IPv4 packet is sent to a host on a remote network, what information is provided by ARP?
+
+The IPv4 address of the destination host
+
+The IPv4 address of the default gateway
+
+The MAC address of the router interface closest to the sending host
+
+The MAC address of the switch port that connects to the sending host
+
+##### Question 12
+
+The ARP table in a switch maps which two types of address together?
+
+Layer 3 address to a Layer 2 address
+
+Layer 3 address to a Layer 4 address
+
+Layer 4 address to a Layer 2 address
+
+Layer 2 address to a Layer 4 address
+
+##### Question 13
+
+What is the purpose of ARP in an IPv4 network?
+
+To forward data onward based on the destination IP address
+
+To obtain a specific MAC address when an IP address is known
+
+To forward data onward based on the destination MAC address.
+
+To build the MAC address table in a switch from the information that is gathered
+
+##### Question 14
+
+Which destination address is used in an ARP request frame?
+
+0.0.0.0
+
+255.255.255.255
+
+FFFF.FFFF.FFFF
+
+127.0.0.1
+
+01-00-5E-00-AA-23

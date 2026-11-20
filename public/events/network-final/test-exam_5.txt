@@ -1,0 +1,493 @@
+# Вопросы: exam_5 (тесты)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Identify the steps needed to configure a switch for SSH. The answer order does not matter.
+
+Create a local user.
+
+Required steps for SSH configuration
+
+Generate RSA keys.
+
+Required steps for SSH configuration
+
+Configure a domain name.
+
+Required steps for SSH configuration
+
+Use the login local command.
+
+Required steps for SSH configuration
+
+Use the transport input ssh command.
+
+Required steps for SSH configuration
+
+##### Question 2
+
+What feature of SSH makes it more secure than Telnet for a device management connection?
+
+confidentiality with IPsec
+
+stronger password requirement
+
+random one-time port connection
+
+login information and data encryption
+
+##### Question 3
+
+What is the difference between a virus and a worm?
+
+Viruses self-replicate but worms do not.
+
+Worms self-replicate but viruses do not.
+
+Worms require a host file but viruses do not.
+
+Viruses hide in legitimate programs but worms do not.
+
+##### Question 4
+
+Which firewall feature is used to ensure that packets coming into a network are legitimate responses to requests initiated from internal hosts?
+
+Stateful packet inspection
+
+URL filtering
+
+Application filtering
+
+Packet filtering
+
+##### Question 5
+
+What is the advantage of using SSH over Telnet?
+
+SSH is easier to use.
+
+SSH operates faster than Telnet.
+
+SSH provides secure communications to access hosts.
+
+SSH supports authentication for a connection request.
+
+##### Question 6
+
+A user is redesigning a network for a small company and wants to ensure security at a reasonable price. The user deploys a new application-aware firewall with intrusion detection capabilities on the ISP connection. The user installs a second firewall to separate the company network from the public network. Additionally, the user installs an IPS on the internal network of the company. What approach is the user implementing?
+
+attack based
+
+risk based
+
+structured
+
+layered
+
+##### Question 7
+
+Match the type of information security threat to the scenario.
+
+A
+
+identity theft
+
+pretending to be someone else by using stolen personal information to apply for a credit card
+
+B
+
+information theft
+
+obtaining trade secret documents illegally
+
+C
+
+data loss
+
+installing virus code to destroy surveillance recordings for certain days
+
+D
+
+disruption of service
+
+preventing users from accessing a website by sending a large number of link requests in a short period
+
+##### Question 8
+
+Match each weakness with an example.
+
+A
+
+security policy weakness
+
+The network administrator did not fully consider the implications of unauthorized users accessing the network.
+
+B
+
+technological weakness
+
+A nework engineer is examining the operating system of a network device for vulnerabilities.
+
+C
+
+configuration weakness
+
+When implementing an access list on a router, a network engineer did not filter a type of malicous traffic.
+
+##### Question 9
+
+Which attack involves a compromise of data that occurs between two end points?
+
+denial-of-service
+
+man-in-the-middle attack
+
+extraction of security parameters
+
+username enumeration
+
+##### Question 10
+
+Match the description to the type of firewall filtering.
+
+A
+
+packet filtering
+
+prevents or allows access based on the IP or MAC addresses of the source and destination
+
+B
+
+application filtering
+
+prevents or allows access based on the port numbers used in the request
+
+C
+
+stateful packet inspection
+
+prevents or allows access based on whether the traffic is in response to requests from internal hosts
+
+D
+
+URL filtering
+
+prevents or allows access based on web addresses or keywords
+
+##### Question 11
+
+Which example of malicious code would be classified as a Trojan horse?
+
+malware that was written to look like a video game
+
+malware that requires manual user intervention to spread between systems
+
+malware that attaches itself to a legitimate program and spreads to other programs when launched
+
+malware that can automatically spread from one system to another by exploiting a vulnerability in the target
+
+##### Question 12
+
+Refer to the exhibit. Host H3 is having trouble communicating with host H1. The network administrator suspects a problem exists with the H3 workstation and wants to prove that there is no problem with the R2 configuration. What tool could the network administrator use on router R2 to prove that communication exists to host H1 from the interface on R2, which is the interface that H3 uses when communicating with remote networks?
+
+traceroute
+
+show cdp neighbors
+
+telnet
+
+an extended ping
+
+##### Question 13
+
+Why would a network administrator use the tracert utility?
+
+to determine the active TCP connections on a PC
+
+to check information about a DNS name in the DNS server
+
+to identify where a packet was lost or delayed on a network
+
+to display the IP address, default gateway, and DNS server address for a PC
+
+##### Question 14
+
+Which method is used to send a ping message specifying the source address for the ping?
+
+Issue the ping command from within interface configuration mode.
+
+Issue the ping command without specifying a destination IP address.
+
+Issue the ping command without extended commands.
+
+Issue the ping command after shutting down un-needed interfaces.
+
+##### Question 15
+
+Which command can an administrator execute to determine what interface a router will use to reach remote networks?
+
+show arp
+
+show interfaces
+
+show ip route
+
+show protocols
+
+##### Question 16
+
+Which command can an administrator issue on a Cisco router to send debug messages to the vty lines?
+
+terminal monitor
+
+logging console
+
+logging buffered
+
+logging synchronous
+
+##### Question 17
+
+A network administrator is upgrading a small business network to give high priority to real-time applications traffic. What two types of network services is the network administrator trying to accommodate? (Choose two.)
+
+Voice
+
+Video
+
+Instant messaging
+
+FTP
+
+SNMP
+
+##### Question 18
+
+What information about a Cisco router can be verified using the show version command?
+
+the routing protocol version that is enabled
+
+the value of the configuration register
+
+the operational status of serial interfaces
+
+the administrative distance used to reach networks
+
+##### Question 19
+
+What is an accurate description of redundancy?
+
+configuring a router with a complete MAC address database to ensure that all frames can be forwarded to the correct destination
+
+configuring a switch with proper security to ensure that all traffic forwarded through an interface is filtered
+
+designing a network to use multiple virtual devices to ensure that all traffic uses the best path through the internetwork
+
+designing a network to use multiple paths between switches to ensure there is no single point of failure
+
+##### Question 20
+
+Which command should be used on a Cisco router or switch to allow log messages to be displayed on remotely connected sessions using Telnet or SSH?
+
+debug all
+
+logging synchronous
+
+show running-config
+
+terminal monitor
+
+##### Question 21
+
+A network engineer is analyzing reports from a recently performed network baseline. Which situation would depict a possible latency issue?
+
+a change in the bandwidth according to the show interfaces output
+
+a next-hop timeout from a traceroute
+
+an increase in host-to-host ping response times
+
+a change in the amount of RAM according to the show version output
+
+##### Question 22
+
+Refer to the exhibit. An administrator is testing connectivity to a remote device with the IP address 10.1.1.1. What does the output of this command indicate?
+
+Connectivity to the remote device was successful.
+
+A router along the path did not have a route to the destination.
+
+A ping packet is being blocked by a security device along the path.
+
+The connection timed out while waiting for a reply from the remote device.
+
+##### Question 23
+
+A network engineer is troubleshooting connectivity issues among interconnected Cisco routers and switches. Which command should the engineer use to find the IP address information, host name, and IOS version of neighboring network devices?
+
+show version
+
+show ip route
+
+show interfaces
+
+show cdp neighbors detail
+
+##### Question 24
+
+Which statement is true about Cisco IOS ping indicators?
+
+'!' indicates that the ping was unsuccessful and that the device may have issues finding a DNS server.
+
+'U' may indicate that a router along the path did not contain a route to the destination address and that the ping was unsuccessful.
+
+'.' indicates that the ping was successful but the response time was longer than normal.
+
+A combination of '.' and '!' indicates that a router along the path did not have a route to the destination address and responded with an ICMP unreachable message.
+
+##### Question 25
+
+A network technician issues the C:> tracert -6 www.cisco.com command on a Windows PC. What is the purpose of the -6 command option?
+
+It forces the trace to use IPv6.
+
+It limits the trace to only 6 hops.
+
+It sets a 6 milliseconds timeout for each replay.
+
+It sends 6 probes within each TTL time period.
+
+##### Question 26
+
+A user reports a lack of network connectivity. The technician takes control of the user machine and attempts to ping other computers on the network and these pings fail. The technician pings the default gateway and that also fails. What can be determined for sure by the results of these tests?
+
+The NIC in the PC is bad.
+
+The TCP/IP protocol is not enabled.
+
+The router that is attached to the same network as the workstation is down.
+
+Nothing can be determined for sure at this point.
+
+##### Question 27
+
+An employee complains that a Windows PC cannot connect to the Internet. A network technician issues the ipconfig command on the PC and is shown an IP address of 169.254.10.3. Which two conclusions can be drawn? (Choose two.)
+
+The PC cannot contact a DHCP server.
+
+The DNS server address is misconfigured.
+
+The default gateway address is not configured.
+
+The PC is configured to obtain an IP address automatically.
+
+The enterprise network is misconfigured for dynamic routing.
+
+##### Question 28
+
+What is considered the most effective way to mitigate a worm attack?
+
+Change system passwords every 30 days.
+
+Ensure that all systems have the most current virus definitions.
+
+Ensure that AAA is configured in the network.
+
+Download security updates from the operating system vendor and patch all vulnerable systems.
+
+##### Question 29
+
+When configuring SSH on a router to implement secure network management, a network engineer has issued the login local and transport input ssh line vty commands. What three additional configuration actions have to be performed to complete the SSH configuration? (Choose three.)
+
+Set the user privilege levels.
+
+Generate the asymmetric RSA keys.
+
+Configure the correct IP domain name.
+
+Configure role-based CLI access.
+
+Create a valid local username and password database.
+
+Manually enable SSH after the RSA keys are generated.
+
+##### Question 30
+
+Which statement describes the ping and tracert commands?
+
+Tracert shows each hop, while ping shows a destination reply only.
+
+Tracert uses IP addresses; ping does not.
+
+Both ping and tracert can show results in a graphical display.
+
+Ping shows whether the transmission is successful; tracert does not.
+
+##### Question 31
+
+On which two interfaces or ports can security be improved by configuring executive timeouts? (Choose two.)
+
+fast Ethernet interfaces
+
+console ports
+
+serial interfaces
+
+vty ports
+
+loopback interfaces
+
+##### Question 32
+
+file_download
+
+PT Activity
+
+Open the PT Activity. Perform the tasks in the activity instructions and then answer the question.
+
+Which command has to be configured on the router to complete the SSH configuration?
+
+service password-encryption
+
+transport input ssh
+
+enable secret class
+
+ip domain-name cisco.com
+
+##### Question 33
+
+A technician is to document the current configurations of all network devices in a college, including those in off-site buildings. Which protocol would be best to use to securely access the network devices?
+
+FTP
+
+HTTP
+
+SSH
+
+Telnet
+
+##### Question 34
+
+An administrator decides to use "RobErT" as the password on a newly installed router. Which statement applies to the password choice?
+
+It is weak since it uses easily found personal information.
+
+It is strong because it uses a passphrase.
+
+It is strong because it uses a minimum of 10 numbers, letters and special characters.
+
+It is strong because it contains 10 numbers and special characters.
+
+##### Question 35
+
+A network technician is troubleshooting an issue and needs to verify the IP addresses of all interfaces on a router. What is the best command to use to accomplish the task?
+
+show ip interface brief
+
+nslookup
+
+ipconfig getifaddr en0
+
+show ip route

@@ -11,3 +11,7 @@
 .outline ol {list-style: none; padding: 0; border-top: 1px solid var(--g-border)}
 .outline li a {display: flex; justify-content: space-between; gap: 1rem; padding: 1rem .3rem; border-bottom: 1px solid var(--g-border)}
 .outline li a:hover {text-decoration: underline}
+
+.outline details {margin-block: .75rem; border-bottom: 1px solid var(--g-border); padding: .5rem 0}
+.outline summary {cursor: pointer; min-height: 44px; padding: .65rem .25rem; font-weight: 600}
+.studyText {white-space: pre-wrap; line-height: 1.7; padding: .5rem}

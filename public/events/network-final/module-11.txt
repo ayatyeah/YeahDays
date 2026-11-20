@@ -1,0 +1,335 @@
+# Вопросы: 11 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Host-A has the IPv4 address and subnet mask 10.5.4.100 255.255.255.0. What is the network address of Host-A?
+
+10.0.0.0
+
+10.5.0.0
+
+10.5.4.0
+
+10.5.4.100
+
+##### Question 2
+
+Host-A has the IPv4 address and subnet mask 172.16.4.100 255.255.0.0. What is the network address of Host-A?
+
+172.0.0.0
+
+172.16.0.0
+
+172.16.4.0
+
+172.16.4.100
+
+##### Question 3
+
+Host-A has the IPv4 address and subnet mask 10.5.4.100 255.255.255.0. Which of the following IPv4 addresses would be on the same network as Host-A? (Choose all that apply)
+
+10.5.4.1
+
+10.5.0.1
+
+10.5.4.99
+
+10.0.0.98
+
+10.5.100.4
+
+##### Question 4
+
+Host-A has the IPv4 address and subnet mask 172.16.4.100 255.255.0.0. Which of the following IPv4 addresses would be on the same network as Host-A? (Choose all that apply)
+
+172.16.4.99
+
+172.16.0.1
+
+172.17.4.99
+
+172.17.4.1
+
+172.18.4.1
+
+##### Question 5
+
+Host-A has the IPv4 address and subnet mask 192.168.1.50 255.255.255.0. Which of the following IPv4 addresses would be on the same network as Host-A? (Choose all that apply)
+
+192.168.0.1
+
+192.168.0.100
+
+192.168.1.1
+
+192.168.1.100
+
+192.168.2.1
+
+##### Question 1
+
+Which two statements are correct about private IPv4 addresses? (Choose two.)
+
+Private IPv4 addresses are assigned to devices within an organization’s intranet (internal network).
+
+Internet routers will typically forward any packet with a destination address that is a private IPv4 address.
+
+172.99.1.1 is a private IPv4 address.
+
+Any organization (home, school, office, company) can use the 10.0.0.0/8 address.
+
+##### Question 2
+
+Which two statements are correct about public IPv4 addresses? (Choose two.)
+
+Public IPv4 addresses are allowed to be assigned to devices within an organization’s intranet (internal network).
+
+To access a device over the internet, the destination IPv4 address must be a public address.
+
+192.168.1.10 is a public IPv4 address.
+
+Public IPv4 address exhaustion is a reason why there are private IPv4 addresses and why organizations are transitioning to IPv6.
+
+##### Question 3
+
+Which organization or group of organizations receives IP addresses from IANA and is responsible for allocating these addresses to ISPs and some organizations?
+
+IETF
+
+IEEE
+
+RIRs
+
+Tier 1 ISPs
+
+##### Question 1
+
+Which devices will not forward an IPv4 broadcast packet by default?
+
+Ethernet switch
+
+Router
+
+Windows PC
+
+None of the above. All devices forward IPv4 broadcast packets by default.
+
+##### Question 2
+
+Which two situations are the result of excessive broadcast traffic? (Choose two)
+
+Slow network operations
+
+Slow device operations
+
+When devices on all adjacent networks are affected
+
+When the router has to forward an excessive number of packets
+
+##### Question 1
+
+What is the prefix length notation for the subnet mask 255.255.255.224?
+
+/25
+
+/26
+
+/27
+
+/28
+
+##### Question 2
+
+How many valid host addresses are available on an IPv4 subnet that is configured with a /26 mask?
+
+254
+
+190
+
+192
+
+62
+
+64
+
+##### Question 3
+
+Which subnet mask would be used if 5 host bits are available?
+
+255.255.255.0
+
+255.255.255.128
+
+255.255.255.224
+
+255.255.255.240
+
+##### Question 4
+
+A network administrator subnets the 192.168.10.0/24 network into subnets with /26 masks. How many equal-sized subnets are created?
+
+1
+
+2
+
+4
+
+8
+
+16
+
+64
+
+##### Question 5
+
+What subnet mask is represented by the slash notation /20?
+
+255.255.255.248
+
+255.255.224.0
+
+255.255.240.0
+
+255.255.255.0
+
+255.255.255.192
+
+##### Question 6
+
+Which statement is true about variable-length subnet masking?
+
+Each subnet is the same size.
+
+The size of each subnet may be different, depending on requirements.
+
+Subnets may only be subnetted one additional time.
+
+Bits are returned, rather than borrowed, to create additional subnets.
+
+##### Question 7
+
+Why does a Layer 3 device perform the ANDing process on a destination IP address and subnet mask?
+
+To identify the broadcast address of the destination network
+
+To identify the host address of the destination host
+
+To identify faulty frames
+
+To identify the network address of the destination network
+
+##### Question 8
+
+How many usable IP addresses are available on the 192.168.1.0/27 network?
+
+256
+
+254
+
+62
+
+30
+
+16
+
+32
+
+##### Question 9
+
+Which subnet mask would be used if exactly 4 host bits are available?
+
+255.255.255.224
+
+255.255.255.128
+
+255.255.255.240
+
+255.255.255.248
+
+##### Question 10
+
+Which two parts are components of an IPv4 address? (Choose two.)
+
+Subnet portion
+
+Network portion
+
+Logical portion
+
+Host portion
+
+Physical portion
+
+Broadcast portion
+
+##### Question 11
+
+If a network device has a mask of /26, how many IP addresses are available for hosts on this network?
+
+64
+
+30
+
+62
+
+32
+
+16
+
+14
+
+##### Question 12
+
+What does the IP address 172.17.4.250/24 represent?
+
+Network address
+
+Multicast address
+
+Host address
+
+Broadcast address
+
+##### Question 13
+
+If a network device has a mask of /28, how many IP addresses are available for hosts on this network?
+
+256
+
+254
+
+62
+
+32
+
+16
+
+14
+
+##### Question 14
+
+What is the purpose of the subnet mask in conjunction with an IP address?
+
+To uniquely identify a host on a network
+
+To identify whether the address is public or private
+
+To determine the subnet to which the host belongs
+
+To mask the IP address to outsiders
+
+##### Question 15
+
+A network administrator is variably subnetting a network. The smallest subnet has a mask of 255.255.255.224. How many usable host addresses will this subnet provide?
+
+2
+
+6
+
+14
+
+30
+
+62

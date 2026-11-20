@@ -1,0 +1,351 @@
+# Вопросы: 02 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Which IOS mode allows access to all commands and features?
+
+Global configuration mode
+
+Interface subconfiguration mode
+
+Line console subconfiguration mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+##### Question 2
+
+Which IOS mode are you in if the Switch(config)# prompt is displayed?
+
+Global configuration mode
+
+Interface subconfiguration mode
+
+Line console subconfiguration mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+##### Question 3
+
+Which IOS mode are you in if the Switch> prompt is displayed?
+
+Global configuration mode
+
+Interface subconfiguration mode
+
+Line console subconfiguration mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+##### Question 4
+
+Which two commands would return you to the privileged EXEC prompt regardless of the configuration mode you are in? (Choose two.)
+
+CTRL+Z
+
+disable
+
+enable
+
+end
+
+exit
+
+##### Question 1
+
+What is the command to assign the name “Sw-Floor-2” to a switch?
+
+hostname
+
+Sw-Floor-2
+
+host name
+
+Sw-Floor-2
+
+name
+
+Sw-Floor-2
+
+##### Question 2
+
+How is the privileged EXEC mode access secured on a switch?
+
+enable class
+
+secret class
+
+enable secret class
+
+service password-encryption
+
+##### Question 3
+
+Which command enables password authentication for user EXEC mode access on a switch?
+
+enable secret
+
+login
+
+secret
+
+service password-encryption
+
+##### Question 4
+
+Which command encrypts all plaintext passwords access on a switch?
+
+enable secret
+
+login
+
+secret
+
+service password-encryption
+
+##### Question 5
+
+Which is the command to configure a banner to be displayed when connecting to a switch?
+
+banner $ Keep out $
+
+banner motd $ Keep out $
+
+display $ Keep out $
+
+login banner $ Keep out $
+
+##### Question 1
+
+What is the structure of an IPv4 address called?
+
+Dotted-binary format
+
+Dotted-decimal format
+
+Dotted-hexadecimal format
+
+##### Question 2
+
+How is an IPv4 address represented?
+
+Four binary numbers between 0 and 1 separated by colons.
+
+Four decimal numbers between 0 and 255 separated by periods.
+
+Thirty-two hexadecimal numbers separated by colons.
+
+Thirty-two hexadecimal numbers separated by periods.
+
+##### Question 3
+
+What type of interface has no physical port associated with it?
+
+Console
+
+Ethernet
+
+Serial
+
+Switch virtual interface (SVI)
+
+##### Question 1
+
+Which statement is true about the running configuration file in a Cisco IOS device?
+
+It affects the operation of the device immediately when modified.
+
+It is stored in NVRAM.
+
+It should be deleted using the
+
+erase running-config
+
+command.
+
+It is automatically saved when the router reboots.
+
+##### Question 2
+
+Which two statements are true regarding the user EXEC mode? (Choose two.)
+
+All router commands are available.
+
+Global configuration mode can be accessed by entering the
+
+enable
+
+command.
+
+The device prompt for this mode ends with the '>' symbol.
+
+Interfaces and routing protocols can be configured.
+
+Only some aspects of the router configuration can be viewed.
+
+##### Question 3
+
+Which type of access is secured on a Cisco router or switch with the
+
+enable secret
+
+command?
+
+Virtual terminal
+
+Privileged EXEC
+
+AUX port
+
+Console line
+
+##### Question 4
+
+What is the default SVI on a Cisco switch?
+
+VLAN1
+
+VLAN99
+
+VLAN100
+
+VLAN999
+
+##### Question 5
+
+When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)
+
+The hostname should be fewer than 64 characters in length
+
+The hostname should be written in all lower case characters
+
+The hostname should contain no spaces
+
+The hostname should end with a special character
+
+The hostname should begin with a letter
+
+##### Question 6
+
+What is the function of the shell in an OS?
+
+It interacts with the device hardware.
+
+It interfaces between the users and the kernel.
+
+It provides dedicated firewall services.
+
+It provides the intrusion protection services for the device.
+
+##### Question 7
+
+A router with a valid operating system contains a configuration file stored in NVRAM. The configuration file has an enable secret password but no console password. When the router boots up, which mode will display?
+
+Global configuration mode
+
+Setup mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+##### Question 8
+
+An administrator has just changed the IP address of an interface on an IOS device. What else must be done in order to apply those changes to the device?
+
+Copy the running configuration to the startup configuration file.
+
+Copy the information in the startup configuration file to the running configuration.
+
+Reload the device and type
+
+yes
+
+when prompted to save the configuration.
+
+Nothing must be done. Changes to the configuration on an IOS device take effect as soon as the command is typed correctly and the Enter key has been pressed.
+
+##### Question 9
+
+Which memory location on a Cisco router or switch will lose all content when the device is restarted?
+
+ROM
+
+Flash
+
+NVRAM
+
+RAM
+
+##### Question 10
+
+Why would a technician enter the command
+
+copy startup-config running-config
+
+?
+
+To remove all configurations from the switch
+
+To save an active configuration to NVRAM
+
+To copy an existing configuration into RAM
+
+To make a changed configuration the new startup configuration
+
+##### Question 11
+
+Which functionality is provided by DHCP?
+
+Automatic assignment of an IP address to each host
+
+Remote switch management
+
+Translation of IP addresses to domain names
+
+End-to-end connectivity test
+
+##### Question 12
+
+Which two functions are provided to users by the context-sensitive help feature of the Cisco IOS CLI? (Choose two.)
+
+Providing an error message when a wrong command is submitted
+
+Displaying a list of all available commands within the current mode
+
+Allowing the user to complete the remainder of an abbreviated command with the TAB key
+
+Determining which option, keyword, or argument is available for the entered command
+
+Selecting the best command to accomplish a task
+
+##### Question 13
+
+Which memory location on a Cisco router or switch stores the startup configuration file?
+
+RAM
+
+ROM
+
+NVRAM
+
+Flash
+
+##### Question 14
+
+To what subnet does the IP address 10.1.100.50 belong if a subnet mask of 255.255.0.0 is used?
+
+10.1.0.0
+
+10.0.0.0
+
+10.1.100.32
+
+10.1.100.0

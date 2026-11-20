@@ -1,6 +1,5 @@
 /** Lightweight navigation metadata. Keep lecture banks out of client navigation. */
 export const EVENT_COURSES = [
-  { id: "cloud-computing", title: "Cloud Computing", description: "Cloud services, AWS and Azure", logo: "/courses/cloud-computing.svg", eventIds: ["cloud-computing-final"] },
   { id: "computer-networks", title: "Computer Networks", description: "Networks, protocols and Cisco", logo: "/courses/computer-networks.svg", eventIds: ["computer-networks-final"] },
   { id: "philosophy", title: "Philosophy", description: "Reality, knowledge, values and an argued position", logo: "/courses/philosophy.svg", eventIds: ["philosophy-final"] },
 ];

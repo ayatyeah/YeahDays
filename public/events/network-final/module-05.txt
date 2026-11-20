@@ -1,0 +1,249 @@
+# Вопросы: 05 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Which is the binary equivalent to the 192.168.11.10 IP address?
+
+11000000‬.11000000.00001011‬.‭00001010‬‬
+
+11000000.10101000‬.00001011‬.‭00001010
+
+11000000.10101000‬.00001010‬.‭00001011‬‬
+
+11000000.10101000‬.00001011‬.‭00010010‬‬
+
+##### Question 2
+
+Which of the following is the binary equivalent to the 172.16.31.30 IP address?
+
+11000000.00010000‬.00011111‬.‭00011110‬‬
+
+10101000.00010000‬.00011111‬.‭00011110‬‬
+
+10101100.00010000‬.00011110‬.‭00011110‬‬
+
+10101100.00010000‬.00011111‬.‭00011110‬‬
+
+##### Question 1
+
+Which is the hexadecimal equivalent of 202?
+
+B10
+
+BA
+
+C10
+
+CA
+
+##### Question 2
+
+Which is the hexadecimal equivalent of 254?
+
+EA
+
+ED
+
+FA
+
+FE
+
+##### Question 3
+
+Which is the decimal equivalent of A9?
+
+168
+
+169
+
+170
+
+171
+
+##### Question 4
+
+Which of the following is the decimal equivalent of 7D?
+
+124
+
+125
+
+126
+
+127
+
+##### Question 1
+
+What is the binary representation for the decimal number 173?
+
+10100111
+
+10100101
+
+10101101
+
+10110101
+
+##### Question 2
+
+Given the binary address of 11101100 00010001 00001100 00001010, which address does this represent in dotted decimal format?
+
+234.17.10.9
+
+234.16.12.10
+
+236.17.12.6
+
+236.17.12.10
+
+##### Question 3
+
+How many binary bits exist within an IPv6 address?
+
+32
+
+48
+
+64
+
+128
+
+256
+
+##### Question 4
+
+What is the binary equivalent of the decimal number 232?
+
+11101000
+
+11000110
+
+10011000
+
+11110010
+
+##### Question 5
+
+Which two statements are correct about IPv4 and IPv6 addresses? (Choose two.)
+
+IPv6 addresses are represented by hexadecimal numbers.
+
+IPv4 addresses are represented by hexadecimal numbers.
+
+IPv6 addresses are 32 bits in length.
+
+IPv4 addresses are 32 bits in length.
+
+IPv4 addresses are 128 bits in length.
+
+IPv6 addresses are 64 bits in length.
+
+##### Question 6
+
+Which IPv4 address format was created for ease of use by people and is expressed as 201.192.1.14?
+
+Binary
+
+Dotted decimal
+
+Hexadecimal
+
+ASCII
+
+##### Question 7
+
+What is the dotted decimal representation of the IPv4 address 11001011.00000000.01110001.11010011?
+
+192.0.2.199
+
+198.51.100.201
+
+203.0.113.211
+
+209.165.201.223
+
+##### Question 8
+
+What is the decimal equivalent of the binary number 10010101?
+
+149
+
+157
+
+168
+
+192
+
+##### Question 9
+
+What is the decimal equivalent of the hex number 0x3F?
+
+63
+
+77
+
+87
+
+93
+
+##### Question 10
+
+What is the dotted decimal representation of the IPv4 address which is represented as the binary string 00001010.01100100.00010101.00000001?
+
+10.100.21.1
+
+10.10.20.1
+
+100.10.11.1
+
+100.21.10.1
+
+##### Question 11
+
+What is the decimal equivalent of 0xC9?
+
+185
+
+200
+
+201
+
+199
+
+##### Question 12
+
+Which is a valid hexadecimal number?
+
+F
+
+G
+
+H
+
+J
+
+##### Question 13
+
+What is the binary representation of 0xCA?
+
+10111010
+
+11010101
+
+11001010
+
+11011010
+
+##### Question 14
+
+How many bits are in an IPv4 address?
+
+32
+
+64
+
+128
+
+256

@@ -1,0 +1,2291 @@
+# Module 2: Basic Switch and End Device Configuration
+
+Источник: NetAcad, Computer networks SE, 2026-11-07. Текстовое извлечение; видео, изображения и скрытые элементы не выгружены.
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.0 Introduction
+
+
+2.0 Introduction
+
+
+### 2.0.1 Why should I take this module?
+
+
+2.0.1 Why should I take this module?
+
+Welcome to Basic Switch and End Device Configuration!
+
+As part of your career in networking, you might have to set up a new network or maintain and upgrade an existing one. In either case, you’ll configure switches and end devices so that they are secure and perform effectively based on your requirements.
+
+Out of the box, switches and end devices come with some general configuration. But for your particular network, switches and end devices require your specific information and instructions. In this module, you will learn how to access Cisco IOS network devices. You will learn basic configuration commands and use them to configure and verify a Cisco IOS device and an end device with an IP address.
+
+Of course, there is much more to network administration, but none of that can happen without first configuring switches and end devices. Let’s get started!
+
+
+### 2.0.2 What will I learn to do in this module?
+
+
+2.0.2 What will I learn to do in this module?
+
+Module Title:
+
+Basic Switch and End Device Configuration
+
+Module Objective:
+
+Implement initial settings including passwords, IP addressing, and default gateway parameters on a network switch and end devices.
+
+Cisco IOS Access
+
+IOS Navigation
+
+The Command Structure
+
+Basic Device Configuration
+
+Save Configurations
+
+Ports and Addresses
+
+Configure IP Addressing
+
+Verify Connectivity
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.2 IOS Navigation
+
+
+2.2 IOS Navigation
+
+
+### 2.2.1 Primary Command Modes
+
+
+2.2.1 Primary Command Modes
+
+In the previous topic, you learned that all network devices require an OS and that they can be configured using the CLI or a GUI. Using the CLI may provide the network administrator with more precise control and flexibility than using the GUI. This topic discusses using CLI to navigate the Cisco IOS.
+
+As a security feature, the Cisco IOS software separates management access into the following two command modes:
+
+User EXEC Mode
+
+- This mode has limited capabilities but is useful for basic operations. It allows only a limited number of basic monitoring commands but does not allow the execution of any commands that might change the configuration of the device. The user EXEC mode is identified by the CLI prompt that ends with the > symbol.
+
+Privileged EXEC Mode
+
+- To execute configuration commands, a network administrator must access privileged EXEC mode. Higher configuration modes, like global configuration mode, can only be reached from privileged EXEC mode. The privileged EXEC mode can be identified by the prompt ending with the # symbol.
+
+The table summarizes the two modes and displays the default CLI prompts of a Cisco switch and router.
+
+Command Mode
+
+Description
+
+Default Device Prompt
+
+User Exec Mode
+
+Mode allows access to only a limited number of basic monitoring commands.
+
+It is often referred to as “view-only" mode.
+
+Switch>
+
+Router>
+
+Privileged EXEC Mode
+
+Mode allows access to all commands and features.
+
+The user can use any monitoring commands and execute configuration and management commands.
+
+Switch#
+
+Router#
+
+
+### 2.2.2 Configuration Mode and Subconfiguration Modes
+
+
+2.2.2 Configuration Mode and Subconfiguration Modes
+
+To configure the device, the user must enter global configuration mode, which is commonly called global config mode.
+
+From global config mode, CLI configuration changes are made that affect the operation of the device as a whole. Global configuration mode is identified by a prompt that ends with (config)# after the device name, such as
+
+Switch(config)#
+
+.
+
+Global configuration mode is accessed before other specific configuration modes. From global config mode, the user can enter different subconfiguration modes. Each of these modes allows the configuration of a particular part or function of the IOS device. Two common subconfiguration modes include:
+
+Line Configuration Mode
+
+- Used to configure console, SSH, Telnet, or AUX access.
+
+Interface Configuration Mode
+
+- Used to configure a switch port or router network interface.
+
+When the CLI is used, the mode is identified by the command-line prompt that is unique to that mode. By default, every prompt begins with the device name. Following the name, the remainder of the prompt indicates the mode. For example, the default prompt for line configuration mode is
+
+Switch(config-line)#
+
+and the default prompt for interface configuration mode is
+
+Switch(config-if)#
+
+.
+
+
+### 2.2.3 Video - IOS CLI Primary Command Modes
+
+
+2.2.3 Video - IOS CLI Primary Command Modes
+
+Click Play in the figure to view a video demonstration of navigating between IOS modes.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 2.2.4 Navigate Between IOS Modes
+
+
+2.2.4 Navigate Between IOS Modes
+
+Various commands are used to move in and out of command prompts. To move from user EXEC mode to privileged EXEC mode, use the
+
+enable
+
+command. Use the
+
+disable
+
+privileged EXEC mode command to return to user EXEC mode.
+
+Note:
+
+Privileged EXEC mode is sometimes called
+
+.
+
+To move in and out of global configuration mode, use the
+
+configure terminal
+
+privileged EXEC mode command. To return to the privileged EXEC mode, enter the
+
+exit
+
+global config mode command.
+
+There are many different subconfiguration modes. For example, to enter line subconfiguration mode, you use the
+
+line
+
+command followed by the management line type and number you wish to access. Use the
+
+exit
+
+command to exit a subconfiguration mode and return to global configuration mode.
+
+Switch(config)#
+
+line console 0
+
+Switch(config-line)#
+
+exit
+
+Switch(config)#
+
+To move from any subconfiguration mode of the global configuration mode to the mode one step above it in the hierarchy of modes, enter the
+
+exit
+
+command.
+
+To move from any subconfiguration mode to the privileged EXEC mode, enter the
+
+end
+
+command or enter the key combination
+
+Ctrl+Z
+
+.
+
+Switch(config-line)#
+
+end
+
+Switch#
+
+You can also move directly from one subconfiguration mode to another. Notice how after selecting an interface, the command prompt changes from
+
+(config-line)#
+
+to
+
+(config-if)#
+
+.
+
+Switch(config-line)#
+
+interface FastEthernet 0/1
+
+Switch(config-if)#
+
+
+### 2.2.5 Video - Navigate Between IOS Modes
+
+
+2.2.5 Video - Navigate Between IOS Modes
+
+Click Play in the figure to view a video demonstration of how to move between various IOS CLI modes.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 2.2.6 A Note About Syntax Checker Activities
+
+
+2.2.6 A Note About Syntax Checker Activities
+
+When you are learning how to modify device configurations, you might want to start in a safe, non-production environment before trying it on real equipment. NetAcad gives you different simulation tools to help build your configuration and troubleshooting skills. Because these are simulation tools, they typically do not have all the functionality of real equipment. One such tool is the Syntax Checker. In each Syntax Checker, you are given a set of instructions to enter a specific set of commands. You cannot progress in Syntax Checker unless the exact and full command is entered as specified. More advanced simulation tools, such as Packet Tracer, let you enter abbreviated commands, much as you would do on real equipment.
+
+
+### 2.2.7 Syntax Checker - Navigate Between IOS Modes
+
+
+2.2.7 Syntax Checker - Navigate Between IOS Modes
+
+Use the Syntax Checker activity to navigate between IOS command lines on a switch.
+
+Enter privileged EXEC mode using the
+
+enable
+
+command.
+
+Switch>
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 2.2.8 Check Your Understanding - IOS Navigation
+
+
+Instructions:
+
+The exam consists of
+
+4
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+Which IOS mode allows access to all commands and features?
+
+Global configuration mode
+
+Interface subconfiguration mode
+
+Line console subconfiguration mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+
+##### Question 2
+
+
+Which IOS mode are you in if the Switch(config)# prompt is displayed?
+
+Global configuration mode
+
+Interface subconfiguration mode
+
+Line console subconfiguration mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+
+##### Question 3
+
+
+Which IOS mode are you in if the Switch> prompt is displayed?
+
+Global configuration mode
+
+Interface subconfiguration mode
+
+Line console subconfiguration mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+
+##### Question 4
+
+
+Which two commands would return you to the privileged EXEC prompt regardless of the configuration mode you are in? (Choose two.)
+
+CTRL+Z
+
+disable
+
+enable
+
+end
+
+exit
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.3 The Command Structure
+
+
+2.3 The Command Structure
+
+
+### 2.3.1 Basic IOS Command Structure
+
+
+2.3.1 Basic IOS Command Structure
+
+This topic covers the basic structure of commands for the Cisco IOS. A network administrator must know the basic IOS command structure to be able to use the CLI for device configuration.
+
+A Cisco IOS device supports many commands. Each IOS command has a specific format, or syntax, and can only be executed in the appropriate mode. The general syntax for a command, shown in the figure, is the command followed by any appropriate keywords and arguments.
+
+The diagram shows the general syntax for a switch command (which is prompt, command, space, and keyword or argument) and provides two examples. In the first example, the prompt is Switch>, the command is show, a space follows, and the keywords are ip protocols. In the second example, the prompt is Switch>, the command is ping, a space follows, and the argument is 192 dot 168 dot 10 dot 5.
+
+Prompt
+
+Command
+
+Space
+
+Keyword(s) or Argument(s)
+
+Keyword
+
+- This is a specific parameter defined in the operating system (in the figure,
+
+ip protocols
+
+).
+
+Argument
+
+- This is not predefined; it is a value or variable defined by the user (in the figure,
+
+192.168.10.5
+
+).
+
+After entering each complete command, including any keywords and arguments, press the
+
+Enter
+
+key to submit the command to the command interpreter.
+
+
+### 2.3.2 IOS Command Syntax Check
+
+
+2.3.2 IOS Command Syntax Check
+
+A command might require one or more arguments. To determine the keywords and arguments required for a command, refer to the command syntax. The syntax provides the pattern, or format, that must be used when entering a command.
+
+As identified in the table, boldface text indicates commands and keywords that are entered as shown. Italic text indicates an argument for which the user provides the value.
+
+Convention
+
+Description
+
+boldface
+
+[
+
+x
+
+]
+
+{
+
+x
+
+}
+
+[
+
+x
+
+{
+
+y
+
+|
+
+z
+
+}]
+
+For instance, the syntax for using the
+
+description
+
+command is
+
+description
+
+The argument is a
+
+value provided by the user. The
+
+description
+
+command is typically used to identify the purpose of an interface. For example, entering the command,
+
+description Connects to the main headquarter office switch
+
+, describes where the other device is at the end of the connection.
+
+The following examples demonstrate conventions used to document and use IOS commands:
+
+ping
+
+- The command is
+
+ping
+
+and the user-defined argument is the
+
+of the destination device. For example,
+
+ping 10.10.10.5
+
+.
+
+traceroute
+
+- The command is
+
+traceroute
+
+and the user-defined argument is the
+
+of the destination device. For example,
+
+traceroute 192.168.254.254
+
+.
+
+If a command is complex with multiple arguments, you may see it represented like this:
+
+Switch(config-if)#
+
+switchport port-security aging
+
+{
+
+static
+
+|
+
+time
+
+|
+
+type
+
+{
+
+absolute
+
+|
+
+inactivity
+
+}
+
+The command will typically be followed with a detailed description of the command and each argument.
+
+The Cisco IOS Command Reference is the ultimate source of information for a particular IOS command.
+
+
+### 2.3.3 IOS Help Features
+
+
+2.3.3 IOS Help Features
+
+The IOS has two forms of help available: context-sensitive help and command syntax check.
+
+Context-sensitive help enables you to quickly find answers to these questions:
+
+Which commands are available in each command mode?
+
+Which commands start with specific characters or group of characters?
+
+Which arguments and keywords are available to particular commands?
+
+To access context-sensitive help, simply enter a question mark,
+
+?
+
+, at the CLI.
+
+Command syntax check verifies that a valid command was entered by the user. When a command is entered, the command line interpreter evaluates the command from left to right. If the interpreter understands the command, the requested action is executed, and the CLI returns to the appropriate prompt. However, if the interpreter cannot understand the command being entered, it will provide feedback describing what is wrong with the command.
+
+
+### 2.3.4 Video - Context Sensitive Help and Command Syntax Check
+
+
+2.3.4 Video - Context Sensitive Help and Command Syntax Check
+
+Click Play in the figure to view a video demonstration of context-sensitive help and command syntax check.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 2.3.5 Hot Keys and Shortcuts
+
+
+2.3.5 Hot Keys and Shortcuts
+
+The IOS CLI provides hot keys and shortcuts that make configuring, monitoring, and troubleshooting easier.
+
+Commands and keywords can be shortened to the minimum number of characters that identify a unique selection. For example, the
+
+configure
+
+command can be shortened to
+
+conf
+
+because
+
+configure
+
+is the only command that begins with
+
+conf
+
+. An even shorter version,
+
+con
+
+, will not work because more than one command begins with
+
+con
+
+. Keywords can also be shortened.
+
+The table lists keystrokes to enhance command line editing.
+
+Keystroke
+
+Description
+
+Tab
+
+Backspace
+
+Ctrl+D
+
+Ctrl+K
+
+Esc D
+
+Ctrl+U
+
+or
+
+Ctrl+X
+
+Ctrl+W
+
+Ctrl+A
+
+Left Arrow
+
+or
+
+Ctrl+B
+
+Esc B
+
+Esc F
+
+Right Arrow
+
+or
+
+Ctrl+F
+
+Ctrl+E
+
+Up Arrow
+
+or
+
+Ctrl+P
+
+Down Arrow
+
+or
+
+Ctrl+N
+
+Ctrl+R
+
+or
+
+Ctrl+I
+
+or
+
+Ctrl+L
+
+Note:
+
+While the
+
+Delete
+
+key typically deletes the character to the right of the prompt, the IOS command structure does not recognize the Delete key.
+
+When a command output produces more text than can be displayed in a terminal window, the IOS will display a
+
+“--More--”
+
+prompt. The following table describes the keystrokes that can be used when this prompt is displayed.
+
+Keystroke
+
+Description
+
+Enter
+
+Key
+
+Space
+
+Bar
+
+Ends the display string, returning to previous prompt.
+
+* Except \"y\", which answers \"yes\" to the
+
+--More--
+
+prompt, and acts like the
+
+Space
+
+bar
+
+This table lists commands used to exit out of an operation.
+
+Keystroke
+
+Description
+
+Ctrl-C
+
+Ctrl-Z
+
+Ctrl-Shift-6
+
+
+### 2.3.6 Video - Hot Keys and Shortcuts
+
+
+2.3.6 Video - Hot Keys and Shortcuts
+
+Click Play in the figure to view a video demonstration of the various hotkeys and shortcuts.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 2.3.7 Packet Tracer - Navigate the IOS
+
+
+2.3.7 Packet Tracer - Navigate the IOS
+
+In this activity, you will practice skills necessary for navigating the Cisco IOS, including different user access modes, various configuration modes, and common commands used on a regular basis. You will also practice accessing the context-sensitive help by configuring the
+
+clock
+
+command.
+
+description
+
+Navigate the IOS
+
+file_download
+
+Navigate the IOS
+
+
+### 2.3.8 Lab - Navigate the IOS by Using Tera Term for Console Connectivity
+
+
+2.3.8 Lab - Navigate the IOS by Using Tera Term for Console Connectivity
+
+
+###### Skills Practice Opportunity
+
+
+You have the opportunity to practice the following skills:
+
+Part 1: Access a Cisco Switch through the Serial Console Port
+
+Part 2: Display and Configure Basic Device Settings
+
+Part 3: (Optional) Access a Cisco Router Using a Mini-USB Console Cable
+
+You can practice these skills using the Packet Tracer or lab equipment, if available.
+
+Packet Tracer - Physical Mode (PTPM)
+
+description
+
+Navigate the IOS Using a Terminal Client for Console Connectivity - Physical Mode
+
+file_download
+
+Navigate the IOS Using a Terminal Client for Console Connectivity - Physical Mode
+
+Lab Equipment
+
+description
+
+Navigate the IOS by Using Tera Term for Console Connectivity
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.4 Basic Device Configuration
+
+
+2.4 Basic Device Configuration
+
+
+### 2.4.1 Device Names
+
+
+2.4.1 Device Names
+
+You have learned a great deal about the Cisco IOS, navigating the IOS, and the command structure. Now, you are ready to configure devices! The first configuration command on any device should be to give it a unique device name or hostname. By default, all devices are assigned a factory default name. For example, a Cisco IOS switch is "Switch.
+
+The problem is if all switches in a network were left with their default names, it would be difficult to identify a specific device. For instance, how would you know that you are connected to the right device when accessing it remotely using SSH? The hostname provides confirmation that you are connected to the correct device.
+
+The default name should be changed to something more descriptive. By choosing names wisely, it is easier to remember, document, and identify network devices. Here are some important naming guidelines for hosts:
+
+Start with a letter
+
+Contain no spaces
+
+End with a letter or digit
+
+Use only letters, digits, and dashes
+
+Be less than 64 characters in length
+
+An organization must choose a naming convention that makes it easy and intuitive to identify a specific device. The hostnames used in the device IOS preserve capitalization and lowercase characters. For example, the figure shows that three switches, spanning three different floors, are interconnected together in a network. The naming convention that was used incorporated the location and the purpose of each device. Network documentation should explain how these names were chosen so additional devices can be named accordingly.
+
+The diagram shows three interconnected switches spanning three floors. The top switch is named Sw-Floor-3, the middle switch is named Sw-Floor-2, and the bottom switch is name Sw-Floor-1. A user sitting at a host PC is connected to the Sw-Floor-1 switch. Text at bottom reads: when network devices are named, they are easy to identify for configuration purposes.
+
+Sw-Floor-3
+
+Sw-Floor-2
+
+Sw-Floor-1
+
+When network devices are named, they are easy to identify for configuration purposes.
+
+When the naming convention has been identified, the next step is to use the CLI to apply the names to the devices. As shown in the example, from the privileged EXEC mode, access the global configuration mode by entering the
+
+configure terminal
+
+command. Notice the change in the command prompt.
+
+Switch#
+
+configure terminal
+
+Switch(config)#
+
+hostname Sw-Floor-1
+
+Sw-Floor-1(config)#
+
+From global configuration mode, enter the command
+
+hostname
+
+followed by the name of the switch and press
+
+Enter
+
+. Notice the change in the command prompt name.
+
+Note:
+
+To return the switch to the default prompt, use the
+
+no hostname
+
+global config command.
+
+Always make sure the documentation is updated each time a device is added or modified. Identify devices in the documentation by their location, purpose, and address.
+
+
+### 2.4.2 Password Guidelines
+
+
+2.4.2 Password Guidelines
+
+The use of weak or easily guessed passwords continues to be the biggest security concern of organizations. Network devices, including home wireless routers, should always have passwords configured to limit administrative access.
+
+Cisco IOS can be configured to use hierarchical mode passwords to allow different access privileges to a network device.
+
+All networking devices should limit administrative access by securing privileged EXEC, user EXEC, and remote Telnet access with passwords. In addition, all passwords should be encrypted and legal notifications provided.
+
+When choosing passwords, use strong passwords that are not easily guessed. There are some key points to consider when choosing passwords:
+
+Use passwords that are more than eight characters in length.
+
+Use a combination of upper and lowercase letters, numbers, special characters, and/or numeric sequences.
+
+Avoid using the same password for all devices.
+
+Do not use common words because they are easily guessed.
+
+Use an internet search to find a password generator. Many will allow you to set the length, character set, and other parameters.
+
+Note:
+
+Most of the labs in this course use simple passwords such as
+
+cisco
+
+or
+
+class
+
+. These passwords are considered weak and easily guessable and should be avoided in production environments. We only use these passwords for convenience in a classroom setting, or to illustrate configuration examples.
+
+
+### 2.4.3 Configure Passwords
+
+
+2.4.3 Configure Passwords
+
+When you initially connect to a device, you are in user EXEC mode. This mode is secured using the console.
+
+To secure user EXEC mode access, enter line console configuration mode using the
+
+line console 0
+
+global configuration command, as shown in the example. The zero is used to represent the first (and in most cases the only) console interface. Next, specify the user EXEC mode password using the
+
+password
+
+command. Finally, enable user EXEC access using the
+
+login
+
+command.
+
+Sw-Floor-1#
+
+configure terminal
+
+Sw-Floor-1(config)#
+
+line console 0
+
+Sw-Floor-1(config-line)#
+
+password cisco
+
+Sw-Floor-1(config-line)#
+
+login
+
+Sw-Floor-1(config-line)#
+
+end
+
+Sw-Floor-1#
+
+Console access will now require a password before allowing access to the user EXEC mode.
+
+To have administrator access to all IOS commands including configuring a device, you must gain privileged EXEC mode access. It is the most important access method because it provides complete access to the device.
+
+To secure privileged EXEC access, use the
+
+enable secret
+
+global config command, as shown in the example.
+
+Sw-Floor-1#
+
+configure terminal
+
+Sw-Floor-1(config)#
+
+enable secret class
+
+Sw-Floor-1(config)#
+
+exit
+
+Sw-Floor-1#
+
+Virtual terminal (VTY) lines enable remote access using Telnet or SSH to the device. Many Cisco switches support up to 16 VTY lines that are numbered 0 to 15.
+
+To secure VTY lines, enter line VTY mode using the
+
+line vty 0 15
+
+global config command. Next, specify the VTY password using the
+
+password
+
+command. Lastly, enable VTY access using the
+
+login
+
+command.
+
+An example of securing the VTY lines on a switch is shown.
+
+Sw-Floor-1#
+
+configure terminal
+
+Sw-Floor-1(config)#
+
+line vty 0 15
+
+Sw-Floor-1(config-line)#
+
+password cisco
+
+Sw-Floor-1(config-line)#
+
+login
+
+Sw-Floor-1(config-line)#
+
+end
+
+Sw-Floor-1#
+
+
+### 2.4.4 Encrypt Passwords
+
+
+2.4.4 Encrypt Passwords
+
+The startup-config and running-config files display most passwords in plaintext. This is a security threat because anyone can discover the passwords if they have access to these files.
+
+To encrypt all plaintext passwords, use the
+
+service password-encryption
+
+global config command as shown in the example.
+
+Sw-Floor-1#
+
+configure terminal
+
+Sw-Floor-1(config)#
+
+service password-encryption
+
+Sw-Floor-1(config)#
+
+The command applies weak encryption to all unencrypted passwords. This encryption applies only to passwords in the configuration file, not to passwords as they are sent over the network. The purpose of this command is to keep unauthorized individuals from viewing passwords in the configuration file.
+
+Use the
+
+show running-config
+
+command to verify that passwords are now encrypted.
+
+Sw-Floor-1(config)#
+
+end
+
+Sw-Floor-1#
+
+show running-config
+
+!
+
+(Output omitted)
+
+!
+
+line con 0
+
+password 7 094F471A1A0A
+
+login
+
+!
+
+line vty 0 4
+
+password 7 094F471A1A0A
+
+login
+
+line vty 5 15
+
+password 7 094F471A1A0A
+
+login
+
+!
+
+end
+
+
+### 2.4.5 Banner Messages
+
+
+2.4.5 Banner Messages
+
+Although requiring passwords is one way to keep unauthorized personnel out of a network, it is vital to provide a method for declaring that only authorized personnel should attempt to access the device. To do this, add a banner to the device output. Banners can be an important part of the legal process in the event that someone is prosecuted for breaking into a device. Some legal systems do not allow prosecution, or even the monitoring of users, unless a notification is visible.
+
+To create a banner message of the day on a network device, use the
+
+banner motd #
+
+#
+
+global config command. The “#” in the command syntax is called the delimiting character. It is entered before and after the message. The delimiting character can be any character as long as it does not occur in the message. For this reason, symbols such as the "#" are often used. After the command is executed, the banner will be displayed on all subsequent attempts to access the device until the banner is removed.
+
+The following example shows the steps to configure the banner on Sw-Floor-1.
+
+Sw-Floor-1#
+
+configure terminal
+
+Sw-Floor-1(config)#
+
+banner motd #Authorized Access Only#
+
+
+### 2.4.6 Video - Secure Administrative Access to a Switch
+
+
+2.4.6 Video - Secure Administrative Access to a Switch
+
+Click Play in the figure to view a video demonstration of how to secure administrative access to a switch.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 2.4.7 Syntax Checker - Basic Device Configuration
+
+
+2.4.7 Syntax Checker - Basic Device Configuration
+
+Secure management access to a switch.
+
+Assign a device name.
+
+Secure user EXEC mode access.
+
+Secure privileged EXEC mode access.
+
+Secure VTY access.
+
+Encrypt all plaintext passwords.
+
+Display a login banner.
+
+Enter global configuration mode.
+
+Switch#
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 2.4.8 Check Your Understanding - Basic Device Configuration
+
+
+Instructions:
+
+The exam consists of
+
+5
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+What is the command to assign the name “Sw-Floor-2” to a switch?
+
+hostname
+
+Sw-Floor-2
+
+host name
+
+Sw-Floor-2
+
+name
+
+Sw-Floor-2
+
+
+##### Question 2
+
+
+How is the privileged EXEC mode access secured on a switch?
+
+enable class
+
+secret class
+
+enable secret class
+
+service password-encryption
+
+
+##### Question 3
+
+
+Which command enables password authentication for user EXEC mode access on a switch?
+
+enable secret
+
+login
+
+secret
+
+service password-encryption
+
+
+##### Question 4
+
+
+Which command encrypts all plaintext passwords access on a switch?
+
+enable secret
+
+login
+
+secret
+
+service password-encryption
+
+
+##### Question 5
+
+
+Which is the command to configure a banner to be displayed when connecting to a switch?
+
+banner $ Keep out $
+
+banner motd $ Keep out $
+
+display $ Keep out $
+
+login banner $ Keep out $
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.5 Save Configurations
+
+
+2.5 Save Configurations
+
+
+### 2.5.1 Configuration Files
+
+
+2.5.1 Configuration Files
+
+You now know how to perform basic configuration on a switch, including passwords and banner messages. This topic will show you how to save your configurations.
+
+There are two system files that store the device configuration:
+
+startup-config
+
+- This is the saved configuration file that is stored in NVRAM. It contains all the commands that will be used by the device upon startup or reboot. Flash does not lose its contents when the device is powered off.
+
+running-config
+
+- This is stored in Random Access Memory (RAM). It reflects the current configuration. Modifying a running configuration affects the operation of a Cisco device immediately. RAM is volatile memory. It loses all of its content when the device is powered off or restarted.
+
+The
+
+show running-config
+
+privileged EXEC mode command is used to view the running config. As shown in the example, the command will list the complete configuration currently stored in RAM.
+
+Sw-Floor-1#
+
+show running-config
+
+Building configuration...
+
+Current configuration : 1351 bytes
+
+!
+
+! Last configuration change at 00:01:20 UTC Mon Mar 1 1993
+
+!
+
+version 15.0
+
+no service pad
+
+service timestamps debug datetime msec
+
+service timestamps log datetime msec
+
+service password-encryption
+
+!
+
+hostname Sw-Floor-1
+
+!
+
+(output omitted)
+
+To view the startup configuration file, use the
+
+show startup-config
+
+privileged EXEC command.
+
+If power to the device is lost, or if the device is restarted, all configuration changes will be lost unless they have been saved. To save changes made to the running configuration to the startup configuration file, use the
+
+copy running-config startup-config
+
+privileged EXEC mode command.
+
+
+### 2.5.2 Alter the Running Configuration
+
+
+2.5.2 Alter the Running Configuration
+
+If changes made to the running config do not have the desired effect and the running-config has not yet been saved, you can restore the device to its previous configuration. Remove the changed commands individually, or reload the device using the
+
+reload
+
+privileged EXEC mode command to restore the startup-config.
+
+The downside to using the
+
+reload
+
+command to remove an unsaved running config is the brief amount of time the device will be offline, causing network downtime.
+
+When a reload is initiated, the IOS will detect that the running config has changes that were not saved to the startup configuration. A prompt will appear to ask whether to save the changes. To discard the changes, enter
+
+n
+
+or
+
+no
+
+.
+
+Alternatively, if undesired changes were saved to the startup config, it may be necessary to clear all the configurations. This requires erasing the startup config and restarting the device. The startup config is removed by using the
+
+erase startup-config
+
+privileged EXEC mode command. After the command is issued, the switch will prompt you for confirmation. Press
+
+Enter
+
+to accept.
+
+After removing the startup config from NVRAM, reload the device to remove the current running config file from RAM. On reload, a switch will load the default startup config that originally shipped with the device.
+
+
+### 2.5.3 Video - Alter the Running Configuration
+
+
+2.5.3 Video - Alter the Running Configuration
+
+Click Play in the figure to view a video demonstration on how to save switch configuration files.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 2.5.4 Capture Configuration to a Text File
+
+
+2.5.4 Capture Configuration to a Text File
+
+Configuration files can also be saved and archived to a text document. This sequence of steps ensures that a working copy of the configuration file is available for editing or reuse later.
+
+For example, assume that a switch has been configured, and the running config has been saved on the device.
+
+Step 1.
+
+Open terminal emulation software, such as PuTTY or Tera Term, that is already connected to a switch.
+
+Step 2.
+
+Enable logging in the terminal software and assign a name and file location to save the log file. The figure displays that
+
+All session output
+
+will be captured to the file specified (i.e., MySwitchLogs).
+
+Step 3.
+
+Execute the
+
+show running-config
+
+or
+
+show startup-config
+
+command at the privileged EXEC prompt. Text displayed in the terminal window will be placed into the chosen file.
+
+Sw-Floor-1#
+
+show running-config
+
+Building configuration...
+
+(output omitted)
+
+Step 4.
+
+Disable logging in the terminal software. The figure shows how to disable logging by choosing the
+
+None
+
+session logging option.
+
+The text file created can be used as a record of how the device is currently implemented. The file could require editing before being used to restore a saved configuration to a device.
+
+To restore a configuration file to a device:
+
+Step 1.
+
+Enter global configuration mode on the device.
+
+Step 2.
+
+Copy and paste the text file into the terminal window connected to the switch.
+
+The text in the file will be applied as commands in the CLI and become the running configuration on the device. This is a convenient method of manually configuring a device.
+
+
+### 2.5.5 Packet Tracer - Configure Initial Switch Settings
+
+
+2.5.5 Packet Tracer - Configure Initial Switch Settings
+
+In this activity, you will perform basic switch configurations. You will secure access to the CLI and console ports using encrypted and plaintext passwords. You will learn how to configure messages for users logging into the switch. These banners are also used to warn unauthorized users that access is prohibited.
+
+description
+
+Configure Initial Switch Settings
+
+file_download
+
+Configure Initial Switch Settings
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.6 Ports and Addresses
+
+
+2.6 Ports and Addresses
+
+
+### 2.6.1 IP Addresses
+
+
+2.6.1 IP Addresses
+
+Congratulations, you have performed a basic device configuration! Of course, the fun is not over yet. If you want your end devices to communicate with each other, you must ensure that each of them has an appropriate IP address and is correctly connected. You will learn about IP addresses, device ports and the media used to connect devices in this topic.
+
+The use of IP addresses is the primary means of enabling devices to locate one another and establish end-to-end communication on the internet. Each end device on a network must be configured with an IP address. Examples of end devices include these:
+
+Computers (work stations, laptops, file servers, web servers)
+
+Network printers
+
+VoIP phones
+
+Security cameras
+
+Smart phones
+
+Mobile handheld devices (such as wireless barcode scanners)
+
+The structure of an IPv4 address is called dotted decimal notation and is represented by four decimal numbers between 0 and 255. IPv4 addresses are assigned to individual devices connected to a network.
+
+Note:
+
+IP in this course refers to both the IPv4 and IPv6 protocols. IPv6 is the most recent version of IP and is replacing the more common IPv4.
+
+With the IPv4 address, a subnet mask is also necessary. An IPv4 subnet mask is a 32-bit value that differentiates the network portion of the address from the host portion. Coupled with the IPv4 address, the subnet mask determines to which subnet the device is a member.
+
+The example in the figure displays the IPv4 address (192.168.1.10), subnet mask (255.255.255.0), and default gateway (192.168.1.1) assigned to a host. The default gateway address is the IP address of the router that the host will use to access remote networks, including the internet.
+
+IPv6 addresses are 128 bits in length and written as a string of hexadecimal values. Every four bits is represented by a single hexadecimal digit; for a total of 32 hexadecimal values. Groups of four hexadecimal digits are separated by a colon (:) . IPv6 addresses are not case-sensitive and can be written in either lowercase or uppercase.
+
+
+### 2.6.2 Interfaces and Ports
+
+
+2.6.2 Interfaces and Ports
+
+Network communications depend on end user device interfaces, networking device interfaces, and the cables that connect them. Each physical interface has specifications, or standards, that define it. A cable connecting to the interface must be designed to match the physical standards of the interface. Types of network media include twisted-pair copper cables, fiber-optic cables, coaxial cables, or wireless, as shown in the figure.
+
+Copper
+
+Wireless
+
+Fiber-optics
+
+Different types of network media have different features and benefits. Not all network media have the same characteristics. Not all media are appropriate for the same purpose. These are some of the differences between various types of media:
+
+Distance the media can successfully carry a signal
+
+Environment in which the media is to be installed
+
+Amount of data and the speed at which it must be transmitted
+
+Cost of the media and installation
+
+Not only does each link on the internet require a specific network media type, but each link also requires a particular network technology. For example, Ethernet is the most common local-area network (LAN) technology used today. Ethernet ports are found on end-user devices, switch devices, and other networking devices that can physically connect to the network using a cable.
+
+Cisco IOS Layer 2 switches have physical ports for devices to connect. These ports do not support Layer 3 IP addresses. Therefore, switches have one or more switch virtual interfaces (SVIs). These are virtual interfaces because there is no physical hardware on the device associated with it. An SVI is created in software.
+
+The virtual interface lets you remotely manage a switch over a network using IPv4 and IPv6. Each switch comes with one SVI appearing in the default configuration "out-of-the-box." The default SVI is interface VLAN1.
+
+Note:
+
+A Layer 2 switch does not need an IP address. The IP address assigned to the SVI is used to remotely access the switch. An IP address is not necessary for the switch to perform its operations.
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 2.6.3 Check Your Understanding - Ports and Addresses
+
+
+Instructions:
+
+The exam consists of
+
+3
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+What is the structure of an IPv4 address called?
+
+Dotted-binary format
+
+Dotted-decimal format
+
+Dotted-hexadecimal format
+
+
+##### Question 2
+
+
+How is an IPv4 address represented?
+
+Four binary numbers between 0 and 1 separated by colons.
+
+Four decimal numbers between 0 and 255 separated by periods.
+
+Thirty-two hexadecimal numbers separated by colons.
+
+Thirty-two hexadecimal numbers separated by periods.
+
+
+##### Question 3
+
+
+What type of interface has no physical port associated with it?
+
+Console
+
+Ethernet
+
+Serial
+
+Switch virtual interface (SVI)
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.7 Configure IP Addressing
+
+
+2.7 Configure IP Addressing
+
+
+### 2.7.1 Manual IP Address Configuration for End Devices
+
+
+2.7.1 Manual IP Address Configuration for End Devices
+
+Much like you need your friends' telephone numbers to text or call them, end devices in your network need an IP address so that they can communicate with other devices on your network. In this topic, you will implement basic connectivity by configuring IP addressing on switches and PCs.
+
+IPv4 address information can be entered into end devices manually, or automatically using Dynamic Host Configuration Protocol (DHCP).
+
+To manually configure an IPv4 address on a Windows host, open the
+
+Control Panel > Network Sharing Center > Change adapter settings
+
+and choose the adapter. Next right-click and select
+
+Properties
+
+to display the
+
+Local Area Connection Properties
+
+, as shown in the figure.
+
+Highlight Internet Protocol Version 4 (TCP/IPv4) and click
+
+Properties
+
+to open the
+
+Internet Protocol Version 4 (TCP/IPv4) Properties
+
+window, shown in the figure. Configure the IPv4 address and subnet mask information, and default gateway.
+
+Note:
+
+IPv6 addressing and configuration options are similar to IPv4.
+
+Note:
+
+The DNS server addresses are the IPv4 and IPv6 addresses of the Domain Name System (DNS) servers, which are used to translate IP addresses to domain names, such as
+
+.
+
+
+### 2.7.2 Automatic IP Address Configuration for End Devices
+
+
+2.7.2 Automatic IP Address Configuration for End Devices
+
+End devices typically default to using DHCP for automatic IPv4 address configuration. DHCP is a technology that is used in almost every network. The best way to understand why DHCP is so popular is by considering all the extra work that would have to take place without it.
+
+In a network, DHCP enables automatic IPv4 address configuration for every end device that is DHCP-enabled. Imagine the amount of time it would take if every time you connected to the network, you had to manually enter the IPv4 address, the subnet mask, the default gateway, and the DNS server. Multiply that by every user and every device in an organization and you see the problem. Manual configuration also increases the chance of misconfiguration by duplicating another device’s IPv4 address.
+
+As shown in the figure, to configure DHCP on a Windows PC, you only need to select
+
+Obtain an IP address automatically
+
+and
+
+Obtain DNS server address automatically
+
+. Your PC will search out a DHCP server and be assigned the address settings necessary to communicate on the network.
+
+Note:
+
+IPv6 uses DHCPv6 and SLAAC (Stateless Address Autoconfiguration) for dynamic address allocation.
+
+
+### 2.7.3 Syntax Checker - Verify Windows PC IP Configuration
+
+
+2.7.3 Syntax Checker - Verify Windows PC IP Configuration
+
+It is possible to display the IP configuration settings on a Windows PC by using the
+
+ipconfig
+
+command at the command prompt. The output will show the IPv4 address, subnet mask, and gateway information received from the DHCP server.
+
+Enter the command to display the IP configuration on a Windows PC.
+
+C:\>
+
+
+### 2.7.4 Switch Virtual Interface Configuration
+
+
+2.7.4 Switch Virtual Interface Configuration
+
+To access the switch remotely, an IP address and a subnet mask must be configured on the SVI. To configure an SVI on a switch, use the
+
+interface vlan 1
+
+global configuration command. Vlan 1 is not an actual physical interface but a virtual one. Next assign an IPv4 address using the
+
+ip address
+
+interface configuration command. Finally, enable the virtual interface using the
+
+no shutdown
+
+interface configuration command.
+
+After these commands are configured, the switch has all the IPv4 elements ready for communication over the network.
+
+Note:
+
+Similar to a Windows hosts, switches configured with an IPv4 address will typically also need to have a default gateway assigned. This can be done using the
+
+ip default-gateway
+
+global configuration command. The
+
+parameter would be the IPv4 address of the local router on the network, as shown in the example. However, in this module you will only be configuring a network with switches and hosts. Routers will be introduced later.
+
+Sw-Floor-1#
+
+configure terminal
+
+Sw-Floor-1(config)#
+
+interface vlan 1
+
+Sw-Floor-1(config-if)#
+
+ip address 192.168.1.20 255.255.255.0
+
+Sw-Floor-1(config-if)#
+
+no shutdown
+
+Sw-Floor-1(config-if)#
+
+exit
+
+Sw-Floor-1(config)#
+
+ip default-gateway 192.168.1.1
+
+
+### 2.7.5 Syntax Checker - Configure a Switch Virtual Interface
+
+
+2.7.5 Syntax Checker - Configure a Switch Virtual Interface
+
+Enter interface configuration mode for VLAN 1.
+
+Switch(config)#
+
+
+### 2.7.6 Packet Tracer - Implement Basic Connectivity
+
+
+2.7.6 Packet Tracer - Implement Basic Connectivity
+
+In this activity, you will first perform basic switch configurations. Then you will implement basic connectivity by configuring IP addressing on switches and PCs. When the IP addressing configuration is complete, you will use various
+
+show
+
+commands to verify configurations and use the
+
+ping
+
+command to verify basic connectivity between devices.
+
+description
+
+Implement Basic Connectivity
+
+file_download
+
+Implement Basic Connectivity
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.8 Verify Connectivity
+
+
+2.8 Verify Connectivity
+
+
+### 2.8.1 Video Activity - Test the Interface Assignment
+
+
+2.8.1 Video Activity - Test the Interface Assignment
+
+In the previous topic, you implemented basic connectivity by configuring IP addressing on switches and PCs. Then you verified your configurations and connectivity, because, what is the point of configuring a device if you do not verify that the configuration is working? You will continue this process in this topic. Using the CLI, you will verify the interfaces and the addresses of the switches and routers in your network.
+
+In the same way that you use commands and utilities like
+
+ipconfig
+
+to verify the network configuration of a PC host, you also use commands to verify the interfaces and address settings of intermediary devices like switches and routers.
+
+Click Play in the figure to view a video demonstration of the
+
+show ip interface brief
+
+command. This command is useful for verifying the condition of the switch interfaces.
+
+Follow Along in Packet Tracer
+
+Download the same PKT file that is used in the video. Practice using the
+
+ipconfig
+
+and
+
+show ip interface brief
+
+commands, as shown in the video.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+file_download
+
+Test the Interface Assignment
+
+
+### 2.8.2 Video Activity - Test End-to-End Connectivity
+
+
+2.8.2 Video Activity - Test End-to-End Connectivity
+
+The
+
+ping
+
+command can be used to test connectivity to another device on the network or a website on the internet.
+
+Click Play in the figure to view a video demonstration using the
+
+ping
+
+command to test connectivity to a switch and to another PC.
+
+Follow Along in Packet Tracer
+
+Download the same PKT file that is used in the video. Practice using the
+
+ping
+
+command, as shown in the video.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+file_download
+
+Test End-to-End Connectivity
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 2.9 Module Practice and Quiz
+
+
+2.9 Module Practice and Quiz
+
+
+### 2.9.1 Packet Tracer - Basic Switch and End Device Configuration
+
+
+2.9.1 Packet Tracer - Basic Switch and End Device Configuration
+
+As a recently hired LAN technician, you have been asked by your network manager to demonstrate your ability to configure a small LAN. Your tasks include configuring initial settings on two switches by using the Cisco IOS and configuring IP address parameters on host devices to provide end-to-end connectivity. You are to use two switches and two hosts on a cabled and powered network.
+
+description
+
+Basic Switch and End Device Configuration
+
+file_download
+
+Basic Switch and End Device Configuration
+
+
+### 2.9.2 Lab - Basic Switch and End Device Configuration
+
+
+2.9.2 Lab - Basic Switch and End Device Configuration
+
+
+###### Skills Practice Opportunity
+
+
+You have the opportunity to practice the following skills:
+
+Part 1: Set Up the Network Topology
+
+Part 2: Configure PC Hosts
+
+Part 3: Configure and Verify Basic Switch Settings
+
+You can practice these skills using the Packet Tracer or lab equipment, if available.
+
+Packet Tracer - Physical Mode (PTPM)
+
+description
+
+Basic Switch and End Device Configuration - Physical Mode
+
+file_download
+
+Basic Switch and End Device Configuration - Physical Mode
+
+Lab Equipment
+
+description
+
+Basic Switch and End Device Configuration
+
+
+### 2.9.3 What did I learn in this module?
+
+
+2.9.3 What did I learn in this module?
+
+All end devices and network devices require an operating system (OS). The user can interact with the shell using a command-line interface (CLI) to use a keyboard to run CLI-based network programs, use a keyboard to enter text and text-based commands, and view output on a monitor.
+
+As a security feature, the Cisco IOS software separates management access into the following two command modes: User EXEC Mode and Privileged EXEC Mode.
+
+Global configuration mode is accessed before other specific configuration modes. From global config mode, the user can enter different subconfiguration modes. Each of these modes allows the configuration of a particular part or function of the IOS device. Two common subconfiguration modes include: Line Configuration Mode and Interface Configuration Mode. To move in and out of global configuration mode, use the
+
+configure terminal
+
+privileged EXEC mode command. To return to the privileged EXEC mode, enter the
+
+exit
+
+global config mode command.
+
+Each IOS command has a specific format or syntax and can only be executed in the appropriate mode. The general syntax for a command is the command followed by any appropriate keywords and arguments. The IOS has two forms of help available: context-sensitive help and command syntax check.
+
+The first configuration command on any device should be to give it a unique device name or hostname. Network devices should always have passwords configured to limit administrative access. Cisco IOS can be configured to use hierarchical mode passwords to allow different access privileges to a network device. Configure and encrypt all passwords. Provide a method for declaring that only authorized personnel should attempt to access the device by adding a banner to the device output.
+
+There are two system files that store the device configuration: startup-config and running-config. Running configuration files can be altered if they have not been saved. Configuration files can also be saved and archived to a text document.
+
+IP addresses enable devices to locate one another and establish end-to-end communication on the internet. Each end device on a network must be configured with an IP address. The structure of an IPv4 address is called dotted decimal notation and is represented by four decimal numbers between 0 and 255.
+
+IPv4 address information can be entered into end devices manually, or automatically using Dynamic Host Configuration Protocol (DHCP). In a network, DHCP enables automatic IPv4 address configuration for every end device that is DHCP-enabled. To access the switch remotely, an IP address and a subnet mask must be configured on the SVI. To configure an SVI on a switch, use the
+
+interface vlan 1
+
+command in global configuration mode.
+
+In the same way that you use commands and utilities to verify a PC host’s network configuration, you also use commands to verify the interfaces and address settings of intermediary devices like switches and routers. The
+
+show ip interface brief
+
+command verifies the condition of the switch interfaces. The
+
+ping
+
+command can be used to test connectivity to another device on the network or a website on the internet.
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### Module Quiz - Basic Switch and End Device Configuration
+
+
+Instructions:
+
+The exam consists of
+
+14
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+Which statement is true about the running configuration file in a Cisco IOS device?
+
+It affects the operation of the device immediately when modified.
+
+It is stored in NVRAM.
+
+It should be deleted using the
+
+erase running-config
+
+command.
+
+It is automatically saved when the router reboots.
+
+
+##### Question 2
+
+
+Which two statements are true regarding the user EXEC mode? (Choose two.)
+
+All router commands are available.
+
+Global configuration mode can be accessed by entering the
+
+enable
+
+command.
+
+The device prompt for this mode ends with the '>' symbol.
+
+Interfaces and routing protocols can be configured.
+
+Only some aspects of the router configuration can be viewed.
+
+
+##### Question 3
+
+
+Which type of access is secured on a Cisco router or switch with the
+
+enable secret
+
+command?
+
+Virtual terminal
+
+Privileged EXEC
+
+AUX port
+
+Console line
+
+
+##### Question 4
+
+
+What is the default SVI on a Cisco switch?
+
+VLAN1
+
+VLAN99
+
+VLAN100
+
+VLAN999
+
+
+##### Question 5
+
+
+When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)
+
+The hostname should be fewer than 64 characters in length
+
+The hostname should be written in all lower case characters
+
+The hostname should contain no spaces
+
+The hostname should end with a special character
+
+The hostname should begin with a letter
+
+
+##### Question 6
+
+
+What is the function of the shell in an OS?
+
+It interacts with the device hardware.
+
+It interfaces between the users and the kernel.
+
+It provides dedicated firewall services.
+
+It provides the intrusion protection services for the device.
+
+
+##### Question 7
+
+
+A router with a valid operating system contains a configuration file stored in NVRAM. The configuration file has an enable secret password but no console password. When the router boots up, which mode will display?
+
+Global configuration mode
+
+Setup mode
+
+Privileged EXEC mode
+
+User EXEC mode
+
+
+##### Question 8
+
+
+An administrator has just changed the IP address of an interface on an IOS device. What else must be done in order to apply those changes to the device?
+
+Copy the running configuration to the startup configuration file.
+
+Copy the information in the startup configuration file to the running configuration.
+
+Reload the device and type
+
+yes
+
+when prompted to save the configuration.
+
+Nothing must be done. Changes to the configuration on an IOS device take effect as soon as the command is typed correctly and the Enter key has been pressed.
+
+
+##### Question 9
+
+
+Which memory location on a Cisco router or switch will lose all content when the device is restarted?
+
+ROM
+
+Flash
+
+NVRAM
+
+RAM
+
+
+##### Question 10
+
+
+Why would a technician enter the command
+
+copy startup-config running-config
+
+?
+
+To remove all configurations from the switch
+
+To save an active configuration to NVRAM
+
+To copy an existing configuration into RAM
+
+To make a changed configuration the new startup configuration
+
+
+##### Question 11
+
+
+Which functionality is provided by DHCP?
+
+Automatic assignment of an IP address to each host
+
+Remote switch management
+
+Translation of IP addresses to domain names
+
+End-to-end connectivity test
+
+
+##### Question 12
+
+
+Which two functions are provided to users by the context-sensitive help feature of the Cisco IOS CLI? (Choose two.)
+
+Providing an error message when a wrong command is submitted
+
+Displaying a list of all available commands within the current mode
+
+Allowing the user to complete the remainder of an abbreviated command with the TAB key
+
+Determining which option, keyword, or argument is available for the entered command
+
+Selecting the best command to accomplish a task
+
+
+##### Question 13
+
+
+Which memory location on a Cisco router or switch stores the startup configuration file?
+
+RAM
+
+ROM
+
+NVRAM
+
+Flash
+
+
+##### Question 14
+
+
+To what subnet does the IP address 10.1.100.50 belong if a subnet mask of 255.255.0.0 is used?
+
+10.1.0.0
+
+10.0.0.0
+
+10.1.100.32
+
+10.1.100.0
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset

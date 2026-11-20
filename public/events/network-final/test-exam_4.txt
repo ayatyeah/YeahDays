@@ -1,0 +1,423 @@
+# Вопросы: exam_4 (тесты)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+What does a client do when it has UDP datagrams to send?
+
+It just sends the datagrams.
+
+It queries the server to see if it is ready to receive data.
+
+It sends a simplified three-way handshake to the server.
+
+It sends to the server a segment with the SYN flag set to synchronize the conversation.
+
+##### Question 2
+
+Which flag in the TCP header is used in response to a received FIN in order to terminate connectivity between two network devices?
+
+FIN
+
+ACK
+
+SYN
+
+RST
+
+##### Question 3
+
+Which two characteristics are associated with UDP sessions? (Choose two.)
+
+Destination devices receive traffic with minimal delay.
+
+Transmitted data segments are tracked.
+
+Destination devices reassemble messages and pass them to an application.
+
+Received data is unacknowledged.
+
+Unacknowledged data packets are retransmitted.
+
+##### Question 4
+
+Which three statements characterize UDP? (Choose three.)
+
+UDP provides basic connectionless transport layer functions.
+
+UDP provides connection-oriented, fast transport of data at Layer 3.
+
+UDP relies on application layer protocols for error detection.
+
+UDP is a low overhead protocol that does not provide sequencing or flow control mechanisms.
+
+UDP relies on IP for error detection and recovery.
+
+UDP provides sophisticated flow control mechanisms.
+
+##### Question 5
+
+Which two fields are included in the TCP header but not in the UDP header? (Choose two.)
+
+window
+
+checksum
+
+source port
+
+destination port
+
+sequence number
+
+##### Question 6
+
+What is a characteristic of UDP?
+
+UDP datagrams take the same path and arrive in the correct order at the destination.
+
+Applications that use UDP are always considered unreliable.
+
+UDP reassembles the received datagrams in the order they were received.
+
+UDP only passes data to the network when the destination is ready to receive the data.
+
+##### Question 7
+
+Which protocol or service uses UDP for a client-to-server communication and TCP for server-to-server communication?
+
+HTTP
+
+FTP
+
+DNS
+
+SMTP
+
+##### Question 8
+
+In what two situations would UDP be better than TCP as the preferred transport protocol? (Choose two.)
+
+when applications need to guarantee that a packet arrives intact, in sequence, and unduplicated
+
+when a faster delivery mechanism is needed
+
+when delivery overhead is not an issue
+
+when applications do not need to guarantee delivery of the data
+
+when destination port numbers are dynamic
+
+##### Question 9
+
+What kind of port must be requested from IANA in order to be used with a specific application?
+
+registered port
+
+private port
+
+dynamic port
+
+source port
+
+##### Question 10
+
+What information is used by TCP to reassemble and reorder received segments?
+
+port numbers
+
+sequence numbers
+
+acknowledgment numbers
+
+fragment numbers
+
+##### Question 11
+
+Which field in the TCP header indicates the status of the three-way handshake process?
+
+window
+
+reserved
+
+checksum
+
+control bits
+
+##### Question 12
+
+Why does HTTP use TCP as the transport layer protocol?
+
+to ensure the fastest possible download speed
+
+because HTTP is a best-effort protocol
+
+because transmission errors can be tolerated easily
+
+because HTTP requires reliable delivery
+
+##### Question 13
+
+Which three fields are used in a UDP segment header? (Choose three.)
+
+Window Size
+
+Length
+
+Source Port
+
+Acknowledgment Number
+
+Checksum
+
+Sequence Number
+
+##### Question 14
+
+What are three responsibilities of the transport layer? (Choose three.)
+
+meeting the reliability requirements of applications, if any
+
+multiplexing multiple communication streams from many users or applications on the same network
+
+identifying the applications and services on the client and server that should handle transmitted data
+
+directing packets towards the destination network
+
+formatting data into a compatible form for receipt by the destination devices
+
+conducting error detection of the contents in frames
+
+##### Question 15
+
+What do the client/server and peer-to-peer network models have in common?
+
+Both models have dedicated servers.
+
+Both models support devices in server and client roles.
+
+Both models require the use of TCP/IP-based protocols.
+
+Both models are used only in the wired network environment.
+
+##### Question 16
+
+What is an example of network communication that uses the client-server model?
+
+A user uses eMule to download a file that is shared by a friend after the file location is determined.
+
+A workstation initiates an ARP to find the MAC address of a receiving host.
+
+A user prints a document by using a printer that is attached to a workstation of a coworker.
+
+A workstation initiates a DNS request when the user types www.cisco.com in the address bar of a web browser.
+
+##### Question 17
+
+Which networking model is being used when an author uploads one chapter document to a file server of a book publisher?
+
+peer-to-peer
+
+master-slave
+
+client/server
+
+point-to-point
+
+##### Question 18
+
+What are two characteristics of peer-to-peer networks? (Choose two.)
+
+scalability
+
+one way data flow
+
+decentralized resources
+
+centralized user accounts
+
+resource sharing without a dedicated server
+
+##### Question 19
+
+What type of information is contained in a DNS MX record?
+
+the FQDN of the alias used to identify a service
+
+the IP address for an FQDN entry
+
+the domain name mapped to mail exchange servers
+
+the IP address of an authoritative name server
+
+##### Question 20
+
+In what networking model would eDonkey, eMule, BitTorrent, Bitcoin, and LionShare be used?
+
+peer-to-peer
+
+client-based
+
+master-slave
+
+point-to-point
+
+##### Question 21
+
+Which applications or services allow hosts to act as client and server at the same time?
+
+client/server applications
+
+email applications
+
+P2P applications
+
+authentication services
+
+##### Question 22
+
+What is the function of the HTTP GET message?
+
+to request an HTML page from a web server
+
+to send error information from a web server to a web client
+
+to upload content to a web server from a web client
+
+to retrieve client email from an email server using TCP port 110
+
+##### Question 23
+
+Which three statements describe a DHCP Discover message? (Choose three.)
+
+The source MAC address is 48 ones (FF-FF-FF-FF-FF-FF).
+
+The destination IP address is 255.255.255.255.
+
+The message comes from a server offering an IP address.
+
+The message comes from a client seeking an IP address.
+
+All hosts receive the message, but only a DHCP server replies.
+
+Only the DHCP server receives the message.
+
+##### Question 24
+
+What is true about the Server Message Block protocol?
+
+Different SMB message types have a different format.
+
+Clients establish a long term connection to servers.
+
+SMB messages cannot authenticate a session.
+
+SMB uses the FTP protocol for communication.
+
+##### Question 25
+
+Which application layer protocol uses message types such as GET, PUT, and POST?
+
+DNS
+
+DHCP
+
+SMTP
+
+HTTP
+
+POP3
+
+##### Question 26
+
+What is an advantage of SMB over FTP?
+
+Only with SMB can data transfers occur in both directions.
+
+Only SMB establishes two simultaneous connections with the client, making the data transfer faster.
+
+SMB is more reliable than FTP because SMB uses TCP and FTP uses UDP.
+
+SMB clients can establish a long-term connection to the server.
+
+##### Question 27
+
+Which protocol is used by a client to communicate securely with a web server?
+
+SMTP
+
+SMB
+
+IMAP
+
+HTTPS
+
+##### Question 28
+
+The application layer of the TCP/IP model performs the functions of what three layers of the OSI model? (Choose three.)
+
+physical
+
+session
+
+network
+
+presentation
+
+data link
+
+transport
+
+application
+
+##### Question 29
+
+Which three layers of the OSI model provide similar network services to those provided by the application layer of the TCP/IP model? (Choose three.)
+
+physical layer
+
+session layer
+
+transport layer
+
+application layer
+
+presentation layer
+
+data link layer
+
+##### Question 30
+
+Which scenario describes a function provided by the transport layer?
+
+A student is using a classroom VoIP phone to call home. The unique identifier burned into the phone is a transport layer address used to contact another network device on the same network.
+
+A student is playing a short web-based movie with sound. The movie and sound are encoded within the transport layer header.
+
+A student has two web browser windows open in order to access two web sites. The transport layer ensures the correct web page is delivered to the correct browser window.
+
+A corporate worker is accessing a web server located on a corporate network. The transport layer formats the screen so the web page appears properly no matter what device is being used to view the web site.
+
+##### Question 31
+
+A PC that is communicating with a web server has a TCP window size of 6,000 bytes when sending data and a packet size of 1,500 bytes. Which byte of information will the web server acknowledge after it has received three packets of data from the PC?
+
+4501
+
+6001
+
+6000
+
+4500
+
+##### Question 32
+
+A client creates a packet to send to a server. The client is requesting telnet service. What number will be used as the destination port number in the sending packet?
+
+23
+
+443
+
+161
+
+110

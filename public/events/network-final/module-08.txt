@@ -1,0 +1,403 @@
+# Вопросы: 08 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Which OSI layer sends segments to be encapsulated in an IPv4 or IPv6 packet?
+
+Data link layer
+
+Network layer
+
+Transport layer
+
+Session layer
+
+##### Question 2
+
+Which layer is responsible for taking an IP packet and preparing it for transmission over the communications medium?
+
+Physical layer
+
+Network layer
+
+Data link layer
+
+Transport layer
+
+##### Question 3
+
+What is the term for splitting up an IP packet when forwarding it from one medium to another medium with a smaller MTU?
+
+Encapsulation
+
+Fragmentation
+
+Segmentation
+
+Serialization
+
+##### Question 4
+
+Which delivery method does not guarantee that the packet will be delivered fully without errors?
+
+Connectionless
+
+Best effort
+
+Media independent
+
+##### Question 1
+
+What are the two most commonly referenced fields in an IPv4 packet header that indicate where the packet is coming from and where it is going? (Choose two.)
+
+Destination IP address
+
+Protocol
+
+Time to Live
+
+Source IP address
+
+Differentiated Services (DS)
+
+##### Question 2
+
+Which statement is correct about IPv4 packet header fields?
+
+The source and destination IPv4 addresses remain the same while travelling from source to destination.
+
+The Time to Live field is used to determine the priority of each packet.
+
+The Total Length and Header Checksum fields are used to reorder a fragmented packet.
+
+The Version field identifies the next level protocol.
+
+##### Question 3
+
+Which field is used to detect corruption in the IPv4 header?
+
+Header Checksum
+
+Time to Live
+
+Protocol
+
+Differentiated Services (DS)
+
+##### Question 4
+
+Which field includes common values such as ICMP (1), TCP (6), and UDP (17)?
+
+Header Checksum
+
+Time to Live
+
+Protocol
+
+Differentiated Services (DS)
+
+##### Question 1
+
+Which three options are major issues associated with IPv4? (Choose three.)
+
+IP address depletion
+
+Increased network complexity and Internet routing table expansion
+
+Connections always active
+
+Lack of end-to-end connectivity
+
+Global and political boundaries
+
+Too many IPv4 addresses available
+
+##### Question 2
+
+Which two options are improvements provided by IPv6 as compared to IPv4? (Choose two.)
+
+Header supports additional fields for complex packets
+
+Increased the IP address space
+
+Standardizes the use of NAT
+
+Supports class-based networks
+
+Uses a simpler header to provide improved packet handling
+
+##### Question 3
+
+Which is true of the IPv6 header?
+
+It consists of 20 octets.
+
+It consists of 40 octets.
+
+It contains 8 header fields.
+
+It contains 12 header fields.
+
+##### Question 4
+
+Which is true of the IPv6 packet header?
+
+The Hop Limit field replaces the IPv4 Time to Live field.
+
+The Source and Destination IPv6 addresses change while travelling from source to destination.
+
+The Time to Live field replaces the DiffServ field.
+
+The Version field identifies the next header.
+
+##### Question 1
+
+Which statement about host forwarding decisions is true?
+
+A host cannot ping itself.
+
+A remote destination host is on the same local network as the sending host.
+
+Local hosts can reach each other without the need of a router.
+
+Routing is enabled on switches to discover the best path to a destination.
+
+##### Question 2
+
+Which default gateway statement is true?
+
+A default gateway is required to send packets to other hosts on the local network.
+
+The default gateway address is the IP address of a switch on a remote network.
+
+The default gateway address is the IP address of the router on the local network.
+
+Traffic can only be forwarded outside the local network if there is no default gateway.
+
+##### Question 3
+
+Which two commands could be entered on a Windows host to view its IPv4 and IPv6 routing table? (Choose two.)
+
+netroute -l
+
+netstat -r
+
+print route
+
+route print
+
+print net
+
+##### Question 1
+
+What is the command used on a Cisco IOS router to view the routing table?
+
+netstart -r
+
+route print
+
+show ip route
+
+show routing table
+
+##### Question 2
+
+What does a code of “O” indicate next to a route in the routing table?
+
+A directly connected route
+
+A route with an administrative distance of 0
+
+A gateway of last resort
+
+A route learned dynamically from OSPF
+
+##### Question 3
+
+This type of route is also known as a gateway of last resort.
+
+Static route
+
+Remote route
+
+Default route
+
+Directly connected route
+
+##### Question 4
+
+Which is a characteristic of static routes?
+
+They are manually configured.
+
+They are advertised to directly connected neighbors.
+
+They are appropriate when there are many redundant links.
+
+They automatically adjust to a change in network topology.
+
+##### Question 5
+
+True or False? A router can be configured with a combination of both static routes and a dynamic routing protocol.
+
+True
+
+False
+
+##### Question 1
+
+Which command can be used on a Windows host to display the routing table?
+
+netstat -s
+
+show ip route
+
+netstat -r
+
+tracert
+
+##### Question 2
+
+What information is added during encapsulation at OSI Layer 3?
+
+Source and destination MAC
+
+Source and destination application protocol
+
+Source and destination port number
+
+Source and destination IP address
+
+##### Question 3
+
+How does the network layer use the MTU value?
+
+The network layer depends on the higher level layers to determine the MTU.
+
+The network layer depends on the data link layer to set the MTU, and adjusts the speed of transmission to accommodate it.
+
+The MTU is passed to the network layer by the data link layer.
+
+To increase speed of delivery, the network layer ignores the MTU.
+
+##### Question 4
+
+Which characteristic describes an IPv6 enhancement over IPv4?
+
+IPv6 addresses are based on 128-bit flat addressing as opposed to IPv4 which is based on 32-bit hierarchical addressing.
+
+The IPv6 header is simpler than the IPv4 header is, which improves packet handling.
+
+Both IPv4 and IPv6 support authentication, but only IPv6 supports privacy capabilities.
+
+The IPv6 address space is four times bigger than the IPv4 address space.
+
+##### Question 5
+
+Which statement accurately describes a characteristic of IPv4?
+
+All IPv4 addresses are assignable to hosts.
+
+IPv4 has a 32-bit address space.
+
+An IPv4 header has fewer fields than an IPv6 header has.
+
+IPv4 natively supports IPsec.
+
+##### Question 6
+
+When a router receives a packet, what information must be examined in order for the packet to be forwarded to a remote destination?
+
+Destination MAC address
+
+Source IP address
+
+Destination IP address
+
+Source MAC address
+
+##### Question 7
+
+A computer has to send a packet to a destination host in the same LAN. How will the packet be sent?
+
+The packet will be sent to the default gateway first, and then, depending on the response from the gateway, it may be sent to the destination host.
+
+The packet will be sent directly to the destination host.
+
+The packet will first be sent to the default gateway, and then from the default gateway it will be sent directly to the destination host.
+
+The packet will be sent only to the default gateway.
+
+##### Question 8
+
+Which IPv4 address can a host use to ping the loopback interface?
+
+126.0.0.1
+
+127.0.0.0
+
+126.0.0.0
+
+127.0.0.1
+
+##### Question 9
+
+When a connectionless protocol is in use at a lower layer of the OSI model, how is missing data detected and retransmitted if necessary?
+
+Connectionless acknowledgements are used to request retransmission.
+
+Upper-layer connection-oriented protocols keep track of the data received and can request retransmission from the upper-level protocols on the sending host.
+
+Network layer IP protocols manage the communication sessions if connection-oriented transport services are not available.
+
+The best-effort delivery process guarantees that all packets that are sent are received.
+
+##### Question 10
+
+What was the reason for the creation and implementation of IPv6?
+
+To make reading a 32-bit address easier
+
+To relieve IPv4 address depletion
+
+To provide more address space in the Internet Names Registry
+
+To allow NAT support for private addressing
+
+##### Question 11
+
+Which information is used by routers to forward a data packet toward its destination?
+
+Source IP address
+
+Destination IP address
+
+Source data-link address
+
+Destination data-link address
+
+##### Question 12
+
+Which field in an IPv4 packet header will typically stay the same during its transmission?
+
+Flag
+
+Time-to-Live
+
+Packet Length
+
+Destination Address
+
+##### Question 13
+
+Which field in an IPv6 packet is used by the router to determine if a packet has expired and should be dropped?
+
+TTL
+
+Hop Limit
+
+Address Unreachable
+
+No Route to Destination

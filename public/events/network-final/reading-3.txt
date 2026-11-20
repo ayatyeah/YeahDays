@@ -1,0 +1,2903 @@
+# Module 3: Protocols and Models
+
+Источник: NetAcad, Computer networks SE, 2026-11-07. Текстовое извлечение; видео, изображения и скрытые элементы не выгружены.
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.0 Introduction
+
+
+3.0 Introduction
+
+
+### 3.0.1 Why should I take this module?
+
+
+3.0.1 Why should I take this module?
+
+Welcome to Protocols and Models!
+
+You know the basic components of a simple network, as well as initial configuration. But after you have configured and connected these components, how do you know they will work together? Protocols! Protocols are sets of agreed upon rules that have been created by standards organizations. But, because you cannot pick up a rule and look closely at it, how do you truly understand why there is such a rule and what it is supposed to do? Models! Models give you a way to visualize the rules and their place in your network. This module gives you an overview of network protocols and models. You are about to have a much deeper understanding of how networks actually work!
+
+
+### 3.0.2 What will I learn to do in this module?
+
+
+3.0.2 What will I learn to do in this module?
+
+Module Title:
+
+Protocols and Models
+
+Module Objective:
+
+Explain how network protocols enable devices to access local and remote network resources.
+
+Topic Title
+
+Topic Objective
+
+The Rules
+
+Protocols
+
+Protocol Suites
+
+Standards Organizations
+
+Reference Models
+
+Data Encapsulation
+
+Data Access
+
+
+### 3.0.3 Class Activity - Design a Communications System
+
+
+3.0.3 Class Activity - Design a Communications System
+
+You have just purchased a new automobile for your personal use. After driving the car for a week or so, you find that it is not working correctly. Discussing the problem with several of your peers, you decide to take it to an automotive repair facility that they highly recommend. It is the only repair facility located in close proximity.
+
+When you arrive at the repair facility, you find that all the mechanics speak another language. You are having difficulty explaining the automobile’s performance problems, but the repairs really need to be done. You are not sure you can drive it back home to research other options.
+
+You must find a way to work with the repair facility to ensure your automobile is fixed correctly.
+
+How will you communicate with the mechanics? Design a communications model to ensure that the car is properly repaired.
+
+description
+
+Design a Communications System
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.1 The Rules
+
+
+3.1 The Rules
+
+
+### 3.1.1 Video - Devices in a Bubble
+
+
+3.1.1 Video - Devices in a Bubble
+
+Click Play in the figure to view a video explaining how a network device operates within a network.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 3.1.2 Communications Fundamentals
+
+
+3.1.2 Communications Fundamentals
+
+Networks vary in size, shape, and function. They can be as complex as devices connected across the internet, or as simple as two computers directly connected to one another with a single cable, and anything in-between. However, simply having a wired or wireless physical connection between end devices is not enough to enable communication. For communication to occur, devices must know “how” to communicate.
+
+People exchange ideas using many different communication methods. However, all communication methods have the following three elements in common:
+
+Message source (sender)
+
+- Message sources are people, or electronic devices, that need to send a message to other individuals or devices.
+
+Message Destination (receiver)
+
+- The destination receives the message and interprets it.
+
+Channel
+
+- This consists of the media that provides the pathway over which the message travels from source to destination.
+
+
+### 3.1.3 Communication Protocols
+
+
+3.1.3 Communication Protocols
+
+Sending a message, whether by face-to-face communication or over a network, is governed by rules called protocols. These protocols are specific to the type of communication method being used. In our day-to-day personal communication, the rules we use to communicate over one medium, like a telephone call, are not necessarily the same as the rules for using another medium, such as sending a letter.
+
+The process of sending a letter is similar to communication that occurs in computer networks.
+
+Click each button for an analogy and a network example of the communication process.
+
+Analogy
+
+Network
+
+Analogy
+
+Click Play in the figure to view an animation of two people communicating face-to-face.
+
+Prior to communicating, they must agree on how to communicate. If the communication is using voice, they must first agree on the language. Next, when they have a message to share, they must be able to format that message in a way that is understandable.
+
+If someone uses the English language, but poor sentence structure, the message can easily be misunderstood. Each of these tasks describe protocols that are used to accomplish communication.
+
+The figure is an animated representation of communication between a female and a male. Up top are words with right arrows between them: message, message source signal transmitter transmission medium signal receiver, and message, message destination. The animation shows a lightbulb appearing above the female traveling to the male and a lightbulb appear above his head.
+
+Message
+
+Signal
+
+Message
+
+source
+
+Transmitter
+
+Transmission
+
+Medium
+
+Receiver
+
+Message
+
+Destination
+
+play_circle_filled
+
+
+### 3.1.4 Rule Establishment
+
+
+3.1.4 Rule Establishment
+
+Before communicating with one another, individuals must use established rules or agreements to govern the conversation. Consider this message for example:
+
+humans communication between govern rules. It is verydifficult tounderstand messages that are not correctly formatted and donot follow the established rules and protocols. A estrutura da gramatica, da lingua, da pontuacao e do sentence faz a configuracao humana compreensivel por muitos individuos diferentes.
+
+Notice how it is difficult to read the message because it is not formatted properly. It should be written using rules (i.e., protocols) that are necessary for effective communication. The example shows the message which is now properly formatted for language and grammar.
+
+Rules govern communication between humans. It is very difficult to understand messages that are not correctly formatted and do not follow the established rules and protocols. The structure of the grammar, the language, the punctuation and the sentence make the configuration humanly understandable for many different individuals.
+
+Protocols must account for the following requirements to successfully deliver a message that is understood by the receiver:
+
+An identified sender and receiver
+
+Common language and grammar
+
+Speed and timing of delivery
+
+Confirmation or acknowledgment requirements
+
+
+### 3.1.5 Network Protocol Requirements
+
+
+3.1.5 Network Protocol Requirements
+
+The protocols that are used in network communications share many of these fundamental traits. In addition to identifying the source and destination, computer and network protocols define the details of how a message is transmitted across a network. Common computer protocols include the following requirements:
+
+Message encoding
+
+Message formatting and encapsulation
+
+Message size
+
+Message timing
+
+Message delivery options
+
+
+### 3.1.6 Message Encoding
+
+
+3.1.6 Message Encoding
+
+One of the first steps to sending a message is encoding. Encoding is the process of converting information into another acceptable form, for transmission. Decoding reverses this process to interpret the information.
+
+Click each button for an analogy and a network example of message encoding.
+
+Analogy
+
+Network
+
+Analogy
+
+Imagine a person calls a friend to discuss the details of a beautiful sunset. Click Play in the figure to view an animation of message encoding.
+
+To communicate the message, she converts her thoughts into an agreed upon language. She then speaks the words using the sounds and inflections of spoken language that convey the message. Her friend listens to the description and decodes the sounds to understand the message he received.
+
+Message
+
+Signal
+
+Message
+
+Message Source
+
+Encoder
+
+Transmitter
+
+Transmission
+
+Medium
+
+\"The Channel\
+
+Receiver
+
+Decoder
+
+Message Destination
+
+Source Encoded
+
+Destination Decoded
+
+play_circle_filled
+
+
+### 3.1.7 Message Formatting and Encapsulation
+
+
+3.1.7 Message Formatting and Encapsulation
+
+When a message is sent from source to destination, it must use a specific format or structure. Message formats depend on the type of message and the channel that is used to deliver the message.
+
+Click each button for an analogy and a network example of message formatting and encapsulation.
+
+Analogy
+
+Network
+
+Analogy
+
+A common example of requiring the correct format in human communications is when sending a letter. Click Play in the figure to view an animation of formatting and encapsulating a letter.
+
+An envelope has the address of the sender and receiver, each located at the proper place on the envelope. If the destination address and formatting are not correct, the letter is not delivered.
+
+The process of placing one message format (the letter) inside another message format (the envelope) is called encapsulation. De-encapsulation occurs when the process is reversed by the recipient and the letter is removed from the envelope.
+
+The animation shows an envelope with a stamp, a sender of 4085 SE Pine Street, Ocala, Florida 34471 and a recipient at 1400 Main Street, Canton, Ohio 44203. The envelope opens and shows a letter: dear Jane, I just returned from my trip. I thought you might like to see my pictures. John. A breakout table appears with the following headings: Recipient (destination) location address, sender (source) location address, salutation (start of message indicator), recipient (destination) identifier, content of letter (encapsulated data) sender (source) identifier, end of frame (end of message indicator). The next row has envelope addressing under the first 2 sections, then encapsulated letter under the next 4 sections. The 1400 Main Street Canton, Ohio 44203 goes in a new row under the recipient (destination) and envelope addressing sections. The 4085 SE Pine Street Ocala, Florida 34471 goes under the sender (source) and envelope addressing sections. The dear goes under the salutation (start of message indicator) and encapsulated letter sections. The Jane goes under the recipient (destination) identifier and encapsulated letter sections. The words I just returned from my trip. I thought you might like to see my pictures. Goes under the content of letter (encapsulated data) and encapsulated letter sections. The word John goes under the sender (source) identifier and encapsulated letter sections. The stamp on the letter goes under the end of frame (end of message indicator) section.
+
+Recipient (destination) Location address
+
+Sender (source) Location address
+
+Salutation (start of message indicator)
+
+Recipient (destination) identifier
+
+Content of Letter (encapsulated data)
+
+Sender (source) identifier
+
+End of Frame (End of message indicator)
+
+Envelope Addressing
+
+Encapsulated Letter
+
+Sender
+
+4085 SE Pine Street
+
+Ocala, Florida 34471
+
+Recipient
+
+1400 Main Street
+
+Canton, Ohio 44203
+
+4085 SE Pine Street
+
+Ocala, Florida 34471
+
+4085 SE Pine Street
+
+Ocala, Florida 34471
+
+1400 Main Street
+
+Canton, Ohio 44203
+
+1400 Main Street
+
+Canton, Ohio 44203
+
+Dear Jane,
+
+I just returned from my trip. I thought you might like to see my pictures.
+
+John
+
+Dear
+
+Jane
+
+I just returned from my trip. I thought you might like to see my pictures.
+
+John
+
+Dear
+
+Jane
+
+I just returned from my trip. I thought you might like to see my pictures.
+
+John
+
+play_circle_filled
+
+
+### 3.1.8 Message Size
+
+
+3.1.8 Message Size
+
+Another rule of communication is message size.
+
+Click each button for an analogy and a network example of message size.
+
+Analogy
+
+Network
+
+Analogy
+
+Click Play in the figure to view an animation of message size in face-to-face communications.
+
+When people communicate with each other, the messages that they send are usually broken into smaller parts or sentences. These sentences are limited in size to what the receiving person can process at one time, as shown in the figure. It also makes it easier for the receiver to read and comprehend.
+
+You should see this sunset. It is beautiful. The colors are amazing.
+
+play_circle_filled
+
+
+### 3.1.9 Message Timing
+
+
+3.1.9 Message Timing
+
+Message timing is also very important in network communications. Message timing includes the following:
+
+Flow Control
+
+- This is the process of managing the rate of data transmission. Flow control defines how much information can be sent and the speed at which it can be delivered. For example, if one person speaks too quickly, it may be difficult for the receiver to hear and understand the message. In network communication, there are network protocols used by the source and destination devices to negotiate and manage the flow of information.
+
+Response Timeout
+
+- If a person asks a question and does not hear a response within an acceptable amount of time, the person assumes that no answer is coming and reacts accordingly. The person may repeat the question or instead, may go on with the conversation. Hosts on the network use network protocols that specify how long to wait for responses and what action to take if a response timeout occurs.
+
+Access method
+
+- This determines when someone can send a message. Click Play in the figure to see an animation of two people talking at the same time, then a \"collision of information\" occurs, and it is necessary for the two to back off and start again. Likewise, when a device wants to transmit on a wireless LAN, it is necessary for the WLAN network interface card (NIC) to determine whether the wireless medium is available.
+
+The animation shows a woman and a man speaking at the same time. The woman says What time is the movie? and the man says When are we meeting for dinner?. Because they spoke simultaneously, neither understood the other and they both say Sorry? I did not understand you.
+
+Sorry? I did not understand you.
+
+play_circle_filled
+
+
+### 3.1.10 Message Delivery Options
+
+
+3.1.10 Message Delivery Options
+
+A message can be delivered in different ways.
+
+Click each button for an analogy and a network example of message delivery options.
+
+Analogy
+
+Network
+
+Analogy
+
+Sometimes, a person wants to communicate information to a single individual. At other times, the person may need to send information to a group of people at the same time, or even to all people in the same area.
+
+Click the unicast, multicast, and broadcast buttons in the figure for an example of each.
+
+Source
+
+
+### 3.1.11 A Note About the Node Icon
+
+
+3.1.11 A Note About the Node Icon
+
+Networking documents and topologies often represent networking and end devices using a node icon. Nodes are typically represented as a circle. The figure shows a comparison of the three different delivery options using node icons instead of computer icons.
+
+The figure uses circles representing network nodes to illustrate the three different message delivery options. There are three topologies shown from left to right. The topology on the left depicts a unicast message and consists of one red node, one green node, and four yellow nodes. It has an arrow from the red node leading to the green node. The middle topology depicts a multicast message and consists of one red node, three green nodes, and two yellow nodes. It has an arrow from the red node leading to each of the green nodes. The topology on the right depicts a broadcast. It has one red node and five green nodes. It has an arrow from the red node leading to each of the green nodes.
+
+Unicast
+
+Multicast
+
+Broadcast
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 3.1.12 Check Your Understanding - The Rules
+
+
+Instructions:
+
+The exam consists of
+
+4
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+What is the process of converting information into the proper form for transmission?
+
+Formatting
+
+Encoding
+
+Encapsulation
+
+
+##### Question 2
+
+
+Which step of the communication process is concerned with properly identifying the address of the sender and receiver?
+
+Formatting
+
+Encoding
+
+Encapsulation
+
+
+##### Question 3
+
+
+Which three are components of message timing? (Choose three.)
+
+Flow control
+
+Sequence numbers
+
+Access method
+
+Retransmit time
+
+Response timeout
+
+
+##### Question 4
+
+
+Which delivery method is used to transmit information to one or more end devices, but not all devices on the network?
+
+Unicast
+
+Multicast
+
+Broadcast
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.2 Protocols
+
+
+3.2 Protocols
+
+
+### 3.2.1 Network Protocol Overview
+
+
+3.2.1 Network Protocol Overview
+
+You know that for end devices to be able to communicate over a network, each device must abide by the same set of rules. These rules are called protocols and they have many functions in a network. This topic gives you a overview of network protocols.
+
+Network protocols define a common format and set of rules for exchanging messages between devices. Protocols are implemented by end devices and intermediary devices in software, hardware, or both. Each network protocol has its own function, format, and rules for communications.
+
+The table lists the various types of protocols that are needed to enable communications across one or more networks.
+
+Protocol Type
+
+Description
+
+Network Communications Protocols
+
+Network Security Protocols
+
+Routing Protocols
+
+Service Discovery Protocols
+
+
+### 3.2.2 Network Protocol Functions
+
+
+3.2.2 Network Protocol Functions
+
+Network communication protocols are responsible for a variety of functions necessary for network communications between end devices. For example, in the figure how does the computer send a message, across several network devices, to the server?
+
+The figure shows how the protocol IPv4 can be used to send a message from a computer across a network to a server. In the center of the figure are three routers connected together in a triangle. The router on the left is connected to a computer. The router on the right is connected to a server. A message below the computer reads: I will send this message across the network using an IPv4 header. A message below the attached router reads: I can forward this message because I understand the IPv4 header. A message below the server reads: I can accept this message because I understand IPv4.
+
+I will send this message across the network using an IPv4 header.
+
+I can forward this message because I understand the IPv4 header.
+
+I can accept this message because I understand IPv4.
+
+IP
+
+Data
+
+Computers and network devices use agreed-upon protocols to communicate. The table lists the functions of these protocols.
+
+Function
+
+Description
+
+Addressing
+
+Reliability
+
+Flow control
+
+Sequencing
+
+Error Detection
+
+Application Interface
+
+
+### 3.2.3 Protocol Interaction
+
+
+3.2.3 Protocol Interaction
+
+A message sent over a computer network typically requires the use of several protocols, each one with its own functions and format. The figure shows some common network protocols that are used when a device sends a request to a web server for its web page.
+
+A small network diagram shows, from left to right, a laptop connected to the Internet cloud which is connected to a server. An envelope is crossing the connection between the laptop and the cloud. Below the envelope are a list of protocols used when a device sends a request to a web server for a web page. Text at the bottom of the figure describes these protocols and reads: Hypertext Transfer Protocol (H T T P) - This protocol governs the way a web server and a web client interact. H T T P defines the content and formatting of the requests and responses that are exchanged between the client and server. Both the client and the web server software implement H T T P as part of the application. H T T P relies on other protocols to govern how the messages are transported between the client and server. Transmission Control Protocol (T C P) - This protocol manages the individual conversations. T C P is responsible for guaranteeing the reliable delivery of the information and managing flow control between the end devices. Internet Protocol (I P) - This protocol is responsible for delivering messages from the sender to the receiver. I P is used by routers to forward the messages across multiple networks. Ethernet - This protocol is responsible for the delivery of messages from one NIC to another NIC on the same Ethernet Local Area Network (LAN).
+
+HTTP
+
+TCP
+
+IP
+
+Ethernet
+
+Internet
+
+The protocols in the figure are described as follows:
+
+Hypertext Transfer Protocol (HTTP)
+
+- This protocol governs the way a web server and a web client interact. HTTP defines the content and formatting of the requests and responses that are exchanged between the client and server. Both the client and the web server software implement HTTP as part of the application. HTTP relies on other protocols to govern how the messages are transported between the client and server.
+
+Transmission Control Protocol (TCP)
+
+- This protocol manages the individual conversations. TCP is responsible for guaranteeing the reliable delivery of the information and managing flow control between the end devices.
+
+Internet Protocol (IP)
+
+- This protocol is responsible for delivering messages from the sender to the receiver. IP is used by routers to forward the messages across multiple networks.
+
+Ethernet
+
+- This protocol is responsible for the delivery of messages from one NIC to another NIC on the same Ethernet local area network (LAN).
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 3.2.4 Check Your Understanding - Protocols
+
+
+Instructions:
+
+The exam consists of
+
+4
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+BGP and OSPF are examples of which type of protocol?
+
+Network communication
+
+Network security
+
+Routing
+
+Service discovery
+
+
+##### Question 2
+
+
+Which two protocols are service discovery protocols? (Choose two.)
+
+DNS
+
+TCP
+
+SSH
+
+DHCP
+
+
+##### Question 3
+
+
+What is the purpose of the sequencing function in network communication?
+
+To uniquely label transmitted segments of data for proper reassembly by the receiver
+
+To determine if data is corrupted during transmission
+
+To ensure data flows at an efficient rate between sender and receiver
+
+To guarantee delivery of data
+
+
+##### Question 4
+
+
+This protocol is responsible for guaranteeing the reliable delivery of information.
+
+TCP
+
+IP
+
+HTTP
+
+Ethernet
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.3 Protocol Suites
+
+
+3.3 Protocol Suites
+
+
+### 3.3.1 Network Protocol Suites
+
+
+3.3.1 Network Protocol Suites
+
+In many cases, protocols must be able to work with other protocols so that your online experience gives you everything you need for network communications. Protocol suites are designed to work with each other seamlessly.
+
+A protocol suite is a group of inter-related protocols necessary to perform a communication function.
+
+One of the best ways to visualize how the protocols within a suite interact is to view the interaction as a stack. A protocol stack shows how the individual protocols within a suite are implemented. The protocols are viewed in terms of layers, with each higher-level service depending on the functionality defined by the protocols shown in the lower levels. The lower layers of the stack are concerned with moving data over the network and providing services to the upper layers, which are focused on the content of the message being sent.
+
+As illustrated in the figure, we can use layers to describe the activity occurring in face-to-face communication. At the bottom is the physical layer where we have two people with voices saying words out loud. In the middle is the rules layer that stipulates the requirements of communication including that a common language must be chosen. At the top is the content layer and this is where the content of the communication is actually spoken.
+
+The figure shows three different layers used to describe what occurs during face-to-face communications. The bottom layer, labeled physical layer, shows two people exchanging a message. The middle layer, labeled rules layer, lists the conversation protocol suite to be used including: use a common language; wait your turn; and signal when finished. The top layer is labeled content layer and includes the message: Where is the cafe? Text at the bottom reads: Protocol suites are sets of rules that work together to help solve a problem.
+
+Where is the café?
+
+Content Layer
+
+Rules Layer
+
+Physical Layer
+
+Conversation protocol suite
+
+1. Use a common language
+
+2. Wait your turn
+
+3. Signal when finished
+
+Protocol suites are sets of rules that work together to help solve a problem.
+
+
+### 3.3.2 Evolution of Protocol Suites
+
+
+3.3.2 Evolution of Protocol Suites
+
+A protocol suite is a set of protocols that work together to provide comprehensive network communication services. Since the 1970s there have been several different protocol suites, some developed by a standards organization and others developed by various vendors.
+
+During the evolution of network communications and the internet there were several competing protocol suites, as shown in the figure.
+
+The figure is a table with text underneath. The table consists of four rows and five columns. The first column header is TCP/IP layer name and reads top to bottom: Application, Transport, Internet, and Network Access. The second column header is TCP/IP. Application protocols are HTTP, DNS, DHCP, and FTP. Transport protocols are TCP and UDP. Internet protocols are IPv4, IPv6, ICMPv4, and ICMPv6. The network access protocols are Ethernet, ARP, and WLAN. The third column header is ISO. Application protocols are ACSE, ROSE, TRSE, and SESE. Transport protocols are TP0, TP1, TP2, TP3, and TP4. Internet protocols are CONP/CMNS and CLNP/CLNS. Network access protocols are Ethernet, ARP, and WLAN. The fourth column header is AppleTalk. Application protocol is AFP. Transport protocols are ATP, AEP, NBP, and RTMP. Internet protocols are AARP. Network access protocols are Ethernet, ARP, and WLAN. The fifth column header is Novell Netware. Application protocol is NDS. Transport protocol is SPX. Internet protocols is IPX. Network Access protocols are Etherent, ARP, and WLAN. Text below the table reads: Internet Protocol Suite or TCP/IP - This is the most common and relevant protocol suite used today. The TCP/IP protocol suite is an open standard protocol suite maintained by the Internet Engineering Task Force (IETF). Open Systems Interconnection (OSI) protocols - This is a family of protocols developed jointly in 1977 by the International Organization for Standardization (ISO) and the International Telecommunications Union (ITU). The OSI protocol also included a seven-layer model called the OSI reference model. The OSI reference model categorizes the functions of its protocols. Today OSI is mainly known for its layered model. The OSI protocols have largely been replaced by TCP/IP. AppleTalk - A short-lived proprietary protocol suite released by Apple Inc. in 1985 for Apple devices. In 1995, Apple adopted TCP/IP to replace AppleTalk. Novell NetWare - A short-lived proprietary protocol suite and network operating system developed by Novell Inc. in 1983 using the IPX network protocol. In 1995, Novell adopted TCP/IP to replace IPX.
+
+TCP/IP
+
+ISO
+
+AppleTalk
+
+Novell
+
+Netware
+
+HTTP
+
+DNS
+
+DHCP
+
+FTP
+
+ACSE
+
+ROSE
+
+TRSE
+
+SESE
+
+AFP
+
+NDS
+
+TCP
+
+UDP
+
+TP0 TP1
+
+TP2
+
+TP3 TP4
+
+ATP AEP
+
+NBP RTMP
+
+SPX
+
+IPv4 IPv6
+
+ICMPv4
+
+ICMPv6
+
+CONP/CMNS
+
+CLNP/CLNS
+
+AARP
+
+IPX
+
+Ethernet ARP WLAN
+
+TCP/IP Layer Name
+
+Application
+
+Transport
+
+Internet
+
+Network Access
+
+Internet Protocol Suite or TCP/IP
+
+- This is the most common and relevant protocol suite used today. The TCP/IP protocol suite is an open standard protocol suite maintained by the Internet Engineering Task Force (IETF).
+
+Open Systems Interconnection (OSI) protocols
+
+- This is a family of protocols developed jointly in 1977 by the International Organization for Standardization (ISO) and the International Telecommunications Union (ITU). The OSI protocol also included a seven-layer model called the OSI reference model. The OSI reference model categorizes the functions of its protocols. Today OSI is mainly known for its layered model. The OSI protocols have largely been replaced by TCP/IP.
+
+AppleTalk
+
+- A short-lived proprietary protocol suite released by Apple Inc. in 1985 for Apple devices. In 1995, Apple adopted TCP/IP to replace AppleTalk.
+
+Novell NetWare
+
+- A short-lived proprietary protocol suite and network operating system developed by Novell Inc. in 1983 using the IPX network protocol. In 1995, Novell adopted TCP/IP to replace IPX.
+
+
+### 3.3.3 TCP/IP Protocol Example
+
+
+3.3.3 TCP/IP Protocol Example
+
+TCP/IP protocols are available for the application, transport, and internet layers. There are no TCP/IP protocols in the network access layer. The most common network access layer LAN protocols are Ethernet and WLAN (wireless LAN) protocols. Network access layer protocols are responsible for delivering the IP packet over the physical medium.
+
+The figure shows an example of the three TCP/IP protocols used to send packets between the web browser of a host and the web server. HTTP, TCP, and IP are the TCP/IP protocols used. At the network access layer, Ethernet is used in the example. However, this could also be a wireless standard such as WLAN or cellular service.
+
+The figure shows the TCP/IP protocols used to send packets between the web browser of a host and a web server. A network topology shows a host connected to the Internet cloud with a connection to a Web server. An envelope representing a packet is shown flowing between the Internet and the server. Radiating from the packet is information on the protocols used at each layer. From top to bottom: application layer and hypertext transfer protocol (HTTP); transport layer and transmission control protocol (TCP); internet layer and internet protocol (IP); and network access layer and Ethernet.
+
+Hypertext Transfer Protocol (HTTP)
+
+Transmission Control Protocol (TCP)
+
+Internet Protocol (IP)
+
+Ethernet
+
+Web
+
+Server
+
+Protocol Stack
+
+Layer Name
+
+Application
+
+Transport
+
+Internet
+
+Network Access
+
+Internet
+
+
+### 3.3.4 TCP/IP Protocol Suite
+
+
+3.3.4 TCP/IP Protocol Suite
+
+Today, the TCP/IP protocol suite includes many protocols and continues to evolve to support new services. Some of the more popular ones are shown in the figure.
+
+The figure shows the TCP/IP layers and associated protocols. At the application layer: DNS is a name system protocol; DHCPv4, DHCPv6, and SLAAC are host config protocols; SMTP, POP3, and IMAP are email protocols; FTP, SFTP, and TFTP are file transfer protocols; and HTTP, HTTPS, and REST are web and web service protocols. At the transport layer: TCP is a connection-oriented protocol and UDP is a connectionless protocol. At the internet layer: IPv4, IPv6, and NAT are Internet protocols; ICMPv4, ICMPv6, and ICMPv6 ND are messaging protocols; and OSPF, EIGRP, and BGP are routing protocols. At the network access layer: ARP is an address resolution protocol; and Ethernet and WLAN are data link protocols. Text at the bottom reads: TCP/IP is the protocol suite used by the internet and the networks of today. TCP/IP has two important aspects for vendors and manufacturers: Open standard protocol suite - This means it is freely available to the public and can be used by any vendor on their hardware or in their software. Standards-based protocol suite - This means it has been endorsed by the networking industry and approved by a standards organization. This ensures that products from different manufacturers can interoperate successfully.
+
+TCP/IP Layers
+
+Application Layer
+
+Name
+
+System
+
+Host
+
+Config
+
+Email
+
+File
+
+Transfer
+
+Web and
+
+Web Service
+
+Transport Layer
+
+Connection-Oriented
+
+Connectionless
+
+Internet Layer
+
+Internet Protocol
+
+Messaging
+
+Routing Protocols
+
+Network Access Layer
+
+Address Resolution
+
+Data Link Protocols
+
+TCP/IP Protocols
+
+DNS
+
+DHCPv4
+
+DHCPv6
+
+SLAAC
+
+SMTP
+
+POP3
+
+IMAP
+
+FTP
+
+SFTP
+
+TFTP
+
+HTTP
+
+HTTPS
+
+REST
+
+TCP
+
+UDP
+
+IPv4
+
+IPv6
+
+NAT
+
+ICMPv4
+
+ICMPv6
+
+ICMPv6 ND
+
+OSPF
+
+EIGRP
+
+BGP
+
+ARP
+
+Ethernet
+
+WLAN
+
+TCP/IP is the protocol suite used by the internet and the networks of today. TCP/IP has two important aspects for vendors and manufacturers:
+
+Open standard protocol suite
+
+- This means it is freely available to the public and can be used by any vendor on their hardware or in their software.
+
+Standards-based protocol suite
+
+- This means it has been endorsed by the networking industry and approved by a standards organization. This ensures that products from different manufacturers can interoperate successfully.
+
+Click each button for a brief description of protocols at each layer.
+
+Application Layer
+
+Transport layer
+
+Internet Layer
+
+Network Access Layer
+
+
+### 3.3.5 TCP/IP Communication Process
+
+
+3.3.5 TCP/IP Communication Process
+
+The animations in the figures demonstrate the complete communication process using an example of a web server transmitting data to a client.
+
+Click the Play in the figure to view an animation of a web server encapsulating and sending a web page to a client.
+
+The animation shows a small network with a Web Server and a Web Client. Theres is a graphic that shows the components that make up a message. An Ethernet Frame, and IP Packet, a TCP segment, and the user data. The animation begins with the web server preparing the Hypertext Markup Language (HTML) page as data to be sent. The application protocol HTTP header is added (prepended) to the front of the HTML data. The header contains various information, including the HTTP version the server is using and a status code indicating it has information for the web client. The HTTP application layer protocol delivers the HTML-formatted web page data to the TCP transport layer. The transport layer protocol prepends additional information to the HTTP data to manage the exchange of information between the web server and web client. The IP information is prepended to the TCP information. IP assigns the appropriate source and destination IP addresses. This information is known as an IP packet. The Ethernet protocol prepends and adds to the end (appends) information to the IP packet to create a data link frame. The frame is then converted into a string of binary bits that are sent along the network path to the web client.
+
+play_circle_filled
+
+Click the Play in the next figure to view an animation of the client receiving, and de-encapsulating the web page for display in the web browser.
+
+The animation shows a small network with a Server and a Client. The client receives a string of binary bits from the server. The client takes the binary string of bits and converts it into an Ethernet frame. The Frame contains the Ethernet header, the IP packet, the TCP segment, and the data. Each protocol header is processed and then removed in the opposite order it was added. The Ethernet information is processed and removed, followed by the IP protocol information, the TCP information, and finally the HTTP information. The HTML web page information is then passed on to the web browser software of the client.
+
+play_circle_filled
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 3.3.6 Check Your Understanding - Protocol Suites
+
+
+Instructions:
+
+The exam consists of
+
+6
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+UDP and TCP belong to which layer of the TCP/IP protocol?
+
+Application
+
+Transport
+
+Internet
+
+Network access
+
+
+##### Question 2
+
+
+Which two protocols belong in the TCP/IP model application layer?
+
+EIGRP
+
+DNS
+
+OSPF
+
+ICMP
+
+DHCP
+
+
+##### Question 3
+
+
+Which protocol operates at the network access layer of the TCP/IP model?
+
+HTTP
+
+IP
+
+DNS
+
+Ethernet
+
+
+##### Question 4
+
+
+Which of the following are protocols that provide feedback from the destination host to the source host regarding errors in packet delivery? (Choose two.)
+
+IPv4
+
+TCP
+
+ICMPv4
+
+IPv6
+
+UDP
+
+ICMPv6
+
+
+##### Question 5
+
+
+A device receives a data link frame with data and processes and removes the Ethernet information. What information would be the next to be processed by the receiving device?
+
+HTTP at the application layer
+
+HTML at the application layer
+
+IP at the internet layer
+
+UDP at the internet layer
+
+TCP at the transport layer
+
+
+##### Question 6
+
+
+Which services are provided by the internet layer of the TCP/IP protocol suite? (Choose three.)
+
+File Transfer
+
+Address Resolution
+
+Routing Protocols
+
+Messaging
+
+Ethernet
+
+Internet Protocol
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.4 Standards Organizations
+
+
+3.4 Standards Organizations
+
+
+### 3.4.1 Open Standards
+
+
+3.4.1 Open Standards
+
+When buying new tires for a car, there are many manufacturers you might choose. Each of them will have at least one type of tire that fits your car. That is because the automotive industry uses standards when they make cars. It is the same with protocols. Because there are many different manufacturers of network components, they must all use the same standards. In networking, standards are developed by international standards organizations.
+
+Open standards encourage interoperability, competition, and innovation. They also guarantee that the product of no single company can monopolize the market or have an unfair advantage over its competition.
+
+A good example of this is when purchasing a wireless router for the home. There are many different choices available from a variety of vendors, all of which incorporate standard protocols such as IPv4, IPv6, DHCP, SLAAC, Ethernet, and 802.11 Wireless LAN. These open standards also allow a client running the Apple OS X operating system to download a web page from a web server running the Linux operating system. This is because both operating systems implement the open standard protocols, such as those in the TCP/IP protocol suite.
+
+Standards organizations are usually vendor-neutral, non-profit organizations established to develop and promote the concept of open standards. These organizations are important in maintaining an open internet with freely accessible specifications and protocols that can be implemented by any vendor.
+
+A standards organization may draft a set of rules entirely on its own or, in other cases, may select a proprietary protocol as the basis for the standard. If a proprietary protocol is used, it usually involves the vendor who created the protocol.
+
+The figure shows the logo for each standards organization.
+
+logos for standards organizations including IEEE, IETF, IANA, ICANN, ITU, and TIA
+
+
+### 3.4.2 Internet Standards
+
+
+3.4.2 Internet Standards
+
+Various organizations have different responsibilities for promoting and creating standards for the internet and TCP/IP protocol.
+
+The figure displays standards organizations involved with the development and support of the internet.
+
+The figure shows standards organizations involved with the development and support of the internet. At the top of the figure is the Internet Society (ISOC) logo. A line underneath connects to the Internet Architecture Board (IAB) logo. Underneath and to the left is the Internet Engineering Task Force (IETF) and to the right is the Internet Research Task Force (IRTF). Below the IETF is the Internet Engineering Steering Group (IESG) and below that are working group #1 and working group #2. Below the IRTF is the Internet Research Steering Group (IRSG) and below that are research group #1 and research group #2. Text at the bottom reads: Internet Society (ISOC) - Responsible for promoting the open development and evolution of internet use throughout the world. Internet Architecture Board (IAB) - Responsible for the overall management and development of internet standards. Internet Engineering Task Force (IETF) - Develops, updates, and maintains internet and TCP/IP technologies. This includes the process and documents for developing new protocols and updating existing protocols, which are known as Request for Comments (RFC) documents. Internet Research Task Force (IRTF) - Focused on long-term research related to internet and TCP/IP protocols such as Anti-Spam Research Group (ASRG), Crypto Forum Research Group (CFRG), and Peer-to-Peer Research Group (P2PRG).
+
+Internet Society (ISOC)
+
+Internet Architecture Board (IAB)
+
+Internet Engineering
+
+Task Force (IETF)
+
+Internet Engineering Steering Group (IESG)
+
+Internet Research
+
+Task Force (IRTF)
+
+Internet Research Steering Group (IRSG)
+
+Working
+
+Group #1
+
+Working
+
+Group #2
+
+Research
+
+Group #1
+
+Research
+
+Group #2
+
+Internet Society (ISOC)
+
+- Responsible for promoting the open development and evolution of internet use throughout the world.
+
+Internet Architecture Board (IAB)
+
+- Responsible for the overall management and development of internet standards.
+
+Internet Engineering Task Force (IETF)
+
+- Develops, updates, and maintains internet and TCP/IP technologies. This includes the process and documents for developing new protocols and updating existing protocols, which are known as Request for Comments (RFC) documents.
+
+Internet Research Task Force (IRTF)
+
+- Focused on long-term research related to internet and TCP/IP protocols such as Anti-Spam Research Group (ASRG), Crypto Forum Research Group (CFRG), and Peer-to-Peer Research Group (P2PRG).
+
+The next figure displays standards organizations involved with the development and support of TCP/IP and include IANA and ICANN.
+
+The figure shows the standards organizations involved with the development and support of TCP/IP. Image shows ICANN on the right with an arrow pointing to IANA. Below IANA are three arrows leading to IP addresses, domain names, and TCP/UDP port numbers. Text at the bottom reads: Internet Corporation for Assigned Names and Numbers (ICANN) - Based in the United States, ICANN coordinates IP address allocation, the management of domain names, and assignment of other information used in TCP/IP protocols. Internet Assigned Numbers Authority (IANA) - Responsible for overseeing and managing IP address allocation, domain name management, and protocol identifiers for ICANN.
+
+IANA
+
+ICANN
+
+Domain Names
+
+TCP/UDP Port Numbers
+
+IP Addresses
+
+Internet Corporation for Assigned Names and Numbers (ICANN)
+
+- Based in the United States, ICANN coordinates IP address allocation, the management of domain names, and assignment of other information used in TCP/IP protocols.
+
+Internet Assigned Numbers Authority (IANA)
+
+- Responsible for overseeing and managing IP address allocation, domain name management, and protocol identifiers for ICANN.
+
+
+### 3.4.3 Electronic and Communications Standards
+
+
+3.4.3 Electronic and Communications Standards
+
+Other standards organizations have responsibilities for promoting and creating the electronic and communication standards used to deliver the IP packets as electronic signals over a wired or wireless medium.
+
+These standard organizations include the following:
+
+Institute of Electrical and Electronics Engineers
+
+(
+
+IEEE
+
+, pronounced “I-triple-E”) - Organization of electrical engineering and electronics dedicated to advancing technological innovation and creating standards in a wide area of industries including power and energy, healthcare, telecommunications, and networking. Important IEEE networking standards include 802.3 Ethernet and 802.11 WLAN standard. Search the internet for other IEEE network standards.
+
+Electronic Industries Alliance (EIA)
+
+- Organization is best known for its standards relating to electrical wiring, connectors, and the 19-inch racks used to mount networking equipment.
+
+Telecommunications Industry Association (TIA)
+
+- Organization responsible for developing communication standards in a variety of areas including radio equipment, cellular towers, Voice over IP (VoIP) devices, satellite communications, and more.
+
+International Telecommunications Union-Telecommunication Standardization Sector (ITU-T)
+
+- One of the largest and oldest communication standards organizations. The ITU-T defines standards for video compression, Internet Protocol Television (IPTV), and broadband communications, such as a digital subscriber line (DSL).
+
+
+### 3.4.4 Lab - Research Networking Standards
+
+
+3.4.4 Lab - Research Networking Standards
+
+In this lab, you will complete the following objectives:
+
+Part 1: Research Networking Standards Organizations
+
+Part 2: Reflect on Internet and Computer Networking Experience
+
+description
+
+Research Networking Standards
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 3.4.5 Check Your Understanding - Standards Organizations
+
+
+Instructions:
+
+The exam consists of
+
+4
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+True or false. Standards organizations are usually vendor-neutral.
+
+True
+
+False
+
+
+##### Question 2
+
+
+This standards organization is concerned with the Request for Comments (RFC) documents that specify new protocols and update existing ones.
+
+Internet Society (ISOC)
+
+Internet Engineering Task Force (IETF)
+
+Internet Architecture Board (IAB)
+
+Internet Research Task Force (IRTF)
+
+
+##### Question 3
+
+
+This standards organization is responsible for IP address allocation and domain name management.
+
+Internet Society (ISOC)
+
+Internet Engineering Task Force (IETF)
+
+Internet Architecture Board (IAB)
+
+Internet Assigned Numbers Authority (IANA)
+
+
+##### Question 4
+
+
+What types of standards are developed by the Electronics Industries Alliance (EIA)?
+
+Electric wiring and connectors
+
+Radio equipment and cell towers
+
+Video compression and broadband communications
+
+Voice over IP (VoIP) and satellite communications
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.5 Reference Models
+
+
+3.5 Reference Models
+
+
+### 3.5.1 The Benefits of Using a Layered Model
+
+
+3.5.1 The Benefits of Using a Layered Model
+
+You cannot actually watch real packets travel across a real network, the way you can watch the components of a car being put together on an assembly line. so, it helps to have a way of thinking about a network so that you can imagine what is happening. A model is useful in these situations.
+
+Complex concepts such as how a network operates can be difficult to explain and understand. For this reason, a layered model is used to modularize the operations of a network into manageable layers.
+
+These are the benefits of using a layered model to describe network protocols and operations:
+
+Assisting in protocol design because protocols that operate at a specific layer have defined information that they act upon and a defined interface to the layers above and below
+
+Fostering competition because products from different vendors can work together
+
+Preventing technology or capability changes in one layer from affecting other layers above and below
+
+Providing a common language to describe networking functions and capabilities
+
+As shown in the figure, there are two layered models that are used to describe network operations:
+
+Open System Interconnection (OSI) Reference Model
+
+TCP/IP Reference Model
+
+At the top of the image are two LANs connected via a WAN with the text: A networking model is only a representation of a network operation. The model is not the actual network. Underneath are the OSI and TCP/IP model layers and protocols. The seven layers of the OSI model from top to bottom and their associated protocols are: application, presentation, session (protocols at the top three layers are HTTP, DNS, DHCP, and FTP), transport (TCP and UDP), network (IPv4, IPv6, ICMPv4, and ICMPv6), data link, and physical (protocols at the bottom two layers are Ethernet, WLAN, SONET, and SDH). The four layers of the TCP/IP model from top to bottom and their associated protocols are: application (HTTP, DNS, DHCP, and FTP), transport (TCP and UDP), Internet (IPv4, IPv6, ICMPv4, and ICMPv6), and network access (Ethernet, WLAN, SONET, and SDH).
+
+HTTP, DNS, DHCP, FTP
+
+TCP, UDP
+
+IPv4, IPv6,
+
+ICMPv4, ICMPv6
+
+Ethernet, WLAN, SONET, SDH
+
+TCP/IP Protocol Suite
+
+A networking model is only a representation of a network operation. The model is not the actual network.
+
+Application
+
+Transport
+
+Internet
+
+Network Access
+
+TCP/IP Model
+
+Application
+
+Presentation
+
+Session
+
+Transport
+
+Network
+
+Data Link
+
+Physical
+
+OSI Model
+
+
+### 3.5.2 The OSI Reference Model
+
+
+3.5.2 The OSI Reference Model
+
+The OSI reference model provides an extensive list of functions and services that can occur at each layer. This type of model provides consistency within all types of network protocols and services by describing what must be done at a particular layer, but not prescribing how it should be accomplished.
+
+It also describes the interaction of each layer with the layers directly above and below. The TCP/IP protocols discussed in this course are structured around both the OSI and TCP/IP models. The table shows details about each layer of the OSI model. The functionality of each layer and the relationship between layers will become more evident throughout this course as the protocols are discussed in more detail.
+
+OSI Model Layer
+
+Description
+
+7 - Application
+
+6 - Presentation
+
+5 - Session
+
+4 - Transport
+
+3 - Network
+
+2 - Data Link
+
+1 - Physical
+
+Note:
+
+Whereas the TCP/IP model layers are referred to only by name, the seven OSI model layers are more often referred to by number rather than by name. For instance, the physical layer is referred to as Layer 1 of the OSI model, data link layer is Layer2, and so on.
+
+
+### 3.5.3 The TCP/IP Protocol Model
+
+
+3.5.3 The TCP/IP Protocol Model
+
+The TCP/IP protocol model for internetwork communications was created in the early 1970s and is sometimes referred to as the internet model. This type of model closely matches the structure of a particular protocol suite. The TCP/IP model is a protocol model because it describes the functions that occur at each layer of protocols within the TCP/IP suite. TCP/IP is also used as a reference model. The table shows details about each layer of the TCP/IP model.
+
+TCP/IP Model Layer
+
+Description
+
+4 - Application
+
+3 - Transport
+
+2 - Internet
+
+1 - Network Access
+
+The definitions of the standard and the TCP/IP protocols are discussed in a public forum and defined in a publicly available set of IETF RFCs. An RFC is authored by networking engineers and sent to other IETF members for comments.
+
+
+### 3.5.4 OSI and TCP/IP Model Comparison
+
+
+3.5.4 OSI and TCP/IP Model Comparison
+
+The protocols that make up the TCP/IP protocol suite can also be described in terms of the OSI reference model. In the OSI model, the network access layer and the application layer of the TCP/IP model are further divided to describe discrete functions that must occur at these layers.
+
+At the network access layer, the TCP/IP protocol suite does not specify which protocols to use when transmitting over a physical medium; it only describes the handoff from the internet layer to the physical network protocols. OSI Layers 1 and 2 discuss the necessary procedures to access the media and the physical means to send data over a network.
+
+The figure shows the O S I model on the left and the t c p / i p model on the right. The o s i model is labeled from top down with the numbers 7 down to 1 and the following words at each layer: application, presentation, session, transport, network, data link, and physical. The top three layers of the o s i model are across the application layer of the t c p / i p model. The transport layers of each model are across from each other. The network o s i model layer is across from the internet layer on the right. Layers 1 and 2 of the o s i model are across from the network access layer of the t c p / i p model.
+
+OSI Model
+
+Application
+
+Presentation
+
+Session
+
+Transport
+
+Network
+
+Data Link
+
+Physical
+
+TCP/IP Model
+
+Application
+
+Transport
+
+Internet
+
+Network Access
+
+The key similarities are in the transport and network layers; however, the two models differ in how they relate to the layers above and below each layer:
+
+OSI Layer 3, the network layer, maps directly to the TCP/IP internet layer. This layer is used to describe protocols that address and route messages through an internetwork.
+
+OSI Layer 4, the transport layer, maps directly to the TCP/IP transport layer. This layer describes general services and functions that provide ordered and reliable delivery of data between source and destination hosts.
+
+The TCP/IP application layer includes several protocols that provide specific functionality to a variety of end user applications. The OSI model Layers 5, 6, and 7 are used as references for application software developers and vendors to produce applications that operate on networks.
+
+Both the TCP/IP and OSI models are commonly used when referring to protocols at various layers. Because the OSI model separates the data link layer from the physical layer, it is commonly used when referring to these lower layers.
+
+
+### 3.5.5 Packet Tracer - Investigate the TCP/IP and OSI Models in Action
+
+
+3.5.5 Packet Tracer - Investigate the TCP/IP and OSI Models in Action
+
+This simulation activity is intended to provide a foundation for understanding the TCP/IP protocol suite and the relationship to the OSI model. Simulation mode allows you to view the data contents being sent across the network at each layer.
+
+As data moves through the network, it is broken down into smaller pieces and identified so that the pieces can be put back together when they arrive at the destination. Each piece is assigned a specific name and is associated with a specific layer of the TCP/IP and OSI models. The assigned name is called a protocol data unit (PDU). Using Packet Tracer simulation mode, you can view each of the layers and the associated PDU. The following steps lead the user through the process of requesting a web page from a web server by using the web browser application available on a client PC.
+
+Even though much of the information displayed will be discussed in more detail later, this is an opportunity to explore the functionality of Packet Tracer and be able to visualize the encapsulation process.
+
+description
+
+Investigate the TCP-IP and OSI Models in Action
+
+file_download
+
+Investigate the TCP-IP and OSI Models in Action
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.6 Data Encapsulation
+
+
+3.6 Data Encapsulation
+
+
+### 3.6.1 Segmenting Messages
+
+
+3.6.1 Segmenting Messages
+
+Knowing the OSI reference model and the TCP/IP protocol model will come in handy when you learn about how data is encapsulated as it moves across a network. It is not as simple as a physical letter being sent through the mail system.
+
+In theory, a single communication, such as a video or an email message with many large attachments, could be sent across a network from a source to a destination as one massive, uninterrupted stream of bits. However, this would create problems for other devices needing to use the same communication channels or links. These large streams of data would result in significant delays. Further, if any link in the interconnected network infrastructure failed during the transmission, the complete message would be lost and would have to be retransmitted in full.
+
+A better approach is to divide the data into smaller, more manageable pieces to send over the network. Segmentation is the process of dividing a stream of data into smaller units for transmissions over the network. Segmentation is necessary because data networks use the TCP/IP protocol suite send data in individual IP packets. Each packet is sent separately, similar to sending a long letter as a series of individual postcards. Packets containing segments for the same destination can be sent over different paths.
+
+This leads to segmenting messages having two primary benefits:
+
+Increases speed
+
+- Because a large data stream is segmented into packets, large amounts of data can be sent over the network without tying up a communications link. This allows many different conversations to be interleaved on the network called multiplexing.
+
+Increases efficiency
+
+-If a single segment is fails to reach its destination due to a failure in the network or network congestion, only that segment needs to be retransmitted instead of resending the entire data stream.
+
+Click each button in the figure to view the animations of segmentation and multiplexing.
+
+The animation shows a small LAN with two hosts and a server. When the Segmentation button is pressed a large message from the first host is broken up into smaller messages that are sent arcross the network to the server. Then the Multiplexing button is pressed messages from both hosts are sent onto the network one after the other to the server.
+
+
+### 3.6.2 Sequencing
+
+
+3.6.2 Sequencing
+
+The challenge to using segmentation and multiplexing to transmit messages across a network is the level of complexity that is added to the process. Imagine if you had to send a 100-page letter, but each envelope could only hold one page. Therefore, 100 envelopes would be required and each envelope would need to be addressed individually. It is possible that the 100-page letter in 100 different envelopes arrives out-of-order. Consequently, the information in the envelope would need to include a sequence number to ensure that the receiver could reassemble the pages in the proper order.
+
+In network communications, each segment of the message must go through a similar process to ensure that it gets to the correct destination and can be reassembled into the content of the original message, as shown in the figure. TCP is responsible for sequencing the individual segments.
+
+The figure shows two computers sending messages on a network to a server. Each message has been divided up into multiple pieces shown as yellow and orange envelopes, some are interleaved and numbered. Text reads: Multiple pieces are labeled for easy direction and re-assembly. Labeling provides for ordering and assembling the pieces when they arrive.
+
+Labeling provides for ordering and assembling the pieces when they arrive.
+
+Multiple pieces are labeled for easy direction and
+
+re-assembly.
+
+
+### 3.6.3 Protocol Data Units
+
+
+3.6.3 Protocol Data Units
+
+As application data is passed down the protocol stack on its way to be transmitted across the network media, various protocol information is added at each level. This is known as the encapsulation process.
+
+Note:
+
+Although the UDP PDU is called datagram, IP packets are sometimes also referred to as IP datagrams.
+
+The form that a piece of data takes at any layer is called a protocol data unit (PDU). During encapsulation, each succeeding layer encapsulates the PDU that it receives from the layer above in accordance with the protocol being used. At each stage of the process, a PDU has a different name to reflect its new functions. Although there is no universal naming convention for PDUs, in this course, the PDUs are named according to the protocols of the TCP/IP suite. The PDUs for each form of data are shown in the figure.
+
+The figure shows the protocol data units (PDUs) at various layers of the OSI model. At the top of the image is a person sitting at a computer workstation sending email data. That data is passed down the stack and encapsulated into a new PDU at each layer. At the top, the email data is divided into smaller chunks of data. Below that, a transport header is added in front of the chunk of data and it becomes a segment. Below that, a network header is added in front of the transport header and it becomes a packet. Below that, a frame header is added in front of the network header and a frame trailer is added behind the data and it becomes a frame (medium dependent). The frame is shown as a stream of bits prior to being received by a router which is connected to the cloud. Text at the bottom reads: Data - The general term for the PDU used at the application layer; Segment - Transport layer PDU; Packet - Network layer PDU; Frame - Data Link layer PDU; Bits - Physical layer PDU used when physically transmitting data over the medium. Note: If the Transport header is TCP, then it is a segment. If the Transport header is UDP then it is a datagram.
+
+Email Data
+
+Data
+
+Network header
+
+Data
+
+Frame header
+
+Network header
+
+Data
+
+Frame
+
+trailer
+
+Data
+
+Segment
+
+Packet
+
+Frame
+
+(medium dependent)
+
+Bits
+
+Passing down the stack.
+
+Transport header
+
+Data - The general term for the PDU used at the application layer
+
+Segment - Transport layer PDU
+
+Packet - Network layer PDU
+
+Frame - Data Link layer PDU
+
+Bits - Physical layer PDU used when physically transmitting data over the medium
+
+Note:
+
+If the Transport header is TCP, then it is a segment. If the Transport header is UDP then it is a datagram.
+
+
+### 3.6.4 Encapsulation Example
+
+
+3.6.4 Encapsulation Example
+
+When messages are being sent on a network, the encapsulation process works from top to bottom. At each layer, the upper layer information is considered data within the encapsulated protocol. For example, the TCP segment is considered data within the IP packet.
+
+You saw this animation previously in this module. This time, click Play and focus on the encapsulation process as a web server sends a web page to a web client.
+
+The animation shows a small network with a Web Server and a Web Client. Theres is a graphic that shows the components that make up a message. An Ethernet Frame, and IP Packet, a TCP segment, and the user data. The animation begins with the web server preparing the Hypertext Markup Language (HTML) page as data to be sent. The application protocol HTTP header is added (prepended) to the front of the HTML data. The header contains various information, including the HTTP version the server is using and a status code indicating it has information for the web client. The HTTP application layer protocol delivers the HTML-formatted web page data to the TCP transport layer. The transport layer protocol prepends additional information to the HTTP data to manage the exchange of information between the web server and web client. The IP information is prepended to the TCP information. IP assigns the appropriate source and destination IP addresses. This information is known as an IP packet. The Ethernet protocol prepends and adds to the end (appends) information to the IP packet to create a data link frame. The frame is then converted into a string of binary bits that are sent along the network path to the web client.
+
+Web Server
+
+Web Client
+
+Data
+
+TCP
+
+IP
+
+Ethernet
+
+User Data
+
+TCP Segment
+
+IP Packet
+
+Ethernet Frame
+
+Data
+
+TCP
+
+IP
+
+Protocol Encapsulation Terms
+
+Ethernet
+
+play_circle_filled
+
+
+### 3.6.5 De-encapsulation Example
+
+
+3.6.5 De-encapsulation Example
+
+This process is reversed at the receiving host and is known as de-encapsulation. De-encapsulation is the process used by a receiving device to remove one or more of the protocol headers. The data is de-encapsulated as it moves up the stack toward the end-user application.
+
+You saw this animation previously in this module. This time, click Play and focus on the de-encapsulation process.
+
+The animation shows a small network with a Server and a Client. The client receives a string of binary bits from the server. The client takes the binary string of bits and converts it into an Ethernet frame. The Frame contains the Ethernet header, the IP packet, the TCP segment, and the data. Each protocol header is processed and then removed in the opposite order it was added. The Ethernet information is processed and removed, followed by the IP protocol information, the TCP information, and finally the HTTP information. The HTML web page information is then passed on to the web browser software of the client.
+
+Ethernet
+
+IP
+
+TCP
+
+Data
+
+User Data
+
+TCP Segment
+
+IP Packet
+
+Ethernet Frame
+
+Ethernet
+
+IP
+
+TCP
+
+Data
+
+play_circle_filled
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 3.6.6 Check Your Understanding - Data Encapsulation
+
+
+Instructions:
+
+The exam consists of
+
+4
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+What is the process of dividing a large data stream into smaller pieces prior to transmission?
+
+Sequencing
+
+Duplexing
+
+Multiplexing
+
+Segmentation
+
+
+##### Question 2
+
+
+What is the PDU associated with the transport layer?
+
+Segment
+
+Packet
+
+Bits
+
+Frame
+
+
+##### Question 3
+
+
+Which protocol stack layer encapsulates data into frames?
+
+Data link
+
+Transport
+
+Network
+
+Application
+
+
+##### Question 4
+
+
+What is the name of the process of adding protocol information to data as it moves down the protocol stack?
+
+De-encapsulation
+
+Sequencing
+
+Segmentation
+
+Encapsulation
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.7 Data Access
+
+
+3.7 Data Access
+
+
+### 3.7.1 Addresses
+
+
+3.7.1 Addresses
+
+As you just learned, it is necessary to segment messages in a network. But those segmented messages will not go anywhere if they are not addressed properly. This topic gives an overview of network addresses. You will also get the chance to use the Wireshark tool, which will help you to ‘view’ network traffic.
+
+The network and data link layers are responsible for delivering the data from the source device to the destination device. As shown in the figure, protocols at both layers contain a source and destination address, but their addresses have different purposes:
+
+Network layer source and destination addresses
+
+- Responsible for delivering the IP packet from the original source to the final destination, which may be on the same network or a remote network.
+
+Data link layer source and destination addresses
+
+- Responsible for delivering the data link frame from one network interface card (NIC) to another NIC on the same network.
+
+The figure shows the addressing and labeling used at various layers of the OSI model for delivering data. Starting from left to right, it shows: the physical layer provides timing and synchronization bits; the data link layer provides destination and source physical addresses; the network layer provides destination and source logical network addresses; the transport layer provides destination and source process number (ports); and the upper layers provide encoded application data.
+
+Physical
+
+Data Link
+
+Network
+
+Transport
+
+Upper Layers
+
+Timing and synchronization bits
+
+Destination and source physical addresses
+
+Destination and source logical network addresses
+
+Destination and source process number (ports)
+
+Encoded application data
+
+
+### 3.7.2 Layer 3 Logical Address
+
+
+3.7.2 Layer 3 Logical Address
+
+An IP address is the network layer, or Layer 3, logical address used to deliver the IP packet from the original source to the final destination, as shown in the figure.
+
+The figure shows a layer 3 IP packet moving from the original source to the final destination. The original source is PC1, shown on the left, with IP address 192.168.1.110. The final destination is a web server, shown on the far right, with IP address 172.16.1.99. An IP packet is shown leaving PC1 heading to router R1. The IP packet is then shown leaving router R1 and heading to router R2. The IP packet is then shown leaving R2 and heading towards the web server. Below the network topology is a diagram of a layer 3 IP packet header showing 192.168.1.110 as the source and 172.16.1.99 as the destination.
+
+Web Server
+
+172.16.1.99
+
+Source IP
+
+192.168.1.110
+
+Destination IP
+
+172.16.1.99
+
+...
+
+PC1
+
+192.168.1.110
+
+IP Packet
+
+Final Destination
+
+Layer 3 IP Packet
+
+IP Packet
+
+Original Source
+
+The IP packet contains two IP addresses:
+
+Source IP address
+
+- The IP address of the sending device, which is the original source of the packet.
+
+Destination IP address
+
+- The IP address of the receiving device, which is the final destination of the packet.
+
+The IP addresses indicate the original source IP address and final destination IP address. This is true whether the source and destination are on the same IP network or different IP networks.
+
+An IP address contains two parts:
+
+Network portion (IPv4) or Prefix (IPv6)
+
+- The left-most part of the address that indicates the network in which the IP address is a member. All devices on the same network will have the same network portion of the address.
+
+Host portion (IPv4) or Interface ID (IPv6)
+
+- The remaining part of the address that identifies a specific device on the network. This portion is unique for each device or interface on the network.
+
+Note:
+
+The subnet mask (IPv4) or prefix-length (IPv6) is used to identify the network portion of an IP address from the host portion.
+
+
+### 3.7.3 Devices on the Same Network
+
+
+3.7.3 Devices on the Same Network
+
+In this example we have a client computer, PC1, communicating with an FTP server on the same IP network.
+
+Source IPv4 address
+
+- The IPv4 address of the sending device, the client computer PC1: 192.168.1.110.
+
+Destination IPv4 address
+
+- The IPv4 address of the receiving device, FTP server: 192.168.1.9.
+
+Notice in the figure that the network portion of the source IPv4 address and the network portion of the destination IPv4 address are the same and therefore; the source and destination are on the same network.
+
+The figure shows the data link Ethernet frame header and network layer IP packet header for information flowing from a source to a destination on the same network. At the bottom is a network topology. Starting at the left, it consists of PC1 with IP address 192.168.1.110 and MAC address AA-AA-AA-AA-AA-AA, an FTP server with IP address 192.168.1.9 and MAC address CC-CC-CC-CC-CC-CC, and another PC, all connected to the same switch. In the middle of the topology is a string of three routers to which the switch is connected. At the right is another switch connected to a server. Above the topology is the message broken down into its various components. It begins on the left with the data link Ethernet frame header showing a destination of CC-CC-CC-CC-CC-CC and a source of AA-AA-AA-AA-AA-AA. Next is the network layer IP packet header showing a source of 192.168.1 (network) 110 (host) and a destination of 192.168.1 (network) 9 (host). Lastly is the data.
+
+PC1
+
+192.168.1.110
+
+AA-AA-AA-AA-AA-AA
+
+FTP Server
+
+192.168.1.9
+
+CC-CC-CC-CC-CC-CC
+
+Data Link
+
+Ethernet Frame Header
+
+Network Layer
+
+IP Packet Header
+
+Destination
+
+Source
+
+Destination
+
+Data
+
+CC-CC-CC-CC-CC-CC
+
+AA-AA-AA-AA-AA-AA
+
+Network
+
+192.168.1.
+
+Host
+
+110
+
+Network
+
+192.168.1.
+
+Host
+
+9
+
+
+### 3.7.4 Role of the Data Link Layer Addresses - Same IP Network
+
+
+3.7.4 Role of the Data Link Layer Addresses - Same IP Network
+
+When the sender and receiver of the IP packet are on the same network, the data link frame is sent directly to the receiving device. On an Ethernet network, the data link addresses are known as Ethernet Media Access Control (MAC) addresses, as highlighted in the figure.
+
+The figure shows the data link Ethernet frame header and network layer IP packet header for information flowing from a source to a destination on the same network, highlighting the role of the MAC address. At the bottom is a network topology. Starting at the left, it consists of PC1 with IP address 192.168.1.110 and MAC address AA-AA-AA-AA-AA-AA (shown highlighted), an FTP server with IP address 192.168.1.9 and MAC address CC-CC-CC-CC-CC-CC (shown highlighted), and another PC, all connected to the same switch. In the middle of the topology is a string of three routers to which the switch is connected. At the right is another switch connected to a server. Above the topology is the message broken down into its various components. It begins on the left with the data link Ethernet frame header showing a destination of CC-CC-CC-CC-CC-CC and a source of AA-AA-AA-AA-AA-AA. Next is the network layer IP packet header showing a source of 192.168.1 (network) 110 (host) and a destination of 192.168.1 (network) 9 (host). Lastly is the data.
+
+PC1
+
+192.168.1.110
+
+AA-AA-AA-AA-AA-AA
+
+FTP Server
+
+192.168.1.9
+
+CC-CC-CC-CC-CC-CC
+
+Data Link
+
+Ethernet Frame Header
+
+Network Layer
+
+IP Packet Header
+
+Destination
+
+Source
+
+Destination
+
+Data
+
+CC-CC-CC-CC-CC-CC
+
+AA-AA-AA-AA-AA-AA
+
+Network
+
+192.168.1.
+
+Host
+
+110
+
+Network
+
+192.168.1.
+
+Host
+
+9
+
+MAC addresses are physically embedded on the Ethernet NIC.
+
+Source MAC address
+
+- This is the data link address, or the Ethernet MAC address, of the device that sends the data link frame with the encapsulated IP packet. The MAC address of the Ethernet NIC of PC1 is AA-AA-AA-AA-AA-AA, written in hexadecimal notation.
+
+Destination MAC address
+
+- When the receiving device is on the same network as the sending device, this is the data link address of the receiving device. In this example, the destination MAC address is the MAC address of the FTP server: CC-CC-CC-CC-CC-CC, written in hexadecimal notation.
+
+The frame with the encapsulated IP packet can now be transmitted from PC1 directly to the FTP server.
+
+
+### 3.7.5 Devices on a Remote Network
+
+
+3.7.5 Devices on a Remote Network
+
+But what are the roles of the network layer address and the data link layer address when a device is communicating with a device on a remote network? In this example we have a client computer, PC1, communicating with a server, named Web Server, on a different IP network.
+
+
+### 3.7.6 Role of the Network Layer Addresses
+
+
+3.7.6 Role of the Network Layer Addresses
+
+When the sender of the packet is on a different network from the receiver, the source and destination IP addresses will represent hosts on different networks. This will be indicated by the network portion of the IP address of the destination host.
+
+Source IPv4 address
+
+- The IPv4 address of the sending device, the client computer PC1: 192.168.1.110.
+
+Destination IPv4 address
+
+- The IPv4 address of the receiving device, the server, Web Server: 172.16.1.99.
+
+Notice in the figure that the network portion of the source IPv4 address and destination IPv4 address are on different networks.
+
+The figure shows the data link Ethernet frame header and network layer IP packet header for information flowing from a source on one network to a destination on a different network. At the bottom is a network topology. Starting at the left, it consists of PC1 with IP 192.168.1.110 and MAC AA-AA-AA-AA-AA-AA, a server, and another PC, all connected to the same switch. In the middle of the topology is a string of three routers to which the switch is connected. The router on the left is labeled R1 with IP 192.168.1.1 and MAC 11-11-11-11-11-11. The middle router is unlabeled. The router on the right is labeled R2 with IP 172.16.1.1 and MAC 22-22-22-22-22-22. At the right is another switch connected to a Web server with IP 172.16.1.99 and MAC AB-CD-EF-12-34-56. Above the topology is the message broken down into its various components. It begins on the left with the data link Ethernet frame header showing a destination of 11-11-11-11-11-11-11 and a source of AA-AA-AA-AA-AA-AA. Next is the network layer IP packet header showing a source of 192.168.1 (network) 110 (device) and a destination of 172.16.1 (network) 99 (device). Lastly is the data.
+
+Data Link
+
+Ethernet Frame Header
+
+Network Layer
+
+IP Packet Header
+
+Destination
+
+Source
+
+Destination
+
+Data
+
+11-11-11-11-11-11
+
+AA-AA-AA-AA-AA-AA
+
+Network
+
+192.168.1.
+
+Device
+
+110
+
+Network
+
+172.16.1.
+
+Device
+
+99
+
+PC1
+
+192.168.1.110
+
+AA-AA-AA-AA-AA-AA
+
+R1
+
+192.168.1.1
+
+11-11-11-11-11-11
+
+R2
+
+172.16.1.1
+
+22-22-22-22-22-22
+
+Web Server
+
+172.16.1.99
+
+AB-CD-EF-12-34-56
+
+
+### 3.7.7 Role of the Data Link Layer Addresses - Different IP Networks
+
+
+3.7.7 Role of the Data Link Layer Addresses - Different IP Networks
+
+When the sender and receiver of the IP packet are on different networks, the Ethernet data link frame cannot be sent directly to the destination host because the host is not directly reachable in the network of the sender. The Ethernet frame must be sent to another device known as the router or default gateway. In our example, the default gateway is R1. R1 has an Ethernet data link address that is on the same network as PC1. This allows PC1 to reach the router directly.
+
+Source MAC address
+
+- The Ethernet MAC address of the sending device, PC1. The MAC address of the Ethernet interface of PC1 is AA-AA-AA-AA-AA-AA.
+
+Destination MAC address
+
+- When the receiving device, the destination IP address, is on a different network from the sending device, the sending device uses the Ethernet MAC address of the default gateway or router. In this example, the destination MAC address is the MAC address of the R1 Ethernet interface, 11-11-11-11-11-11. This is the interface that is attached to the same network as PC1, as shown in the figure.
+
+The figure shows the data link Ethernet frame header and network layer IP packet header for information flowing from a source on one network to a destination on a different network, highlighting the role of the MAC address. At the bottom is a network topology. Starting at the left, it consists of PC1 with IP 192.168.1.110 and MAC AA-AA-AA-AA-AA-AA(shown highlighted), a server, and another PC, all connected to the same switch. In the middle of the topology is a string of three routers to which the switch is connected. The router on the left is labeled R1 with IP 192.168.1.1 and MAC 11-11-11-11-11-11 (shown highlighted). The middle router is unlabeled. The router on the right is labeled R2 with IP 172.16.1.1 and MAC 22-22-22-22-22-22. At the right is another switch connected to a Web server with IP 172.16.1.99 and MAC AB-CD-EF-12-34-56. Above the topology is the message broken down into its various components. It begins on the left with the data link Ethernet frame header showing a destination of 11-11-11-11-11-11-11 and a source of AA-AA-AA-AA-AA-AA. Next is the network layer IP packet header showing a source of 192.168.1 (network) 110 (device) and a destination of 172.16.1 (network) 99 (device). Lastly is the data.
+
+Data Link
+
+Ethernet Frame Header
+
+Network Layer
+
+IP Packet Header
+
+Destination
+
+Source
+
+Destination
+
+Data
+
+11-11-11-11-11-11
+
+AA-AA-AA-AA-AA-AA
+
+Network
+
+192.168.1.
+
+Device
+
+110
+
+Network
+
+172.16.1.
+
+Device
+
+99
+
+PC1
+
+192.168.1.110
+
+AA-AA-AA-AA-AA-AA
+
+R1
+
+192.168.1.1
+
+11-11-11-11-11-11
+
+R2
+
+172.16.1.1
+
+22-22-22-22-22-22
+
+Web Server
+
+172.16.1.99
+
+AB-CD-EF-12-34-56
+
+The Ethernet frame with the encapsulated IP packet can now be transmitted to R1. R1 forwards the packet to the destination, Web Server. This may mean that R1 forwards the packet to another router or directly to Web Server if the destination is on a network connected to R1.
+
+It is important that the IP address of the default gateway be configured on each host on the local network. All packets to a destination on remote networks are sent to the default gateway. Ethernet MAC addresses and the default gateway are discussed in more detail in other modules.
+
+
+### 3.7.8 Data Link Addresses
+
+
+3.7.8 Data Link Addresses
+
+The data link Layer 2 physical address has a different role. The purpose of the data link address is to deliver the data link frame from one network interface to another network interface on the same network.
+
+Before an IP packet can be sent over a wired or wireless network, it must be encapsulated in a data link frame, so it can be transmitted over the physical medium.
+
+Click each button to view an illustration of how the data link layer addresses change at every hop from source to destination
+
+Host to Router
+
+Router to Router
+
+Router to Server
+
+Host to Router
+
+The figure shows the L2 header in the first hop as information flows from a host on one network to a server on a different network. A network topology shows the original source PC1 at 192.168.1.10 connected to a router, connected to another router, connected to the final destination Web server at 172.16.1.99. Below the topology is an L3 IP packet with source IP 192.168.1.110 and destination IP 172.16.1.99. In front of the packet is the L2 header with destination NIC and source NIC. These L2 header addresses match the NIC of the original source (PC1) and the interface of the next hop router.
+
+Original Source
+
+Final Destination
+
+PC1
+
+192.168.1.110
+
+Web Server
+
+172.16.1.99
+
+NIC
+
+L2
+
+L3
+
+L2
+
+L3
+
+L2
+
+L3
+
+Destination NIC
+
+Source NIC
+
+Source IP
+
+192.168.1.110
+
+L2 Header
+
+L3 IP Packet
+
+Destination IP
+
+172.16.1.99
+
+As the IP packet travels from host-to-router, router-to-router, and finally router-to-host, at each point along the way the IP packet is encapsulated in a new data link frame. Each data link frame contains the source data link address of the NIC card sending the frame, and the destination data link address of the NIC card receiving the frame.
+
+The Layer 2, data link protocol is only used to deliver the packet from NIC-to-NIC on the same network. The router removes the Layer 2 information as it is received on one NIC and adds new data link information before forwarding out the exit NIC on its way towards the final destination.
+
+The IP packet is encapsulated in a data link frame that contains the following data link information:
+
+Source data link address
+
+- The physical address of the NIC that is sending the data link frame.
+
+Destination data link address
+
+- The physical address of the NIC that is receiving the data link frame. This address is either the next hop router or the address of the final destination device.
+
+
+### 3.7.9 Lab - Install Wireshark
+
+
+3.7.9 Lab - Install Wireshark
+
+Wireshark is a software protocol analyzer, or "packet sniffer" application, used for network troubleshooting, analysis, software and protocol development, and education. Wireshark is used throughout the course to demonstrate network concepts. In this lab, you will download and install Wireshark.
+
+description
+
+Install Wireshark
+
+
+### 3.7.10 Lab - Use Wireshark to View Network Traffic
+
+
+3.7.10 Lab - Use Wireshark to View Network Traffic
+
+In this lab, you will use Wireshark to capture and analyze traffic.
+
+description
+
+Use Wireshark to View Network Traffic
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 3.7.11 Check Your Understanding - Data Access
+
+
+Instructions:
+
+The exam consists of
+
+6
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+True or false? Frames exchanged between devices in different IP networks must be forwarded to a default gateway.
+
+True
+
+False
+
+
+##### Question 2
+
+
+True or false? The right-most part of an IP address is used to identify the network that a device belongs to.
+
+True
+
+False
+
+
+##### Question 3
+
+
+What is used to determine the network portion of an IPv4 address?
+
+Subnet mask
+
+MAC address
+
+Right-most part of the IP address
+
+Left-most part of the MAC address
+
+
+##### Question 4
+
+
+Which of the following statements are true regarding network layer and data link layer addresses? (Choose three.)
+
+Data link layer addresses are logical and network layer addresses are physical.
+
+Network layer addresses are expressed as 12 hexadecimal digits and data link layer addresses are decimal.
+
+Network layer addresses are logical and data link addresses are expressed as 12 hexadecimal digits.
+
+Data link layer addresses are physical and network layer addresses are logical.
+
+Network layer addresses are either 32 or 128 bits in length.
+
+Data link layer addresses are 32 bits in length.
+
+
+##### Question 5
+
+
+What is the order of the two addresses in the data link frame?
+
+Source MAC, destination MAC
+
+Destination MAC, source IP
+
+Destination IP, source IP
+
+Destination MAC, source MAC
+
+Source IP, destination IP
+
+
+##### Question 6
+
+
+True or False? Data Link addresses are physical so they never change in the data link frame from source to destination.
+
+True
+
+False
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 3.8 Module Practice and Quiz
+
+
+3.8 Module Practice and Quiz
+
+
+### 3.8.1 What did I learn in this module?
+
+
+3.8.1 What did I learn in this module?
+
+The Rules
+
+All communication methods have three elements in common: message source (sender), message destination (receiver), and channel. Sending a message is governed by rules called
+
+. Protocols must include: an identified sender and receiver, common language and grammar, speed and timing of delivery, and confirmation or acknowledgment requirements. Common computer protocols include these requirements: message encoding, formatting and encapsulation, size, timing, and delivery options. Encoding is the process of converting information into another acceptable form, for transmission. Decoding reverses this process to interpret the information. Message formats depend on the type of message and the channel that is used to deliver the message. Message timing includes flow control, response timeout, and access method. Message delivery options include unicast, multicast, and broadcast.
+
+Protocols
+
+Protocols are implemented by end-devices and intermediary devices in software, hardware, or both. A message sent over a computer network typically requires the use of several protocols, each one with its own functions and format. Each network protocol has its own function, format, and rules for communications. The Ethernet family of protocols includes IP, TCP, HTTP, and many more. Protocols secure data to provide authentication, data integrity, and data encryption: SSH, SSL, and TLS. Protocols enable routers to exchange route information, compare path information, and then to select the best path to the destination network: OSPF and BGP. Protocols are used for the automatic detection of devices or services: DHCP and DNS. Computers and network devices use agreed-upon protocols that provide the following functions: addressing, reliability, flow control, sequencing, error-detection, and application interface.
+
+Protocol Suites
+
+A protocol suite is a group of inter-related protocols necessary to perform a communication function. A protocol stack shows how the individual protocols within a suite are implemented. Since the 1970s there have been several different protocol suites, some developed by a standards organization and others developed by various vendors. TCP/IP protocols are available for the application, transport, and internet layers. TCP/IP is the protocol suite used by today’s networks and internet. TCP/IP offers two important aspects to vendors and manufacturers: open standard protocol suite, and standards-based protocol suite. The TCP/IP protocol suite communication process enables such processes as a web server encapsulating and sending a web page to a client, as well as the client de-encapsulating the web page for display in a web browser.
+
+Standards Organizations
+
+Open standards encourage interoperability, competition, and innovation. Standards organizations are usually vendor-neutral, non-profit organizations established to develop and promote the concept of open standards. Various organizations have different responsibilities for promoting and creating standards for the internet including: ISOC, IAB, IETF, and IRTF. Standards organizations that develop and support TCP/IP include: ICANN and IANA. Electronic and communications standards organizations include: IEEE, EIA, TIA, and ITU-T.
+
+Reference Models
+
+The two reference models that are used to describe network operations are OSI and TCP/IP. The OSI model has seven layers:
+
+7 - Application
+
+6 - Presentation
+
+5 - Session
+
+4 - Transport
+
+3 - Network
+
+2 - Data Link
+
+1 - Physical
+
+The TCP/IP model has four layers:
+
+4 - Application
+
+3 - Transport
+
+2 - Internet
+
+1 - Network Access
+
+Data Encapsulation
+
+Segmenting messages has two primary benefits:
+
+By sending smaller individual pieces from source to destination, many different conversations can be interleaved on the network. This is called
+
+.
+
+Segmentation can increase the efficiency of network communications. If part of the message fails to make it to the destination only the missing parts need to be retransmitted.
+
+TCP is responsible for sequencing the individual segments. The form that a piece of data takes at any layer is called a
+
+. During encapsulation, each succeeding layer encapsulates the PDU that it receives from the layer above in accordance with the protocol being used. When sending messages on a network, the encapsulation process works from top to bottom. This process is reversed at the receiving host and is known as
+
+. De-encapsulation is the process used by a receiving device to remove one or more of the protocol headers. The data is de-encapsulated as it moves up the stack toward the end-user application.
+
+Data Access
+
+The network and data link layers are responsible for delivering the data from the source device to the destination device. Protocols at both layers contain a source and destination address, but their addresses have different purposes:
+
+Network layer source and destination addresses
+
+- Responsible for delivering the IP packet from the original source to the final destination, which may be on the same network or a remote network.
+
+Data link layer source and destination addresses
+
+- Responsible for delivering the data link frame from one network interface card (NIC) to another NIC on the same network.
+
+The IP addresses indicate the original source IP address and final destination IP address. An IP address contains two parts: the network portion (IPv4) or Prefix (IPv6) and the host portion (IPv4) or Interface ID (IPv6). When the sender and receiver of the IP packet are on the same network, the data link frame is sent directly to the receiving device. On an Ethernet network, the data link addresses are known as Ethernet Media Access Control (MAC) addresses. When the sender of the packet is on a different network from the receiver, the source and destination IP addresses will represent hosts on different networks. The Ethernet frame must be sent to another device known as the router or default gateway.
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### Module Quiz - Protocols and Models
+
+
+Instructions:
+
+The exam consists of
+
+15
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+Which three acronyms/initialisms represent standards organizations? (Choose three.)
+
+IANA
+
+TCP/IP
+
+IEEE
+
+IETF
+
+OSI
+
+MAC
+
+
+##### Question 2
+
+
+What type of communication will send a message to all devices on a local area network?
+
+Broadcast
+
+Multicast
+
+Unicast
+
+Allcast
+
+
+##### Question 3
+
+
+In computer communication, what is the purpose of message encoding?
+
+To convert information to the appropriate form for transmission
+
+To interpret information
+
+To break large messages into smaller frames
+
+To negotiate correct timing for successful communication
+
+
+##### Question 4
+
+
+Which message delivery option is used when all devices need to receive the same message simultaneously?
+
+Duplex
+
+Unicast
+
+Multicast
+
+Broadcast
+
+
+##### Question 5
+
+
+What are two benefits of using a layered network model? (Choose two.)
+
+It assists in protocol design.
+
+It speeds up packet delivery.
+
+It prevents designers from creating their own model.
+
+It prevents technology in one layer from affecting other layers.
+
+It ensures a device at one layer can function at the next higher layer.
+
+
+##### Question 6
+
+
+What is the purpose of protocols in data communications?
+
+Specifying the bandwidth of the channel or medium for each type of communication
+
+Specifying the device operating systems that will support the communication
+
+Providing the rules required for a specific type of communication to occur
+
+Dictating the content of the message sent during communication
+
+
+##### Question 7
+
+
+Which logical address is used for delivery of data to a remote network?
+
+Destination MAC address
+
+Destination IP address
+
+Destination port number
+
+Source MAC address
+
+Source IP address
+
+
+##### Question 8
+
+
+What is the general term that is used to describe a piece of data at any layer of a networking model?
+
+Frame
+
+Packet
+
+Protocol data unit
+
+Segment
+
+
+##### Question 9
+
+
+Which two protocols function at the internet layer? (Choose two.)
+
+POP
+
+BOOTP
+
+ICMP
+
+IP
+
+PPP
+
+
+##### Question 10
+
+
+Which layer of the OSI model defines services to segment and reassemble data for individual communications between end devices?
+
+Application
+
+Presentation
+
+Session
+
+Transport
+
+Network
+
+
+##### Question 11
+
+
+Which type of communication will send a message to a group of host destinations simultaneously?
+
+Broadcast
+
+Multicast
+
+Unicast
+
+Anycast
+
+
+##### Question 12
+
+
+What process is used to receive transmitted data and convert it into a readable message?
+
+Access control
+
+Decoding
+
+Encapsulation
+
+Flow control
+
+
+##### Question 13
+
+
+What is done to an IP packet before it is transmitted over the physical medium?
+
+It is tagged with information guaranteeing reliable delivery.
+
+It is segmented into smaller individual pieces.
+
+It is encapsulated into a TCP segment.
+
+It is encapsulated in a Layer 2 frame.
+
+
+##### Question 14
+
+
+What process is used to place one message inside another message for transfer from the source to the destination?
+
+Access control
+
+Decoding
+
+Encapsulation
+
+Flow control
+
+
+##### Question 15
+
+
+A web client is sending a request for a webpage to a web server. From the perspective of the client, what is the correct order of the protocol stack that is used to prepare the request for transmission?
+
+HTTP, IP, TCP, Ethernet
+
+HTTP, TCP, IP, Ethernet
+
+Ethernet, TCP, IP, HTTP
+
+Ethernet, IP, TCP, HTTP
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset

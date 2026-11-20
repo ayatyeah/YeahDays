@@ -1,0 +1,483 @@
+# Вопросы: 14 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Which layer is responsible for establishing a temporary communication session between the source and destination host applications?
+
+Application layer
+
+Data link layer
+
+Network layer
+
+Physical layer
+
+Transport layer
+
+##### Question 2
+
+Which three are transport layer responsibilities? (Choose three.)
+
+Conversation multiplexing
+
+Identifying frames
+
+Identifying routing information
+
+Segmenting data and reassembling segments
+
+Tracking individual conversations
+
+##### Question 3
+
+Which transport layer protocol statement is true?
+
+TCP has fewer fields than UDP.
+
+TCP is faster than UDP.
+
+UDP is a best-effort delivery protocol.
+
+UDP provides reliability.
+
+##### Question 4
+
+Which transport layer protocol would be used for VoIP applications?
+
+Session Information Protocol (SIP)
+
+Transmission Control Protocol (TCP)
+
+User Datagram Protocol (UDP)
+
+VoIP Transfer Protocol
+
+##### Question 1
+
+Which transport layer protocol ensures reliable same-order delivery?
+
+ICMP
+
+IP
+
+TCP
+
+UDP
+
+##### Question 2
+
+Which TCP header statement is true?
+
+It consists of 4 fields in an 8-byte header.
+
+It consists of 8 fields in a 10-byte header.
+
+It consists of 10 fields in a 20-byte header.
+
+It consists of 20 fields in a 40-byte header.
+
+##### Question 3
+
+Which two applications would use the TCP transport layer protocol? (Choose two.)
+
+FTP
+
+HTTP
+
+ICMP
+
+TFTP
+
+VoIP
+
+##### Question 1
+
+Which of the following is a stateless best-effort delivery transport layer protocol?
+
+ICMP
+
+IP
+
+TCP
+
+UDP
+
+##### Question 2
+
+Which UDP header statement is true?
+
+It consists of 4 fields in an 8-byte header.
+
+It consists of 8 fields in a 10-byte header.
+
+It consists of 10 fields in a 20-byte header.
+
+It consists of 20 fields in a 40-byte header.
+
+##### Question 3
+
+Which two applications would use the UDP transport layer protocol? (Choose two.)
+
+FTP
+
+HTTP
+
+ICMP
+
+TFTP
+
+VoIP
+
+##### Question 4
+
+Which two fields are the same in a TCP and UDP header? (Choose two.)
+
+Control bits
+
+Destination port number
+
+Sequence number
+
+Source port number
+
+Well-known port number
+
+##### Question 1
+
+Assume a host with IP address 10.1.1.10 wants to request web services from a server at 10.1.1.254. Which of the following would display the correct socket pair?
+
+1099:10.1.1.10, 80:10.1.1.254
+
+10.1.1.10:80, 10.1.1.254:1099
+
+10.1.1.10:1099, 10.1.1.254:80
+
+80:10.1.1.10, 1099:10.1.1.254
+
+##### Question 2
+
+Which port group includes port numbers for FTP, HTTP, and TFTP applications?
+
+Dynamic ports
+
+Private ports
+
+Registered ports
+
+Well-known ports
+
+##### Question 3
+
+Which Windows command would display the protocols in use, the local address and port numbers, the foreign address and port numbers, and the connection state?
+
+Ipconfig /all
+
+Ping
+
+Netstat
+
+Traceroute
+
+##### Question 1
+
+Which of the following would be valid source and destination ports for a host connecting to an email server?
+
+Source: 25, Destination: 49152
+
+Source: 80, Destination: 49152
+
+Source: 49152, Destination: 25
+
+Source: 49152, Destination: 80
+
+##### Question 2
+
+Which control bit flags are used during the three-way handshake?
+
+ACK and FIN
+
+FIN and RESET
+
+RESET and SYN
+
+SYN and ACK
+
+##### Question 3
+
+How many exchanges are needed to end both sessions between two hosts?
+
+One exchange
+
+Two exchanges
+
+Three exchanges
+
+Four exchanges
+
+Five exchanges
+
+##### Question 1
+
+What field is used by the destination host to reassemble segments into the original order?
+
+Control Bits
+
+Destination Port
+
+Sequence Number
+
+Source Port
+
+Window Size
+
+##### Question 2
+
+What field is used to provide flow control?
+
+Control Bits
+
+Destination Port
+
+Sequence Number
+
+Source Port
+
+Window Size
+
+##### Question 3
+
+What happens when a sending host senses there is congestion?
+
+The receiving host increases the number of bytes it sends before receiving an acknowledgment from the sending host.
+
+The receiving host reduces the number of bytes it sends before receiving an acknowledgment from the sending host.
+
+The sending host increases the number of bytes it sends before receiving an acknowledgment from the destination host.
+
+The sending host reduces the number of bytes it sends before receiving an acknowledgment from the destination host.
+
+##### Question 1
+
+Why is UDP desirable for protocols that make a simple request and reply transactions?
+
+Flow Control
+
+Low overhead
+
+Reliability
+
+Same-order delivery
+
+##### Question 2
+
+Which UDP datagram reassembly statement is true?
+
+UDP does not reassemble the data.
+
+UDP reassembles the data in the order that it was received.
+
+UDP reassembles the data using control bits.
+
+UDP reassembles the data using sequence numbers.
+
+##### Question 3
+
+Which of the following would be valid source and destination ports for a host connecting to a DNS server?
+
+Source: 53, Destination: 49152
+
+Source: 1812, Destination: 49152
+
+Source: 49152, Destination: 53
+
+Source: 49152, Destination: 1812
+
+##### Question 1
+
+Which transport layer feature is used to establish a connection-oriented session?
+
+UDP ACK flag
+
+TCP 3-way handshake
+
+UDP sequence number
+
+TCP port number
+
+##### Question 2
+
+What is the complete range of TCP and UDP well-known ports?
+
+0 to 255
+
+0 to 1023
+
+256 - 1023
+
+1024 - 49151
+
+##### Question 3
+
+What is a socket?
+
+The combination of the source and destination IP address and source and destination Ethernet address
+
+The combination of a source IP address and port number or a destination IP address and port number
+
+The combination of the source and destination sequence and acknowledgment numbers
+
+The combination of the source and destination sequence numbers and port numbers
+
+##### Question 4
+
+How does a networked server manage requests from multiple clients for different services?
+
+The server sends all requests through a default gateway.
+
+Each request has a combination of source and destination port numbers, coming from a unique IP address.
+
+The server uses IP addresses to identify different services.
+
+Each request is tracked through the physical address of the client.
+
+##### Question 5
+
+What happens if part of an FTP message is not delivered to the destination?
+
+The message is lost because FTP does not use a reliable delivery method.
+
+The FTP source host sends a query to the destination host.
+
+The part of the FTP message that was lost is re-sent.
+
+The entire FTP message is re-sent.
+
+##### Question 6
+
+What type of applications are best suited for using UDP?
+
+Applications that are sensitive to delay
+
+Applications that need reliable delivery
+
+Applications that require retransmission of lost segments
+
+Applications that are sensitive to packet loss
+
+##### Question 7
+
+Network congestion has resulted in the source learning of the loss of TCP segments that were sent to the destination. What is one way that the TCP protocol addresses this?
+
+The source decreases the amount of data that it transmits before it receives an acknowledgement from the destination.
+
+The source decreases the window size to decrease the rate of transmission from the destination.
+
+The destination decreases the window size.
+
+The destination sends fewer acknowledgement messages in order to conserve bandwidth.
+
+##### Question 8
+
+Which two operations are provided by TCP but not by UDP? (Choose two.)
+
+Identifying the applications
+
+Acknowledging received data
+
+Identifying individual conversations
+
+Retransmitting any unacknowledged data
+
+Reconstructing data in the order received
+
+##### Question 9
+
+What is the purpose of using a source port number in a TCP communication?
+
+To notify the remote device that the conversation is over
+
+To assemble the segments that arrived out of order
+
+To keep track of multiple conversations between devices
+
+To inquire for a nonreceived segment
+
+##### Question 10
+
+Which two flags in the TCP header are used in a TCP three-way handshake to establish connectivity between two network devices? (Choose two.)
+
+ACK
+
+FIN
+
+PSH
+
+RST
+
+SYN
+
+URG
+
+##### Question 11
+
+What TCP mechanism is used to enhance performance by allowing a device to continuously send a steady stream of segments as long as the device is also receiving necessary acknowledgements?
+
+Three-way handshake
+
+Socket pair
+
+Two-way handshake
+
+Sliding window
+
+##### Question 12
+
+Which action is performed by a client when establishing communication with a server via the use of UDP at the transport layer?
+
+The client sets the window size for the session.
+
+The client sends an ISN to the server to start the 3-way handshake.
+
+The client randomly selects a source port number.
+
+The client sends a synchronization segment to begin the session.
+
+##### Question 13
+
+Which two services or protocols use the preferred UDP protocol for fast transmission and low overhead? (Choose two)
+
+FTP
+
+DNS
+
+HTTP
+
+POP3
+
+VoIP
+
+##### Question 14
+
+Which number or set of numbers represents a socket?
+
+01-23-45-67-89-AB
+
+21
+
+192.168.1.1:80
+
+10.1.1.15
+
+##### Question 15
+
+What is a responsibility of transport layer protocols?
+
+Providing network access
+
+Tracking individual conversations
+
+Determining the best path to forward a packet
+
+Translating private IP addresses to public IP addresses

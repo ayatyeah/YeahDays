@@ -1,0 +1,529 @@
+# Вопросы: 03 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+What is the process of converting information into the proper form for transmission?
+
+Formatting
+
+Encoding
+
+Encapsulation
+
+##### Question 2
+
+Which step of the communication process is concerned with properly identifying the address of the sender and receiver?
+
+Formatting
+
+Encoding
+
+Encapsulation
+
+##### Question 3
+
+Which three are components of message timing? (Choose three.)
+
+Flow control
+
+Sequence numbers
+
+Access method
+
+Retransmit time
+
+Response timeout
+
+##### Question 4
+
+Which delivery method is used to transmit information to one or more end devices, but not all devices on the network?
+
+Unicast
+
+Multicast
+
+Broadcast
+
+##### Question 1
+
+BGP and OSPF are examples of which type of protocol?
+
+Network communication
+
+Network security
+
+Routing
+
+Service discovery
+
+##### Question 2
+
+Which two protocols are service discovery protocols? (Choose two.)
+
+DNS
+
+TCP
+
+SSH
+
+DHCP
+
+##### Question 3
+
+What is the purpose of the sequencing function in network communication?
+
+To uniquely label transmitted segments of data for proper reassembly by the receiver
+
+To determine if data is corrupted during transmission
+
+To ensure data flows at an efficient rate between sender and receiver
+
+To guarantee delivery of data
+
+##### Question 4
+
+This protocol is responsible for guaranteeing the reliable delivery of information.
+
+TCP
+
+IP
+
+HTTP
+
+Ethernet
+
+##### Question 1
+
+UDP and TCP belong to which layer of the TCP/IP protocol?
+
+Application
+
+Transport
+
+Internet
+
+Network access
+
+##### Question 2
+
+Which two protocols belong in the TCP/IP model application layer?
+
+EIGRP
+
+DNS
+
+OSPF
+
+ICMP
+
+DHCP
+
+##### Question 3
+
+Which protocol operates at the network access layer of the TCP/IP model?
+
+HTTP
+
+IP
+
+DNS
+
+Ethernet
+
+##### Question 4
+
+Which of the following are protocols that provide feedback from the destination host to the source host regarding errors in packet delivery? (Choose two.)
+
+IPv4
+
+TCP
+
+ICMPv4
+
+IPv6
+
+UDP
+
+ICMPv6
+
+##### Question 5
+
+A device receives a data link frame with data and processes and removes the Ethernet information. What information would be the next to be processed by the receiving device?
+
+HTTP at the application layer
+
+HTML at the application layer
+
+IP at the internet layer
+
+UDP at the internet layer
+
+TCP at the transport layer
+
+##### Question 6
+
+Which services are provided by the internet layer of the TCP/IP protocol suite? (Choose three.)
+
+File Transfer
+
+Address Resolution
+
+Routing Protocols
+
+Messaging
+
+Ethernet
+
+Internet Protocol
+
+##### Question 1
+
+True or false. Standards organizations are usually vendor-neutral.
+
+True
+
+False
+
+##### Question 2
+
+This standards organization is concerned with the Request for Comments (RFC) documents that specify new protocols and update existing ones.
+
+Internet Society (ISOC)
+
+Internet Engineering Task Force (IETF)
+
+Internet Architecture Board (IAB)
+
+Internet Research Task Force (IRTF)
+
+##### Question 3
+
+This standards organization is responsible for IP address allocation and domain name management.
+
+Internet Society (ISOC)
+
+Internet Engineering Task Force (IETF)
+
+Internet Architecture Board (IAB)
+
+Internet Assigned Numbers Authority (IANA)
+
+##### Question 4
+
+What types of standards are developed by the Electronics Industries Alliance (EIA)?
+
+Electric wiring and connectors
+
+Radio equipment and cell towers
+
+Video compression and broadband communications
+
+Voice over IP (VoIP) and satellite communications
+
+##### Question 1
+
+What is the process of dividing a large data stream into smaller pieces prior to transmission?
+
+Sequencing
+
+Duplexing
+
+Multiplexing
+
+Segmentation
+
+##### Question 2
+
+What is the PDU associated with the transport layer?
+
+Segment
+
+Packet
+
+Bits
+
+Frame
+
+##### Question 3
+
+Which protocol stack layer encapsulates data into frames?
+
+Data link
+
+Transport
+
+Network
+
+Application
+
+##### Question 4
+
+What is the name of the process of adding protocol information to data as it moves down the protocol stack?
+
+De-encapsulation
+
+Sequencing
+
+Segmentation
+
+Encapsulation
+
+##### Question 1
+
+True or false? Frames exchanged between devices in different IP networks must be forwarded to a default gateway.
+
+True
+
+False
+
+##### Question 2
+
+True or false? The right-most part of an IP address is used to identify the network that a device belongs to.
+
+True
+
+False
+
+##### Question 3
+
+What is used to determine the network portion of an IPv4 address?
+
+Subnet mask
+
+MAC address
+
+Right-most part of the IP address
+
+Left-most part of the MAC address
+
+##### Question 4
+
+Which of the following statements are true regarding network layer and data link layer addresses? (Choose three.)
+
+Data link layer addresses are logical and network layer addresses are physical.
+
+Network layer addresses are expressed as 12 hexadecimal digits and data link layer addresses are decimal.
+
+Network layer addresses are logical and data link addresses are expressed as 12 hexadecimal digits.
+
+Data link layer addresses are physical and network layer addresses are logical.
+
+Network layer addresses are either 32 or 128 bits in length.
+
+Data link layer addresses are 32 bits in length.
+
+##### Question 5
+
+What is the order of the two addresses in the data link frame?
+
+Source MAC, destination MAC
+
+Destination MAC, source IP
+
+Destination IP, source IP
+
+Destination MAC, source MAC
+
+Source IP, destination IP
+
+##### Question 6
+
+True or False? Data Link addresses are physical so they never change in the data link frame from source to destination.
+
+True
+
+False
+
+##### Question 1
+
+Which three acronyms/initialisms represent standards organizations? (Choose three.)
+
+IANA
+
+TCP/IP
+
+IEEE
+
+IETF
+
+OSI
+
+MAC
+
+##### Question 2
+
+What type of communication will send a message to all devices on a local area network?
+
+Broadcast
+
+Multicast
+
+Unicast
+
+Allcast
+
+##### Question 3
+
+In computer communication, what is the purpose of message encoding?
+
+To convert information to the appropriate form for transmission
+
+To interpret information
+
+To break large messages into smaller frames
+
+To negotiate correct timing for successful communication
+
+##### Question 4
+
+Which message delivery option is used when all devices need to receive the same message simultaneously?
+
+Duplex
+
+Unicast
+
+Multicast
+
+Broadcast
+
+##### Question 5
+
+What are two benefits of using a layered network model? (Choose two.)
+
+It assists in protocol design.
+
+It speeds up packet delivery.
+
+It prevents designers from creating their own model.
+
+It prevents technology in one layer from affecting other layers.
+
+It ensures a device at one layer can function at the next higher layer.
+
+##### Question 6
+
+What is the purpose of protocols in data communications?
+
+Specifying the bandwidth of the channel or medium for each type of communication
+
+Specifying the device operating systems that will support the communication
+
+Providing the rules required for a specific type of communication to occur
+
+Dictating the content of the message sent during communication
+
+##### Question 7
+
+Which logical address is used for delivery of data to a remote network?
+
+Destination MAC address
+
+Destination IP address
+
+Destination port number
+
+Source MAC address
+
+Source IP address
+
+##### Question 8
+
+What is the general term that is used to describe a piece of data at any layer of a networking model?
+
+Frame
+
+Packet
+
+Protocol data unit
+
+Segment
+
+##### Question 9
+
+Which two protocols function at the internet layer? (Choose two.)
+
+POP
+
+BOOTP
+
+ICMP
+
+IP
+
+PPP
+
+##### Question 10
+
+Which layer of the OSI model defines services to segment and reassemble data for individual communications between end devices?
+
+Application
+
+Presentation
+
+Session
+
+Transport
+
+Network
+
+##### Question 11
+
+Which type of communication will send a message to a group of host destinations simultaneously?
+
+Broadcast
+
+Multicast
+
+Unicast
+
+Anycast
+
+##### Question 12
+
+What process is used to receive transmitted data and convert it into a readable message?
+
+Access control
+
+Decoding
+
+Encapsulation
+
+Flow control
+
+##### Question 13
+
+What is done to an IP packet before it is transmitted over the physical medium?
+
+It is tagged with information guaranteeing reliable delivery.
+
+It is segmented into smaller individual pieces.
+
+It is encapsulated into a TCP segment.
+
+It is encapsulated in a Layer 2 frame.
+
+##### Question 14
+
+What process is used to place one message inside another message for transfer from the source to the destination?
+
+Access control
+
+Decoding
+
+Encapsulation
+
+Flow control
+
+##### Question 15
+
+A web client is sending a request for a webpage to a web server. From the perspective of the client, what is the correct order of the protocol stack that is used to prepare the request for transmission?
+
+HTTP, IP, TCP, Ethernet
+
+HTTP, TCP, IP, Ethernet
+
+Ethernet, TCP, IP, HTTP
+
+Ethernet, IP, TCP, HTTP

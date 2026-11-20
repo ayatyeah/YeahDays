@@ -1,0 +1,231 @@
+# Вопросы: 04 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+True or false? The physical layer is only concerned with wired network connections.
+
+True
+
+False
+
+##### Question 2
+
+True or false? When a frame is encoded by the physical layer, all bits are sent over the media at the same time.
+
+True
+
+False
+
+##### Question 3
+
+The physical layer of the receiving device passes bits up to which higher level layer?
+
+Application
+
+Presentation
+
+Network
+
+Data link
+
+##### Question 4
+
+What PDU is received by the physical layer for encoding and transmission?
+
+Frame
+
+Segment
+
+Packet
+
+##### Question 1
+
+Which media uses patterns of microwaves to represent bits?
+
+Copper
+
+Wireless
+
+Fiber-optic
+
+##### Question 2
+
+Which media uses patterns of light to represent bits?
+
+Copper
+
+Wireless
+
+Fiber-optic
+
+##### Question 3
+
+Which media uses electrical pulses to represent bits?
+
+Copper
+
+Wireless
+
+Fiber-optic
+
+##### Question 4
+
+Which of these is the name for the capacity of a medium to carry data?
+
+Bandwidth
+
+Throughput
+
+Goodput
+
+##### Question 5
+
+Which of these is a measure of the transfer of bits across the media?
+
+Bandwidth
+
+Throughput
+
+Goodput
+
+##### Question 1
+
+Which of the following attaches antennas to wireless devices? It can also be bundled with fiber-optic cabling for two-way data transmission.
+
+UTP
+
+STP
+
+Coaxial
+
+##### Question 2
+
+Which of the following counters EMI and RFI by using shielding techniques and special connectors?
+
+UTP
+
+STP
+
+Coaxial
+
+##### Question 3
+
+Which of the following is the most common network media?
+
+UTP
+
+STP
+
+Coaxial
+
+##### Question 4
+
+Which of the following terminates with BNC, N type and F type connectors?
+
+UTP
+
+STP
+
+Coaxial
+
+##### Question 1
+
+Which of the following fiber-optic cable types can help data travel approximately 500 meters?
+
+Multimode
+
+Single-mode
+
+##### Question 2
+
+Which of the following fiber-optic cable types use light emitting diodes (LEDs) as a data light source transmitter?
+
+Multimode
+
+Single-mode
+
+##### Question 3
+
+Which of the following fiber-optic cable types use lasers in a single stream as a data light source transmitter?
+
+Multimode
+
+Single-mode
+
+##### Question 4
+
+Which of the following fiber-optic cable types is used to connect long-distance telephony and cable TV applications?
+
+Multimode
+
+Single-mode
+
+##### Question 5
+
+Which of the following fiber-optic cable types can travel approximately 100 km?
+
+Multimode
+
+Single-mode
+
+##### Question 6
+
+Which of the following fiber-optic cable types is used within a campus network?
+
+Multimode
+
+Single-mode
+
+##### Question 1
+
+True or false. Wireless is not well suited for enterprise networks.
+
+True
+
+False
+
+##### Question 2
+
+True or false. Wireless LANs operate in full-duplex allowing all devices to send or receive data at the same time so the number of users does not impact performance.
+
+True
+
+False
+
+##### Question 3
+
+Which of the following wireless standards is best suited for industrial and IoT environments?
+
+Zigbee
+
+WiMAX
+
+Wi-Fi
+
+Bluetooth
+
+##### Question 4
+
+Which of the following wireless standards is used for Personal Area Networks (PANs) and allows devices to communicate over distances of 1 to 100 meters?
+
+Zigbee
+
+WiMAX
+
+Wi-Fi
+
+Bluetooth
+
+##### Question 1
+
+Which statement correctly describes frame encoding?
+
+It uses the characteristic of one wave to modify another wave.
+
+It transmits data signals along with a clock signal which occurs at evenly spaced time durations.
+
+It generates the electrical, optical, or wireless signals that represent the binary numbers of the frame.
+
+It converts bits into a predefined code in order to provide a predictable pattern to help distinguish data bits from control bits.

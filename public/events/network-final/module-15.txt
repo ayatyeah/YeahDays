@@ -1,0 +1,401 @@
+# Вопросы: 15 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+This layer of the OSI model is concerned with the protocols that exchange data between programs running on hosts.
+
+Application
+
+Transport
+
+Network
+
+Physical
+
+##### Question 2
+
+MKV, GIF, and JPG standards are associated with which OSI layer?
+
+Application
+
+Presentation
+
+Session
+
+Transport
+
+##### Question 3
+
+These three OSI layers define the same functions as the TCP/IP model application layer.
+
+Application
+
+Presentation
+
+Session
+
+Transport
+
+Network
+
+Data link
+
+##### Question 4
+
+Which two are protocols that belong in the OSI application layer?
+
+PNG
+
+DNS
+
+SMTP
+
+QuickTime
+
+##### Question 5
+
+This is a function of the OSI session layer.
+
+Compress and decompress data
+
+Provide an interface between applications
+
+Format data for the application layer
+
+Exchange of information to initiate dialog between peers
+
+##### Question 1
+
+True or false? In a peer-to-peer network environment every peer can function as both a client and a server.
+
+True
+
+False
+
+##### Question 1
+
+This message type is used when uploading data files to a web server.
+
+GET
+
+POST
+
+PUT
+
+##### Question 2
+
+This protocol is used by a web browser to establish a connection to a web server.
+
+HTTP
+
+SSL
+
+IMAP
+
+SMTP
+
+##### Question 3
+
+This protocol is used by a client to send email to a mail server.
+
+POP
+
+SMTP
+
+IMAP
+
+HTTP
+
+##### Question 4
+
+Which is a feature of IMAP?
+
+It uploads email messages to a server.
+
+It listens passively on port 110 for client requests.
+
+It downloads a copy of email messages leaving the original on the server.
+
+##### Question 5
+
+True or false? HTTP is a secure protocol.
+
+True
+
+False
+
+##### Question 1
+
+Which of the following DNS record types is used to resolve IPv6 addresses?
+
+A
+
+NS
+
+AAAA
+
+MX
+
+##### Question 2
+
+True or false? A DNS server that receives a request for a name resolution that is not within its DNS zone will send a failure message to the requesting client.
+
+True
+
+False
+
+##### Question 3
+
+Which of the following is displayed by the nslookup utility?
+
+The configured default DNS server
+
+The IP address of the end device
+
+All cached DNS entries
+
+##### Question 4
+
+Which of the following DNS resource record types resolves authoritative name servers?
+
+NS
+
+A
+
+MX
+
+AAAA
+
+##### Question 1
+
+How many connections are required by FTP between client and server?
+
+1
+
+2
+
+3
+
+4
+
+##### Question 2
+
+True or false? FTP data transfers take place from client to server (push) and from server to client (pull).
+
+True
+
+False
+
+##### Question 3
+
+Which of these ports are used by FTP? (Choose two.)
+
+20
+
+21
+
+25
+
+110
+
+##### Question 4
+
+True or false? Resource sharing over SMB is only supported on Microsoft operating systems.
+
+True
+
+False
+
+##### Question 1
+
+On a home network, which device is most likely to provide dynamic IPv4 addressing to clients on the home network?
+
+A dedicated file server
+
+A home router
+
+An ISP DHCP server
+
+A DNS server
+
+##### Question 2
+
+What part of the URL, http://www.cisco.com/index.html, represents the top-level DNS domain?
+
+.com
+
+Www
+
+Http
+
+Index
+
+##### Question 3
+
+What are two characteristics of the application layer of the TCP/IP model? (Choose two.)
+
+Responsibility for logical addressing
+
+Responsibility for physical addressing
+
+The creation and maintenance of dialogue between source and destination applications
+
+Closest to the end user
+
+##### Question 4
+
+What message type is used by an HTTP client to request data from a web server?
+
+GET
+
+POST
+
+PUT
+
+ACK
+
+##### Question 5
+
+Which protocol can be used to transfer messages from an email server to an email client?
+
+SMTP
+
+POP3
+
+SNMP
+
+HTTP
+
+##### Question 6
+
+Which application layer protocol is used to provide file-sharing and print services to Microsoft applications?
+
+HTTP
+
+SMTP
+
+DHCP
+
+SMB
+
+##### Question 7
+
+Which three protocols or standards are used at the application layer of the TCP/IP model? (Choose three.)
+
+TCP
+
+HTTP
+
+MPEG
+
+GIF
+
+IP
+
+UDP
+
+##### Question 8
+
+Why is DHCP for IPv4 preferred for use on large networks?
+
+Large networks send more requests for domain to IP address resolution than do smaller networks.
+
+DHCP uses a reliable transport layer protocol.
+
+It prevents sharing of files that are copyrighted.
+
+It is a more efficient way to manage IPv4 addresses than static address assignment is.
+
+Hosts on large networks require more IPv4 addressing configuration settings than do hosts on small networks.
+
+##### Question 9
+
+An author is uploading one chapter document from a personal computer to a file server of a book publisher. What role is the personal computer assuming in this network model?
+
+Client
+
+Agent
+
+Server
+
+Controller
+
+Transient
+
+##### Question 10
+
+Which statement is true about FTP?
+
+The client can choose if FTP is going to establish one or two connections with the server.
+
+The client can download data from or upload data to the server.
+
+FTP is a peer-to-peer application.
+
+FTP does not provide reliability during data transmission.
+
+##### Question 11
+
+A wireless host needs to request an IPv4 address. What protocol would be used to process the request?
+
+FTP
+
+HTTP
+
+DHCP
+
+ICMP
+
+SNMP
+
+##### Question 12
+
+Which TCP/IP model layer is closest to the end user?
+
+Application
+
+Internet
+
+Network access
+
+Transport
+
+##### Question 13
+
+When retrieving email messages, which protocol allows for easy, centralized storage and backup of emails that would be desirable for a small- to medium-sized business?
+
+IMAP
+
+POP
+
+SMTP
+
+HTTPS
+
+##### Question 14
+
+Which protocol uses encryption?
+
+DHCP
+
+DNS
+
+FTP
+
+HTTPS
+
+##### Question 15
+
+Which two tasks can be performed by a local DNS server? (Choose two.)
+
+Providing IP addresses to local hosts
+
+Allowing data transfer between two network devices
+
+Mapping name-to-IP addresses for internal hosts
+
+Forwarding name resolution requests between servers
+
+Retrieving email messages

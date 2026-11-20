@@ -1,0 +1,369 @@
+# Вопросы: 06 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+What is another name for the OSI data link layer?
+
+Layer 1
+
+Layer 2
+
+Layer 3
+
+Layer 6
+
+##### Question 2
+
+The IEEE 802 LAN/MAN data link layer consists of which two sublayers? (Choose two.)
+
+Network Control Protocol
+
+Logical Link Control
+
+Media Access Control
+
+Link Control Protocol
+
+##### Question 3
+
+What is the responsibility of the MAC sublayer?
+
+Adds Layer 3 addresses to the frame
+
+Communicates with the network layer (Layer 3)
+
+Provides the method to get the frame on and off the media
+
+Transmits the bits on the media
+
+##### Question 4
+
+What Layer 2 function does a router perform? (Choose three.)
+
+Accepts a frame from a medium
+
+De-encapsulates the frame
+
+Refers to its Layer 3 routing table for a matching destination network
+
+Re-encapsulates the packet into a new frame
+
+##### Question 5
+
+The media access control method used depends on which two criteria?
+
+Layer 3 IP protocol
+
+Media sharing
+
+Topology
+
+Transport layer protocol
+
+Type of data
+
+##### Question 6
+
+Which organization defines standards for the network access layer (i.e., the OSI physical and data link layers)?
+
+Cisco
+
+IANA
+
+IEEE
+
+IETF
+
+##### Question 1
+
+Which topology displays networking device layer IP addresses?
+
+Aerial topology
+
+IP address topology
+
+Logical topology
+
+Physical topology
+
+##### Question 2
+
+What kind of network would use point-to-point, hub and spoke, or mesh topologies?
+
+PAN
+
+LAN
+
+WLAN
+
+WAN
+
+##### Question 3
+
+Which LAN topology is a hybrid topology?
+
+Bus
+
+Extended star
+
+Ring
+
+Star
+
+##### Question 4
+
+Which duplex communication method is used in WLANs?
+
+Full-duplex
+
+Half-duplex
+
+Simplex
+
+##### Question 5
+
+Which media access control method is used in legacy Ethernet LANs?
+
+Carrier sense multiple access/collision annoyance
+
+Carrier sense multiple access/collision avoidance
+
+Carrier sense multiple access/collision destruction
+
+Carrier sense multiple access/collision detection
+
+##### Question 1
+
+What does the data link layer add to a Layer 3 packet to create a frame? (Choose two.)
+
+Flags
+
+Sequence number
+
+Header
+
+Trailer
+
+##### Question 2
+
+What is the function of the last field in a data link layer frame?
+
+To determine whether the frame experienced transmission errors
+
+To identify special flow control services such as quality of service (QoS)
+
+To identify the beginning and end limits of the frame
+
+To identify the Layer 3 protocol in the data field
+
+##### Question 3
+
+Which lists the Layer 2 and Layer 3 address fields in the correct order?
+
+Destination NIC address, source NIC address, source IP address, destination IP address
+
+Source NIC address, destination NIC address, source IP address, destination IP address
+
+Destination NIC address, source NIC address, destination IP address, source IP address
+
+Source NIC address, destination NIC address, destination IP address, source IP address
+
+##### Question 4
+
+Which of the following are data link layer protocols? (Choose three)
+
+802.11
+
+Ethernet
+
+IP
+
+PPP
+
+UDP
+
+##### Question 1
+
+What identifier is used at the data link layer to uniquely identify an Ethernet device?
+
+IP address
+
+MAC address
+
+Sequence number
+
+TCP port number
+
+UDP port number
+
+##### Question 2
+
+What attribute of a NIC would place it at the data link layer of the OSI model?
+
+Attached Ethernet cable
+
+IP address
+
+MAC address
+
+RJ-45 port
+
+TCP/IP protocol stack
+
+##### Question 3
+
+Which two engineering organizations define open standards and protocols that apply to the data link layer? (Choose two.)
+
+Institute of Electrical and Electronics Engineers (IEEE)
+
+Internet Assigned Numbers Authority (IANA)
+
+International Telecommunication Union (ITU)
+
+Electronic Industries Alliance (EIA)
+
+Internet Society (ISOC)
+
+##### Question 4
+
+What is true concerning physical and logical topologies?
+
+The logical topology is always the same as the physical topology.
+
+Physical topologies are concerned with how a network transfers frames.
+
+Physical topologies display the IP addressing scheme of each network.
+
+Logical topologies refer to how a network transfers data between devices.
+
+##### Question 5
+
+What method is used to manage contention-based access on a wireless network?
+
+CSMA/CD
+
+Priority ordering
+
+CSMA/CA
+
+Token passing
+
+##### Question 6
+
+A technician has been asked to develop a physical topology for a network that provides a high level of redundancy. Which physical topology requires that every node is attached to every other node on the network?
+
+Bus
+
+Hierarchical
+
+Mesh
+
+Ring
+
+Star
+
+##### Question 7
+
+Which statement describes the half-duplex mode of data transmission?
+
+Data that is transmitted over the network can only flow in one direction.
+
+Data that is transmitted over the network flows in one direction at a time.
+
+Data that is transmitted over the network flows in one direction to many different destinations simultaneously.
+
+Data that is transmitted over the network flows in both directions at the same time.
+
+##### Question 8
+
+Which is a function of the Logical Link Control (LLC) sublayer?
+
+To define the media access processes that are performed by the hardware
+
+To provide data link layer addressing
+
+To identify which network layer protocol is being used
+
+To accept segments and package them into data units that are called packets
+
+##### Question 9
+
+Which data link layer media access control method does Ethernet use with legacy Ethernet hubs?
+
+CSMA/CD
+
+Determinism
+
+Turn taking
+
+Token passing
+
+##### Question 10
+
+What are the two sublayers of the OSI model data link layer? (Choose two.)
+
+Internet
+
+Physical
+
+LLC
+
+Transport
+
+MAC
+
+Network access
+
+##### Question 11
+
+Which layer of the OSI model is responsible for specifying the encapsulation method used for specific types of media?
+
+Application
+
+Transport
+
+Data link
+
+Physical
+
+##### Question 12
+
+What type of physical topology can be created by connecting all Ethernet cables to a central device?
+
+Bus
+
+Ring
+
+Star
+
+Mesh
+
+##### Question 13
+
+What are two services performed by the data link layer of the OSI model? (Choose two.)
+
+It fragments data packets into the MTU size.
+
+It determines the path to forward packets.
+
+It accepts Layer 3 packets and encapsulates them into frames.
+
+It provides media access control and performs error detection.
+
+It monitors the Layer 2 communication by building a MAC address table.
+
+##### Question 14
+
+Although CSMA/CD is still a feature of Ethernet, why is it no longer necessary?
+
+The virtually unlimited availability of IPv6 addresses
+
+The use of CSMA/CA
+
+The use of full-duplex capable Layer 2 switches
+
+The development of half-duplex switch operation
+
+The use of Gigabit Ethernet speeds

@@ -1,0 +1,387 @@
+# Вопросы: 12 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+What is the most important motivating factor for moving to IPv6?
+
+Better performance with IPv6
+
+IPv6 addresses that are easier to work with
+
+Better security with IPv6
+
+Depletion of IPv4 addresses
+
+##### Question 2
+
+True or False: 4 out of 5 RIRs no longer have enough IPv4 addresses to allocate to customers on a regular basis.
+
+True
+
+False
+
+##### Question 3
+
+Which of the following techniques use native IPv6 connectivity?
+
+Dual stack
+
+Tunneling
+
+Translation
+
+All of the above
+
+##### Question 1
+
+What is the recommended prefix length for most IPv6 subnets?
+
+/32
+
+/48
+
+/64
+
+/128
+
+##### Question 2
+
+Which part of a GUA is assigned by the ISP?
+
+Global routing prefix
+
+Global routing prefix and subnet ID
+
+Prefix
+
+RIR prefix
+
+##### Question 3
+
+Which type of IPv6 unicast address is not routable between networks?
+
+Unique local address
+
+GUA
+
+Embedded IPv4 address
+
+LLA
+
+##### Question 4
+
+True or false? The Subnet ID field in an GUA must borrow bits from the interface ID.
+
+True
+
+False
+
+##### Question 5
+
+What type of IPv6 address begins with fe80?
+
+GUA
+
+LLA
+
+Multicast address
+
+None. An IPv6 address must begin with 2001.
+
+##### Question 1
+
+True or false? RA messages are sent to all IPv6 routers by hosts requesting addressing information.
+
+True
+
+False
+
+##### Question 2
+
+Which dynamic addressing method for GUAs is the one where devices rely solely on the contents of the RA message for their addressing information?
+
+Method 1: SLAAC
+
+Method 2: SLAAC and stateless DHCPv6
+
+Method 3: Stateful DHCPv6
+
+##### Question 3
+
+Which dynamic addressing method for GUAs is the one where devices rely solely on a DHCPv6 server for their addressing information?
+
+Method 1: SLAAC
+
+Method 2: SLAAC and stateless DHCPv6
+
+Method 3: Stateful DHCPv6
+
+##### Question 4
+
+Which dynamic addressing method for GUAs is the one where devices get their IPv6 configuration in a RA message and request DNS information from a DHCPv6 server?
+
+Method 1: SLAAC
+
+Method 2: SLAAC and stateless DHCPv6
+
+Method 3: Stateful DHCPv6
+
+##### Question 5
+
+What are the two methods a device can use to generate its own IPv6 interface ID?
+
+SLAAC
+
+Stateless DHCPv6
+
+Stateful DHCPv6
+
+EUI-64
+
+Randomly generated
+
+##### Question 1
+
+True or False? IPv6 was designed with subnetting in mind.
+
+True
+
+False
+
+##### Question 2
+
+Which field in an IPv6 GUA is used for subnetting?
+
+Prefix
+
+Network
+
+Global Routing Prefix
+
+Subnet ID
+
+Interface ID
+
+##### Question 3
+
+Given a /48 Global Routing Prefix and a /64 prefix, what is the subnet portion of the following address: 2001:db8:cafe:1111:2222:3333:4444:5555
+
+Café
+
+1111
+
+2222
+
+3333
+
+4444
+
+##### Question 4
+
+Given a /32 Global Routing Prefix and a /64 prefix, how many bits would be allocated for the Subnet ID?
+
+8
+
+16
+
+32
+
+48
+
+64
+
+##### Question 1
+
+What is the valid most compressed format possible of the IPv6 address 2001:0DB8:0000:AB00:0000:0000:0000:1234?
+
+2001:DB8:0:AB00::1234
+
+2001:DB8:0:AB::1234
+
+2001:DB8::AB00::1234
+
+2001:DB8:0:AB:0:1234
+
+##### Question 2
+
+What is the prefix associated with the IPv6 address 2001:DB8:D15:EA:CC44::1/64?
+
+2001::/64
+
+2001:DB8::/64
+
+2001:DB8:D15:EA::/64
+
+2001:DB8:D15:EA:CC44::/64
+
+##### Question 3
+
+What type of address is automatically assigned to an interface when IPv6 is enabled on that interface?
+
+Global unicast
+
+Link-local
+
+Loopback
+
+Unique local
+
+##### Question 4
+
+Which IPv6 network prefix is only intended for local links and can not be routed?
+
+2001::/3
+
+FC00::/7
+
+FE80::/10
+
+FF00::/12
+
+##### Question 5
+
+What is the purpose of the command
+
+ping ::1
+
+?
+
+It tests the internal configuration of an IPv6 host.
+
+It tests the broadcast capability of all hosts on the subnet.
+
+It tests the multicast connectivity to all hosts on the subnet.
+
+It tests the reachability of the default gateway for the network.
+
+##### Question 6
+
+What is the interface ID of the IPv6 address 2001:DB8::1000:A9CD:47FF:FE57:FE94/64?
+
+FE94
+
+FE57:FE94
+
+47FF:FE57:FE94
+
+A9CD:47FF:FE57:FE94
+
+1000:A9CD:47FF:FE57:FE94
+
+##### Question 7
+
+What is the network address for the IPv6 address 2001:DB8:AA04:B5::1/64?
+
+2001::/64
+
+2001:DB8::/64
+
+2001:DB8:AA04::/64
+
+2001:DB8:AA04:B5::/64
+
+##### Question 8
+
+Which address type is not supported in IPv6?
+
+Private
+
+Multicast
+
+Unicast
+
+Broadcast
+
+##### Question 9
+
+What is indicated by a successful ping to the ::1 IPv6 address?
+
+The host is cabled properly.
+
+The default gateway address is correctly configured.
+
+All hosts on the local link are available.
+
+The link-local address is correctly configured.
+
+IP is properly installed on the host.
+
+##### Question 10
+
+What is the most compressed representation of the IPv6 address 2001:0db8:0000:abcd:0000:0000:0000:0001?
+
+2001:0db8:abcd::1
+
+2001:db8:0:abcd::1
+
+2001:0db8:abcd::0001
+
+2001:0db8:0000:abcd::1
+
+2001:db8::abcd:0:1
+
+##### Question 11
+
+What is the minimum configuration for a router interface that is enabled for IPv6?
+
+To have a link-local IPv6 address
+
+To have both an IPv4 and an IPv6 address
+
+To have a self-generated loopback address
+
+To have both a link-local and a global unicast IPv6 address
+
+##### Question 12
+
+At a minimum, which address is required on IPv6-enabled interfaces?
+
+Link-local
+
+Unique local
+
+Site local
+
+Global unicast
+
+##### Question 13
+
+What are three parts of an IPv6 global unicast address? (Choose three.)
+
+An interface ID that is used to identify the local network for a particular host
+
+A global routing prefix that is used to identify the network portion of the address that has been provided by an ISP
+
+A subnet ID that is used to identify networks inside of the local enterprise site
+
+A global routing prefix that is used to identify the portion of the network address provided by a local administrator
+
+An interface ID that is used to identify the local host on the network
+
+##### Question 14
+
+Your organization is issued the IPv6 prefix of 2001:db8:130f::/48 by your service provider. With this prefix, how many bits are available for your organization to create /64 subnetworks if interface ID bits are not borrowed?
+
+8
+
+16
+
+80
+
+128
+
+##### Question 15
+
+Which type of IPv6 address is not routable and used only for communication on a single subnet?
+
+Global unicast address
+
+Link-local address
+
+Loopback address
+
+Unique local address
+
+Unspecified address

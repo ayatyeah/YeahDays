@@ -1,0 +1,475 @@
+# Вопросы: exam_0 (тесты)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+Match the requirements of a reliable network with the supporting network architecture.
+
+A
+
+security
+
+Protect the network from unauthorized access.
+
+B
+
+scalability
+
+Expand the network without degrading the service for existing users.
+
+C
+
+fault tolerance
+
+Provide redundant links and devices.
+
+##### Question 2
+
+Match the description with the associated IOS mode.
+
+limited number of basic monitoring commands
+
+user EXEC mode
+
+the first entrance into the CLI of an IOS device
+
+user EXEC mode
+
+accessed by entering the enable command
+
+privileged EXEC mode
+
+identified by a prompt ending with the # character
+
+privileged EXEC mode
+
+changes made affect the operation of the device as a whole
+
+global configuration mode
+
+accessed by entering the configure terminal command
+
+global configuration mode
+
+##### Question 3
+
+An administrator is configuring a switch console port with a password. In what order will the administrator travel through the IOS modes of operation in order to reach the mode in which the configuration commands will be entered?
+
+A
+
+first mode
+
+user EXEC mode
+
+B
+
+final mode
+
+line configuration mode
+
+C
+
+second mode
+
+privileged EXEC mode
+
+D
+
+third mode
+
+global configuration mode
+
+##### Question 4
+
+What are three characteristics of an SVI? (Choose three.)
+
+It is designed as a security protocol to protect switch ports.
+
+It is not associated with any physical interface on a switch.
+
+It is a special interface that allows connectivity by different types of media.
+
+It is required to allow connectivity by any device at any location.
+
+It provides a means to remotely manage a switch.
+
+It is associated with VLAN1 by default.
+
+##### Question 5
+
+Which two host names follow the guidelines for naming conventions on Cisco IOS devices? (Choose two.)
+
+Branch2!
+
+RM-3-Switch-2A4
+
+Floor(15)
+
+HO Floor 17
+
+SwBranch799
+
+##### Question 6
+
+A technician configures a switch with these commands:
+
+SwitchA(config)# interface vlan 1
+
+SwitchA(config-if)# ip address 192.168.1.1 255.255.255.0
+
+SwitchA(config-if)# no shutdown
+
+What is the technician configuring?
+
+Telnet access
+
+SVI
+
+Password encryption
+
+Physical switchport access
+
+##### Question 7
+
+A network administrator enters the service password-encryption command into the configuration mode of a router. What does this command accomplish?
+
+This command encrypts passwords as they are transmitted across serial WAN links.
+
+This command prevents someone from viewing the running configuration passwords.
+
+This command enables a strong encryption algorithm for the enable secret password command.
+
+This command automatically encrypts passwords in configuration files that are currently stored in NVRAM.
+
+This command provides an exclusive encrypted password for external service personnel who are required to do router maintenance.
+
+##### Question 8
+
+Which command or key combination allows a user to return to the previous level in the command hierarchy?
+
+End
+
+Exit
+
+Ctrl-Z
+
+Ctrl-C
+
+##### Question 9
+
+What command will prevent all unencrypted passwords from displaying in plain text in a configuration file?
+
+(config)# enable password secret
+
+(config)# enable secret Secret_Password
+
+(config-line)# password secret
+
+(config)# service password-encryption
+
+(config)# enable secret Encrypted_Password
+
+##### Question 10
+
+Passwords can be used to restrict access to all or parts of the Cisco IOS. Select the modes and interfaces that can be protected with passwords. (Choose three.)
+
+VTY interface
+
+Console interface
+
+Ethernet interface
+
+Boot IOS mode
+
+Privileged EXEC mode
+
+Router configuration mode
+
+##### Question 11
+
+What are two characteristics of RAM on a Cisco device? (Choose two.)
+
+RAM provides nonvolatile storage.
+
+The configuration that is actively running on the device is stored in RAM.
+
+The contents of RAM are lost during a power cycle.
+
+RAM is a component in Cisco switches but not in Cisco routers.
+
+RAM is able to store multiple versions of IOS and configuration files.
+
+##### Question 12
+
+What function does pressing the Tab key have when entering a command in IOS?
+
+It aborts the current command and returns to configuration mode.
+
+It exits configuration mode and returns to user EXEC mode.
+
+It moves the cursor to the beginning of the next line.
+
+It completes the remainder of a partially typed word in a command.
+
+##### Question 13
+
+What command is used to verify the condition of the switch interfaces, including the status of the interfaces and a configured IP address?
+
+ipconfig
+
+ping
+
+traceroute
+
+show ip interface brief
+
+##### Question 14
+
+While trying to solve a network issue, a technician made multiple changes to the current router configuration file. The changes did not solve the problem and were not saved. What action can the technician take to discard the changes and work with the file in NVRAM?
+
+Issue the reload command without saving the running configuration.
+
+Delete the vlan.dat file and reboot the device.
+
+Close and reopen the terminal emulation software.
+
+Issue the copy startup-config running-config command.
+
+##### Question 15
+
+After making configuration changes on a Cisco switch, a network administrator issues a copy running-config startup-config command. What is the result of issuing this command?
+
+The new configuration will be stored in flash memory.
+
+The new configuration will be loaded if the switch is restarted.
+
+The current IOS file will be replaced with the newly configured file.
+
+The configuration changes will be removed and the original configuration will be restored.
+
+##### Question 16
+
+Refer to the exhibit. A network administrator is configuring access control to switch SW1. If the administrator uses a console connection to connect to the switch, which password is needed to access user EXEC mode?
+
+letmein
+
+secretin
+
+lineconin
+
+linevtyin
+
+##### Question 17
+
+What process involves placing one PDU inside of another PDU?
+
+encapsulation
+
+encoding
+
+segmentation
+
+flow control
+
+##### Question 18
+
+At which layer of the OSI model would a logical address be added during encapsulation?
+
+physical layer
+
+data link layer
+
+network layer
+
+transport layer
+
+##### Question 19
+
+Which PDU format is used when bits are received from the network medium by the NIC of a host?
+
+file
+
+frame
+
+packet
+
+segment
+
+##### Question 20
+
+Which method allows a computer to react accordingly when it requests data from a server and the server takes too long to respond?
+
+encapsulation
+
+flow control
+
+access method
+
+response timeout
+
+##### Question 21
+
+What is a characteristic of multicast messages?
+
+They are sent to a select group of hosts.
+
+They are sent to all hosts on a network.
+
+They must be acknowledged.
+
+They are sent to a single destination.
+
+##### Question 22
+
+What layer is responsible for routing messages through an internetwork in the TCP/IP model?
+
+internet
+
+transport
+
+network access
+
+session
+
+##### Question 23
+
+What three application layer protocols are part of the TCP/IP protocol suite? (Choose three.)
+
+ARP
+
+DHCP
+
+DNS
+
+FTP
+
+NAT
+
+PPP
+
+##### Question 24
+
+What is an advantage of network devices using open standard protocols?
+
+Network communications is confined to data transfers between devices from the same vendor.
+
+A client host and a server running different operating systems can successfully exchange data.
+
+Internet access can be controlled by a single ISP in each market.
+
+Competition and innovation are limited to specific types of products.
+
+##### Question 25
+
+A web client is receiving a response for a web page from a web server. From the perspective of the client, what is the correct order of the protocol stack that is used to decode the received transmission?
+
+Ethernet, IP, TCP, HTTP
+
+HTTP, TCP, IP, Ethernet
+
+Ethernet, TCP, IP, HTTP
+
+HTTP, Ethernet, IP, TCP
+
+##### Question 26
+
+Which statement is correct about network protocols?
+
+Network protocols define the type of hardware that is used and how it is mounted in racks.
+
+They define how messages are exchanged between the source and the destination.
+
+They all function in the network access layer of TCP/IP.
+
+They are only required for exchange of messages between devices on remote networks.
+
+##### Question 27
+
+Which statement accurately describes a TCP/IP encapsulation process when a PC is sending data to the network?
+
+Data is sent from the internet layer to the network access layer.
+
+Packets are sent from the network access layer to the transport layer.
+
+Segments are sent from the transport layer to the internet layer.
+
+Frames are sent from the network access layer to the internet layer.
+
+##### Question 28
+
+Why would a Layer 2 switch need an IP address?
+
+to enable the switch to send broadcast frames to attached PCs
+
+to enable the switch to function as a default gateway
+
+to enable the switch to be managed remotely
+
+to enable the switch to receive frames from attached PCs
+
+##### Question 29
+
+Refer to the exhibit. An administrator is trying to configure the switch but receives the error message that is displayed in the exhibit. What is the problem?
+
+The entire command, configure terminal, must be used.
+
+The administrator is already in global configuration mode.
+
+The administrator must first enter privileged EXEC mode before issuing the command.
+
+The administrator must connect via the console port to access global configuration mode.
+
+##### Question 30
+
+file_download
+
+PT Activity
+
+Open the PT Activity. Perform the tasks in the activity instructions and then answer the question.
+
+What is the IP address of the switch virtual interface (SVI) on Switch0?
+
+192.168.5.10
+
+192.168.10.5
+
+192.168.10.1
+
+192.168.5.0
+
+##### Question 31
+
+Which device performs the function of determining the path that messages should take through internetworks?
+
+a router
+
+a firewall
+
+a web server
+
+a DSL modem
+
+##### Question 32
+
+What term describes a type of network used by people who work from home or from a small remote office?
+
+SOHO network
+
+BYOD
+
+Quality of service
+
+Converged network
+
+##### Question 33
+
+At which OSI layer is a destination IP address added to a PDU during the encapsulation process?
+
+network layer
+
+application layer
+
+transport layer
+
+presentation layer

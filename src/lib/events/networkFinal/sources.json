@@ -1,0 +1,127 @@
+[
+  {
+    "file": "module-01",
+    "count": 35,
+    "title": "Модуль 01"
+  },
+  {
+    "file": "module-02",
+    "count": 26,
+    "title": "Модуль 02"
+  },
+  {
+    "file": "module-03",
+    "count": 43,
+    "title": "Модуль 03"
+  },
+  {
+    "file": "module-04",
+    "count": 24,
+    "title": "Модуль 04"
+  },
+  {
+    "file": "module-05",
+    "count": 20,
+    "title": "Модуль 05"
+  },
+  {
+    "file": "module-06",
+    "count": 29,
+    "title": "Модуль 06"
+  },
+  {
+    "file": "module-07",
+    "count": 22,
+    "title": "Модуль 07"
+  },
+  {
+    "file": "module-08",
+    "count": 33,
+    "title": "Модуль 08"
+  },
+  {
+    "file": "module-09",
+    "count": 25,
+    "title": "Модуль 09"
+  },
+  {
+    "file": "module-10",
+    "count": 13,
+    "title": "Модуль 10"
+  },
+  {
+    "file": "module-11",
+    "count": 25,
+    "title": "Модуль 11"
+  },
+  {
+    "file": "module-12",
+    "count": 32,
+    "title": "Модуль 12"
+  },
+  {
+    "file": "module-13",
+    "count": 16,
+    "title": "Модуль 13"
+  },
+  {
+    "file": "module-14",
+    "count": 38,
+    "title": "Модуль 14"
+  },
+  {
+    "file": "module-15",
+    "count": 34,
+    "title": "Модуль 15"
+  },
+  {
+    "file": "module-16",
+    "count": 34,
+    "title": "Модуль 16"
+  },
+  {
+    "file": "module-17",
+    "count": 29,
+    "title": "Модуль 17"
+  },
+  {
+    "file": "test-IP_Addressing",
+    "count": 33,
+    "title": "Тест · IP_Addressing"
+  },
+  {
+    "file": "test-exam_0",
+    "count": 33,
+    "title": "Тест · exam_0"
+  },
+  {
+    "file": "test-exam_1",
+    "count": 34,
+    "title": "Тест · exam_1"
+  },
+  {
+    "file": "test-exam_2",
+    "count": 33,
+    "title": "Тест · exam_2"
+  },
+  {
+    "file": "test-exam_4",
+    "count": 32,
+    "title": "Тест · exam_4"
+  },
+  {
+    "file": "test-exam_5",
+    "count": 35,
+    "title": "Тест · exam_5"
+  },
+  {
+    "file": "test-exam_6",
+    "count": 55,
+    "title": "Тест · exam_6"
+  },
+  {
+    "file": "test-exam_7",
+    "count": 60,
+    "title": "Тест · exam_7"
+  }
+]

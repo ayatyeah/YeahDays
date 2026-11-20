@@ -1,0 +1,491 @@
+# Вопросы: IP_Addressing (тесты)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+A high school in New York (school A) is using videoconferencing technology to establish student interactions with another high school (school B) in Russia. The videoconferencing is conducted between two end devices through the Internet. The network administrator of school A configures the end device with the IP address 209.165.201.10. The administrator sends a request for the IP address for the end device in school B and the response is 192.168.25.10. Neither school is using a VPN. The administrator knows immediately that this IP will not work. Why?
+
+This is a loopback address.
+
+This is a link-local address.
+
+This is a private IP address.
+
+There is an IP address conflict.
+
+##### Question 2
+
+Match the subnetwork to a host address that would be included within the subnetwork.
+
+A
+
+192.168.1.32/27
+
+192.168.1.48
+
+B
+
+192.168.1.64/27
+
+192.168.1.68
+
+C
+
+192.168.1.96/27
+
+192.168.1.121
+
+##### Question 3
+
+How many host addresses are available on the network 172.16.128.0 with a subnet mask of 255.255.252.0?
+
+510
+
+512
+
+1022
+
+1024
+
+2046
+
+2048
+
+##### Question 4
+
+Which address prefix range is reserved for IPv4 multicast?
+
+240.0.0.0 - 254.255.255.255
+
+224.0.0.0 - 239.255.255.255
+
+169.254.0.0 - 169.254.255.255
+
+127.0.0.0 - 127.255.255.255
+
+##### Question 5
+
+What is the usable number of host IP addresses on a network that has a /26 mask?
+
+256
+
+254
+
+64
+
+62
+
+32
+
+16
+
+##### Question 6
+
+A site administrator has been told that a particular network at the site must accommodate 126 hosts. Which subnet mask would be used that contains the required number of host bits?
+
+255.255.255.0
+
+255.255.255.128
+
+255.255.255.224
+
+255.255.255.240
+
+##### Question 7
+
+Refer to the exhibit. Considering the addresses already used and having to remain within the 10.16.10.0/24 network range, which subnet address could be assigned to the network containing 25 hosts?
+
+10.16.10.160/26
+
+10.16.10.128/28
+
+10.16.10.64/27
+
+10.16.10.224/26
+
+10.16.10.240/27
+
+10.16.10.240/28
+
+##### Question 8
+
+How many bits must be borrowed from the host portion of an address to accommodate a router with five connected networks?
+
+two
+
+three
+
+four
+
+five
+
+##### Question 9
+
+How many host addresses are available on the 192.168.10.128/26 network?
+
+30
+
+32
+
+60
+
+62
+
+64
+
+##### Question 10
+
+A message is sent to all hosts on a remote network. Which type of message is it?
+
+limited broadcast
+
+multicast
+
+directed broadcast
+
+unicast
+
+##### Question 11
+
+Refer to the exhibit. An administrator must send a message to everyone on the router A network. What is the broadcast address for network 172.16.16.0/22?
+
+172.16.16.255
+
+172.16.20.255
+
+172.16.19.255
+
+172.16.23.255
+
+172.16.255.255
+
+##### Question 12
+
+What is the prefix for the host address 2001:DB8:BC15:A:12AB::1/64?
+
+2001:DB8:BC15
+
+2001:DB8:BC15:A
+
+2001:DB8:BC15:A:1
+
+2001:DB8:BC15:A:12
+
+##### Question 13
+
+What is used in the EUI-64 process to create an IPv6 interface ID on an IPv6 enabled interface?
+
+the MAC address of the IPv6 enabled interface
+
+a randomly generated 64-bit hexadecimal address
+
+an IPv6 address that is provided by a DHCPv6 server
+
+an IPv4 address that is configured on the interface
+
+##### Question 14
+
+Given IPv6 address prefix 2001:db8::/48, what will be the last subnet that is created if the subnet prefix is changed to /52?
+
+2001:db8:0:f00::/52
+
+2001:db8:0:8000::/52
+
+2001:db8:0:f::/52
+
+2001:db8:0:f000::/52
+
+##### Question 15
+
+Which address is a valid IPv6 link-local unicast address?
+
+FEC8:1::FFFF
+
+FD80::1:1234
+
+FE80::1:4545:6578:ABC1
+
+FE0A::100:7788:998F
+
+FC90:5678:4251:FFFF
+
+##### Question 16
+
+Which type of IPv6 address refers to any unicast address that is assigned to multiple hosts?
+
+unique local
+
+global unicast
+
+link-local
+
+anycast
+
+##### Question 17
+
+What are two types of IPv6 unicast addresses? (Choose two.)
+
+multicast
+
+loopback
+
+link-local
+
+anycast
+
+broadcast
+
+##### Question 18
+
+Which IPv6 prefix is reserved for communication between devices on the same link?
+
+FC00::/7
+
+2001::/32
+
+FE80::/10
+
+FDFF::/7
+
+##### Question 19
+
+Which service provides dynamic global IPv6 addressing to end devices without using a server that keeps a record of available IPv6 addresses?
+
+stateful DHCPv6
+
+SLAAC
+
+static IPv6 addressing
+
+stateless DHCPv6
+
+##### Question 20
+
+Refer to the exhibit. A company is deploying an IPv6 addressing scheme for its network. The company design document indicates that the subnet portion of the IPv6 addresses is used for the new hierarchical network design, with the site subsection to represent multiple geographical sites of the company, the sub-site section to represent multiple campuses at each site, and the subnet section to indicate each network segment separated by routers. With such a scheme, what is the maximum number of subnets achieved per sub-site?
+
+0
+
+4
+
+16
+
+256
+
+##### Question 21
+
+An IPv6 enabled device sends a data packet with the destination address of FF02::1. What is the target of this packet?
+
+the one IPv6 device on the link that has been uniquely configured with this address
+
+all IPv6 enabled devices on the local link or network
+
+only IPv6 DHCP servers
+
+only IPv6 configured routers
+
+##### Question 22
+
+Three methods allow IPv6 and IPv4 to co-exist. Match each method with its description.
+
+A
+
+The IPv4 packets and IPv6 packets coexist in the same network.
+
+dual-stack
+
+B
+
+IPv6 packets are converted into IPv4 packets, and vice versa.
+
+translation
+
+C
+
+The IPv6 packet is transported inside an IPv4 packet.
+
+tunneling
+
+##### Question 23
+
+Match the IPv6 address with the IPv6 address type.
+
+A
+
+FF02::1:FFAE:F85F
+
+solicited node multicast
+
+B
+
+::1
+
+loopback
+
+C
+
+FF02::1
+
+all node multicast
+
+D
+
+2001:DB8::BAF:3F57:FE94
+
+global unicast
+
+##### Question 24
+
+What is the purpose of ICMP messages?
+
+to inform routers about network topology changes
+
+to ensure the delivery of an IP packet
+
+to provide feedback of IP packet transmissions
+
+to monitor the process of a domain name to IP address resolution
+
+##### Question 25
+
+A user executes a traceroute over IPv6. At what point would a router in the path to the destination device drop the packet?
+
+when the value of the Hop Limit field reaches 255
+
+when the value of the Hop Limit field reaches zero
+
+when the router receives an ICMP time exceeded message
+
+when the target host responds with an ICMP echo reply message
+
+##### Question 26
+
+Refer to the exhibit. An administrator is trying to troubleshoot connectivity between PC1 and PC2 and uses the tracert command from PC1 to do it. Based on the displayed output, where should the administrator begin troubleshooting?
+
+PC2
+
+R1
+
+SW2
+
+R2
+
+SW1
+
+##### Question 27
+
+Match each description with an appropriate IP address.
+
+A
+
+an experimental address
+
+240.2.6.255
+
+B
+
+a private address
+
+172.19.20.5
+
+C
+
+a TEST-NET address
+
+192.0.2.123
+
+D
+
+a link-local address
+
+169.254.1.5
+
+E
+
+a loopback address
+
+127.0.0.1
+
+##### Question 28
+
+What is the prefix length notation for the subnet mask 255.255.255.224?
+
+/25
+
+/26
+
+/27
+
+/28
+
+##### Question 29
+
+Which subnet would include the address 192.168.1.96 as a usable host address?
+
+192.168.1.64/26
+
+192.168.1.32/27
+
+192.168.1.32/28
+
+192.168.1.64/29
+
+##### Question 30
+
+file_download
+
+PT Activity
+
+Open the PT Activity. Perform the tasks in the activity instructions and then answer the question.
+
+What are the three IPv6 addresses displayed when the route from PC1 to PC2 is traced? (Choose three.)
+
+2001:DB8:1:1::1
+
+2001:DB8:1:1::A
+
+2001:DB8:1:2::2
+
+2001:DB8:1:2::1
+
+2001:DB8:1:3::1
+
+2001:DB8:1:3::2
+
+2001:DB8:1:4::1
+
+##### Question 31
+
+A host is transmitting a multicast. Which host or hosts will receive it?
+
+a specially defined group of hosts
+
+one specific host
+
+all hosts with the same IP address
+
+the closest neighbor on the same network
+
+##### Question 32
+
+Which is the compressed format of the IPv6 address 2001:0db8:0000:0000:0000:a0b0:0008:0001?
+
+2001:db8::a0b0:8:1
+
+2001:db8::ab8:1:0:1000
+
+2001:db80:0:1::80:1
+
+2001:db8:0:1::8:1
+
+##### Question 33
+
+A user issues a ping 10.10.14.67 command and receives a response that includes a code of 0. What does this code represent?
+
+network unreachable
+
+protocol unreachable
+
+port unreachable
+
+host unreachable

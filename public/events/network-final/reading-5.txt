@@ -1,0 +1,1107 @@
+# Module 5: Number Systems
+
+Источник: NetAcad, Computer networks SE, 2026-11-07. Текстовое извлечение; видео, изображения и скрытые элементы не выгружены.
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 0%
+
+
+## 5.0 Introduction
+
+
+5.0 Introduction
+
+
+### Incomplete 5.0.1 Why should I take this module?
+
+
+5.0.1 Why should I take this module?
+
+Welcome to Number Systems!
+
+Guess what? This is a 32-bit IPv4 address of a computer in a network: 11000000.10101000.00001010.00001010. It is shown in binary. This is the IPv4 address for the same computer in dotted decimal: 192.168.10.10. Which one would you rather work with? IPv6 addresses are 128 bits! To make these addresses more manageable, IPv6 uses a hexadecimal system of 0-9 and the letters A-F.
+
+As a network administrator you must know how to convert binary addresses into dotted decimal and dotted decimal addresses into binary. You will also need to know how to convert dotted decimal into hexadecimal and vice versa. (Hint: You still need your binary conversion skills to make this work.)
+
+Surprisingly, it is not that hard when you learn a few tricks. This module contains an activity called the Binary Game which will really help you get started. So, why wait?
+
+
+### Incomplete 5.0.2 What will I learn to do in this module?
+
+
+5.0.2 What will I learn to do in this module?
+
+Module Title:
+
+Number Systems
+
+Module Objective:
+
+Calculate numbers between decimal, binary, and hexadecimal systems.
+
+Topic Title
+
+Topic Objective
+
+Binary Number System
+
+Hexadecimal Number System
+
+Progress loaded successfully…
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 5.1 Binary Number System
+
+
+5.1 Binary Number System
+
+
+### 5.1.1 Binary and IPv4 Addresses
+
+
+5.1.1 Binary and IPv4 Addresses
+
+IPv4 addresses begin as binary, a series of only 1s and 0s. These are difficult to manage, so network administrators must convert them to decimal. This topic shows you a few ways to do this.
+
+Binary is a numbering system that consists of the digits 0 and 1 called bits. In contrast, the decimal numbering system consists of 10 digits consisting of the digits 0 - 9.
+
+Binary is important for us to understand because hosts, servers, and network devices use binary addressing. Specifically, they use binary IPv4 addresses, as shown in the figure, to identify each other.
+
+There is a central router with two LANs directly connected and one WAN connected to a cloud. Each LAN has a switch and a PC. The WAN has one PC. Each device has an IPv4 address that is in dotted binary notation instead of dotted decimal notation.
+
+LAN A Network Address
+
+11000000.10101000.00001010.00000000 /24
+
+LAN B Network Address
+
+11000000.10101000.00001011.00000000 /24
+
+Each address consists of a string of 32 bits, divided into four sections called octets. Each octet contains 8 bits (or 1 byte) separated with a dot. For example, PC1 in the figure is assigned IPv4 address 11000000.10101000.00001010.00001010. Its default gateway address would be that of R1 Gigabit Ethernet interface 11000000.10101000.00001010.00000001.
+
+Binary works well with hosts and network devices. However, it is very challenging for humans to work with.
+
+For ease of use by people, IPv4 addresses are commonly expressed in dotted decimal notation. PC1 is assigned the IPv4 address 192.168.10.10, and its default gateway address is 192.168.10.1, as shown in the figure.
+
+This diagram is the same as the first, a central router with two LANs and a WAN connected to a cloud. This has the same devices as the first diagram; however, instead of having the IPv4 addressing in binary, it is in dotted decimal notation.
+
+LAN A Network Address
+
+192.168.10.0 /24
+
+LAN B Network Address
+
+192.168.11.0 /24
+
+For a solid understanding of network addressing, it is necessary to know binary addressing and gain practical skills converting between binary and dotted decimal IPv4 addresses. This section will cover how to convert between base two (binary) and base 10 (decimal) numbering systems.
+
+
+### 5.1.2 Video - Converting Between Binary and Decimal Numbering Systems
+
+
+5.1.2 Video - Converting Between Binary and Decimal Numbering Systems
+
+Click Play in the figure for a video demonstrating how to convert between binary and decimal numbering systems.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 5.1.3 Binary Positional Notation
+
+
+5.1.3 Binary Positional Notation
+
+Learning to convert binary to decimal requires an understanding of positional notation. Positional notation means that a digit represents different values depending on the “position” the digit occupies in the sequence of numbers. You already know the most common numbering system, the decimal (base 10) notation system.
+
+The decimal positional notation system operates as described in the table.
+
+(10
+
+)
+
+(10
+
+)
+
+(10
+
+)
+
+(10
+
+)
+
+The following bullets describe each row of the table.
+
+Row 1, Radix is the number base. Decimal notation is based on 10, therefore the radix is 10.
+
+Row 2, Position in number considers the position of the decimal number starting with, from right to left, 0 (1st position), 1 (2nd position), 2 (3rd position), 3 (4th position). These numbers also represent the exponential value use to calculate the positional value in the 4th row.
+
+Row 3 calculates the positional value by taking the radix and raising it by the exponential value of its position in row 2.
+
+Note:
+
+n
+
+is = 1.
+
+Row 4 positional value represents units of thousands, hundreds, tens, and ones.
+
+To use the positional system, match a given number to its positional value. The example in the table illustrates how positional notation is used with the decimal number 1234.
+
+Result
+
+1,234
+
+In contrast, the binary positional notation operates as described in the table.
+
+(2
+
+)
+
+(2
+
+)
+
+(2
+
+)
+
+(2
+
+)
+
+(2
+
+)
+
+(2
+
+)
+
+(2
+
+)
+
+(2
+
+)
+
+The following bullets describe each row of the table.
+
+Row 1, Radix is the number base. Binary notation is based on 2, therefore the radix is 2.
+
+Row 2, Position in number considers the position of the binary number starting with, from right to left, 0 (1st position), 1 (2nd position), 2 (3rd position), 3 (4th position). These numbers also represent the exponential value use to calculate the positional value in the 4th row.
+
+Row 3 calculates the positional value by taking the radix and raising it by the exponential value of its position in row 2.
+
+Note:
+
+n
+
+is = 1.
+
+Row 4 positional value represents units of ones, twos, fours, eights, etc.
+
+The example in the table illustrates how a binary number 11000000 corresponds to the number 192. If the binary number had been 10101000, then the corresponding decimal number would be 168.
+
+Result
+
+192
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 5.1.4 Check Your Understanding - Binary Number System
+
+
+Instructions:
+
+The exam consists of
+
+2
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+Which is the binary equivalent to the 192.168.11.10 IP address?
+
+11000000‬.11000000.00001011‬.‭00001010‬‬
+
+11000000.10101000‬.00001011‬.‭00001010
+
+11000000.10101000‬.00001010‬.‭00001011‬‬
+
+11000000.10101000‬.00001011‬.‭00010010‬‬
+
+
+##### Question 2
+
+
+Which of the following is the binary equivalent to the 172.16.31.30 IP address?
+
+11000000.00010000‬.00011111‬.‭00011110‬‬
+
+10101000.00010000‬.00011111‬.‭00011110‬‬
+
+10101100.00010000‬.00011110‬.‭00011110‬‬
+
+10101100.00010000‬.00011111‬.‭00011110‬‬
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+
+### 5.1.5 Convert Binary to Decimal
+
+
+5.1.5 Convert Binary to Decimal
+
+To convert a binary IPv4 address to its dotted decimal equivalent, divide the IPv4 address into four 8-bit octets. Next apply the binary positional value to the first octet binary number and calculate accordingly.
+
+For example, consider that 11000000.10101000.00001011.00001010 is the binary IPv4 address of a host. To convert the binary address to decimal, start with the first octet, as shown in the table. Enter the 8-bit binary number under the positional value of row 1 and then calculate to produce the decimal number 192. This number goes into the first octet of the dotted decimal notation.
+
+Result
+
+192
+
+Next convert the second octet of 10101000 as shown in the table. The resulting decimal value is 168, and it goes into the second octet.
+
+Result
+
+168
+
+Convert the third octet of 00001011 as shown in the table.
+
+Result
+
+11
+
+Convert the fourth octet of 00001010 as shown in the table. This completes the IP address and produces
+
+192.168.11.10
+
+.
+
+Result
+
+10
+
+
+### 5.1.6 Activity - Binary to Decimal Conversions
+
+
+5.1.6 Activity - Binary to Decimal Conversions
+
+Instructions
+
+This activity allows you to practice 8-bit binary to decimal conversion as much as necessary. We recommend that you work with this tool until you are able to do the conversion without error. Convert the binary number shown in the octet to its decimal value.
+
+Enter decimal answer below.
+
+0
+
+1
+
+Binary Number
+
+
+### 5.1.7 Decimal to Binary Conversion
+
+
+5.1.7 Decimal to Binary Conversion
+
+It is also necessary to understand how to convert a dotted decimal IPv4 address to binary. A useful tool is the binary positional value table.
+
+Click each position starting at 128 and work your way from left to right to the 1 position.
+
+128
+
+64
+
+32
+
+16
+
+8
+
+4
+
+2
+
+1
+
+Is the decimal number of the octet (n) equal to or greater than the most-significant bit (
+
+128
+
+)?
+
+If no, then enter binary
+
+0
+
+in the
+
+128
+
+positional value.
+
+If yes, then add a binary
+
+1
+
+in the
+
+128
+
+positional value and subtract
+
+128
+
+from the decimal number.
+
+The graphic shows a table that has 8 columns for one Byte or 8 bits. The top row shows the values from left to right; 128, 64, 32, 16, 8, 4, 2, 1. To the left of this top line are the words Positional Value. The bottom row is blank, but field under 128 is highlighted when selecting the 128 tab. Above the table is a flow chart that has only one proposition n > or = 128. No is to the left and Yes is to the right. There is a line going from the proposition in the center, one line to the left and one line to the right. The line moves across the top and then once it clears the chart, the line points straight down. On the No side or the left is a box with Add zero in it and a new line points to the highlighted field. On the right or Yes side the box has Add one. The line then continues and points to the highlighted field under 128. Under the Add one box is another line that points down to another box that has n - 128. Where the original number will subtract 128 from it and then consider the next column with 64.
+
+No
+
+n >= 128
+
+Yes
+
+Positional Value
+
+Add 0
+
+Add 1
+
+n - 128
+
+
+### 5.1.8 Decimal to Binary Conversion Example
+
+
+5.1.8 Decimal to Binary Conversion Example
+
+To help understand the process, consider the IP address
+
+192.168.10.11
+
+.
+
+The first octet number
+
+192
+
+is converted to binary using the previously explained positional notation process.
+
+It is possible to bypass the process of subtraction with easier or smaller decimal numbers. For instance, notice that it is fairly easy to calculate the third octet converted to a binary number without actually going through the subtraction process (8 + 2 = 10). The binary value of the third octet is
+
+00001010
+
+.
+
+The fourth octet is 11 (8 + 2 + 1). The binary value of the fourth octet is
+
+00001011
+
+.
+
+Converting between binary and decimal may seem challenging at first, but with practice it should become easier over time.
+
+Click each step to see the conversion of the IP address of
+
+192.168.10.11
+
+into binary.
+
+Step 1
+
+Step 2
+
+Step 3
+
+Step 4
+
+Step 5
+
+Step 6
+
+Step 7
+
+Step 8
+
+Step 9
+
+Step 10
+
+Step 11
+
+Is the first octet number
+
+192
+
+equal to or greater than the high-order bit
+
+128
+
+?
+
+Yes it is, therefore add a
+
+1
+
+to the high-order positional value to a represent
+
+128
+
+.
+
+Subtract
+
+128
+
+from
+
+192
+
+to produce a remainder of
+
+64
+
+.
+
+When selecting the Step 1 button, the graphic states Example: 192.168.10.11 with 192 in a different color. To the Right of that is a diamond that states: 192 > or = 128. There is a Yes on the right side of the diamond. A table is shown below that contains 8 columns for one Byte or 8 bits. The top row shows the values from left to right: 128, 64, 32, 16, 8, 4, 2, and 1 with the words Positional Value to the left. The bottom row field under 128 is highlighted. Above the table, from the flow chart diamond with Yes is to the right is line that moves across the top and then once it clears the chart, the line points straight down to a box that has Add one. The line then continues under the chart and points to the highlighted field under 128. Under the Add one box is another line that points down to another box that has 192 - 128 = 64. There is also a 1 under the 128 in the highlighted field; the other columns are still blank on this line.
+
+Example: 192.168.10.11
+
+Yes
+
+Positional Value
+
+192 >= 128
+
+192 - 128 = 64
+
+Add 1
+
+
+### 5.1.9 Activity - Decimal to Binary Conversions
+
+
+5.1.9 Activity - Decimal to Binary Conversions
+
+Instructions
+
+This activity allows you to practice decimal conversions to 8-bit binary values. We recommend that you work with this tool until you are able to do the conversion without error. Convert the decimal number shown in the Decimal Value row to its binary bits.
+
+
+### 5.1.10 Activity - Binary Game
+
+
+5.1.10 Activity - Binary Game
+
+This is a fun way to learn binary numbers for networking.
+
+Game
+
+Link:
+
+You will need to log in to
+
+to use this link. It will be necessary to create an account if you do not already have one.
+
+There are also a variety of free mobile binary games. Search for "binary game" in your app store.
+
+
+### 5.1.11 IPv4 Addresses
+
+
+5.1.11 IPv4 Addresses
+
+As mentioned in the beginning of this topic, routers and computers only understand binary, while humans work in decimal. It is important for you to gain a thorough understanding of these two numbering systems and how they are used in networking.
+
+Click each button to contrast the dotted decimal address and the 32-bit address.
+
+Dotted Decimal Address
+
+Octets
+
+32-bit Address
+
+192.168.10.10 is an IP address that is assigned to a computer.
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 5.2 Hexadecimal Number System
+
+
+5.2 Hexadecimal Number System
+
+
+### 5.2.1 Hexadecimal and IPv6 Addresses
+
+
+5.2.1 Hexadecimal and IPv6 Addresses
+
+Now you know how to convert binary to decimal and decimal to binary. You need that skill to understand IPv4 addressing in your network. But you are just as likely to be using IPv6 addresses in your network. To understand IPv6 addresses, you must be able to convert hexadecimal to decimal and vice versa.
+
+Just as decimal is a base ten number system, hexadecimal is a base sixteen system. The base sixteen number system uses the digits 0 to 9 and the letters A to F. The figure shows the equivalent decimal and hexadecimal values for binary 0000 to 1111.
+
+This graphic has three columns. The first column has the numbers 0 through 15 in decimal. The second column has the numbers 0 through 15 in binary. All of the numbers in binary are expressed with 4 place values. For example 0 is 0000, 10 is 1010, 15 is 1111, etc. The third column is parallel with the other two columns. This column has the numbers 0 through 15 in hexadecimal. These are expressed with one value. For example 5 is 5, 10 is A, 11 is B, 12 is C, 13 is D, 14 is E, and 15 is F. It should be noted that these may be expressed with upper or lower case. In this diagram they are all upper case letters representing the numeric values.
+
+Decimal
+
+Binary
+
+Hexadecimal
+
+Binary and hexadecimal work well together because it is easier to express a value as a single hexadecimal digit than as four binary bits.
+
+The hexadecimal numbering system is used in networking to represent IP Version 6 addresses and Ethernet MAC addresses.
+
+IPv6 addresses are 128 bits in length and every 4 bits is represented by a single hexadecimal digit; for a total of 32 hexadecimal values. IPv6 addresses are not case-sensitive and can be written in either lowercase or uppercase.
+
+As shown in the figure, the preferred format for writing an IPv6 address is x:x:x:x:x:x:x:x, with each “x” consisting of four hexadecimal values. When referring to 8 bits of an IPv4 address we use the term octet. In IPv6, a
+
+is the unofficial term used to refer to a segment of 16 bits or four hexadecimal values. Each “x” is a single hextet, 16 bits, or four hexadecimal digits.
+
+This graphic has a top line with the 8 hextets of the IPv6 address expressed as X:X:X:X:X:X:X:X. Beneath each X are the numbers 0000 representing the first number that can be in this field below each 0 is the to and below that are the lower case numbers ffff representing the maximum value that can be made in a single hextet. Under the X in the fourth hextet is an orange arrow pointing to the numbers 0000 to ffff, which are in a box. Under the box is another arrow point down to to a section of numbers. At the center of the arrow is the statement 4 hexadecimal digits = 16 binary digits. Under the arrow are a section of numbers with four parts. Each of the four parts has 0000 under that the word to under that the numbers 1111. This is to represent the binary of each hexadecimal number, since each number is made of 4 binary digits and there are 4 hexadecimal digits in each hextet for a total of 16 bits.
+
+4 hexadecimal digits = 16 binary digits
+
+to
+
+The sample topology in the figure displays IPv6 hexadecimal addresses.
+
+
+### 5.2.2 Video - Converting Between Hexadecimal and Decimal Numbering Systems
+
+
+5.2.2 Video - Converting Between Hexadecimal and Decimal Numbering Systems
+
+Click Play in the video to see how to convert between hexadecimal and decimal numbering systems.
+
+play_arrow
+
+
+#### Transcript
+
+
+Follow along using the transcript.
+
+
+### 5.2.3 Decimal to Hexadecimal Conversions
+
+
+5.2.3 Decimal to Hexadecimal Conversions
+
+Converting decimal numbers to hexadecimal values is straightforward. Follow the steps listed:
+
+Convert the decimal number to 8-bit binary strings.
+
+Divide the binary strings in groups of four starting from the rightmost position.
+
+Convert each four binary numbers into their equivalent hexadecimal digit.
+
+The example provides the steps for converting
+
+168
+
+to hexadecimal.
+
+For example,
+
+168
+
+converted into hex using the three-step process.
+
+168
+
+in binary is
+
+10101000
+
+.
+
+10101000
+
+in two groups of four binary digits is
+
+1010
+
+and
+
+1000
+
+.
+
+1010
+
+is hex
+
+A
+
+and
+
+1000
+
+is hex
+
+8
+
+.
+
+Answer:
+
+168
+
+is
+
+A8
+
+in hexadecimal.
+
+
+### 5.2.4 Hexadecimal to Decimal Conversion
+
+
+5.2.4 Hexadecimal to Decimal Conversion
+
+Converting hexadecimal numbers to decimal values is also straightforward. Follow the steps listed:
+
+Convert the hexadecimal number to 4-bit binary strings.
+
+Create 8-bit binary grouping starting from the rightmost position.
+
+Convert each 8-bit binary grouping into their equivalent decimal digit.
+
+This example provides the steps for converting
+
+D2
+
+to decimal.
+
+D2
+
+in 4-bit binary strings is
+
+1101
+
+and
+
+0010
+
+.
+
+1101
+
+and
+
+0010
+
+is
+
+11010010
+
+in an 8-bit grouping.
+
+11010010
+
+in binary is equivalent to
+
+210
+
+in decimal.
+
+Answer:
+
+D2
+
+in hexadecimal is
+
+210
+
+in decimal.
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### 5.2.5 Check Your Understanding - Hexadecimal Number System
+
+
+Instructions:
+
+The exam consists of
+
+4
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+Which is the hexadecimal equivalent of 202?
+
+B10
+
+BA
+
+C10
+
+CA
+
+
+##### Question 2
+
+
+Which is the hexadecimal equivalent of 254?
+
+EA
+
+ED
+
+FA
+
+FE
+
+
+##### Question 3
+
+
+Which is the decimal equivalent of A9?
+
+168
+
+169
+
+170
+
+171
+
+
+##### Question 4
+
+
+Which of the following is the decimal equivalent of 7D?
+
+124
+
+125
+
+126
+
+127
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset
+
+Back Search Theme Appearance Language Picker Exit Course Module Progress Page Level Progress: 100%
+
+
+## 5.3 Module Practice and Quiz
+
+
+5.3 Module Practice and Quiz
+
+
+### 5.3.1 What did I learn in this module?
+
+
+5.3.1 What did I learn in this module?
+
+Binary Number System
+
+Binary is a numbering system that consists of the numbers 0 and 1 called bits. In contrast, the decimal numbering system consists of 10 digits consisting of the numbers 0 - 9. Binary is important for us to understand because hosts, servers, and network devices use binary addressing, specifically, binary IPv4 addresses, to identify each other. You must know binary addressing and how to convert between binary and dotted decimal IPv4 addresses. This topic presented a few ways to convert decimal to binary and binary to decimal.
+
+Hexadecimal Number System
+
+Just as decimal is a base ten number system, hexadecimal is a base sixteen system. The base sixteen number system uses the numbers 0 to 9 and the letters A to F. The hexadecimal numbering system is used in networking to represent IPv6 addresses and Ethernet MAC addresses. IPv6 addresses are 128 bits in length and every 4 bits is represented by a single hexadecimal digit; for a total of 32 hexadecimal values. To convert hexadecimal to decimal, you must first convert the hexadecimal to binary, then convert the binary to decimal. To convert decimal to hexadecimal, you must also first convert the decimal to binary.
+
+arrow_back_ios
+
+arrow_forward_ios
+
+
+### Module Quiz - Number Systems
+
+
+Instructions:
+
+The exam consists of
+
+14
+
+questions and
+
+70
+
+% is required to pass.
+
+You have
+
+unlimited attempts
+
+to pass the exam.
+
+You have no time limit per attempt to pass the exam.
+
+
+##### Question 1
+
+
+What is the binary representation for the decimal number 173?
+
+10100111
+
+10100101
+
+10101101
+
+10110101
+
+
+##### Question 2
+
+
+Given the binary address of 11101100 00010001 00001100 00001010, which address does this represent in dotted decimal format?
+
+234.17.10.9
+
+234.16.12.10
+
+236.17.12.6
+
+236.17.12.10
+
+
+##### Question 3
+
+
+How many binary bits exist within an IPv6 address?
+
+32
+
+48
+
+64
+
+128
+
+256
+
+
+##### Question 4
+
+
+What is the binary equivalent of the decimal number 232?
+
+11101000
+
+11000110
+
+10011000
+
+11110010
+
+
+##### Question 5
+
+
+Which two statements are correct about IPv4 and IPv6 addresses? (Choose two.)
+
+IPv6 addresses are represented by hexadecimal numbers.
+
+IPv4 addresses are represented by hexadecimal numbers.
+
+IPv6 addresses are 32 bits in length.
+
+IPv4 addresses are 32 bits in length.
+
+IPv4 addresses are 128 bits in length.
+
+IPv6 addresses are 64 bits in length.
+
+
+##### Question 6
+
+
+Which IPv4 address format was created for ease of use by people and is expressed as 201.192.1.14?
+
+Binary
+
+Dotted decimal
+
+Hexadecimal
+
+ASCII
+
+
+##### Question 7
+
+
+What is the dotted decimal representation of the IPv4 address 11001011.00000000.01110001.11010011?
+
+192.0.2.199
+
+198.51.100.201
+
+203.0.113.211
+
+209.165.201.223
+
+
+##### Question 8
+
+
+What is the decimal equivalent of the binary number 10010101?
+
+149
+
+157
+
+168
+
+192
+
+
+##### Question 9
+
+
+What is the decimal equivalent of the hex number 0x3F?
+
+63
+
+77
+
+87
+
+93
+
+
+##### Question 10
+
+
+What is the dotted decimal representation of the IPv4 address which is represented as the binary string 00001010.01100100.00010101.00000001?
+
+10.100.21.1
+
+10.10.20.1
+
+100.10.11.1
+
+100.21.10.1
+
+
+##### Question 11
+
+
+What is the decimal equivalent of 0xC9?
+
+185
+
+200
+
+201
+
+199
+
+
+##### Question 12
+
+
+Which is a valid hexadecimal number?
+
+F
+
+G
+
+H
+
+J
+
+
+##### Question 13
+
+
+What is the binary representation of 0xCA?
+
+10111010
+
+11010101
+
+11001010
+
+11011010
+
+
+##### Question 14
+
+
+How many bits are in an IPv4 address?
+
+32
+
+64
+
+128
+
+256
+
+100%
+
+You have scored 100%.
+
+Congratulations, you have passed the exam.
+
+Reset

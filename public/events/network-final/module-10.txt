@@ -1,0 +1,259 @@
+# Вопросы: 10 (модули)
+
+Источник: NetAcad, отображаемый вариант. Выбранные ответы не являются проверенным ключом. Изображения и интерактивные сопоставления см. в курсе.
+
+##### Question 1
+
+A router boots and enters setup mode. What is the reason for this?
+
+The IOS image is corrupt.
+
+Cisco IOS is missing from flash memory.
+
+The configuration file is missing from NVRAM.
+
+The POST process has detected hardware failure.
+
+##### Question 2
+
+Which command is used to encrypt all passwords in a router configuration file?
+
+Router_A (config) #
+
+enable secret
+
+<password>
+
+Router_A (config) #
+
+service password-encryption
+
+Router_A (config) #
+
+enable password
+
+Router_A (config) #
+
+encrypt password
+
+##### Question 3
+
+Company policy requires using the most secure method to safeguard access to the privileged exec and configuration mode on the routers. The privileged exec password is
+
+. Which of the following router commands achieves the goal of providing the highest level of security?
+
+secret password trustknow1
+
+enable password trustknow1
+
+service password-encryption
+
+enable secret trustknow1
+
+##### Question 4
+
+What will be the response from the router after the command, "router(config)#
+
+hostname portsmouth
+
+\" is entered?
+
+portsmouth#
+
+portsmouth(config)#
+
+invalid input detected
+
+router(config-host)#
+
+hostname = portsmouth
+
+portsmouth#
+
+? command not recognized
+
+router(config)#
+
+##### Question 5
+
+An administrator is configuring a new router to permit out-of-band management access. Which set of commands will allow the required login using a password of
+
+cisco
+
+?
+
+Router(config)#
+
+line vty 0 4
+
+Router(config-line)#
+
+password manage
+
+Router(config-line)#
+
+exit
+
+Router(config)#
+
+enable password cisco
+
+Router(config)#
+
+line vty 0 4
+
+Router(config-line)#
+
+password cisco
+
+Router(config-line)#
+
+login
+
+Router(config)#
+
+line console 0
+
+Router(config-line)#
+
+password cisco
+
+Router(config-line)#
+
+login
+
+Router(config)#
+
+line console 0
+
+Router(config-line)#
+
+password cisco
+
+Router(config-line)#
+
+exit
+
+Router(config)#
+
+service password-encryption
+
+##### Question 6
+
+Which command can be used on a Cisco router to display all interfaces, the IPv4 address assigned, and the current status?
+
+show ip interface brief
+
+ping
+
+show ip route
+
+show interface fa0/1
+
+##### Question 7
+
+Which CLI mode allows users to access all device commands, such as those used for configuration, management, and troubleshooting?
+
+User EXEC mode
+
+Privileged EXEC mode
+
+Global configuration mode
+
+Interface configuration mode
+
+##### Question 8
+
+What is the purpose of the startup configuration file on a Cisco router?
+
+To facilitate the basic operation of the hardware components of a device
+
+To contain the commands that are used to initially configure a router on startup
+
+To contain the configuration commands that the router IOS is currently using
+
+To provide a limited backup version of the IOS, in case the router cannot load the full featured IOS
+
+##### Question 9
+
+Which characteristic describes the default gateway of a host computer?
+
+The logical address of the router interface on the same network as the host computer
+
+The physical address of the switch interface connected to the host computer
+
+The physical address of the router interface on the same network as the host computer
+
+The logical address assigned to the switch interface connected to the router
+
+##### Question 10
+
+What is the purpose of the
+
+banner motd
+
+command?
+
+It configures a message that will identify printed documents to LAN users.
+
+It is a way that routers communicate the status of their links with one another.
+
+It provides an easy way of communicating with any user attached to a router's LANs.
+
+It provides a way to make announcements to those who log in to a router.
+
+##### Question 11
+
+A technician is configuring a router to allow for all forms of management access. As part of each different type of access, the technician is trying to type the command
+
+login.
+
+Which configuration mode should be entered to do this task?
+
+User executive mode
+
+Global configuration mode
+
+Any line configuration mode
+
+Privileged EXEC mode
+
+##### Question 12
+
+What is stored in the NVRAM of a Cisco router?
+
+The Cisco IOS
+
+The running configuration
+
+The bootup instructions
+
+The startup configuration
+
+##### Question 13
+
+Which statement regarding the
+
+service password-encryption
+
+command is true?
+
+It is configured in privileged EXEC mode.
+
+It encrypts only line mode passwords.
+
+As soon as the
+
+service password-encryption
+
+command is entered, all currently set passwords formerly displayed in plain text are encrypted.
+
+To see the passwords encrypted by the
+
+service password-encryption
+
+command in plain text, issue the
+
+no service password-encryption
+
+command.

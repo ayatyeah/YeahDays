@@ -1,5 +1,8 @@
 import ReadingLanguage, {readingLanguage} from '@/components/events/ReadingLanguage';
 import {readingEnglish} from '@/lib/events/networkFinal/readingEnglish';
+import {auth} from '@/auth';
+import {prisma} from '@/lib/db';
+import {revalidatePath} from 'next/cache';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import EventNotes from '@/components/EventNotes';
@@ -22,6 +25,19 @@ export default async function Reading({params}:{params:Promise<{section:string;u
   const parts=lecturePage?lecture.parts:module.parts;
   const source=lecturePage?book.sources.find(s=>s.lectureId===lecture.id):undefined;
   const base='/events/courses/computer-networks';
+  const userId=(await auth())?.user?.id;
+  const eventId='network-reading:'+section+':'+unit;
+  const row=userId?await prisma.eventProgress.findUnique({where:{userId_eventId:{userId,eventId}},select:{percent:true}}):null;
+  const read=row?.percent===100;
+  async function markReading(){
+    'use server';
+    const viewer=(await auth())?.user?.id;
+    if(!viewer||viewer!==userId)return;
+    const percent=read?0:100;
+    await prisma.eventProgress.upsert({where:{userId_eventId:{userId:viewer,eventId}},create:{userId:viewer,eventId,data:{},percent},update:{percent}});
+    revalidatePath(base+'/'+section);
+    revalidatePath(base+'/'+section+'/'+unit);
+  }
   const lang=await readingLanguage();
   const en=lang==="en";
   const local=topics.map(t=>{const [title,terms,scenario,explanation,question,answer]=readingEnglish[t.id-1];return {...(en?{...t,title,scenario,explanation,question,answer}:t),terms};});
@@ -29,6 +45,7 @@ export default async function Reading({params}:{params:Promise<{section:string;u
     <Link className={styles.back} href={base+'/'+section}>← {lecturePage?(en?'Lectures':'Лекции'):(en?'Module theory':'Теория по модулям')}</Link>
     <ReadingLanguage lang={lang}/>
     <h1>{lecturePage?lecture.title[lang]:`${en?'Module':'Модуль'} ${n}. ${local[0].title}`}</h1>
+    {userId && <form action={markReading}><button className="f-button" aria-pressed={read}>{read?(en?'✓ Read · mark as unread':'✓ Прочитано · снять отметку'):(en?'Mark as read':'Отметить как прочитанное')}</button></form>}
     {local.map(t=><section key={t.id}><h2>{t.scenario}</h2><p>{t.explanation}</p>{!en && <p><strong>Термины для экзамена. </strong>{t.terms}</p>}</section>)}
     {parts.length>1 && <nav aria-label={en?"Topics":"Темы"}><ol>{parts.map(p=><li key={p.id}><a href={'#'+p.id}>{p.title[lang]}</a></li>)}</ol></nav>}
     {parts.map(p=><section key={p.id} id={p.id} className={styles.reading}><h2>{p.title[lang]}</h2><EventNotes text={p.notes[lang]} lang={lang}/></section>)}

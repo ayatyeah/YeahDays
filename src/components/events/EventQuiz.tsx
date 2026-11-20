@@ -22,7 +22,7 @@ export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { co
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, reviewDuringQuiz = true,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, reviewDuringQuiz = true, resume, onNavigate,
 }: {
   eventId: string;
   step: Pick<Step, "title">;
@@ -32,6 +32,8 @@ export default function EventQuiz({
   onLang?: () => void;
   explainOptionsOpen?: boolean;
   reviewDuringQuiz?: boolean;
+  resume?: {index:number; answers:number[][]};
+  onNavigate?: (index:number)=>void;
   onMusic: () => void;
   onExit: () => void;
   onFinish: (answers: number[][]) => void;
@@ -40,8 +42,9 @@ export default function EventQuiz({
   const tl = useContentLang();
   const [navigationHost, setNavigationHost] = useState<HTMLElement | null>(null);
   useEffect(() => { setNavigationHost(document.body); }, []);
-  const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[][]>([]);
+  const [index, setIndex] = useState(resume?.index ?? 0);
+  function navigate(i:number){setIndex(i);onNavigate?.(i); }
+  const [answers, setAnswers] = useState<number[][]>(resume?.answers ?? []);
   const answeredCount = answers.filter(Boolean).length;
   const [answeredAt, setAnsweredAt] = useState<Record<string, number>>({});
   const [reviewAt, setReviewAt] = useState<number | null>(null);
@@ -79,7 +82,7 @@ export default function EventQuiz({
 
   const missed = readyForReview(missedQuestions(quiz, answers, mastered), answeredAt, answeredCount);
   function advance() {
-    if (index + 1 === quiz.length) onFinish(answers); else setIndex(i => i + 1);
+    if (index + 1 === quiz.length) onFinish(answers); else navigate(index+1);
   }
 
   return (
@@ -182,7 +185,7 @@ export default function EventQuiz({
           </div>
         )}
         {navigationHost && createPortal(<nav className={styles.navigation} aria-label="Question navigation">
-          <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Back</Button>
+          <Button disabled={index === 0} onClick={() => navigate(index-1)}>← Back</Button>
           <Button variant="primary" className="flex-1" disabled={!answered}
             onClick={() => { if (reviewAt !== null && answeredCount >= reviewAt && missed.length) setReviewing(true); else advance(); }}>
             {index + 1 === quiz.length ? "Finish quiz" : "Next"}

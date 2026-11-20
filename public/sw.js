@@ -246,7 +246,8 @@ self.addEventListener("fetch", (event) => {
   // API никогда не кэшируем: /api/state — это синк аккаунта, и ответ из
   // кэша отдавал устаревший снимок («аккаунт не обновляется» при входе).
   const authPage = url.pathname === "/login" || url.pathname.startsWith("/login/") || url.pathname === "/register";
-  if (url.pathname.startsWith("/api/") || authPage) {
+  const personalReading = /^\/events\/courses\/computer-networks\/(practice$|theory(?:\/|$)|lectures(?:\/|$))/.test(url.pathname);
+  if (url.pathname.startsWith("/api/") || authPage || personalReading) {
     if (request.mode === "navigate") {
       // Preload has already sent this request. Ignoring it replays OAuth's
       // single-use code and Microsoft rejects the second exchange (invalid_grant).

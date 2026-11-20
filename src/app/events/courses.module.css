@@ -26,3 +26,5 @@
 .readingLanguage {display:flex;gap:4px;width:max-content;margin:6px 0 16px;padding:3px;border:1px solid var(--g-border);border-radius:14px}
 .readingLanguage button {padding:8px 16px;min-height:44px;border-radius:11px;cursor:pointer}
 .readingLanguage button[aria-pressed=true] {background:var(--g-accent);color:var(--g-on-accent)}
+
+.sectionTitle {font-size:1.4rem;font-weight:600;margin:2rem 0 1.5rem}

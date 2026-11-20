@@ -9,5 +9,5 @@ export default async function PracticeGroup({params}:{params:Promise<{group:stri
   const {group} = await params;
   const entry = groups.find(g=>g.id===group);
   if (!entry) notFound();
-  return <main style={{maxWidth:840,margin:'0 auto',padding:'16px 12px 128px'}}><NetworkPracticeQuiz key={group} title={entry.title} questions={questionsFor(group)}/></main>;
+  return <main style={{maxWidth:840,margin:'0 auto',padding:'16px 12px 128px'}}><NetworkPracticeQuiz key={group} group={group} title={entry.title} questions={questionsFor(group)}/></main>;
 }

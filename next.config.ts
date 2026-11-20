@@ -47,6 +47,14 @@ const nextConfig: NextConfig = {
     staleTimes: { static: 1800 },
   },
 
+  async redirects() {
+    return ["module", "test"].map(prefix => ({
+      source: `/events/network-final/${prefix}-:set.txt`,
+      destination: `/events/courses/computer-networks/practice/${prefix}-:set`,
+      permanent: false,
+    }));
+  },
+
   async headers() {
     return [
       {

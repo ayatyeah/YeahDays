@@ -1,4 +1,5 @@
 "use client";
+import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "@/components/events/QuestionLanguage";
 import QuizStage from "@/components/events/QuizStage";
 import { useCopy } from "@/i18n/useCopy";
@@ -130,9 +131,9 @@ export default function Quiz({ goalId, kind, unitId, onDone, onClose }: { goalId
           {item.options.map((o, i) => {
             const state = !answered ? "" : i === outcome?.correctIndex ? "right" : i === choice ? "wrong" : "";
             return (
-              <button key={i} data-answer-state={state === "right" ? "correct" : state === "wrong" ? "wrong" : undefined} className={`path-option ${state}`} aria-pressed={choice === i} disabled={answered || busy} onClick={() => setChoice(i)} data-no-i18n>
+              <AnswerOption key={i} data-answer-state={state === "right" ? "correct" : state === "wrong" ? "wrong" : undefined} className={`path-option ${state}`} aria-pressed={choice === i} disabled={answered || busy} onClick={() => setChoice(i)} data-no-i18n>
                 <QuestionText>{o}</QuestionText>
-              </button>
+              </AnswerOption>
             );
           })}
         </div>

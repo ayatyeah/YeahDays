@@ -1,3 +1,23 @@
 .scrollTarget { scroll-margin-top:120px; }
 :global(.g-notes-page) .scrollTarget { scroll-margin-top:300px; }
 :global(.p-shell[data-clean-mode=true]) .scrollTarget { scroll-margin-top:100px; }
+
+.navigation {
+  position: fixed;
+  z-index: 45;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(32rem, calc(100vw - 32px));
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: 0 4px 20px #0002;
+}
+@media (max-width: 768px) {
+  .navigation { bottom: calc(78px + env(safe-area-inset-bottom)); }
+}

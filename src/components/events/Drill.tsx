@@ -1,4 +1,5 @@
 "use client";
+import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
@@ -66,7 +67,6 @@ export default function Drill({
   const [traps, setTraps] = useState(false);
   const [summary, setSummary] = useState<{ right: number; total: number; gained: number } | null>(null);
   const tally = useRef({ right: 0, total: 0, before: 0 });
-  const feedback = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setState(loadDrill(userId, event.id));
@@ -76,10 +76,6 @@ export default function Drill({
   const item = round?.[index];
   const answered = picked !== undefined;
   useTutorDetail(item ? { quiz: { question: item.q, options: item.options, picked, correct: answered ? item.correct : undefined, index, total: round!.length } } : null, item ? `drill ${index + 1}/${round!.length}` : "");
-
-  useEffect(() => {
-    if (answered) feedback.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }, [answered, index]);
 
   const all = stats(event, state);
   const current = stats(event, state, scope);
@@ -165,7 +161,7 @@ export default function Drill({
               const right = answered && i === item.correct;
               const wrong = answered && i === picked && i !== item.correct;
               return (
-                <button
+                <AnswerOption
                   key={`${index}-${i}`}
                   data-selection-question lang="en"
                   data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
@@ -180,13 +176,13 @@ export default function Drill({
                   )}
                 >
                   {right && "✓ "}{wrong && "✗ "}<QuestionText>{option}</QuestionText>
-                </button>
+                </AnswerOption>
               );
             })}
           </div>
 
           {answered && (
-            <div ref={feedback} className="mt-4 scroll-mb-28 space-y-3">
+            <div className="mt-4 scroll-mb-28 space-y-3">
               <div role="status" className="rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm">
                 <p className="font-semibold">
                   {picked === item.correct

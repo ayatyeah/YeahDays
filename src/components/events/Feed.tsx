@@ -1,4 +1,5 @@
 "use client";
+import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
@@ -480,7 +481,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
             const ok = picked !== null && i === q.correct;
             const bad = picked === i && i !== q.correct;
             return (
-              <button
+              <AnswerOption
                 key={`${index}-${i}`}
                 data-selection-question lang="en"
                 data-answer-state={ok ? "correct" : bad ? "wrong" : undefined}
@@ -493,7 +494,7 @@ function QuizView({ card, mode, userId, eventId, caption, onNext }: { card: Quiz
                 )}
               >
                 {ok && "✓ "}{bad && "✗ "}<QuestionText>{option}</QuestionText>
-              </button>
+              </AnswerOption>
             );
           })}
         </div>

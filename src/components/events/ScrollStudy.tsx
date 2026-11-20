@@ -1,4 +1,5 @@
 "use client";
+import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 
@@ -219,8 +220,6 @@ export default function ScrollStudy({
       if (complete) delete m.tests[step.id];
       else m.tests[step.id] = { quiz, answers: next };
     });
-    // Разбор появляется ниже вариантов — подкрутить карточку, чтобы его было видно.
-    requestAnimationFrame(() => document.querySelector(`[data-review="${step.id}:${k}"]`)?.scrollIntoView({ block: "nearest", behavior: "smooth" }));
     // Отвечены все — засчитываем как обычный квиз части (один раз за попытку).
     if (complete && !sent.current.has(step.id)) {
       sent.current.add(step.id);
@@ -320,7 +319,7 @@ export default function ScrollStudy({
                 const ok = picked !== null && o === q.correct;
                 const bad = picked === o && o !== q.correct;
                 return (
-                  <button
+                  <AnswerOption
                     key={o}
                     data-selection-question lang="en"
                     data-answer-state={ok ? "correct" : bad ? "wrong" : undefined}
@@ -333,7 +332,7 @@ export default function ScrollStudy({
                     )}
                   >
                     {ok && "✓ "}{bad && "✗ "}<QuestionText>{option}</QuestionText>
-                  </button>
+                  </AnswerOption>
                 );
               })}
             </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import AnswerOption from "@/components/events/AnswerOption";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Button from "@/components/ui/Button";
 import EventNotes from "@/components/EventNotes";
@@ -402,9 +403,10 @@ export default function MockExamView({
                       const chosen = g ? Number(g.answer) === i : false;
                       const right = !!g && i === task.correct;
                       return (
-                        <button
+                        <AnswerOption
                           key={i}
                           data-selection-question lang="en"
+                          data-answer-state={right ? "correct" : chosen ? "wrong" : undefined}
                           aria-disabled={!!g}
                           aria-pressed={chosen}
                           onClick={() => { if (!g) choose(task, i); }}
@@ -418,7 +420,7 @@ export default function MockExamView({
                         >
                           <span className="mr-2 font-semibold">{String.fromCharCode(65 + i)})</span>
                           {option}
-                        </button>
+                        </AnswerOption>
                       );
                     })}
                     {g && (

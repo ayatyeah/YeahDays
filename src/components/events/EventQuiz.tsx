@@ -1,4 +1,5 @@
 "use client";
+import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
 import ErrorReview from "./ErrorReview";
@@ -56,23 +57,20 @@ export default function EventQuiz({
   }
   const answered = picked !== undefined;
   useTutorDetail({ quiz: { id: item.id, question: item.q, options: item.options, pickedMany: picked, correctMany: answered ? expected : undefined, picked: picked?.[0], correct: answered ? expected[0] : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
-  const feedback = useRef<HTMLDivElement>(null);
   const questionHeading = useRef<HTMLHeadingElement>(null);
   const previousIndex = useRef(index);
 
   useEffect(() => {
     const navigated = previousIndex.current !== index;
     previousIndex.current = index;
-    // Back can open an already answered question: navigation still wins over
-    // feedback scrolling, so its heading is not skipped.
-    const target = navigated ? questionHeading.current : answered ? feedback.current : null;
+    // Only explicit question navigation moves the viewport. Answer feedback
+    // is announced by role="status" without moving focus or scrolling.
+    if (!navigated) return;
+    const target = questionHeading.current;
     if (!target) return;
     target.focus({ preventScroll: true });
-    target.scrollIntoView({
-      block: "start",
-      behavior: navigated || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
-    });
-  }, [answered, index]);
+    target.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [index]);
 
   const missed = readyForReview(missedQuestions(quiz, answers, mastered), answeredAt, answers.filter(Boolean).length);
   function advance() {
@@ -125,9 +123,9 @@ export default function EventQuiz({
             const wrong = answered && picked?.includes(i) && expected.length > 0 && !expected.includes(i);
             const chosen = (picked ?? selected).includes(i);
             return (
-              <button
+              <AnswerOption
                 key={`${item.id}-${i}`}
-                data-selection-question data-quiz-answer lang="en"
+                data-selection-question lang="en"
                 data-answer-state={right ? "correct" : wrong ? "wrong" : undefined}
                 aria-disabled={answered}
                 aria-pressed={chosen}
@@ -140,7 +138,7 @@ export default function EventQuiz({
                 )}
               >
                 <span className="quiz-answer-mark" data-checkbox={multi && !answered ? "true" : undefined} aria-hidden="true">{right ? "✓" : wrong ? "✗" : chosen ? "✓" : ""}</span><span>{item.labels && `${item.labels[i]}. `}<QuestionText>{option}</QuestionText></span>
-              </button>
+              </AnswerOption>
             );
           })}
         </div>
@@ -148,7 +146,7 @@ export default function EventQuiz({
         {multi && !answered && <Button variant="primary" className="mt-4 w-full" disabled={selected.length !== expected.length} onClick={() => submit(selected)}>Check answers</Button>}
         {answered && (
           <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
-            <div ref={feedback} tabIndex={-1} role="status" className={cn(styles.scrollTarget, "rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm")}>
+            <div role="status" className={cn(styles.scrollTarget, "rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm")}>
               <p className="font-semibold">{!expected.length ? "Explanation only" : matchesAnswer(picked, expected) ? "Correct" : "Not quite"}</p>
               {item.caution && <p className="mt-2">{item.caution}</p>}
               <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
@@ -176,7 +174,7 @@ export default function EventQuiz({
             </div>
           </div>
         )}
-        <nav className="mt-4 flex gap-3 scroll-mb-28" aria-label="Question navigation">
+        <nav className={styles.navigation} aria-label="Question navigation">
           <Button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>← Back</Button>
           <Button variant="primary" className="flex-1" disabled={!answered}
             onClick={() => { if (reviewAt !== null && answers.filter(Boolean).length >= reviewAt && missed.length) setReviewing(true); else advance(); }}>

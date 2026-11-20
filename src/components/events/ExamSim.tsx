@@ -1,4 +1,5 @@
 "use client";
+import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionLanguage, QuestionText } from "./QuestionLanguage";
 
 import { useEffect, useRef, useState } from "react";
@@ -85,7 +86,7 @@ export default function ExamSim({
         <h2 data-selection-question lang="en" className="mt-3 text-lg font-semibold leading-snug"><QuestionText>{item.q}</QuestionText></h2>
         <div className="mt-4 space-y-2">
           {item.options.map((option, i) => (
-            <button
+            <AnswerOption
               key={`${index}-${i}`}
               data-selection-question lang="en"
               aria-pressed={picked === i}
@@ -96,7 +97,7 @@ export default function ExamSim({
               )}
             >
               <QuestionText>{option}</QuestionText>
-            </button>
+            </AnswerOption>
           ))}
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2">

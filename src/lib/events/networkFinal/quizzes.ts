@@ -9,6 +9,14 @@ const archives: Record<string, typeof archive['module-01']> = archive;
 const bilingual = (ru: string, en = ru) => ({ru, en});
 const normalize = (text: string) => text.trim().toLowerCase().replace(/[.!]+$/, '');
 
+// These archive answers paraphrase the printed choice instead of repeating it verbatim.
+const vrtKeys: Record<string, number[]> = {
+  'vrt-1-09':[0], 'vrt-1-11':[2], 'vrt-1-14':[2], 'vrt-2-17':[3], 'vrt-2-19':[3],
+  'vrt-3-03':[3], 'vrt-3-04':[3], 'vrt-3-10':[2], 'vrt-3-18':[1,3,4], 'vrt-3-24':[0],
+  'vrt-4-07':[0], 'vrt-4-10':[0], 'vrt-4-16':[1], 'vrt-4-17':[0], 'vrt-4-20':[1,3,4],
+  'vrt-4-21':[3], 'vrt-4-24':[0],
+};
+
 export const groups = [
   ...sources.map(s => ({id:s.file, title:s.title, count:s.count})),
   ...Array.from(new Set(bank.map(q => q.topic)), topic => ({id:'topic-'+topic,title:'Модуль '+topic+' · разборы',count:bank.filter(q => q.topic === topic).length})),
@@ -29,7 +37,7 @@ export function questionsFor(group: string): EventQuizQuestion[] {
   }));
   return sets.filter(q => 'vrt-'+q.set === group).map(q => {
     const answers = q.answer.split(';').map(normalize);
-    const indices = answers.map(a => q.options.findIndex(o => normalize(o) === a));
+    const indices = vrtKeys[q.id] ?? answers.map(a => q.options.findIndex(o => normalize(o) === a));
     return {id:q.id,q:q.prompt,options:q.options,correct:!q.caution && indices.every(i=>i>=0) ? indices : [], caution:q.caution,why:bilingual(q.answer+' — '+q.explanation)};
   });
 }

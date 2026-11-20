@@ -87,41 +87,41 @@
   {
     "file": "test-IP_Addressing",
     "count": 33,
-    "title": "Тест · IP_Addressing"
+    "title": "IP-адресация"
   },
   {
     "file": "test-exam_0",
     "count": 33,
-    "title": "Тест · exam_0"
+    "title": "Основы подключения и обмена данными"
   },
   {
     "file": "test-exam_1",
     "count": 34,
-    "title": "Тест · exam_1"
+    "title": "Ethernet"
   },
   {
     "file": "test-exam_2",
     "count": 33,
-    "title": "Тест · exam_2"
+    "title": "Связь между сетями"
   },
   {
     "file": "test-exam_4",
     "count": 32,
-    "title": "Тест · exam_4"
+    "title": "Сетевые приложения"
   },
   {
     "file": "test-exam_5",
     "count": 35,
-    "title": "Тест · exam_5"
+    "title": "Построение и защита малой сети"
   },
   {
     "file": "test-exam_6",
     "count": 55,
-    "title": "Тест · exam_6"
+    "title": "Пробный финал Cisco"
   },
   {
     "file": "test-exam_7",
     "count": 60,
-    "title": "Тест · exam_7"
+    "title": "Финальный вариант из архива"
   }
 ]

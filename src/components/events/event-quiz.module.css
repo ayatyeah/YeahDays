@@ -21,3 +21,6 @@
 @media (max-width: 768px) {
   .navigation { bottom: calc(78px + env(safe-area-inset-bottom)); }
 }
+
+/* The quiz toolbar exposes the assistant while the answer navigation owns this space. */
+:global(body):has(.navigation) :global(.p-global-assistant) { display: none; }

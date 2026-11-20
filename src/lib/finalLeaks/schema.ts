@@ -19,5 +19,5 @@ export function parseLeakBatch(value:unknown):LeakBatch {
  if(new Set(questions.map(questionFingerprint)).size!==questions.length)throw Error('В загрузке есть повторяющиеся вопросы');
  return {id,title:text(b.title,'title',180),questions};
 }
-export function questionFingerprint(q:Pick<LeakQuestion,'prompt'|'options'>){const norm=(s:string)=>s.normalize('NFKC').toLowerCase().replace(/\s+/g,' ').trim();return JSON.stringify([norm(q.prompt),q.options.map(norm).sort()]);}
+export function questionFingerprint(q:Pick<LeakQuestion,'prompt'|'options'>){const norm=(s:string)=>s.normalize('NFKC').toLowerCase().replace(/\s+/g,' ').trim();return JSON.stringify([norm(q.prompt),q.options.map(norm)]);}
 export function publishQuestions(batch:LeakBatch):PublishedLeak[]{return batch.questions.map((q,i)=>({...q,id:`leak-${batch.id}-${i+1}`,batchId:batch.id,batchTitle:batch.title}));}

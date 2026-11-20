@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import book from "@/lib/events/finals/computer-networks.json";
 import notes from "@/lib/events/computerNetworksEndterm/notes.json";
+import { labs } from "@/lib/events/networkFinal/labs";
 import sources from "@/lib/events/networkFinal/sources.json";
 import bank from "@/lib/events/networkFinal/practice.json";
 import sets from "@/lib/events/networkFinal/sets.json";
@@ -44,6 +45,14 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
     </section>)}
     {section === "theory" && modules.map(m => <details key={m.id}><summary>Модуль {m.id} · {m.title}</summary><div className={styles.studyText}><a href={`/events/network-final/reading-${m.id}.txt`}>Полный текст сохранённого модуля (EN)</a><p/>{m.body.replace(/^#{1,4} /gm, "").replace(/\*\*/g, "")}</div></details>)}
     {section === "practice" && <>
+      <section id="labs">
+        <h2>Разбор сданных лабораторных</h2>
+        {labs.map(lab => <details key={lab.week}>
+          <summary>Неделя {lab.week} · {lab.activity}</summary>
+          <h3>{lab.task}</h3>
+          <details><summary>Показать разбор</summary><p>{lab.answer}</p></details>
+        </details>)}
+      </section>
       <h2>Вопросы из NetAcad</h2><p>{sources.reduce((total, source) => total + source.count, 0)} вопросов из 17 модулей, шести промежуточных тестов и двух финальных вариантов. Подборка от 7 ноября включает повторы. Рисунки и интерактивные сопоставления открываются в Cisco. В последнем варианте название меню и заголовок теста расходятся.</p><ul>{sources.map(s => <li key={s.file}><a href={`/events/network-final/${s.file}.txt`}>{s.title} · {s.count} вопросов</a></li>)}</ul><h2>Самопроверка с разбором</h2><p>В архивной подборке {bank.length} вопросов по темам и {sets.length} заданий VRT. Открой вопрос, отметь свой вариант и проверь разбор.</p>
       {modules.filter(m => bank.some(q => q.topic === m.id)).map(m => <details key={m.id}><summary>{m.title} · {bank.filter(q => q.topic === m.id).length}</summary>
         {bank.filter(q => q.topic === m.id).map(q => <section key={q.id}><h3>{q.prompt}</h3><ol>{q.options.map((o,i) => <li key={i}><label><input type={q.correct.length > 1 ? "checkbox" : "radio"} name={q.id}/> {o}</label></li>)}</ol><details><summary>Проверить ответ</summary><strong>{q.answerText}</strong><p>{q.explanation}</p><p>{q.caution}</p><small>{q.source}</small></details></section>)}

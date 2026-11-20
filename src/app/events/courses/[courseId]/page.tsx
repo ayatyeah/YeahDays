@@ -23,7 +23,7 @@ export default async function CourseEventsPage({ params }: { params: Promise<{ c
     ];
     return <section className={styles.catalog} lang="ru" data-no-i18n>
       <Link className={styles.back} href="/events">← Все курсы</Link>
-      <header className={styles.courseHeading}><img src={course.logo} alt=""/><div><h1>{course.title}</h1><p>Открой нужную папку — сразу к материалам или тесту.</p></div></header>
+      <header className={styles.courseHeading}><img src={course.logo} alt=""/><div><h1>{course.title}</h1><p>Письменный финал · 40 вопросов за 50 минут. В 30 вопросах выбери один ответ, в остальных 10 — два или три.</p></div></header>
       <nav className={styles.grid} aria-label="Папки Computer Networks">
         {folders.map(([id, title, description]) => <Link className={`${styles.course} ${styles.folder}`} key={id} href={`/events/courses/computer-networks/${id}`}>
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>

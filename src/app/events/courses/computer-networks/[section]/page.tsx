@@ -22,7 +22,7 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
     <Link className={styles.back} href="/events/courses/computer-networks">← Computer Networks</Link>
     {section!=="practice" && <ReadingLanguage lang={lang}/>}
     <h1>{en?(section==="lectures"?"Lectures":"Module theory"):sections[section as keyof typeof sections]}</h1>
-    {section === "lectures" && <p>{en?'As of 20 November, LMS lists lectures 1–10. The final test has no questions yet.':'В LMS на 20 ноября опубликованы лекции 1–10. На странице Final Test вопросы пока не добавлены.'} <a href="https://lms.astanait.edu.kz/mod/quiz/view.php?id=75585">{en?'View Final Test in LMS':'Проверить Final Test в LMS'}</a></p>}
+    {section === "lectures" && <p>{book.guide[lang].split("\n")[1]}</p>}
     {section === "lectures" && <nav className={styles.moduleFolders} aria-label={en?"Lectures":"Лекции"}>{book.event.lectures.map((l,i)=>
       <Link key={l.id} href={`/events/courses/computer-networks/lectures/${i+1}`}><small>{en?'Lecture':'Лекция'} {i+1}</small><strong>{l.title[lang].split(' — ').slice(1).join(' — ') || l.title[lang]}</strong><span>{en?'Notes and examples':'Конспект и примеры'} →</span></Link>)}</nav>}
     {section === "theory" && <nav className={styles.moduleFolders} aria-label="Модули Cisco">{modules.map(m=>

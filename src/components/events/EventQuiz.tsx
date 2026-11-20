@@ -123,7 +123,7 @@ export default function EventQuiz({
         setMastered(nextMastered); setReviewing(false);
         setReviewAt(missedQuestions(quiz, answers, nextMastered).length ? answeredCount + reviewDelay() : null);
         advance();
-      }}/> : <section className={panel}>
+      }}/> : <><section data-quiz-card className={panel}>
         <h2 ref={questionHeading} tabIndex={-1} data-selection-question lang="en" className={cn(styles.scrollTarget, "whitespace-pre-wrap break-words text-lg font-semibold leading-snug")}><QuestionText>{item.q}</QuestionText></h2>
         {multi && <p className="mt-3 text-sm" role="status">Choose {expected.length} answers · Selected: {(picked ?? selected).length} / {expected.length}</p>}
         <div className="mt-4 space-y-2">
@@ -153,7 +153,8 @@ export default function EventQuiz({
           })}
         </div>
 
-        {multi && !answered && <Button variant="primary" className="mt-4 w-full" disabled={selected.length !== expected.length} onClick={() => submit(selected)}>Check answers</Button>}
+        {multi && <Button variant="primary" className="mt-4 w-full" disabled={answered || selected.length !== expected.length} onClick={() => submit(selected)}>Check answers</Button>}
+      </section>
         {answered && (
           <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className={cn(styles.scrollTarget, "rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm")}>
@@ -193,7 +194,7 @@ export default function EventQuiz({
             {index + 1 === quiz.length ? "Finish quiz" : "Next"}
           </Button>
         </nav>, navigationHost)}
-      </section>}</QuizStage>
+      </>}</QuizStage>
       {/* Плеер — под вопросом, а не над ним. Сверху он занимал на телефоне
           треть экрана (меньше 200×200 правила YouTube делать не дают), и
           варианты ответа уезжали за край. Позиция в дереве не меняется от

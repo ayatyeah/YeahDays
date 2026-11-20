@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import book from "@/lib/events/finals/computer-networks.json";
 import notes from "@/lib/events/computerNetworksEndterm/notes.json";
 import { labs } from "@/lib/events/networkFinal/labs";
-import { groups } from '@/lib/events/networkFinal/quizzes';
+import { groups, questionsFor } from '@/lib/events/networkFinal/quizzes';
 import styles from "../../../courses.module.css";
 
 const sections = { practice: "Практика", lectures: "Лекции", theory: "Теория" };
@@ -43,18 +43,23 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
     </section>)}
     {section === "theory" && modules.map(m => <details key={m.id}><summary>Модуль {m.id} · {m.title}</summary><div className={styles.studyText}><a href={`/events/network-final/reading-${m.id}.txt`}>Полный текст сохранённого модуля (EN)</a><p/>{m.body.replace(/^#{1,4} /gm, "").replace(/\*\*/g, "")}</div></details>)}
     {section === "practice" && <>
-      <section id="labs">
-        <h2>Разбор сданных лабораторных</h2>
+      <nav className={styles.moduleFolders} aria-label="Модули Cisco">{modules.map(m => {
+        const id = 'module-'+String(m.id).padStart(2,'0');
+        const count = questionsFor(id).filter(q=>q.correct.length).length;
+        return <Link key={id} prefetch={false} href={`/events/courses/computer-networks/practice/${id}`}><small>Модуль {m.id}</small><strong>{m.title}</strong><span>{count} вопросов для квиза →</span></Link>;
+      })}</nav>
+      <details id="labs"><summary>Разбор сданных лабораторных</summary>
+
         {labs.map(lab => <details key={lab.week}>
           <summary>Неделя {lab.week} · {lab.activity}</summary>
           <h3>{lab.task}</h3>
           <details><summary>Показать разбор</summary><p>{lab.answer}</p></details>
         </details>)}
-      </section>
+      </details>
       {[
-        {title:"Вопросы из NetAcad", items:groups.filter(g=>g.id.startsWith("module-") || g.id.startsWith("test-"))},
+        {title:"Промежуточные тесты и финалы", items:groups.filter(g=>g.id.startsWith("test-"))},
         {title:"Самопроверка с разбором", items:groups.filter(g=>g.id.startsWith("topic-") || g.id.startsWith("vrt-"))},
-      ].map(category=><section key={category.title}><h2>{category.title}</h2><ul>{category.items.map(g=><li key={g.id}><Link prefetch={false} href={`/events/courses/computer-networks/practice/${g.id}`}>{g.title} · {g.count} вопросов →</Link></li>)}</ul></section>)}
+      ].map(category=><details key={category.title}><summary>{category.title}</summary><ul>{category.items.map(g=><li key={g.id}><Link prefetch={false} href={`/events/courses/computer-networks/practice/${g.id}`}>{g.title} · {g.count} вопросов →</Link></li>)}</ul></details>)}
     </>}
   </article>;
 }

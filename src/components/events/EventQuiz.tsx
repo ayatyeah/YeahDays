@@ -21,7 +21,7 @@ export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { co
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, reviewDuringQuiz = true,
 }: {
   eventId: string;
   step: Pick<Step, "title">;
@@ -30,6 +30,7 @@ export default function EventQuiz({
   music: boolean;
   onLang?: () => void;
   explainOptionsOpen?: boolean;
+  reviewDuringQuiz?: boolean;
   onMusic: () => void;
   onExit: () => void;
   onFinish: (answers: number[][]) => void;
@@ -51,7 +52,7 @@ export default function EventQuiz({
   const multi = expected.length > 1;
   function submit(value: number[]) {
     setAnswers(previous => { const next = [...previous]; next[index] = value; return next; });
-    if (answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answers.filter(Boolean).length + 1 + reviewDelay());
+    if (reviewDuringQuiz && answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answers.filter(Boolean).length + 1 + reviewDelay());
     if (answers[index] === undefined) setAnsweredAt(previous => ({ ...previous, [item.id]: answers.filter(Boolean).length + 1 }));
     onAnswer?.(item.id, value);
   }

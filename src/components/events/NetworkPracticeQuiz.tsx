@@ -8,6 +8,7 @@ import {useSession} from 'next-auth/react';
 import setup from './aws-practice.module.css';
 import EventQuiz, {type EventQuizQuestion} from './EventQuiz';
 import {matchesAnswer} from '@/lib/events/quizAnswers';
+import courseStyles from '@/app/events/courses.module.css';
 import styles from './aws-knowledge-checks.module.css';
 
 const Tutor = dynamic(() => import('./Tutor'));
@@ -22,7 +23,7 @@ function AccountQuiz({group,title,questions}:Props) {
   const {data:session,status} = useSession();
   const storage = session?.user?.id ? 'yg-cn-bank:'+session.user.id+':'+title : null;
   const bank = questions.filter(q=>q.correct.length);
-  const [limit,setLimit] = useState(String(Math.min(10,bank.length)));
+  const [limit,setLimit] = useState(String(group.startsWith("sprint-")?bank.length:Math.min(10,bank.length)));
   const [order,setOrder] = useState('original');
   const [scope,setScope] = useState('all');
   const owner=session?.user?.id;
@@ -136,7 +137,7 @@ function AccountQuiz({group,title,questions}:Props) {
   return <section className={styles.quiz} data-no-i18n>
     <Link href={home}>← Практика Computer Networks</Link><h1>{title}</h1>
     <label>Освоено вопросов: {bank.filter(q=>history[q.id]).length} из {bank.length}
-      <progress style={{display:'block',width:'100%',height:12,accentColor:'var(--g-accent)'}} max={bank.length||1} value={bank.filter(q=>history[q.id]).length}/>
+      <progress className={courseStyles.meter} max={bank.length||1} value={bank.filter(q=>history[q.id]).length}/>
     </label>
     <small role="status">{saveStatus} {saveStatus.startsWith('Нет') && owner && <button onClick={()=>reload.current()}>Повторить</button>}</small>
     {answers ? <section aria-live="polite"><h2>Результат: {quiz.length-missed.length} из {quiz.length}</h2>

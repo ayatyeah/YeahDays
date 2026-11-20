@@ -1,3 +1,4 @@
+import {families,sprints} from './sprints';
 import archive from './archive.json';
 import bank from './practice.json';
 import { conceptFor } from './concepts';
@@ -18,12 +19,26 @@ const vrtKeys: Record<string, number[]> = {
 };
 
 export const groups = [
+  ...sprints.map(plan=>({...plan,count:families.length*plan.rounds})),
   ...sources.map(s => ({id:s.file, title:s.title, count:s.count})),
   ...Array.from(new Set(bank.map(q => q.topic)), topic => ({id:'topic-'+topic,title:'Модуль '+topic+' · разборы',count:bank.filter(q => q.topic === topic).length})),
   ...Array.from(new Set(sets.map(q => q.set)), set => ({id:'vrt-'+set,title:'VRT · вариант '+set,count:sets.filter(q => q.set === set).length})),
 ];
 
 export function questionsFor(group: string): EventQuizQuestion[] {
+  const plan=sprints.find(p=>p.id===group);
+  if(plan){
+    const byId=new Map(bank.map(q=>[q.id,q]));
+    return Array.from({length:plan.rounds},(_,round)=>families.map(family=>{
+      const q=byId.get(family.ids[round])!;
+      const related=family.ids.filter(id=>id!==q.id).map(id=>{
+        const other=byId.get(id)!;
+        return {prompt:other.prompt,answer:other.correct.map(i=>other.options[i]).join(' · ')};
+      });
+      return {id:q.id,q:q.prompt,options:q.options,correct:q.correct,why:bilingual(q.explanation,q.explanationEn),
+        transfer:{title:family.title,rule:family.rule,related}};
+    })).flat();
+  }
   if (Object.hasOwn(archives, group)) return archives[group].map(q => {
     const reasons = q.optionExplanations.length ? q.optionExplanations : q.options.map(conceptFor);
     const definitions = q.correct.map(i => reasons[i]).filter(Boolean);

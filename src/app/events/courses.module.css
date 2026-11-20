@@ -28,3 +28,12 @@
 .readingLanguage button[aria-pressed=true] {background:var(--g-accent);color:var(--g-on-accent)}
 
 .sectionTitle {font-size:1.4rem;font-weight:600;margin:2rem 0 1.5rem}
+
+/* Reserve space within the grid for the raised folder tabs, including hover. */
+.sectionTitle + .grid {padding-block-start:32px}
+.sectionPage {width:100%;max-width:none;margin-inline:0;min-width:0}
+:global(.f-content):has(.sectionPage) {width:100%;box-sizing:border-box}
+.meter {display:block;width:100%;height:6px;margin-block:7px 12px;border:0;border-radius:99px;overflow:hidden;appearance:none;background:var(--g-border);color:var(--g-accent)}
+.meter::-webkit-progress-bar {background:var(--g-border);border-radius:inherit}
+.meter::-webkit-progress-value {background:var(--g-accent);border-radius:inherit}
+.meter::-moz-progress-bar {background:var(--g-accent);border-radius:inherit}

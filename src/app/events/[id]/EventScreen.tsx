@@ -1,5 +1,6 @@
 "use client";
 
+import {withNetworkTerms} from '@/lib/events/networkFinal/terminology';
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { eventCourseHref } from "@/lib/events/courses";
@@ -807,7 +808,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               {([['short', 'Quick notes'], ['full', 'Full notebook']] as const).map(([value, label]) => <Button key={value} aria-pressed={notesVersion === value} variant={notesVersion === value ? "primary" : "ghost"} onClick={() => { setNotesVersion(value); savePref("notes-length", value); }}>{label}</Button>)}
             </div>}
             <article className={panel} data-testid="lecture-notes" data-notes-version={notesVersion}>
-              <TopicLearningModes key={view.step.id} title={part.title[lang]} lang={lang}><EventNotes text={part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} /></TopicLearningModes>
+              <TopicLearningModes key={view.step.id} title={part.title[lang]} lang={lang}><EventNotes text={lang==='ru' && event.id.startsWith('computer-networks')?withNetworkTerms(part.notes.ru):part.notes[lang]} lang={lang} translation={lang === "en" ? part.notes.ru : undefined} /></TopicLearningModes>
             </article>
             <Button variant="primary" className="h-auto min-h-11 w-full whitespace-normal" onClick={() => startQuiz(view.step)}>
               Начать квиз по этой части · {view.step.count} вопросов
@@ -864,7 +865,7 @@ function Runner({ event: sourceEvent, userId }: { event: StudyEvent; userId: str
               <CopyNotes text={part.notes[lang]} title={part.title[lang]} />
             </div>
             <article className={panel}>
-              <EventNotes text={part.notes[lang]} lang={lang} translation={event.id === "computer-networks-endterm" && lang === "en" ? part.notes.ru : undefined} />
+              <EventNotes text={lang==='ru' && event.id.startsWith('computer-networks')?withNetworkTerms(part.notes.ru):part.notes[lang]} lang={lang} translation={event.id === "computer-networks-endterm" && lang === "en" ? part.notes.ru : undefined} />
             </article>
             <PartNav
               prev={flat[at - 1] && { label: where(flat[at - 1]), go: () => setView({ mode: "extra", ...flat[at - 1] }) }}

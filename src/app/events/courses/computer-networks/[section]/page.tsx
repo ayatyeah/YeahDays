@@ -1,3 +1,4 @@
+import NetworkStudyRoutes from '@/components/events/NetworkStudyRoutes';
 import ReadingLanguage, {readingLanguage} from '@/components/events/ReadingLanguage';
 import {readingEnglish} from '@/lib/events/networkFinal/readingEnglish';
 import {auth} from '@/auth';
@@ -23,7 +24,7 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
     const mid=section==="midterm";
     const lectures=book.event.lectures.map((lecture,i)=>({lecture,i})).filter(({i})=>mid?(i<5 || i===6):i>=4);
     const ids=lectures.flatMap(({i})=>lectureModules[i]);
-    return <article className={styles.outline} lang="ru" data-no-i18n>
+    return <article className={`${styles.outline} ${styles.sectionPage}`} lang="ru" data-no-i18n>
       <Link className={styles.back} href={base}>← Computer Networks</Link>
       <h1>{sections[section]}</h1>
       <p>{mid?'Из сохранённой подготовки к мидтерму — лекции 1–5 и 7 и квизы по их темам.':'По объявлению об эндтерме — недели 5–10. Особое внимание TCP/UDP, прикладным протоколам и настройке Cisco IOS.'}</p>
@@ -40,19 +41,20 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
   const percentages=new Map(progress.map(row=>[row.eventId.slice(prefix.length),row.percent]));
   function mastery(id:string){
     const value=percentages.get(id)??0;
-    return <span>Освоено {value}% <progress aria-label="Освоено вопросов" max={100} value={value}/></span>;
+    return <span>Освоено {value}% <progress className={styles.meter} aria-label="Освоено вопросов" max={100} value={value}/></span>;
   }
-  return <article className={styles.outline} lang={lang} data-no-i18n>
+  return <article className={`${styles.outline} ${styles.sectionPage}`} lang={lang} data-no-i18n>
     <Link className={styles.back} href="/events/courses/computer-networks">← Computer Networks</Link>
     {section!=="practice" && <ReadingLanguage lang={lang}/>}
     <h1>{en?(section==="lectures"?"Lectures":"Module theory"):sections[section as keyof typeof sections]}</h1>
-    {section!=="practice" && <label>{en?'Read':'Прочитано'} {progress.filter(p=>p.percent===100).length} / {section==="lectures"?book.event.lectures.length:modules.length} <progress value={progress.filter(p=>p.percent===100).length} max={section==="lectures"?book.event.lectures.length:modules.length}/></label>}
+    {section!=="practice" && <label>{en?'Read':'Прочитано'} {progress.filter(p=>p.percent===100).length} / {section==="lectures"?book.event.lectures.length:modules.length} <progress className={styles.meter} value={progress.filter(p=>p.percent===100).length} max={section==="lectures"?book.event.lectures.length:modules.length}/></label>}
     {section === "lectures" && <p>{book.guide[lang].split("\n")[1]}</p>}
     {section === "lectures" && <nav className={styles.moduleFolders} aria-label={en?"Lectures":"Лекции"}>{book.event.lectures.map((l,i)=>
       <Link key={l.id} href={`/events/courses/computer-networks/lectures/${i+1}`}><small>{en?'Lecture':'Лекция'} {i+1}</small><strong>{l.title[lang].split(' — ').slice(1).join(' — ') || l.title[lang]}</strong><span>{percentages.get(String(i+1))===100?'✓ ':''}{en?'Notes and examples':'Конспект и примеры'} →</span></Link>)}</nav>}
     {section === "theory" && <nav className={styles.moduleFolders} aria-label="Модули Cisco">{modules.map(m=>
       <Link key={m.id} href={`/events/courses/computer-networks/theory/${m.id}`}><small>{en?'Module':'Модуль'} {m.id}</small><strong>{en?readingEnglish[m.id-1][0]:m.title}</strong><span>{percentages.get(String(m.id))===100?'✓ ':''}{en?'Theory and self-check':'Теория и самопроверка'} →</span></Link>)}</nav>}
     {section === "practice" && <>
+      <NetworkStudyRoutes/>
       <nav className={styles.moduleFolders} aria-label="Модули Cisco">{modules.map(m => {
         const id = 'module-'+String(m.id).padStart(2,'0');
         const count = questionsFor(id).filter(q=>q.correct.length).length;

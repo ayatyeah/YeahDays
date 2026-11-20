@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import {withNetworkTerms} from '@/lib/events/networkFinal/terminology';
 import EventNotes from '@/components/EventNotes';
 import { Icon } from '@/components/final/Brand';
 import { eventCourseHref } from '@/lib/events/courses';
@@ -129,7 +130,7 @@ export default function LectureNotebook({ event, notebook }: { event: StudyEvent
       </aside>
       <div className="g-notes-articles">{parts.map((part, i) => (part.id === activePart) && <article id={part.id} key={part.id} className="g-note-paper">
         <div className="g-note-meta"><span>Part {i + 1} of {parts.length}</span><Icon name="book" size={18}/></div>
-        <h2 data-selection-translation={lang === 'en' ? part.title.ru : undefined}>{part.title[lang]}</h2><TopicLearningModes key={part.id} title={part.title[lang]} lang={lang} signedIn={!!session?.user?.id}><div data-selection-notes lang={lang}><EventNotes text={part.notes[lang]} lang={lang} translation={lang === 'en' ? part.notes.ru : undefined}/></div></TopicLearningModes>
+        <h2 data-selection-translation={lang === 'en' ? part.title.ru : undefined}>{part.title[lang]}</h2><TopicLearningModes key={part.id} title={part.title[lang]} lang={lang} signedIn={!!session?.user?.id}><div data-selection-notes lang={lang}><EventNotes text={lang==='ru' && event.id.startsWith('computer-networks')?withNetworkTerms(part.notes.ru):part.notes[lang]} lang={lang} translation={lang === 'en' ? part.notes.ru : undefined}/></div></TopicLearningModes>
         <details className="g-note-sources"><summary>{lang === 'en' ? 'Source lecture & reading' : 'Лекция и материалы'}</summary><ul>{notebook.sources.filter(source => source.lectureId === event.lectures.find(lecture => lecture.parts.some(p => p.id === part.id))?.id).map(source => <li key={source.id}><a href={source.url} target="_blank" rel="noreferrer">{source.title}{source.pages ? ` · ${source.pages}` : ''}<Icon name="arrow" size={15}/></a></li>)}</ul></details>
         {event.id === 'computer-networks-final' && part.id.startsWith('cne-') && <NetworkStoryClip partId={part.id}/>}
         <nav className="g-note-pagination" aria-label={`Navigation for part ${i + 1}`}>{i > 0 ? <a href={`#${parts[i - 1].id}`} onClick={() => setActivePart(parts[i - 1].id)}>← {ru ? 'Предыдущая тема' : 'Previous part'}</a> : <span/>}{i < parts.length - 1 ? <a href={`#${parts[i + 1].id}`} onClick={() => setActivePart(parts[i + 1].id)}>{ru ? 'Следующая тема' : 'Next part'} →</a> : <a href="#workspace-content">Back to top ↑</a>}</nav>

@@ -18,7 +18,7 @@ import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
 import styles from "./event-quiz.module.css";
 
-export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
+export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
@@ -160,6 +160,8 @@ export default function EventQuiz({
               <p className="font-semibold">{!expected.length ? "Explanation only" : matchesAnswer(picked, expected) ? "Correct" : "Not quite"}</p>
               {item.caution && <p className="mt-2">{item.caution}</p>}
               <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
+              {item.transfer && <section className="mt-4"><h3 className="font-semibold">{item.transfer.title}</h3><p>{item.transfer.rule}</p>
+                <details className="mt-2"><summary>Похожие вопросы ({item.transfer.related.length})</summary><ul className="list-disc space-y-2 pl-5" lang="en">{item.transfer.related.map(example=><li key={example.prompt}>{example.prompt}<details><summary lang="ru">Показать ответ</summary>{example.answer}</details></li>)}</ul></details></section>}
               {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Study notes: {item.studyLink.title} ↗</a>}
               {item.optionExplanations && <details open={explainOptionsOpen || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
                 <summary className="cursor-pointer font-semibold">{explainOptionsOpen ? "Почему каждый вариант подходит или не подходит" : "Why each option works or does not"}</summary>

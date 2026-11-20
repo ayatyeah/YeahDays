@@ -1,3 +1,4 @@
+import NetworkStudyRoutes from '@/components/events/NetworkStudyRoutes';
 import { notFound } from "next/navigation";
 import { EVENT_COURSES } from "@/lib/events/courses";
 import Link from "next/link";
@@ -24,6 +25,7 @@ export default async function CourseEventsPage({ params }: { params: Promise<{ c
     return <section className={styles.catalog} lang="ru" data-no-i18n>
       <Link className={styles.back} href="/events">← Все курсы</Link>
       <header className={styles.courseHeading}><img src={course.logo} alt=""/><div><h1>{course.title}</h1><p>Письменный финал · 40 вопросов за 50 минут. В 30 вопросах выбери один ответ, в остальных 10 — два или три.</p></div></header>
+      <NetworkStudyRoutes/>
       <h2 className={styles.sectionTitle}>Подготовка к экзамену</h2>
       <nav className={styles.moduleFolders} aria-label="Выбрать экзамен">{[['midterm','Мидтерм','Темы лекций 1–5 и 7'],['endterm','Эндтерм','Темы лекций 5–10']].map(([id,title,description])=><Link key={id} href={`/events/courses/computer-networks/${id}`}><strong>{title}</strong><span>{description} →</span></Link>)}</nav>
       <h2 className={styles.sectionTitle}>Файнал · весь курс</h2>

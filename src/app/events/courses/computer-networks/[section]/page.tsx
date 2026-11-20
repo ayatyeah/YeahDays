@@ -36,6 +36,7 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
   return <article className={styles.outline} lang="ru" data-no-i18n>
     <Link className={styles.back} href="/events/courses/computer-networks">← Computer Networks</Link>
     <h1>{sections[section as keyof typeof sections]}</h1>
+    {section === "lectures" && <p>В LMS на 20 ноября опубликованы лекции 1–10. На странице Final Test вопросы пока не добавлены. <a href="https://lms.astanait.edu.kz/mod/quiz/view.php?id=75585">Проверить Final Test в LMS</a></p>}
     {section === "lectures" && book.event.lectures.map((lecture, i) => <section key={lecture.id}>
       <h2>{i + 1}. {lecture.title.ru}</h2>
       {lecture.parts.map(part => <p key={part.id}><Link href={`/events/computer-networks-final#${part.id}`}>{part.title.ru} →</Link></p>)}
@@ -43,12 +44,12 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
     </section>)}
     {section === "theory" && modules.map(m => <details key={m.id}><summary>Модуль {m.id} · {m.title}</summary><div className={styles.studyText}><a href={`/events/network-final/reading-${m.id}.txt`}>Полный текст сохранённого модуля (EN)</a><p/>{m.body.replace(/^#{1,4} /gm, "").replace(/\*\*/g, "")}</div></details>)}
     {section === "practice" && <>
-      <h2>Вопросы из NetAcad</h2><p>Сохранённые варианты от 7 ноября. Рисунки и интерактивные сопоставления открываются в Cisco. В последнем варианте название меню и заголовок теста расходятся.</p><ul>{sources.map(s => <li key={s.file}><a href={`/events/network-final/${s.file}.txt`}>{s.title} · {s.count} вопросов</a></li>)}</ul><h2>Самопроверка с разбором</h2><p>В архивной подборке {bank.length} вопросов по темам и {sets.length} заданий VRT. Открой вопрос, выбери ответ для себя и проверь разбор.</p>
+      <h2>Вопросы из NetAcad</h2><p>{sources.reduce((total, source) => total + source.count, 0)} вопросов из 17 модулей, шести промежуточных тестов и двух финальных вариантов. Подборка от 7 ноября включает повторы. Рисунки и интерактивные сопоставления открываются в Cisco. В последнем варианте название меню и заголовок теста расходятся.</p><ul>{sources.map(s => <li key={s.file}><a href={`/events/network-final/${s.file}.txt`}>{s.title} · {s.count} вопросов</a></li>)}</ul><h2>Самопроверка с разбором</h2><p>В архивной подборке {bank.length} вопросов по темам и {sets.length} заданий VRT. Открой вопрос, отметь свой вариант и проверь разбор.</p>
       {modules.filter(m => bank.some(q => q.topic === m.id)).map(m => <details key={m.id}><summary>{m.title} · {bank.filter(q => q.topic === m.id).length}</summary>
-        {bank.filter(q => q.topic === m.id).map(q => <section key={q.id}><h3>{q.prompt}</h3><ol>{q.options.map((o,i) => <li key={i}>{o}</li>)}</ol><details><summary>Проверить ответ</summary><strong>{q.answerText}</strong><p>{q.explanation}</p><p>{q.caution}</p><small>{q.source}</small></details></section>)}
+        {bank.filter(q => q.topic === m.id).map(q => <section key={q.id}><h3>{q.prompt}</h3><ol>{q.options.map((o,i) => <li key={i}><label><input type={q.correct.length > 1 ? "checkbox" : "radio"} name={q.id}/> {o}</label></li>)}</ol><details><summary>Проверить ответ</summary><strong>{q.answerText}</strong><p>{q.explanation}</p><p>{q.caution}</p><small>{q.source}</small></details></section>)}
       </details>)}
       {Array.from(new Set(sets.map(q => q.set))).map(set => <details key={set}><summary>VRT · вариант {set}</summary>
-        {sets.filter(q => q.set === set).map(q => <section key={q.id}><h3>{q.number}. {q.prompt}</h3><ol>{q.options.map((o,i) => <li key={i}>{o}</li>)}</ol><details><summary>Проверить ответ</summary><strong>{q.answer}</strong><p>{q.explanation}</p><p>{q.caution}</p></details></section>)}
+        {sets.filter(q => q.set === set).map(q => <section key={q.id}><h3>{q.number}. {q.prompt}</h3><ol>{q.options.map((o,i) => <li key={i}><label><input type="checkbox" name={q.id}/> {o}</label></li>)}</ol><details><summary>Проверить ответ</summary><strong>{q.answer}</strong><p>{q.explanation}</p><p>{q.caution}</p></details></section>)}
       </details>)}
     </>}
   </article>;

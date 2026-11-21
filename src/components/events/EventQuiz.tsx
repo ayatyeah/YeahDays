@@ -20,7 +20,7 @@ import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
 import styles from "./event-quiz.module.css";
 
-export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string;notes?:Record<Lang,string>}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
+export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;positions?:Record<number,number>;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string;notes?:Record<Lang,string>}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({

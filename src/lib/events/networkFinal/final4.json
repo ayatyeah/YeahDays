@@ -1,0 +1,638 @@
+[
+  {
+    "id": "final-4-01",
+    "module": 3,
+    "q": "Which OSI layer is responsible for logical addressing and selecting the best path to a remote network?",
+    "qRu": "Какой уровень OSI отвечает за логическую адресацию и выбор пути до удалённой сети?",
+    "options": [
+      "Transport",
+      "Network",
+      "Data Link",
+      "Session",
+      "Physical"
+    ],
+    "optionsRu": [
+      "Транспортный",
+      "Сетевой",
+      "Канальный",
+      "Сеансовый",
+      "Физический"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Маршрутизатор читает IP назначения и выбирает следующий переход по таблице маршрутизации. Это работа сетевого уровня (Network, L3). L2 доставляет кадр внутри одного канала, L1 передаёт биты, а транспортный и сеансовый уровни работают выше IP.",
+    "explanationEn": "A router reads the destination IP and uses its routing table to select a next hop. Logical addressing and routing belong to Network (L3). Data Link handles one link, Physical carries bits, and Transport and Session operate above IP."
+  },
+  {
+    "id": "final-4-02",
+    "module": 2,
+    "q": "Which command prevents unencrypted passwords from being displayed in plain text in the Cisco IOS configuration file?",
+    "qRu": "Какая команда скрывает открыто записанные пароли в конфигурации Cisco IOS?",
+    "options": [
+      "Router(config)# enable secret",
+      "Router(config)# service password-encryption",
+      "Router(config-line)# password-encryption",
+      "Router# service encryption"
+    ],
+    "optionsRu": [
+      "Router(config)# enable secret",
+      "Router(config)# service password-encryption",
+      "Router(config-line)# password-encryption",
+      "Router# service encryption"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "В глобальном режиме service password-encryption маскирует пароли, которые иначе видны в конфигурации. Классическое шифрование Type 7 обратимо. Команда enable secret настраивает только секрет привилегированного режима, а остальные варианты имеют неверный синтаксис.",
+    "explanationEn": "In global configuration mode, service password-encryption obscures passwords otherwise shown in plaintext. Classic Type 7 encoding is reversible. Enable secret sets only the privileged-mode secret, and the remaining commands have incorrect syntax."
+  },
+  {
+    "id": "final-4-03",
+    "module": 17,
+    "q": "Which commands can be used on a Windows host to troubleshoot network connectivity? (Choose three.)",
+    "qRu": "Какие команды Windows помогают проверить сетевое подключение? Выберите три.",
+    "options": [
+      "ping",
+      "tracert",
+      "ipconfig",
+      "show ip route",
+      "show interfaces",
+      "show running-config"
+    ],
+    "optionsRu": [
+      "ping",
+      "tracert",
+      "ipconfig",
+      "show ip route",
+      "show interfaces",
+      "show running-config"
+    ],
+    "correct": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "ping проверяет доступность адреса, tracert показывает переходы по пути, а ipconfig выводит локальный адрес, маску и шлюз. Три команды с show относятся к Cisco IOS.",
+    "explanationEn": "Use ping to test reachability, tracert to trace the hops and ipconfig to inspect local IP settings. The three show commands are Cisco IOS commands."
+  },
+  {
+    "id": "final-4-04",
+    "module": 11,
+    "q": "Network A needs 60 hosts on one IPv4 subnet. Which mask fits all its hosts with the least address waste?",
+    "qRu": "В сети A нужно разместить 60 хостов в одной подсети IPv4. Какая маска даст наименьший запас адресов?",
+    "options": [
+      "255.255.255.192",
+      "255.255.255.128",
+      "255.255.255.0",
+      "255.255.254.0"
+    ],
+    "optionsRu": [
+      "255.255.255.192",
+      "255.255.255.128",
+      "255.255.255.0",
+      "255.255.254.0"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Оставь 6 бит хосту. Получится 64 адреса, из которых 62 можно назначать (64 − адрес сети − broadcast). Это /26, или 255.255.255.192. Более крупные подсети из списка дают 126, 254 или 510 адресов хостов. На схеме число размыто. Здесь принято 60 хостов. Если их 66 или 68, нужен /25 на 126 хостов.",
+    "explanationEn": "Six host bits give 64 addresses and 62 usable hosts after reserving the network and broadcast addresses. The mask is /26, or 255.255.255.192. The other masks allow 126, 254 or 510 hosts and waste more space. The diagram label is unclear. This exercise assumes 60 hosts. For 66 or 68 hosts, use /25 (126 usable)."
+  },
+  {
+    "id": "final-4-05",
+    "module": 11,
+    "q": "Marketing uses 172.16.3.32/27, Sales uses 172.16.3.64/27, Admin uses 172.16.3.96/27, and the point-to-point links use /30. Network A needs 120 hosts. Which two statements are correct?",
+    "qRu": "Marketing использует 172.16.3.32/27, Sales — 172.16.3.64/27, Admin — 172.16.3.96/27, а соединения точка-точка — /30. Сети A нужно 120 хостов. Какие два утверждения верны?",
+    "options": [
+      "The broadcast address of the Marketing LAN is 172.16.3.63.",
+      "The Sales LAN can support up to 30 hosts.",
+      "The usable host range of the Admin LAN is 172.16.3.97–172.16.3.127.",
+      "Each point-to-point link can support up to 6 hosts.",
+      "Network A can use the subnet 172.16.3.64/25."
+    ],
+    "optionsRu": [
+      "Broadcast сети Marketing — 172.16.3.63.",
+      "Сеть Sales поддерживает до 30 хостов.",
+      "Диапазон хостов Admin — 172.16.3.97–172.16.3.127.",
+      "Каждая линия точка-точка поддерживает до 6 хостов.",
+      "Сети A можно назначить подсеть 172.16.3.64/25."
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "Шаг /27 равен 32. Блок Marketing занимает .32–.63, последний адрес — broadcast. Sales получает 32 − 2 = 30 адресов хостов. В Admin последний хост .126, а .127 — broadcast. В /30 два хоста. Для /25 границы идут по .0 и .128, поэтому .64 не начало такой сети.",
+    "explanationEn": "A /27 spans 32 addresses. Marketing runs from .32 to .63, making .63 its broadcast, and Sales has 32 − 2 = 30 usable addresses. Admin ends at host .126, with .127 reserved for broadcast. A /30 has two usable addresses. A /25 starts at .0 or .128, so .64 is not an aligned /25 network."
+  },
+  {
+    "id": "final-4-06",
+    "module": 11,
+    "q": "Given 172.16.75.130 with subnet mask 255.255.240.0, which two statements are correct?",
+    "qRu": "Даны 172.16.75.130 и маска 255.255.240.0. Какие два утверждения верны?",
+    "options": [
+      "The network address is 172.16.64.0.",
+      "The network address is 172.16.75.0.",
+      "The broadcast address is 172.16.79.255.",
+      "The broadcast address is 172.16.75.255.",
+      "The network address is 172.16.80.0.",
+      "The broadcast address is 172.16.95.255."
+    ],
+    "optionsRu": [
+      "Адрес сети — 172.16.64.0.",
+      "Адрес сети — 172.16.75.0.",
+      "Broadcast — 172.16.79.255.",
+      "Broadcast — 172.16.75.255.",
+      "Адрес сети — 172.16.80.0.",
+      "Broadcast — 172.16.95.255."
+    ],
+    "correct": [
+      0,
+      2
+    ],
+    "explanation": "В третьем октете шаг равен 256 − 240 = 16. Значение 75 лежит в блоке 64–79. Первый адрес блока — 172.16.64.0, последний — 172.16.79.255. Границы 80–95 уже относятся к следующему блоку.",
+    "explanationEn": "The third octet advances in blocks of 256 − 240 = 16. The value 75 falls in 64–79, so the first address is 172.16.64.0 and the last is 172.16.79.255. Values 80–95 describe the next block."
+  },
+  {
+    "id": "final-4-07",
+    "module": 8,
+    "q": "Host A pings Host B through Router 1, Router 2 and Router 3 in sequence. The IPv4 echo request starts with TTL 128. What TTL arrives at Host B?",
+    "qRu": "Хост A отправляет IPv4 echo request через три маршрутизатора подряд к хосту B. Начальный TTL равен 128. Какой TTL увидит B?",
+    "options": [
+      "128",
+      "126",
+      "125",
+      "124"
+    ],
+    "optionsRu": [
+      "128",
+      "126",
+      "125",
+      "124"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Каждый из трёх маршрутизаторов уменьшает TTL на 1 при пересылке. Поэтому хост B получает 128 − 3 = 125. Конечные хосты не добавляют ещё один переход.",
+    "explanationEn": "Each of the three routers decrements TTL by one when forwarding, giving 128 − 3 = 125. Neither endpoint counts as an extra forwarding hop."
+  },
+  {
+    "id": "final-4-08",
+    "module": 15,
+    "q": "Which DHCP message does a client send to accept the IP address offered by a server?",
+    "qRu": "Какое сообщение DHCP клиент отправляет, чтобы принять предложенный сервером IP-адрес?",
+    "options": [
+      "DHCPDISCOVER",
+      "DHCPOFFER",
+      "DHCPREQUEST",
+      "DHCPACK"
+    ],
+    "optionsRu": [
+      "DHCPDISCOVER",
+      "DHCPOFFER",
+      "DHCPREQUEST",
+      "DHCPACK"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "В обмене DORA клиент ищет сервер (Discover), сервер предлагает адрес (Offer), клиент выбирает предложение (Request), сервер подтверждает аренду (ACK). Вопрос спрашивает именно о сообщении клиента после Offer.",
+    "explanationEn": "In DORA, the client discovers, the server offers, the client requests the selected offer, and the server acknowledges the lease. The client message immediately after Offer is Request."
+  },
+  {
+    "id": "final-4-09",
+    "module": 12,
+    "q": "Which IPv6 address is valid?",
+    "qRu": "Какой IPv6-адрес записан корректно?",
+    "options": [
+      "2001:DB8::G1:5",
+      "FE80::2AA:FF:FE9A:4CA3",
+      "2001:DB8::1::5",
+      "3FFE:1044:0:0:0:0:0:0:AB"
+    ],
+    "optionsRu": [
+      "2001:DB8::G1:5",
+      "FE80::2AA:FF:FE9A:4CA3",
+      "2001:DB8::1::5",
+      "3FFE:1044:0:0:0:0:0:0:AB"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "В FE80::2AA:FF:FE9A:4CA3 двойное двоеточие заменяет три нулевые группы, всего получается восемь. Буква G недопустима в шестнадцатеричном числе. Два знака :: в одном адресе недопустимы. У последнего варианта девять групп.",
+    "explanationEn": "In FE80::2AA:FF:FE9A:4CA3 the double colon expands to three zero groups, yielding eight groups. G is not hexadecimal, two double colons are ambiguous, and the last option has nine groups."
+  },
+  {
+    "id": "final-4-10",
+    "module": 12,
+    "q": "Which IPv6 address is the unspecified address, equivalent to IPv4 0.0.0.0?",
+    "qRu": "Какой неопределённый IPv6-адрес (unspecified address) соответствует IPv4 0.0.0.0?",
+    "options": [
+      "::1",
+      "::",
+      "FF02::1",
+      "FE80::/10"
+    ],
+    "optionsRu": [
+      "::1",
+      "::",
+      "FF02::1",
+      "FE80::/10"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Все 128 бит неопределённого адреса равны нулю и сокращаются до ::. Добавление единицы даёт loopback ::1. FF02::1 обозначает локальную группу всех узлов, FE80::/10 — диапазон link-local.",
+    "explanationEn": "The unspecified address consists of 128 zero bits, compressed to ::. A final one gives loopback ::1. FF02::1 is the link-local all-nodes multicast group, and FE80::/10 identifies link-local unicast space."
+  },
+  {
+    "id": "final-4-11",
+    "module": 12,
+    "q": "Which three are characteristics of IPv6 multicast addresses?",
+    "qRu": "Какие три свойства относятся к IPv6 multicast?",
+    "options": [
+      "One-to-many communication",
+      "One-to-nearest communication",
+      "Addresses begin with FF00::/8.",
+      "Addresses begin with FE80::/10.",
+      "FF02::1 is the all-nodes multicast group.",
+      "A multicast address can be the source address of a packet."
+    ],
+    "optionsRu": [
+      "Связь от одного ко многим",
+      "Связь от одного к ближайшему",
+      "Адреса из FF00::/8.",
+      "Адреса из FE80::/10.",
+      "FF02::1 — multicast-группа всех узлов канала.",
+      "Multicast-адрес можно указать источником пакета."
+    ],
+    "correct": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Multicast доставляет пакет участникам группы. Первый байт адреса группы равен FF, а FF02::1 охватывает все узлы локального канала. Адрес группы ставится в поле назначения. Ближайшего получателя выбирает anycast, а FE80::/10 — link-local unicast.",
+    "explanationEn": "Multicast sends to members of a group. Its addresses start with byte FF, and FF02::1 reaches all nodes on the local link. The group address is a destination. Anycast selects the nearest recipient, while FE80::/10 is link-local unicast."
+  },
+  {
+    "id": "final-4-12",
+    "module": 12,
+    "q": "What is the compressed notation for 2001:0DB8:0000:0000:0000:00A0:0000:0010?",
+    "qRu": "Как сократить запись 2001:0DB8:0000:0000:0000:00A0:0000:0010?",
+    "options": [
+      "2001:DB8::A0::10",
+      "2001:DB8::A0:0:10",
+      "2001:DB8:0:A0:0:10",
+      "2001:0DB8::A:0:10"
+    ],
+    "optionsRu": [
+      "2001:DB8::A0::10",
+      "2001:DB8::A0:0:10",
+      "2001:DB8:0:A0:0:10",
+      "2001:0DB8::A:0:10"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "После удаления ведущих нулей получается 2001:DB8:0:0:0:A0:0:10. Замени цепочку из трёх нулевых групп одним ::. Ноль между A0 и 10 остаётся, как и конечный ноль в A0.",
+    "explanationEn": "Strip leading zeros to obtain 2001:DB8:0:0:0:A0:0:10. Replace the three consecutive zero groups with one double colon. Preserve the isolated zero and the trailing zero in A0."
+  },
+  {
+    "id": "final-4-13",
+    "module": 12,
+    "q": "What is known as “one-to-many” addressing in IPv6?",
+    "qRu": "Как называется IPv6-адресация «от одного ко многим»?",
+    "options": [
+      "Global unicast",
+      "Anycast",
+      "Multicast",
+      "Link-local"
+    ],
+    "optionsRu": [
+      "Global unicast",
+      "Anycast",
+      "Multicast",
+      "Link-local"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Multicast-адрес представляет группу, и пакет получают её участники в пределах заданной области. Unicast адресует один интерфейс, anycast выбирает ближайший из нескольких. Link-local описывает область действия адреса.",
+    "explanationEn": "A multicast destination represents a group whose members receive the packet within its scope. Unicast identifies one interface, anycast selects the nearest of several, and link-local describes scope."
+  },
+  {
+    "id": "final-4-14",
+    "module": 3,
+    "q": "A Layer 2 switch resides at what layer of the four-layer TCP/IP model?",
+    "qRu": "На каком уровне четырёхуровневой модели TCP/IP работает L2-коммутатор?",
+    "options": [
+      "Application",
+      "Transport",
+      "Internet",
+      "Network Access",
+      "Session"
+    ],
+    "optionsRu": [
+      "Прикладной",
+      "Транспортный",
+      "Межсетевой",
+      "Сетевого доступа",
+      "Сеансовый"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Коммутатор пересылает Ethernet-кадры по MAC-адресам. В модели OSI это Data Link, а в четырёхуровневой модели TCP/IP функции канального и физического уровней объединены в Network Access. Internet занимается IP-маршрутизацией.",
+    "explanationEn": "Switches forward Ethernet frames by MAC address. This is Data Link in OSI. In the four-layer TCP/IP model, Network Access covers both link and physical functions. The Internet layer handles IP routing."
+  },
+  {
+    "id": "final-4-15",
+    "module": 15,
+    "q": "Typically, which transport protocol and port does HTTPS use with HTTP/1.1 or HTTP/2?",
+    "qRu": "Какие транспортный протокол и порт обычно использует HTTPS с HTTP/1.1 или HTTP/2?",
+    "options": [
+      "UDP port 443",
+      "TCP port 443",
+      "TCP port 80",
+      "UDP port 53",
+      "TCP port 22"
+    ],
+    "optionsRu": [
+      "UDP, порт 443",
+      "TCP, порт 443",
+      "TCP, порт 80",
+      "UDP, порт 53",
+      "TCP, порт 22"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "HTTPS с HTTP/1.1 или HTTP/2 использует TLS поверх TCP, стандартный порт 443. UDP 443 встречается в HTTP/3 с QUIC. TCP 80 — обычный HTTP, UDP 53 — DNS, TCP 22 — SSH.",
+    "explanationEn": "HTTPS with HTTP/1.1 or HTTP/2 uses TLS over TCP on port 443 by default. HTTP/3 uses QUIC over UDP 443. TCP 80 is plain HTTP, UDP 53 is DNS, and TCP 22 is SSH."
+  },
+  {
+    "id": "final-4-16",
+    "module": 2,
+    "q": "In Cisco IOS interface configuration mode, which command assigns 10.5.8.1/22 to the interface?",
+    "qRu": "Какой командой в режиме настройки интерфейса Cisco IOS назначить 10.5.8.1/22?",
+    "options": [
+      "Router1(config-if)# ip address 10.5.8.1 /22",
+      "Router1(config-if)# ip address 10.5.8.1 255.255.252.0",
+      "Router1(config-if)# ip address 10.5.8.1 0.0.3.255",
+      "Router1(config-if)# ip address 10.5.8.1 255.255.248.0"
+    ],
+    "optionsRu": [
+      "Router1(config-if)# ip address 10.5.8.1 /22",
+      "Router1(config-if)# ip address 10.5.8.1 255.255.252.0",
+      "Router1(config-if)# ip address 10.5.8.1 0.0.3.255",
+      "Router1(config-if)# ip address 10.5.8.1 255.255.248.0"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "После ip address укажи адрес и маску в десятичной записи. Для /22 это 8 + 8 + 6 единиц, то есть 255.255.252.0. Значение 0.0.3.255 — обратная маска, а 255.255.248.0 соответствует /21.",
+    "explanationEn": "The IOS command expects an address followed by a dotted-decimal subnet mask. For /22, 8 + 8 + 6 leading ones give 255.255.252.0. The wildcard mask is 0.0.3.255, and 255.255.248.0 is /21."
+  },
+  {
+    "id": "final-4-17",
+    "module": 8,
+    "q": "Client A sends a packet across R1 and R2 to Host 1 (192.168.1.2/24). R2 connects directly to the Host 1 LAN at 192.168.1.1/24. Which default gateway should be configured on Host 1?",
+    "qRu": "Клиент A отправляет пакет через R1 и R2 хосту 1 (192.168.1.2/24). Интерфейс R2 в локальной сети хоста имеет 192.168.1.1/24. Какой шлюз по умолчанию настроить на хосте 1?",
+    "options": [
+      "10.1.1.1",
+      "172.16.1.2",
+      "192.168.1.1",
+      "10.1.1.2",
+      "172.16.1.1",
+      "192.168.1.2"
+    ],
+    "optionsRu": [
+      "10.1.1.1",
+      "172.16.1.2",
+      "192.168.1.1",
+      "10.1.1.2",
+      "172.16.1.1",
+      "192.168.1.2"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Шлюз по умолчанию — адрес интерфейса маршрутизатора в том же канале, куда хост может отправить кадр напрямую. Для хоста .2 это R2 с адресом .1. Адреса других подсетей доступны через шлюз, а собственный адрес хоста не пересылает трафик.",
+    "explanationEn": "The default gateway is the router interface the host can reach directly on its own link. For Host 1 at .2, this is R2 at .1. The other subnets require routing, and the host’s own address cannot forward its traffic."
+  },
+  {
+    "id": "final-4-18",
+    "module": 15,
+    "q": "Which protocol translates domain names into IP addresses?",
+    "qRu": "Какой протокол преобразует доменные имена в IP-адреса?",
+    "options": [
+      "DNS",
+      "DHCP",
+      "ARP",
+      "SMTP",
+      "FTP"
+    ],
+    "optionsRu": [
+      "DNS",
+      "DHCP",
+      "ARP",
+      "SMTP",
+      "FTP"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "Клиент запрашивает у DNS запись A для IPv4 или AAAA для IPv6. DHCP выдаёт настройки, ARP ищет MAC по локальному IPv4, SMTP отправляет почту, FTP передаёт файлы.",
+    "explanationEn": "A DNS lookup returns an A record for IPv4 or an AAAA record for IPv6. DHCP provides settings, ARP resolves a local IPv4 address to a MAC, SMTP sends mail, and FTP transfers files."
+  },
+  {
+    "id": "final-4-19",
+    "module": 1,
+    "q": "Which devices are end devices? (Choose three.)",
+    "qRu": "Какие устройства относятся к конечным (end devices)? Выберите три.",
+    "options": [
+      "Laptop",
+      "Router",
+      "IP phone",
+      "Switch",
+      "Network printer",
+      "Firewall"
+    ],
+    "optionsRu": [
+      "Ноутбук",
+      "Маршрутизатор",
+      "IP-телефон",
+      "Коммутатор",
+      "Сетевой принтер",
+      "Межсетевой экран"
+    ],
+    "correct": [
+      0,
+      2,
+      4
+    ],
+    "explanation": "Конечное устройство создаёт или принимает пользовательские данные. Ноутбук открывает страницу, IP-телефон принимает голос, принтер получает задание. Маршрутизатор, коммутатор и межсетевой экран обычно пересылают или фильтруют чужой трафик.",
+    "explanationEn": "An endpoint originates or consumes user data. A laptop requests a page, an IP phone receives voice, and a printer accepts print jobs. Routers, switches and firewalls primarily forward or filter traffic between endpoints."
+  },
+  {
+    "id": "final-4-20",
+    "module": 1,
+    "q": "Which are basic characteristics of a reliable network architecture? (Choose three.)",
+    "qRu": "Какие три свойства характерны для надёжной сетевой архитектуры?",
+    "options": [
+      "Fault tolerance",
+      "Scalability",
+      "Quality of Service (QoS)",
+      "Attenuation",
+      "Half-duplex operation",
+      "Crosstalk"
+    ],
+    "optionsRu": [
+      "Отказоустойчивость",
+      "Масштабируемость",
+      "Качество обслуживания (QoS)",
+      "Затухание",
+      "Полудуплексный режим",
+      "Перекрёстные помехи"
+    ],
+    "correct": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "Отказоустойчивость сохраняет связь при сбое, масштабируемость позволяет добавлять пользователей и узлы, а QoS отдаёт приоритет чувствительному к задержке трафику. Затухание и перекрёстные помехи ухудшают сигнал, полудуплекс описывает режим передачи.",
+    "explanationEn": "Fault tolerance keeps service available after a failure, scalability accommodates growth, and QoS prioritizes delay-sensitive traffic. Attenuation and crosstalk impair signals. Half duplex describes how a link transmits."
+  },
+  {
+    "id": "final-4-21",
+    "module": 6,
+    "q": "Which two sublayers make up the IEEE 802 Data Link layer?",
+    "qRu": "Из каких двух подуровней состоит канальный уровень IEEE 802?",
+    "options": [
+      "Logical Link Control (LLC)",
+      "Media Access Control (MAC)",
+      "Transmission Control (TC)",
+      "Internet Protocol (IP)",
+      "Network Interface Control (NIC)"
+    ],
+    "optionsRu": [
+      "Управление логической связью (LLC)",
+      "Управление доступом к среде (MAC)",
+      "Управление передачей (TC)",
+      "Интернет-протокол (IP)",
+      "Управление сетевым интерфейсом (NIC)"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "LLC связывает верхние протоколы с канальным уровнем, MAC отвечает за кадры, MAC-адреса и доступ к среде. IP работает уровнем выше. NIC обычно означает сетевой адаптер, а TC не является подуровнем IEEE 802.",
+    "explanationEn": "LLC interfaces with upper-layer protocols. MAC handles frames, MAC addressing and access to the medium. IP belongs one layer higher, NIC normally means a network interface card, and TC is not an IEEE 802 sublayer."
+  },
+  {
+    "id": "final-4-22",
+    "module": 4,
+    "q": "What is the purpose of twisting the pairs of wires in UTP cabling?",
+    "qRu": "Зачем в кабеле UTP проводники скручивают попарно?",
+    "options": [
+      "To enhance flexibility",
+      "To increase signal strength",
+      "To reduce crosstalk",
+      "To simplify termination"
+    ],
+    "optionsRu": [
+      "Повысить гибкость",
+      "Усилить сигнал",
+      "Снизить перекрёстные помехи",
+      "Упростить оконцовку"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Скрутка меняет взаимное положение проводников вдоль кабеля и уменьшает наводки между парами (crosstalk). При дифференциальном приёме общая помеха также частично подавляется. Сама скрутка не усиливает сигнал.",
+    "explanationEn": "Twisting changes the conductors’ relative positions along the cable, reducing coupling between pairs (crosstalk). Differential reception also rejects common-mode noise. Twisting does not amplify the signal."
+  },
+  {
+    "id": "final-4-23",
+    "module": 8,
+    "q": "Which fields belong to the IPv4 packet header? (Choose three.)",
+    "qRu": "Какие три поля входят в заголовок IPv4-пакета?",
+    "options": [
+      "Time to Live",
+      "Header Checksum",
+      "Sequence Number",
+      "Source IPv4 Address",
+      "Acknowledgment Number",
+      "Window Size"
+    ],
+    "optionsRu": [
+      "Время жизни (TTL)",
+      "Контрольная сумма заголовка",
+      "Порядковый номер",
+      "IPv4-адрес источника",
+      "Номер подтверждения",
+      "Размер окна"
+    ],
+    "correct": [
+      0,
+      1,
+      3
+    ],
+    "explanation": "В заголовке IPv4 TTL ограничивает число переходов, Header Checksum позволяет проверить заголовок, Source IPv4 Address указывает отправителя. Порядковый номер, номер подтверждения и размер окна относятся к TCP.",
+    "explanationEn": "IPv4 uses TTL to limit hops, the header checksum to check the header, and the source IPv4 address to identify the sender. Sequence number, acknowledgment number and window size are TCP fields."
+  },
+  {
+    "id": "final-4-24",
+    "module": 2,
+    "q": "Which Cisco IOS command erases the startup configuration from NVRAM?",
+    "qRu": "Какая команда Cisco IOS стирает загрузочную конфигурацию из NVRAM?",
+    "options": [
+      "erase startup-config",
+      "delete running-config",
+      "copy startup-config null",
+      "clear config",
+      "write memory",
+      "reload"
+    ],
+    "optionsRu": [
+      "erase startup-config",
+      "delete running-config",
+      "copy startup-config null",
+      "clear config",
+      "write memory",
+      "reload"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "В NVRAM хранится startup-config. Команда erase startup-config удаляет сохранённую конфигурацию. Текущая конфигурация продолжает действовать в RAM. write memory сохраняет её, а reload перезагружает устройство.",
+    "explanationEn": "NVRAM holds startup-config. The erase startup-config command removes that saved configuration while the running configuration remains active in RAM. Write memory saves the running configuration and reload restarts the device."
+  },
+  {
+    "id": "final-4-25",
+    "module": 12,
+    "q": "Which command displays a brief summary of IPv6 addresses and interface status?",
+    "qRu": "Какой командой вывести краткую сводку IPv6-адресов и состояния интерфейсов?",
+    "options": [
+      "show ipv6 interface brief",
+      "show ip interface brief",
+      "show interfaces ipv6",
+      "show ipv6 brief",
+      "show ipv6 route brief",
+      "show brief ipv6"
+    ],
+    "optionsRu": [
+      "show ipv6 interface brief",
+      "show ip interface brief",
+      "show interfaces ipv6",
+      "show ipv6 brief",
+      "show ipv6 route brief",
+      "show brief ipv6"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "В IOS последовательность ipv6 interface выбирает IPv6-интерфейсы, а brief — краткий формат. show ip interface brief относится к IPv4. Команды с route описывают маршруты, а не состояние интерфейсов.",
+    "explanationEn": "In IOS, ipv6 interface selects IPv6 interface information and brief requests the summary. Show ip interface brief is the IPv4 counterpart. Route commands concern routing entries rather than interface status."
+  }
+]

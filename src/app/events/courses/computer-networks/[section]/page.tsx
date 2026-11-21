@@ -1,3 +1,5 @@
+import {finalPaper, finalOccurrences} from '@/lib/events/networkFinal/finalPaper';
+import {writtenQuestions} from '@/lib/events/networkFinal/finalWritten';
 import NetworkStudyRoutes from '@/components/events/NetworkStudyRoutes';
 import ReadingLanguage, {readingLanguage} from '@/components/events/ReadingLanguage';
 import {readingEnglish} from '@/lib/events/networkFinal/readingEnglish';
@@ -11,7 +13,7 @@ import { labs } from "@/lib/events/networkFinal/labs";
 import { groups, questionsFor } from '@/lib/events/networkFinal/quizzes';
 import styles from "../../../courses.module.css";
 
-const sections = { midterm:"Мидтерм", endterm:"Эндтерм", practice: "Квизы по модулям", lectures: "Лекции", theory: "Теория" };
+const sections = { midterm:"Мидтерм", endterm:"Эндтерм", final:"Файнал", practice: "Квизы по модулям", lectures: "Лекции", theory: "Теория" };
 export function generateStaticParams() {
   return Object.keys(sections).map(section => ({ section }));
 }
@@ -19,7 +21,19 @@ export function generateStaticParams() {
 export default async function NetworkSection({ params }: { params: Promise<{section: string}> }) {
   const { section } = await params;
   if (!Object.hasOwn(sections, section)) notFound();
-  if(section==="midterm" || section==="endterm"){
+  if(section==="midterm" || section==="endterm" || section==="final"){
+    if (section === 'final') {
+      const root = '/events/courses/computer-networks';
+      return <article className={`${styles.outline} ${styles.sectionPage}`} lang="ru" data-no-i18n>
+        <Link className={styles.back} href={root}>← Computer Networks</Link><h1>Файнал</h1>
+        <nav className={styles.moduleFolders} aria-label="Банки файнала">
+          <Link href={root+'/practice/final-paper'}><strong>Файнал банк</strong><span>{finalPaper.length} тестовых вопросов с разбором · по всем вариантам или по одному</span></Link>
+          <Link href={root+'/final/open-ended'}><strong>Open-ended</strong><span>{writtenQuestions.length} письменных заданий · оценка Gemini и образец ответа</span></Link>
+          <Link href={root+'/practice/final-related'}><strong>Вопросы по модулям и лекциям</strong><span>Дополнительная практика по темам файнала</span></Link>
+        </nav>
+        <p>В тестах {finalOccurrences} позиций. В общем банке {finalOccurrences-finalPaper.length} повторов объединено.</p>
+      </article>;
+    }
     const mid=section==="midterm";
     const term=mid?'мидтерма':'эндтерма';
     return <article className={`${styles.outline} ${styles.sectionPage}`} lang="ru" data-no-i18n>

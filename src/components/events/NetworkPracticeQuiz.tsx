@@ -28,7 +28,7 @@ function AccountQuiz({group,title,questions}:Props) {
   const lang=choices.question??'ru';
   const en=grind && lang==='en';
   const bank = questions.filter(q=>q.correct.length);
-  const [limit,setLimit] = useState(String((grind || ["compact","complete","midterm-paper","midterm-related","endterm-paper","endterm-related"].includes(group) || group.startsWith("sprint-"))?bank.length:Math.min(10,bank.length)));
+  const [limit,setLimit] = useState(String((grind || ["compact","complete","midterm-paper","midterm-related","endterm-paper","endterm-related","final-paper","final-related"].includes(group) || group.startsWith("sprint-"))?bank.length:Math.min(10,bank.length)));
   const [order,setOrder] = useState('original');
   const [scope,setScope] = useState('all');
   const owner=session?.user?.id;
@@ -100,17 +100,19 @@ function AccountQuiz({group,title,questions}:Props) {
     void sync(next,owner);
   }
   const history=Object.fromEntries(Object.entries(snapshot.history).map(([id,x])=>[id,x.ok]));
-  const term=group.startsWith('midterm-')?'midterm':group.startsWith('endterm-')?'endterm':null;
+  const term=group.startsWith('midterm-')?'midterm':group.startsWith('endterm-')?'endterm':group.startsWith('final-')?'final':null;
   const [source,setSource]=useState('all');
   const [kind,number]=source.split('-');
   const related=group.endsWith('-related');
   const inSource=(q:EventQuizQuestion)=>{
     if(source==='all')return true;
+    if(kind==='variant' && q.source?.positions)return Number(number) in q.source.positions;
     if(kind==='only')return q.source?.kind===number;
     if(related && q.source?.kind!==kind)return false;
     return q.source?.[kind as 'lecture'|'module'|'variant']===Number(number);
   };
   const sourcePool=bank.filter(inSource);
+  if(group==='final-paper' && kind==='variant')sourcePool.sort((a,b)=>a.source!.positions![Number(number)]-b.source!.positions![Number(number)]);
   function numbersFor(kind:'module'|'lecture'){
     const numbers=questions.flatMap(q=>{
       const value=q.source?.[kind];
@@ -160,7 +162,7 @@ function AccountQuiz({group,title,questions}:Props) {
     setRound(n => n+1);
   }
   const quizInfo = <>
-    <Link href={term?'/events/courses/computer-networks/'+term:home}>{term?(term==='midterm'?'← Мидтерм':'← Эндтерм'):en?'← Computer Networks practice':'← Практика Computer Networks'}</Link><h1>{en?'GRIND MODE':title}</h1>
+    <Link href={term?'/events/courses/computer-networks/'+term:home}>{term?(term==='midterm'?'← Мидтерм':term==='final'?'← Файнал':'← Эндтерм'):en?'← Computer Networks practice':'← Практика Computer Networks'}</Link><h1>{en?'GRIND MODE':title}</h1>
     <label>{en?'Mastered':'Освоено вопросов'} · {bank.filter(q=>history[q.id]).length} / {bank.length}
       <progress className={courseStyles.meter} max={bank.length||1} value={bank.filter(q=>history[q.id]).length}/>
     </label>
@@ -184,7 +186,7 @@ function AccountQuiz({group,title,questions}:Props) {
       }}>{snapshot.attempt.done?(en?'View result':'Открыть результат'):en?`Resume · question ${snapshot.attempt.index+1} of ${snapshot.attempt.ids.length}`:`Продолжить · вопрос ${snapshot.attempt.index+1} из ${snapshot.attempt.ids.length}`}</button>}
       {!grind && <><h2>Настроить квиз</h2><p>Верно с последней попытки: {bank.filter(q=>history[q.id]===true).length} из {bank.length}</p>
       <div className={setup.fields}>
-        {term && <label>Банк вопросов<select value={source} onChange={e=>setSource(e.target.value)}><option value="all">Общий банк</option>{group.endsWith("-related") && <optgroup label="По источнику"><option value="only-module">Все вопросы модулей</option><option value="only-lecture">Все вопросы лекций</option></optgroup>}{group==="endterm-paper" && <optgroup label="По вариантам">{[1,2,3,4].map(n=><option key={n} value={"variant-"+n}>Вариант {n}</option>)}</optgroup>}<optgroup label="По модулям">{moduleNumbers.map(n=><option key={n} value={'module-'+n}>Модуль {n}</option>)}</optgroup><optgroup label="По лекциям">{lectureNumbers.map(n=><option key={n} value={'lecture-'+n}>Лекция {n}</option>)}</optgroup></select></label>}
+        {term && <label>Банк вопросов<select value={source} onChange={e=>setSource(e.target.value)}><option value="all">Общий банк</option>{group.endsWith("-related") && <optgroup label="По источнику"><option value="only-module">Все вопросы модулей</option><option value="only-lecture">Все вопросы лекций</option></optgroup>}{(group==="endterm-paper" || group==="final-paper") && <optgroup label="По вариантам">{(group==="final-paper"?[4,113,122,123]:[1,2,3,4]).map(n=><option key={n} value={"variant-"+n}>Вариант {n===113?"11-3":n===122?"12-2":n===123?"12-3":n}</option>)}</optgroup>}<optgroup label="По модулям">{moduleNumbers.map(n=><option key={n} value={'module-'+n}>Модуль {n}</option>)}</optgroup><optgroup label="По лекциям">{lectureNumbers.map(n=><option key={n} value={'lecture-'+n}>Лекция {n}</option>)}</optgroup></select></label>}
         <label>Какие вопросы<select value={scope} onChange={e=>setScope(e.target.value)}><option value="all">Весь банк</option><option value="new">Ещё не отвеченные</option><option value="errors">Мои ошибки</option></select></label>
         <label>Количество вопросов<input type="number" min="1" max={pool.length || 1} value={limit && Math.min(Number(limit),pool.length)} onChange={e=>setLimit(e.target.value)}/></label>
         <label>Порядок<select value={order} onChange={e=>setOrder(e.target.value)}><option value="original">По порядку</option><option value="random">Случайный</option></select></label>

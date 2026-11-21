@@ -1,0 +1,127 @@
+[
+  {
+    "id": "final-113-02",
+    "module": 2,
+    "q": "Which two methods provide remote CLI access to a Cisco device?",
+    "qRu": "Какие два способа дают удалённый доступ к командной строке устройства Cisco?",
+    "options": [
+      "SSH",
+      "HDMI",
+      "Console cable",
+      "Telnet",
+      "USB storage"
+    ],
+    "optionsRu": [
+      "SSH",
+      "HDMI",
+      "Консольный кабель",
+      "Telnet",
+      "USB-накопитель"
+    ],
+    "correct": [
+      0,
+      3
+    ],
+    "explanation": "SSH и Telnet открывают удалённую командную сессию по сети. SSH шифрует трафик, а Telnet передаёт его открыто. Консольный кабель требует физического подключения, HDMI выводит изображение, USB-накопитель хранит файлы.",
+    "explanationEn": "SSH and Telnet both open remote terminal sessions over a network. SSH encrypts the session, whereas Telnet sends cleartext. A console cable requires a local connection, HDMI carries video, and USB storage holds files."
+  },
+  {
+    "id": "final-113-07",
+    "module": 8,
+    "q": "Client A (10.1.1.2/24) sends a packet to Host 1 via routers R1 and R2. R1 has LAN address 10.1.1.1, the inter-router link uses 172.16.1.1 and 172.16.1.2, and R2 serves the destination LAN at 192.16.1.1. Without NAT, what is the source IP address in the packet arriving at Fa0/0 on R2?",
+    "qRu": "Клиент A (10.1.1.2/24) отправляет пакет к Host 1 через R1 и R2. Адрес R1 в сети клиента — 10.1.1.1, между маршрутизаторами используются 172.16.1.1 и 172.16.1.2, в сети назначения у R2 адрес 192.16.1.1. Какой IP-адрес источника в пакете на входе Fa0/0 у R2, если NAT выключен?",
+    "options": [
+      "10.1.1.1",
+      "172.16.1.2",
+      "192.16.1.1",
+      "10.1.1.2",
+      "172.16.1.1"
+    ],
+    "optionsRu": [
+      "10.1.1.1",
+      "172.16.1.2",
+      "192.16.1.1",
+      "10.1.1.2",
+      "172.16.1.1"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "IP-источник задаёт отправитель — клиент 10.1.1.2. При обычной пересылке маршрутизатор меняет канальный заголовок и уменьшает TTL. Ни шлюз клиента, ни адрес транзитного интерфейса не подставляется вместо исходного IP.",
+    "explanationEn": "Client A sets the source to 10.1.1.2. Each forwarding router replaces the link-layer header and decrements TTL. Ordinary routing without NAT does not substitute either the gateway address or a transit interface address for the source IP."
+  },
+  {
+    "id": "final-113-13",
+    "module": 11,
+    "q": "Network A has 66 hosts and Network B has 310. Which subnet mask places all hosts in Network B in the same subnet with the fewest unused addresses?",
+    "qRu": "В сети A находятся 66 узлов, в сети B — 310. Какая маска вместит все узлы сети B в одну подсеть с наименьшим запасом?",
+    "options": [
+      "255.255.255.0",
+      "255.255.254.0",
+      "255.255.252.0",
+      "255.255.248.0"
+    ],
+    "optionsRu": [
+      "255.255.255.0",
+      "255.255.254.0",
+      "255.255.252.0",
+      "255.255.248.0"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Для 310 узлов восьми бит недостаточно: 2⁸ − 2 = 254. Девять бит дают 510 доступных адресов, значит нужен префикс /23 и маска 255.255.254.0. Более крупные сети /22 и /21 оставляют больший запас.",
+    "explanationEn": "Eight host bits provide only 254 usable addresses. Nine provide 510, enough for 310 hosts. This leaves a /23 prefix, mask 255.255.254.0. Both /22 and /21 would leave more addresses unused."
+  },
+  {
+    "id": "final-113-15",
+    "module": 14,
+    "q": "Which two statements about UDP are correct?",
+    "qRu": "Какие два утверждения об UDP верны?",
+    "options": [
+      "It has lower header overhead than TCP",
+      "It guarantees in-order delivery by itself",
+      "It does not require a connection handshake",
+      "It retransmits every lost datagram automatically",
+      "Its header is always 20 bytes"
+    ],
+    "optionsRu": [
+      "Заголовок занимает меньше места, чем в TCP",
+      "Сам обеспечивает доставку по порядку",
+      "Не требует рукопожатия для установки соединения",
+      "Автоматически повторяет каждую потерянную дейтаграмму",
+      "Его заголовок всегда равен 20 байтам"
+    ],
+    "correct": [
+      0,
+      2
+    ],
+    "explanation": "Заголовок UDP занимает 8 байт, минимальный заголовок TCP — 20. UDP может отправить первую дейтаграмму сразу. Повтор потерянных данных и упорядочивание при необходимости реализует приложение.",
+    "explanationEn": "A UDP header is 8 bytes, versus at least 20 for TCP. UDP can send the first datagram without a connection handshake. The application must handle any required retransmission or ordering."
+  },
+  {
+    "id": "final-113-20",
+    "module": 11,
+    "q": "How many usable host addresses are available in a typical IPv4 /24 subnet?",
+    "qRu": "Сколько адресов можно назначить узлам в обычной IPv4-подсети /24?",
+    "options": [
+      "128",
+      "254",
+      "255",
+      "256",
+      "512"
+    ],
+    "optionsRu": [
+      "128",
+      "254",
+      "255",
+      "256",
+      "512"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Из 32 бит адреса 24 заняты префиксом. Оставшиеся 8 бит дают 256 комбинаций. Две зарезервированы для адреса сети и широковещательного адреса, поэтому узлам доступны 254.",
+    "explanationEn": "A /24 leaves eight host bits and thus 256 addresses. Reserving the all-zero host value for the network and the all-one value for broadcast leaves 254 usable host addresses."
+  }
+]

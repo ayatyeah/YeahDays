@@ -27,7 +27,7 @@ export default async function CourseEventsPage({ params }: { params: Promise<{ c
       <header className={styles.courseHeading}><img src={course.logo} alt=""/><div><h1>{course.title}</h1><p>Письменный финал · 40 вопросов за 50 минут. В 30 вопросах выбери один ответ, в остальных 10 — два или три.</p></div></header>
       <NetworkStudyRoutes/>
       <h2 className={styles.sectionTitle}>Подготовка к экзамену</h2>
-      <nav className={styles.moduleFolders} aria-label="Выбрать экзамен">{[['midterm','Мидтерм','25 вопросов и практика по связанным темам'],['endterm','Эндтерм','Темы лекций 5–10']].map(([id,title,description])=><Link key={id} href={`/events/courses/computer-networks/${id}`}><strong>{title}</strong><span>{description} →</span></Link>)}</nav>
+      <nav className={styles.moduleFolders} aria-label="Выбрать экзамен">{[['midterm','Мидтерм','25 вопросов и практика по связанным темам'],['endterm','Эндтерм','Темы лекций 5–10'],['final','Файнал','Файнал банк · тесты и письменные задания']].map(([id,title,description])=><Link key={id} href={`/events/courses/computer-networks/${id}`}><strong>{title}</strong><span>{description} →</span></Link>)}</nav>
       <h2 className={styles.sectionTitle}>Файнал · весь курс</h2>
       <nav className={styles.grid} aria-label="Папки Computer Networks">
         {folders.map(([id, title, description]) => <Link className={`${styles.course} ${styles.folder}`} key={id} href={`/events/courses/computer-networks/${id}`}>

@@ -1,0 +1,624 @@
+[
+  {
+    "id": "final-123-01",
+    "module": 1,
+    "q": "A company allows selected suppliers to securely access part of its internal network. Which type of network is being provided?",
+    "qRu": "Компания даёт выбранным поставщикам защищённый доступ к части внутренней сети. Как называется такая сеть?",
+    "options": [
+      "Intranet",
+      "Extranet",
+      "LAN only",
+      "Peer-to-peer network"
+    ],
+    "optionsRu": [
+      "Интранет",
+      "Экстранет",
+      "Только локальная сеть",
+      "Одноранговая сеть"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Экстранет (extranet) открывает партнёрам ограниченную часть корпоративных ресурсов. Интранет предназначен для сотрудников. LAN описывает охват сети, а peer-to-peer — роли узлов.",
+    "explanationEn": "An extranet extends selected company resources to trusted outside partners. An intranet serves internal users. LAN describes scope, and peer-to-peer describes device roles."
+  },
+  {
+    "id": "final-123-02",
+    "module": 12,
+    "q": "Which IPv6 address is valid?",
+    "qRu": "Какой IPv6-адрес записан правильно?",
+    "options": [
+      "2031:0:130F::9C0:876A:130B",
+      "2001:0DB8:0000:130F:0000:0000:08GC:140B",
+      "2001:0DB8:0:130H::87C:140B",
+      "2031::130F::9C0:876A:130B"
+    ],
+    "optionsRu": [
+      "2031:0:130F::9C0:876A:130B",
+      "2001:0DB8:0000:130F:0000:0000:08GC:140B",
+      "2001:0DB8:0:130H::87C:140B",
+      "2031::130F::9C0:876A:130B"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "В IPv6 допустимы цифры 0–9 и буквы A–F. Одна запись :: заполняет пропущенные нулевые группы до восьми. В первом адресе она заменяет две группы. В следующих вариантах встречаются G, H или два знака ::.",
+    "explanationEn": "Each IPv6 group uses hexadecimal digits 0–9 and A–F. One :: supplies enough zero groups to reach eight. The first address omits two groups. The others contain G, H or two occurrences of ::."
+  },
+  {
+    "id": "final-123-03",
+    "module": 4,
+    "q": "What are the main functions of the physical layer? (Choose two.)",
+    "qRu": "Что делает физический уровень? Выбери два ответа.",
+    "options": [
+      "Transport bits across the media",
+      "Encode frames into signals",
+      "Provide logical addressing",
+      "Manage routing decisions",
+      "Provide application services"
+    ],
+    "optionsRu": [
+      "Передаёт биты по среде",
+      "Кодирует биты кадра в сигналы",
+      "Обеспечивает логическую адресацию",
+      "Выбирает маршруты",
+      "Предоставляет прикладные сервисы"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "Физический уровень (physical layer) получает биты кадра и представляет их сигналами на кабеле, в волокне или в эфире. IP-адреса и маршруты относятся к сетевому уровню, прикладные сервисы — к верхнему.",
+    "explanationEn": "The physical layer encodes the bits of a frame as signals and transmits them over the medium. Logical addressing and routing belong to the network layer, and application services sit above it."
+  },
+  {
+    "id": "final-123-04",
+    "module": 12,
+    "q": "What is known as “one-to-nearest” addressing in IPv6?",
+    "qRu": "Как называется IPv6-адресация «один к ближайшему»?",
+    "options": [
+      "Global unicast",
+      "Anycast",
+      "Multicast",
+      "Unspecified"
+    ],
+    "optionsRu": [
+      "Глобальная индивидуальная (global unicast)",
+      "Anycast",
+      "Групповая (multicast)",
+      "Неопределённый адрес"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "При anycast несколько узлов используют один адрес, а маршрутизация доставляет пакет к одному из них по лучшему маршруту. Unicast задаёт конкретный интерфейс, multicast доставляет группе, а :: означает отсутствие назначенного адреса.",
+    "explanationEn": "Several anycast nodes share an address. Routing delivers a packet to one of them along the preferred path. Unicast identifies an individual interface, multicast targets a group, and :: means unspecified."
+  },
+  {
+    "id": "final-123-05",
+    "module": 15,
+    "q": "Which two protocols are commonly used to retrieve email from a mail server?",
+    "qRu": "Какие два протокола используют для получения писем с сервера?",
+    "options": [
+      "POP3",
+      "IMAP",
+      "ICMP",
+      "DHCP",
+      "ARP"
+    ],
+    "optionsRu": [
+      "POP3",
+      "IMAP",
+      "ICMP",
+      "DHCP",
+      "ARP"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "POP3 позволяет загрузить письма, IMAP — работать с почтой на сервере и синхронизировать папки. ICMP сообщает о сетевых событиях, DHCP выдаёт параметры сети, ARP ищет MAC-адрес.",
+    "explanationEn": "POP3 retrieves messages, while IMAP provides access to server mailboxes and synchronizes folders. ICMP reports network events, DHCP supplies configuration, and ARP resolves local hardware addresses."
+  },
+  {
+    "id": "final-123-06",
+    "module": 14,
+    "q": "Which transport protocol is commonly chosen for low-delay live voice traffic?",
+    "qRu": "Какой транспортный протокол обычно используют для голоса в реальном времени с малой задержкой?",
+    "options": [
+      "TCP",
+      "UDP",
+      "FTP",
+      "SMTP",
+      "ARP"
+    ],
+    "optionsRu": [
+      "TCP",
+      "UDP",
+      "FTP",
+      "SMTP",
+      "ARP"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Голосовой поток часто передают через UDP. Опоздавший звук уже бесполезен, а UDP позволяет продолжить воспроизведение без ожидания повторной передачи. TCP обеспечивает упорядоченную доставку, FTP и SMTP работают выше транспорта, ARP решает задачу адресации.",
+    "explanationEn": "Live voice often uses UDP because a late audio sample has little value. UDP allows playback to continue without waiting for retransmission. TCP enforces ordered delivery, FTP and SMTP are applications, and ARP resolves addresses."
+  },
+  {
+    "id": "final-123-07",
+    "module": 14,
+    "q": "Which message begins the standard TCP three-way handshake?",
+    "qRu": "С какого сообщения начинается трёхстороннее рукопожатие TCP?",
+    "options": [
+      "ACK",
+      "FIN",
+      "SYN",
+      "ASK",
+      "PSH"
+    ],
+    "optionsRu": [
+      "ACK",
+      "FIN",
+      "SYN",
+      "ASK",
+      "PSH"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Клиент посылает SYN со своим начальным порядковым номером, сервер отвечает SYN-ACK, клиент подтверждает ACK. FIN завершает передачу, PSH относится к доставке данных приложению. Флага ASK в TCP нет.",
+    "explanationEn": "The client sends SYN with its initial sequence number. The server returns SYN-ACK, then the client sends ACK. FIN closes a sending direction, PSH concerns data delivery, and ASK is not a TCP flag."
+  },
+  {
+    "id": "final-123-08",
+    "module": 7,
+    "q": "Which part of a MAC address identifies the vendor?",
+    "qRu": "Какая часть MAC-адреса указывает производителя?",
+    "options": [
+      "Host ID",
+      "OUI",
+      "Network prefix",
+      "VLAN ID",
+      "FCS"
+    ],
+    "optionsRu": [
+      "Идентификатор хоста",
+      "OUI",
+      "Сетевой префикс",
+      "Идентификатор VLAN",
+      "FCS"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "В классическом глобальном MAC-адресе первые 24 бита образуют OUI (Organizationally Unique Identifier), выделенный организации. VLAN ID обозначает виртуальную сеть, а FCS проверяет целостность кадра.",
+    "explanationEn": "In the traditional globally assigned MAC format, the first 24 bits are the organizationally unique identifier (OUI). A VLAN ID identifies a virtual LAN and the FCS checks frame integrity."
+  },
+  {
+    "id": "final-123-09",
+    "module": 12,
+    "q": "What is the alternative notation for B514:82C3:0000:0000:0029:EC7A:0000:EC72?",
+    "qRu": "Какая запись обозначает тот же IPv6-адрес B514:82C3:0000:0000:0029:EC7A:0000:EC72?",
+    "options": [
+      "B514:82C3:0029::EC7A:0000:EC72",
+      "B514:82C3:0029:EC7A:EC72",
+      "B514:82C3::0029:EC7A:0:EC72",
+      "B514:82C3::0029:EC7A:EC72"
+    ],
+    "optionsRu": [
+      "B514:82C3:0029::EC7A:0000:EC72",
+      "B514:82C3:0029:EC7A:EC72",
+      "B514:82C3::0029:EC7A:0:EC72",
+      "B514:82C3::0029:EC7A:EC72"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "Сверни третью и четвёртую нулевые группы в ::. Седьмая группа тоже нулевая, но стоит отдельно, поэтому оставь 0 между EC7A и EC72. Ведущие нули в 0029 допустимы.",
+    "explanationEn": "Compress the consecutive third and fourth zero groups to ::. The separate seventh zero group must still appear as 0 between EC7A and EC72. Keeping the leading zeros in 0029 is valid."
+  },
+  {
+    "id": "final-123-10",
+    "module": 9,
+    "q": "A host sends an Ethernet frame carrying an IPv4 packet to another host on the local Ethernet LAN. Which protocol determines the destination MAC address from the IPv4 address?",
+    "qRu": "Хост отправляет IPv4-пакет соседу в той же Ethernet LAN. Какой протокол находит MAC-адрес назначения по IPv4-адресу?",
+    "options": [
+      "DHCP",
+      "ICMP",
+      "ARP",
+      "TCP",
+      "DNS"
+    ],
+    "optionsRu": [
+      "DHCP",
+      "ICMP",
+      "ARP",
+      "TCP",
+      "DNS"
+    ],
+    "correct": [
+      2
+    ],
+    "explanation": "ARP запрашивает у соседей, кто владеет известным IPv4-адресом. Ответ содержит MAC, который отправитель укажет в кадре. DNS разрешает имена, DHCP настраивает узел, TCP передаёт данные, ICMP сообщает об ошибках.",
+    "explanationEn": "ARP asks which neighbor owns a known IPv4 address. The reply supplies the MAC used in the Ethernet frame. DNS resolves names, DHCP configures hosts, TCP carries data, and ICMP reports network conditions."
+  },
+  {
+    "id": "final-123-11",
+    "module": 12,
+    "q": "Which IPv6 address is the equivalent of the IPv4 loopback address 127.0.0.1?",
+    "qRu": "Какой IPv6-адрес соответствует IPv4 loopback 127.0.0.1?",
+    "options": [
+      "::1",
+      "::",
+      "2000::/3",
+      "0::/10"
+    ],
+    "optionsRu": [
+      "::1",
+      "::",
+      "2000::/3",
+      "0::/10"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "::1 — адрес петли (loopback). Пакет возвращается внутреннему сетевому стеку того же устройства. :: — неопределённый адрес, а записи с / задают префиксы.",
+    "explanationEn": "::1 is the loopback address. Traffic goes back to the networking stack on the same device. :: is the unspecified address, and slash notation identifies a prefix."
+  },
+  {
+    "id": "final-123-12",
+    "module": 8,
+    "q": "Client A (10.6.6.2) sends an IPv4 packet via R1 (10.6.6.1) and R2 to Host 1. The R1–R2 link uses 172.22.5.1 and 172.22.5.2. R2 serves the destination LAN at 192.168.6.1. With ordinary routing and no NAT, what source IPv4 address is in the packet at R2 Fa0/0?",
+    "qRu": "Клиент A (10.6.6.2) отправляет пакет через R1 (10.6.6.1) и R2 к Host 1. Канал R1–R2 использует 172.22.5.1 и 172.22.5.2. В сети назначения у R2 адрес 192.168.6.1. Какой IPv4-адрес источника в пакете на Fa0/0 у R2 при маршрутизации без NAT?",
+    "options": [
+      "172.22.5.1",
+      "172.22.5.2",
+      "192.168.6.1",
+      "10.6.6.1",
+      "10.6.6.2"
+    ],
+    "optionsRu": [
+      "172.22.5.1",
+      "172.22.5.2",
+      "192.168.6.1",
+      "10.6.6.1",
+      "10.6.6.2"
+    ],
+    "correct": [
+      4
+    ],
+    "explanation": "Источник IP-пакета — клиент 10.6.6.2. Маршрутизаторы меняют канальный заголовок для следующего перехода и уменьшают TTL. Без NAT адрес источника остаётся прежним.",
+    "explanationEn": "The packet originated at 10.6.6.2. Each router supplies a new link-layer header and decreases TTL. Ordinary forwarding without NAT preserves the original source IP."
+  },
+  {
+    "id": "final-123-13",
+    "module": 3,
+    "q": "Which two OSI layers are directly concerned with media access and physical transmission?",
+    "qRu": "Какие два уровня OSI отвечают за доступ к среде и физическую передачу?",
+    "options": [
+      "Application",
+      "Transport",
+      "Network",
+      "Data Link",
+      "Physical"
+    ],
+    "optionsRu": [
+      "Прикладной",
+      "Транспортный",
+      "Сетевой",
+      "Канальный",
+      "Физический"
+    ],
+    "correct": [
+      3,
+      4
+    ],
+    "explanation": "Канальный уровень (data link) определяет правила доступа к среде и формирует кадры. Физический (physical) переносит биты сигналами. Сетевой уровень пересылает IP-пакеты, а транспортный связывает процессы.",
+    "explanationEn": "The data link layer handles access to the medium and framing. The physical layer transmits bits as signals. The network layer forwards IP packets, and transport serves end-to-end processes."
+  },
+  {
+    "id": "final-123-14",
+    "module": 15,
+    "q": "Typically, HTTP uses what transport protocol and port number?",
+    "qRu": "Какой транспорт и порт обычно использует обычный HTTP?",
+    "options": [
+      "UDP port 80",
+      "TCP port 443",
+      "UDP port 443",
+      "TCP port 80",
+      "TCP port 143"
+    ],
+    "optionsRu": [
+      "UDP, порт 80",
+      "TCP, порт 443",
+      "UDP, порт 443",
+      "TCP, порт 80",
+      "TCP, порт 143"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Для обычного HTTP/1.1 порт сервера по умолчанию — TCP 80. Порт 443 связан с HTTPS, а TCP 143 — с IMAP.",
+    "explanationEn": "Plain HTTP/1.1 uses TCP port 80 by default. Port 443 is associated with HTTPS, and TCP 143 with IMAP."
+  },
+  {
+    "id": "final-123-15",
+    "module": 8,
+    "q": "Which network-layer characteristic means that IP does not guarantee packet delivery?",
+    "qRu": "Как называется свойство IP, при котором доставка пакета не гарантируется?",
+    "options": [
+      "Connection-oriented",
+      "Best-effort",
+      "Reliable",
+      "Session-based",
+      "Acknowledged delivery"
+    ],
+    "optionsRu": [
+      "С установлением соединения",
+      "Доставка по возможности (best-effort)",
+      "Надёжная доставка",
+      "На основе сеанса",
+      "Доставка с подтверждением"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Best-effort означает, что маршрутизатор попытается переслать пакет, но IP не подтверждает доставку и не повторяет потерянные пакеты. Если приложению нужны подтверждения и повторы, их может предоставить TCP.",
+    "explanationEn": "Best-effort means IP attempts forwarding without guaranteeing delivery, acknowledging packets or retransmitting losses. A higher-layer protocol such as TCP can provide those guarantees."
+  },
+  {
+    "id": "final-123-16",
+    "module": 4,
+    "q": "Which three characteristics apply to copper cabling limitations?",
+    "qRu": "Какие три фактора ограничивают передачу данных по медному кабелю?",
+    "options": [
+      "Attenuation",
+      "EMI/RFI interference",
+      "Crosstalk",
+      "Immune to electrical hazards",
+      "Unlimited distance support",
+      "Immune to dispersion"
+    ],
+    "optionsRu": [
+      "Затухание",
+      "Электромагнитные и радиочастотные помехи",
+      "Перекрёстные наводки",
+      "Невосприимчивость к электрическим опасностям",
+      "Неограниченная длина",
+      "Невосприимчивость к дисперсии"
+    ],
+    "correct": [
+      0,
+      1,
+      2
+    ],
+    "explanation": "С длиной электрический сигнал слабеет (attenuation). Внешние поля создают EMI/RFI, а соседние пары наводят друг в друге помехи (crosstalk). Поэтому для медного Ethernet нормируют длину и скрутку пар.",
+    "explanationEn": "Electrical signals weaken over distance (attenuation). External fields cause EMI/RFI and adjacent pairs induce crosstalk. These effects help explain copper Ethernet length limits and twisted-pair construction."
+  },
+  {
+    "id": "final-123-17",
+    "module": 15,
+    "q": "What protocol allows multiple hosts to dynamically obtain IP addresses from a server?",
+    "qRu": "Какой протокол позволяет узлам автоматически получать IP-адреса с сервера?",
+    "options": [
+      "DNS",
+      "DHCP",
+      "NDP",
+      "ARP",
+      "ICMP"
+    ],
+    "optionsRu": [
+      "DNS",
+      "DHCP",
+      "NDP",
+      "ARP",
+      "ICMP"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "DHCP-сервер выдаёт адрес в аренду и может сообщить маску, шлюз и DNS-сервер. DNS сопоставляет имена с адресами, ARP и NDP помогают находить соседей, ICMP передаёт служебные сообщения.",
+    "explanationEn": "A DHCP server leases addresses and can supply the mask, gateway and DNS servers. DNS resolves names, ARP and NDP help discover neighbors, and ICMP carries control messages."
+  },
+  {
+    "id": "final-123-18",
+    "module": 3,
+    "q": "What is the correct PDU order during encapsulation?",
+    "qRu": "В каком порядке образуются PDU при инкапсуляции данных с TCP?",
+    "options": [
+      "Data → Packet → Segment → Frame → Bits",
+      "Data → Segment → Packet → Frame → Bits",
+      "Bits → Frame → Packet → Segment → Data",
+      "Data → Frame → Packet → Segment → Bits"
+    ],
+    "optionsRu": [
+      "Данные → пакет → сегмент → кадр → биты",
+      "Данные → сегмент → пакет → кадр → биты",
+      "Биты → кадр → пакет → сегмент → данные",
+      "Данные → кадр → пакет → сегмент → биты"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "TCP добавляет к данным транспортный заголовок и получает сегмент. IP помещает сегмент в пакет, Ethernet помещает пакет в кадр, а физический уровень передаёт биты кадра. Обратный порядок используется при приёме.",
+    "explanationEn": "TCP wraps application data in a segment. IP wraps the segment in a packet, Ethernet wraps the packet in a frame, and the physical layer transmits the frame as bits. The reverse order applies on reception."
+  },
+  {
+    "id": "final-123-19",
+    "module": 2,
+    "q": "Which command saves the running configuration to NVRAM?",
+    "qRu": "Какая команда сохраняет текущую конфигурацию в NVRAM?",
+    "options": [
+      "copy startup-config running-config",
+      "write erase",
+      "reload",
+      "copy running-config startup-config",
+      "save config",
+      "config-save"
+    ],
+    "optionsRu": [
+      "copy startup-config running-config",
+      "write erase",
+      "reload",
+      "copy running-config startup-config",
+      "save config",
+      "config-save"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "В команде copy сначала указывают источник, затем назначение. Текущие настройки находятся в running-config в RAM. Копия в startup-config загрузится после перезапуска. Обратная команда читает сохранённые настройки в RAM.",
+    "explanationEn": "The copy command takes the source first and destination second. Running-config is in RAM. Copying it to startup-config preserves it for the next boot. Reversing the arguments reads the saved settings into RAM."
+  },
+  {
+    "id": "final-123-20",
+    "module": 3,
+    "q": "Which two benefits result from segmenting a large message?",
+    "qRu": "Какие два преимущества даёт разбиение большого сообщения на сегменты?",
+    "options": [
+      "Multiple communications can share the link more efficiently",
+      "Only missing segments need to be retransmitted",
+      "It removes the requirement for protocols",
+      "It guarantees zero delay"
+    ],
+    "optionsRu": [
+      "Несколько потоков могут эффективнее делить канал",
+      "Достаточно повторно передать потерянные сегменты",
+      "Протоколы больше не нужны",
+      "Гарантируется нулевая задержка"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "Небольшие сегменты разных потоков можно чередовать на одном канале. При потере части сообщения надёжный транспорт может повторить только эту часть. Заголовки и задержки при этом сохраняются.",
+    "explanationEn": "Small segments from several conversations can be interleaved on a link. A reliable transport can retransmit a lost portion without resending the whole message. Protocols and delays still exist."
+  },
+  {
+    "id": "final-123-21",
+    "module": 7,
+    "q": "What is the purpose of the FCS field in an Ethernet frame?",
+    "qRu": "Для чего служит поле FCS в кадре Ethernet?",
+    "options": [
+      "To identify the source IP address",
+      "To detect transmission errors",
+      "To define the default gateway",
+      "To select the routing protocol",
+      "To assign a VLAN ID in every frame"
+    ],
+    "optionsRu": [
+      "Для определения исходного IP",
+      "Для обнаружения ошибок передачи",
+      "Для задания шлюза по умолчанию",
+      "Для выбора протокола маршрутизации",
+      "Для назначения VLAN ID каждому кадру"
+    ],
+    "correct": [
+      1
+    ],
+    "explanation": "Отправитель заносит значение CRC в поле FCS (frame check sequence). Получатель пересчитывает CRC и сравнивает значения. Расхождение указывает на повреждение кадра. Маршрут, адрес и VLAN из FCS не определяются.",
+    "explanationEn": "The sender puts a CRC value in the frame check sequence. The receiver computes the CRC and compares it to the FCS. A mismatch indicates corruption. The FCS carries no route, address or VLAN identifier."
+  },
+  {
+    "id": "final-123-22",
+    "module": 4,
+    "q": "Why are the wire pairs twisted in UTP cable?",
+    "qRu": "Зачем проводники в кабеле UTP скручены попарно?",
+    "options": [
+      "To increase cable diameter",
+      "To convert electrical signals into light",
+      "To increase IP address capacity",
+      "To reduce crosstalk and interference",
+      "To provide physical encryption"
+    ],
+    "optionsRu": [
+      "Чтобы увеличить диаметр кабеля",
+      "Чтобы преобразовать электрические сигналы в свет",
+      "Чтобы увеличить число IP-адресов",
+      "Чтобы уменьшить перекрёстные наводки и помехи",
+      "Чтобы обеспечить физическое шифрование"
+    ],
+    "correct": [
+      3
+    ],
+    "explanation": "Скрутка меняет положение проводников относительно источника помехи. Оба провода воспринимают похожую наводку, которую дифференциальный приёмник частично подавляет. Разный шаг скрутки пар также снижает взаимные наводки.",
+    "explanationEn": "Twisting alternates each conductor’s exposure to interference. Similar noise on both wires is rejected by the differential receiver, and different twist rates reduce coupling between pairs."
+  },
+  {
+    "id": "final-123-23",
+    "module": 12,
+    "q": "A router advertises a /64 prefix to hosts. Which mechanism lets hosts create their own IPv6 addresses without a stateful DHCPv6 address lease?",
+    "qRu": "Маршрутизатор объявляет префикс /64. Как узлы могут составить свои IPv6-адреса без аренды адреса у DHCPv6-сервера?",
+    "options": [
+      "SLAAC",
+      "ARP",
+      "FTP",
+      "NAT44",
+      "POP3"
+    ],
+    "optionsRu": [
+      "SLAAC",
+      "ARP",
+      "FTP",
+      "NAT44",
+      "POP3"
+    ],
+    "correct": [
+      0
+    ],
+    "explanation": "При SLAAC хост берёт префикс из Router Advertisement с разрешённой автономной настройкой и добавляет свой идентификатор интерфейса. ARP и NAT44 относятся к IPv4, FTP и POP3 — прикладные протоколы.",
+    "explanationEn": "With SLAAC, the host takes a prefix advertised for autonomous configuration and adds its interface identifier. ARP and NAT44 concern IPv4, while FTP and POP3 are application protocols."
+  },
+  {
+    "id": "final-123-24",
+    "module": 7,
+    "q": "Which two statements correctly describe cut-through switching?",
+    "qRu": "Какие два утверждения описывают сквозную коммутацию (cut-through switching)?",
+    "options": [
+      "It can begin forwarding before the entire frame is received",
+      "It needs at least the destination MAC address before forwarding",
+      "It always performs a complete CRC check before forwarding",
+      "It has higher latency than store-and-forward in all cases",
+      "It always discards corrupted frames before transmission"
+    ],
+    "optionsRu": [
+      "Передача может начаться до получения всего кадра",
+      "До пересылки требуется как минимум MAC-адрес назначения",
+      "Перед пересылкой всегда выполняется полная проверка CRC",
+      "Задержка всегда выше, чем при store-and-forward",
+      "Повреждённые кадры всегда отбрасываются до передачи"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "explanation": "Коммутатор читает MAC назначения в начале кадра и может сразу выбрать выходной порт. FCS находится в конце, поэтому при ранней пересылке полную проверку ещё нельзя завершить. Это сокращает задержку, но возможна передача повреждённого кадра.",
+    "explanationEn": "The switch reads the destination MAC near the start of the frame and can choose an output port immediately. Since the FCS arrives last, early forwarding cannot wait for a complete CRC check. This reduces latency but can propagate corrupt frames."
+  },
+  {
+    "id": "final-123-25",
+    "module": 11,
+    "q": "Network A needs 124 hosts and Network B needs 490 hosts. Which subnet mask can accommodate all hosts in Network B with the fewest unused host addresses?",
+    "qRu": "В сети A 124 узла, а в сети B 490. Какая маска вмещает все узлы сети B с наименьшим запасом?",
+    "options": [
+      "255.255.255.0",
+      "255.255.252.0",
+      "255.255.255.128",
+      "255.255.248.0",
+      "255.255.254.0"
+    ],
+    "optionsRu": [
+      "255.255.255.0",
+      "255.255.252.0",
+      "255.255.255.128",
+      "255.255.248.0",
+      "255.255.254.0"
+    ],
+    "correct": [
+      4
+    ],
+    "explanation": "Для 490 узлов нужно 9 бит хоста: 2⁹ − 2 = 510 доступных адресов. Значит, длина префикса 32 − 9 = /23, маска 255.255.254.0. /24 даёт только 254 адреса, а /22 и /21 оставят больше свободных.",
+    "explanationEn": "Nine host bits provide 2⁹ − 2 = 510 usable addresses for 490 hosts. That leaves a /23 prefix, mask 255.255.254.0. A /24 has only 254 usable addresses, while /22 and /21 waste more space."
+  }
+]

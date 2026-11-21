@@ -1,3 +1,4 @@
+import {finalPaper,finalRelated} from './finalPaper';
 import {grindNotes} from './grindNotes';
 import {endtermPaper,endtermRelated} from './endterm';
 import {midtermPaper,midtermRelated} from './midterm';
@@ -10,6 +11,8 @@ import type { EventQuizQuestion } from '@/components/events/EventQuiz';
 
 const bilingual = (ru: string, en = ru) => ({ru, en});
 export const groups = [
+  {id:'final-paper',title:'Файнал банк',count:finalPaper.length},
+  {id:'final-related',title:'Практика по темам файнала',count:finalRelated.length},
   {id:'endterm-paper',title:'Банк эндтерма',count:endtermPaper.length},
   {id:'endterm-related',title:'Практика по темам эндтерма',count:endtermRelated.length},
   {id:'midterm-paper',title:'Банк мидтерма',count:midtermPaper.length},
@@ -80,6 +83,8 @@ export function questionsFor(group: string): EventQuizQuestion[] {
         transfer:{title:family.title,rule:family.rule,related}};
     })).flat();
   }
+  if(group==='final-paper')return finalPaper;
+  if(group==='final-related')return finalRelated;
   if(group==='endterm-paper')return endtermPaper;
   if(group==='endterm-related')return endtermRelated;
   if(group==='midterm-paper')return midtermPaper;

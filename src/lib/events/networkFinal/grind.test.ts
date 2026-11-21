@@ -43,6 +43,19 @@ describe('network study banks',()=>{
       expect(cases.size).toBe(lessons.size);
     }
   });
+  it('fits the timed reading budget and preserves saved answer indices in clarified questions',()=>{
+    const quick=questionsFor('grind');
+    expect(quick.map(q=>[q.id,q.correct])).toEqual(grindBank.map(q=>[q.id,q.correct]));
+    expect(quick).toHaveLength(110);
+    const lessons=[...new Map(quick.map(q=>[q.lesson!.id,q.lesson!])).values()];
+    for(const lang of ['ru','en'] as const){
+      const words=lessons.reduce((total,u)=>total+((u[lang]+' '+u.notes![lang]).match(/[\p{L}\p{N}]+(?:[.:/-][\p{L}\p{N}]+)*/gu)?.length??0),0);
+      // 115 minutes of study reading at 130 words per minute.
+      expect(words).toBeLessThanOrEqual(115*130);
+    }
+    const gateway=quick.find(q=>q.id==='module-13-4')!;
+    expect(gateway.options[gateway.correct[0]]).toContain('local gateway');
+  });
   it('keeps all four endterm papers complete including reference questions',()=>{
     for(const variant of [1,2,3,4]){
       const paper=endtermPaper.filter(q=>q.source?.variant===variant);

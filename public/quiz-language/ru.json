@@ -14617,5 +14617,22 @@
   "Tiered pricing": "Многоуровневое ценообразование",
   "On-Demand pricing": "Оплата по требованию",
   "Split the file into two 3.5 GB files before uploading.": "Разделить файл на два файла по 3,5 ГБ перед загрузкой.",
-  "An AZ contains one or more discrete data centers within a single geographic Region.": "AZ содержит один или несколько отдельных дата-центров внутри одного географического региона."
+  "An AZ contains one or more discrete data centers within a single geographic Region.": "AZ содержит один или несколько отдельных дата-центров внутри одного географического региона.",
+  "A network grows by adding standards-compatible devices without redesigning existing services. Which architectural characteristic does this illustrate?": "Сеть расширяют совместимыми устройствами без переделки работающих сервисов. Какое свойство архитектуры это иллюстрирует?",
+  "Which global IOS command obscures cleartext line passwords in the running configuration?": "Какая глобальная команда IOS скрывает открытые пароли линий в текущей конфигурации?",
+  "Which three names identify organizations or coordinating authorities involved in Internet standards and identifiers? (Choose three.)": "Какие три названия относятся к организациям или службам, которые разрабатывают сетевые стандарты или координируют интернет-идентификаторы? (Выберите три.)",
+  "An optical link uses an LED and a relatively wide core that carries multiple light paths. Which fiber type fits?": "В оптической линии используется светодиод и сравнительно широкая сердцевина, по которой свет проходит несколькими путями. Какой это тип волокна?",
+  "An IPv6 host knows a neighbor’s unicast IPv6 address but has no MAC mapping. What type of destination IPv6 address does its initial Neighbor Solicitation use?": "Узел IPv6 знает unicast-адрес соседа, но ещё не знает его MAC. Какой тип IPv6-адреса назначения используется в первом запросе Neighbor Solicitation?",
+  "Which IOS command configures a hashed credential for entering privileged EXEC mode using the example password trustknow1?": "Какая команда IOS задаёт хешированный пароль для входа в привилегированный режим EXEC, если учебный пароль — trustknow1?",
+  "Which EXEC mode provides the full set of privileged monitoring commands and lets an administrator enter global configuration mode?": "Какой режим EXEC открывает полный набор привилегированных команд проверки и позволяет перейти к глобальной настройке?",
+  "Which forwarding device normally forms the boundary of an IPv4 broadcast domain between two subnets?": "Какое устройство пересылки обычно образует границу широковещательного домена IPv4 между двумя подсетями?",
+  "A workstation cannot reach a remote file server. What does a successful ping to its configured default gateway establish?": "Рабочая станция не может связаться с удалённым файловым сервером. Что подтверждает успешный ping до её настроенного шлюза по умолчанию?",
+  "On Windows, which command lists responding intermediate hops toward a destination and helps narrow down where a path problem may begin?": "Какая команда Windows показывает ответившие промежуточные узлы по пути к назначению и помогает сузить поиск проблемы?",
+  "Which transport protocol typically carries the delay-sensitive voice media stream in a VoIP call?": "Какой транспортный протокол обычно переносит чувствительный к задержке поток голоса во время VoIP-звонка?",
+  "Which application protocol defines how a browser requests a webpage and a web server responds?": "Какой прикладной протокол определяет, как браузер запрашивает страницу и как веб-сервер отвечает?",
+  "Which two planning resources identify the existing network layout and the funds available for expansion? (Choose two.)": "Какие два ресурса при планировании позволяют узнать текущую схему сети и доступные средства на расширение? (Выберите два.)",
+  "The workstation can reach the local gateway and receive its reply.": "Рабочая станция может связаться с локальным шлюзом и получить его ответ.",
+  "Which twisted-pair cable uses a conductive shield in addition to twisting to reduce EMI and RFI?": "В какой витой паре помимо скрутки используется проводящий экран для уменьшения электромагнитных и радиочастотных помех?",
+  "Which short-range wireless technology is commonly used for a personal area network linking a phone and its headset?": "Какая технология ближней беспроводной связи обычно используется для персональной сети между телефоном и гарнитурой?",
+  "Which IPv4 delivery method is replaced in IPv6 by sending to multicast groups such as all-nodes?": "Какой способ доставки IPv4 заменён в IPv6 отправкой в multicast-группы, например в группу всех узлов канала?"
 }

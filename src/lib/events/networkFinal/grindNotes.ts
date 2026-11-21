@@ -27,12 +27,23 @@ const sections:Record<string,Selection[]> = {
   '17a':[[5,0,8],[4,0,3]], '17b':[[6,1,4],[4,2,7,8]],
 };
 
-type WorkedCase = {scenario:string;reasoning:string;check:string;answer:string};
+// The timed route keeps the sections needed for its actual practice set.
+const shortSections:Record<string,Selection[]>={
+  '1b':[[0,0,4,5]], '1c':[[0,1,1]], '2a':[[0,2,2,3]], '2b':[[0,3,3]],
+  '4a':[[2,0,1,4]], '4b':[[2,1,1],[2,2,1,4]],
+  '7a':[[3,1,4],[3,2,0]], '8a':[[4,0,1,2]], '8b':[[4,0,3,7]],
+  '9a':[[4,1,1,4]], '10a':[[4,2,1,2]], '10b':[[4,2,4,8]],
+  '13a':[[6,1,2]], '15a':[[8,0,4,9]], '16b':[[9,0,2,6]],
+  '17a':[[0,1,1]], '17b':[[6,1,4]],
+};
+
+type WorkedCase = {scenario:string;reasoning:string;check:string;answer:string;rule?:string};
 const examples:Record<string, Record<'ru'|'en', WorkedCase>> = {...early,...middle,...late};
 
-export function grindNotes(id:string){
+export function grindNotes(id:string, short:boolean){
   function read(lang:'ru'|'en'){
-    const blocks=sections[id].flatMap(([lecture,part,...indices])=>{
+    const selected=(short && shortSections[id]) || sections[id];
+    const blocks=selected.flatMap(([lecture,part,...indices])=>{
       const text=book.event.lectures[lecture].parts[part].notes[lang];
       const chunks=text.trim().split(/\n(?=#{2,3} )/);
       return indices.map(index=>{
@@ -42,6 +53,7 @@ export function grindNotes(id:string){
       });
     });
     const example=examples[id][lang];
+    if(example.rule) blocks.push((lang==='ru'?'## Как различать варианты':'## How to tell the options apart')+'\n'+example.rule);
     blocks.push([
       lang==='ru'?'## Разбор задачи':'## Worked example',
       example.scenario,

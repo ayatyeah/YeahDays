@@ -4,13 +4,15 @@
       "scenario": "Ноутбук подготовил IP-пакет для принтера в своей LAN. Что сетевая карта добавит перед отправкой?",
       "reasoning": "На канальном уровне (data link layer) пакет становится полезной нагрузкой кадра. Перед ним появляется заголовок с MAC-адресами, после него — концевик (trailer) с проверочным значением FCS. Из двух подуровней IEEE 802 за адресацию и доступ к среде отвечает MAC, а LLC связывает канальный уровень с сетевыми протоколами. Пакет остаётся внутри кадра со своим IP-заголовком.",
       "check": "Один бит кадра изменился в пути. Откуда принимающая сетевая карта узнает об ошибке?",
-      "answer": "Карта вычислит CRC по полученному кадру и сравнит результат с полем FCS. При несовпадении она отбросит кадр. Само поле FCS не восстанавливает испорченный бит."
+      "answer": "Карта вычислит CRC по полученному кадру и сравнит результат с полем FCS. При несовпадении она отбросит кадр. Само поле FCS не восстанавливает испорченный бит.",
+      "rule": "Кадр адресуют сетевой карте по MAC-адресу. IP-адрес нужен для маршрутизации пакета между сетями, а TCP- и UDP-порты помогают доставить данные нужному приложению."
     },
     "en": {
       "scenario": "A laptop has prepared an IP packet for a printer on its LAN. What does the network interface add before transmission?",
       "reasoning": "At the data link layer the packet becomes the payload of a frame. A header containing the MAC addresses goes in front, and a trailer containing the frame check sequence (FCS) goes at the end. Of the two IEEE 802 sublayers, MAC handles addressing and media access, while LLC links the data link layer to network protocols. The original IP header stays inside the frame.",
       "check": "One bit changes in transit. How would the receiving network interface detect the error?",
-      "answer": "It computes a CRC over the received frame and compares the result with the FCS. A mismatch causes the frame to be discarded. The FCS cannot repair the damaged bit."
+      "answer": "It computes a CRC over the received frame and compares the result with the FCS. A mismatch causes the frame to be discarded. The FCS cannot repair the damaged bit.",
+      "rule": "A frame addresses a network interface by its MAC address. An IP address supports routing between networks, while TCP and UDP ports help deliver data to the intended application."
     }
   },
   "6b": {
@@ -18,13 +20,15 @@
       "scenario": "В двух аудиториях компьютеры соединены кабелями с местными коммутаторами. Оба коммутатора подключены к центральному. Как прочитать такую схему?",
       "reasoning": "Начни с физических соединений (physical topology). В каждой аудитории получилась звезда, а звёзды вместе образуют расширенную звезду (extended star). На современном полнодуплексном соединении (full duplex) обе стороны передают одновременно. Если вместо коммутатора поставить старый концентратор с общей полудуплексной средой, кабели могут выглядеть так же, но Ethernet уже будет обнаруживать коллизии методом CSMA/CD.",
       "check": "А если несколько ноутбуков делят один радиоканал Wi-Fi, какой принцип доступа применяется?",
-      "answer": "CSMA/CA. Станция проверяет, свободен ли канал, и использует ожидание, чтобы снизить вероятность одновременной передачи."
+      "answer": "CSMA/CA. Станция проверяет, свободен ли канал, и использует ожидание, чтобы снизить вероятность одновременной передачи.",
+      "rule": "В классификации курса объединение нескольких звёзд называют гибридной топологией (hybrid topology). В общей Ethernet-среде передатчик обнаруживает коллизию (collision detection). В Wi-Fi станция старается избежать коллизии до отправки (collision avoidance)."
     },
     "en": {
       "scenario": "In each of two classrooms, computers connect by cable to a local switch. Both switches connect to a central switch. How would you read the diagram?",
       "reasoning": "Start with the physical connections. Each classroom forms a star, and the stars together form an extended star. On a modern full-duplex link both ends can transmit simultaneously. Replacing a local switch with a legacy half-duplex hub can leave the cable layout looking the same, but devices then share a medium and use CSMA/CD to detect collisions.",
       "check": "Several laptops instead share a Wi-Fi radio channel. Which access method applies?",
-      "answer": "CSMA/CA. A station checks the channel and uses a waiting period to reduce the chance of transmitting at the same time as another station."
+      "answer": "CSMA/CA. A station checks the channel and uses a waiting period to reduce the chance of transmitting at the same time as another station.",
+      "rule": "The course classifies several stars connected together as a hybrid topology. On shared half-duplex Ethernet a sender detects collisions. On Wi-Fi a station tries to avoid collisions before it sends."
     }
   },
   "7a": {
@@ -32,13 +36,15 @@
       "scenario": "В анализаторе Ethernet видны поле 0x0800 и два адреса по шесть байт. Какие подсказки дают эти поля?",
       "reasoning": "Шестибайтовые значения — MAC-адреса отправителя и получателя кадра. В Ethernet II значение 0x0800 в поле EtherType говорит, что дальше находится пакет IPv4. Приёмник отдельно использует FCS в конце кадра для проверки целостности. Поэтому одного правильного EtherType недостаточно, чтобы признать кадр исправным.",
       "check": "В отчёте указан минимальный размер обычного Ethernet-кадра без VLAN — 64 байта. Входит ли в него преамбула (preamble)?",
-      "answer": "Нет. Размер считают от MAC-адреса назначения до FCS включительно. Преамбула и разделитель начала кадра (SFD) идут перед этими полями."
+      "answer": "Нет. Размер считают от MAC-адреса назначения до FCS включительно. Преамбула и разделитель начала кадра (SFD) идут перед этими полями.",
+      "rule": "В классической схеме MAC-адреса с 24-битным OUI первые три байта — выданный IEEE идентификатор организации (organizationally unique identifier). Организация назначает оставшиеся три байта интерфейсу. По локально назначенному или рандомизированному MAC нельзя надёжно определить производителя."
     },
     "en": {
       "scenario": "An Ethernet capture contains 0x0800 and two six-byte addresses. What clues do these fields give you?",
       "reasoning": "The six-byte values are the frame’s source and destination MAC addresses. In Ethernet II, 0x0800 in EtherType identifies an IPv4 packet as the payload. The receiver separately uses the FCS at the end of the frame to check integrity. A recognized EtherType alone cannot show that the frame arrived intact.",
       "check": "Does the 64-byte minimum for an ordinary untagged Ethernet frame include the preamble?",
-      "answer": "No. The count starts at the destination MAC address and ends with the FCS, inclusive. The preamble and start frame delimiter (SFD) precede these fields."
+      "answer": "No. The count starts at the destination MAC address and ends with the FCS, inclusive. The preamble and start frame delimiter (SFD) precede these fields.",
+      "rule": "In the classic MAC address format with a 24-bit OUI, the first three bytes are an organizationally unique identifier assigned by IEEE. The organization assigns the remaining three bytes to the interface. Locally assigned or randomized MAC addresses do not reliably identify a manufacturer."
     }
   },
   "7b": {
@@ -46,13 +52,15 @@
       "scenario": "У коммутатора пустая MAC-таблица. Кадр A → B приходит на порт 2, а B подключён к порту 5. Что коммутатор узнает сам?",
       "reasoning": "По адресу источника (source MAC) он запишет A за портом 2. Записи для B пока нет, поэтому кадр уйдёт через остальные порты этой VLAN в состоянии forwarding. Когда ответ B → A придёт на порт 5, коммутатор выучит адрес B и отправит ответ только на порт 2. Обучение идёт по источнику, выбор выходного порта — по назначению.",
       "check": "Коммутатор должен отбрасывать кадры с ошибочной FCS до их отправки дальше. Какой метод нужен?",
-      "answer": "Store-and-forward. Он ждёт весь кадр вместе с FCS. При cut-through пересылка может начаться раньше, чем придут последние байты."
+      "answer": "Store-and-forward. Он ждёт весь кадр вместе с FCS. При cut-through пересылка может начаться раньше, чем придут последние байты.",
+      "rule": "Fast-forward и fragment-free — две разновидности cut-through. Первый метод начинает пересылку после чтения MAC назначения, второй ждёт первые 64 байта. С помощью Auto-MDIX медный порт сам определяет нужную раскладку пар для прямого или перекрёстного кабеля. Скорость и дуплекс согласуются отдельно."
     },
     "en": {
       "scenario": "A switch starts with an empty MAC table. A frame from A to B arrives on port 2, and B is attached to port 5. What can the switch learn on its own?",
       "reasoning": "It records source A on port 2. Because B has no table entry yet, the switch floods the frame through the other forwarding ports in the same VLAN. When B replies on port 5, the switch learns B and forwards the reply only to port 2. Learning uses the source address, while the forwarding decision uses the destination.",
       "check": "Which switching method can discard a frame with an invalid FCS before forwarding any of it?",
-      "answer": "Store-and-forward waits for the entire frame including its FCS. Cut-through forwarding can begin before the last bytes arrive."
+      "answer": "Store-and-forward waits for the entire frame including its FCS. Cut-through forwarding can begin before the last bytes arrive.",
+      "rule": "Fast-forward and fragment-free are both cut-through methods. Fast-forward can start after reading the destination MAC, while fragment-free waits for the first 64 bytes. With Auto-MDIX, the copper port automatically selects the pair orientation needed with straight-through or crossover cabling. Speed and duplex are negotiated separately."
     }
   },
   "8a": {
@@ -88,13 +96,15 @@
       "scenario": "ПК отправляет первый пакет на удалённый сервер. Адрес сервера уже известен, но ARP-кэш пуст. Кого будет искать ПК?",
       "reasoning": "Сначала ПК выберет следующий узел (next hop) — локальный шлюз. В ARP Request он укажет IPv4-адрес шлюза как искомый, а кадр адресует на FF:FF:FF:FF:FF:FF. Шлюз обычно ответит unicast со своим MAC, и ПК временно сохранит пару IP → MAC. Запрашивать MAC удалённого сервера в этой LAN бесполезно. Локальная широковещательная рассылка до сервера не дойдёт.",
       "check": "Два удалённых сайта доступны через один шлюз, запись о нём ещё действительна. Нужен ли новый ARP-запрос для второго сайта?",
-      "answer": "Нет. Оба первых кадра направляются к тому же next hop, и для него уже известен MAC. На Cisco IOS соответствие можно проверить командой show ip arp."
+      "answer": "Нет. Оба первых кадра направляются к тому же next hop, и для него уже известен MAC. На Cisco IOS соответствие можно проверить командой show ip arp.",
+      "rule": "FF:FF:FF:FF:FF:FF и FFFF.FFFF.FFFF — две записи одного 48-битного широковещательного MAC-адреса. В вопросе про адрес Ethernet-кадра ищи именно 48-битный адрес. Значение 255.255.255.255 относится к IPv4."
     },
     "en": {
       "scenario": "A PC sends its first packet to a remote server. It knows the server’s IP, but its ARP cache is empty. Which device will it look up?",
       "reasoning": "The PC first selects its next hop, the local gateway. It asks for the gateway’s IPv4 address in an ARP Request carried by an Ethernet frame addressed to FF:FF:FF:FF:FF:FF. The gateway normally replies by unicast with its MAC, and the PC temporarily caches the IP-to-MAC mapping. A local ARP broadcast cannot reach the remote server.",
       "check": "Two remote sites use the same gateway, whose cache entry is still valid. Does the second site require a new ARP request?",
-      "answer": "No. Both first-hop frames go to the same next hop, and its MAC is already known. On Cisco IOS, show ip arp displays the mapping."
+      "answer": "No. Both first-hop frames go to the same next hop, and its MAC is already known. On Cisco IOS, show ip arp displays the mapping.",
+      "rule": "FF:FF:FF:FF:FF:FF and FFFF.FFFF.FFFF are two ways to write the same 48-bit broadcast MAC address. An Ethernet frame question asks for that 48-bit address. The value 255.255.255.255 belongs to IPv4."
     }
   },
   "9b": {
@@ -102,13 +112,15 @@
       "scenario": "IPv6-ноутбук подключился к LAN. Ему сначала нужны параметры сети, а затем Ethernet-адрес конкретного соседа. Это один и тот же запрос?",
       "reasoning": "Для сведений о сети ноутбук отправляет Router Solicitation (RS). Маршрутизатор отвечает Router Advertisement (RA), где может сообщить префикс для SLAAC и предложить себя как шлюз. Для поиска MAC по уже известному IPv6-адресу нужен Neighbor Solicitation (NS) на solicited-node multicast адрес соседа. Тот сообщает свой канальный адрес через Neighbor Advertisement (NA).",
       "check": "Ноутбук уже знает префикс и шлюз. Теперь он отправил NS для адреса соседнего принтера. Какое сообщение ожидается?",
-      "answer": "Neighbor Advertisement от принтера. Пара NS/NA решает задачу адресации соседа, а пара RS/RA нужна для обнаружения маршрутизаторов и параметров сети."
+      "answer": "Neighbor Advertisement от принтера. Пара NS/NA решает задачу адресации соседа, а пара RS/RA нужна для обнаружения маршрутизаторов и параметров сети.",
+      "rule": "Когда MAC ещё неизвестен, первый NS для разрешения адреса уходит на solicited-node multicast. Когда MAC уже известен и узел лишь проверяет достижимость соседа, NS может идти unicast. Для ответа важна цель запроса."
     },
     "en": {
       "scenario": "An IPv6 laptop joins a LAN. First it needs network settings, then it needs the Ethernet address of a particular neighbor. Does one request do both jobs?",
       "reasoning": "To discover network settings, the laptop sends a Router Solicitation (RS). A Router Advertisement (RA) can announce a prefix for SLAAC and offer the router as a default gateway. To resolve a known neighbor IPv6 address to a MAC, the laptop sends a Neighbor Solicitation (NS) to the target’s solicited-node multicast address. The neighbor supplies its link-layer address in a Neighbor Advertisement (NA).",
       "check": "The laptop already has its prefix and gateway. It sends an NS for a local printer. Which message should come back?",
-      "answer": "A Neighbor Advertisement from the printer. NS/NA handles neighbor resolution, while RS/RA handles discovery of routers and network settings."
+      "answer": "A Neighbor Advertisement from the printer. NS/NA handles neighbor resolution, while RS/RA handles discovery of routers and network settings.",
+      "rule": "When the MAC is unknown, the initial NS for address resolution uses solicited-node multicast. When the MAC is already known and the host is checking whether the neighbor is still reachable, the NS can use unicast. Look for the purpose of the request."
     }
   },
   "10a": {
@@ -116,13 +128,15 @@
       "scenario": "После включения учебный роутер предлагает initial configuration dialog. Ты подключён через консоль. Где искать причину?",
       "reasoning": "Консоль работает напрямую, даже когда IP-адрес ещё не задан. IOS обычно загружает сохранённую startup-config из NVRAM. Если подходящая конфигурация не найдена, роутер может предложить начальную настройку. После настройки текущие изменения находятся в running-config в RAM, поэтому их сохраняют командой copy running-config startup-config.",
       "check": "После входа видно R1>. Как перейти к R1# и чем защитить именно этот переход?",
-      "answer": "Команда enable переводит в privileged EXEC. Для проверки пароля этого перехода настраивают enable secret. SSH отвечает за шифрование удалённого сеанса и выполняет другую задачу."
+      "answer": "Команда enable переводит в privileged EXEC. Для проверки пароля этого перехода настраивают enable secret. SSH отвечает за шифрование удалённого сеанса и выполняет другую задачу.",
+      "rule": "Приглашение R1# означает privileged EXEC. Отсюда доступны команды проверки и переход в настройку через configure terminal. В глобальном режиме команда enable secret задаёт секрет для последующего повышения привилегий. Команда service password-encryption лишь скрывает некоторые открытые пароли в конфигурации и сама не задаёт этот секрет."
     },
     "en": {
       "scenario": "After power-up a training router offers the initial configuration dialog. You are connected through the console. Where would you look for the cause?",
       "reasoning": "The console provides direct access even before an IP address exists. IOS normally loads a saved startup-config from NVRAM. If a usable startup configuration is missing, the router can offer initial setup. New changes live in running-config in RAM until saved with copy running-config startup-config.",
       "check": "You see R1> after login. How do you reach R1#, and what protects that particular transition?",
-      "answer": "Enter enable to reach privileged EXEC. Configure enable secret to protect that transition with a password. SSH instead supplies encryption for a remote session."
+      "answer": "Enter enable to reach privileged EXEC. Configure enable secret to protect that transition with a password. SSH instead supplies encryption for a remote session.",
+      "rule": "R1# is the privileged EXEC prompt. It gives access to verification commands and to configuration through configure terminal. In global configuration mode, enable secret sets the secret for later entry into privileged EXEC. The service password-encryption command obscures certain cleartext configuration passwords and does not set that secret."
     }
   },
   "10b": {
@@ -144,13 +158,15 @@
       "scenario": "Два ПК имеют адреса 172.20.5.17 и 172.20.7.190 с маской 255.255.252.0. Третий октет разный. Нужен ли им роутер для обмена в одной VLAN?",
       "reasoning": "Префикс /22 оставляет в третьем октете блоки по четыре значения. Октеты 5 и 7 входят в один блок 4–7, поэтому побитовое AND с маской для обоих даёт сеть 172.20.4.0/22. Адрес рассылки этого блока — 172.20.7.255. При общей VLAN возможна прямая доставка, несмотря на различие третьего октета.",
       "check": "Адреса 172.31.8.1 и 172.32.8.1 начинаются с 172. Какой из них частный по RFC 1918?",
-      "answer": "172.31.8.1. Частный блок 172.16.0.0/12 охватывает вторые октеты от 16 до 31. Второй октет 32 уже за границей этого блока."
+      "answer": "172.31.8.1. Частный блок 172.16.0.0/12 охватывает вторые октеты от 16 до 31. Второй октет 32 уже за границей этого блока.",
+      "rule": "Частные блоки, например 10.0.0.0/8, организация может использовать внутри своей сети. Эти адреса могут повторяться в независимых сетях, и в публичном Интернете к ним обычно нет маршрута. Внутри VLAN коммутатор рассылает локальный широковещательный кадр по остальным активным портам этой VLAN. На маршрутизаторе такой широковещательный домен (broadcast domain) обычно заканчивается."
     },
     "en": {
       "scenario": "Two PCs use 172.20.5.17 and 172.20.7.190 with mask 255.255.252.0. Their third octets differ. Do they need a router to communicate on the same VLAN?",
       "reasoning": "A /22 groups third-octet values in blocks of four. Both 5 and 7 fall in the block from 4 through 7, so bitwise AND with the mask yields network 172.20.4.0/22 for both hosts. The broadcast address for that block is 172.20.7.255. On the same VLAN the PCs can deliver directly despite the different third octets.",
       "check": "Both 172.31.8.1 and 172.32.8.1 start with 172. Which one is private under RFC 1918?",
-      "answer": "172.31.8.1. The private block 172.16.0.0/12 covers second octets from 16 through 31. A second octet of 32 falls outside it."
+      "answer": "172.31.8.1. The private block 172.16.0.0/12 covers second octets from 16 through 31. A second octet of 32 falls outside it.",
+      "rule": "An organization can use private address blocks such as 10.0.0.0/8 internally. Independent networks may reuse these addresses, which normally have no public Internet route. Within a VLAN a switch floods a local broadcast frame through the other forwarding ports of that VLAN. A router normally marks the boundary of this broadcast domain."
     }
   },
   "11b": {

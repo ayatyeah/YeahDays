@@ -170,7 +170,7 @@ function AccountQuiz({group,title,questions}:Props) {
     {!takingQuiz && quizInfo}
 
     {grind && <div className={courseStyles.readingLanguage} role="group" aria-label="Study language">{(['ru','en'] as const).map(code=><button key={code} aria-pressed={lang===code} onClick={()=>choose('question',code)}>{code==='ru'?'Русский':'English'}</button>)}</div>}
-    {grind && !takingQuiz && !answers && <p>{en?'Read a short rule, then apply it to questions on the same topic.':'Прочитай короткое правило, затем закрепи его на вопросах по той же теме.'} {group==='grind'?(en?'Budget about 1 hour for the notes, 2½–3 hours for practice, and 30–60 minutes for mistakes and breaks.':'Около часа на разборы, 2,5–3 часа на вопросы и 30–60 минут на ошибки и перерывы.'):(en?'Allow 12–18 hours for all questions.':'Ориентир на все задания — 12–18 часов.')}</p>}
+    {grind && !takingQuiz && !answers && <p>{en?'Read a short rule, then apply it to questions on the same topic.':'Прочитай короткое правило, затем закрепи его на вопросах по той же теме.'} {group==='grind'?(en?'Plan for 4–5 hours: 100–115 minutes to read, 15–20 for self-checks, 110–130 for the 110 quiz questions, and 20–35 for mistakes and breaks.':'Ориентир на 4–5 часов: 100–115 минут на чтение, 15–20 на самопроверку, 110–130 на 110 вопросов и 20–35 на ошибки и перерывы.'):(en?'Allow 12–18 hours for all questions.':'Ориентир на все задания — 12–18 часов.')}</p>}
 
     {answers ? <section aria-live="polite"><h2>{en?'Result':'Результат'} · {quiz.length-missed.length} / {quiz.length}</h2>
       <div className={styles.actions}><button className="f-button" onClick={()=>restart(null)}>{en?'Back to setup':'К настройкам'}</button>

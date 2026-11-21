@@ -28,14 +28,42 @@ export const groups = [
 // Both GRIND routes share 37 lesson objects, including their bilingual text.
 type Lesson = NonNullable<EventQuizQuestion['lesson']>;
 const detailedLessons = new Map<string,Lesson>();
-function withGrindLesson(question:EventQuizQuestion):EventQuizQuestion {
+// Clarify the teaching prompts while keeping saved question and option IDs stable.
+const grindPrompts:Record<string,string> = {
+  "module-04-11": "Which twisted-pair cable uses a conductive shield in addition to twisting to reduce EMI and RFI?",
+  "module-04-23": "Which short-range wireless technology is commonly used for a personal area network linking a phone and its headset?",
+  "module-12-25": "Which IPv4 delivery method is replaced in IPv6 by sending to multicast groups such as all-nodes?",
+  "module-01-11": "A network grows by adding standards-compatible devices without redesigning existing services. Which architectural characteristic does this illustrate?",
+  "module-02-8": "Which global IOS command obscures cleartext line passwords in the running configuration?",
+  "module-03-29": "Which three names identify organizations or coordinating authorities involved in Internet standards and identifiers? (Choose three.)",
+  "module-04-15": "An optical link uses an LED and a relatively wide core that carries multiple light paths. Which fiber type fits?",
+  "module-09-11": "An IPv6 host knows a neighbor’s unicast IPv6 address but has no MAC mapping. What type of destination IPv6 address does its initial Neighbor Solicitation use?",
+  "module-10-3": "Which IOS command configures a hashed credential for entering privileged EXEC mode using the example password trustknow1?",
+  "module-10-7": "Which EXEC mode provides the full set of privileged monitoring commands and lets an administrator enter global configuration mode?",
+  "module-11-9": "Which forwarding device normally forms the boundary of an IPv4 broadcast domain between two subnets?",
+  "module-13-4": "A workstation cannot reach a remote file server. What does a successful ping to its configured default gateway establish?",
+  "module-13-3": "On Windows, which command lists responding intermediate hops toward a destination and helps narrow down where a path problem may begin?",
+  "module-14-4": "Which transport protocol typically carries the delay-sensitive voice media stream in a VoIP call?",
+  "module-15-8": "Which application protocol defines how a browser requests a webpage and a web server responds?",
+  "module-17-8": "Which two planning resources identify the existing network layout and the funds available for expansion? (Choose two.)"
+};
+function withGrindLesson(question:EventQuizQuestion, short:boolean):EventQuizQuestion {
   const lesson=question.lesson!;
-  let detailed=detailedLessons.get(lesson.id);
+  const key=(short?'short:':'full:')+lesson.id;
+  let detailed=detailedLessons.get(key);
   if(!detailed){
-    detailed={...lesson,notes:grindNotes(lesson.id)};
-    detailedLessons.set(lesson.id,detailed);
+    detailed={...lesson,notes:grindNotes(lesson.id,short)};
+    detailedLessons.set(key,detailed);
   }
-  return {...question,lesson:detailed};
+  if(question.id==='module-13-4'){
+    const options=[...question.options];
+    options[2]='The workstation can reach the local gateway and receive its reply.';
+    return {...question,q:grindPrompts[question.id],options,optionExplanations:undefined,why:{
+      ru:'Ответ шлюза проверяет двусторонний обмен с первым переходом. Дальнейший маршрут, обратный путь от сервера и сам файловый сервис ещё предстоит проверить.',
+      en:'A reply tests two-way reachability to the first hop. The route beyond the gateway, the return path from the server and the file service still need separate checks.',
+    },lesson:detailed};
+  }
+  return {...question,q:grindPrompts[question.id]??question.q,lesson:detailed};
 }
 
 export function questionsFor(group: string): EventQuizQuestion[] {
@@ -60,7 +88,7 @@ export function questionsFor(group: string): EventQuizQuestion[] {
   if(group==='compact')return compactBank;
   if(group==='grind' || group==='grind-full'){
     const pool=group==='grind'?grindBank:grindUnits.flatMap(u=>forUnit(u.id)).filter(q=>q.correct.length);
-    return pool.map(withGrindLesson);
+    return pool.map(q=>withGrindLesson(q,group==='grind'));
   }
   if(group.startsWith('unit-') && grindUnits.some(u=>u.id===group.slice(5)))return forUnit(group.slice(5));
   if(sources.some(s=>s.file===group))return archiveBank.filter(q=>q.id.slice(0,q.id.lastIndexOf('-'))===group);

@@ -18,13 +18,15 @@
       "scenario": "У ноутбука появился адрес для связи с другими сетями, но в строке шлюза виден fe80::1. Как он сможет отправить пакет за пределы Wi-Fi?",
       "reasoning": "Маршрутизатор присылает объявление (Router Advertisement, RA) со своего локального адреса канала. При SLAAC ноутбук берёт объявленный для автоконфигурации префикс и добавляет идентификатор интерфейса. Для удалённого назначения ноутбук доставляет кадр соседнему роутеру, поэтому адрес шлюза fe80::1 имеет подходящую область действия. В самом IP-пакете назначением остаётся удалённый хост.",
       "check": "Сервер DHCPv6 выдал рабочей станции адрес. Откуда при обычной динамической настройке она узнает шлюз?",
-      "answer": "Из RA, в котором маршрутизатор объявляет себя доступным шлюзом. Выдача адреса DHCPv6 и выбор шлюза решают разные задачи."
+      "answer": "Из RA, в котором маршрутизатор объявляет себя доступным шлюзом. Выдача адреса DHCPv6 и выбор шлюза решают разные задачи.",
+      "rule": "При SLAAC роутер сообщает префикс, а узел сам формирует адрес. DHCPv6 может дополнительно выдать DNS-сервер или сам адрес — это разные режимы. Вместо общего IPv4 broadcast IPv6 использует адресные группы (multicast), например ff02::1 для всех узлов на канале."
     },
     "en": {
       "scenario": "A laptop has a routable IPv6 address but lists fe80::1 as its gateway. How can it send traffic beyond the Wi-Fi link?",
       "reasoning": "The router sends a Router Advertisement (RA) from its link-local address. With SLAAC, the laptop combines a prefix advertised for autonomous configuration with an interface identifier. To reach a remote destination, the laptop delivers a frame to the neighboring router, so fe80::1 has the right scope for that hop. The IP packet still names the remote host as its destination.",
       "check": "A workstation gets its address from a stateful DHCPv6 server. How does it normally learn its default router?",
-      "answer": "From an RA advertising the router as a default gateway. Assigning the workstation an address and choosing its next hop are separate jobs."
+      "answer": "From an RA advertising the router as a default gateway. Assigning the workstation an address and choosing its next hop are separate jobs.",
+      "rule": "With SLAAC, the router advertises a prefix and the host forms its own address. DHCPv6 can supply extra settings such as DNS, or it can assign the address itself. IPv6 uses multicast groups where IPv4 might broadcast, for example ff02::1 for all nodes on a link."
     }
   },
   "13a": {
@@ -32,13 +34,15 @@
       "scenario": "Пользователь открывает учебный портал, но получает пустую страницу. При этом ping до IP-адреса портала возвращает четыре ответа.",
       "reasoning": "Каждый ответ Echo Reply подтверждает, что Echo Request дошёл до адресата и ответ вернулся. Время в ответе — задержка туда и обратно (round-trip time). Проверка затронула IP и ICMP, а портал использует ещё и веб-службу. Поэтому следующий осмысленный тест — открыть тот же адрес по нужному протоколу и проверить ответ службы.",
       "check": "Если отвечает только 127.0.0.1, какую часть пути ты уже проверил?",
-      "answer": "Собственный IP-стек компьютера. Пакет на loopback остаётся внутри устройства, поэтому работа кабеля, шлюза и удалённого сервера ещё не проверена."
+      "answer": "Собственный IP-стек компьютера. Пакет на loopback остаётся внутри устройства, поэтому работа кабеля, шлюза и удалённого сервера ещё не проверена.",
+      "rule": "И в IPv4, и в IPv6 сообщение Destination Unreachable означает невозможность доставить пакет, а Time Exceeded — исчерпание времени жизни. Ответ на ping шлюза проверяет первый переход к другим сетям. Ответ на ping 127.0.0.1 проверяет только локальный IP-стек."
     },
     "en": {
       "scenario": "A student gets a blank page from the course portal, but pinging the portal’s IP produces four replies.",
       "reasoning": "Each Echo Reply confirms that the target received an Echo Request and a reply made it back. The reported time measures the round trip. This tests IP and ICMP, while the portal also depends on its web service. A useful next test is to request the page using the expected protocol and inspect the service response.",
       "check": "If only 127.0.0.1 replies, which part of the path have you tested?",
-      "answer": "The computer’s own IP stack. A loopback packet stays on the device, so the cable, gateway and remote server remain untested."
+      "answer": "The computer’s own IP stack. A loopback packet stays on the device, so the cable, gateway and remote server remain untested.",
+      "rule": "Both IPv4 and IPv6 use Destination Unreachable to report delivery failures and Time Exceeded when a packet’s lifetime runs out. A successful gateway ping tests the first hop toward other networks. Pinging 127.0.0.1 tests only the local IP stack."
     }
   },
   "13b": {
@@ -46,13 +50,15 @@
       "scenario": "В трассировке до сервера первая строка показывает роутер, вторая — звёздочки, а третья и четвёртая снова показывают адреса.",
       "reasoning": "Первая проба уходит с TTL 1, и первый роутер обычно сообщает об истечении времени (Time Exceeded). Для следующей строки traceroute повышает TTL, чтобы проба прошла дальше. Звёздочки означают, что на эти пробы вовремя не пришёл ответ. Более дальние ответы показывают, что по крайней мере часть трафика продолжала идти.",
       "check": "Какое поле ограничивает число переходов при той же проверке в IPv6?",
-      "answer": "Hop Limit. Каждый пересылающий роутер уменьшает его, а при исчерпании лимита может вернуть ICMPv6 Time Exceeded."
+      "answer": "Hop Limit. Каждый пересылающий роутер уменьшает его, а при исчерпании лимита может вернуть ICMPv6 Time Exceeded.",
+      "rule": "В Windows команда tracert показывает отвечающие узлы на пути. В IPv4 проба истекает по счётчику TTL, в IPv6 — по Hop Limit. Time Exceeded — название сообщения в ответ, а не поле исходного пакета."
     },
     "en": {
       "scenario": "A trace to a server shows a router on line one, a row of stars on line two, and addresses again on lines three and four.",
       "reasoning": "The first probe starts with a TTL of one, so the first router usually reports Time Exceeded. Traceroute increases the TTL for the next line so that its probes can travel farther. Stars mean those probes received no timely response. The later replies show that at least some traffic continued beyond that point.",
       "check": "Which field limits the number of hops in the IPv6 version of this test?",
-      "answer": "Hop Limit. Each forwarding router decrements it and may return ICMPv6 Time Exceeded when it expires."
+      "answer": "Hop Limit. Each forwarding router decrements it and may return ICMPv6 Time Exceeded when it expires.",
+      "rule": "On Windows, tracert lists the hops that respond along a path. IPv4 probes expire according to TTL and IPv6 probes according to Hop Limit. Time Exceeded names the reply, not a field in the original packet."
     }
   },
   "14a": {
@@ -60,13 +66,15 @@
       "scenario": "Два приложения одного ноутбука подключились по TCP к 192.0.2.20 на порт 443. Как ОС решает, какому приложению передать ответ?",
       "reasoning": "Первому соединению клиент выделил исходный порт 51001, второму — 51002. На сервер идут запросы с разными исходными портами и одинаковым портом назначения 443. На обратном пути серверный порт становится исходным, а клиентский — портом назначения. ОС различает соединения по протоколу и парам «IP-адрес, порт» на обоих концах.",
       "check": "Какие два поля всё равно будут у датаграммы UDP, даже если приложение не устанавливает соединение?",
-      "answer": "Source Port и Destination Port. Порты помогают доставить данные приложению и без процедуры установления TCP-соединения."
+      "answer": "Source Port и Destination Port. Порты помогают доставить данные приложению и без процедуры установления TCP-соединения.",
+      "rule": "Сокет (socket) записывают IP:порт. Для обычного HTTP пример пары — 192.0.2.10:51001 и 192.0.2.20:80. И TCP, и UDP содержат Source Port и Destination Port. Для голосового медиапотока часто выбирают UDP, потому что опоздавший звук уже бесполезен, даже если повторная передача когда-нибудь его доставит."
     },
     "en": {
       "scenario": "Two apps on a laptop open TCP connections to 192.0.2.20 on port 443. How does the OS deliver each response to the right app?",
       "reasoning": "The client assigns source port 51001 to the first connection and 51002 to the second. Both requests use destination port 443. In each reply, the server port becomes the source and the client port becomes the destination. The OS identifies a connection by its protocol and the IP address and port at each end.",
       "check": "Which two fields will a UDP datagram still contain even though the application opens no connection?",
-      "answer": "Source Port and Destination Port. Ports support delivery to the right application independently of TCP connection setup."
+      "answer": "Source Port and Destination Port. Ports support delivery to the right application independently of TCP connection setup.",
+      "rule": "A socket endpoint is written as IP:port. For plain HTTP one possible pair is 192.0.2.10:51001 and 192.0.2.20:80. TCP and UDP both carry source and destination ports. Real-time voice media often uses UDP because a late audio sample is useless even if a retransmission eventually delivers it."
     }
   },
   "14b": {
@@ -88,13 +96,15 @@
       "scenario": "Ты отправил письмо с ноутбука. На телефоне коллеги оно появилось во «Входящих», а после прочтения отметка обновилась и на его компьютере.",
       "reasoning": "Клиент отправителя передаёт письмо почтовому серверу по SMTP. Серверы тоже могут использовать SMTP, чтобы переслать письмо в домен получателя. Устройства коллеги обращаются к одному серверному ящику по IMAP, поэтому видят общее состояние сообщений. Одна операция — отправка, другая — работа с ящиком.",
       "check": "Браузер получает HTML по HTTPS, а пользователь скачивает файл по FTP. Где нужны отдельные управляющее соединение и соединение данных?",
-      "answer": "В FTP. Команды передаются по управляющему соединению, а содержимое файла — по соединению данных."
+      "answer": "В FTP. Команды передаются по управляющему соединению, а содержимое файла — по соединению данных.",
+      "rule": "При загрузке страницы браузер запрашивает ресурс методом HTTP GET. HTTPS защищает HTTP-обмен с помощью TLS. В FTP команда на скачивание идёт по управляющему соединению, а сам файл — по отдельному соединению данных."
     },
     "en": {
       "scenario": "You send a message from your laptop. Your colleague reads it on a phone, and the same message shows as read on their computer.",
       "reasoning": "The sender’s client submits the message to a mail server using SMTP. Mail servers can also use SMTP to relay it to the recipient’s domain. The recipient’s devices use IMAP to access the same server mailbox and synchronize message flags. Sending the mail and managing the mailbox are two different operations.",
       "check": "A browser fetches HTML over HTTPS and a user downloads a file over FTP. Which one needs separate control and data connections?",
-      "answer": "FTP. Commands travel over the control connection, and file contents travel over a data connection."
+      "answer": "FTP. Commands travel over the control connection, and file contents travel over a data connection.",
+      "rule": "To load a page, the browser requests a resource with HTTP GET. HTTPS protects HTTP traffic using TLS. In FTP, the download command goes over the control connection and the file itself uses a separate data connection."
     }
   },
   "15b": {
@@ -116,13 +126,15 @@
       "scenario": "Электронный журнал открывается вовремя и доступен только преподавателю, но вместо поставленных 84 баллов в нём записано 48.",
       "reasoning": "Начни с того, что потерял пользователь. Запись доступна, круг читателей остался прежним, а содержимое изменилось. Пострадала целостность (integrity). Чтобы установить причину изменения, понадобятся дополнительные данные, например история записи.",
       "check": "Теперь оценки верны и журнал доступен, но его копию получил посторонний. Какое свойство пострадало?",
-      "answer": "Конфиденциальность (confidentiality). Если бы при правильных оценках пользователи не могли открыть журнал, речь шла бы о доступности (availability)."
+      "answer": "Конфиденциальность (confidentiality). Если бы при правильных оценках пользователи не могли открыть журнал, речь шла бы о доступности (availability).",
+      "rule": "Различай причину и последствие. Перегрев из-за отказа кондиционера — угроза со стороны окружающей среды (environmental threat). Когда из-за перегрева сервис недоступен, последствие — нарушение доступности (availability)."
     },
     "en": {
       "scenario": "A gradebook opens promptly and only the teacher has access, but a recorded score of 84 now reads 48.",
       "reasoning": "Start with the consequence for its user. The record is available and its readership has stayed the same, but the content changed. The affected property is integrity. Establishing the cause of the change requires more evidence, such as the record history.",
       "check": "The grades are accurate and available, but an outsider receives a copy. Which property has been compromised?",
-      "answer": "Confidentiality. If the grades had remained accurate but users could not open the gradebook, the issue would be availability."
+      "answer": "Confidentiality. If the grades had remained accurate but users could not open the gradebook, the issue would be availability.",
+      "rule": "Distinguish the cause from its impact. Overheating after a cooling failure is an environmental threat. If the equipment stops serving users, the impact is a loss of availability."
     }
   },
   "16b": {
@@ -130,13 +142,15 @@
       "scenario": "Стажёр входит на маршрутизатор по SSH. Просмотр состояния разрешён, попытка изменить настройки отклоняется, а журнал сохраняет обе операции.",
       "reasoning": "SSH шифрует трафик управления. Проверка личности при входе относится к authentication. Разрешение конкретной команды задаёт authorization, а сохранение сведений о действиях выполняет accounting. Поэтому успешный защищённый вход совместим с отказом на отдельную команду.",
       "check": "Для аудита нужны имя оператора, время входа и список выполненных команд. Какую функцию AAA нужно проверить?",
-      "answer": "Accounting. Она ведёт учёт действий, а правила разрешения команд относятся к authorization."
+      "answer": "Accounting. Она ведёт учёт действий, а правила разрешения команд относятся к authorization.",
+      "rule": "Для нескольких сетевых устройств проверку личности и прав можно централизовать на AAA-сервере. SSH защищает сеанс шифрованием, включая команды и пароль. Telnet передаёт их открытым текстом."
     },
     "en": {
       "scenario": "A trainee signs in to a router using SSH. They may inspect status, a configuration change is denied, and the log records both operations.",
       "reasoning": "SSH encrypts the management traffic. Verifying identity at sign-in is authentication. Deciding whether a particular command is allowed is authorization, and recording activity is accounting. A successful encrypted login can therefore still leave the trainee without permission to change settings.",
       "check": "An audit needs the operator’s identity, login time and commands executed. Which AAA function should be checked?",
-      "answer": "Accounting. It records activity, while command permissions belong to authorization."
+      "answer": "Accounting. It records activity, while command permissions belong to authorization.",
+      "rule": "Multiple network devices can rely on a central AAA server for identity and permissions. SSH encrypts the session, including commands and credentials. Telnet sends them in cleartext."
     }
   },
   "17a": {
@@ -144,13 +158,15 @@
       "scenario": "Сегодня в офисе 18 проводных устройств. Через год ожидаются 36, в том числе IP-телефоны. Как выбрать коммутатор и объяснить бюджет?",
       "reasoning": "Посчитай порты для конечных устройств и восходящих соединений (uplinks), затем учти рост. Если телефоны питаются по кабелю, проверь суммарный бюджет PoE. При одновременной передаче голоса и резервных копий классификация трафика позволяет QoS назначать приоритет очередям. Дополнительные порты решают задачу роста, а задержки при перегрузке требуют отдельного решения.",
       "check": "Руководителю важно, чтобы при обрыве одного магистрального кабеля офис сохранил связь. Что предусмотреть в проекте?",
-      "answer": "Независимый резервный путь и механизм переключения на него. Запас свободных портов сам по себе не создаёт второго пути."
+      "answer": "Независимый резервный путь и механизм переключения на него. Запас свободных портов сам по себе не создаёт второго пути.",
+      "rule": "Для расширения нужны бюджет и актуальная документация сети (network documentation): физическая схема показывает соединения, логическая — подсети и VLAN. Модульность (modularity) позволяет добавить карту портов по мере роста. Потребность в дополнительной пропускной способности оценивают по измеренной нагрузке."
     },
     "en": {
       "scenario": "An office has 18 wired devices today and expects 36 next year, including IP phones. How would you choose a switch and explain the budget?",
       "reasoning": "Count ports for end devices and uplinks, then allow for growth. If the phones use power over Ethernet, check the total PoE power budget. When voice calls and backups compete for a busy link, traffic classification lets QoS assign queue priorities. Extra ports address growth, while delay under load needs separate attention.",
       "check": "Management wants the office to stay connected if one backbone cable is cut. What should the design include?",
-      "answer": "An independent backup path and a way to switch traffic onto it. Spare ports alone do not create a second path."
+      "answer": "An independent backup path and a way to switch traffic onto it. Spare ports alone do not create a second path.",
+      "rule": "Plan expansion using a budget and current network documentation. Physical diagrams show connections; logical diagrams show subnets and VLANs. Modular hardware can accept another interface card as demand grows. Measurements tell you whether more bandwidth is also necessary."
     }
   },
   "17b": {
@@ -158,13 +174,15 @@
       "scenario": "По отчётам голосовая связь стала прерываться днём. Обычный RTT между офисами был 12 мс, а в момент жалобы достиг 95 мс.",
       "reasoning": "Сравни измерение с исходным уровнем (baseline) для тех же узлов и времени суток. Рост RTT подтверждает изменение задержки, но пока не объясняет причину. Если одновременно выросла загрузка канала, сформулируй проверяемую гипотезу о конкурирующем трафике. Сопоставь время проблем с очередями и типами трафика, а затем запиши вывод и результат повторной проверки.",
       "check": "Проверка опровергла гипотезу, и нужна помощь коллеги. Какие сведения сократят время диагностики?",
-      "answer": "Передай симптомы, затронутые узлы, время, нормальные и текущие показатели, выполненные проверки и их результаты. Так следующий специалист продолжит с проверенных фактов."
+      "answer": "Передай симптомы, затронутые узлы, время, нормальные и текущие показатели, выполненные проверки и их результаты. Так следующий специалист продолжит с проверенных фактов.",
+      "rule": "Для исходного уровня (baseline) снимай показатели регулярно в обычные рабочие периоды, включая часы пик. Анализатор протоколов Wireshark показывает типы обмена, наблюдаемые на выбранном интерфейсе. После выдвижения гипотезы сначала проверь её, а затем выбирай исправление."
     },
     "en": {
       "scenario": "Calls between offices are breaking up in the afternoon. Normal round-trip time was 12 ms, but a measurement during a complaint shows 95 ms.",
       "reasoning": "Compare the measurement with a baseline for the same endpoints and time of day. The higher RTT establishes a change in delay, but its cause is still unknown. If link utilization rose as well, form a testable hypothesis about competing traffic. Compare incident times with queue measurements and traffic types, then document the finding and the retest.",
       "check": "The test rules out your hypothesis and you need to escalate. What information would help the next technician?",
-      "answer": "Provide the symptoms, affected endpoints, timing, normal and current readings, and the checks already performed with their results. The next technician can then start from verified facts."
+      "answer": "Provide the symptoms, affected endpoints, timing, normal and current readings, and the checks already performed with their results. The next technician can then start from verified facts.",
+      "rule": "Build a baseline from regular measurements over a representative period, including busy hours. A protocol analyzer such as Wireshark identifies traffic types visible on the selected interface. Once you form a hypothesis, test it before deciding on a fix."
     }
   }
 }

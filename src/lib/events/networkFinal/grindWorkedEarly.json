@@ -4,13 +4,15 @@
       "scenario": "Камера отправляет изображение на сервер через коммутатор. Какие устройства участвуют в разговоре как хосты?",
       "reasoning": "Камера создаёт данные, а сервер их принимает. Оба — конечные устройства (end devices). Сетевой адаптер (NIC) камеры превращает биты в сигнал для линии, а коммутатор (switch) пересылает кадр к серверу. Наличие кабеля у коммутатора ещё ничего не говорит о том, кто создал изображение.",
       "check": "Техник знает, какие устройства связаны, но хочет найти кабель камеры в конкретной стойке. Какую схему открыть?",
-      "answer": "Физическую топологию (physical topology). На ней показаны расположение оборудования и прокладка кабелей."
+      "answer": "Физическую топологию (physical topology). На ней показаны расположение оборудования и прокладка кабелей.",
+      "rule": "План этажей с гнёздами, стойками и трассами кабелей показывает физическую топологию (physical topology). На логической схеме (logical topology) видно, как связаны устройства и куда могут идти данные. Две VLAN на одном физическом коммутаторе удобно различать на логической схеме."
     },
     "en": {
       "scenario": "A camera sends video through a switch to a recording server. Which devices are the hosts in this exchange?",
       "reasoning": "The camera creates the data and the server receives it. Both are end devices. The camera's network interface card (NIC) puts signals on the link, and the switch forwards the frame toward the server. Having a cable attached does not make the switch the source of the video.",
       "check": "A technician knows which devices communicate but needs to locate the camera cable in a specific rack. Which diagram helps?",
-      "answer": "The physical topology shows equipment locations and cable runs."
+      "answer": "The physical topology shows equipment locations and cable runs.",
+      "rule": "A floor plan showing sockets, racks and cable runs depicts physical topology. Logical topology describes network relationships and possible data paths. Two VLANs sharing one physical switch are easier to distinguish on a logical diagram."
     }
   },
   "1b": {
@@ -18,13 +20,15 @@
       "scenario": "Поставщик заходит со своего ноутбука через интернет и видит только заказы для своей компании. Как описать этот доступ?",
       "reasoning": "Внешнему партнёру открыли ограниченную часть внутренних ресурсов — это extranet. Интернет доставляет трафик, а VPN может защитить его в пути. Если компания разрешает сотруднику работать с личного ноутбука, такая политика называется BYOD. Тип доступа определяй по тому, кому и к чему дали доступ.",
       "check": "Филиал в посёлке видит антенну провайдера, а кабель туда не проложен. Как подключить его к интернету?",
-      "answer": "Через беспроводного интернет-провайдера (WISP), если площадка попадает в его зону покрытия. Внутри филиала устройства по-прежнему могут работать в обычной LAN."
+      "answer": "Через беспроводного интернет-провайдера (WISP), если площадка попадает в его зону покрытия. Внутри филиала устройства по-прежнему могут работать в обычной LAN.",
+      "rule": "Раздели два участка пути. Домашняя точка Wi-Fi связывает устройства внутри LAN. Беспроводной интернет-провайдер (WISP) даёт внешний канал до сети провайдера по радио. Для удалённой фермы без проводного широкополосного доступа важны покрытие и возможность установить абонентскую антенну."
     },
     "en": {
       "scenario": "A supplier signs in over the internet using a personal laptop and sees only orders for its company. How would you describe this access?",
       "reasoning": "The supplier is an outside partner with access to selected internal resources, so this is an extranet. The internet carries the traffic, and a VPN could protect it in transit. BYOD describes a policy allowing employees to use their own devices. Identify the type of access by asking who can reach which resources.",
       "check": "A rural branch can see a provider's radio tower but has no wired internet service. How could it connect?",
-      "answer": "A wireless internet service provider (WISP) can supply the access link if the site is within coverage. The branch can still use a regular LAN internally."
+      "answer": "A wireless internet service provider (WISP) can supply the access link if the site is within coverage. The branch can still use a regular LAN internally.",
+      "rule": "Separate the two links. A home Wi-Fi access point connects devices inside a LAN. A wireless internet service provider (WISP) supplies the external link to its network over radio. For a remote farm without wired broadband, check provider coverage and whether a subscriber antenna can be installed."
     }
   },
   "1c": {
@@ -32,13 +36,15 @@
       "scenario": "По одному каналу идут видеозвонок и резервная копия. Голос прерывается, хотя оба приложения работают. Что поменяет QoS?",
       "reasoning": "Когда канал занят, голосовой пакет может застрять в очереди за данными копии. Политика качества обслуживания (QoS) позволяет обслужить чувствительный к задержке голос раньше. Копирование может занять дольше. Общая пропускная способность линии останется прежней.",
       "check": "У офиса есть второй независимый канал, и связь сохранилась при обрыве первого. Какое свойство проверил обрыв?",
-      "answer": "Отказоустойчивость (fault tolerance). Резервирование (redundancy) дало трафику другой рабочий путь."
+      "answer": "Отказоустойчивость (fault tolerance). Резервирование (redundancy) дало трафику другой рабочий путь.",
+      "rule": "Когда к работающей сети добавляют новое оборудование, совместимые стандарты позволяют ему обмениваться данными с уже установленными устройствами. В вопросе о росте это признак масштабируемости (scalability). Стандарт сам по себе не создаёт резервный путь и не назначает приоритет голосу."
     },
     "en": {
       "scenario": "A video call shares a busy link with a backup. Speech breaks up while both applications are still running. How can QoS help?",
       "reasoning": "Voice packets can spend too long queued behind backup traffic. A quality of service (QoS) policy can serve delay-sensitive voice traffic first. The backup may take longer. The link's total capacity stays the same.",
       "check": "A branch remains connected after its primary circuit fails because a second independent circuit takes over. What property did the failure demonstrate?",
-      "answer": "Fault tolerance. Redundancy provided another working path for the traffic."
+      "answer": "Fault tolerance. Redundancy provided another working path for the traffic.",
+      "rule": "When a network grows, common standards let new equipment communicate with devices already installed. In a question about growth, this supports scalability. A standard alone neither creates a backup path nor assigns priority to voice traffic."
     }
   },
   "2a": {
@@ -46,13 +52,15 @@
       "scenario": "Ты подключился к коммутатору через консоль. Видишь Switch> и хочешь изменить имя устройства. Как дойти до нужного режима?",
       "reasoning": "Знак > означает пользовательский режим (user EXEC). Введи enable и проверь, что приглашение стало Switch#. Затем configure terminal откроет глобальную настройку, где Switch(config)# принимает команду hostname Lab1. Если у приглашения только # без (config), ты ещё в привилегированном EXEC.",
       "check": "Ты в Lab1(config-if)#. Как одним переходом вернуться в Lab1# для проверки состояния?",
-      "answer": "Введи end или нажми Ctrl+Z. Один exit из режима интерфейса вернул бы тебя в глобальную настройку."
+      "answer": "Введи end или нажми Ctrl+Z. Один exit из режима интерфейса вернул бы тебя в глобальную настройку.",
+      "rule": "В IOS команда service password-encryption в режиме (config)# скрывает применимые пароли, записанные открытым текстом в конфигурации. Классическое кодирование Type 7 обратимо. Команда enable secret задаёт секрет именно для privileged EXEC, а login включает проверку учётных данных на выбранной линии."
     },
     "en": {
       "scenario": "You connect to a switch console, see Switch>, and want to rename the switch. How do you reach the right mode?",
       "reasoning": "The > prompt indicates user EXEC mode. Enter enable and check for Switch#. Then configure terminal opens global configuration mode, where Switch(config)# accepts hostname Lab1. A plain # prompt without (config) still indicates privileged EXEC.",
       "check": "You are at Lab1(config-if)#. How can you reach Lab1# in one step to inspect the device?",
-      "answer": "Enter end or press Ctrl+Z. A single exit from interface configuration would return you to global configuration."
+      "answer": "Enter end or press Ctrl+Z. A single exit from interface configuration would return you to global configuration.",
+      "rule": "In IOS global configuration mode, service password-encryption obscures applicable cleartext passwords stored in the configuration. Classic Type 7 encoding is reversible. The enable secret command sets the credential for privileged EXEC specifically, while login enables a credential check on the selected line."
     }
   },
   "2b": {
@@ -60,13 +68,15 @@
       "scenario": "Вчера имя коммутатора поменялось на Lab1 сразу после команды hostname. После перезагрузки вернулось старое имя. Куда делось изменение?",
       "reasoning": "IOS сразу применил команду к рабочей конфигурации (running-config) в RAM. При перезагрузке содержимое RAM потерялось. Устройство загрузило сохранённую startup-config из NVRAM, где оставалось прежнее имя. После настройки команда copy running-config startup-config сохранит действующую версию для следующего запуска.",
       "check": "Для удалённого управления L2-коммутатором техник назначил IP на interface vlan 10. Где искать гнездо этого интерфейса?",
-      "answer": "У этого интерфейса нет отдельного гнезда. SVI — логический интерфейс VLAN, к которому трафик попадает через физические порты."
+      "answer": "У этого интерфейса нет отдельного гнезда. SVI — логический интерфейс VLAN, к которому трафик попадает через физические порты.",
+      "rule": "У SVI нет отдельного физического разъёма: один логический интерфейс представляет VLAN с любым числом портов. Различай и виды памяти: RAM теряет рабочие данные при перезапуске, NVRAM хранит стартовую конфигурацию, flash обычно хранит образ IOS, а ROM содержит код начальной загрузки."
     },
     "en": {
       "scenario": "Yesterday the hostname changed to Lab1 as soon as you entered the command. After a restart the old name returned. Where did the change go?",
       "reasoning": "IOS immediately applied the command to the running configuration in RAM. Restarting cleared RAM. The switch loaded its startup configuration from NVRAM, which still contained the old name. After making the change, copy running-config startup-config saves the active version for the next boot.",
       "check": "A technician assigns a management address to interface vlan 10 on a Layer 2 switch. Where is its physical socket?",
-      "answer": "There is no dedicated socket. A switch virtual interface (SVI) represents the VLAN, and traffic reaches it through physical switch ports."
+      "answer": "There is no dedicated socket. A switch virtual interface (SVI) represents the VLAN, and traffic reaches it through physical switch ports.",
+      "rule": "An SVI has no dedicated physical socket. One logical interface represents a VLAN that can span multiple ports. RAM loses its working data on restart, NVRAM retains the startup configuration, flash typically stores the IOS image, and ROM contains bootstrap code."
     }
   },
   "3a": {
@@ -74,13 +84,15 @@
       "scenario": "Камеры шлют записи на регистратор быстрее, чем он успевает их принять. Какое правило общения здесь нужно?",
       "reasoning": "Сначала проверь, понимает ли регистратор формат записи. Если формат верен, а очередь переполняется, причина связана с темпом передачи. Управление потоком (flow control) помогает отправителю соразмерить объём передачи с возможностями получателя. Тайм-аут (timeout) задаёт предел ожидания ответа и сам по себе не освобождает буфер.",
       "check": "Учитель посылает один поток только подписчикам учебного канала. Как называется такой способ доставки?",
-      "answer": "Multicast. Получателей определяет принадлежность к группе. При broadcast рассылка адресована всему широковещательному домену."
+      "answer": "Multicast. Получателей определяет принадлежность к группе. При broadcast рассылка адресована всему широковещательному домену.",
+      "rule": "При выборе способа доставки смотри на адрес назначения. Адрес конкретного получателя означает unicast, адрес группы — multicast, даже если подписчик остался один. В терминах курса timing охватывает темп, право передавать сейчас и предел ожидания ответа. Номер последовательности определяет порядок данных."
     },
     "en": {
       "scenario": "Cameras send recordings faster than a recorder can accept them. Which communication rule matters here?",
       "reasoning": "First check whether the recorder understands the recording format. If it does and its queue is filling, the issue concerns the sending rate. Flow control helps the sender limit the amount of data to what the receiver can accept. A timeout sets a limit on waiting for a response and does not free buffer space by itself.",
       "check": "A teacher sends one stream addressed only to subscribers of a class channel. Which delivery method is this?",
-      "answer": "Multicast. Group membership determines the intended receivers. Broadcast addresses the whole broadcast domain."
+      "answer": "Multicast. Group membership determines the intended receivers. Broadcast addresses the whole broadcast domain.",
+      "rule": "Identify delivery by the destination address. An individual destination means unicast. A group address means multicast even if just one subscriber remains. In the course terminology, timing covers pacing, permission to transmit now and the response deadline. A sequence number identifies order."
     }
   },
   "3b": {
@@ -88,13 +100,15 @@
       "scenario": "Браузер в аудитории отправляет обычный HTTP-запрос по TCP на сервер в другой подсети. Что появится на первом Ethernet-кабеле?",
       "reasoning": "HTTP формирует запрос. TCP добавляет порты и информацию для надёжной доставки, затем IP добавляет адрес удалённого сервера. Ethernet оборачивает пакет в кадр для первого перехода. Поэтому IP назначения указывает на сервер, а MAC назначения на этом кабеле принадлежит шлюзу аудитории.",
       "check": "Роутер переслал тот же IP-пакет по следующему Ethernet-каналу. Какой заголовок он построил заново?",
-      "answer": "Заголовок Ethernet для нового канала, с MAC-адресами этого перехода. При обычной маршрутизации без NAT IP назначения остаётся адресом сервера."
+      "answer": "Заголовок Ethernet для нового канала, с MAC-адресами этого перехода. При обычной маршрутизации без NAT IP назначения остаётся адресом сервера.",
+      "rule": "Если один кусок данных пропал, IP сам по себе его не восстановит. TCP использует номера последовательности, подтверждения и повторную передачу для надёжной доставки упорядоченного потока. На локальном Ethernet-канале кадр для IP-пакета создаёт канальный уровень (data link layer)."
     },
     "en": {
       "scenario": "A classroom browser sends an HTTP request over TCP to a server on another subnet. What goes onto the first Ethernet cable?",
       "reasoning": "HTTP creates the request. TCP adds ports and information needed for reliable delivery, then IP adds the remote server's address. Ethernet wraps the packet in a frame for the first hop. The destination IP therefore identifies the server, while the destination MAC on this cable belongs to the classroom gateway.",
       "check": "The router forwards that IP packet onto another Ethernet link. Which header does it build again?",
-      "answer": "It builds an Ethernet header for the new link, with MAC addresses for that hop. In ordinary routing without NAT, the destination IP still identifies the server."
+      "answer": "It builds an Ethernet header for the new link, with MAC addresses for that hop. In ordinary routing without NAT, the destination IP still identifies the server.",
+      "rule": "IP itself does not recover a missing piece of data. TCP uses sequence numbers, acknowledgments and retransmission to deliver a reliable ordered stream. The data link layer builds the frame that carries an IP packet across a local Ethernet link."
     }
   },
   "3c": {
@@ -102,13 +116,15 @@
       "scenario": "Ноутбук и точка доступа выпущены разными фирмами. Почему они могут согласовать связь по Wi-Fi?",
       "reasoning": "Оба производителя могут реализовать совместимый стандарт семейства IEEE 802.11. Он описывает правила работы беспроводного канала. Когда приложения на ноутбуке обмениваются данными через интернет, они также используют протоколы из другого семейства документов, в том числе RFC, разработанные в IETF. Название организации проще выбрать, если сначала определить, какой именно стандарт ищешь.",
       "check": "В документации прикладного интернет-протокола указан номер RFC. В другом вопросе требуется организация, координирующая глобальные пулы IP-адресов. Одинаков ли ответ?",
-      "answer": "Это разные задачи. IETF разрабатывает интернет-стандарты, публикуемые как RFC. Глобальные пулы адресов и ряд реестров протоколов координирует IANA."
+      "answer": "Это разные задачи. IETF разрабатывает интернет-стандарты, публикуемые как RFC. Глобальные пулы адресов и ряд реестров протоколов координирует IANA.",
+      "rule": "В перечне организаций курса IEEE и IETF разрабатывают стандарты, а IANA ведёт общие реестры адресов и номеров протоколов. TCP/IP обозначает набор протоколов, OSI — модель уровней, MAC — подуровень и связанный с ним тип адреса. Эти три сокращения обозначают технические понятия."
     },
     "en": {
       "scenario": "A laptop and an access point come from different manufacturers. Why can they still agree on how to use Wi-Fi?",
       "reasoning": "Both manufacturers can implement a compatible IEEE 802.11 standard. It defines how the wireless link operates. Applications exchanging data over the internet also rely on other specifications, including RFCs developed through the IETF. Identify the technology being standardized before choosing the organization.",
       "check": "One question concerns an internet protocol specified in an RFC. Another asks who coordinates global IP address pools. Do they call for the same organization?",
-      "answer": "These are different jobs. The IETF develops internet standards published as RFCs. IANA coordinates global address pools and maintains protocol registries."
+      "answer": "These are different jobs. The IETF develops internet standards published as RFCs. IANA coordinates global address pools and maintains protocol registries.",
+      "rule": "In the course list, IEEE and IETF develop standards, while IANA coordinates shared address and protocol-number registries. TCP/IP names a protocol suite, OSI a layered model, and MAC a sublayer and its associated address type. Those three terms identify technical concepts."
     }
   },
   "4a": {
@@ -130,13 +146,15 @@
       "scenario": "Нужно соединить два здания через цех с мощными электродвигателями. Почему для линии рассматривают оптоволокно?",
       "reasoning": "В медной линии сигнал электрический, и внешнее поле может создать помеху. Скрутка пар уменьшает влияние наводок, а экранированная пара (STP) даёт дополнительную защиту. Оптоволокно (fiber) передаёт данные светом и устойчиво к электромагнитным помехам. Для выбора одномодового или многомодового волокна ещё проверь расстояние и совместимость оптических модулей.",
       "check": "У техника обычный кабель UTP без экрана. За счёт чего он всё же уменьшает перекрёстные помехи между парами?",
-      "answer": "Проводники в каждой паре скручены, а пары обычно имеют разный шаг скрутки. Это уменьшает взаимные наводки (crosstalk)."
+      "answer": "Проводники в каждой паре скручены, а пары обычно имеют разный шаг скрутки. Это уменьшает взаимные наводки (crosstalk).",
+      "rule": "STP — это витые пары с экраном, который требует соответствующего разъёма и правильного заземления. Коаксиальный кабель тоже экранирован, но устроен иначе: внешний проводник окружает центральную жилу. В учебной паре «LED или лазер» светодиод относится к многомодовому волокну; современные многомодовые модули также применяют лазеры."
     },
     "en": {
       "scenario": "Two buildings need a link through a workshop with large electric motors. Why consider optical fiber?",
       "reasoning": "Copper carries an electrical signal, so external fields can introduce interference. Twisting the pairs reduces interference, and shielded twisted pair (STP) adds another layer of protection. Fiber carries light and is immune to electromagnetic interference. Check the distance and compatible transceivers when choosing between single-mode and multimode fiber.",
       "check": "A technician has ordinary UTP cable with no shield. How can it still reduce interference between pairs?",
-      "answer": "The conductors in each pair are twisted, and pairs typically have different twist rates. This reduces crosstalk."
+      "answer": "The conductors in each pair are twisted, and pairs typically have different twist rates. This reduces crosstalk.",
+      "rule": "STP uses shielded twisted pairs with matching connectors and proper grounding. Coax is also shielded, but its outer conductor surrounds one central conductor. In the course comparison of LEDs and lasers, LEDs are associated with multimode fiber. Modern multimode transceivers can also use lasers."
     }
   },
   "4c": {
@@ -144,13 +162,15 @@
       "scenario": "У студентов полный индикатор Wi-Fi, но когда вся группа начинает загружать файлы, каждому достаётся меньше скорости. Почему?",
       "reasoning": "Индикатор показывает уровень сигнала у устройства. На одном канале клиенты делят эфирное время (airtime), и перед передачей им приходится учитывать занятость среды. При активной передаче у многих клиентов ожидание растёт. Сильный сигнал сам по себе не даёт каждому всю пропускную способность канала.",
       "check": "Для батарейного датчика важны редкие короткие сообщения. Для беспроводных наушников важна связь с телефоном. Какие технологии подходят этим двум задачам?",
-      "answer": "Zigbee подходит для маломощных датчиков с небольшим потоком данных. Bluetooth подходит для персональной сети (PAN), например связи наушников с телефоном."
+      "answer": "Zigbee подходит для маломощных датчиков с небольшим потоком данных. Bluetooth подходит для персональной сети (PAN), например связи наушников с телефоном.",
+      "rule": "Для выбора технологии важнее назначение, чем число метров. В этих вопросах Bluetooth связывает персональные устройства, Zigbee обслуживает маломощные датчики, Wi-Fi предоставляет беспроводную LAN, WiMAX используется для широкополосного доступа. Фактическая дальность зависит от оборудования и среды."
     },
     "en": {
       "scenario": "Students see full Wi-Fi bars, yet each gets less throughput when the whole class starts downloading. Why?",
       "reasoning": "The bars indicate received signal strength. Clients on the same channel share airtime and must account for other transmissions before sending. More active clients generally spend longer waiting. A strong signal alone does not give each client the channel's entire capacity.",
       "check": "A battery-powered sensor sends short, infrequent readings. A wireless headset needs a link to a phone. Which technologies fit these two tasks?",
-      "answer": "Zigbee suits low-power sensors with small data volumes. Bluetooth suits personal area networks (PANs), including a headset paired with a phone."
+      "answer": "Zigbee suits low-power sensors with small data volumes. Bluetooth suits personal area networks (PANs), including a headset paired with a phone.",
+      "rule": "Choose by purpose before comparing distances. In these questions Bluetooth pairs personal devices, Zigbee serves low-power sensors, Wi-Fi supplies a wireless LAN, and WiMAX supplies broadband access. Actual range depends on equipment and surroundings."
     }
   },
   "5a": {

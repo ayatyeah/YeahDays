@@ -30,7 +30,7 @@ const sections:Record<string,Selection[]> = {
 // The timed route keeps the sections needed for its actual practice set.
 const shortSections:Record<string,Selection[]>={
   '1b':[[0,0,4,5]], '1c':[[0,1,1]], '2a':[[0,2,2,3]], '2b':[[0,3,3]],
-  '4a':[[2,0,1,4]], '4b':[[2,1,1],[2,2,1,4]],
+  '4a':[[2,0,1,2,4]], '4b':[[2,1,1],[2,2,1,4]],
   '7a':[[3,1,4],[3,2,0]], '8a':[[4,0,1,2]], '8b':[[4,0,3,7]],
   '9a':[[4,1,1,4]], '10a':[[4,2,1,2]], '10b':[[4,2,4,8]],
   '13a':[[6,1,2]], '15a':[[8,0,4,9]], '16b':[[9,0,2,6]],

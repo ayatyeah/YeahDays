@@ -53,6 +53,7 @@ describe('network study banks',()=>{
       // 115 minutes of study reading at 130 words per minute.
       expect(words).toBeLessThanOrEqual(115*130);
     }
+    expect(lessons.find(u=>u.id==='4a')!.notes!.en).toMatch(/microwave signals.*wireless/i);
     const gateway=quick.find(q=>q.id==='module-13-4')!;
     expect(gateway.options[gateway.correct[0]]).toContain('local gateway');
   });

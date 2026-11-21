@@ -32,3 +32,27 @@
 @media(max-width:900px) {
   :global(body):has([data-network-quiz=true],[data-quiz-menu]) :global(.g-tutor-launch) { bottom:calc(var(--g-reader-control-bottom, 16px) + 70px); }
 }
+
+/* Give the question its own scroll area and the assistant a dedicated
+   column beside the quiz controls on narrow screens. */
+@media (max-width: 760px) {
+  :global(body):has([data-network-quiz=true]) { overflow:hidden; }
+  :global(body):has([data-network-quiz=true]) :global(.f-mobile-dock),
+  :global(body):has([data-network-quiz=true]) :global(.f-workspace-footer),
+  :global(body):has([data-network-quiz=true]) :global(.f-navigation-wrap) { display:none !important; }
+  :global(body) [data-network-quiz=true] {
+    position:fixed; inset:0 0 calc(96px + env(safe-area-inset-bottom)); z-index:42;
+    display:block; overflow-y:auto; overscroll-behavior:contain;
+    padding:max(10px, env(safe-area-inset-top)) 14px 12px;
+    background:var(--color-bg);
+    box-shadow:0 100vh 0 100vh var(--color-bg);
+  }
+  :global(body):has([data-network-quiz=true]) .navigation {
+    left:12px; right:72px; bottom:calc(8px + env(safe-area-inset-bottom));
+    transform:none; width:auto;
+  }
+  :global(body):has([data-network-quiz=true]) :global(.g-tutor-launch) {
+    bottom:calc(15px + env(safe-area-inset-bottom)); right:12px;
+  }
+  :global(body) [data-network-quiz=true] .scrollTarget { scroll-margin-top:10px; }
+}

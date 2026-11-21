@@ -79,19 +79,26 @@ export default function EventQuiz({
   const answered = picked !== undefined;
   useTutorDetail({ quiz: { id: item.id, question: item.q, options: item.options, pickedMany: picked, correctMany: answered ? expected : undefined, picked: picked?.[0], correct: answered ? expected[0] : undefined, index, total: quiz.length } }, `${index + 1}/${quiz.length}`);
   const questionHeading = useRef<HTMLHeadingElement>(null);
-  const previousIndex = useRef(index);
+  const previousIndex = useRef<number | null>(null);
+  const previousLesson = useRef(showLesson);
 
   useEffect(() => {
-    const navigated = previousIndex.current !== index;
+    const firstQuestion = previousIndex.current === null;
+    const navigated = previousIndex.current !== index || previousLesson.current !== showLesson;
+    previousLesson.current = showLesson;
     previousIndex.current = index;
     // Only explicit question navigation moves the viewport. Answer feedback
     // is announced by role="status" without moving focus or scrolling.
     if (!navigated) return;
     const target = questionHeading.current;
     if (!target) return;
+    const mobileQuiz = target.closest<HTMLElement>("[data-network-quiz=true]");
+    const inMobileQuiz = mobileQuiz && window.matchMedia("(max-width: 760px)").matches;
+    if (firstQuestion && !inMobileQuiz) return;
     target.focus({ preventScroll: true });
-    target.scrollIntoView({ block: "start", behavior: "instant" });
-  }, [index]);
+    if (inMobileQuiz) mobileQuiz.scrollTop = 0;
+    else target.scrollIntoView({ block: "start", behavior: "instant" });
+  }, [index, showLesson]);
 
   const missed = readyForReview(missedQuestions(quiz, answers, mastered), answeredAt, answeredCount);
   function advance() {

@@ -4,6 +4,7 @@ import { useCopy } from "@/i18n/useCopy";
 
 import { useState } from "react";
 import Link from "next/link";
+import SelfNotification from "@/components/SelfNotification";
 import PushOptIn from "@/components/PushOptIn";
 import DeviceList from "@/components/DeviceList";
 import PairingCodeCard from "@/components/PairingCodeCard";
@@ -59,6 +60,7 @@ export default function SettingsContent({ compact = false }: { compact?: boolean
       <div className={compact ? "" : "desk"}>
         <div className={compact ? "" : "desk-main"}>
           <Group title={tx("Уведомления")}>
+            <SelfNotification />
             <PushOptIn />
             <div className="mt-3">
               <DeviceList />

@@ -25,6 +25,19 @@ export const groups = [
   ...Array.from(new Set(sets.map(q => q.set)), set => ({id:'vrt-'+set,title:'VRT · вариант '+set,count:sets.filter(q => q.set === set).length})),
 ];
 
+// Both GRIND routes share 37 lesson objects, including their bilingual text.
+type Lesson = NonNullable<EventQuizQuestion['lesson']>;
+const detailedLessons = new Map<string,Lesson>();
+function withGrindLesson(question:EventQuizQuestion):EventQuizQuestion {
+  const lesson=question.lesson!;
+  let detailed=detailedLessons.get(lesson.id);
+  if(!detailed){
+    detailed={...lesson,notes:grindNotes(lesson.id)};
+    detailedLessons.set(lesson.id,detailed);
+  }
+  return {...question,lesson:detailed};
+}
+
 export function questionsFor(group: string): EventQuizQuestion[] {
   const plan=sprints.find(p=>p.id===group);
   if(plan){
@@ -46,9 +59,8 @@ export function questionsFor(group: string): EventQuizQuestion[] {
   if(group==='complete')return archiveBank;
   if(group==='compact')return compactBank;
   if(group==='grind' || group==='grind-full'){
-    const notes=new Map(grindUnits.map(unit=>[unit.id,grindNotes(unit.id)]));
     const pool=group==='grind'?grindBank:grindUnits.flatMap(u=>forUnit(u.id)).filter(q=>q.correct.length);
-    return pool.map(q=>({...q,lesson:{...q.lesson!,notes:notes.get(q.lesson!.id)!}}));
+    return pool.map(withGrindLesson);
   }
   if(group.startsWith('unit-') && grindUnits.some(u=>u.id===group.slice(5)))return forUnit(group.slice(5));
   if(sources.some(s=>s.file===group))return archiveBank.filter(q=>q.id.slice(0,q.id.lastIndexOf('-'))===group);

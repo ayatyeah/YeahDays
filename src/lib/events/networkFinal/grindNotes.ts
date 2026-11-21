@@ -1,6 +1,7 @@
 import book from '../finals/computer-networks.json';
-import {modules} from './readings';
-import {readingEnglish} from './readingEnglish';
+import early from './grindWorkedEarly.json';
+import middle from './grindWorkedMiddle.json';
+import late from './grindWorkedLate.json';
 import {withNetworkTerms} from './terminology';
 
 // Zero-based lecture, part and section indices. Each selection ends at the
@@ -26,8 +27,8 @@ const sections:Record<string,Selection[]> = {
   '17a':[[5,0,8],[4,0,3]], '17b':[[6,1,4],[4,2,7,8]],
 };
 
-// Place each module's worked case beside the microtopic that uses it.
-const caseUnits = new Set(['1b','2b','3b','4a','5b','6a','7b','8b','9a','10b','11b','12b','13b','14b','15b','16b','17a']);
+type WorkedCase = {scenario:string;reasoning:string;check:string;answer:string};
+const examples:Record<string, Record<'ru'|'en', WorkedCase>> = {...early,...middle,...late};
 
 export function grindNotes(id:string){
   function read(lang:'ru'|'en'){
@@ -40,14 +41,14 @@ export function grindNotes(id:string){
         return chunk.replace(/^### /,'## ');
       });
     });
-    if(caseUnits.has(id)){
-      const index=parseInt(id,10)-1;
-      const {scenario,explanation,question,answer}=modules[index];
-      const [, , problem,worked,check,solution]=readingEnglish[index];
-      blocks.push(lang==='ru'
-        ? ['## Разбор задачи',scenario,explanation,'?? '+question,'?= '+answer].join('\n')
-        : ['## Worked example',problem,worked,'?? '+check,'?= '+solution].join('\n'));
-    }
+    const example=examples[id][lang];
+    blocks.push([
+      lang==='ru'?'## Разбор задачи':'## Worked example',
+      example.scenario,
+      example.reasoning,
+      '?? '+example.check,
+      '?= '+example.answer,
+    ].join('\n'));
     const notes=blocks.join('\n\n');
     return lang==='ru'?withNetworkTerms(notes):notes;
   }

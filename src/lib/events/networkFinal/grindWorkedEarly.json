@@ -1,0 +1,184 @@
+{
+  "1a": {
+    "ru": {
+      "scenario": "Камера отправляет изображение на сервер через коммутатор. Какие устройства участвуют в разговоре как хосты?",
+      "reasoning": "Камера создаёт данные, а сервер их принимает. Оба — конечные устройства (end devices). Сетевой адаптер (NIC) камеры превращает биты в сигнал для линии, а коммутатор (switch) пересылает кадр к серверу. Наличие кабеля у коммутатора ещё ничего не говорит о том, кто создал изображение.",
+      "check": "Техник знает, какие устройства связаны, но хочет найти кабель камеры в конкретной стойке. Какую схему открыть?",
+      "answer": "Физическую топологию (physical topology). На ней показаны расположение оборудования и прокладка кабелей."
+    },
+    "en": {
+      "scenario": "A camera sends video through a switch to a recording server. Which devices are the hosts in this exchange?",
+      "reasoning": "The camera creates the data and the server receives it. Both are end devices. The camera's network interface card (NIC) puts signals on the link, and the switch forwards the frame toward the server. Having a cable attached does not make the switch the source of the video.",
+      "check": "A technician knows which devices communicate but needs to locate the camera cable in a specific rack. Which diagram helps?",
+      "answer": "The physical topology shows equipment locations and cable runs."
+    }
+  },
+  "1b": {
+    "ru": {
+      "scenario": "Поставщик заходит со своего ноутбука через интернет и видит только заказы для своей компании. Как описать этот доступ?",
+      "reasoning": "Внешнему партнёру открыли ограниченную часть внутренних ресурсов — это extranet. Интернет доставляет трафик, а VPN может защитить его в пути. Если компания разрешает сотруднику работать с личного ноутбука, такая политика называется BYOD. Тип доступа определяй по тому, кому и к чему дали доступ.",
+      "check": "Филиал в посёлке видит антенну провайдера, а кабель туда не проложен. Как подключить его к интернету?",
+      "answer": "Через беспроводного интернет-провайдера (WISP), если площадка попадает в его зону покрытия. Внутри филиала устройства по-прежнему могут работать в обычной LAN."
+    },
+    "en": {
+      "scenario": "A supplier signs in over the internet using a personal laptop and sees only orders for its company. How would you describe this access?",
+      "reasoning": "The supplier is an outside partner with access to selected internal resources, so this is an extranet. The internet carries the traffic, and a VPN could protect it in transit. BYOD describes a policy allowing employees to use their own devices. Identify the type of access by asking who can reach which resources.",
+      "check": "A rural branch can see a provider's radio tower but has no wired internet service. How could it connect?",
+      "answer": "A wireless internet service provider (WISP) can supply the access link if the site is within coverage. The branch can still use a regular LAN internally."
+    }
+  },
+  "1c": {
+    "ru": {
+      "scenario": "По одному каналу идут видеозвонок и резервная копия. Голос прерывается, хотя оба приложения работают. Что поменяет QoS?",
+      "reasoning": "Когда канал занят, голосовой пакет может застрять в очереди за данными копии. Политика качества обслуживания (QoS) позволяет обслужить чувствительный к задержке голос раньше. Копирование может занять дольше. Общая пропускная способность линии останется прежней.",
+      "check": "У офиса есть второй независимый канал, и связь сохранилась при обрыве первого. Какое свойство проверил обрыв?",
+      "answer": "Отказоустойчивость (fault tolerance). Резервирование (redundancy) дало трафику другой рабочий путь."
+    },
+    "en": {
+      "scenario": "A video call shares a busy link with a backup. Speech breaks up while both applications are still running. How can QoS help?",
+      "reasoning": "Voice packets can spend too long queued behind backup traffic. A quality of service (QoS) policy can serve delay-sensitive voice traffic first. The backup may take longer. The link's total capacity stays the same.",
+      "check": "A branch remains connected after its primary circuit fails because a second independent circuit takes over. What property did the failure demonstrate?",
+      "answer": "Fault tolerance. Redundancy provided another working path for the traffic."
+    }
+  },
+  "2a": {
+    "ru": {
+      "scenario": "Ты подключился к коммутатору через консоль. Видишь Switch> и хочешь изменить имя устройства. Как дойти до нужного режима?",
+      "reasoning": "Знак > означает пользовательский режим (user EXEC). Введи enable и проверь, что приглашение стало Switch#. Затем configure terminal откроет глобальную настройку, где Switch(config)# принимает команду hostname Lab1. Если у приглашения только # без (config), ты ещё в привилегированном EXEC.",
+      "check": "Ты в Lab1(config-if)#. Как одним переходом вернуться в Lab1# для проверки состояния?",
+      "answer": "Введи end или нажми Ctrl+Z. Один exit из режима интерфейса вернул бы тебя в глобальную настройку."
+    },
+    "en": {
+      "scenario": "You connect to a switch console, see Switch>, and want to rename the switch. How do you reach the right mode?",
+      "reasoning": "The > prompt indicates user EXEC mode. Enter enable and check for Switch#. Then configure terminal opens global configuration mode, where Switch(config)# accepts hostname Lab1. A plain # prompt without (config) still indicates privileged EXEC.",
+      "check": "You are at Lab1(config-if)#. How can you reach Lab1# in one step to inspect the device?",
+      "answer": "Enter end or press Ctrl+Z. A single exit from interface configuration would return you to global configuration."
+    }
+  },
+  "2b": {
+    "ru": {
+      "scenario": "Вчера имя коммутатора поменялось на Lab1 сразу после команды hostname. После перезагрузки вернулось старое имя. Куда делось изменение?",
+      "reasoning": "IOS сразу применил команду к рабочей конфигурации (running-config) в RAM. При перезагрузке содержимое RAM потерялось. Устройство загрузило сохранённую startup-config из NVRAM, где оставалось прежнее имя. После настройки команда copy running-config startup-config сохранит действующую версию для следующего запуска.",
+      "check": "Для удалённого управления L2-коммутатором техник назначил IP на interface vlan 10. Где искать гнездо этого интерфейса?",
+      "answer": "У этого интерфейса нет отдельного гнезда. SVI — логический интерфейс VLAN, к которому трафик попадает через физические порты."
+    },
+    "en": {
+      "scenario": "Yesterday the hostname changed to Lab1 as soon as you entered the command. After a restart the old name returned. Where did the change go?",
+      "reasoning": "IOS immediately applied the command to the running configuration in RAM. Restarting cleared RAM. The switch loaded its startup configuration from NVRAM, which still contained the old name. After making the change, copy running-config startup-config saves the active version for the next boot.",
+      "check": "A technician assigns a management address to interface vlan 10 on a Layer 2 switch. Where is its physical socket?",
+      "answer": "There is no dedicated socket. A switch virtual interface (SVI) represents the VLAN, and traffic reaches it through physical switch ports."
+    }
+  },
+  "3a": {
+    "ru": {
+      "scenario": "Камеры шлют записи на регистратор быстрее, чем он успевает их принять. Какое правило общения здесь нужно?",
+      "reasoning": "Сначала проверь, понимает ли регистратор формат записи. Если формат верен, а очередь переполняется, причина связана с темпом передачи. Управление потоком (flow control) помогает отправителю соразмерить объём передачи с возможностями получателя. Тайм-аут (timeout) задаёт предел ожидания ответа и сам по себе не освобождает буфер.",
+      "check": "Учитель посылает один поток только подписчикам учебного канала. Как называется такой способ доставки?",
+      "answer": "Multicast. Получателей определяет принадлежность к группе. При broadcast рассылка адресована всему широковещательному домену."
+    },
+    "en": {
+      "scenario": "Cameras send recordings faster than a recorder can accept them. Which communication rule matters here?",
+      "reasoning": "First check whether the recorder understands the recording format. If it does and its queue is filling, the issue concerns the sending rate. Flow control helps the sender limit the amount of data to what the receiver can accept. A timeout sets a limit on waiting for a response and does not free buffer space by itself.",
+      "check": "A teacher sends one stream addressed only to subscribers of a class channel. Which delivery method is this?",
+      "answer": "Multicast. Group membership determines the intended receivers. Broadcast addresses the whole broadcast domain."
+    }
+  },
+  "3b": {
+    "ru": {
+      "scenario": "Браузер в аудитории отправляет обычный HTTP-запрос по TCP на сервер в другой подсети. Что появится на первом Ethernet-кабеле?",
+      "reasoning": "HTTP формирует запрос. TCP добавляет порты и информацию для надёжной доставки, затем IP добавляет адрес удалённого сервера. Ethernet оборачивает пакет в кадр для первого перехода. Поэтому IP назначения указывает на сервер, а MAC назначения на этом кабеле принадлежит шлюзу аудитории.",
+      "check": "Роутер переслал тот же IP-пакет по следующему Ethernet-каналу. Какой заголовок он построил заново?",
+      "answer": "Заголовок Ethernet для нового канала, с MAC-адресами этого перехода. При обычной маршрутизации без NAT IP назначения остаётся адресом сервера."
+    },
+    "en": {
+      "scenario": "A classroom browser sends an HTTP request over TCP to a server on another subnet. What goes onto the first Ethernet cable?",
+      "reasoning": "HTTP creates the request. TCP adds ports and information needed for reliable delivery, then IP adds the remote server's address. Ethernet wraps the packet in a frame for the first hop. The destination IP therefore identifies the server, while the destination MAC on this cable belongs to the classroom gateway.",
+      "check": "The router forwards that IP packet onto another Ethernet link. Which header does it build again?",
+      "answer": "It builds an Ethernet header for the new link, with MAC addresses for that hop. In ordinary routing without NAT, the destination IP still identifies the server."
+    }
+  },
+  "3c": {
+    "ru": {
+      "scenario": "Ноутбук и точка доступа выпущены разными фирмами. Почему они могут согласовать связь по Wi-Fi?",
+      "reasoning": "Оба производителя могут реализовать совместимый стандарт семейства IEEE 802.11. Он описывает правила работы беспроводного канала. Когда приложения на ноутбуке обмениваются данными через интернет, они также используют протоколы из другого семейства документов, в том числе RFC, разработанные в IETF. Название организации проще выбрать, если сначала определить, какой именно стандарт ищешь.",
+      "check": "В документации прикладного интернет-протокола указан номер RFC. В другом вопросе требуется организация, координирующая глобальные пулы IP-адресов. Одинаков ли ответ?",
+      "answer": "Это разные задачи. IETF разрабатывает интернет-стандарты, публикуемые как RFC. Глобальные пулы адресов и ряд реестров протоколов координирует IANA."
+    },
+    "en": {
+      "scenario": "A laptop and an access point come from different manufacturers. Why can they still agree on how to use Wi-Fi?",
+      "reasoning": "Both manufacturers can implement a compatible IEEE 802.11 standard. It defines how the wireless link operates. Applications exchanging data over the internet also rely on other specifications, including RFCs developed through the IETF. Identify the technology being standardized before choosing the organization.",
+      "check": "One question concerns an internet protocol specified in an RFC. Another asks who coordinates global IP address pools. Do they call for the same organization?",
+      "answer": "These are different jobs. The IETF develops internet standards published as RFCs. IANA coordinates global address pools and maintains protocol registries."
+    }
+  },
+  "4a": {
+    "ru": {
+      "scenario": "На идеальной линии 2 Мбит/с нужно передать 2000 бит. Сколько времени занимает сама передача?",
+      "reasoning": "Физический уровень (physical layer) представляет биты изменениями сигнала. При скорости 2 000 000 бит/с передача 2000 бит займёт 2000 / 2 000 000 с, то есть 1 мс. Последний бит выходит на линию позже первого. До получения сообщения могут добавиться задержки распространения и ожидания в очереди.",
+      "check": "На линии с номиналом 100 Мбит/с измерили 76 Мбит/с переданных данных, из них 70 Мбит/с полезных данных приложения. Назови три величины.",
+      "answer": "100 Мбит/с — пропускная способность (bandwidth), 76 Мбит/с — фактическая скорость (throughput), 70 Мбит/с — полезная скорость приложения (goodput)."
+    },
+    "en": {
+      "scenario": "An ideal 2 Mb/s link must transmit 2,000 bits. How much time does transmission itself take?",
+      "reasoning": "The physical layer represents bits as changes in a signal. At 2,000,000 bits per second, transmitting 2,000 bits takes 2,000 / 2,000,000 seconds, or 1 ms. The last bit enters the link later than the first. Propagation and queuing can add further delay before the message arrives.",
+      "check": "A 100 Mb/s link carries a measured 76 Mb/s of data, including 70 Mb/s of useful application payload. Name the three quantities.",
+      "answer": "100 Mb/s is the bandwidth, 76 Mb/s the throughput, and 70 Mb/s the application goodput."
+    }
+  },
+  "4b": {
+    "ru": {
+      "scenario": "Нужно соединить два здания через цех с мощными электродвигателями. Почему для линии рассматривают оптоволокно?",
+      "reasoning": "В медной линии сигнал электрический, и внешнее поле может создать помеху. Скрутка пар уменьшает влияние наводок, а экранированная пара (STP) даёт дополнительную защиту. Оптоволокно (fiber) передаёт данные светом и устойчиво к электромагнитным помехам. Для выбора одномодового или многомодового волокна ещё проверь расстояние и совместимость оптических модулей.",
+      "check": "У техника обычный кабель UTP без экрана. За счёт чего он всё же уменьшает перекрёстные помехи между парами?",
+      "answer": "Проводники в каждой паре скручены, а пары обычно имеют разный шаг скрутки. Это уменьшает взаимные наводки (crosstalk)."
+    },
+    "en": {
+      "scenario": "Two buildings need a link through a workshop with large electric motors. Why consider optical fiber?",
+      "reasoning": "Copper carries an electrical signal, so external fields can introduce interference. Twisting the pairs reduces interference, and shielded twisted pair (STP) adds another layer of protection. Fiber carries light and is immune to electromagnetic interference. Check the distance and compatible transceivers when choosing between single-mode and multimode fiber.",
+      "check": "A technician has ordinary UTP cable with no shield. How can it still reduce interference between pairs?",
+      "answer": "The conductors in each pair are twisted, and pairs typically have different twist rates. This reduces crosstalk."
+    }
+  },
+  "4c": {
+    "ru": {
+      "scenario": "У студентов полный индикатор Wi-Fi, но когда вся группа начинает загружать файлы, каждому достаётся меньше скорости. Почему?",
+      "reasoning": "Индикатор показывает уровень сигнала у устройства. На одном канале клиенты делят эфирное время (airtime), и перед передачей им приходится учитывать занятость среды. При активной передаче у многих клиентов ожидание растёт. Сильный сигнал сам по себе не даёт каждому всю пропускную способность канала.",
+      "check": "Для батарейного датчика важны редкие короткие сообщения. Для беспроводных наушников важна связь с телефоном. Какие технологии подходят этим двум задачам?",
+      "answer": "Zigbee подходит для маломощных датчиков с небольшим потоком данных. Bluetooth подходит для персональной сети (PAN), например связи наушников с телефоном."
+    },
+    "en": {
+      "scenario": "Students see full Wi-Fi bars, yet each gets less throughput when the whole class starts downloading. Why?",
+      "reasoning": "The bars indicate received signal strength. Clients on the same channel share airtime and must account for other transmissions before sending. More active clients generally spend longer waiting. A strong signal alone does not give each client the channel's entire capacity.",
+      "check": "A battery-powered sensor sends short, infrequent readings. A wireless headset needs a link to a phone. Which technologies fit these two tasks?",
+      "answer": "Zigbee suits low-power sensors with small data volumes. Bluetooth suits personal area networks (PANs), including a headset paired with a phone."
+    }
+  },
+  "5a": {
+    "ru": {
+      "scenario": "В IPv4-адресе один октет равен 77. Как записать его восемью битами и проверить результат?",
+      "reasoning": "Сначала выпиши веса слева направо — 128, 64, 32, 16, 8, 4, 2, 1. Число 77 раскладывается на 64 + 8 + 4 + 1. Запиши единицы на этих позициях и нули на остальных, получится 01001101. Начальный ноль сохраняет ширину октета, а сумму легко проверить обратным сложением.",
+      "check": "В другом адресе октет 00101100. Сколько это в десятичной записи?",
+      "answer": "Единицы стоят у весов 32, 8 и 4. Сумма равна 44."
+    },
+    "en": {
+      "scenario": "One octet in an IPv4 address is 77. How can you write and verify its eight-bit representation?",
+      "reasoning": "List the weights from left to right as 128, 64, 32, 16, 8, 4, 2, 1. Split 77 into 64 + 8 + 4 + 1. Write ones in those positions and zeros elsewhere to get 01001101. The leading zero keeps the octet eight bits wide, and adding the weights back confirms the value.",
+      "check": "Another address contains the octet 00101100. What is its decimal value?",
+      "answer": "Its ones occupy the 32, 8 and 4 positions. Their sum is 44."
+    }
+  },
+  "5b": {
+    "ru": {
+      "scenario": "Один байт MAC-адреса записан как B4. Сколько это в десятичной и двоичной записи?",
+      "reasoning": "В шестнадцатеричной системе B означает 11. Старшая цифра имеет вес 16, поэтому B4 = 11 × 16 + 4 = 180. Для двоичной записи замени каждую цифру четырьмя битами — B даёт 1011, а 4 даёт 0100. Если убрать ноль внутри второй четвёрки, сместятся разряды.",
+      "check": "Как записать 47 в виде двух hex-цифр? Как проверить, что получилось ровно столько?",
+      "answer": "47 / 16 даёт 2 и остаток 15. Остаток обозначается F, значит ответ 2F. Обратная проверка даёт 2 × 16 + 15 = 47."
+    },
+    "en": {
+      "scenario": "A byte of a MAC address is written as B4. What does that mean in decimal and binary?",
+      "reasoning": "The hexadecimal digit B represents 11. The high digit has a weight of 16, so B4 equals 11 × 16 + 4, or 180. For binary, replace each digit with four bits: B gives 1011 and 4 gives 0100. Dropping a zero inside the second group would shift the bit positions.",
+      "check": "How would you write 47 as two hex digits and check the result?",
+      "answer": "Dividing 47 by 16 gives 2 with remainder 15. The remainder is F, giving 2F. Converting back gives 2 × 16 + 15 = 47."
+    }
+  }
+}

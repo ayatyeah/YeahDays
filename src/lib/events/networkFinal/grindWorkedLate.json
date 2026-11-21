@@ -1,0 +1,170 @@
+{
+  "12a": {
+    "ru": {
+      "scenario": "В журнале один принтер записан как 2001:0db8:0030:000a:0000:0000:0000:0007/64. Как понять, куда его перенесли?",
+      "reasoning": "Разверни адрес в восемь групп. При /64 первые четыре группы задают подсеть, поэтому префикс принтера — 2001:db8:30:a::/64. Остаток адреса отличает принтер от других узлов этой подсети. Сокращение 2001:db8:30:a::7 меняет только запись адреса.",
+      "check": "Администратор дал принтеру 2001:db8:30:b::7/64. Какая часть адреса изменилась?",
+      "answer": "Изменилась четвёртая группа префикса. Принтер теперь в другой /64, хотя последние 64 бита совпадают."
+    },
+    "en": {
+      "scenario": "A printer appears in an inventory as 2001:0db8:0030:000a:0000:0000:0000:0007/64. How do you identify its subnet?",
+      "reasoning": "Expand the address into eight groups. With /64, the first four groups identify the subnet, giving 2001:db8:30:a::/64. The remaining bits distinguish the printer from other hosts on that subnet. Writing the address as 2001:db8:30:a::7 changes only its appearance.",
+      "check": "The printer is assigned 2001:db8:30:b::7/64. What changed?",
+      "answer": "The fourth group of the prefix changed. The printer is in a different /64 even though its last 64 bits stayed the same."
+    }
+  },
+  "12b": {
+    "ru": {
+      "scenario": "У ноутбука появился адрес для связи с другими сетями, но в строке шлюза виден fe80::1. Как он сможет отправить пакет за пределы Wi-Fi?",
+      "reasoning": "Маршрутизатор присылает объявление (Router Advertisement, RA) со своего локального адреса канала. При SLAAC ноутбук берёт объявленный для автоконфигурации префикс и добавляет идентификатор интерфейса. Для удалённого назначения ноутбук доставляет кадр соседнему роутеру, поэтому адрес шлюза fe80::1 имеет подходящую область действия. В самом IP-пакете назначением остаётся удалённый хост.",
+      "check": "Сервер DHCPv6 выдал рабочей станции адрес. Откуда при обычной динамической настройке она узнает шлюз?",
+      "answer": "Из RA, в котором маршрутизатор объявляет себя доступным шлюзом. Выдача адреса DHCPv6 и выбор шлюза решают разные задачи."
+    },
+    "en": {
+      "scenario": "A laptop has a routable IPv6 address but lists fe80::1 as its gateway. How can it send traffic beyond the Wi-Fi link?",
+      "reasoning": "The router sends a Router Advertisement (RA) from its link-local address. With SLAAC, the laptop combines a prefix advertised for autonomous configuration with an interface identifier. To reach a remote destination, the laptop delivers a frame to the neighboring router, so fe80::1 has the right scope for that hop. The IP packet still names the remote host as its destination.",
+      "check": "A workstation gets its address from a stateful DHCPv6 server. How does it normally learn its default router?",
+      "answer": "From an RA advertising the router as a default gateway. Assigning the workstation an address and choosing its next hop are separate jobs."
+    }
+  },
+  "13a": {
+    "ru": {
+      "scenario": "Пользователь открывает учебный портал, но получает пустую страницу. При этом ping до IP-адреса портала возвращает четыре ответа.",
+      "reasoning": "Каждый ответ Echo Reply подтверждает, что Echo Request дошёл до адресата и ответ вернулся. Время в ответе — задержка туда и обратно (round-trip time). Проверка затронула IP и ICMP, а портал использует ещё и веб-службу. Поэтому следующий осмысленный тест — открыть тот же адрес по нужному протоколу и проверить ответ службы.",
+      "check": "Если отвечает только 127.0.0.1, какую часть пути ты уже проверил?",
+      "answer": "Собственный IP-стек компьютера. Пакет на loopback остаётся внутри устройства, поэтому работа кабеля, шлюза и удалённого сервера ещё не проверена."
+    },
+    "en": {
+      "scenario": "A student gets a blank page from the course portal, but pinging the portal’s IP produces four replies.",
+      "reasoning": "Each Echo Reply confirms that the target received an Echo Request and a reply made it back. The reported time measures the round trip. This tests IP and ICMP, while the portal also depends on its web service. A useful next test is to request the page using the expected protocol and inspect the service response.",
+      "check": "If only 127.0.0.1 replies, which part of the path have you tested?",
+      "answer": "The computer’s own IP stack. A loopback packet stays on the device, so the cable, gateway and remote server remain untested."
+    }
+  },
+  "13b": {
+    "ru": {
+      "scenario": "В трассировке до сервера первая строка показывает роутер, вторая — звёздочки, а третья и четвёртая снова показывают адреса.",
+      "reasoning": "Первая проба уходит с TTL 1, и первый роутер обычно сообщает об истечении времени (Time Exceeded). Для следующей строки traceroute повышает TTL, чтобы проба прошла дальше. Звёздочки означают, что на эти пробы вовремя не пришёл ответ. Более дальние ответы показывают, что по крайней мере часть трафика продолжала идти.",
+      "check": "Какое поле ограничивает число переходов при той же проверке в IPv6?",
+      "answer": "Hop Limit. Каждый пересылающий роутер уменьшает его, а при исчерпании лимита может вернуть ICMPv6 Time Exceeded."
+    },
+    "en": {
+      "scenario": "A trace to a server shows a router on line one, a row of stars on line two, and addresses again on lines three and four.",
+      "reasoning": "The first probe starts with a TTL of one, so the first router usually reports Time Exceeded. Traceroute increases the TTL for the next line so that its probes can travel farther. Stars mean those probes received no timely response. The later replies show that at least some traffic continued beyond that point.",
+      "check": "Which field limits the number of hops in the IPv6 version of this test?",
+      "answer": "Hop Limit. Each forwarding router decrements it and may return ICMPv6 Time Exceeded when it expires."
+    }
+  },
+  "14a": {
+    "ru": {
+      "scenario": "Два приложения одного ноутбука подключились по TCP к 192.0.2.20 на порт 443. Как ОС решает, какому приложению передать ответ?",
+      "reasoning": "Первому соединению клиент выделил исходный порт 51001, второму — 51002. На сервер идут запросы с разными исходными портами и одинаковым портом назначения 443. На обратном пути серверный порт становится исходным, а клиентский — портом назначения. ОС различает соединения по протоколу и парам «IP-адрес, порт» на обоих концах.",
+      "check": "Какие два поля всё равно будут у датаграммы UDP, даже если приложение не устанавливает соединение?",
+      "answer": "Source Port и Destination Port. Порты помогают доставить данные приложению и без процедуры установления TCP-соединения."
+    },
+    "en": {
+      "scenario": "Two apps on a laptop open TCP connections to 192.0.2.20 on port 443. How does the OS deliver each response to the right app?",
+      "reasoning": "The client assigns source port 51001 to the first connection and 51002 to the second. Both requests use destination port 443. In each reply, the server port becomes the source and the client port becomes the destination. The OS identifies a connection by its protocol and the IP address and port at each end.",
+      "check": "Which two fields will a UDP datagram still contain even though the application opens no connection?",
+      "answer": "Source Port and Destination Port. Ports support delivery to the right application independently of TCP connection setup."
+    }
+  },
+  "14b": {
+    "ru": {
+      "scenario": "Пришли байты TCP 501–700 и 901–1100. До этого все байты до 500 включительно уже были приняты.",
+      "reasoning": "Получатель собирает поток по номеру последовательности (sequence number). Сразу после 700 есть пробел, поэтому накопительное подтверждение пока указывает ACK 701. Если получатель сохранил более поздние байты, то после прихода 701–900 непрерывная последовательность закончится на 1100. Следующим ожидается байт 1101, поэтому значение ACK станет 1101.",
+      "check": "Если приёмник объявил окно 3000 байт, а сегмент несёт 750 байт данных, сколько полных сегментов помещается в это окно?",
+      "answer": "Четыре, если окно пока свободно и других ограничений нет. Окно измеряет объём данных, а ACK обозначает позицию в потоке."
+    },
+    "en": {
+      "scenario": "A TCP receiver gets bytes 501–700 and 901–1100. All bytes through 500 had already arrived.",
+      "reasoning": "The receiver uses sequence numbers to place the bytes in order. There is a gap after 700, so its cumulative acknowledgment remains ACK 701. If the receiver buffers the later bytes, filling the gap with 701–900 extends the contiguous stream through 1100. Its next cumulative ACK then becomes 1101.",
+      "check": "An empty receive window is 3,000 bytes and each segment carries 750 bytes of data. How many full segments fit?",
+      "answer": "Four, assuming no other limits. The window measures a quantity of data, while the acknowledgment identifies a position in the stream."
+    }
+  },
+  "15a": {
+    "ru": {
+      "scenario": "Ты отправил письмо с ноутбука. На телефоне коллеги оно появилось во «Входящих», а после прочтения отметка обновилась и на его компьютере.",
+      "reasoning": "Клиент отправителя передаёт письмо почтовому серверу по SMTP. Серверы тоже могут использовать SMTP, чтобы переслать письмо в домен получателя. Устройства коллеги обращаются к одному серверному ящику по IMAP, поэтому видят общее состояние сообщений. Одна операция — отправка, другая — работа с ящиком.",
+      "check": "Браузер получает HTML по HTTPS, а пользователь скачивает файл по FTP. Где нужны отдельные управляющее соединение и соединение данных?",
+      "answer": "В FTP. Команды передаются по управляющему соединению, а содержимое файла — по соединению данных."
+    },
+    "en": {
+      "scenario": "You send a message from your laptop. Your colleague reads it on a phone, and the same message shows as read on their computer.",
+      "reasoning": "The sender’s client submits the message to a mail server using SMTP. Mail servers can also use SMTP to relay it to the recipient’s domain. The recipient’s devices use IMAP to access the same server mailbox and synchronize message flags. Sending the mail and managing the mailbox are two different operations.",
+      "check": "A browser fetches HTML over HTTPS and a user downloads a file over FTP. Which one needs separate control and data connections?",
+      "answer": "FTP. Commands travel over the control connection, and file contents travel over a data connection."
+    }
+  },
+  "15b": {
+    "ru": {
+      "scenario": "Ноутбук подключён к Wi-Fi и получил 192.0.2.42. Сайт доступен по известному IPv4-адресу, но браузер сообщает об ошибке поиска имени.",
+      "reasoning": "DHCP выдаёт сетевые параметры при подключении, среди них может быть адрес DNS-сервера. Затем запрос DNS ищет запись ресурса по имени. Для IPv4 нужна запись A, для IPv6 — AAAA. Доступ по IP уже проверен, поэтому запрос имени к настроенному DNS-серверу поможет сузить поиск причины.",
+      "check": "Почтовому серверу нужно выяснить, какой узел принимает письма для домена. Какую запись DNS он запросит первой?",
+      "answer": "MX. Она указывает имя почтового узла, адрес которого затем можно найти через A или AAAA."
+    },
+    "en": {
+      "scenario": "A laptop on Wi-Fi has received 192.0.2.42. A site is reachable at its known IPv4 address, but the browser reports a name lookup error.",
+      "reasoning": "DHCP supplies configuration when the laptop joins the network and can include the DNS server address. DNS then looks up resource records by name. An A record gives an IPv4 address, and an AAAA record gives an IPv6 address. Since IP connectivity already works, querying the configured DNS server for the name narrows the diagnosis.",
+      "check": "A mail server needs to find which host accepts mail for a domain. Which DNS record does it request first?",
+      "answer": "MX. It names the mail exchanger, whose address can then be resolved using A or AAAA."
+    }
+  },
+  "16a": {
+    "ru": {
+      "scenario": "Электронный журнал открывается вовремя и доступен только преподавателю, но вместо поставленных 84 баллов в нём записано 48.",
+      "reasoning": "Начни с того, что потерял пользователь. Запись доступна, круг читателей остался прежним, а содержимое изменилось. Пострадала целостность (integrity). Чтобы установить причину изменения, понадобятся дополнительные данные, например история записи.",
+      "check": "Теперь оценки верны и журнал доступен, но его копию получил посторонний. Какое свойство пострадало?",
+      "answer": "Конфиденциальность (confidentiality). Если бы при правильных оценках пользователи не могли открыть журнал, речь шла бы о доступности (availability)."
+    },
+    "en": {
+      "scenario": "A gradebook opens promptly and only the teacher has access, but a recorded score of 84 now reads 48.",
+      "reasoning": "Start with the consequence for its user. The record is available and its readership has stayed the same, but the content changed. The affected property is integrity. Establishing the cause of the change requires more evidence, such as the record history.",
+      "check": "The grades are accurate and available, but an outsider receives a copy. Which property has been compromised?",
+      "answer": "Confidentiality. If the grades had remained accurate but users could not open the gradebook, the issue would be availability."
+    }
+  },
+  "16b": {
+    "ru": {
+      "scenario": "Стажёр входит на маршрутизатор по SSH. Просмотр состояния разрешён, попытка изменить настройки отклоняется, а журнал сохраняет обе операции.",
+      "reasoning": "SSH шифрует трафик управления. Проверка личности при входе относится к authentication. Разрешение конкретной команды задаёт authorization, а сохранение сведений о действиях выполняет accounting. Поэтому успешный защищённый вход совместим с отказом на отдельную команду.",
+      "check": "Для аудита нужны имя оператора, время входа и список выполненных команд. Какую функцию AAA нужно проверить?",
+      "answer": "Accounting. Она ведёт учёт действий, а правила разрешения команд относятся к authorization."
+    },
+    "en": {
+      "scenario": "A trainee signs in to a router using SSH. They may inspect status, a configuration change is denied, and the log records both operations.",
+      "reasoning": "SSH encrypts the management traffic. Verifying identity at sign-in is authentication. Deciding whether a particular command is allowed is authorization, and recording activity is accounting. A successful encrypted login can therefore still leave the trainee without permission to change settings.",
+      "check": "An audit needs the operator’s identity, login time and commands executed. Which AAA function should be checked?",
+      "answer": "Accounting. It records activity, while command permissions belong to authorization."
+    }
+  },
+  "17a": {
+    "ru": {
+      "scenario": "Сегодня в офисе 18 проводных устройств. Через год ожидаются 36, в том числе IP-телефоны. Как выбрать коммутатор и объяснить бюджет?",
+      "reasoning": "Посчитай порты для конечных устройств и восходящих соединений (uplinks), затем учти рост. Если телефоны питаются по кабелю, проверь суммарный бюджет PoE. При одновременной передаче голоса и резервных копий классификация трафика позволяет QoS назначать приоритет очередям. Дополнительные порты решают задачу роста, а задержки при перегрузке требуют отдельного решения.",
+      "check": "Руководителю важно, чтобы при обрыве одного магистрального кабеля офис сохранил связь. Что предусмотреть в проекте?",
+      "answer": "Независимый резервный путь и механизм переключения на него. Запас свободных портов сам по себе не создаёт второго пути."
+    },
+    "en": {
+      "scenario": "An office has 18 wired devices today and expects 36 next year, including IP phones. How would you choose a switch and explain the budget?",
+      "reasoning": "Count ports for end devices and uplinks, then allow for growth. If the phones use power over Ethernet, check the total PoE power budget. When voice calls and backups compete for a busy link, traffic classification lets QoS assign queue priorities. Extra ports address growth, while delay under load needs separate attention.",
+      "check": "Management wants the office to stay connected if one backbone cable is cut. What should the design include?",
+      "answer": "An independent backup path and a way to switch traffic onto it. Spare ports alone do not create a second path."
+    }
+  },
+  "17b": {
+    "ru": {
+      "scenario": "По отчётам голосовая связь стала прерываться днём. Обычный RTT между офисами был 12 мс, а в момент жалобы достиг 95 мс.",
+      "reasoning": "Сравни измерение с исходным уровнем (baseline) для тех же узлов и времени суток. Рост RTT подтверждает изменение задержки, но пока не объясняет причину. Если одновременно выросла загрузка канала, сформулируй проверяемую гипотезу о конкурирующем трафике. Сопоставь время проблем с очередями и типами трафика, а затем запиши вывод и результат повторной проверки.",
+      "check": "Проверка опровергла гипотезу, и нужна помощь коллеги. Какие сведения сократят время диагностики?",
+      "answer": "Передай симптомы, затронутые узлы, время, нормальные и текущие показатели, выполненные проверки и их результаты. Так следующий специалист продолжит с проверенных фактов."
+    },
+    "en": {
+      "scenario": "Calls between offices are breaking up in the afternoon. Normal round-trip time was 12 ms, but a measurement during a complaint shows 95 ms.",
+      "reasoning": "Compare the measurement with a baseline for the same endpoints and time of day. The higher RTT establishes a change in delay, but its cause is still unknown. If link utilization rose as well, form a testable hypothesis about competing traffic. Compare incident times with queue measurements and traffic types, then document the finding and the retest.",
+      "check": "The test rules out your hypothesis and you need to escalate. What information would help the next technician?",
+      "answer": "Provide the symptoms, affected endpoints, timing, normal and current readings, and the checks already performed with their results. The next technician can then start from verified facts."
+    }
+  }
+}

@@ -28,6 +28,21 @@ describe('network study banks',()=>{
     expect(compactBank.length).toBeLessThan(709);
     expect(compactBank.every(q=>q.correct.length)).toBe(true);
   });
+  it('pairs each practice topic with a different bilingual worked case and transfer check',()=>{
+    const lessons=new Map(questionsFor('grind').map(q=>[q.lesson!.id,q.lesson!]));
+    expect([...lessons.keys()].sort()).toEqual(grindUnits.map(u=>u.id).sort());
+    for(const lang of ['ru','en'] as const){
+      const cases=new Set<string>();
+      for(const lesson of lessons.values()){
+        const notes=lesson.notes![lang];
+        const [reading,worked]=notes.split(lang==='ru'?'## Разбор задачи\n':'## Worked example\n');
+        expect(reading).toMatch(/^## /);
+        expect(worked).toMatch(/\n\?\? .+\n\?= .+/);
+        cases.add(worked);
+      }
+      expect(cases.size).toBe(lessons.size);
+    }
+  });
   it('keeps all four endterm papers complete including reference questions',()=>{
     for(const variant of [1,2,3,4]){
       const paper=endtermPaper.filter(q=>q.source?.variant===variant);

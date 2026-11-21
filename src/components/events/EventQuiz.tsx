@@ -22,7 +22,7 @@ export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { co
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, reviewDuringQuiz = true, resume, onNavigate, lessons = false,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, resume, onNavigate, lessons = false,
 }: {
   lessons?: boolean;
   eventId: string;
@@ -32,7 +32,6 @@ export default function EventQuiz({
   music: boolean;
   onLang?: () => void;
   explainOptionsOpen?: boolean;
-  reviewDuringQuiz?: boolean;
   resume?: {index:number; answers:number[][]};
   onNavigate?: (index:number)=>void;
   onMusic: () => void;
@@ -51,8 +50,16 @@ export default function EventQuiz({
   }
   const [answers, setAnswers] = useState<number[][]>(resume?.answers ?? []);
   const answeredCount = answers.filter(Boolean).length;
-  const [answeredAt, setAnsweredAt] = useState<Record<string, number>>({});
-  const [reviewAt, setReviewAt] = useState<number | null>(null);
+  const [answeredAt, setAnsweredAt] = useState<Record<string, number>>(() => {
+    const times: Record<string, number> = {};
+    let count = 0;
+    quiz.forEach((q, i) => { if (resume?.answers[i]) times[q.id] = ++count; });
+    return times;
+  });
+  const [reviewAt, setReviewAt] = useState<number | null>(() => {
+    const pending = missedQuestions(quiz, answers, []);
+    return pending.length ? answeredAt[pending[0].id] + reviewDelay() : null;
+  });
   const [reviewing, setReviewing] = useState(false);
   const [mastered, setMastered] = useState<string[]>([]);
   const item = quiz[index];
@@ -64,7 +71,7 @@ export default function EventQuiz({
   const multi = expected.length > 1;
   function submit(value: number[]) {
     setAnswers(previous => { const next = [...previous]; next[index] = value; return next; });
-    if (reviewDuringQuiz && answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answeredCount + 1 + reviewDelay());
+    if (answers[index] === undefined && expected.length && !matchesAnswer(value, expected) && reviewAt === null) setReviewAt(answeredCount + 1 + reviewDelay());
     if (answers[index] === undefined) setAnsweredAt(previous => ({ ...previous, [item.id]: answeredCount + 1 }));
     onAnswer?.(item.id, value);
   }

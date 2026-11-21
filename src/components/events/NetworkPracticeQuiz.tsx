@@ -135,7 +135,7 @@ function AccountQuiz({group,title,questions}:Props) {
     const index=a.ids.indexOf(id);
     if(index<0)return;
     const picks=[...a.answers];picks[index]=selected;
-    persist({...a,index,answers:picks},{id,ok:matchesAnswer(selected,question.correct)});
+    persist({...a,answers:picks},{id,ok:matchesAnswer(selected,question.correct)});
   }
   const [music,setMusic] = useState(false);
   const [round,setRound] = useState(0);
@@ -168,7 +168,7 @@ function AccountQuiz({group,title,questions}:Props) {
     {answers ? <section aria-live="polite"><h2>{en?'Result':'Результат'} · {quiz.length-missed.length} / {quiz.length}</h2>
       <div className={styles.actions}><button className="f-button" onClick={()=>restart(null)}>{en?'Back to setup':'К настройкам'}</button>
       {!!missed.length && <button className="f-button" onClick={()=>restart(missed)}>{en?'Review mistakes':'Повторить ошибки'} · {missed.length}</button>}</div></section>
-    : quiz.length > 0 ? <EventQuiz key={round} eventId="computer-networks-final" step={{title:{ru:title,en:grind?"GRIND MODE":title}}} quiz={quiz} lang={grind?lang:"ru"} lessons={grind} music={music} onMusic={()=>setMusic(v=>!v)} resume={snapshot.attempt??undefined} onNavigate={index=>{const a=current.current.attempt;if(a)persist({...a,index});}} onFinish={values=>{setAnswers(values);const a=current.current.attempt;if(a)persist({...a,answers:values,done:true});}} onAnswer={record} reviewDuringQuiz={false} onExit={()=>setErrorsOnly(null)} explainOptionsOpen/> : <section className={setup.panel}>
+    : quiz.length > 0 ? <EventQuiz key={round} eventId="computer-networks-final" step={{title:{ru:title,en:grind?"GRIND MODE":title}}} quiz={quiz} lang={grind?lang:"ru"} lessons={grind} music={music} onMusic={()=>setMusic(v=>!v)} resume={snapshot.attempt??undefined} onNavigate={index=>{const a=current.current.attempt;if(a)persist({...a,index});}} onFinish={values=>{setAnswers(values);const a=current.current.attempt;if(a)persist({...a,answers:values,done:true});}} onAnswer={record} onExit={()=>setErrorsOnly(null)} explainOptionsOpen/> : <section className={setup.panel}>
       {snapshot.attempt && loaded===cache && <button className="f-button" onClick={()=>{
         const a=snapshot.attempt!;
         const pool=a.ids.map(id=>bank.find(q=>q.id===id)).filter((q):q is EventQuizQuestion=>!!q);

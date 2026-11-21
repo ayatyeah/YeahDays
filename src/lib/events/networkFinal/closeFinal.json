@@ -1,0 +1,1496 @@
+[
+  {
+    "id": "close-1-01",
+    "variant": 1,
+    "q": "Which parameter does the router use to choose the path to the destination when there are multiple routes available?",
+    "options": [
+      "Lower route metric",
+      "Higher gateway IP",
+      "Lower gateway IP",
+      "Higher route metric"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "При выборе между путями одного протокола к одному префиксу выигрывает меньшая метрика. Числовая величина адреса шлюза не измеряет стоимость пути.",
+      "en": "For otherwise equal routes to the same prefix learned by one protocol, its lower metric wins. Gateway address values do not measure path cost."
+    }
+  },
+  {
+    "id": "close-1-02",
+    "variant": 1,
+    "q": "At which layer of the OSI model would a logical address be added during encapsulation?",
+    "options": [
+      "Physical",
+      "Network",
+      "Transport",
+      "Data link"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Логический IP-адрес входит в заголовок сетевого уровня. Физический уровень передаёт сигналы, канальный добавляет MAC-адреса, транспортный — порты.",
+      "en": "The network layer adds IP addresses. Data link adds MAC addresses, transport adds ports, and the physical layer transmits signals."
+    }
+  },
+  {
+    "id": "close-1-03",
+    "variant": 1,
+    "q": "What is the effect of using the Router# copy running-config startup-config command on a router?",
+    "options": [
+      "ROM changes",
+      "NVRAM changes",
+      "RAM changes",
+      "Flash changes"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Команда копирует текущую конфигурацию из RAM в startup-config в NVRAM. Источник при копировании сохраняется. Образ IOS во flash и загрузочный код в ROM здесь не используются.",
+      "en": "The running configuration in RAM is copied to the startup configuration in NVRAM. The source in RAM, ROM bootstrap and flash image are unaffected by the copy."
+    }
+  },
+  {
+    "id": "close-1-04",
+    "variant": 1,
+    "q": "Which two OSI model layers have the same functionality as two layers of the TCP/IP model?",
+    "options": [
+      "Data link",
+      "Physical",
+      "Session",
+      "Transport",
+      "Network"
+    ],
+    "correct": [
+      3,
+      4
+    ],
+    "why": {
+      "ru": "Transport соответствует транспортному уровню TCP/IP, Network — Internet. Канальный и физический вместе образуют уровень доступа к сети. Сеансовые функции входят в прикладной уровень TCP/IP.",
+      "en": "Transport maps to transport and network maps to internet. Physical and data link share the network access layer, while session functions belong to the TCP/IP application layer."
+    }
+  },
+  {
+    "id": "close-1-05",
+    "variant": 1,
+    "q": "What is an advantage of network devices using open standard protocols?",
+    "options": [
+      "Communication is confined to one vendor",
+      "Competition is limited to specific products",
+      "A client and server running different operating systems can exchange data",
+      "One ISP controls Internet access in each market"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Открытый стандарт задаёт общий формат сообщений. Независимые реализации могут обмениваться данными. Ограничение одной фирмой, продуктом или провайдером из этого не следует.",
+      "en": "Published formats let implementations on different operating systems interoperate. They impose neither a single vendor nor a single ISP."
+    }
+  },
+  {
+    "id": "close-1-06",
+    "variant": 1,
+    "q": "Although CSMA/CD is still a feature of Ethernet, why is it no longer necessary?",
+    "options": [
+      "CSMA/CA",
+      "IPv6 address availability",
+      "Gigabit Ethernet speeds",
+      "Full-duplex capable Layer 2 switches",
+      "Half-duplex switches"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "В full-duplex каждая сторона может передавать одновременно по своему каналу. Коллизий нет. Сама скорость и размер адресного пространства этого не обеспечивают. CSMA/CA относится к Wi-Fi, а half-duplex допускает коллизии.",
+      "en": "Full-duplex switched links have separate transmit and receive paths. Speed and IPv6 addressing do not eliminate collisions. CSMA/CA is associated with wireless access."
+    }
+  },
+  {
+    "id": "close-1-07",
+    "variant": 1,
+    "q": "What property of ARP causes a reply only to the source sending an ARP request?",
+    "options": [
+      "EtherType 0x0806",
+      "ARP replies are broadcast",
+      "The destination MAC is FF:FF:FF:FF:FF:FF",
+      "The source MAC appears in the Ethernet header"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Получатель запроса узнаёт MAC отправителя и адресует ответ ему лично. FF:FF:FF:FF:FF:FF относится к запросу. EtherType указывает протокол, а обычный ARP-ответ передаётся unicast.",
+      "en": "The request conveys the sender’s MAC so the responder can unicast its reply. The broadcast address distributes the request, and EtherType identifies the protocol."
+    }
+  },
+  {
+    "id": "close-1-08",
+    "variant": 1,
+    "q": "A user is implementing security on a small office network. Which two actions would provide the minimum security requirements for this network?",
+    "options": [
+      "Dedicated intrusion prevention appliance",
+      "Antivirus software",
+      "Wireless network",
+      "Intrusion detection system",
+      "Firewall"
+    ],
+    "correct": [
+      1,
+      4
+    ],
+    "why": {
+      "ru": "Антивирус защищает конечные устройства, а firewall фильтрует сетевой трафик. Беспроводное подключение само по себе защиту не создаёт. Выделенные IPS и IDS относятся к дополнительным средствам.",
+      "en": "Antivirus protects endpoints and the firewall filters network traffic. Wireless access is a connectivity feature. Dedicated IPS and IDS appliances go beyond this baseline."
+    }
+  },
+  {
+    "id": "close-1-09",
+    "variant": 1,
+    "q": "What is a characteristic of multicast messages?",
+    "options": [
+      "Sent to every host",
+      "Sent to a single destination host",
+      "Must be acknowledged",
+      "Sent to a select group of hosts"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Multicast доставляет данные подписчикам группы. Отправка всем — broadcast, одному узлу — unicast. Подтверждение приёма не определяет тип адресации.",
+      "en": "Multicast targets members of a group. Broadcast targets everyone and unicast targets one host. An acknowledgment is not a property of multicast addressing."
+    }
+  },
+  {
+    "id": "close-1-10",
+    "variant": 1,
+    "q": "What property of ARP allows MAC addresses of frequently used servers to be fixed in the ARP table?",
+    "options": [
+      "EtherType identifies ARP",
+      "Timed entries expire",
+      "Switch port-to-MAC and ARP tables have identical entries",
+      "A static IP-to-MAC mapping can be entered manually"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Статическая запись явно связывает IP и MAC. Динамические записи стареют. Таблица коммутации хранит соответствия MAC и порта, а значение EtherType только обозначает ARP.",
+      "en": "A manually configured static mapping stays fixed. Dynamic entries age out. A switch forwarding table maps MAC addresses to ports, and EtherType labels ARP traffic."
+    }
+  },
+  {
+    "id": "close-1-11",
+    "variant": 1,
+    "q": "What is the purpose of the FCS field in a frame?",
+    "options": [
+      "Obtain the sender’s MAC",
+      "Detect transmission or reception errors",
+      "Verify the sender’s logical address",
+      "Compute a CRC header for the data field"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "FCS в конце кадра содержит контрольное значение CRC. Получатель вычисляет CRC и сравнивает значения. Адреса берутся из заголовков. FCS не создаёт отдельный заголовок.",
+      "en": "The receiver compares its calculated CRC with the FCS in the trailer. This detects corruption without validating the sender’s IP or recovering a MAC address."
+    }
+  },
+  {
+    "id": "close-1-12",
+    "variant": 1,
+    "q": "Which two issues can cause both runts and giants in Ethernet networks?",
+    "options": [
+      "Malfunctioning NIC",
+      "CRC errors",
+      "Electrical interference on serial interfaces",
+      "Half-duplex operation",
+      "Incorrect cable type"
+    ],
+    "correct": [
+      0,
+      3
+    ],
+    "why": {
+      "ru": "Runts короче минимума Ethernet, giants длиннее допустимого кадра. Неисправная NIC может сформировать неверный размер, а коллизии и несогласованный duplex связаны с ошибками кадров. Ошибка CRC — результат проверки, а не причина изменения длины. Последовательный интерфейс не является Ethernet.",
+      "en": "Runts and giants are frames outside the legal size range. The course pairs a faulty NIC with half-duplex operation. A CRC error is a check result, and serial interfaces are a different medium."
+    }
+  },
+  {
+    "id": "close-1-13",
+    "variant": 1,
+    "q": "Which information is used by routers to forward a data packet toward its destination?",
+    "options": [
+      "Source data-link address",
+      "Destination IP address",
+      "Destination data-link address",
+      "Source IP address"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Маршрутизатор ищет сеть назначения по IP получателя. MAC нужен лишь для текущего сегмента и меняется на следующем переходе. Адреса источника указывают, откуда пришёл пакет.",
+      "en": "Routers look up the destination IP prefix. Link-layer addresses select the next local recipient, while source fields describe the sender."
+    }
+  },
+  {
+    "id": "close-1-14",
+    "variant": 1,
+    "q": "Which term describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet?",
+    "options": [
+      "Source IPv4 address",
+      "Destination IPv4 address",
+      "Differentiated services",
+      "Protocol"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "В байте DS находятся DSCP для класса обслуживания и ECN для уведомления о перегрузке. IPv4-адреса занимают по 32 бита. Поле Protocol указывает протокол внутри пакета.",
+      "en": "The differentiated services octet contains DSCP for traffic treatment and ECN for congestion. IPv4 addresses are 32 bits, and Protocol identifies the encapsulated protocol."
+    }
+  },
+  {
+    "id": "close-1-15",
+    "variant": 1,
+    "q": "What is a basic characteristic of the IP protocol?",
+    "options": [
+      "User data segmentation",
+      "Reliable end-to-end delivery",
+      "Connectionless",
+      "Media dependent"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "IP отправляет каждый пакет без установки соединения. Сегментацию и надёжную доставку может обеспечить TCP. Один IP-пакет можно переносить по разным физическим средам.",
+      "en": "IP sends datagrams without setting up a connection. TCP can provide segmentation and reliable delivery, and IP works over different media."
+    }
+  },
+  {
+    "id": "close-1-16",
+    "variant": 1,
+    "q": "What are two services provided by the OSI network layer?",
+    "options": [
+      "Routing packets toward the destination",
+      "Placing frames on the media",
+      "Collision detection",
+      "Encapsulating transport-layer PDUs",
+      "Error detection on the link"
+    ],
+    "correct": [
+      0,
+      3
+    ],
+    "why": {
+      "ru": "Сетевой уровень упаковывает сегмент в IP-пакет и выбирает путь к сети назначения. Доступ к среде, коллизии Ethernet и проверка кадра относятся к нижним уровням.",
+      "en": "Layer 3 encapsulates a transport PDU and routes the resulting packet. Media access, Ethernet collisions and frame error detection belong to lower layers."
+    }
+  },
+  {
+    "id": "close-1-17",
+    "variant": 1,
+    "q": "At which OSI layer is a source port number added to a PDU during the encapsulation process?",
+    "options": [
+      "Data link",
+      "Network",
+      "Transport",
+      "Presentation",
+      "Application"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Порт источника записывается в заголовок TCP или UDP и обозначает отправляющее приложение. Канальный уровень адресует кадр, сетевой — пакет. Верхние уровни работают с данными приложения.",
+      "en": "TCP and UDP use source ports to identify the sending application. Link and network headers carry addresses, and upper layers supply the application data."
+    }
+  },
+  {
+    "id": "close-1-18",
+    "variant": 1,
+    "q": "Which of the following is the name for all computers connected to a network that participate directly in network communication?",
+    "options": [
+      "Intermediary devices",
+      "Servers",
+      "Hosts",
+      "Media"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Host — общее название конечного участника обмена. Сервер — один из типов хостов. Промежуточные устройства пересылают данные, а среда переносит сигнал.",
+      "en": "Hosts are endpoints that originate or consume data. Servers are one kind of host. Intermediary devices forward traffic and media carry the signal."
+    }
+  },
+  {
+    "id": "close-1-19",
+    "variant": 1,
+    "q": "Ciscoville’s firewall is flooded with traffic until residents lose access to remote services. Which type of attack is being launched?",
+    "options": [
+      "Reconnaissance",
+      "Access",
+      "Trojan horse",
+      "DoS"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "На брандмауэр приходит столько трафика, что сервис недоступен. Это отказ в обслуживании. Разведка собирает сведения, атака доступа получает права, троян маскируется под обычную программу.",
+      "en": "The flood exhausts firewall capacity and makes the service unavailable. Reconnaissance gathers information, access attacks obtain privileges, and a Trojan disguises software."
+    }
+  },
+  {
+    "id": "close-1-20",
+    "variant": 1,
+    "q": "What are two ways to protect a computer from malware?",
+    "options": [
+      "Defragment the hard disk",
+      "Delete unused software",
+      "Use antivirus software",
+      "Empty the browser cache",
+      "Keep software up to date"
+    ],
+    "correct": [
+      2,
+      4
+    ],
+    "why": {
+      "ru": "Антивирус обнаруживает вредоносные файлы, обновления закрывают известные уязвимости. Дефрагментация, очистка кэша и удаление ненужных программ не заменяют эти две меры.",
+      "en": "Antivirus detects malicious files and updates close known vulnerabilities. Disk organization, cache cleanup and removing unused programs do not provide both of these protections."
+    }
+  },
+  {
+    "id": "close-1-21",
+    "variant": 1,
+    "q": "Which term describes a field in the IPv4 packet header that contains a 32-bit binary value associated with an interface on the sending device?",
+    "options": [
+      "TTL",
+      "Protocol",
+      "Source IPv4 address",
+      "Destination IPv4 address"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Интерфейс отправителя задаёт 32-битное поле Source IPv4. Destination обозначает получателя, TTL ограничивает число переходов, Protocol указывает тип вложенных данных.",
+      "en": "Source IPv4 identifies the sending interface. Destination identifies the recipient. TTL limits hops and Protocol identifies the upper-layer payload."
+    }
+  },
+  {
+    "id": "close-1-22",
+    "variant": 1,
+    "q": "What OSI physical layer term describes the process by which one wave modifies another wave?",
+    "options": [
+      "EIA/TIA",
+      "Air",
+      "IEEE",
+      "Modulation"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "При модуляции данные изменяют параметры несущей волны. Воздух — среда передачи, а IEEE и EIA/TIA связаны со стандартизацией.",
+      "en": "Modulation varies a carrier in response to an information signal. Air is a medium, while IEEE and EIA/TIA are associated with standards."
+    }
+  },
+  {
+    "id": "close-1-23",
+    "variant": 1,
+    "q": "What will happen if the default gateway address is incorrectly configured on a host?",
+    "options": [
+      "Loopback ping fails",
+      "Local hosts become unreachable",
+      "ARP discovers the correct gateway IP",
+      "Hosts in other networks become unreachable",
+      "The switch stops forwarding the host’s frames"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Для удалённых сетей нужен рабочий следующий переход. Локальный обмен и loopback продолжают работать. ARP ищет MAC для уже известного IP. Коммутатор принимает решения по своим MAC-таблицам.",
+      "en": "The host needs a reachable gateway for remote networks. Local delivery and loopback still work. ARP resolves a known IP, and Ethernet switches forward independently of this IP setting."
+    }
+  },
+  {
+    "id": "close-1-24",
+    "variant": 1,
+    "q": "Which three layers of the OSI model are comparable in function to the application layer of the TCP/IP model?",
+    "options": [
+      "Data link",
+      "Physical",
+      "Application",
+      "Session",
+      "Transport",
+      "Presentation"
+    ],
+    "correct": [
+      2,
+      3,
+      5
+    ],
+    "why": {
+      "ru": "Прикладной уровень TCP/IP объединяет прикладные, сеансовые и представительские функции OSI. Транспорт и доступ к среде остаются ниже.",
+      "en": "Application, presentation and session functions sit within the TCP/IP application layer. Transport and link access are separate."
+    }
+  },
+  {
+    "id": "close-1-25",
+    "variant": 1,
+    "q": "What does a router do when it receives a Layer 2 frame over the network medium?",
+    "options": [
+      "De-encapsulates the frame",
+      "Re-encapsulates the packet into a new frame",
+      "Determines the best path",
+      "Forwards the new frame on the outgoing medium"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Первым действием роутер снимает входящую канальную оболочку. Поиск пути, создание нового кадра и передача происходят после извлечения пакета.",
+      "en": "A router first removes the incoming frame to inspect the packet. Route selection, encapsulation in a fresh frame and transmission follow."
+    }
+  },
+  {
+    "id": "close-1-26",
+    "variant": 1,
+    "q": "Which term describes a field in the IPv4 packet header that contains a unicast, multicast, or broadcast address?",
+    "options": [
+      "TTL",
+      "Destination IPv4 address",
+      "Protocol",
+      "Header checksum"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Тип доставки unicast, multicast или broadcast определяется адресом назначения. TTL отсчитывает переходы, Protocol обозначает полезную нагрузку, checksum проверяет заголовок.",
+      "en": "Destination IPv4 determines unicast, multicast or broadcast delivery. TTL limits hops, Protocol identifies the payload and the checksum detects header corruption."
+    }
+  },
+  {
+    "id": "close-1-27",
+    "variant": 1,
+    "q": "Which procedure is used to reduce the effect of crosstalk in copper cables?",
+    "options": [
+      "Design infrastructure to avoid crosstalk",
+      "Require grounding",
+      "Wrap the bundle in metallic shielding",
+      "Avoid sharp bends",
+      "Twist the two conductors of each pair together"
+    ],
+    "correct": [
+      4
+    ],
+    "why": {
+      "ru": "Скрутка уменьшает наводки за счёт чередования положения проводников. Экранирование помогает против помех, но для UTP характерна именно скрутка. Заземление, изгибы и общий план монтажа описывают другие меры.",
+      "en": "Twisting each pair balances the coupling from nearby conductors. Grounding and bend limits address other concerns. A metallic shield is an additional construction feature."
+    }
+  },
+  {
+    "id": "close-1-28",
+    "variant": 1,
+    "q": "Which two acronyms represent the data link sublayers that Ethernet relies upon to operate?",
+    "options": [
+      "CSMA",
+      "SFD",
+      "MAC",
+      "LLC",
+      "FCS"
+    ],
+    "correct": [
+      2,
+      3
+    ],
+    "why": {
+      "ru": "MAC отвечает за адресацию и доступ к среде, LLC связывает канальный уровень с сетевым. CSMA — метод доступа, SFD отмечает начало кадра, FCS проверяет его целостность.",
+      "en": "MAC handles addressing and media access. LLC interfaces with network protocols. CSMA is an access method, SFD marks the start and FCS checks frame integrity."
+    }
+  },
+  {
+    "id": "close-1-29",
+    "variant": 1,
+    "q": "Which statement describes the characteristics of packet-filtering and stateful firewalls as they relate to the OSI model?",
+    "options": [
+      "Packet filters inspect through transport, stateful firewalls track sessions",
+      "Both inspect application data by definition",
+      "Only stateful firewalls inspect beyond the network layer and they inspect application data",
+      "Packet filters track sessions and stateful filters use application data to track them"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Пакетный фильтр может сравнивать IP, протокол и порты L4. Stateful дополнительно помнит состояние обмена. Анализ содержимого приложения требует дополнительных функций и не определяет ни один из этих двух типов.",
+      "en": "A packet filter can inspect IP and transport ports. A stateful firewall also tracks a connection across packets. Application content inspection is a separate capability."
+    }
+  },
+  {
+    "id": "close-1-30",
+    "variant": 1,
+    "q": "How do hosts ensure that their packets are directed to the correct network destination?",
+    "options": [
+      "Always send to the default gateway",
+      "Query the gateway for the best route",
+      "Consult a local routing table containing local and default routes",
+      "Pass routing information learned from the local table to the gateway for every packet"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Хост ищет наиболее конкретный маршрут в собственной таблице. Локальному соседу он посылает напрямую, а для удалённой сети может использовать маршрут по умолчанию. Запрос маршрута шлюзу для каждого пакета не требуется.",
+      "en": "The host consults its own routing table. It can deliver directly to a local peer or use a default route off-link without querying a gateway for every packet."
+    }
+  },
+  {
+    "id": "close-1-31",
+    "variant": 1,
+    "q": "What is an ISP?",
+    "options": [
+      "A device combining several networking devices",
+      "A cabling standards body",
+      "A protocol for local communication",
+      "An organization that connects users and businesses to the Internet"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "ISP продаёт или предоставляет подключение к Интернету. Это организация, а не устройство, протокол или комитет стандартов.",
+      "en": "An ISP supplies Internet connectivity to people or organizations. It is not a device, standards body or LAN protocol."
+    }
+  },
+  {
+    "id": "close-1-32",
+    "variant": 1,
+    "q": "Which two fields or features does Ethernet examine to determine if a received frame is passed to the data link layer or discarded by the NIC?",
+    "options": [
+      "Frame Check Sequence",
+      "CEF",
+      "Minimum frame size",
+      "Source MAC address",
+      "Auto-MDIX"
+    ],
+    "correct": [
+      0,
+      2
+    ],
+    "why": {
+      "ru": "NIC проверяет целостность по FCS и отбрасывает слишком короткие кадры. CEF относится к пересылке на Cisco, Auto-MDIX — к распиновке кабеля. MAC источника не подтверждает целостность.",
+      "en": "Ethernet checks FCS and rejects undersized frames. CEF is a forwarding mechanism, Auto-MDIX adjusts wiring, and a source MAC cannot establish frame integrity."
+    }
+  },
+  {
+    "id": "close-1-33",
+    "variant": 1,
+    "q": "What does the IP address 192.168.1.15/29 represent?",
+    "options": [
+      "Broadcast address",
+      "Subnetwork address",
+      "Multicast address",
+      "Unicast address"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "/29 даёт блоки по 8 адресов. В блоке 192.168.1.8–15 сеть заканчивается на .8, узлы — .9–.14, последний .15 — broadcast.",
+      "en": "A /29 contains eight addresses. The .8–.15 subnet starts at .8, ends with broadcast .15 and has usable addresses .9–.14."
+    }
+  },
+  {
+    "id": "close-1-34",
+    "variant": 1,
+    "q": "Which switching method uses the CRC value in a frame?",
+    "options": [
+      "Store-and-forward",
+      "Cut-through",
+      "Fragment-free",
+      "Fast-forward"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Store-and-forward ждёт весь кадр с FCS и сверяет CRC. Fast-forward начинает передачу после MAC назначения, fragment-free ждёт первые 64 байта. Оба — варианты cut-through.",
+      "en": "Store-and-forward buffers the whole frame before checking its FCS. Fast-forward and fragment-free are cut-through modes that can forward before the trailer arrives."
+    }
+  },
+  {
+    "id": "close-1-35",
+    "variant": 1,
+    "q": "A small advertising company hosts a critical web server and has a leased line to one ISP. Which approach provides cost-effective redundancy for its Internet connection?",
+    "options": [
+      "Add a second web server",
+      "Add a DSL connection to another ISP",
+      "Add links between switches and the edge router",
+      "Add a second NIC to the web server"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Независимое подключение к другому ISP сохраняет доступ при отказе первой внешней линии. Дополнительные серверы, сетевые карты и внутренние линки оставляют прежнюю внешнюю точку отказа.",
+      "en": "A second provider gives the company an independent Internet path. Another NIC, server or internal link still depends on the original leased line."
+    }
+  },
+  {
+    "id": "close-1-36",
+    "variant": 1,
+    "q": "Throughput on a company’s internal gigabit backbone is below the expected bandwidth. Which three factors could account for the difference?",
+    "options": [
+      "Reliability of gigabit backbone infrastructure",
+      "Latency introduced by devices along the path",
+      "Sophistication of the encapsulation method",
+      "WAN bandwidth to the Internet",
+      "Type of traffic crossing the network",
+      "Amount of traffic currently crossing the network"
+    ],
+    "correct": [
+      1,
+      4,
+      5
+    ],
+    "why": {
+      "ru": "Здесь измеряют backbone внутри компании. Объём конкурирующего трафика, его тип и задержки промежуточных устройств влияют на фактическую скорость. Скорость интернет-линии относится к другому участку.",
+      "en": "Load, traffic characteristics and latency along the internal path affect achieved throughput. WAN capacity describes another path outside the backbone being measured."
+    }
+  },
+  {
+    "id": "close-1-37",
+    "variant": 1,
+    "q": "What OSI physical layer term describes the physical medium for microwave transmissions?",
+    "options": [
+      "Throughput",
+      "Air",
+      "Goodput",
+      "Latency"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Микроволны в беспроводной линии распространяются по воздуху. Throughput и goodput измеряют скорость передачи, latency — задержку.",
+      "en": "Microwaves propagate through air. Throughput and goodput are rates, and latency is a time delay."
+    }
+  },
+  {
+    "id": "close-1-38",
+    "variant": 1,
+    "q": "What action will occur if a host receives a frame with a destination MAC address it does not recognize?",
+    "options": [
+      "Return it to the switch",
+      "Reply with its own IP",
+      "Forward it to all other hosts",
+      "Discard it"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Обычная NIC отбрасывает кадр с чужим unicast MAC. Хост не обновляет коммутатор ответом и не рассылает такой кадр другим узлам.",
+      "en": "An ordinary host discards a frame with an unrelated unicast destination. It does not reply, send it back or flood the LAN."
+    }
+  },
+  {
+    "id": "close-1-39",
+    "variant": 1,
+    "q": "When the store-and-forward method of switching is in use what part of the Ethernet frame is used to perform an error check?",
+    "options": [
+      "Source MAC in the header",
+      "Destination MAC in the header",
+      "Protocol type in the header",
+      "CRC in the trailer"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "В trailer хранится FCS со значением CRC для сравнения. MAC-поля адресуют кадр, а поле типа идентифицирует вложенный протокол.",
+      "en": "The trailer carries the CRC used for the integrity check. MAC addresses identify endpoints on the link, while the type identifies the payload."
+    }
+  },
+  {
+    "id": "close-1-40",
+    "variant": 1,
+    "q": "Which three basic parts are common to all frame types supported by the data link layer?",
+    "options": [
+      "Data",
+      "Header",
+      "CRC value",
+      "Type field",
+      "Trailer",
+      "MTU size"
+    ],
+    "correct": [
+      0,
+      1,
+      4
+    ],
+    "why": {
+      "ru": "Базовая схема кадра — заголовок, данные, завершающая часть. Конкретные поля типа и проверки зависят от протокола. MTU — ограничение размера полезной нагрузки.",
+      "en": "The three basic parts are header, data and trailer. Individual protocol fields vary, and MTU is a size limit rather than a frame part."
+    }
+  },
+  {
+    "id": "close-2-01",
+    "variant": 2,
+    "q": "Under which two circumstances will a switch flood a frame out of every port except the port that the frame was received on?",
+    "options": [
+      "Known unicast destination",
+      "Unknown destination MAC",
+      "Broadcast source address",
+      "Broadcast destination address",
+      "Multicast source address"
+    ],
+    "correct": [
+      1,
+      3
+    ],
+    "why": {
+      "ru": "В пределах VLAN коммутатор рассылает broadcast и неизвестный unicast на остальные разрешённые порты. Для известного unicast есть конкретный порт. Групповой MAC не является допустимым источником обычного Ethernet-кадра.",
+      "en": "Unknown unicast and broadcast destinations cause flooding within the VLAN. A known unicast selects one port. A broadcast or multicast source is not a valid ordinary Ethernet source address."
+    }
+  },
+  {
+    "id": "close-2-02",
+    "variant": 2,
+    "q": "What action will occur if a host receives a frame with a destination MAC address of FF:FF:FF:FF:FF:FF?",
+    "options": [
+      "Forward to all other hosts",
+      "Send it to the switch to update its MAC table",
+      "Forward it to the router",
+      "Process the frame"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Все единицы в адресе назначения означают Ethernet broadcast. Хост принимает кадр и передаёт его соответствующему протоколу. Рассылку между портами выполняет коммутатор.",
+      "en": "The all-ones destination is broadcast. Each receiving host processes the frame locally. Distributing it across switch ports is the switch’s job."
+    }
+  },
+  {
+    "id": "close-2-03",
+    "variant": 2,
+    "q": "A network team is comparing physical WAN topologies for connecting remote sites to a headquarters building. Which topology provides high availability and connects some but not all remote sites?",
+    "options": [
+      "Point-to-point",
+      "Hub and spoke",
+      "Partial mesh",
+      "Mesh"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Partial mesh добавляет резервные связи между некоторыми площадками. В full mesh каждая соединена с каждой, в hub-and-spoke обмен идёт через центр, а point-to-point связывает одну пару.",
+      "en": "Partial mesh adds some direct redundant links. Full mesh connects every pair, hub and spoke relies on a center, and point-to-point joins one pair."
+    }
+  },
+  {
+    "id": "close-2-04",
+    "variant": 2,
+    "q": "Which is the compressed form of fe80:0000:0000:0000:0220:0b3f:f0e0:0029?",
+    "options": [
+      "fe80::220:b3f:f0e0:29",
+      "fe80:9ea0::2020:0:bf:e0:9290",
+      "fe80:9ea0:0:2200::fe0:290",
+      "fe80:220:b3f:f0e0:29"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Три соседние нулевые группы сжимаются в двойное двоеточие. В оставшихся группах удаляются только ведущие нули. Добавление 9ea0 меняет адрес, а без двойного двоеточия пять групп не образуют полный IPv6-адрес.",
+      "en": "Compress consecutive zero groups once and drop leading zeros within each remaining group. Additional nonzero groups change the address."
+    }
+  },
+  {
+    "id": "close-2-05",
+    "variant": 2,
+    "q": "What three application layer protocols are part of the TCP/IP protocol suite?",
+    "options": [
+      "DNS",
+      "DHCP",
+      "NAT",
+      "ARP",
+      "FTP",
+      "PPP"
+    ],
+    "correct": [
+      0,
+      1,
+      4
+    ],
+    "why": {
+      "ru": "DNS разрешает имена, DHCP выдаёт параметры сети, FTP передаёт файлы. NAT преобразует адреса, ARP находит MAC, PPP оформляет канальный обмен.",
+      "en": "DNS resolves names, DHCP supplies configuration and FTP transfers files. NAT translates addresses, ARP resolves a link address and PPP is a link protocol."
+    }
+  },
+  {
+    "id": "close-2-06",
+    "variant": 2,
+    "q": "What does the term attenuation mean in data communication?",
+    "options": [
+      "Loss of signal strength as distance increases",
+      "Strengthening a signal by a network device",
+      "Time for a signal to reach its destination",
+      "Leakage of signals between cable pairs"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Затухание — уменьшение силы сигнала по мере распространения. Усилитель компенсирует его. Время распространения — задержка, а наводка между парами — crosstalk.",
+      "en": "Attenuation is loss of signal strength over distance. Amplification increases strength, propagation time is delay, and coupling between pairs is crosstalk."
+    }
+  },
+  {
+    "id": "close-2-07",
+    "variant": 2,
+    "q": "Which type of UTP cable is used to connect a PC to a switch port?",
+    "options": [
+      "Rollover",
+      "Straight-through",
+      "Console",
+      "Crossover"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "При классической распиновке PC и switch используют разные группы контактов для передачи, поэтому нужен прямой кабель. Crossover меняет пары местами для однотипных портов. Rollover применяется для консоли. Auto-MDIX на современном порту может компенсировать выбор кабеля.",
+      "en": "A traditional PC-to-switch connection uses straight-through wiring. Crossover swaps pairs for like interfaces and rollover serves a console. Auto-MDIX can compensate on modern equipment."
+    }
+  },
+  {
+    "id": "close-2-08",
+    "variant": 2,
+    "q": "What happens when a switch receives a frame and the calculated CRC value is different than the value that is in the FCS field?",
+    "options": [
+      "Drop the frame",
+      "Notify the source of the bad frame",
+      "Write a new CRC and forward the frame",
+      "Flood the frame except on the incoming port"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Несовпадение CRC указывает на повреждение. При проверке FCS коммутатор отбрасывает кадр. Он не восстанавливает содержимое пересчётом CRC, не рассылает испорченную копию и не обязан извещать отправителя.",
+      "en": "A failed FCS means the switch detected corruption. It discards the frame instead of repairing the CRC, flooding a bad frame or notifying the sender."
+    }
+  },
+  {
+    "id": "close-2-09",
+    "variant": 2,
+    "q": "What are three ways that media access control is used in networking?",
+    "options": [
+      "Contention-based access is deterministic",
+      "Data link protocols define access rules for different media",
+      "MAC governs placement of data frames onto media",
+      "Controlled access has lower performance due to collisions",
+      "802.11 uses CSMA/CD",
+      "Ethernet uses CSMA/CD on shared half-duplex media"
+    ],
+    "correct": [
+      1,
+      2,
+      5
+    ],
+    "why": {
+      "ru": "MAC задаёт правила занятия среды и отправки кадров. В историческом shared Ethernet применяется CSMA/CD, в Wi-Fi — CSMA/CA. Конкуренция не гарантирует предсказуемый момент передачи, а управляемый доступ как раз ограничивает коллизии.",
+      "en": "Access rules and frame placement depend on the medium. Legacy shared Ethernet uses CSMA/CD, Wi-Fi uses collision avoidance, and contention is not deterministic."
+    }
+  },
+  {
+    "id": "close-2-10",
+    "variant": 2,
+    "q": "What happens when the transport input ssh command is entered on the switch vty lines?",
+    "options": [
+      "A proprietary client is required",
+      "Remote management traffic is encrypted",
+      "The command sets a username and password",
+      "The SSH client on the switch is enabled"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "На линиях VTY команда разрешает вход по SSH, который шифрует соединение. Она не создаёт учётную запись и не включает исходящий SSH-клиент. Подойдёт совместимый стандартный клиент.",
+      "en": "This VTY setting allows encrypted incoming SSH sessions. It does not create credentials, enable the outgoing client or mandate proprietary client software."
+    }
+  },
+  {
+    "id": "close-2-11",
+    "variant": 2,
+    "q": "With basic Ethernet switching and no multicast filtering, what happens to a frame addressed to 01:00:5E:00:00:19?",
+    "options": [
+      "Forward to other ports except the ingress port",
+      "Do not forward the frame",
+      "Share the MAC table with adjacent switches",
+      "Send it to a router because the MAC is not local"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Префикс 01:00:5E обозначает IPv4 multicast. В базовой модели без записи группы и IGMP snooping коммутатор распространяет такой кадр по VLAN. Обмен таблицами и обязательная пересылка роутеру здесь не нужны.",
+      "en": "01:00:5E is an IPv4 multicast prefix. Under basic switching without a learned multicast group or snooping, the frame is flooded within its VLAN."
+    }
+  },
+  {
+    "id": "close-2-12",
+    "variant": 2,
+    "q": "The local router’s WAN interface is 2001:db8:FACE:39::10. What does a user test by pinging this address?",
+    "options": [
+      "Determine the path to the remote server",
+      "Verify connectivity within the local network",
+      "Create a performance benchmark for an intranet server",
+      "Verify Internet connectivity"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Указанный в условии адрес совпадает с WAN-интерфейсом локального маршрутизатора. Echo Reply подтверждает доступность этого интерфейса. Для списка переходов нужен traceroute, а ответ своего роутера не доказывает доступность удалённого сервера.",
+      "en": "The ping target is the local router’s WAN interface in the supplied topology. A reply establishes reachability to that interface, not to a remote Internet server. Traceroute lists hops."
+    }
+  },
+  {
+    "id": "close-2-13",
+    "variant": 2,
+    "q": "What three items are contained in an Ethernet header and trailer?",
+    "options": [
+      "Error-checking information",
+      "Source IP address",
+      "Destination MAC address",
+      "Destination IP address",
+      "Source MAC address"
+    ],
+    "correct": [
+      0,
+      2,
+      4
+    ],
+    "why": {
+      "ru": "В заголовке Ethernet находятся MAC получателя и отправителя, в конце — FCS. IP-адреса лежат глубже, в заголовке вложенного IP-пакета.",
+      "en": "The Ethernet header contains both MAC addresses and the trailer carries the FCS. IP addresses belong to the encapsulated network-layer packet."
+    }
+  },
+  {
+    "id": "close-2-14",
+    "variant": 2,
+    "q": "Which is a multicast MAC address?",
+    "options": [
+      "FF-FF-FF-FF-FF-FF",
+      "5C-26-0A-4B-19-3E",
+      "00-26-0F-4B-00-3E",
+      "01-00-5E-00-00-03"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Префикс 01-00-5E используют для IPv4 multicast. Все FF — broadcast. Первые октеты 5C и 00 имеют сброшенный групповой бит и обозначают unicast.",
+      "en": "01-00-5E identifies IPv4 multicast. All FF means broadcast. The low bit of the first octet in 5C and 00 is zero, indicating unicast."
+    }
+  },
+  {
+    "id": "close-2-15",
+    "variant": 2,
+    "q": "With the use of unshielded twisted-pair copper wire in a network, what causes crosstalk within the cable pairs?",
+    "options": [
+      "Two nodes transmitting simultaneously",
+      "Magnetic fields around adjacent wire pairs",
+      "Reflection from the far end of the cable",
+      "Braided shielding around adjacent pairs"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Переменный сигнал в одной паре создаёт поле, которое наводит сигнал в соседней. Одновременная передача на общей среде даёт коллизию, отражение возвращается по линии, а экран снижает помехи.",
+      "en": "An adjacent pair’s electromagnetic field induces an unwanted signal. Simultaneous transmissions can collide, reflections travel back along the cable, and shielding mitigates interference."
+    }
+  },
+  {
+    "id": "close-2-16",
+    "variant": 2,
+    "q": "Which statement describes a characteristic of the frame header fields of the data link layer?",
+    "options": [
+      "All include flow-control and logical connection fields",
+      "They vary depending on the protocol",
+      "Ethernet headers contain Layer 3 source and destination addresses",
+      "They include information about user applications"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Ethernet и другие канальные протоколы определяют собственные поля. Управление потоком не универсально. IP-адреса и сведения о приложении принадлежат другим уровням.",
+      "en": "Each link protocol specifies its own header fields. Layer 3 addresses and application information belong to higher layers. Flow control is not universal."
+    }
+  },
+  {
+    "id": "close-2-17",
+    "variant": 2,
+    "q": "What are two functions of NVRAM?",
+    "options": [
+      "Store the routing table",
+      "Contain the running configuration",
+      "Retain contents without power",
+      "Store the ARP table",
+      "Store the startup configuration"
+    ],
+    "correct": [
+      2,
+      4
+    ],
+    "why": {
+      "ru": "NVRAM энергонезависима и хранит startup-config. Работающая конфигурация, динамическая таблица маршрутов и ARP-кэш обычно находятся в RAM.",
+      "en": "NVRAM retains the startup configuration without power. The running configuration, live routes and ARP cache generally reside in RAM."
+    }
+  },
+  {
+    "id": "close-2-18",
+    "variant": 2,
+    "q": "Which PDU format is used when bits are received from the network medium by the NIC of a host?",
+    "options": [
+      "Frame",
+      "Packet",
+      "Segment",
+      "File"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "NIC собирает биты среды в кадр канального уровня. После снятия заголовка можно извлечь IP-пакет, а из него — транспортный сегмент. Файл относится к приложению.",
+      "en": "The NIC assembles received bits into a link-layer frame. A packet and a segment are higher-layer PDUs. A file is application data."
+    }
+  },
+  {
+    "id": "close-2-19",
+    "variant": 2,
+    "q": "What type of network traffic requires QoS?",
+    "options": [
+      "Email",
+      "Wiki",
+      "Online purchasing",
+      "Video conferencing"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Видеоконференция чувствительна к задержке, джиттеру и потере пакетов прямо во время разговора. Почта, веб-страницы и покупки обычно переносят ожидание и повторную передачу.",
+      "en": "Video conferencing is sensitive to delay, jitter and loss during a live conversation. Email, wiki pages and purchases can typically tolerate buffering or retransmission."
+    }
+  },
+  {
+    "id": "close-2-20",
+    "variant": 2,
+    "q": "Why are two strands of fiber used for a single fiber optic connection?",
+    "options": [
+      "Prevent signal degradation over longer distances",
+      "Increase the speed of light transmission",
+      "Prevent copper-style crosstalk",
+      "Allow full-duplex connectivity"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "В обычной двухволоконной линии одно волокно передаёт в одну сторону, второе — в обратную. Это даёт одновременный обмен, а не увеличивает скорость распространения или дальность каждого волокна.",
+      "en": "A conventional duplex fiber pair carries one direction on each strand simultaneously. It does not change propagation speed, individual reach or copper-style crosstalk."
+    }
+  },
+  {
+    "id": "close-2-21",
+    "variant": 2,
+    "q": "What two criteria are used to help select a network medium from various network media?",
+    "options": [
+      "Installation environment",
+      "Types of data to prioritize",
+      "Number of intermediary devices",
+      "Distance the medium can carry a signal",
+      "Cost of end devices"
+    ],
+    "correct": [
+      0,
+      3
+    ],
+    "why": {
+      "ru": "Среда должна подходить к условиям установки и передавать сигнал на нужное расстояние. Приоритеты — задача QoS. Число сетевых устройств и цена конечных узлов не характеризуют данный кабель.",
+      "en": "The medium must suit the installation environment and carry the signal over the required distance. Traffic prioritization is QoS, and endpoint cost does not determine cable reach."
+    }
+  },
+  {
+    "id": "close-2-22",
+    "variant": 2,
+    "q": "What is a characteristic of the LLC sublayer?",
+    "options": [
+      "Delimits data according to physical signaling",
+      "Provides logical device addressing",
+      "Allows several Layer 3 protocols to share an interface and medium",
+      "Defines software services for the physical layer"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "LLC указывает, какому сетевому протоколу передать содержимое кадра. Логический адрес — поле IP, а кодирование сигнала и границы передачи относятся к нижним функциям.",
+      "en": "LLC lets multiple network-layer protocols share an interface and identifies the encapsulated protocol. IP supplies logical addressing and the physical layer handles signaling."
+    }
+  },
+  {
+    "id": "close-2-23",
+    "variant": 2,
+    "q": "A network team is comparing topologies for connecting on a shared media. Which physical topology is an example of a hybrid topology for a LAN?",
+    "options": [
+      "Ring",
+      "Partial mesh",
+      "Bus",
+      "Extended star"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Расширенная звезда соединяет несколько звёзд в иерархию. Ring образует кольцо, bus — одну общую магистраль, а partial mesh описывает выборочные связи между узлами.",
+      "en": "An extended star joins smaller stars into a hierarchy. A bus shares a backbone, a ring is a loop and partial mesh describes selected direct interconnections."
+    }
+  },
+  {
+    "id": "close-2-24",
+    "variant": 2,
+    "q": "A computer has to send a packet to a destination host in the same LAN. How will the packet be sent?",
+    "options": [
+      "Send to the gateway and then the destination",
+      "Send directly to the destination host",
+      "Send only to the default gateway",
+      "Ask the gateway before choosing whether to send locally"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Для узла той же IP-подсети отправитель находит его MAC и посылает кадр напрямую через локальную сеть. Маршрут по умолчанию нужен для удалённых сетей.",
+      "en": "A same-subnet host resolves its peer’s MAC and addresses the frame directly to it. None of the alternatives involving the default gateway is required."
+    }
+  },
+  {
+    "id": "close-2-25",
+    "variant": 2,
+    "q": "Which two functions are performed at the LLC sublayer of the OSI Data Link Layer to facilitate Ethernet communication?",
+    "options": [
+      "Integrate Layer 2 flows between fiber and copper speeds",
+      "Enable IPv4 and IPv6 to use the same physical medium",
+      "Delimit fields within an Ethernet 2 frame",
+      "Implement CSMA/CD over shared half-duplex media",
+      "Identify the network-layer protocol encapsulated by the frame"
+    ],
+    "correct": [
+      1,
+      4
+    ],
+    "why": {
+      "ru": "LLC обеспечивает совместное использование интерфейса протоколами L3 и их распознавание. Границы кадра, управление доступом и CSMA/CD относятся к MAC. Согласование физических скоростей не является функцией LLC.",
+      "en": "LLC supports multiple Layer 3 protocols over a shared interface and identifies the encapsulated protocol. Framing and CSMA/CD are MAC functions. Speed conversion is a different task."
+    }
+  },
+  {
+    "id": "close-2-26",
+    "variant": 2,
+    "q": "When IPv4 addressing is manually configured on a web server, which property of the IPv4 configuration identifies the network and host portion for an IPv4 address?",
+    "options": [
+      "DHCP server address",
+      "Subnet mask",
+      "DNS server address",
+      "Default gateway"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Единичные биты маски обозначают сетевую часть, нулевые — часть хоста. DHCP выдаёт настройки, DNS разрешает имена, шлюз пересылает пакеты за пределы подсети.",
+      "en": "The subnet mask distinguishes network bits from host bits. DHCP supplies configuration, DNS resolves names and the default gateway reaches other networks."
+    }
+  },
+  {
+    "id": "close-2-27",
+    "variant": 2,
+    "q": "What property of ARP causes cached IP-to-MAC mappings to remain in memory longer?",
+    "options": [
+      "A static IP-to-MAC entry can be entered manually",
+      "Switch MAC and ARP tables contain the same entries",
+      "EtherType 0x0806 appears in the frame",
+      "Entries have timestamps and expire"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Статическая запись не удаляется по обычному тайм-ауту динамического ARP-кэша. Таймер описывает истечение срока, EtherType распознаёт ARP, а таблица коммутатора сопоставляет MAC с портами.",
+      "en": "A static mapping does not expire like an ordinary dynamic cache entry. The timer explains expiration. EtherType identifies ARP and the switch table maps MAC addresses to ports."
+    }
+  },
+  {
+    "id": "close-2-28",
+    "variant": 2,
+    "q": "Why would a Layer 2 switch need an IP address?",
+    "options": [
+      "Receive frames from attached PCs",
+      "Function as a default gateway",
+      "Be managed remotely",
+      "Send broadcasts to attached PCs"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Коммутатору нужен IP управления, например для SSH. Для обычной пересылки unicast и broadcast он использует канальный уровень. Назначение management IP не включает маршрутизацию.",
+      "en": "The management interface needs an IP for remote administration such as SSH. Normal switching and broadcast forwarding work at Layer 2."
+    }
+  },
+  {
+    "id": "close-2-29",
+    "variant": 2,
+    "q": "In addition to the cable length, what two factors could interfere with the communication carried over UTP cables?",
+    "options": [
+      "Size of the network",
+      "Crosstalk",
+      "Signal modulation technique",
+      "Electromagnetic interference",
+      "Bandwidth"
+    ],
+    "correct": [
+      1,
+      3
+    ],
+    "why": {
+      "ru": "Сигнал UTP искажают соседние пары и внешние электромагнитные поля. Размер сети, полоса пропускания и название способа модуляции не являются этими источниками наводок.",
+      "en": "Crosstalk couples signals between pairs and external electromagnetic fields can induce noise. Network size and bandwidth do not describe either physical source of interference."
+    }
+  },
+  {
+    "id": "close-2-30",
+    "variant": 2,
+    "q": "What property of ARP forces all Ethernet NICs to process an ARP request?",
+    "options": [
+      "EtherType 0x0806",
+      "ARP replies are broadcast",
+      "Source MAC in the header",
+      "Destination FF:FF:FF:FF:FF:FF in the header"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Широковещательный MAC заставляет все NIC в данном broadcast-домене принять кадр. EtherType после этого передаёт его обработчику ARP. MAC отправителя нужен для ответа, который обычно идёт unicast.",
+      "en": "The Ethernet broadcast destination is accepted by every NIC in the broadcast domain. EtherType then selects ARP. The source MAC enables a normally unicast reply."
+    }
+  },
+  {
+    "id": "close-2-31",
+    "variant": 2,
+    "q": "A Wireshark capture is shown with the Transmission Control Protocol section expanded. The item highlighted states Window size: 9017.",
+    "options": [
+      "Trace a path to 127.0.0.1",
+      "Test the local TCP/IP stack",
+      "Ping a network host at 127.0.0.1",
+      "Check the network card IP"
+    ],
+    "correct": [],
+    "why": {
+      "ru": "Поле Window size описывает объявленное TCP-окно приёма. Варианты на листе относятся к loopback и диагностике IP. Ни один не объясняет выделенное поле, поэтому вопрос исключён из подсчёта баллов.",
+      "en": "The advertised TCP window describes receive capacity. Every printed option instead describes IP or loopback diagnostics, so this item has no defensible printed answer."
+    }
+  },
+  {
+    "id": "close-2-32",
+    "variant": 2,
+    "q": "What OSI physical layer term describes the measure of usable data transferred over a given period of time?",
+    "options": [
+      "Goodput",
+      "Fiber-optic cable",
+      "Air",
+      "Copper cable"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Goodput измеряет объём полезных данных приложения за время, исключая заголовки и повторы. Остальные варианты обозначают среды передачи.",
+      "en": "Goodput is application payload delivered per unit time, excluding overhead and retransmissions. Air, copper and fiber are media, not rates."
+    }
+  },
+  {
+    "id": "close-2-33",
+    "variant": 2,
+    "q": "Passwords can be used to restrict access to all or parts of the Cisco IOS. Select the modes and interfaces that can be protected with passwords. (Choose 3.)",
+    "options": [
+      "Boot IOS mode",
+      "Console interface",
+      "Privileged EXEC mode",
+      "VTY interface",
+      "Router configuration mode",
+      "Ethernet interface"
+    ],
+    "correct": [
+      1,
+      2,
+      3
+    ],
+    "why": {
+      "ru": "Линии console и VTY поддерживают проверку при входе. Enable secret защищает privileged EXEC. Для режима настройки маршрутизации и физического Ethernet-порта отдельный пароль входа таким способом не задают.",
+      "en": "Console and VTY lines can require login, and enable secret protects privileged EXEC. The remaining choices are not separately password-protected login contexts in this way."
+    }
+  },
+  {
+    "id": "close-2-34",
+    "variant": 2,
+    "q": "A network administrator is issuing the login block-for 180 attempts 2 within 30 command on a router. Which threat is the network administrator trying to prevent?",
+    "options": [
+      "A device inspecting link traffic",
+      "A worm spreading through the network",
+      "A user repeatedly guessing the router password",
+      "An unauthorized visitor entering the equipment room"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Команда блокирует новые входы на 180 секунд после двух неудач за 30 секунд. Она ограничивает подбор пароля. Прослушивание трафика, распространение червя и физический доступ этим счётчиком не обнаруживаются.",
+      "en": "Repeated failed logins trigger a 180-second block after two failures in 30 seconds. The command targets password guessing rather than inspection, malware spread or physical entry."
+    }
+  },
+  {
+    "id": "close-2-35",
+    "variant": 2,
+    "q": "At which OSI layer is a source IP address added to a PDU during the encapsulation process?",
+    "options": [
+      "Network layer",
+      "Application layer",
+      "Transport layer",
+      "Data link layer"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "IP-адрес источника добавляется вместе с IP-заголовком на сетевом уровне. Транспорт добавляет порты, канальный уровень — MAC-адреса, приложение создаёт данные.",
+      "en": "The IP source is added in the Layer 3 header. Transport provides ports, data link provides MAC addresses and the application creates the payload."
+    }
+  },
+  {
+    "id": "close-2-36",
+    "variant": 2,
+    "q": "How is SSH different from Telnet?",
+    "options": [
+      "SSH encrypts messages and authenticates remote users while Telnet sends plaintext",
+      "SSH requires PuTTY and Telnet requires Tera Term",
+      "SSH is in-band and Telnet is out-of-band only",
+      "SSH needs an active network while Telnet is a console-only connection"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "SSH шифрует сессию, включая учётные данные. Telnet передаёт текст открыто. Оба работают по сети и поддерживаются разными клиентами. Консольный кабель не определяет Telnet.",
+      "en": "SSH encrypts the remote session, including credentials. Telnet sends plaintext. Both run over the network and support multiple terminal clients."
+    }
+  },
+  {
+    "id": "close-2-37",
+    "variant": 2,
+    "q": "Which two devices are intermediary devices?",
+    "options": [
+      "Servers",
+      "Switches",
+      "Routers",
+      "Hosts"
+    ],
+    "correct": [
+      1,
+      2
+    ],
+    "why": {
+      "ru": "Коммутаторы пересылают кадры, маршрутизаторы — пакеты между сетями. Серверы и другие хосты создают или принимают пользовательские данные.",
+      "en": "Switches forward frames and routers forward packets. Servers and other hosts are endpoints."
+    }
+  },
+  {
+    "id": "close-2-38",
+    "variant": 2,
+    "q": "What is a user trying to determine when issuing a ping 10.1.1.1 command on a PC?",
+    "options": [
+      "Identify the destination device type",
+      "Test the PC stack without sending traffic on the wire",
+      "List the path traffic will take",
+      "Test connectivity with the destination device"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Ping посылает ICMP Echo Request адресу 10.1.1.1 и ждёт ответ. Тип устройства он не определяет, список переходов показывает traceroute, а для чисто локального теста используют loopback.",
+      "en": "An echo reply tests reachability to 10.1.1.1. Ping does not identify device type or list a route. A local-only stack test would use loopback."
+    }
+  },
+  {
+    "id": "close-2-39",
+    "variant": 2,
+    "q": "What term describes a policy that allows network devices to manage the flow of data to give priority to voice and video?",
+    "options": [
+      "Quality of service",
+      "Extranet",
+      "Internet",
+      "Intranet"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "QoS позволяет при перегрузке отдавать предпочтение чувствительным к задержке потокам. Остальные термины описывают сети и их аудиторию, а не политику очередей.",
+      "en": "Quality of service can prioritize delay-sensitive voice and video. Internet, intranet and extranet describe networks rather than queue policies."
+    }
+  },
+  {
+    "id": "close-2-40",
+    "variant": 2,
+    "q": "What is one advantage of using the cut-through switching method instead of the store-and-forward switching method?",
+    "options": [
+      "Support any mix of Ethernet speeds",
+      "Make a forwarding decision using the source MAC",
+      "Lower latency for high-performance applications",
+      "Reduce bandwidth by dropping most invalid frames"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Cut-through начинает передачу после чтения MAC назначения, ещё до получения всего кадра. Это снижает задержку. Полная проверка FCS и отсев повреждённых кадров до передачи характерны для store-and-forward.",
+      "en": "Cut-through begins forwarding after reading the destination MAC, reducing latency. Store-and-forward can check the entire FCS before forwarding. Source MAC is used for learning."
+    }
+  }
+]

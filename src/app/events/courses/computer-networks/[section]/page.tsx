@@ -27,6 +27,7 @@ export default async function NetworkSection({ params }: { params: Promise<{sect
       return <article className={`${styles.outline} ${styles.sectionPage}`} lang="ru" data-no-i18n>
         <Link className={styles.back} href={root}>← Computer Networks</Link><h1>Файнал</h1>
         <nav className={styles.moduleFolders} aria-label="Банки файнала">
+          <Link href={root+'/practice/final-close'}><strong>Более близкий файнал</strong><span>Два комплекта с фотографий · 79 вопросов с проверкой и один для разбора</span></Link>
           <Link href={root+'/practice/final-paper'}><strong>Файнал банк</strong><span>{finalPaper.length} тестовых вопросов с разбором · по всем вариантам или по одному</span></Link>
           <Link href={root+'/final/open-ended'}><strong>Open-ended</strong><span>{writtenQuestions.length} письменных заданий · оценка Gemini и образец ответа</span></Link>
           <Link href={root+'/practice/final-related'}><strong>Вопросы по модулям и лекциям</strong><span>Дополнительная практика по темам файнала</span></Link>

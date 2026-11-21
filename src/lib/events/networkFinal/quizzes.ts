@@ -1,3 +1,4 @@
+import closeQuestions from './closeFinal.json';
 import {finalPaper,finalRelated} from './finalPaper';
 import {grindNotes} from './grindNotes';
 import {endtermPaper,endtermRelated} from './endterm';
@@ -10,7 +11,11 @@ import sources from './sources.json';
 import type { EventQuizQuestion } from '@/components/events/EventQuiz';
 
 const bilingual = (ru: string, en = ru) => ({ru, en});
+const closeFinal: EventQuizQuestion[] = closeQuestions.map(({variant, ...question}) => ({
+  ...question, source: {kind: 'paper', variant, lecture: 0},
+}));
 export const groups = [
+  {id:'final-close',title:'Более близкий файнал',count:closeFinal.filter(q=>q.correct.length).length},
   {id:'final-paper',title:'Файнал банк',count:finalPaper.length},
   {id:'final-related',title:'Практика по темам файнала',count:finalRelated.length},
   {id:'endterm-paper',title:'Банк эндтерма',count:endtermPaper.length},
@@ -83,6 +88,7 @@ export function questionsFor(group: string): EventQuizQuestion[] {
         transfer:{title:family.title,rule:family.rule,related}};
     })).flat();
   }
+  if(group==='final-close')return closeFinal;
   if(group==='final-paper')return finalPaper;
   if(group==='final-related')return finalRelated;
   if(group==='endterm-paper')return endtermPaper;

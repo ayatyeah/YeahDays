@@ -33,7 +33,7 @@ const papers = [
 const unique = [...variants.flatMap(v => v.questions), ...extra113].filter(q => !equivalent[q.id]);
 export const finalPaper: EventQuizQuestion[] = unique.map(q => ({
   id: q.id, q: q.q, options: q.options, correct: q.correct,
-  why: { ru: q.explanation, en: q.explanationEn },
+  why: { ru: q.explanation, en: q.explanationEn }, optionReasons: q.optionReasons,
   source: { kind: 'paper', module: q.module, lecture: lectures[q.module - 1],
     positions: Object.fromEntries(papers.flatMap(paper => {
       const index = paper.ids.indexOf(q.id);

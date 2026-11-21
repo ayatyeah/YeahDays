@@ -22,8 +22,30 @@
       0,
       3
     ],
-    "explanation": "SSH и Telnet открывают удалённую командную сессию по сети. SSH шифрует трафик, а Telnet передаёт его открыто. Консольный кабель требует физического подключения, HDMI выводит изображение, USB-накопитель хранит файлы.",
-    "explanationEn": "SSH and Telnet both open remote terminal sessions over a network. SSH encrypts the session, whereas Telnet sends cleartext. A console cable requires a local connection, HDMI carries video, and USB storage holds files."
+    "explanation": "Представь, что коммутатор в соседнем здании, а ты хочешь увидеть его приглашение Switch>. Нужен протокол, который передаёт введённые команды и возвращает их вывод по сети. Так работают SSH и Telnet. Для безопасного подключения выбирают SSH.",
+    "explanationEn": "Imagine the switch is in another building and you want its Switch> prompt on your laptop. You need a protocol that sends typed commands across the network and brings their output back. Both SSH and Telnet provide this session. Choose SSH when the session must be secure.",
+    "optionReasons": [
+      {
+        "ru": "SSH открывает удалённый терминал и шифрует команды, вывод и данные входа.",
+        "en": "SSH provides a remote terminal and encrypts commands, output and login credentials."
+      },
+      {
+        "ru": "HDMI передаёт изображение и звук на дисплей. Через него нельзя открыть сетевую командную сессию Cisco IOS.",
+        "en": "HDMI sends video and audio to a display. It provides no network terminal session to Cisco IOS."
+      },
+      {
+        "ru": "Консольный кабель действительно даёт CLI, но его нужно физически подключить к порту Console. В условии нужен доступ через сеть.",
+        "en": "A console cable gives CLI access through a physical console port. The question requires access over the network."
+      },
+      {
+        "ru": "Telnet передаёт команды и вывод по сети. Он подходит под условие об удалённом CLI, хотя содержимое сессии передаётся открыто.",
+        "en": "Telnet carries commands and output over the network. It qualifies for remote CLI access even though the session is unencrypted."
+      },
+      {
+        "ru": "USB-накопитель переносит файлы, например образ IOS. Он не передаёт интерактивные команды удалённому устройству.",
+        "en": "USB storage can carry files such as an IOS image. It provides no interactive command channel to a remote device."
+      }
+    ]
   },
   {
     "id": "final-113-07",
@@ -47,8 +69,30 @@
     "correct": [
       3
     ],
-    "explanation": "IP-источник задаёт отправитель — клиент 10.1.1.2. При обычной пересылке маршрутизатор меняет канальный заголовок и уменьшает TTL. Ни шлюз клиента, ни адрес транзитного интерфейса не подставляется вместо исходного IP.",
-    "explanationEn": "Client A sets the source to 10.1.1.2. Each forwarding router replaces the link-layer header and decrements TTL. Ordinary routing without NAT does not substitute either the gateway address or a transit interface address for the source IP."
+    "explanation": "Сначала найди того, кто создал пакет: это Client A. Затем проверь, указан ли NAT. Здесь его нет, поэтому адрес отправителя остаётся 10.1.1.2 даже на входе в R2. На каждом переходе меняется кадр для следующего канала, но пакет внутри по-прежнему указывает на исходного клиента.",
+    "explanationEn": "First identify who created the packet: Client A. Next check whether NAT is present. With no NAT, the source stays 10.1.1.2 even at R2. Each router builds a new frame for its next link, but the enclosed IP packet still identifies the original client.",
+    "optionReasons": [
+      {
+        "ru": "10.1.1.1 принадлежит шлюзу клиента. Клиент отправляет кадр на MAC шлюза, сохраняя собственный IP в поле source.",
+        "en": "10.1.1.1 belongs to the client's gateway. The client addresses the frame to the gateway's MAC while keeping its own IP as the source."
+      },
+      {
+        "ru": "172.16.1.2 — адрес на линии между маршрутизаторами. Получение пакета интерфейсом не делает этот интерфейс отправителем.",
+        "en": "172.16.1.2 is on the link between the routers. Receiving a packet on an interface does not make that interface its source."
+      },
+      {
+        "ru": "192.16.1.1 находится на стороне сети назначения. Через этот интерфейс R2 доставляет данные дальше.",
+        "en": "192.16.1.1 faces the destination LAN. R2 uses that interface to forward the data toward Host 1."
+      },
+      {
+        "ru": "10.1.1.2 — адрес Client A. Именно его клиент записал в исходный пакет, а подмены адресов по пути нет.",
+        "en": "10.1.1.2 is Client A's address. The client wrote it into the original packet and no device translates it on the way."
+      },
+      {
+        "ru": "172.16.1.1 тоже относится к транзитной линии. Роутер пересылает чужой пакет, поэтому не записывает IP своего порта как источник.",
+        "en": "172.16.1.1 also identifies a transit interface. Forwarding another host's packet does not insert the router's own IP as the source."
+      }
+    ]
   },
   {
     "id": "final-113-13",
@@ -70,8 +114,26 @@
     "correct": [
       1
     ],
-    "explanation": "Для 310 узлов восьми бит недостаточно: 2⁸ − 2 = 254. Девять бит дают 510 доступных адресов, значит нужен префикс /23 и маска 255.255.254.0. Более крупные сети /22 и /21 оставляют больший запас.",
-    "explanationEn": "Eight host bits provide only 254 usable addresses. Nine provide 510, enough for 310 hosts. This leaves a /23 prefix, mask 255.255.254.0. Both /22 and /21 would leave more addresses unused."
+    "explanation": "Смотри на сеть B: ей нужны 310 адресов для устройств. В обычной подсети с h битами хоста доступны 2ʰ − 2 адреса. Восемь бит дают 254, девять дают 510. Значит, оставляем девять бит хоста, а первые 23 записываем единицами в маске: 255.255.254.0.",
+    "explanationEn": "Use the demand for Network B: 310 devices. With h host bits a conventional subnet provides 2ʰ − 2 usable addresses. Eight bits give 254, nine give 510. Leave nine bits for hosts and set the first 23 mask bits to one, giving 255.255.254.0.",
+    "optionReasons": [
+      {
+        "ru": "Маска /24 даёт 254 адреса хостов. Она вместила бы сеть A, но для сети B не хватает 56 адресов.",
+        "en": "A /24 supplies 254 host addresses. It could fit Network A but falls 56 short for B."
+      },
+      {
+        "ru": "Маска /23 даёт 510 адресов хостов. После размещения 310 остаются 200, а любая меньшая подсеть уже тесна.",
+        "en": "A /23 supplies 510 usable addresses. It leaves 200 spare after allocating 310, and the next smaller subnet cannot fit them."
+      },
+      {
+        "ru": "Маска /22 даёт 1022 адреса хостов. Остаются 712 свободных вместо 200 при /23.",
+        "en": "A /22 supplies 1,022 usable addresses, leaving 712 spare compared with 200 in a /23."
+      },
+      {
+        "ru": "Маска /21 даёт 2046 адресов хостов. Она вместит устройства, но 1736 адресов останутся свободны.",
+        "en": "A /21 supplies 2,046 usable addresses. It fits the devices but leaves 1,736 unused."
+      }
+    ]
   },
   {
     "id": "final-113-15",
@@ -96,8 +158,30 @@
       0,
       2
     ],
-    "explanation": "Заголовок UDP занимает 8 байт, минимальный заголовок TCP — 20. UDP может отправить первую дейтаграмму сразу. Повтор потерянных данных и упорядочивание при необходимости реализует приложение.",
-    "explanationEn": "A UDP header is 8 bytes, versus at least 20 for TCP. UDP can send the first datagram without a connection handshake. The application must handle any required retransmission or ordering."
+    "explanation": "Представь короткое голосовое сообщение, которое приложение готово отправить прямо сейчас. UDP сразу добавляет к данным заголовок из четырёх полей по два байта и отправляет дейтаграмму. Согласовывать соединение заранее не требуется. Эти две особенности объясняют оба верных варианта.",
+    "explanationEn": "Imagine an application has a voice sample ready to send. UDP adds a header of four two-byte fields and can send the datagram immediately. There is no connection to negotiate first. Those two features account for both correct choices.",
+    "optionReasons": [
+      {
+        "ru": "Четыре поля UDP занимают 8 байт. Даже минимальный заголовок TCP занимает 20, поэтому у UDP меньше служебных данных.",
+        "en": "The four UDP fields occupy 8 bytes. Even the smallest TCP header is 20 bytes, giving UDP less header overhead."
+      },
+      {
+        "ru": "Дейтаграммы могут прийти в другом порядке. В UDP нет порядковых номеров, с помощью которых транспорт сам восстановил бы последовательность.",
+        "en": "Datagrams can arrive out of order. UDP has no sequence numbers to restore their order at the transport layer."
+      },
+      {
+        "ru": "Для первой дейтаграммы не нужно ждать обмена SYN, SYN-ACK и ACK. Такой обмен устанавливает соединение TCP.",
+        "en": "The first datagram can be sent without waiting for SYN, SYN-ACK and ACK. That exchange establishes a TCP connection."
+      },
+      {
+        "ru": "В UDP нет подтверждений получения и механизма повторной передачи. Если повтор нужен, об этом заботится приложение.",
+        "en": "UDP has no acknowledgments or retransmission mechanism. An application must arrange retries when it needs them."
+      },
+      {
+        "ru": "20 байт — минимальный размер заголовка TCP. Фиксированный заголовок UDP занимает 8 байт.",
+        "en": "20 bytes is the minimum TCP header size. UDP has a fixed 8-byte header."
+      }
+    ]
   },
   {
     "id": "final-113-20",
@@ -121,7 +205,29 @@
     "correct": [
       1
     ],
-    "explanation": "Из 32 бит адреса 24 заняты префиксом. Оставшиеся 8 бит дают 256 комбинаций. Две зарезервированы для адреса сети и широковещательного адреса, поэтому узлам доступны 254.",
-    "explanationEn": "A /24 leaves eight host bits and thus 256 addresses. Reserving the all-zero host value for the network and the all-one value for broadcast leaves 254 usable host addresses."
+    "explanation": "Возьми пример 192.168.1.0/24. Последний октет меняется от 0 до 255. Адрес .0 обозначает всю сеть, .255 — broadcast для всех её хостов. Устройствам остаются .1–.254, всего 254 адреса.",
+    "explanationEn": "Take 192.168.1.0/24. Its last octet ranges from 0 through 255. Address .0 identifies the network and .255 is its directed broadcast. Devices can use .1 through .254, giving 254 addresses.",
+    "optionReasons": [
+      {
+        "ru": "128 — полное число адресов блока /25 с семью битами хоста. У /24 таких битов восемь.",
+        "en": "128 is the total address count of a /25 with seven host bits. A /24 has eight host bits."
+      },
+      {
+        "ru": "Из 256 комбинаций вычитаем две зарезервированные: 256 − 2 = 254. Именно это число можно назначить хостам.",
+        "en": "Subtract the two reserved addresses from 256: 256 − 2 = 254 can be assigned to hosts."
+      },
+      {
+        "ru": "255 получилось бы при вычитании одного адреса. Здесь нужно исключить и адрес сети, и broadcast.",
+        "en": "255 subtracts only one address. Both the network address and the broadcast must be excluded."
+      },
+      {
+        "ru": "256 учитывает все комбинации восьми бит, включая .0 и .255. Вопрос спрашивает только адреса для хостов.",
+        "en": "256 counts all eight-bit combinations, including .0 and .255. The question asks for assignable host addresses only."
+      },
+      {
+        "ru": "512 комбинаций требуют девяти бит хоста, то есть префикса /23. В /24 доступно только восемь бит хоста.",
+        "en": "512 combinations require nine host bits, which corresponds to /23. A /24 leaves only eight."
+      }
+    ]
   }
 ]

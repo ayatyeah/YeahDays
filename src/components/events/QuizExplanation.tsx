@@ -5,11 +5,11 @@ import { QuestionLanguage, QuestionText } from './QuestionLanguage';
 import type { EventQuizQuestion } from './EventQuiz';
 
 
-export default function QuizExplanation({ question, expanded }: {question: EventQuizQuestion; expanded?: boolean}) {
+export default function QuizExplanation({ question, expanded, picked, order }: {question: EventQuizQuestion; expanded?: boolean; picked?: number[]; order?: number[]}) {
   const {choices,choose}=useQuizLanguages();
   const lang=choices.explanation??'ru';
   const ru = lang === 'ru';
-  const { why, caution, optionExplanations, transfer, wrong } = question;
+  const { why, caution, optionExplanations, optionReasons, transfer, wrong } = question;
   const summary = why[lang];
   const extraTexts = [caution, transfer?.title, transfer?.rule, ...(optionExplanations ?? [])].filter((text): text is string => !!text);
   if (why.ru === why.en) extraTexts.push(summary);
@@ -20,14 +20,18 @@ export default function QuizExplanation({ question, expanded }: {question: Event
       <button type="button" aria-pressed={!ru} onClick={() => choose('explanation','en')}>English</button>
     </>}>
       {caution && <p className="mt-2"><QuestionText>{caution}</QuestionText></p>}
+      {optionReasons && <h3 className="mt-4 font-semibold">{ru ? "Как решить вопрос" : "How to solve it"}</h3>}
       <p data-explanation-summary data-selection-question>{why.ru === why.en ? <QuestionText>{summary}</QuestionText> : summary}</p>
       {transfer && <section className="mt-4"><h3 className="font-semibold"><QuestionText>{transfer.title}</QuestionText></h3><p><QuestionText>{transfer.rule}</QuestionText></p>
         <details><summary>{ru ? 'Похожие вопросы' : 'Related questions'} ({transfer.related.length})</summary><ul className="list-disc space-y-2 pl-5">{transfer.related.map(example => <li key={example.prompt}>{example.prompt}<details><summary>{ru ? 'Показать ответ' : 'Show answer'}</summary>{example.answer}</details></li>)}</ul></details></section>}
-      {optionExplanations && <details open={expanded || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
+      {(optionReasons || optionExplanations) && <details open={expanded || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
         <summary>{ru ? 'Почему каждый вариант подходит или не подходит' : 'Why each option works or does not'}</summary>
-        <ul className="mt-3 space-y-4">{question.options.map((option, i) => <li key={i}>
-          <p className="font-medium">{question.correct.length ? (question.correct.includes(i) ? '✓ ' : '✗ ') : ''}{question.labels?.[i] ?? String.fromCharCode(65 + i)}. {option}</p>
-          <p data-selection-question><QuestionText>{optionExplanations[i] ?? ''}</QuestionText></p>
+        <ul className="mt-3 space-y-4">{(order ?? question.options.map((_, i) => i)).map((i, position) => <li key={i}>
+          <p className="font-medium">{optionReasons
+              ? (question.correct.includes(i) ? (ru ? '✓ Верно' : '✓ Correct') : (ru ? '✗ Неверно' : '✗ Incorrect')) + ' · '
+              : question.correct.length ? (question.correct.includes(i) ? '✓ ' : '✗ ') : ''}{question.labels?.[i] ?? String.fromCharCode(65 + position)}. {question.options[i]}
+            {optionReasons && picked?.includes(i) && <small> · {ru ? 'Твой выбор' : 'Your choice'}</small>}</p>
+          <p data-selection-question>{optionReasons ? optionReasons[i][lang] : <QuestionText>{optionExplanations?.[i] ?? ''}</QuestionText>}</p>
         </li>)}</ul></details>}
       {wrong && <ul className="mt-3 space-y-2">{question.options.map((option, i) => wrong[i] && <li key={i}>✗ {option} — {wrong[i]![lang]}</li>)}</ul>}
     </QuestionLanguage>

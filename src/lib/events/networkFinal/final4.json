@@ -21,8 +21,30 @@
     "correct": [
       1
     ],
-    "explanation": "Маршрутизатор читает IP назначения и выбирает следующий переход по таблице маршрутизации. Это работа сетевого уровня (Network, L3). L2 доставляет кадр внутри одного канала, L1 передаёт биты, а транспортный и сеансовый уровни работают выше IP.",
-    "explanationEn": "A router reads the destination IP and uses its routing table to select a next hop. Logical addressing and routing belong to Network (L3). Data Link handles one link, Physical carries bits, and Transport and Session operate above IP."
+    "explanation": "Представь, что ноутбук отправляет пакет в другую сеть. На каждом маршрутизаторе сетевой уровень (Network, L3) сравнивает IP назначения с таблицей маршрутов и выбирает следующий переход. IP остаётся адресом конечного получателя, пока обычная маршрутизация передаёт пакет дальше.",
+    "explanationEn": "Imagine a laptop sending a packet to another network. At each router, the Network layer (L3) looks up the destination IP and selects a next hop. In ordinary routing the destination IP still identifies the final recipient.",
+    "optionReasons": [
+      {
+        "ru": "Транспортный уровень различает приложения по портам, например HTTPS по TCP 443.",
+        "en": "Transport distinguishes applications using ports, such as TCP 443 for HTTPS."
+      },
+      {
+        "ru": "Логический адрес IPv4 или IPv6 и выбор маршрута относятся к L3.",
+        "en": "Logical IPv4 or IPv6 addressing and path selection are L3 functions."
+      },
+      {
+        "ru": "Канальный уровень использует MAC-адрес, чтобы доставить кадр на следующем локальном участке.",
+        "en": "Data Link uses a MAC address to deliver a frame across the next local link."
+      },
+      {
+        "ru": "Сеансовый уровень управляет диалогом приложений; путь пакета определяет маршрутизатор.",
+        "en": "Session manages an application dialogue; a router selects the packet path."
+      },
+      {
+        "ru": "Физический уровень передаёт сигналы по кабелю или радио и не читает IP назначения.",
+        "en": "Physical carries signals over a cable or radio without reading the destination IP."
+      }
+    ]
   },
   {
     "id": "final-4-02",
@@ -44,8 +66,26 @@
     "correct": [
       1
     ],
-    "explanation": "В глобальном режиме service password-encryption маскирует пароли, которые иначе видны в конфигурации. Классическое шифрование Type 7 обратимо. Команда enable secret настраивает только секрет привилегированного режима, а остальные варианты имеют неверный синтаксис.",
-    "explanationEn": "In global configuration mode, service password-encryption obscures passwords otherwise shown in plaintext. Classic Type 7 encoding is reversible. Enable secret sets only the privileged-mode secret, and the remaining commands have incorrect syntax."
+    "explanation": "Если в конфигурации консоли указан обычный пароль, команда service password-encryption меняет то, как он записан в конфигурации. В классической IOS это обратимое преобразование Type 7, поэтому доступ к файлу всё равно нужно защищать.",
+    "explanationEn": "If a console line has a plaintext password, service password-encryption changes how the password is stored in the configuration. Classic IOS Type 7 encoding can be reversed, so the configuration file still needs protection.",
+    "optionReasons": [
+      {
+        "ru": "Команда задаёт отдельный секрет входа в привилегированный режим; пароль консоли от неё не изменится.",
+        "en": "This sets the privileged-mode secret. It does not change the console line password."
+      },
+      {
+        "ru": "Глобальная служба преобразует поддерживаемые открытые пароли, в том числе пароли линий.",
+        "en": "This global service encodes supported plaintext passwords, including line passwords."
+      },
+      {
+        "ru": "В режиме config-line задают пароль конкретной линии; команда для маскирования паролей вводится глобально.",
+        "en": "Line configuration sets a particular line’s password. The password-encoding service is configured globally."
+      },
+      {
+        "ru": "Приглашение Router# обозначает EXEC, а имя нужной глобальной команды — service password-encryption.",
+        "en": "Router# is an EXEC prompt, and the required global command is named service password-encryption."
+      }
+    ]
   },
   {
     "id": "final-4-03",
@@ -73,8 +113,34 @@
       1,
       2
     ],
-    "explanation": "ping проверяет доступность адреса, tracert показывает переходы по пути, а ipconfig выводит локальный адрес, маску и шлюз. Три команды с show относятся к Cisco IOS.",
-    "explanationEn": "Use ping to test reachability, tracert to trace the hops and ipconfig to inspect local IP settings. The three show commands are Cisco IOS commands."
+    "explanation": "Если Windows-компьютер не выходит в сеть, начни с ipconfig и проверь локальный адрес и шлюз. Затем ping проверит, отвечает ли шлюз, а tracert покажет, через какие маршрутизаторы идёт путь к удалённому адресу.",
+    "explanationEn": "If a Windows PC cannot connect, use ipconfig to check its address and gateway. Then ping tests whether the gateway responds, and tracert shows hops toward a remote address.",
+    "optionReasons": [
+      {
+        "ru": "Отправляет ICMP echo request. Ответ от шлюза подтверждает доступность шлюза в момент проверки.",
+        "en": "Sends ICMP echo requests. A reply from the gateway confirms that it was reachable during the test."
+      },
+      {
+        "ru": "Показывает переходы до цели, посылая пробы с возрастающим TTL.",
+        "en": "Traces the path by sending probes with increasing TTL."
+      },
+      {
+        "ru": "Показывает локальный IP, маску и шлюз, что помогает найти ошибку настройки ПК.",
+        "en": "Displays the local IP, subnet mask and gateway, helping spot a PC configuration error."
+      },
+      {
+        "ru": "Это команда просмотра таблицы маршрутизации в Cisco IOS. В Windows для этого используют route print.",
+        "en": "This displays a Cisco IOS routing table. The Windows counterpart is route print."
+      },
+      {
+        "ru": "Это команда Cisco IOS для просмотра состояния и счётчиков сетевых интерфейсов.",
+        "en": "This is a Cisco IOS command for interface status and counters."
+      },
+      {
+        "ru": "Выводит действующую конфигурацию устройства Cisco. В обычной командной строке Windows такой команды нет.",
+        "en": "Displays a Cisco device’s current configuration. It is not a standard Windows command."
+      }
+    ]
   },
   {
     "id": "final-4-04",
@@ -96,8 +162,26 @@
     "correct": [
       0
     ],
-    "explanation": "Оставь 6 бит хосту. Получится 64 адреса, из которых 62 можно назначать (64 − адрес сети − broadcast). Это /26, или 255.255.255.192. Более крупные подсети из списка дают 126, 254 или 510 адресов хостов. На схеме число размыто. Здесь принято 60 хостов. Если их 66 или 68, нужен /25 на 126 хостов.",
-    "explanationEn": "Six host bits give 64 addresses and 62 usable hosts after reserving the network and broadcast addresses. The mask is /26, or 255.255.255.192. The other masks allow 126, 254 or 510 hosts and waste more space. The diagram label is unclear. This exercise assumes 60 hosts. For 66 or 68 hosts, use /25 (126 usable)."
+    "explanation": "Для 60 устройств нужно минимум 62 IPv4-адреса вместе с адресом сети и broadcast. Ближайшая степень двойки — 64. Это шесть бит хоста и префикс /26. На схеме число размыто. Здесь принято 60 хостов. Если их 66 или 68, нужен /25 на 126 хостов.",
+    "explanationEn": "For 60 devices you need at least 62 IPv4 addresses including network and broadcast. Round up to 64, a block with six host bits and prefix /26. The host count is blurred in the diagram. This exercise uses 60. If it reads 66 or 68, use /25 for 126 usable addresses.",
+    "optionReasons": [
+      {
+        "ru": "Эта маска /26 даёт 62 доступных адреса. После назначения 60 остаются два.",
+        "en": "This /26 provides 62 usable addresses, leaving just two after assigning 60."
+      },
+      {
+        "ru": "У /25 доступны 126 адресов. Для 60 хостов свободными останутся 66.",
+        "en": "A /25 offers 126 usable addresses, leaving 66 unused for 60 hosts."
+      },
+      {
+        "ru": "У /24 доступны 254 адреса. Это 194 свободных адреса при потребности в 60.",
+        "en": "A /24 offers 254 usable addresses, leaving 194 unused for 60 hosts."
+      },
+      {
+        "ru": "Маска /23 даёт 510 адресов хостов. Это намного больше требуемых 60.",
+        "en": "A /23 supplies 510 usable addresses, far more than the required 60."
+      }
+    ]
   },
   {
     "id": "final-4-05",
@@ -122,8 +206,30 @@
       0,
       1
     ],
-    "explanation": "Шаг /27 равен 32. Блок Marketing занимает .32–.63, последний адрес — broadcast. Sales получает 32 − 2 = 30 адресов хостов. В Admin последний хост .126, а .127 — broadcast. В /30 два хоста. Для /25 границы идут по .0 и .128, поэтому .64 не начало такой сети.",
-    "explanationEn": "A /27 spans 32 addresses. Marketing runs from .32 to .63, making .63 its broadcast, and Sales has 32 − 2 = 30 usable addresses. Admin ends at host .126, with .127 reserved for broadcast. A /30 has two usable addresses. A /25 starts at .0 or .128, so .64 is not an aligned /25 network."
+    "explanation": "Для проверки схемы сначала разбей последний октет на блоки по 32 адреса для /27. Первый адрес каждого блока обозначает сеть, последний — broadcast, остальные 30 доступны хостам. Например, Sales занимает .64–.95, значит хостам доступны .65–.94.",
+    "explanationEn": "Split the last octet into blocks of 32 for each /27. The first address identifies the subnet and the last is broadcast, leaving 30 hosts. For example, Sales spans .64–.95, so .65–.94 are assignable.",
+    "optionReasons": [
+      {
+        "ru": "Marketing начинается с .32. Следующий блок начинается с .64, поэтому broadcast Marketing равен .63.",
+        "en": "Marketing starts at .32 and the next block starts at .64, so Marketing ends at broadcast .63."
+      },
+      {
+        "ru": "У /27 пять бит хоста, поэтому Sales может назначить 2⁵ − 2 = 30 адресов.",
+        "en": "Five host bits in Sales give 2⁵ − 2 = 30 assignable addresses."
+      },
+      {
+        "ru": "В Admin диапазон хостов .97–.126. Адрес .127 зарезервирован для broadcast.",
+        "en": "Admin hosts span .97–.126. The proposed endpoint .127 is reserved for broadcast."
+      },
+      {
+        "ru": "Указанные /30 дают по четыре адреса всего и два доступных хосту. Шесть хостов даёт /29.",
+        "en": "The /30 links have four total addresses and two usable hosts each. Six usable hosts would require /29."
+      },
+      {
+        "ru": "Для /25 последний октет адреса сети равен .0 или .128. Число .64 находится внутри блока .0/25.",
+        "en": "A /25 network starts at .0 or .128 in the last octet. Address .64 lies inside the .0/25 block."
+      }
+    ]
   },
   {
     "id": "final-4-06",
@@ -150,8 +256,34 @@
       0,
       2
     ],
-    "explanation": "В третьем октете шаг равен 256 − 240 = 16. Значение 75 лежит в блоке 64–79. Первый адрес блока — 172.16.64.0, последний — 172.16.79.255. Границы 80–95 уже относятся к следующему блоку.",
-    "explanationEn": "The third octet advances in blocks of 256 − 240 = 16. The value 75 falls in 64–79, so the first address is 172.16.64.0 and the last is 172.16.79.255. Values 80–95 describe the next block."
+    "explanation": "Маска 255.255.240.0 оставляет четыре бита хоста в третьем октете и весь четвёртый октет. Поэтому границы третьего октета идут через 16. Число 75 попадает между 64 и 79 включительно; четвёртый октет проходит от 0 до 255.",
+    "explanationEn": "Mask 255.255.240.0 leaves four host bits in the third octet plus all of the fourth octet. Third-octet blocks therefore advance by 16. The value 75 falls within 64–79, and the last octet ranges from 0 to 255.",
+    "optionReasons": [
+      {
+        "ru": "Если обнулить биты хоста, получится первая точка блока — 172.16.64.0.",
+        "en": "Clearing the host bits gives the block’s starting address, 172.16.64.0."
+      },
+      {
+        "ru": "Один ноль в последнем октете недостаточен. Число 75 тоже содержит биты хоста.",
+        "en": "Clearing just the last octet misses the host bits in 75."
+      },
+      {
+        "ru": "Все биты хоста равны единице у последнего адреса блока, 172.16.79.255.",
+        "en": "All host bits are one at the block’s last address, 172.16.79.255."
+      },
+      {
+        "ru": "Третий октет может увеличиться с 75 до 79 в этой же сети, поэтому .75.255 находится внутри блока.",
+        "en": "The third octet can rise from 75 to 79 in this subnet, so .75.255 is inside the block."
+      },
+      {
+        "ru": "Сеть с третьим октетом 80 начинается сразу после нужного диапазона 64–79.",
+        "en": "The subnet starting at third octet 80 follows the required 64–79 block."
+      },
+      {
+        "ru": "Адрес 172.16.95.255 завершает соседний блок 80–95.",
+        "en": "172.16.95.255 ends the neighboring block spanning 80–95."
+      }
+    ]
   },
   {
     "id": "final-4-07",
@@ -173,8 +305,26 @@
     "correct": [
       2
     ],
-    "explanation": "Каждый из трёх маршрутизаторов уменьшает TTL на 1 при пересылке. Поэтому хост B получает 128 − 3 = 125. Конечные хосты не добавляют ещё один переход.",
-    "explanationEn": "Each of the three routers decrements TTL by one when forwarding, giving 128 − 3 = 125. Neither endpoint counts as an extra forwarding hop."
+    "explanation": "TTL ограничивает число пересылок IPv4-пакета. Проследи значение на выходе каждого роутера: R1 отправляет 127, R2 отправляет 126, R3 отправляет 125. Хост B принимает последнее значение.",
+    "explanationEn": "TTL limits how many times an IPv4 packet can be forwarded. Trace each router’s outgoing packet: R1 sends 127, R2 sends 126, and R3 sends 125. Host B receives that last value.",
+    "optionReasons": [
+      {
+        "ru": "128 было при отправке хостом A, до пересылки первым роутером.",
+        "en": "128 is the starting value at A, before the first router forwards."
+      },
+      {
+        "ru": "126 будет на выходе R2. Впереди ещё R3.",
+        "en": "126 is the value leaving R2, with R3 still ahead."
+      },
+      {
+        "ru": "После трёх пересылок получается 128 − 3 = 125.",
+        "en": "Three forwarding hops produce 128 − 3 = 125."
+      },
+      {
+        "ru": "Для 124 понадобились бы четыре роутера. Само получение пакета хостом B не уменьшает TTL ещё раз.",
+        "en": "124 would require four forwarding routers. Delivery at Host B does not decrement it again."
+      }
+    ]
   },
   {
     "id": "final-4-08",
@@ -196,8 +346,26 @@
     "correct": [
       2
     ],
-    "explanation": "В обмене DORA клиент ищет сервер (Discover), сервер предлагает адрес (Offer), клиент выбирает предложение (Request), сервер подтверждает аренду (ACK). Вопрос спрашивает именно о сообщении клиента после Offer.",
-    "explanationEn": "In DORA, the client discovers, the server offers, the client requests the selected offer, and the server acknowledges the lease. The client message immediately after Offer is Request."
+    "explanation": "Допустим, два DHCP-сервера предложили адреса. Клиент выбирает одно предложение и передаёт DHCPREQUEST с запрошенным адресом и указанием выбранного сервера. Завершающий DHCPACK приходит уже от этого сервера.",
+    "explanationEn": "Suppose two DHCP servers offer addresses. The client picks an offer and sends DHCPREQUEST identifying the requested address and selected server. That server then confirms the lease with DHCPACK.",
+    "optionReasons": [
+      {
+        "ru": "Клиент рассылает Discover для поиска серверов ещё до получения предложения.",
+        "en": "The client sends Discover to find servers before any offer arrives."
+      },
+      {
+        "ru": "Offer отправляет сервер, предлагая клиенту адрес.",
+        "en": "The server sends Offer to propose an address to the client."
+      },
+      {
+        "ru": "Request отправляет клиент, сообщая, какое из предложений он выбрал.",
+        "en": "The client sends Request to identify the offer it selected."
+      },
+      {
+        "ru": "ACK отправляет сервер, подтверждая аренду после запроса клиента.",
+        "en": "The server sends ACK to confirm the lease after the client’s request."
+      }
+    ]
   },
   {
     "id": "final-4-09",
@@ -219,8 +387,26 @@
     "correct": [
       1
     ],
-    "explanation": "В FE80::2AA:FF:FE9A:4CA3 двойное двоеточие заменяет три нулевые группы, всего получается восемь. Буква G недопустима в шестнадцатеричном числе. Два знака :: в одном адресе недопустимы. У последнего варианта девять групп.",
-    "explanationEn": "In FE80::2AA:FF:FE9A:4CA3 the double colon expands to three zero groups, yielding eight groups. G is not hexadecimal, two double colons are ambiguous, and the last option has nine groups."
+    "explanation": "Разверни IPv6-адрес до восьми групп. В каждой допустимы цифры 0–9 и буквы A–F, а один знак :: может заменить цепочку нулевых групп. Например, FE80::2AA:FF:FE9A:4CA3 разворачивается в FE80:0:0:0:2AA:FF:FE9A:4CA3.",
+    "explanationEn": "Expand the IPv6 address to eight groups. Each group uses digits 0–9 and letters A–F, and one double colon can stand for zero groups in a run. For example, FE80::2AA:FF:FE9A:4CA3 expands to FE80:0:0:0:2AA:FF:FE9A:4CA3.",
+    "optionReasons": [
+      {
+        "ru": "Группа G1 содержит G, а шестнадцатеричные буквы заканчиваются на F.",
+        "en": "The group G1 contains G, outside the hexadecimal range A–F."
+      },
+      {
+        "ru": "Видны пять групп, :: добавляет три нулевые. Получаются восемь допустимых групп.",
+        "en": "Five groups are visible and the double colon adds three zero groups, yielding eight valid groups."
+      },
+      {
+        "ru": "Два знака :: оставляют неопределённым количество нулевых групп в каждом пропуске.",
+        "en": "Using two double colons makes the number of omitted groups at each position ambiguous."
+      },
+      {
+        "ru": "Здесь девять явно записанных групп. В IPv6 помещается восемь 16-битных групп.",
+        "en": "There are nine explicit groups here. IPv6 contains eight 16-bit groups."
+      }
+    ]
   },
   {
     "id": "final-4-10",
@@ -242,8 +428,26 @@
     "correct": [
       1
     ],
-    "explanation": "Все 128 бит неопределённого адреса равны нулю и сокращаются до ::. Добавление единицы даёт loopback ::1. FF02::1 обозначает локальную группу всех узлов, FE80::/10 — диапазон link-local.",
-    "explanationEn": "The unspecified address consists of 128 zero bits, compressed to ::. A final one gives loopback ::1. FF02::1 is the link-local all-nodes multicast group, and FE80::/10 identifies link-local unicast space."
+    "explanation": "Если IPv6-адрес ещё не назначен, в некоторых служебных сообщениях узел использует неопределённый адрес (unspecified address) как источник. Его полная запись — восемь нулевых групп. Все они сокращаются до ::.",
+    "explanationEn": "Before a node has an assigned IPv6 address, certain control messages use the unspecified address as their source. It consists of eight zero groups, all compressed to ::.",
+    "optionReasons": [
+      {
+        "ru": "У ::1 последний бит равен единице. Это loopback для обращения к самому себе.",
+        "en": "The last bit of ::1 is one. It is the loopback address for reaching the local host."
+      },
+      {
+        "ru": "Два двоеточия здесь представляют все 128 нулевых бит неопределённого адреса.",
+        "en": "Here the double colon represents all 128 zero bits of the unspecified address."
+      },
+      {
+        "ru": "FF02::1 обращается ко всем IPv6-узлам локального канала.",
+        "en": "FF02::1 addresses all IPv6 nodes on the local link."
+      },
+      {
+        "ru": "FE80::/10 указывает диапазон локальных адресов интерфейсов, а не один неопределённый адрес.",
+        "en": "FE80::/10 is a range of link-local interface addresses, not the single unspecified address."
+      }
+    ]
   },
   {
     "id": "final-4-11",
@@ -271,8 +475,34 @@
       2,
       4
     ],
-    "explanation": "Multicast доставляет пакет участникам группы. Первый байт адреса группы равен FF, а FF02::1 охватывает все узлы локального канала. Адрес группы ставится в поле назначения. Ближайшего получателя выбирает anycast, а FE80::/10 — link-local unicast.",
-    "explanationEn": "Multicast sends to members of a group. Its addresses start with byte FF, and FF02::1 reaches all nodes on the local link. The group address is a destination. Anycast selects the nearest recipient, while FE80::/10 is link-local unicast."
+    "explanation": "Представь рассылку всем IPv6-узлам одного Ethernet-канала. Отправитель указывает FF02::1 как адрес назначения и свой индивидуальный адрес как источник. Начальный байт FF отличает multicast; выбранная группа определяет получателей.",
+    "explanationEn": "Imagine sending to every IPv6 node on one Ethernet link. The sender uses FF02::1 as the destination and its own individual address as the source. The initial FF byte marks multicast, and the selected group determines the recipients.",
+    "optionReasons": [
+      {
+        "ru": "Один пакет адресован группе, так что его могут получить сразу несколько участников.",
+        "en": "One packet addresses a group, so multiple members can receive it."
+      },
+      {
+        "ru": "Доставку ближайшему доступному участнику описывает anycast.",
+        "en": "Delivery to the nearest available member describes anycast."
+      },
+      {
+        "ru": "Префикс /8 фиксирует первые восемь бит. У multicast это FF.",
+        "en": "The /8 prefix fixes the first eight bits, which are FF for multicast."
+      },
+      {
+        "ru": "FE80::/10 выделен под link-local unicast — отдельные адреса интерфейсов на одном канале.",
+        "en": "FE80::/10 identifies link-local unicast addresses of individual interfaces."
+      },
+      {
+        "ru": "FF02::1 — группа всех узлов; значение scope 2 ограничивает доставку локальным каналом.",
+        "en": "FF02::1 is the all-nodes group. Scope 2 confines delivery to the local link."
+      },
+      {
+        "ru": "Multicast адресует получателей. В IPv6 поле источника не может содержать multicast-адрес.",
+        "en": "Multicast identifies recipients. IPv6 does not allow a multicast source address."
+      }
+    ]
   },
   {
     "id": "final-4-12",
@@ -294,8 +524,26 @@
     "correct": [
       1
     ],
-    "explanation": "После удаления ведущих нулей получается 2001:DB8:0:0:0:A0:0:10. Замени цепочку из трёх нулевых групп одним ::. Ноль между A0 и 10 остаётся, как и конечный ноль в A0.",
-    "explanationEn": "Strip leading zeros to obtain 2001:DB8:0:0:0:A0:0:10. Replace the three consecutive zero groups with one double colon. Preserve the isolated zero and the trailing zero in A0."
+    "explanation": "Сначала убери ведущие нули внутри групп: 2001:DB8:0:0:0:A0:0:10. Затем замени три соседних нуля знаком ::. Соседние цифры A0 обозначают число 160, поэтому выбрасывать конечный ноль нельзя.",
+    "explanationEn": "First strip leading zeros within each group: 2001:DB8:0:0:0:A0:0:10. Then replace the three consecutive zero groups with ::. The digits A0 represent 160, so the trailing zero must stay.",
+    "optionReasons": [
+      {
+        "ru": "Два знака :: в одном адресе недопустимы, поскольку при восстановлении нельзя однозначно распределить нули.",
+        "en": "Two double colons in a single address make expansion ambiguous and are invalid."
+      },
+      {
+        "ru": "При разворачивании :: восстанавливает нужные три группы перед A0, а ноль после A0 остаётся на месте.",
+        "en": "Expanding :: restores the three groups before A0 while preserving the isolated zero after it."
+      },
+      {
+        "ru": "Видно только шесть групп и отсутствует ::, которое обозначило бы пропущенные группы.",
+        "en": "There are only six groups and no double colon to represent the missing ones."
+      },
+      {
+        "ru": "Замена A0 на A меняет значение группы с 160 на 10.",
+        "en": "Changing A0 to A changes the group’s value from 160 to 10."
+      }
+    ]
   },
   {
     "id": "final-4-13",
@@ -317,8 +565,26 @@
     "correct": [
       2
     ],
-    "explanation": "Multicast-адрес представляет группу, и пакет получают её участники в пределах заданной области. Unicast адресует один интерфейс, anycast выбирает ближайший из нескольких. Link-local описывает область действия адреса.",
-    "explanationEn": "A multicast destination represents a group whose members receive the packet within its scope. Unicast identifies one interface, anycast selects the nearest of several, and link-local describes scope."
+    "explanation": "В IPv6 один адрес может обозначать целую группу получателей. Например, пакет на FF02::2 предназначен всем IPv6-маршрутизаторам данного канала. Такая групповая доставка называется multicast.",
+    "explanationEn": "In IPv6 one address can identify a whole group. For example, a packet sent to FF02::2 addresses all IPv6 routers on its local link. This group delivery is called multicast.",
+    "optionReasons": [
+      {
+        "ru": "Global unicast адресует конкретный интерфейс и используется для индивидуальной доставки.",
+        "en": "Global unicast identifies a specific interface for individual delivery."
+      },
+      {
+        "ru": "Anycast доставляет пакет одному ближайшему по маршруту участнику из нескольких.",
+        "en": "Anycast delivers to one of several members, normally the nearest by routing."
+      },
+      {
+        "ru": "Multicast-адрес получают все участники соответствующей группы в пределах её области действия.",
+        "en": "A multicast destination reaches members of its group within the group’s scope."
+      },
+      {
+        "ru": "Link-local определяет границу распространения адреса одним каналом. Само слово не задаёт число получателей.",
+        "en": "Link-local limits scope to a single link. It does not specify a number of recipients."
+      }
+    ]
   },
   {
     "id": "final-4-14",
@@ -342,8 +608,30 @@
     "correct": [
       3
     ],
-    "explanation": "Коммутатор пересылает Ethernet-кадры по MAC-адресам. В модели OSI это Data Link, а в четырёхуровневой модели TCP/IP функции канального и физического уровней объединены в Network Access. Internet занимается IP-маршрутизацией.",
-    "explanationEn": "Switches forward Ethernet frames by MAC address. This is Data Link in OSI. In the four-layer TCP/IP model, Network Access covers both link and physical functions. The Internet layer handles IP routing."
+    "explanation": "Коммутатор получает Ethernet-кадр и ищет MAC назначения в своей таблице, чтобы выбрать выходной порт. В OSI это работа канального уровня. При переходе к четырёхуровневой модели TCP/IP ищи более широкую категорию Network Access, куда входят кадры и физическая передача.",
+    "explanationEn": "A switch receives an Ethernet frame and looks up the destination MAC to choose an outgoing port. OSI calls this the Data Link layer. In four-layer TCP/IP, framing and physical transmission both fall under Network Access.",
+    "optionReasons": [
+      {
+        "ru": "Application включает сервисы вроде HTTP и DNS. Для выбора порта коммутатору не нужно читать запрос HTTP.",
+        "en": "Application includes services such as HTTP and DNS. The switch can choose a port without reading an HTTP request."
+      },
+      {
+        "ru": "Transport связывает приложения с помощью TCP или UDP и их портов.",
+        "en": "Transport connects application processes using TCP or UDP and port numbers."
+      },
+      {
+        "ru": "Internet пересылает IP-пакеты между сетями. Обычный L2-коммутатор выбирает порт по адресу Ethernet.",
+        "en": "Internet routes IP packets across networks. An L2 switch chooses a port by Ethernet address."
+      },
+      {
+        "ru": "Network Access охватывает локальные кадры и MAC-адреса, которыми пользуется коммутатор.",
+        "en": "Network Access covers local frames and the MAC addresses used by the switch."
+      },
+      {
+        "ru": "Session — отдельный уровень OSI. В четырёхуровневой модели TCP/IP такого отдельного уровня нет.",
+        "en": "Session is a distinct OSI layer. Four-layer TCP/IP has no separate Session layer."
+      }
+    ]
   },
   {
     "id": "final-4-15",
@@ -367,8 +655,30 @@
     "correct": [
       1
     ],
-    "explanation": "HTTPS с HTTP/1.1 или HTTP/2 использует TLS поверх TCP, стандартный порт 443. UDP 443 встречается в HTTP/3 с QUIC. TCP 80 — обычный HTTP, UDP 53 — DNS, TCP 22 — SSH.",
-    "explanationEn": "HTTPS with HTTP/1.1 or HTTP/2 uses TLS over TCP on port 443 by default. HTTP/3 uses QUIC over UDP 443. TCP 80 is plain HTTP, UDP 53 is DNS, and TCP 22 is SSH."
+    "explanation": "Для HTTPS сначала определи версию HTTP. С HTTP/1.1 и HTTP/2 браузер обычно соединяется по TCP с портом 443 и использует TLS для защиты данных. HTTP/3 использует QUIC поверх UDP, поэтому уточнение версии меняет выбор транспорта.",
+    "explanationEn": "For HTTPS, check the HTTP version first. With HTTP/1.1 or HTTP/2 a browser normally connects to TCP port 443 and uses TLS to protect the data. HTTP/3 uses QUIC over UDP, so the version matters when choosing the transport.",
+    "optionReasons": [
+      {
+        "ru": "UDP 443 используется для HTTP/3 через QUIC, тогда как в условии указаны HTTP/1.1 и HTTP/2.",
+        "en": "UDP 443 is used for HTTP/3 over QUIC, whereas this question specifies HTTP/1.1 and HTTP/2."
+      },
+      {
+        "ru": "TCP доставляет поток, TLS защищает его, а 443 — стандартный порт HTTPS.",
+        "en": "TCP carries the stream, TLS protects it, and 443 is the default HTTPS port."
+      },
+      {
+        "ru": "TCP 80 — стандартное сочетание для обычного HTTP без TLS.",
+        "en": "TCP 80 is the default for plain HTTP without TLS."
+      },
+      {
+        "ru": "На UDP 53 обычно отправляют запросы DNS для получения адреса сервера.",
+        "en": "UDP 53 commonly carries DNS lookups to find the server’s address."
+      },
+      {
+        "ru": "TCP 22 по умолчанию слушает служба удалённого доступа SSH.",
+        "en": "TCP 22 is the default listening port for remote access over SSH."
+      }
+    ]
   },
   {
     "id": "final-4-16",
@@ -390,8 +700,26 @@
     "correct": [
       1
     ],
-    "explanation": "После ip address укажи адрес и маску в десятичной записи. Для /22 это 8 + 8 + 6 единиц, то есть 255.255.252.0. Значение 0.0.3.255 — обратная маска, а 255.255.248.0 соответствует /21.",
-    "explanationEn": "The IOS command expects an address followed by a dotted-decimal subnet mask. For /22, 8 + 8 + 6 leading ones give 255.255.252.0. The wildcard mask is 0.0.3.255, and 255.255.248.0 is /21."
+    "explanation": "Cisco IOS в режиме config-if принимает отдельно IP-адрес и десятичную маску. У /22 два первых октета маски единичные целиком. В третьем октете шесть единиц дают 11111100₂ = 252. Получается 255.255.252.0.",
+    "explanationEn": "In IOS interface configuration, supply the IPv4 address and dotted-decimal mask separately. For /22, the first two mask octets are all ones. The third has six ones, so 11111100 in binary equals 252. The resulting mask is 255.255.252.0.",
+    "optionReasons": [
+      {
+        "ru": "Обозначение /22 удобно для записи сети, но команда ip address здесь ожидает маску отдельным аргументом в десятичном виде.",
+        "en": "Slash notation describes the prefix, but this interface command expects a dotted-decimal mask as its second argument."
+      },
+      {
+        "ru": "После адреса стоит 255.255.252.0 — маска с 22 ведущими единицами.",
+        "en": "The address is followed by 255.255.252.0, a mask with 22 leading one bits."
+      },
+      {
+        "ru": "0.0.3.255 — wildcard, побитовая инверсия нужной маски. Для адреса интерфейса указывают обычную маску.",
+        "en": "0.0.3.255 is the wildcard, the bitwise inverse of the required mask. Interface addressing takes the subnet mask."
+      },
+      {
+        "ru": "У 248 в третьем октете пять старших единиц, поэтому это /21.",
+        "en": "248 has five leading ones in the third octet, making this /21."
+      }
+    ]
   },
   {
     "id": "final-4-17",
@@ -417,8 +745,34 @@
     "correct": [
       2
     ],
-    "explanation": "Шлюз по умолчанию — адрес интерфейса маршрутизатора в том же канале, куда хост может отправить кадр напрямую. Для хоста .2 это R2 с адресом .1. Адреса других подсетей доступны через шлюз, а собственный адрес хоста не пересылает трафик.",
-    "explanationEn": "The default gateway is the router interface the host can reach directly on its own link. For Host 1 at .2, this is R2 at .1. The other subnets require routing, and the host’s own address cannot forward its traffic."
+    "explanation": "Чтобы ответить клиенту за пределами своей сети, Host 1 сначала передаёт кадр локальному маршрутизатору. Хост 192.168.1.2/24 и интерфейс R2 192.168.1.1/24 находятся на одном канале. Значит, Host 1 может узнать MAC R2 через ARP и отправить кадр на шлюз.",
+    "explanationEn": "To reply to a client outside its subnet, Host 1 first sends a frame to a local router. Host 1 at 192.168.1.2/24 shares a link with R2 at 192.168.1.1/24. It can therefore resolve R2’s MAC with ARP and send its frame to that gateway.",
+    "optionReasons": [
+      {
+        "ru": "Адрес 10.1.1.1 находится вне сети 192.168.1.0/24. Host 1 не может выбрать его непосредственным следующим переходом.",
+        "en": "10.1.1.1 is outside 192.168.1.0/24 and cannot be Host 1’s directly reachable next hop."
+      },
+      {
+        "ru": "172.16.1.2 относится к соединению между маршрутизаторами, до которого с Host 1 сначала ведёт R2.",
+        "en": "172.16.1.2 is on the inter-router link, which Host 1 must reach via R2 first."
+      },
+      {
+        "ru": "Это адрес R2 именно на стороне Host 1, доступный без промежуточного маршрутизатора.",
+        "en": "This is R2’s address on the Host 1 side, reachable without an intervening router."
+      },
+      {
+        "ru": "10.1.1.2 находится в удалённой сети клиента. Чтобы достичь её, уже нужен местный шлюз.",
+        "en": "10.1.1.2 is on the remote client network. Reaching it already requires a local gateway."
+      },
+      {
+        "ru": "Даже если 172.16.1.1 принадлежит роутеру, его интерфейс в сети 172.16.1.0 не находится на канале Host 1.",
+        "en": "Even if 172.16.1.1 belongs to a router, its 172.16.1.0 interface is not on Host 1’s link."
+      },
+      {
+        "ru": "192.168.1.2 — собственный адрес Host 1. Указание самого себя не даст перехода в другую сеть.",
+        "en": "192.168.1.2 is Host 1’s own address. Pointing back to itself provides no path to another subnet."
+      }
+    ]
   },
   {
     "id": "final-4-18",
@@ -442,8 +796,30 @@
     "correct": [
       0
     ],
-    "explanation": "Клиент запрашивает у DNS запись A для IPv4 или AAAA для IPv6. DHCP выдаёт настройки, ARP ищет MAC по локальному IPv4, SMTP отправляет почту, FTP передаёт файлы.",
-    "explanationEn": "A DNS lookup returns an A record for IPv4 or an AAAA record for IPv6. DHCP provides settings, ARP resolves a local IPv4 address to a MAC, SMTP sends mail, and FTP transfers files."
+    "explanation": "Когда браузер получает имя сайта, ему нужен IP, на который отправлять пакеты. Для этого он обращается к DNS: запись A содержит IPv4-адрес, AAAA — IPv6-адрес. Уже зная IP, браузер может начинать соединение.",
+    "explanationEn": "When given a site name, a browser needs an IP destination for its packets. DNS supplies it: an A record holds an IPv4 address and an AAAA record holds an IPv6 address. The browser can then start its connection.",
+    "optionReasons": [
+      {
+        "ru": "DNS ищет запись по доменному имени и возвращает соответствующий адрес.",
+        "en": "DNS looks up the domain’s record and returns the corresponding address."
+      },
+      {
+        "ru": "DHCP может сообщить клиенту адрес DNS-сервера, но перевод доменного имени выполняет уже DNS.",
+        "en": "DHCP may tell a client which DNS server to use, but DNS performs the name lookup."
+      },
+      {
+        "ru": "ARP узнаёт MAC-адрес по уже известному IPv4-адресу в локальном канале.",
+        "en": "ARP finds a MAC from an already known IPv4 address on the local link."
+      },
+      {
+        "ru": "SMTP отправляет сообщения электронной почты между клиентом и сервером или между серверами.",
+        "en": "SMTP submits or relays email between clients and servers or between servers."
+      },
+      {
+        "ru": "FTP передаёт файлы после установления соединения с сервером.",
+        "en": "FTP transfers files after connecting to a server."
+      }
+    ]
   },
   {
     "id": "final-4-19",
@@ -471,8 +847,34 @@
       2,
       4
     ],
-    "explanation": "Конечное устройство создаёт или принимает пользовательские данные. Ноутбук открывает страницу, IP-телефон принимает голос, принтер получает задание. Маршрутизатор, коммутатор и межсетевой экран обычно пересылают или фильтруют чужой трафик.",
-    "explanationEn": "An endpoint originates or consumes user data. A laptop requests a page, an IP phone receives voice, and a printer accepts print jobs. Routers, switches and firewalls primarily forward or filter traffic between endpoints."
+    "explanation": "Спроси, для кого предназначены пользовательские данные. При отправке документа с ноутбука на сетевой принтер оба устройства — конечные. Коммутатор на пути лишь пересылает кадры. IP-телефон тоже конечное устройство, потому что создаёт и воспроизводит голос.",
+    "explanationEn": "Ask which devices produce or consume the user’s data. When a laptop sends a document to a network printer, both are endpoints; a switch on the path just forwards frames. An IP phone is also an endpoint because it produces and plays voice.",
+    "optionReasons": [
+      {
+        "ru": "Ноутбук создаёт запросы и получает данные для пользователя.",
+        "en": "A laptop originates requests and consumes data on behalf of a user."
+      },
+      {
+        "ru": "Основная роль роутера — пересылать пакеты между сетями для других узлов.",
+        "en": "A router’s main role is to forward packets between networks for other hosts."
+      },
+      {
+        "ru": "IP-телефон превращает голос в сетевые данные и воспроизводит полученный голос.",
+        "en": "An IP phone converts speech to network data and plays received speech."
+      },
+      {
+        "ru": "Коммутатор пересылает кадры на путь к конечному получателю.",
+        "en": "A switch forwards frames toward their ultimate receiver."
+      },
+      {
+        "ru": "Сетевой принтер принимает задание печати как конечный получатель.",
+        "en": "The network printer consumes a print job as its final destination."
+      },
+      {
+        "ru": "Межсетевой экран обычно стоит между отправителем и получателем и решает, какой трафик пропустить.",
+        "en": "A firewall normally sits between sender and receiver and decides which traffic to allow."
+      }
+    ]
   },
   {
     "id": "final-4-20",
@@ -500,8 +902,34 @@
       1,
       2
     ],
-    "explanation": "Отказоустойчивость сохраняет связь при сбое, масштабируемость позволяет добавлять пользователей и узлы, а QoS отдаёт приоритет чувствительному к задержке трафику. Затухание и перекрёстные помехи ухудшают сигнал, полудуплекс описывает режим передачи.",
-    "explanationEn": "Fault tolerance keeps service available after a failure, scalability accommodates growth, and QoS prioritizes delay-sensitive traffic. Attenuation and crosstalk impair signals. Half duplex describes how a link transmits."
+    "explanation": "На кампусе оборвался кабель, пришли новые студенты и одновременно идёт голосовой звонок. Запасной путь поддержит связь при обрыве (Fault tolerance), возможность добавить узлы обеспечит рост (Scalability), а QoS поможет голосу пройти очередь быстрее при перегрузке.",
+    "explanationEn": "Imagine a campus link fails, new students join and a voice call competes with downloads. An alternate path keeps traffic flowing (fault tolerance), room to add devices supports growth (scalability), and QoS prioritizes voice when the link is busy.",
+    "optionReasons": [
+      {
+        "ru": "При отказе одного пути сеть может задействовать резервный и продолжить обслуживание.",
+        "en": "When one path fails, the network can use an alternate path and keep serving users."
+      },
+      {
+        "ru": "Сеть можно расширять по числу устройств и пользователей без полной замены архитектуры.",
+        "en": "The design can accommodate additional users and devices without a complete redesign."
+      },
+      {
+        "ru": "QoS распределяет ресурсы при перегрузке, например отдаёт приоритет голосовым пакетам.",
+        "en": "QoS allocates resources under congestion, such as prioritizing voice packets."
+      },
+      {
+        "ru": "Attenuation описывает ослабление сигнала с расстоянием — ограничение линии.",
+        "en": "Attenuation means signal strength declines with distance, a link limitation."
+      },
+      {
+        "ru": "Half-duplex означает, что стороны передают по очереди; это режим линии.",
+        "en": "Half duplex means endpoints take turns transmitting, a link operation mode."
+      },
+      {
+        "ru": "Crosstalk — наводка от соседней пары, способная исказить сигнал.",
+        "en": "Crosstalk is coupling from a neighboring pair that can distort a signal."
+      }
+    ]
   },
   {
     "id": "final-4-21",
@@ -526,8 +954,30 @@
       0,
       1
     ],
-    "explanation": "LLC связывает верхние протоколы с канальным уровнем, MAC отвечает за кадры, MAC-адреса и доступ к среде. IP работает уровнем выше. NIC обычно означает сетевой адаптер, а TC не является подуровнем IEEE 802.",
-    "explanationEn": "LLC interfaces with upper-layer protocols. MAC handles frames, MAC addressing and access to the medium. IP belongs one layer higher, NIC normally means a network interface card, and TC is not an IEEE 802 sublayer."
+    "explanation": "IEEE 802 делит канальный уровень на две части. Верхняя, LLC, служит связующим звеном для протоколов выше. Нижняя, MAC, отвечает за доставку кадров по конкретной среде. Например, при пересылке Ethernet-кадра используется MAC-адрес назначения.",
+    "explanationEn": "IEEE 802 splits the Data Link layer into two parts. The upper one, LLC, interfaces with higher-layer protocols. The lower one, MAC, handles frames on the particular medium. An Ethernet frame’s destination MAC is one example of MAC-layer information.",
+    "optionReasons": [
+      {
+        "ru": "LLC — верхняя часть канального уровня IEEE 802, обращённая к протоколам сетевого уровня.",
+        "en": "LLC is the upper IEEE 802 Data Link sublayer, facing network-layer protocols."
+      },
+      {
+        "ru": "MAC — нижний подуровень с функциями кадрирования, адресации и доступа к среде.",
+        "en": "MAC is the lower sublayer responsible for framing, addressing and medium access."
+      },
+      {
+        "ru": "Название Transmission Control отсутствует в паре подуровней IEEE 802; аббревиатура TCP относится к транспорту.",
+        "en": "Transmission Control is not one of the IEEE 802 sublayers; TCP is a transport protocol."
+      },
+      {
+        "ru": "IP предоставляет логические адреса и маршрутизацию на сетевом уровне, над канальным.",
+        "en": "IP provides logical addresses and routing at the Network layer above Data Link."
+      },
+      {
+        "ru": "NIC обычно означает Network Interface Card, то есть сетевой адаптер — устройство, реализующее функции связи.",
+        "en": "NIC usually means Network Interface Card, a piece of hardware implementing link functions."
+      }
+    ]
   },
   {
     "id": "final-4-22",
@@ -549,8 +999,26 @@
     "correct": [
       2
     ],
-    "explanation": "Скрутка меняет взаимное положение проводников вдоль кабеля и уменьшает наводки между парами (crosstalk). При дифференциальном приёме общая помеха также частично подавляется. Сама скрутка не усиливает сигнал.",
-    "explanationEn": "Twisting changes the conductors’ relative positions along the cable, reducing coupling between pairs (crosstalk). Differential reception also rejects common-mode noise. Twisting does not amplify the signal."
+    "explanation": "В медном кабеле изменение тока в одной паре способно вызвать наводку в соседней. Скрутка меняет взаимное положение проводов вдоль кабеля, снижая эту связь. Кроме того, приёмник измеряет разницу между проводами пары, поэтому одинаковая наводка на обоих частично компенсируется.",
+    "explanationEn": "Changing current in one copper pair can induce noise in its neighbor. Twists change the conductors’ positions along the cable, reducing this coupling. The receiver also measures the difference between the two wires, so noise picked up equally tends to cancel.",
+    "optionReasons": [
+      {
+        "ru": "Гибкость зависит от конструкции кабеля. Электрическая причина скрутки — подавление помех.",
+        "en": "Flexibility depends on cable construction. The electrical reason for twisting is noise reduction."
+      },
+      {
+        "ru": "В пассивной витой паре нет усилителя. Скрутка снижает влияние помех на принятый сигнал.",
+        "en": "A passive twisted pair has no amplifier. Twisting reduces the effect of noise on the received signal."
+      },
+      {
+        "ru": "Перекрёстные помехи возникают при наводке одной пары на другую, которую скрутка помогает уменьшить.",
+        "en": "Crosstalk comes from one pair coupling into another, which twisting helps reduce."
+      },
+      {
+        "ru": "При оконцовке обычно стараются сохранить скрутку как можно ближе к контакту ради качества сигнала.",
+        "en": "During termination, installers keep pairs twisted close to the contacts to preserve signal quality."
+      }
+    ]
   },
   {
     "id": "final-4-23",
@@ -578,8 +1046,34 @@
       1,
       3
     ],
-    "explanation": "В заголовке IPv4 TTL ограничивает число переходов, Header Checksum позволяет проверить заголовок, Source IPv4 Address указывает отправителя. Порядковый номер, номер подтверждения и размер окна относятся к TCP.",
-    "explanationEn": "IPv4 uses TTL to limit hops, the header checksum to check the header, and the source IPv4 address to identify the sender. Sequence number, acknowledgment number and window size are TCP fields."
+    "explanation": "Посмотри на пакет глазами маршрутизатора: он видит IPv4-адрес источника, уменьшает TTL и пересчитывает контрольную сумму изменившегося IPv4-заголовка. Очерёдностью данных и подтверждениями занимается TCP внутри пакета, если используется именно TCP.",
+    "explanationEn": "Look at the packet from a router’s perspective. It can read the source IPv4 address, decrement TTL and update the checksum of the changed IPv4 header. Ordering and acknowledging stream data belong to TCP inside the packet when TCP is used.",
+    "optionReasons": [
+      {
+        "ru": "TTL ограничивает время жизни пакета и уменьшается при пересылке маршрутизатором.",
+        "en": "TTL limits the packet’s lifetime and is decremented during routing."
+      },
+      {
+        "ru": "IPv4 Header Checksum проверяет целостность самого заголовка, без полезной нагрузки.",
+        "en": "The IPv4 header checksum covers the header itself, excluding the payload."
+      },
+      {
+        "ru": "TCP Sequence Number указывает положение байтов в потоке TCP.",
+        "en": "TCP’s sequence number indicates the position of bytes in a TCP stream."
+      },
+      {
+        "ru": "Source IPv4 Address — 32-битный адрес исходного отправителя IPv4-пакета.",
+        "en": "Source IPv4 Address is the 32-bit address identifying the IPv4 packet’s source."
+      },
+      {
+        "ru": "TCP Acknowledgment Number указывает следующий ожидаемый байт потока.",
+        "en": "TCP’s acknowledgment number indicates the next expected stream byte."
+      },
+      {
+        "ru": "TCP Window Size сообщает, сколько данных готов принять получатель.",
+        "en": "TCP window size advertises how much data the receiver is ready to accept."
+      }
+    ]
   },
   {
     "id": "final-4-24",
@@ -605,8 +1099,34 @@
     "correct": [
       0
     ],
-    "explanation": "В NVRAM хранится startup-config. Команда erase startup-config удаляет сохранённую конфигурацию. Текущая конфигурация продолжает действовать в RAM. write memory сохраняет её, а reload перезагружает устройство.",
-    "explanationEn": "NVRAM holds startup-config. The erase startup-config command removes that saved configuration while the running configuration remains active in RAM. Write memory saves the running configuration and reload restarts the device."
+    "explanation": "У роутера две конфигурации: действующая running-config в RAM и загрузочная startup-config в NVRAM. Чтобы убрать настройки следующего запуска, удаляют startup-config. До перезапуска устройство продолжает работать с текущими настройками в RAM.",
+    "explanationEn": "A router keeps the active running-config in RAM and the saved startup-config in NVRAM. To remove the settings used at the next boot, erase startup-config. The current session continues using the running configuration in RAM.",
+    "optionReasons": [
+      {
+        "ru": "Команда явно указывает на загрузочную копию, которую требуется удалить.",
+        "en": "This command explicitly targets the saved startup configuration for deletion."
+      },
+      {
+        "ru": "Имя running-config относится к действующим настройкам в RAM, а вопрос касается копии в NVRAM.",
+        "en": "Running-config names the active settings in RAM; the question asks about the NVRAM copy."
+      },
+      {
+        "ru": "Копирование читает исходный файл. Даже копия в пустое назначение не удаляет оригинал.",
+        "en": "A copy operation reads its source. Copying to a discard destination would still leave the original."
+      },
+      {
+        "ru": "clear config не является указанной стандартной командой IOS для удаления startup-config.",
+        "en": "Clear config is not the standard IOS command that erases startup-config."
+      },
+      {
+        "ru": "write memory записывает действующую конфигурацию в NVRAM и сохраняет настройки.",
+        "en": "Write memory saves the running configuration into NVRAM."
+      },
+      {
+        "ru": "reload перезагружает устройство. Сохранённая startup-config обычно применяется снова при загрузке.",
+        "en": "Reload restarts the device. A saved startup configuration is normally applied again on boot."
+      }
+    ]
   },
   {
     "id": "final-4-25",
@@ -632,7 +1152,33 @@
     "correct": [
       0
     ],
-    "explanation": "В IOS последовательность ipv6 interface выбирает IPv6-интерфейсы, а brief — краткий формат. show ip interface brief относится к IPv4. Команды с route описывают маршруты, а не состояние интерфейсов.",
-    "explanationEn": "In IOS, ipv6 interface selects IPv6 interface information and brief requests the summary. Show ip interface brief is the IPv4 counterpart. Route commands concern routing entries rather than interface status."
+    "explanation": "Собери команду из задачи. show выводит состояние, ipv6 задаёт семейство адресов, interface выбирает интерфейсы, brief просит краткую сводку. Так можно быстро увидеть, поднят ли порт и какие IPv6-адреса ему назначены.",
+    "explanationEn": "Build the command from the task. Show displays information, ipv6 selects the address family, interface selects the objects, and brief requests a summary. The result lets you quickly see whether a port is up and which IPv6 addresses it has.",
+    "optionReasons": [
+      {
+        "ru": "Все ключевые слова идут в нужном порядке для краткой сводки IPv6-интерфейсов.",
+        "en": "The keywords appear in the IOS order for an IPv6 interface summary."
+      },
+      {
+        "ru": "Ключевое слово ip в этой команде показывает адреса IPv4, а запрошены IPv6.",
+        "en": "The ip keyword in this command requests IPv4 addresses; the question asks for IPv6."
+      },
+      {
+        "ru": "В нужной ветке IOS сначала указывают ipv6, затем interface и brief.",
+        "en": "In the required IOS command branch, ipv6 comes first, followed by interface and brief."
+      },
+      {
+        "ru": "После ipv6 нужен объект interface. Одного слова brief здесь недостаточно.",
+        "en": "After ipv6 the interface object is required. Brief alone does not select it."
+      },
+      {
+        "ru": "route выбирает маршруты к сетям. Таблица маршрутов не является сводкой адресов и состояния портов.",
+        "en": "Route selects routes to networks. A routing table is not a summary of port status and addresses."
+      },
+      {
+        "ru": "brief — модификатор формата в конце команды; его позиция сразу после show здесь неверна.",
+        "en": "Brief is a final output-format modifier. Placing it directly after show is incorrect here."
+      }
+    ]
   }
 ]

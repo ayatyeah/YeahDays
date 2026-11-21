@@ -15,6 +15,12 @@ describe('final exam banks', () => {
       expect(q.correct.length).toBeGreaterThan(0);
       expect(q.correct.every(i => q.options[i])).toBe(true);
       expect([q.q, ...q.options].every(text => finalTranslations[text])).toBe(true);
+      expect(q.optionReasons).toHaveLength(q.options.length);
+      for (const lang of ['en','ru'] as const) {
+        const reasons = q.optionReasons!.map(reason => reason[lang]);
+        expect(reasons.every(reason => reason.trim().length > 12)).toBe(true);
+        expect(new Set(reasons).size).toBe(reasons.length);
+      }
       expect(q.why.ru.length).toBeGreaterThan(25);
       expect(q.why.en.length).toBeGreaterThan(25);
     }

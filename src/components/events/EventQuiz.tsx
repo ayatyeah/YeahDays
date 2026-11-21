@@ -20,7 +20,7 @@ import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
 import styles from "./event-quiz.module.css";
 
-export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;positions?:Record<number,number>;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string;notes?:Record<Lang,string>}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
+export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;positions?:Record<number,number>;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string;notes?:Record<Lang,string>}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; optionReasons?: ReadonlyArray<Record<Lang, string>>; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
@@ -186,7 +186,7 @@ export default function EventQuiz({
           <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className={cn(styles.scrollTarget, "rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm")}>
               <p className="font-semibold">{!expected.length ? "Explanation only" : matchesAnswer(picked, expected) ? "Correct" : "Not quite"}</p>
-              <QuizExplanation question={item} expanded={explainOptionsOpen}/>
+              <QuizExplanation question={item} expanded={explainOptionsOpen} picked={picked ?? []}/>
               {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Study notes: {item.studyLink.title} ↗</a>}
               <ReportQuestion key={item.id} eventId={eventId} questionId={item.id} />
             </div>

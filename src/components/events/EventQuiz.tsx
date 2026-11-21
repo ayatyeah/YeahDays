@@ -5,14 +5,14 @@ import QuizStage from "./QuizStage";
 import ErrorReview from "./ErrorReview";
 import { missedQuestions, reviewDelay, readyForReview, creditReview } from "@/lib/events/errorReview";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Button from "@/components/ui/Button";
 import EventMusic from "@/components/EventMusic";
 import ReportQuestion from "@/components/events/ReportQuestion";
 import { cn } from "@/lib/cn";
 import { useContentLang } from "@/i18n/locale";
-import { openTutor, useTutorDetail } from "@/lib/tutorFocus";
+import { useTutorDetail } from "@/lib/tutorFocus";
 import type { Lang } from "@/lib/events/types";
 import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
@@ -22,9 +22,10 @@ export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { co
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, resume, onNavigate, lessons = false,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, resume, onNavigate, lessons = false, menuInfo,
 }: {
   lessons?: boolean;
+  menuInfo?: ReactNode;
   eventId: string;
   step: Pick<Step, "title">;
   quiz: EventQuizQuestion[];
@@ -102,6 +103,7 @@ export default function EventQuiz({
     const en=lang==='en';
     const count=quiz.filter(q=>q.lesson?.id===lesson.id).length;
     return <section className={panel} lang={lang} aria-label={en?'Study topic':'Тема для изучения'}>
+      {menuInfo && <details><summary>Меню квиза</summary>{menuInfo}</details>}
       <small>{en?'Module':'Модуль'} {lesson.module} · {lesson.lecture?(en?'Lecture ':'Лекция ')+lesson.lecture:(en?'Applied review · lectures 5–10':'Практическое повторение · лекции 5–10')}</small>
       <h2 ref={questionHeading} tabIndex={-1} className={styles.scrollTarget}>{lesson.title}</h2><p className="my-4 leading-relaxed">{lesson[lang]}</p>
       <div className="my-3 flex flex-wrap gap-4 text-sm underline"><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/theory/'+lesson.module}>{en?'Module notes':'Конспект модуля'}</a><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/lectures/'+(lesson.lecture||5)}>{en?'Lecture notes':'Лекция'}</a><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/practice/unit-'+lesson.id}>{en?'Full topic bank':'Все вопросы темы'}</a></div>
@@ -113,19 +115,8 @@ export default function EventQuiz({
   }
   return (
     <>
-      <header className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <button className="text-sm underline" onClick={onExit}>← Exit quiz</button>
-          <button className="text-sm underline" onClick={() => openTutor()}>✦ AI assistant</button>
-          <button
-            className="rounded-full border border-[var(--color-border)] px-3 py-1.5 text-sm"
-            aria-pressed={music}
-            onClick={onMusic}
-          >
-            {music ? "♪ Music: on" : "♪ Music: off"}
-          </button>
-        </div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">{step.title[tl]}</p>
+      <QuizStage menu={<>
+        {menuInfo ?? <p>{step.title[tl]}</p>}
         <div className="flex items-center gap-3">
           <div
             className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--color-surface-2)]"
@@ -139,9 +130,9 @@ export default function EventQuiz({
           </div>
           <span className="shrink-0 text-sm tabular-nums">Question {index + 1} of {quiz.length}</span>
         </div>
-      </header>
-
-      <QuizStage language={lessons?lang:undefined} questionTexts={[item.q,...item.options]}>{reviewing ? <ErrorReview candidates={missed} onCorrect={(id, selected) => {
+        <Button onClick={onExit}>← Exit quiz</Button>
+        <Button aria-pressed={music} onClick={onMusic}>{music ? "♪ Music: on" : "♪ Music: off"}</Button>
+      </>} language={lessons?lang:undefined} questionTexts={[item.q,...item.options]}>{reviewing ? <ErrorReview candidates={missed} onCorrect={(id, selected) => {
         const corrected = creditReview(quiz, answers, id, selected);
         if (corrected !== answers) { setAnswers(corrected); onAnswer?.(id, selected); }
       }} onDone={id => {

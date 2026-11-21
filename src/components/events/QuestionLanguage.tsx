@@ -23,7 +23,7 @@ function load(lang: Language) {
 const Overrides = createContext<Partial<Record<Language,Dictionary>>>({});
 export function QuestionTranslations({translations,children}:{translations:Partial<Record<Language,Dictionary>>;children:ReactNode}) {return <Overrides.Provider value={translations}>{children}</Overrides.Provider>;}
 const Context = createContext<{lang:Language; dictionary:Dictionary; loading:boolean}>({lang:'en',dictionary:{},loading:true});
-export function QuestionLanguage({ children, sourceTexts = [], language }: { children: ReactNode; sourceTexts?: string[];language?:Language }) {
+export function QuestionLanguage({ children, sourceTexts = [], language, tools }: { children: ReactNode; sourceTexts?: string[];tools?:ReactNode;language?:Language }) {
   const selected = useSyncExternalStore(subscribe, () => selectedLanguage, () => 'en' as Language);
   const lang=language??selected;
   const [dictionary,setDictionary]=useState<Dictionary>(english);
@@ -53,6 +53,7 @@ export function QuestionLanguage({ children, sourceTexts = [], language }: { chi
       <button type="button" aria-pressed={lang==='ru'} onClick={()=>selectLanguage('ru')}>Русский</button></>}
       {loading && <span role="status">{lang==='ru'?'Загрузка перевода…':'Loading translation…'}</span>}
       {failed && <button type="button" onClick={()=>setRetry(n=>n+1)}>{lang==='en'?'Translation unavailable · retry':'Перевод не загрузился · повторить'}</button>}
+      {tools}
     </div>{children}
   </Context.Provider>;
 }

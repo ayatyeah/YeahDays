@@ -157,18 +157,23 @@ function AccountQuiz({group,title,questions}:Props) {
     setAnswers(null);
     setRound(n => n+1);
   }
-  return <section className={styles.quiz} data-no-i18n>
+  const quizInfo = <>
     <Link href={term?'/events/courses/computer-networks/'+term:home}>{term?(term==='midterm'?'← Мидтерм':'← Эндтерм'):en?'← Computer Networks practice':'← Практика Computer Networks'}</Link><h1>{en?'GRIND MODE':title}</h1>
-    {grind && <div className={courseStyles.readingLanguage} role="group" aria-label="Study language">{(['ru','en'] as const).map(code=><button key={code} aria-pressed={lang===code} onClick={()=>setLang(code)}>{code==='ru'?'Русский':'English'}</button>)}</div>}
-    {grind && !takingQuiz && !answers && <p>{en?'Read a short rule, then apply it to questions on the same topic.':'Прочитай короткое правило, затем закрепи его на вопросах по той же теме.'} {group==='grind'?(en?'Budget about 1 hour for the notes, 2½–3 hours for practice, and 30–60 minutes for mistakes and breaks.':'Около часа на разборы, 2,5–3 часа на вопросы и 30–60 минут на ошибки и перерывы.'):(en?'Allow 12–18 hours for all questions.':'Ориентир на все задания — 12–18 часов.')}</p>}
     <label>{en?'Mastered':'Освоено вопросов'} · {bank.filter(q=>history[q.id]).length} / {bank.length}
       <progress className={courseStyles.meter} max={bank.length||1} value={bank.filter(q=>history[q.id]).length}/>
     </label>
     <small role="status">{en?({'Сохранение…':'Saving…','Сохранено в аккаунте':'Saved to account','Нет синхронизации. Повторите сохранение.':'Sync failed. Try again.'}[saveStatus]??''):saveStatus} {saveStatus.startsWith('Нет') && owner && <button onClick={()=>reload.current()}>{en?'Retry':'Повторить'}</button>}</small>
+  </>;
+  return <section className={styles.quiz} data-no-i18n data-network-quiz={takingQuiz || undefined}>
+    {!takingQuiz && quizInfo}
+
+    {grind && <div className={courseStyles.readingLanguage} role="group" aria-label="Study language">{(['ru','en'] as const).map(code=><button key={code} aria-pressed={lang===code} onClick={()=>setLang(code)}>{code==='ru'?'Русский':'English'}</button>)}</div>}
+    {grind && !takingQuiz && !answers && <p>{en?'Read a short rule, then apply it to questions on the same topic.':'Прочитай короткое правило, затем закрепи его на вопросах по той же теме.'} {group==='grind'?(en?'Budget about 1 hour for the notes, 2½–3 hours for practice, and 30–60 minutes for mistakes and breaks.':'Около часа на разборы, 2,5–3 часа на вопросы и 30–60 минут на ошибки и перерывы.'):(en?'Allow 12–18 hours for all questions.':'Ориентир на все задания — 12–18 часов.')}</p>}
+
     {answers ? <section aria-live="polite"><h2>{en?'Result':'Результат'} · {quiz.length-missed.length} / {quiz.length}</h2>
       <div className={styles.actions}><button className="f-button" onClick={()=>restart(null)}>{en?'Back to setup':'К настройкам'}</button>
       {!!missed.length && <button className="f-button" onClick={()=>restart(missed)}>{en?'Review mistakes':'Повторить ошибки'} · {missed.length}</button>}</div></section>
-    : quiz.length > 0 ? <EventQuiz key={round} eventId="computer-networks-final" step={{title:{ru:title,en:grind?"GRIND MODE":title}}} quiz={quiz} lang={grind?lang:"ru"} lessons={grind} music={music} onMusic={()=>setMusic(v=>!v)} resume={snapshot.attempt??undefined} onNavigate={index=>{const a=current.current.attempt;if(a)persist({...a,index});}} onFinish={values=>{setAnswers(values);const a=current.current.attempt;if(a)persist({...a,answers:values,done:true});}} onAnswer={record} onExit={()=>setErrorsOnly(null)} explainOptionsOpen/> : <section className={setup.panel}>
+    : quiz.length > 0 ? <EventQuiz key={round} menuInfo={quizInfo} eventId="computer-networks-final" step={{title:{ru:title,en:grind?"GRIND MODE":title}}} quiz={quiz} lang={grind?lang:"ru"} lessons={grind} music={music} onMusic={()=>setMusic(v=>!v)} resume={snapshot.attempt??undefined} onNavigate={index=>{const a=current.current.attempt;if(a)persist({...a,index});}} onFinish={values=>{setAnswers(values);const a=current.current.attempt;if(a)persist({...a,answers:values,done:true});}} onAnswer={record} onExit={()=>setErrorsOnly(null)} explainOptionsOpen/> : <section className={setup.panel}>
       {snapshot.attempt && loaded===cache && <button className="f-button" onClick={()=>{
         const a=snapshot.attempt!;
         const pool=a.ids.map(id=>bank.find(q=>q.id===id)).filter((q):q is EventQuizQuestion=>!!q);
@@ -187,7 +192,7 @@ function AccountQuiz({group,title,questions}:Props) {
       <button className="f-button" disabled={!pool.length || !Number.isInteger(Number(limit)) || Number(limit)<1 || status==="loading" || !owner || loaded!==cache} onClick={start}>{snapshot.attempt?(en?"Start again":"Начать новую попытку"):(en?"Start":grind?"Начать GRIND MODE":"Начать квиз")}</button></div>
       {!pool.length && <p>В этой подборке пока нет вопросов. Выбери весь банк.</p>}
     </section>}
-    {takingQuiz && session?.user?.id && <Tutor event={{id:'computer-networks-final'}} userId={session.user.id} showLauncher={false}/>}
+    {takingQuiz && session?.user?.id && <Tutor event={{id:'computer-networks-final'}} userId={session.user.id}/>}
     {!quiz.length && !!reference.length && <details><summary>Задания для самостоятельного разбора · {reference.length}</summary>{reference.map(q=><article key={q.id}><h3>{q.q}</h3><ul>{q.options.map((o,i)=><li key={i}>{o}</li>)}</ul><p>{q.caution}</p><p>{q.why.ru}</p></article>)}</details>}
   </section>;
 }

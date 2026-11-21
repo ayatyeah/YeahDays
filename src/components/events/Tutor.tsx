@@ -441,7 +441,7 @@ export default function Tutor({ event, userId, showLauncher = true }: { event: P
           <>
             <motion.div
               key="backdrop"
-              className="fixed inset-0 z-[69] bg-black/40 sm:hidden"
+              className="fixed inset-0 z-[90] bg-black/40 sm:hidden"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -457,7 +457,7 @@ export default function Tutor({ event, userId, showLauncher = true }: { event: P
               exit={{ y: 40, opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 340 }}
               style={mobile && vv ? { bottom: vv.bottom, height: Math.min(vv.height - 8, Math.round(vv.height * 0.92)) } : undefined}
-              className="g-tutor-window fixed inset-x-0 bottom-0 z-[70] flex h-[88dvh] flex-col overflow-hidden rounded-t-3xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:h-[min(720px,calc(100dvh-2rem))] sm:w-[420px] sm:rounded-3xl"
+              className="g-tutor-window fixed inset-x-0 bottom-0 z-[91] flex h-[88dvh] flex-col overflow-hidden rounded-t-3xl border border-[var(--color-border-strong)] bg-[var(--color-surface)] shadow-2xl sm:inset-x-auto sm:bottom-4 sm:right-4 sm:h-[min(720px,calc(100dvh-2rem))] sm:w-[420px] sm:rounded-3xl"
             >
               <header className="flex items-start gap-3 border-b border-[var(--color-border)] px-4 pb-3 pt-3">
                 <div aria-hidden className="g-tutor-mark mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-sky-500 text-white">✦</div>
@@ -501,7 +501,7 @@ export default function Tutor({ event, userId, showLauncher = true }: { event: P
                 </div>
               </details>
 
-              <div ref={scroller} className="flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4 text-[14.5px] leading-relaxed">
+              <div ref={scroller} className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-4 py-4 text-[14.5px] leading-relaxed">
                 {messages.length === 0 && (
                   <div className="space-y-3 pt-2">
                     <p className="text-[15px]">Я вижу, что у тебя открыто, и помогу с подготовкой: объясню проще, подскажу шаг, проверю ответ или устрою мини-опрос.</p>
@@ -551,7 +551,7 @@ export default function Tutor({ event, userId, showLauncher = true }: { event: P
                 {available === false && <p role="status" className="rounded-2xl bg-[var(--color-surface-2)] px-3 py-2 text-sm">ИИ ещё не подключён — помощник заработает, как только его включат.</p>}
               </div>
 
-              <footer className="space-y-2 border-t border-[var(--color-border)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
+              <footer className="shrink-0 space-y-2 border-t border-[var(--color-border)] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2">
                 {messages.length > 0 && (
                   <div className="-mx-3 flex gap-2 overflow-x-auto px-3 pb-0.5 [scrollbar-width:none]">
                     {tips.map((t) => (

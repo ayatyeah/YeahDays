@@ -6,7 +6,7 @@ import { denVideos, youtubeVideoId } from '@/lib/events/denVideos';
 import styles from './quiz-stage.module.css';
 
 /** Video stays mounted across questions; it never downloads before opting in. */
-export default function QuizStage({ children, questionTexts, language }: { children: ReactNode; questionTexts?: string[];language?:"ru"|"en" }) {
+export default function QuizStage({ children, questionTexts, language, menu }: { children: ReactNode; questionTexts?: string[];menu?:ReactNode;language?:"ru"|"en" }) {
   const [enabled, setEnabled] = useState(false);
   const [source, setSource] = useState(denVideos[0].id);
   const [custom, setCustom] = useState('');
@@ -29,8 +29,9 @@ export default function QuizStage({ children, questionTexts, language }: { child
     if (video.current) observer.observe(video.current);
     return () => { observer.disconnect(); resume.current = false; document.removeEventListener('visibilitychange', visibility); };
   }, [enabled, source]);
+  const toggle = <button type="button" aria-pressed={enabled} aria-controls={id} onClick={() => { setFailed(false); setEnabled(value => !value); }}>▸ DenMode{enabled ? ' · вкл' : ''}</button>;
   const content = <div className={styles.stage}>
-    <div className={styles.toolbar}><button type="button" aria-pressed={enabled} aria-controls={id} onClick={() => { setFailed(false); setEnabled(value => !value); }}>▸ DenMode{enabled ? ' · вкл' : ''}</button></div>
+    {!menu && <div className={styles.toolbar}>{toggle}</div>}
     <div className={enabled ? `${styles.split} ${source !== 'local' ? styles.youtubeSplit : ''}` : styles.solo}>
       <div className={styles.question}>{children}</div>
       {enabled && <aside id={id} className={styles.player} aria-label="DenMode — залипалка">
@@ -42,5 +43,5 @@ export default function QuizStage({ children, questionTexts, language }: { child
       </aside>}
     </div>
   </div>;
-  return <QuestionLanguage sourceTexts={questionTexts} language={language}>{content}</QuestionLanguage>;
+  return <QuestionLanguage sourceTexts={questionTexts} language={language} tools={menu && <details data-quiz-menu className={styles.menu}><summary>Меню квиза</summary><div>{menu}{toggle}</div></details>}>{content}</QuestionLanguage>;
 }

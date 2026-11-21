@@ -22,5 +22,13 @@
   .navigation { bottom: var(--g-reader-control-bottom, calc(16px + env(safe-area-inset-bottom))); }
 }
 
-/* The quiz toolbar exposes the assistant while the answer navigation owns this space. */
-:global(body):has(.navigation) :global(.p-global-assistant) { display: none; }
+
+
+:global(body):has([data-network-quiz=true],[data-quiz-menu]) :global(.g-tutor-launch) {
+  display:flex; width:48px; height:48px; min-height:48px; padding:0; justify-content:center; border-radius:50%;
+}
+:global(body):has([data-network-quiz=true],[data-quiz-menu]) :global(.g-tutor-launch span:last-child) { display:none; }
+:global(body):has([data-network-quiz=true],[data-quiz-menu]):has(:global(.g-tutor-launch),:global(.g-tutor-window)) :global(.p-global-assistant) { display:none; }
+@media(max-width:900px) {
+  :global(body):has([data-network-quiz=true],[data-quiz-menu]) :global(.g-tutor-launch) { bottom:calc(var(--g-reader-control-bottom, 16px) + 70px); }
+}

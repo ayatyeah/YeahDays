@@ -1,0 +1,598 @@
+[
+  {
+    "ids": [
+      "module-01-4"
+    ],
+    "ru": "NIC — адаптер самого хоста. Через него биты попадают из компьютера в кабель или радиоканал.",
+    "en": "The NIC is the host adapter that transfers bits between the computer and its wired or wireless link."
+  },
+  {
+    "ids": [
+      "module-01-5"
+    ],
+    "ru": "У роутера отдельный интерфейс обслуживает отдельный канал или сеть. Через него устройство принимает и пересылает пакеты.",
+    "en": "A router interface attaches the router to a particular link or network and carries incoming and outgoing packets."
+  },
+  {
+    "ids": [
+      "module-01-6",
+      "module-06-7",
+      "module-06-19"
+    ],
+    "ru": "Логическая схема показывает связь устройств, адреса и путь данных. Физическая показывает помещения, стойки и прокладку кабеля.",
+    "en": "A logical diagram shows connections, addresses and data paths. A physical diagram locates racks, rooms and cable runs."
+  },
+  {
+    "ids": [
+      "module-01-7"
+    ],
+    "ru": "Чтобы найти кабель или стойку, нужны реальные места установки. Их отображает physical topology.",
+    "en": "A technician looking for a cable run needs installation locations, which a physical topology diagram provides."
+  },
+  {
+    "ids": [
+      "module-01-9",
+      "module-01-22"
+    ],
+    "ru": "Партнёрам дают доступ только к выбранным внутренним ресурсам. Для такого внешнего доступа используют extranet; intranet служит сотрудникам.",
+    "en": "An extranet shares selected internal resources with outside partners. An intranet serves the organization's own users."
+  },
+  {
+    "ids": [
+      "module-01-15"
+    ],
+    "ru": "Для конференции между городами нужны звук и изображение в реальном времени. Эту задачу решает видеосвязь.",
+    "en": "Video conferencing carries live sound and images between participants in different locations."
+  },
+  {
+    "ids": [
+      "module-01-16",
+      "module-01-23",
+      "module-01-32"
+    ],
+    "ru": "В условии важно, кому принадлежит устройство. Если сотрудник подключает личный ноутбук к рабочим ресурсам, это BYOD.",
+    "en": "Look for device ownership. Connecting a personally owned laptop to workplace resources is bring your own device."
+  },
+  {
+    "ids": [
+      "module-01-17"
+    ],
+    "ru": "Public, private и hybrid описывают, кто предоставляет облачную инфраструктуру и кто может ей пользоваться.",
+    "en": "Public, private and hybrid describe cloud deployment and who operates or can use the infrastructure."
+  },
+  {
+    "ids": [
+      "module-01-18"
+    ],
+    "ru": "Powerline накладывает сигнал данных на существующую электропроводку. Поэтому ключевая подсказка — электрическая розетка.",
+    "en": "Powerline adapters carry a data signal over existing electrical wiring. The clue is the wall power outlet."
+  },
+  {
+    "ids": [
+      "module-01-19",
+      "module-01-25",
+      "module-01-30"
+    ],
+    "ru": "Если нет кабеля до здания, последнюю милю можно пройти по радио. WISP использует беспроводный канал до провайдера, cellular — сотовую сеть, satellite — спутниковую линию.",
+    "en": "Without a cable to the building, the last mile can use radio. A WISP provides wireless access, cellular uses a mobile network, and satellite uses a satellite link."
+  },
+  {
+    "ids": [
+      "module-01-24",
+      "module-01-31",
+      "module-01-34"
+    ],
+    "ru": "Интернет связывает сети разных организаций по всему миру. ISP подключает сеть абонента к этой системе, поэтому локальной LAN самой по себе для доступа к внешнему магазину мало.",
+    "en": "The Internet interconnects independently operated networks. An ISP connects a subscriber to it, allowing a home LAN to reach an external store."
+  },
+  {
+    "ids": [
+      "module-01-20",
+      "module-01-21"
+    ],
+    "ru": "Шпионская программа скрытно собирает сведения. Virus, worm и Trojan — формы вредоносного ПО; для выбора ищи в условии, что делает программа.",
+    "en": "Spyware secretly gathers information. Viruses, worms and Trojans are forms of malware; identify the behavior described."
+  },
+  {
+    "ids": [
+      "module-02-18"
+    ],
+    "ru": "Shell принимает команды пользователя и передаёт запросы ядру. Ядро управляет ресурсами, а оболочка предоставляет интерфейс.",
+    "en": "The shell accepts user commands and requests services from the kernel. The kernel manages resources; the shell provides the interface."
+  },
+  {
+    "ids": [
+      "module-03-2"
+    ],
+    "ru": "Formatting задаёт расположение полей, в том числе адресов отправителя и получателя. Encoding определяет представление уже сформированного сообщения.",
+    "en": "Formatting places sender and receiver addresses in defined fields. Encoding represents the resulting message for transmission."
+  },
+  {
+    "ids": [
+      "module-03-3",
+      "test-exam_0-20"
+    ],
+    "ru": "Timing отвечает на три вопроса: когда можно передавать, как быстро и сколько ждать ответ. Отсюда access method, flow control и response timeout.",
+    "en": "Timing governs when to send, how fast to send and how long to wait: access method, flow control and response timeout."
+  },
+  {
+    "ids": [
+      "module-03-15",
+      "module-03-16",
+      "module-03-18",
+      "module-03-29",
+      "test-exam_0-24",
+      "test-exam_7-3"
+    ],
+    "ru": "Открытая спецификация позволяет разным производителям создать совместимые устройства. IETF разрабатывает интернет-протоколы в RFC, IEEE — стандарты LAN, EIA — электрические соединения. Proprietary означает, что спецификацию контролирует владелец.",
+    "en": "Published standards enable interoperability. IETF develops Internet protocols in RFCs, IEEE develops LAN standards, and EIA covers electrical connections. A proprietary specification is controlled by its owner."
+  },
+  {
+    "ids": [
+      "module-03-27"
+    ],
+    "ru": "В начале заголовка Ethernet сначала стоит destination MAC, затем source MAC. Коммутатор может начать поиск выходного порта, как только прочитает адрес назначения.",
+    "en": "The Ethernet header places destination MAC before source MAC. A switch can start its forwarding lookup as soon as it reads the destination."
+  },
+  {
+    "ids": [
+      "module-03-33",
+      "module-03-36"
+    ],
+    "ru": "Каждый слой предоставляет услугу следующему через определённый интерфейс. Его единица обмена называется PDU. Разделение функций позволяет менять реализацию слоя, сохраняя интерфейс.",
+    "en": "Each layer provides a service through a defined interface. Its unit of exchange is a PDU. Implementations can change independently while preserving that interface."
+  },
+  {
+    "ids": [
+      "module-03-34",
+      "test-exam_0-26",
+      "test-exam_7-41"
+    ],
+    "ru": "Устройства должны одинаково понимать формат, кодирование, допустимый размер и способ доставки. Протокол задаёт эти правила, чтобы получатель смог разобрать сообщение.",
+    "en": "Devices must agree on format, encoding, size and delivery. A protocol defines these rules so a receiver can interpret a message."
+  },
+  {
+    "ids": [
+      "module-04-1",
+      "module-04-5",
+      "module-04-6",
+      "module-04-7",
+      "test-exam_1-32"
+    ],
+    "ru": "Физический уровень реализуется в любой среде: медь переносит электрические импульсы, оптоволокно — свет, беспроводная сеть — радиоволны. Сопоставь вид сигнала со средой.",
+    "en": "The physical layer works over copper with electrical signals, fiber with light, and wireless with radio. Match the signal type to the medium."
+  },
+  {
+    "ids": [
+      "module-04-2"
+    ],
+    "ru": "Кадр занимает на линии несколько интервалов передачи. Например, 1000 бит при 1 Мбит/с занимают примерно 1 мс. Приёмник восстанавливает биты из последовательности сигналов, поэтому весь кадр не приходит одновременно.",
+    "en": "A frame occupies the link for multiple signaling intervals. At 1 Mbps, 1,000 bits take about 1 ms. The receiver recovers bits from successive signals, so the whole frame does not arrive at once."
+  },
+  {
+    "ids": [
+      "module-04-3",
+      "module-04-4",
+      "test-exam_0-19",
+      "test-exam_1-4",
+      "module-04-24"
+    ],
+    "ru": "На отправителе Layer 2 формирует кадр, а Layer 1 кодирует его биты в сигналы среды. На приёмнике порядок обратный: из сигналов восстанавливаются биты для канального уровня.",
+    "en": "Layer 2 builds a frame; Layer 1 encodes its bits into signals. On reception the direction reverses: signals yield bits for the data link layer."
+  },
+  {
+    "ids": [
+      "module-04-10",
+      "module-04-13"
+    ],
+    "ru": "У коаксиала центральная жила окружена изоляцией и внешним проводником. BNC, N и F — разъёмы такого кабеля, который часто ведёт к антенне.",
+    "en": "Coax surrounds a central conductor with insulation and an outer conductor. BNC, N and F connectors terminate coax, often on antenna feeds."
+  },
+  {
+    "ids": [
+      "module-04-14",
+      "module-04-15",
+      "module-04-16",
+      "module-04-17",
+      "module-04-18",
+      "module-04-19"
+    ],
+    "ru": "В multimode свет идёт несколькими путями и импульс расплывается с расстоянием. Его используют на коротких линиях кампуса. У single-mode узкий сердечник и лазерный источник, что подходит для дальних магистралей. Дальность зависит от оптики.",
+    "en": "Multimode light follows multiple paths, spreading a pulse over distance, so it suits shorter campus links. Single-mode has a narrow core and uses lasers for long links. Actual reach depends on the optics."
+  },
+  {
+    "ids": [
+      "module-04-20",
+      "module-04-21",
+      "test-exam_7-19"
+    ],
+    "ru": "Wi-Fi применяется в офисах, но устройства делят радиоэфир. На одном обычном канале станция передаёт и принимает по очереди. При проектировании учитывают покрытие, помехи и защиту доступа.",
+    "en": "Wi-Fi works in enterprises, but stations share airtime. On a conventional channel a station takes turns transmitting and receiving. Design for coverage, interference and access security."
+  },
+  {
+    "ids": [
+      "module-05-3",
+      "module-05-19"
+    ],
+    "ru": "202 = 12×16+10. В hex это CA; C даёт 1100, A даёт 1010. Объединяем в 11001010.",
+    "en": "202 = 12×16+10, hence CA. C is 1100 and A is 1010, giving 11001010."
+  },
+  {
+    "ids": [
+      "module-05-4",
+      "module-05-5",
+      "module-05-6",
+      "module-05-15",
+      "module-05-17",
+      "module-05-18"
+    ],
+    "ru": "Первая hex-цифра имеет вес 16, вторая — 1. FE = 15×16+14 = 254; A9 = 169; 7D = 125; 3F = 63; C9 = 201. Допустимы цифры 0–9 и буквы A–F.",
+    "en": "The first hex digit has weight 16 and the second weight 1. FE is 254, A9 is 169, 7D is 125, 3F is 63 and C9 is 201. Only 0–9 and A–F are hex digits."
+  },
+  {
+    "ids": [
+      "module-05-10",
+      "module-05-14"
+    ],
+    "ru": "Для 232 нужны веса 128+64+32+8, значит биты 11101000. Обратный пример: в 10010101 установлены 128+16+4+1 = 149.",
+    "en": "232 uses weights 128+64+32+8, producing 11101000. Conversely 10010101 sets 128+16+4+1, giving 149."
+  },
+  {
+    "ids": [
+      "module-06-5",
+      "module-06-8",
+      "module-06-9",
+      "module-06-21",
+      "module-06-27",
+      "test-exam_1-11",
+      "test-exam_6-15"
+    ],
+    "ru": "В звезде все линии сходятся в центре, в extended star связаны несколько звёзд. В mesh несколько путей, а partial mesh связывает напрямую лишь часть пар узлов. Hub-and-spoke часто соединяет филиалы WAN.",
+    "en": "A star connects all links to a center. An extended star links multiple stars. A mesh provides alternate paths; a partial mesh directly links only some pairs. Hub-and-spoke often connects WAN branches."
+  },
+  {
+    "ids": [
+      "module-06-6",
+      "module-06-18",
+      "module-06-15"
+    ],
+    "ru": "IEEE 802 описывает LAN: 802.3 — Ethernet, 802.11 — Wi-Fi. PPP тоже задаёт канальный обмен на point-to-point линии. Сетевой IP-пакет можно переносить поверх разных канальных стандартов.",
+    "en": "IEEE 802 covers LANs: 802.3 is Ethernet and 802.11 Wi-Fi. PPP also defines link-layer communication on point-to-point links. The same IP packet can cross different link protocols."
+  },
+  {
+    "ids": [
+      "module-06-16",
+      "module-06-17",
+      "module-07-12",
+      "module-07-22"
+    ],
+    "ru": "Ethernet использует 48-битный MAC интерфейса. В глобально назначенном адресе первые три байта обычно содержат OUI производителя. IP относится к другому уровню и назначается отдельно.",
+    "en": "Ethernet uses the interface's 48-bit MAC. In globally assigned addresses the first three bytes normally contain the vendor OUI. IP belongs to a different layer and is assigned separately."
+  },
+  {
+    "ids": [
+      "module-06-11",
+      "module-06-20",
+      "module-06-24",
+      "module-06-29",
+      "test-exam_1-10",
+      "test-exam_6-16",
+      "test-exam_7-20"
+    ],
+    "ru": "На общем Ethernet с хабом станции слушают среду и обнаруживают коллизии (CSMA/CD). На full-duplex порту коммутатора коллизий нет. Wi-Fi делит эфир и использует CSMA/CA для уменьшения вероятности коллизии.",
+    "en": "Shared hub Ethernet listens before sending and detects collisions with CSMA/CD. A full-duplex switch port has no collisions. Wi-Fi shares airtime and uses CSMA/CA to reduce collision probability."
+  },
+  {
+    "ids": [
+      "module-07-1",
+      "module-07-18",
+      "module-07-23",
+      "test-exam_1-12",
+      "test-exam_6-52"
+    ],
+    "ru": "Если данных мало, Ethernet добавляет padding в поле data до минимальных 64 байт кадра. Слишком короткий кадр называют runt, чрезмерно длинный — giant. Аномальные размеры служат поводом проверить NIC и согласование линии.",
+    "en": "Padding in the data field brings short Ethernet frames to the 64-byte minimum. An undersized frame is a runt and an oversized one a giant. Abnormal sizes warrant checking NIC and link settings."
+  },
+  {
+    "ids": [
+      "module-07-5",
+      "module-07-6",
+      "module-07-17",
+      "module-06-23",
+      "test-exam_1-15",
+      "test-exam_6-55",
+      "test-exam_7-55"
+    ],
+    "ru": "LLC — граница между сетевыми протоколами и канальным уровнем. Благодаря этому IPv4 и IPv6 используют одну технологию LAN. MAC отвечает за доступ к среде и работу с кадрами.",
+    "en": "LLC interfaces between network protocols and the data link layer, letting IPv4 and IPv6 share one LAN technology. MAC handles media access and framing."
+  },
+  {
+    "ids": [
+      "module-07-10",
+      "test-exam_1-17",
+      "test-exam_1-18",
+      "test-exam_1-20",
+      "test-exam_1-22",
+      "test-exam_1-23",
+      "test-exam_1-25",
+      "test-exam_6-53",
+      "test-exam_7-24"
+    ],
+    "ru": "Store-and-forward ждёт конец кадра и проверяет FCS до пересылки. Cut-through начинает пересылать раньше. Fast-forward начинает после адреса назначения, fragment-free ждёт первые 64 байта. Более низкая задержка означает, что ошибка может уйти дальше.",
+    "en": "Store-and-forward waits for the whole frame and checks FCS. Cut-through starts earlier: fast-forward after the destination address, fragment-free after the first 64 bytes. Lower delay can let a corrupt frame propagate."
+  },
+  {
+    "ids": [
+      "module-07-20",
+      "test-exam_1-26"
+    ],
+    "ru": "Auto-MDIX автоматически меняет роли передающих и принимающих пар. Поэтому современные порты работают с прямым и перекрёстным кабелем. Скорость и дуплекс согласуются отдельно.",
+    "en": "Auto-MDIX exchanges transmit and receive pair roles automatically, allowing straight-through or crossover cables. Speed and duplex are negotiated separately."
+  },
+  {
+    "ids": [
+      "module-17-1",
+      "module-17-2",
+      "module-17-29"
+    ],
+    "ru": "Малых предприятий много, а их бюджет обычно ограничен. Сравнивая устройства с нужными функциями, учитывай стоимость покупки и эксплуатации.",
+    "en": "Small businesses are numerous and commonly budget-constrained. Among devices meeting the requirements, compare purchase and operating costs."
+  },
+  {
+    "ids": [
+      "module-17-9",
+      "module-17-10",
+      "test-exam_7-38"
+    ],
+    "ru": "Wireshark показывает протоколы и пакеты на наблюдаемом канале. Windows Data Usage показывает потребление по приложениям. Для характерной нагрузки измеряй в рабочие и пиковые периоды.",
+    "en": "Wireshark analyzes captured packets and protocols. Windows Data Usage reports usage by application. Sample normal and peak periods to characterize demand."
+  },
+  {
+    "ids": [
+      "module-17-13",
+      "module-17-14",
+      "module-17-20",
+      "test-exam_5-16",
+      "test-exam_5-20"
+    ],
+    "ru": "IOS по умолчанию выводит debug на консоль. В удалённой VTY-сессии terminal monitor включает показ сообщений. No debug ip icmp отключает конкретную диагностику, undebug all — всю.",
+    "en": "IOS sends debug output to the console by default. Terminal monitor displays messages in a remote VTY session. No debug ip icmp stops that debug, and undebug all stops all debugging."
+  },
+  {
+    "ids": [
+      "module-17-12"
+    ],
+    "ru": "Если замена коммутатора требует согласования или выходит за полномочия техника, передай заявку ответственному вместе с результатами проверок.",
+    "en": "If replacement exceeds the technician's authority, escalate the ticket with the evidence so the responsible manager can approve the change."
+  },
+  {
+    "ids": [
+      "module-17-27",
+      "test-exam_5-23"
+    ],
+    "ru": "Show interfaces показывает счётчики ошибок и параметры линии для проверки duplex mismatch. Show cdp neighbors detail описывает непосредственно подключённые Cisco-устройства и их интерфейсы.",
+    "en": "Show interfaces exposes link settings and error counters for investigating a duplex mismatch. Show cdp neighbors detail identifies directly attached Cisco devices and interfaces."
+  },
+  {
+    "ids": [
+      "test-exam_0-32"
+    ],
+    "ru": "SOHO — small office/home office: небольшая сеть домашнего или удалённого офиса с общим доступом к Интернету и ресурсам.",
+    "en": "SOHO means small office/home office, a small home or branch network sharing connectivity and resources."
+  },
+  {
+    "ids": [
+      "test-exam_1-31",
+      "test-exam_7-60",
+      "test-exam_7-54"
+    ],
+    "ru": "Attenuation — ослабление сигнала с расстоянием. Плохой обжим и разъёмы дополнительно ухудшают сигнал. Crosstalk означает наводку от соседней пары, что является другим эффектом.",
+    "en": "Attenuation is loss of signal strength with distance. Poor termination and connectors also degrade signals. Crosstalk instead comes from a neighboring pair."
+  },
+  {
+    "ids": [
+      "module-01-8",
+      "module-01-10"
+    ],
+    "ru": "LAN обычно управляется одной организацией на ограниченной территории. WAN соединяет удалённые площадки через сеть оператора. Смотри на расстояние и границу управления.",
+    "en": "A LAN normally has one administrator and a limited geographic scope. A WAN connects distant sites across a provider network. Identify the scale and ownership."
+  },
+  {
+    "ids": [
+      "module-01-11",
+      "module-01-26",
+      "module-01-28"
+    ],
+    "ru": "Новые узлы должны добавляться без существенного ухудшения обслуживания существующих. Совместимые стандарты и модульное расширение дают именно такую scalability.",
+    "en": "Scalability lets a network add users without materially degrading existing service. Standard interfaces and modular expansion make growth possible."
+  },
+  {
+    "ids": [
+      "module-01-14",
+      "module-01-27",
+      "module-17-4",
+      "module-17-15",
+      "module-17-24",
+      "test-exam_5-19",
+      "test-exam_6-49"
+    ],
+    "ru": "При разрыве единственного пути связь прекращается. Независимый второй путь или провайдер сохраняет доставку, что даёт fault tolerance. Два кабеля через одно отказавшее устройство проблему не решат.",
+    "en": "Failure of the only path breaks connectivity. An independent alternate path or provider preserves service. Two links through the same failed device cannot provide that protection."
+  },
+  {
+    "ids": [
+      "module-01-13",
+      "module-17-5",
+      "module-17-17",
+      "module-17-22",
+      "test-exam_5-17",
+      "test-exam_7-2"
+    ],
+    "ru": "Очередь создаёт задержку и jitter. QoS сначала обслуживает чувствительные к ним голос и видео. Файлы и обычные веб-страницы обычно могут ждать; приоритет не увеличивает физическую скорость линии.",
+    "en": "Queues introduce delay and jitter. QoS schedules time-sensitive voice and video ahead of delay-tolerant traffic. It does not increase physical link speed."
+  },
+  {
+    "ids": [
+      "module-01-35",
+      "test-exam_6-2"
+    ],
+    "ru": "End devices создают и принимают пользовательские данные. Intermediary devices обслуживают обмен между ними: коммутируют, маршрутизируют, контролируют доступ или проверяют транзитный трафик.",
+    "en": "End devices originate or consume user data. Intermediary devices enable the exchange by switching, routing, managing access or inspecting traffic in transit."
+  },
+  {
+    "ids": [
+      "module-03-1",
+      "module-03-31",
+      "module-03-40"
+    ],
+    "ru": "Encoding представляет информацию согласованным кодом, пригодным для передачи. На принимающей стороне обратное преобразование называется decoding. Например, один и тот же символ обе стороны читают по одной таблице кодирования.",
+    "en": "Encoding represents information in a mutually understood transmission format. Decoding reverses it at the receiver. A character can be recovered when both ends use the same encoding."
+  },
+  {
+    "ids": [
+      "module-03-11",
+      "module-03-21",
+      "module-03-22",
+      "module-03-42",
+      "test-exam_0-17"
+    ],
+    "ru": "На стороне отправителя каждый нижний уровень вкладывает данные предыдущего в свою PDU. Ethernet помещает IP-пакет внутрь кадра. Добавление служебных полей называется encapsulation.",
+    "en": "Each lower layer carries the upper layer's data inside its own PDU. Ethernet encloses an IP packet in a frame. Adding these protocol fields is encapsulation."
+  },
+  {
+    "ids": [
+      "module-04-8",
+      "module-04-9",
+      "test-exam_6-13",
+      "test-exam_1-6"
+    ],
+    "ru": "Bandwidth описывает ёмкость канала. Throughput измеряет реально доставленные биты в секунду и зависит от загрузки, задержек и типа трафика. Goodput учитывает только полезные данные приложения.",
+    "en": "Bandwidth is link capacity. Throughput measures actual bits transferred per second and depends on traffic load, delay and traffic mix. Goodput counts application payload only."
+  },
+  {
+    "ids": [
+      "module-04-11",
+      "module-04-12",
+      "test-exam_1-1",
+      "test-exam_1-2",
+      "test-exam_7-8"
+    ],
+    "ru": "Ток в соседней паре создаёт электромагнитное поле и может навести помеху — crosstalk. UTP снижает эффект скруткой проводов. STP дополнительно использует экран против внешних помех.",
+    "en": "Current in an adjacent pair can induce noise called crosstalk. UTP reduces pickup by twisting the conductors. STP adds shielding against interference."
+  },
+  {
+    "ids": [
+      "module-04-22",
+      "module-04-23",
+      "test-exam_7-47"
+    ],
+    "ru": "Zigbee рассчитан на датчики с малым энергопотреблением и редкими короткими сообщениями. Bluetooth образует персональную сеть PAN, например между телефоном и гарнитурой.",
+    "en": "Zigbee suits low-power sensors sending short, infrequent messages. Bluetooth provides personal-area links such as a phone and a headset."
+  },
+  {
+    "ids": [
+      "module-05-7"
+    ],
+    "ru": "173 = 128 + 32 + 8 + 4 + 1. Поставь единицы под этими весами октета: 10101101.",
+    "en": "173 equals 128 + 32 + 8 + 4 + 1. Set those positions in an octet to get 10101101."
+  },
+  {
+    "ids": [
+      "module-06-1",
+      "module-06-2",
+      "module-06-3",
+      "module-06-25",
+      "module-07-7",
+      "module-07-24",
+      "test-exam_1-14",
+      "test-exam_1-33",
+      "test-exam_6-17",
+      "test-exam_7-32"
+    ],
+    "ru": "Data link — уровень 2. В модели IEEE 802 он разделён на LLC для взаимодействия с верхним уровнем и MAC для доступа к среде и формирования кадров. Это позволяет IP работать поверх разных каналов.",
+    "en": "Data link is Layer 2. IEEE 802 divides it into LLC for upper-layer interaction and MAC for framing and media access. This allows IP to run over different links."
+  },
+  {
+    "ids": [
+      "module-06-10",
+      "module-06-22"
+    ],
+    "ru": "Half duplex позволяет обмен в обе стороны, но в каждый момент передаёт только одна сторона. Full duplex использует независимые направления и допускает одновременную передачу.",
+    "en": "Half duplex supports both directions but only one transmitter at a time. Full duplex has independent directions and can transmit simultaneously."
+  },
+  {
+    "ids": [
+      "module-06-12",
+      "module-06-26",
+      "module-06-28",
+      "test-exam_1-8",
+      "test-exam_1-9",
+      "test-exam_1-13"
+    ],
+    "ru": "Канальный протокол окружает пакет заголовком и концевиком. В Ethernet заголовок содержит destination/source MAC, в конце стоит FCS. У других канальных протоколов набор полей отличается.",
+    "en": "A link protocol encloses the packet in a header and trailer. Ethernet places destination/source MAC in the header and FCS in the trailer. Other link protocols use different field layouts."
+  },
+  {
+    "ids": [
+      "module-06-13",
+      "module-07-2",
+      "module-07-14",
+      "test-exam_1-7",
+      "test-exam_1-24",
+      "test-exam_6-54"
+    ],
+    "ru": "Отправитель вычисляет CRC по кадру и записывает значение в FCS. Получатель вычисляет CRC заново. Несовпадение означает ошибку: кадр отбрасывается, FCS сам данные не исправляет.",
+    "en": "The sender stores a CRC in FCS. The receiver recalculates it. A mismatch signals corruption, so the frame is discarded; FCS does not repair the data."
+  },
+  {
+    "ids": [
+      "module-07-3",
+      "module-07-4",
+      "module-07-11"
+    ],
+    "ru": "В Ethernet преамбула синхронизирует приём, SFD отмечает начало, MAC-адреса идентифицируют интерфейсы, а EtherType указывает вложенный протокол. Стандарты Ethernet выпускает IEEE 802.3.",
+    "en": "In Ethernet the preamble synchronizes reception, SFD marks the start, MAC addresses identify interfaces and EtherType identifies the payload protocol. IEEE 802.3 defines Ethernet."
+  },
+  {
+    "ids": [
+      "module-10-3"
+    ],
+    "ru": "Защищается переход к привилегированным командам enable. Enable secret задаёт проверяемый по хешу секрет; пароль консольной линии относится ко входу через другой интерфейс.",
+    "en": "The requested protection concerns privileged EXEC access. Enable secret configures a hashed secret; a console line password protects a different access point."
+  },
+  {
+    "ids": [
+      "module-17-3",
+      "module-17-8",
+      "module-17-16",
+      "module-17-21"
+    ],
+    "ru": "До расширения зафиксируй адресный план, соединения и загрузку. Документация показывает, где добавить устройства, бюджет определяет доступное оборудование, а модульные шасси позволяют добавить порты.",
+    "en": "Before expansion record addressing, connections and load. Documentation identifies where to add devices, budget constrains purchases, and modular hardware allows additional ports."
+  },
+  {
+    "ids": [
+      "module-17-11",
+      "module-17-25",
+      "test-exam_7-26"
+    ],
+    "ru": "Baseline — измерения исправной сети в разные периоды. Сравнение с ними помогает выдвинуть гипотезу; затем её проверяют измерением, прежде чем менять конфигурацию.",
+    "en": "A baseline samples normal performance over time. Compare current readings, propose a cause, then test that hypothesis before changing configuration."
+  },
+  {
+    "ids": [
+      "test-exam_1-3",
+      "test-exam_1-27",
+      "test-exam_6-14"
+    ],
+    "ru": "Оптоволокно передаёт свет по диэлектрику, поэтому нечувствительно к EMI и не проводит ток между зданиями. Оно поддерживает длинные высокоскоростные линии, но требует оптики и более дорогого монтажа.",
+    "en": "Fiber carries light in a dielectric, so EMI does not induce current and buildings remain electrically isolated. It supports long high-speed runs but requires optical equipment and costlier installation."
+  },
+  {
+    "ids": [
+      "test-exam_7-37"
+    ],
+    "ru": "Сопоставь три детали: учётные данные — security, сохранение соединения при отказе — fault tolerance, приоритет трафика с ограничением задержки — QoS.",
+    "en": "Match each clue separately: credentials indicate security, surviving a failure indicates fault tolerance, and prioritizing delay-sensitive traffic indicates QoS."
+  }
+]

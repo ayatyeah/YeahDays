@@ -1,24 +1,23 @@
+import {endtermPaper,endtermRelated} from './endterm';
+import {midtermPaper,midtermRelated} from './midterm';
 import {families,sprints} from './sprints';
-import archive from './archive.json';
+import {archiveBank,compactBank,grindBank,grindUnits,forUnit} from './grind';
 import bank from './practice.json';
-import { conceptFor } from './concepts';
 import sets from './sets.json';
 import sources from './sources.json';
 import type { EventQuizQuestion } from '@/components/events/EventQuiz';
 
-const archives: Record<string, typeof archive['module-01']> = archive;
 const bilingual = (ru: string, en = ru) => ({ru, en});
-const normalize = (text: string) => text.trim().toLowerCase().replace(/[.!]+$/, '');
-
-// These archive answers paraphrase the printed choice instead of repeating it verbatim.
-const vrtKeys: Record<string, number[]> = {
-  'vrt-1-09':[0], 'vrt-1-11':[2], 'vrt-1-14':[2], 'vrt-2-17':[3], 'vrt-2-19':[3],
-  'vrt-3-03':[3], 'vrt-3-04':[3], 'vrt-3-10':[2], 'vrt-3-18':[1,3,4], 'vrt-3-24':[0],
-  'vrt-4-07':[0], 'vrt-4-10':[0], 'vrt-4-16':[1], 'vrt-4-17':[0], 'vrt-4-20':[1,3,4],
-  'vrt-4-21':[3], 'vrt-4-24':[0],
-};
-
 export const groups = [
+  {id:'endterm-paper',title:'Банк эндтерма',count:endtermPaper.length},
+  {id:'endterm-related',title:'Практика по темам эндтерма',count:endtermRelated.length},
+  {id:'midterm-paper',title:'Банк мидтерма',count:midtermPaper.length},
+  {id:'midterm-related',title:'Практика по темам мидтерма',count:midtermRelated.length},
+  {id:'complete',title:'Общий банк',count:archiveBank.length},
+  {id:'compact',title:'Укороченный банк',count:compactBank.length},
+  {id:'grind-full',title:'GRIND MODE · полный проход',count:archiveBank.filter(q=>q.correct.length).length},
+  {id:'grind',title:'GRIND MODE',count:grindBank.length},
+  ...grindUnits.map(u=>({id:'unit-'+u.id,title:u.title,count:u.ids.length})),
   ...sprints.map(plan=>({...plan,count:families.length*plan.rounds})),
   ...sources.map(s => ({id:s.file, title:s.title, count:s.count})),
   ...Array.from(new Set(bank.map(q => q.topic)), topic => ({id:'topic-'+topic,title:'Модуль '+topic+' · разборы',count:bank.filter(q => q.topic === topic).length})),
@@ -39,22 +38,22 @@ export function questionsFor(group: string): EventQuizQuestion[] {
         transfer:{title:family.title,rule:family.rule,related}};
     })).flat();
   }
-  if (Object.hasOwn(archives, group)) return archives[group].map(q => {
-    const reasons = q.optionExplanations.length ? q.optionExplanations : q.options.map(conceptFor);
-    const definitions = q.correct.map(i => reasons[i]).filter(Boolean);
-    const why = q.why.startsWith('В завершённом задании') && definitions.length ? definitions.join(' ') : q.why;
-    return {...q, why:bilingual(why), optionExplanations:reasons.every((r): r is string => !!r) ? reasons : undefined};
-  });
+  if(group==='endterm-paper')return endtermPaper;
+  if(group==='endterm-related')return endtermRelated;
+  if(group==='midterm-paper')return midtermPaper;
+  if(group==='midterm-related')return midtermRelated;
+  if(group==='complete')return archiveBank;
+  if(group==='compact')return compactBank;
+  if(group==='grind-full')return grindUnits.flatMap(u=>forUnit(u.id)).filter(q=>q.correct.length);
+  if(group==='grind')return grindBank;
+  if(group.startsWith('unit-') && grindUnits.some(u=>u.id===group.slice(5)))return forUnit(group.slice(5));
+  if(sources.some(s=>s.file===group))return archiveBank.filter(q=>q.id.slice(0,q.id.lastIndexOf('-'))===group);
   if (group.startsWith('topic-')) return bank.filter(q => 'topic-'+q.topic === group).map(q => ({
     id:q.id, q:q.prompt, options:q.options, correct:q.eligible ? q.correct : [], caution:q.caution,
     why:bilingual(q.explanation, q.explanationEn),
     optionExplanations:q.id === 'E029' ? ['Маршрутизатор выбирает следующий переход по таблице маршрутизации.', 'Межсетевой экран фильтрует трафик по правилам безопасности.', 'Веб-сервер отвечает на HTTP-запросы.', 'DSL-модем передаёт сигнал по абонентской линии.'] : undefined,
   }));
-  return sets.filter(q => 'vrt-'+q.set === group).map(q => {
-    const answers = q.answer.split(';').map(normalize);
-    const indices = vrtKeys[q.id] ?? answers.map(a => q.options.findIndex(o => normalize(o) === a));
-    return {id:q.id,q:q.prompt,options:q.options,correct:!q.caution && indices.every(i=>i>=0) ? indices : [], caution:q.caution,why:bilingual(q.answer+' — '+q.explanation)};
-  });
+  return endtermPaper.filter(q=>'vrt-'+q.source?.variant===group);
 }
 
 let reportQuestions: Map<string, EventQuizQuestion> | undefined;

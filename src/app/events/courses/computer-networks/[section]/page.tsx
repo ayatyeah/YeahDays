@@ -6,7 +6,7 @@ import {prisma} from '@/lib/db';
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import book from "@/lib/events/finals/computer-networks.json";
-import { lectureModules, modules } from "@/lib/events/networkFinal/readings";
+import { modules } from "@/lib/events/networkFinal/readings";
 import { labs } from "@/lib/events/networkFinal/labs";
 import { groups, questionsFor } from '@/lib/events/networkFinal/quizzes';
 import styles from "../../../courses.module.css";
@@ -19,18 +19,12 @@ export function generateStaticParams() {
 export default async function NetworkSection({ params }: { params: Promise<{section: string}> }) {
   const { section } = await params;
   if (!Object.hasOwn(sections, section)) notFound();
-  if(section==="midterm"||section==="endterm") {
-    const base="/events/courses/computer-networks";
+  if(section==="midterm" || section==="endterm"){
     const mid=section==="midterm";
-    const lectures=book.event.lectures.map((lecture,i)=>({lecture,i})).filter(({i})=>mid?(i<5 || i===6):i>=4);
-    const ids=lectures.flatMap(({i})=>lectureModules[i]);
+    const term=mid?'мидтерма':'эндтерма';
     return <article className={`${styles.outline} ${styles.sectionPage}`} lang="ru" data-no-i18n>
-      <Link className={styles.back} href={base}>← Computer Networks</Link>
-      <h1>{sections[section]}</h1>
-      <p>{mid?'Из сохранённой подготовки к мидтерму — лекции 1–5 и 7 и квизы по их темам.':'По объявлению об эндтерме — недели 5–10. Особое внимание TCP/UDP, прикладным протоколам и настройке Cisco IOS.'}</p>
-      <nav aria-label="Разделы"><a className="f-button" href="#quizzes">К квизам</a> <a className="f-button" href="#lectures">К лекциям</a></nav>
-      <section id="quizzes"><h2>Квизы</h2><nav className={styles.moduleFolders} aria-label="Квизы">{ids.map(id=><Link key={id} prefetch={false} href={base+'/practice/module-'+String(id).padStart(2,'0')}><small>Модуль {id}</small><strong>{modules[id-1].title}</strong><span>Настроить квиз →</span></Link>)}</nav></section>
-      <section id="lectures"><h2>Лекции</h2><nav className={styles.moduleFolders} aria-label="Лекции">{lectures.map(({lecture,i})=><Link key={i} href={base+'/lectures/'+(i+1)}><strong>{lecture.title.ru}</strong><span>Открыть конспект →</span></Link>)}</nav></section>
+      <Link className={styles.back} href="/events/courses/computer-networks">← Computer Networks</Link><h1>{sections[section]}</h1>
+      <nav className={styles.moduleFolders} aria-label={'Папки '+term}>{['paper','related'].map((type,i)=><Link key={type} href={'/events/courses/computer-networks/practice/'+section+'-'+type}><strong>{i?'Вопросы по модулям и лекциям':'Вопросы '+term}</strong><span>{i?'Вся практика или подборка по модулю и лекции':mid?'Отдельный банк · 25 вопросов':'Отдельный банк · 4 варианта по 25 вопросов'}</span></Link>)}</nav>
     </article>;
   }
   const lang=section==="practice"?"ru":await readingLanguage();

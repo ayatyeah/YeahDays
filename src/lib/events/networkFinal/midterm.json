@@ -1,0 +1,452 @@
+[
+  {
+    "id": "mid25-1",
+    "module": 8,
+    "q": "Which OSI layer performs logical addressing and routing?",
+    "options": [
+      "Layer 2 – Data Link",
+      "Layer 3 – Network",
+      "Layer 4 – Transport",
+      "Layer 7 – Application"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Network layer выбирает путь по логическому IP-адресу. Канальный уровень доставляет кадр по MAC внутри одного канала.",
+      "en": "The network layer routes by logical IP address. The data link layer delivers frames over one link using MAC addresses."
+    }
+  },
+  {
+    "id": "mid25-2",
+    "module": 4,
+    "q": "What is the standard T568B wire ordering start sequence?",
+    "options": [
+      "White-Green, Green…",
+      "White-Orange, Orange, White-Green…",
+      "White-Orange, Green…",
+      "White-Brown, Brown…"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Первые три контакта T568B — бело-оранжевый, оранжевый, бело-зелёный. В T568A первой идёт зелёная пара.",
+      "en": "T568B starts white-orange, orange, white-green. T568A starts with the green pair."
+    }
+  },
+  {
+    "id": "mid25-3",
+    "module": 4,
+    "q": "What cable type connects two switches directly when Auto-MDIX is off?",
+    "options": [
+      "Straight-through",
+      "Crossover",
+      "Rollover",
+      "Coaxial"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "У одинаковых портов старого типа контакты передачи совпадают. Crossover соединяет передатчик одного с приёмником другого.",
+      "en": "Like legacy switch ports transmit on the same pins. A crossover cable connects one transmitter to the other receiver."
+    }
+  },
+  {
+    "id": "mid25-4",
+    "module": 13,
+    "q": "Which Wireshark display filter isolates ICMPv4 traffic?",
+    "options": [
+      "ip.proto == icmp",
+      "icmp",
+      "protocol.icmp",
+      "Both A and B"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "icmp — имя протокола в display filter. Поле ip.proto числовое: равносильная запись для IPv4 — ip.proto == 1. Сравнение ip.proto == icmp некорректно.",
+      "en": "icmp selects ICMPv4. The IPv4 protocol field is numeric, so ip.proto == 1 also works. Comparing that number to the protocol object icmp is invalid."
+    }
+  },
+  {
+    "id": "mid25-5",
+    "module": 3,
+    "q": "What is the PDU name at Layer 2?",
+    "options": [
+      "Packet",
+      "Segment",
+      "Frame",
+      "Bit"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Layer 2 оборачивает пакет сетевого уровня в frame с адресами канала. Биты передаёт физический уровень.",
+      "en": "Layer 2 wraps a network-layer packet in a frame with link addresses. The physical layer transmits bits."
+    }
+  },
+  {
+    "id": "mid25-6",
+    "module": 6,
+    "q": "Which media access mechanism manages collisions on half-duplex Ethernet?",
+    "options": [
+      "CSMA/CD",
+      "CSMA/CA",
+      "Token Passing",
+      "TDMA"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "На общей Ethernet-среде станция слушает канал, обнаруживает коллизию и повторяет передачу после случайной паузы. Wi-Fi использует avoidance.",
+      "en": "On shared Ethernet a station listens, detects a collision and retries after a random backoff. Wi-Fi uses collision avoidance."
+    }
+  },
+  {
+    "id": "mid25-7",
+    "module": 5,
+    "q": "What is decimal 192 in 8-bit binary?",
+    "options": [
+      "11000000",
+      "10101000",
+      "11100000",
+      "10000000"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "192 = 128 + 64. В октете включены два старших бита, остальные шесть равны нулю.",
+      "en": "192 equals 128 plus 64. Set the two highest bits and clear the remaining six."
+    }
+  },
+  {
+    "id": "mid25-8",
+    "module": 2,
+    "q": "Which mode allows executing hostname Sw1?",
+    "options": [
+      "User EXEC",
+      "Privileged EXEC",
+      "Global Configuration",
+      "Interface Config"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Имя относится ко всему устройству. Команда hostname вводится по приглашению (config)#.",
+      "en": "The hostname applies to the entire device, so enter it at the global (config)# prompt."
+    }
+  },
+  {
+    "id": "mid25-9",
+    "module": 4,
+    "q": "What is the maximum standard Cat6 UTP channel length for 1000BASE-T without repeaters?",
+    "options": [
+      "50 m",
+      "100 m",
+      "250 m",
+      "500 m"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Для гигабитного Ethernet стандартный канал — до 100 м, включая патч-корды. Для 10GBASE-T на Cat6 допустимая длина может быть меньше.",
+      "en": "A gigabit Ethernet channel can be 100 m including patch cables. Cat6 for 10GBASE-T can have a shorter limit."
+    }
+  },
+  {
+    "id": "mid25-10",
+    "module": 6,
+    "q": "Which topology connects all nodes to a central switch?",
+    "options": [
+      "Bus",
+      "Ring",
+      "Star",
+      "Mesh"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "От каждого узла один кабель идёт к центру. Это физическая звезда. В кольце узлы образуют замкнутый путь.",
+      "en": "One spoke runs from each node to the center: a physical star. A ring forms a closed path instead."
+    }
+  },
+  {
+    "id": "mid25-11",
+    "module": 7,
+    "q": "What is the purpose of the FCS field in an Ethernet frame?",
+    "options": [
+      "IP addressing",
+      "CRC error detection",
+      "Data encryption",
+      "Speed autonegotiation"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Получатель заново вычисляет CRC и сравнивает с FCS. Расхождение означает повреждение кадра при передаче.",
+      "en": "The receiver recalculates CRC and compares it with FCS. A mismatch indicates a corrupted frame."
+    }
+  },
+  {
+    "id": "mid25-12",
+    "module": 14,
+    "q": "Which transport protocol provides connection-oriented reliable delivery?",
+    "options": [
+      "UDP",
+      "IP",
+      "TCP",
+      "ICMP"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "TCP устанавливает соединение, нумерует байты, принимает ACK и повторяет потерянное. UDP не предоставляет этих гарантий.",
+      "en": "TCP establishes a connection, sequences bytes, acknowledges receipt and retransmits missing data."
+    }
+  },
+  {
+    "id": "mid25-13",
+    "module": 11,
+    "q": "What is the local IPv4 limited broadcast address?",
+    "options": [
+      "127.0.0.1",
+      "224.0.0.1",
+      "255.255.255.255",
+      "0.0.0.0"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Все 32 бита равны единице. Limited broadcast остаётся в локальной сети. 127.0.0.1 — loopback, 224.0.0.1 — multicast.",
+      "en": "All 32 bits are set. A limited broadcast stays on the local network. 127.0.0.1 is loopback and 224.0.0.1 is multicast."
+    }
+  },
+  {
+    "id": "mid25-14",
+    "module": 7,
+    "q": "Which command displays the switch Layer 2 address table?",
+    "options": [
+      "show ip arp",
+      "show mac address-table",
+      "show switchport",
+      "show interface brief"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "MAC address table связывает MAC и порт в VLAN. В ARP-таблице другое соответствие — IPv4 и MAC.",
+      "en": "The MAC table maps a MAC to a VLAN and port. ARP maps an IPv4 address to a MAC instead."
+    }
+  },
+  {
+    "id": "mid25-15",
+    "module": 7,
+    "q": "Which feature automatically swaps transmit and receive pairs on switchports?",
+    "options": [
+      "Auto-MDIX",
+      "Auto-Speed",
+      "Port Security",
+      "PoE"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Auto-MDIX определяет, как подключены пары, и меняет роли TX/RX. Согласование скорости не меняет пары.",
+      "en": "Auto-MDIX detects pair orientation and adjusts TX/RX. Speed negotiation alone does not swap pairs."
+    }
+  },
+  {
+    "id": "mid25-16",
+    "module": 7,
+    "q": "Which Ethernet fields synchronize the receiver and indicate the frame start?",
+    "options": [
+      "Destination MAC Address",
+      "Preamble and SFD",
+      "EtherType Field",
+      "FCS"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Preamble даёт приёмнику чередующийся сигнал для синхронизации, Start Frame Delimiter обозначает начало кадра. FCS находится в конце.",
+      "en": "The alternating preamble synchronizes the receiver. The start frame delimiter marks the boundary before the destination address. FCS is at the end."
+    }
+  },
+  {
+    "id": "mid25-17",
+    "module": 7,
+    "q": "What is the minimum payload size for a standard untagged Ethernet frame to avoid padding?",
+    "options": [
+      "46 bytes",
+      "64 bytes",
+      "1500 bytes",
+      "1518 bytes"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Минимальный кадр — 64 байта. Вычти 14 байт заголовка и 4 байта FCS: остаётся 46. Короткое поле данных дополняют padding.",
+      "en": "A 64-byte minimum frame minus a 14-byte header and four-byte FCS leaves 46 bytes. Shorter data requires padding."
+    }
+  },
+  {
+    "id": "mid25-18",
+    "module": 7,
+    "q": "In MAC address 00:1A:2B:3C:4D:5E, which part is the OUI?",
+    "options": [
+      "First 3 bytes (00:1A:2B)",
+      "Last 3 bytes (3C:4D:5E)",
+      "Entire 48 bits",
+      "First byte (00)"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "В классическом глобальном EUI-48 префикс OUI занимает первые 24 бита. Здесь это 00:1A:2B.",
+      "en": "In a classic globally assigned EUI-48, the OUI occupies the first 24 bits, here 00:1A:2B."
+    }
+  },
+  {
+    "id": "mid25-19",
+    "module": 7,
+    "q": "What protocol is encapsulated when EtherType equals 0x0800?",
+    "options": [
+      "IPv6",
+      "ARP",
+      "IPv4",
+      "ICMP"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "EtherType 0x0800 указывает на пакет IPv4. У ARP значение 0x0806, у IPv6 — 0x86DD. ICMPv4 определяется уже внутри IP.",
+      "en": "EtherType 0x0800 identifies IPv4. ARP uses 0x0806 and IPv6 uses 0x86DD. ICMPv4 is identified inside IPv4."
+    }
+  },
+  {
+    "id": "mid25-20",
+    "module": 2,
+    "q": "Which command moves a session from User EXEC to Privileged EXEC mode in Cisco IOS?",
+    "options": [
+      "configure terminal",
+      "enable",
+      "system-view",
+      "privilege level 15"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "enable меняет приглашение с > на #. Уже из privileged EXEC можно ввести configure terminal для настройки.",
+      "en": "Enable changes the prompt from > to #. Configure terminal then enters configuration mode from privileged EXEC."
+    }
+  },
+  {
+    "id": "mid25-21",
+    "module": 2,
+    "q": "Which command saves the running configuration from RAM to NVRAM?",
+    "options": [
+      "copy running-config startup-config",
+      "save config-file",
+      "write memory startup",
+      "copy startup-config running-config"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "В copy сначала источник, затем назначение. Running-config в RAM копируется в startup-config, которая переживает перезапуск.",
+      "en": "Copy takes source first and destination second. Copying running-config to startup-config persists the active settings across reloads."
+    }
+  },
+  {
+    "id": "mid25-22",
+    "module": 9,
+    "q": "What is the primary function of ARP?",
+    "options": [
+      "Map an IP address to a domain name",
+      "Assign IP addresses dynamically",
+      "Map a known IPv4 address to a MAC address",
+      "Route packets between VLANs"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Для кадра нужен канальный адрес следующего узла. ARP узнаёт его MAC по известному IPv4 в локальном сегменте.",
+      "en": "A frame needs a link-layer next-hop address. ARP resolves a known local IPv4 address to that neighbor's MAC."
+    }
+  },
+  {
+    "id": "mid25-23",
+    "module": 7,
+    "q": "What does a switch do when receiving an unknown unicast frame?",
+    "options": [
+      "Drops the frame",
+      "Floods the frame out all forwarding ports in the same VLAN except the ingress port",
+      "Sends ICMP unreachable",
+      "Queries the default gateway"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "При отсутствии destination MAC в таблице коммутатор делает flooding внутри той же VLAN. После обучения порту назначения кадры пойдут только туда.",
+      "en": "An unknown destination MAC triggers flooding within the VLAN except on ingress. Once learned, the switch forwards only to the destination port."
+    }
+  },
+  {
+    "id": "mid25-24",
+    "module": 2,
+    "q": "Which command obscures supported stored cleartext passwords in classic Cisco IOS?",
+    "options": [
+      "enable secret level 7",
+      "service password-encryption",
+      "crypto key generate rsa",
+      "ip security encryption"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Service password-encryption скрывает поддерживаемые открытые пароли в конфигурации классического IOS. Обратимый Type 7 защищает лишь от случайного просмотра.",
+      "en": "Service password-encryption obscures supported plaintext configuration passwords. Classic reversible Type 7 offers only protection against casual viewing."
+    }
+  },
+  {
+    "id": "mid25-25",
+    "module": 2,
+    "q": "Which keyboard shortcut interrupts a hanging command or DNS lookup in Cisco IOS?",
+    "options": [
+      "Ctrl + C",
+      "Ctrl + Shift + 6",
+      "Ctrl + Alt + Delete",
+      "Esc + Shift"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Ctrl+Shift+6 посылает escape sequence IOS и позволяет прервать затянувшуюся операцию, например DNS lookup. Это отличается от перехода между режимами.",
+      "en": "Ctrl+Shift+6 sends the IOS escape sequence to interrupt a long operation such as a DNS lookup. It does not change configuration modes."
+    }
+  }
+]

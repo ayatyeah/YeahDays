@@ -18,12 +18,13 @@ import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
 import styles from "./event-quiz.module.css";
 
-export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
+export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, reviewDuringQuiz = true, resume, onNavigate,
+  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, reviewDuringQuiz = true, resume, onNavigate, lessons = false,
 }: {
+  lessons?: boolean;
   eventId: string;
   step: Pick<Step, "title">;
   quiz: EventQuizQuestion[];
@@ -43,7 +44,11 @@ export default function EventQuiz({
   const [navigationHost, setNavigationHost] = useState<HTMLElement | null>(null);
   useEffect(() => { setNavigationHost(document.body); }, []);
   const [index, setIndex] = useState(resume?.index ?? 0);
-  function navigate(i:number){setIndex(i);onNavigate?.(i); }
+  const [showLesson,setShowLesson]=useState(lessons);
+  function navigate(i:number){
+    if(lessons && quiz[i].lesson?.id!==quiz[index].lesson?.id)setShowLesson(true);
+    setIndex(i);onNavigate?.(i);
+  }
   const [answers, setAnswers] = useState<number[][]>(resume?.answers ?? []);
   const answeredCount = answers.filter(Boolean).length;
   const [answeredAt, setAnsweredAt] = useState<Record<string, number>>({});
@@ -85,6 +90,20 @@ export default function EventQuiz({
     if (index + 1 === quiz.length) onFinish(answers); else navigate(index+1);
   }
 
+  if(showLesson && item.lesson){
+    const lesson=item.lesson;
+    const en=lang==='en';
+    const count=quiz.filter(q=>q.lesson?.id===lesson.id).length;
+    return <section className={panel} lang={lang} aria-label={en?'Study topic':'Тема для изучения'}>
+      <small>{en?'Module':'Модуль'} {lesson.module} · {lesson.lecture?(en?'Lecture ':'Лекция ')+lesson.lecture:(en?'Applied review · lectures 5–10':'Практическое повторение · лекции 5–10')}</small>
+      <h2 ref={questionHeading} tabIndex={-1} className={styles.scrollTarget}>{lesson.title}</h2><p className="my-4 leading-relaxed">{lesson[lang]}</p>
+      <div className="my-3 flex flex-wrap gap-4 text-sm underline"><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/theory/'+lesson.module}>{en?'Module notes':'Конспект модуля'}</a><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/lectures/'+(lesson.lecture||5)}>{en?'Lecture notes':'Лекция'}</a><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/practice/unit-'+lesson.id}>{en?'Full topic bank':'Все вопросы темы'}</a></div>
+      <p>{en?'Practice questions': 'Вопросов по теме'} · {count}</p>
+      {navigationHost && createPortal(<nav className={styles.navigation} aria-label="Study navigation">
+        <Button onClick={onExit}>{en?'Exit':'Выйти'}</Button><Button variant="primary" onClick={()=>setShowLesson(false)}>{en?'Next · practice':'Далее · к вопросам'}</Button>
+      </nav>,navigationHost)}
+    </section>;
+  }
   return (
     <>
       <header className="space-y-3">
@@ -115,7 +134,7 @@ export default function EventQuiz({
         </div>
       </header>
 
-      <QuizStage>{reviewing ? <ErrorReview candidates={missed} onCorrect={(id, selected) => {
+      <QuizStage language={lessons?lang:undefined} questionTexts={[item.q,...item.options]}>{reviewing ? <ErrorReview candidates={missed} onCorrect={(id, selected) => {
         const corrected = creditReview(quiz, answers, id, selected);
         if (corrected !== answers) { setAnswers(corrected); onAnswer?.(id, selected); }
       }} onDone={id => {
@@ -164,7 +183,7 @@ export default function EventQuiz({
               {item.transfer && <section className="mt-4"><h3 className="font-semibold">{item.transfer.title}</h3><p>{item.transfer.rule}</p>
                 <details className="mt-2"><summary>Похожие вопросы ({item.transfer.related.length})</summary><ul className="list-disc space-y-2 pl-5" lang="en">{item.transfer.related.map(example=><li key={example.prompt}>{example.prompt}<details><summary lang="ru">Показать ответ</summary>{example.answer}</details></li>)}</ul></details></section>}
               {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Study notes: {item.studyLink.title} ↗</a>}
-              {item.optionExplanations && <details open={explainOptionsOpen || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
+              {item.optionExplanations && !(lessons && lang==="en") && <details open={explainOptionsOpen || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
                 <summary className="cursor-pointer font-semibold">{explainOptionsOpen ? "Почему каждый вариант подходит или не подходит" : "Why each option works or does not"}</summary>
                 <ul className="mt-3 space-y-4">{item.options.map((option, i) => <li key={i}>
                   <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. <QuestionText>{option}</QuestionText></p>

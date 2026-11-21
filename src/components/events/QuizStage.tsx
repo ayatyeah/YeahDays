@@ -6,7 +6,7 @@ import { denVideos, youtubeVideoId } from '@/lib/events/denVideos';
 import styles from './quiz-stage.module.css';
 
 /** Video stays mounted across questions; it never downloads before opting in. */
-export default function QuizStage({ children, questionTexts }: { children: ReactNode; questionTexts?: string[] }) {
+export default function QuizStage({ children, questionTexts, language }: { children: ReactNode; questionTexts?: string[];language?:"ru"|"en" }) {
   const [enabled, setEnabled] = useState(false);
   const [source, setSource] = useState(denVideos[0].id);
   const [custom, setCustom] = useState('');
@@ -42,5 +42,5 @@ export default function QuizStage({ children, questionTexts }: { children: React
       </aside>}
     </div>
   </div>;
-  return <QuestionLanguage sourceTexts={questionTexts}>{content}</QuestionLanguage>;
+  return <QuestionLanguage sourceTexts={questionTexts} language={language}>{content}</QuestionLanguage>;
 }

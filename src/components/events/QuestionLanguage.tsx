@@ -23,7 +23,7 @@ function load(lang: Language) {
 const Overrides = createContext<Partial<Record<Language,Dictionary>>>({});
 export function QuestionTranslations({translations,children}:{translations:Partial<Record<Language,Dictionary>>;children:ReactNode}) {return <Overrides.Provider value={translations}>{children}</Overrides.Provider>;}
 const Context = createContext<{lang:Language; dictionary:Dictionary; loading:boolean}>({lang:'en',dictionary:{},loading:true});
-export function QuestionLanguage({ children, sourceTexts = [], language, tools }: { children: ReactNode; sourceTexts?: string[];tools?:ReactNode;language?:Language }) {
+export function QuestionLanguage({ children, sourceTexts = [], language, tools, label = "Question language" }: { children: ReactNode; sourceTexts?: string[];tools?:ReactNode;label?:string;language?:Language }) {
   const selected = useSyncExternalStore(subscribe, () => selectedLanguage, () => 'en' as Language);
   const lang=language??selected;
   const [dictionary,setDictionary]=useState<Dictionary>(english);
@@ -48,7 +48,7 @@ export function QuestionLanguage({ children, sourceTexts = [], language, tools }
     return ()=>{alive=false;controller.abort();};
   },[lang,retry,textKey,overrideKey]);
   return <Context.Provider value={{lang,dictionary:{...(dictionaries.get(lang) ?? dictionary),...JSON.parse(overrideKey) as Dictionary},loading}}>
-    <div className={`quiz-language ${styles.controls}`} data-no-i18n role="group" aria-label="Question language">
+    <div className={`quiz-language ${styles.controls}`} data-no-i18n role="group" aria-label={label}>
       {!language && <><button type="button" aria-pressed={lang==='en'} onClick={()=>selectLanguage('en')}>English</button>
       <button type="button" aria-pressed={lang==='ru'} onClick={()=>selectLanguage('ru')}>Русский</button></>}
       {loading && <span role="status">{lang==='ru'?'Загрузка перевода…':'Loading translation…'}</span>}

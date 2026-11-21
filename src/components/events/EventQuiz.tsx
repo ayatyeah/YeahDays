@@ -2,6 +2,7 @@
 import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
+import QuizExplanation from "./QuizExplanation";
 import ErrorReview from "./ErrorReview";
 import { missedQuestions, reviewDelay, readyForReview, creditReview } from "@/lib/events/errorReview";
 
@@ -22,7 +23,7 @@ export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { co
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
-  eventId, step, quiz, lang, music, onLang, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, resume, onNavigate, lessons = false, menuInfo,
+  eventId, step, quiz, lang, music, onMusic, onExit, onFinish, onAnswer, explainOptionsOpen = false, resume, onNavigate, lessons = false, menuInfo,
 }: {
   lessons?: boolean;
   menuInfo?: ReactNode;
@@ -183,30 +184,8 @@ export default function EventQuiz({
           <div className="yg-rise mt-4 scroll-mb-28 space-y-3">
             <div role="status" className={cn(styles.scrollTarget, "rounded-2xl bg-[var(--color-surface-2)] p-4 text-sm")}>
               <p className="font-semibold">{!expected.length ? "Explanation only" : matchesAnswer(picked, expected) ? "Correct" : "Not quite"}</p>
-              {item.caution && <p className="mt-2">{item.caution}</p>}
-              <p className="mt-1" data-selection-question lang={lang}>{item.why[lang]}</p>
-              {item.transfer && <section className="mt-4"><h3 className="font-semibold">{item.transfer.title}</h3><p>{item.transfer.rule}</p>
-                <details className="mt-2"><summary>Похожие вопросы ({item.transfer.related.length})</summary><ul className="list-disc space-y-2 pl-5" lang="en">{item.transfer.related.map(example=><li key={example.prompt}>{example.prompt}<details><summary lang="ru">Показать ответ</summary>{example.answer}</details></li>)}</ul></details></section>}
+              <QuizExplanation question={item} expanded={explainOptionsOpen}/>
               {item.studyLink && <a href={item.studyLink.href} target="_blank" rel="noreferrer" className="mt-3 block font-medium underline">Study notes: {item.studyLink.title} ↗</a>}
-              {item.optionExplanations && !(lessons && lang==="en") && <details open={explainOptionsOpen || undefined} className="mt-4 border-t border-[var(--color-border)] pt-3">
-                <summary className="cursor-pointer font-semibold">{explainOptionsOpen ? "Почему каждый вариант подходит или не подходит" : "Why each option works or does not"}</summary>
-                <ul className="mt-3 space-y-4">{item.options.map((option, i) => <li key={i}>
-                  <p lang="en" className="font-medium">{expected.length ? expected.includes(i) ? "✓ " : "✗ " : ""}{item.labels?.[i] ?? String.fromCharCode(65 + i)}. <QuestionText>{option}</QuestionText></p>
-                  <p data-selection-question className="mt-1">{item.optionExplanations?.[i]}</p>
-                </li>)}</ul>
-              </details>}
-              {item.wrong && (
-                <ul className="mt-3 space-y-1.5 border-t border-[var(--color-border)] pt-3">
-                  {item.options.map((option, i) => item.wrong?.[i] && (
-                    <li key={i} className={cn("text-[13px]", picked?.includes(i) ? "text-[var(--color-strength)]" : "text-[var(--color-fg-dim)]")}>
-                      <span data-selection-question lang="en" className="font-medium">✗ <QuestionText>{option}</QuestionText></span> — <span data-selection-question lang={lang}>{item.wrong[i]![lang]}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {onLang && <button className="mt-2 text-xs underline" onClick={onLang}>
-                {lang === "en" ? "Объяснение на русском" : "Explanation in English"}
-              </button>}
               <ReportQuestion key={item.id} eventId={eventId} questionId={item.id} />
             </div>
           </div>

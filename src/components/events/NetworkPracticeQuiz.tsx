@@ -1,5 +1,6 @@
 'use client';
 import {useEffect,useRef,useState} from 'react';
+import {useQuizLanguages} from './useQuizLanguages';
 import {emptyProgress,mergeNetwork,type NetworkProgress,type Attempt} from '@/lib/events/networkFinal/progress';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
@@ -23,7 +24,8 @@ function AccountQuiz({group,title,questions}:Props) {
   const {data:session,status} = useSession();
   const storage = session?.user?.id ? 'yg-cn-bank:'+session.user.id+':'+title : null;
   const grind=group==="grind" || group==="grind-full";
-  const [lang,setLang]=useState<'ru'|'en'>('ru');
+  const {choices,choose}=useQuizLanguages();
+  const lang=choices.question??'ru';
   const en=grind && lang==='en';
   const bank = questions.filter(q=>q.correct.length);
   const [limit,setLimit] = useState(String((grind || ["compact","complete","midterm-paper","midterm-related","endterm-paper","endterm-related"].includes(group) || group.startsWith("sprint-"))?bank.length:Math.min(10,bank.length)));
@@ -167,7 +169,7 @@ function AccountQuiz({group,title,questions}:Props) {
   return <section className={styles.quiz} data-no-i18n data-network-quiz={takingQuiz || undefined}>
     {!takingQuiz && quizInfo}
 
-    {grind && <div className={courseStyles.readingLanguage} role="group" aria-label="Study language">{(['ru','en'] as const).map(code=><button key={code} aria-pressed={lang===code} onClick={()=>setLang(code)}>{code==='ru'?'Русский':'English'}</button>)}</div>}
+    {grind && <div className={courseStyles.readingLanguage} role="group" aria-label="Study language">{(['ru','en'] as const).map(code=><button key={code} aria-pressed={lang===code} onClick={()=>choose('question',code)}>{code==='ru'?'Русский':'English'}</button>)}</div>}
     {grind && !takingQuiz && !answers && <p>{en?'Read a short rule, then apply it to questions on the same topic.':'Прочитай короткое правило, затем закрепи его на вопросах по той же теме.'} {group==='grind'?(en?'Budget about 1 hour for the notes, 2½–3 hours for practice, and 30–60 minutes for mistakes and breaks.':'Около часа на разборы, 2,5–3 часа на вопросы и 30–60 минут на ошибки и перерывы.'):(en?'Allow 12–18 hours for all questions.':'Ориентир на все задания — 12–18 часов.')}</p>}
 
     {answers ? <section aria-live="polite"><h2>{en?'Result':'Результат'} · {quiz.length-missed.length} / {quiz.length}</h2>

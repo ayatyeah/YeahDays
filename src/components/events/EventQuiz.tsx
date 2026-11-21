@@ -1,4 +1,5 @@
 "use client";
+import EventNotes from "@/components/EventNotes";
 import AnswerOption from "@/components/events/AnswerOption";
 import { QuestionText } from "./QuestionLanguage";
 import QuizStage from "./QuizStage";
@@ -19,7 +20,7 @@ import type { QuizQuestion, Step } from "@/lib/events/engine";
 import { matchesAnswer } from "@/lib/events/quizAnswers";
 import styles from "./event-quiz.module.css";
 
-export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
+export type EventQuizQuestion = Omit<QuizQuestion, "correct" | "lecture"> & { correct: number[]; source?: {kind:string;variant?:number;module?:number;lecture:number}; lesson?: {id:string;module:number;lecture:number;title:string;ru:string;en:string;notes?:Record<Lang,string>}; transfer?: {title:string;rule:string;related:{prompt:string;answer:string}[]}; labels?: string[]; caution?: string; optionExplanations?: string[]; studyLink?: { href: string; title: string } };
 const panel = "rounded-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5";
 
 export default function EventQuiz({
@@ -114,6 +115,7 @@ export default function EventQuiz({
       {menuInfo && <details><summary>Меню квиза</summary>{menuInfo}</details>}
       <small>{en?'Module':'Модуль'} {lesson.module} · {lesson.lecture?(en?'Lecture ':'Лекция ')+lesson.lecture:(en?'Applied review · lectures 5–10':'Практическое повторение · лекции 5–10')}</small>
       <h2 ref={questionHeading} tabIndex={-1} className={styles.scrollTarget}>{lesson.title}</h2><p className="my-4 leading-relaxed">{lesson[lang]}</p>
+      {lesson.notes && <EventNotes key={lesson.id} text={lesson.notes[lang]} lang={lang}/>}
       <div className="my-3 flex flex-wrap gap-4 text-sm underline"><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/theory/'+lesson.module}>{en?'Module notes':'Конспект модуля'}</a><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/lectures/'+(lesson.lecture||5)}>{en?'Lecture notes':'Лекция'}</a><a target="_blank" rel="noreferrer" href={'/events/courses/computer-networks/practice/unit-'+lesson.id}>{en?'Full topic bank':'Все вопросы темы'}</a></div>
       <p>{en?'Practice questions': 'Вопросов по теме'} · {count}</p>
       {navigationHost && createPortal(<nav className={styles.navigation} aria-label="Study navigation">

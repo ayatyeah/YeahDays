@@ -20,6 +20,8 @@ datasource db {
 // google-only аккаунтов. Anonymous-данные линкуются к аккаунту при входе
 // (см. комментарий над моделью).
 model User {
+  quizQuestionLanguage String?
+  quizExplanationLanguage String?
   id                String                    @id @default(cuid())
   name              String?
   email             String?                   @unique

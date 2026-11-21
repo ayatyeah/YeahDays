@@ -1,21 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {useQuizLanguages} from './useQuizLanguages';
 import { QuestionLanguage, QuestionText } from './QuestionLanguage';
 import type { EventQuizQuestion } from './EventQuiz';
 
-const preference = 'yeahgrind.quiz.explanation-language';
 
 export default function QuizExplanation({ question, expanded }: {question: EventQuizQuestion; expanded?: boolean}) {
-  const [lang, setLang] = useState<'ru' | 'en'>('ru');
-  useEffect(() => {
-    try { if (localStorage.getItem(preference) === 'en') setLang('en'); } catch {}
-  }, []);
-  function choose(value: 'ru' | 'en') {
-    setLang(value);
-    try { localStorage.setItem(preference, value); } catch {}
-  }
-
+  const {choices,choose}=useQuizLanguages();
+  const lang=choices.explanation??'ru';
   const ru = lang === 'ru';
   const { why, caution, optionExplanations, transfer, wrong } = question;
   const summary = why[lang];
@@ -24,8 +16,8 @@ export default function QuizExplanation({ question, expanded }: {question: Event
   return <section aria-label="Explanation" lang={lang} data-no-i18n>
     <QuestionLanguage language={lang} label="Explanation language" sourceTexts={extraTexts} tools={<>
       <span>{ru ? 'Язык объяснения' : 'Explanation language'}</span>
-      <button type="button" aria-pressed={ru} onClick={() => choose('ru')}>Русский</button>
-      <button type="button" aria-pressed={!ru} onClick={() => choose('en')}>English</button>
+      <button type="button" aria-pressed={ru} onClick={() => choose('explanation','ru')}>Русский</button>
+      <button type="button" aria-pressed={!ru} onClick={() => choose('explanation','en')}>English</button>
     </>}>
       {caution && <p className="mt-2"><QuestionText>{caution}</QuestionText></p>}
       <p data-explanation-summary data-selection-question>{why.ru === why.en ? <QuestionText>{summary}</QuestionText> : summary}</p>

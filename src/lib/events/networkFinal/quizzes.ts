@@ -1,3 +1,4 @@
+import {grindNotes} from './grindNotes';
 import {endtermPaper,endtermRelated} from './endterm';
 import {midtermPaper,midtermRelated} from './midterm';
 import {families,sprints} from './sprints';
@@ -44,8 +45,11 @@ export function questionsFor(group: string): EventQuizQuestion[] {
   if(group==='midterm-related')return midtermRelated;
   if(group==='complete')return archiveBank;
   if(group==='compact')return compactBank;
-  if(group==='grind-full')return grindUnits.flatMap(u=>forUnit(u.id)).filter(q=>q.correct.length);
-  if(group==='grind')return grindBank;
+  if(group==='grind' || group==='grind-full'){
+    const notes=new Map(grindUnits.map(unit=>[unit.id,grindNotes(unit.id)]));
+    const pool=group==='grind'?grindBank:grindUnits.flatMap(u=>forUnit(u.id)).filter(q=>q.correct.length);
+    return pool.map(q=>({...q,lesson:{...q.lesson!,notes:notes.get(q.lesson!.id)!}}));
+  }
   if(group.startsWith('unit-') && grindUnits.some(u=>u.id===group.slice(5)))return forUnit(group.slice(5));
   if(sources.some(s=>s.file===group))return archiveBank.filter(q=>q.id.slice(0,q.id.lastIndexOf('-'))===group);
   if (group.startsWith('topic-')) return bank.filter(q => 'topic-'+q.topic === group).map(q => ({

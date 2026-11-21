@@ -1492,5 +1492,410 @@
       "ru": "Cut-through начинает передачу после чтения MAC назначения, ещё до получения всего кадра. Это снижает задержку. Полная проверка FCS и отсев повреждённых кадров до передачи характерны для store-and-forward.",
       "en": "Cut-through begins forwarding after reading the destination MAC, reducing latency. Store-and-forward can check the entire FCS before forwarding. Source MAC is used for learning."
     }
+  },
+  {
+    "id": "close-3-01",
+    "variant": 3,
+    "q": "Which device performs the function of determining the path that messages should take through internetworks?",
+    "options": [
+      "a router",
+      "a DSL modem",
+      "a web server",
+      "a firewall"
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "Маршрутизатор сравнивает IP назначения с маршрутами и выбирает следующий переход. DSL-модем обеспечивает линию связи, веб-сервер отвечает на HTTP-запросы, а основная задача firewall — фильтрация трафика.",
+      "en": "A router looks up the destination IP and selects a next hop. A DSL modem provides link access, a web server handles HTTP and a firewall primarily filters traffic."
+    }
+  },
+  {
+    "id": "close-3-02",
+    "variant": 3,
+    "q": "Which two OSI model layers have the same functionality as a single layer of the TCP/IP model? (Choose two.)",
+    "options": [
+      "network",
+      "physical",
+      "transport",
+      "data link",
+      "session"
+    ],
+    "correct": [
+      1,
+      3
+    ],
+    "why": {
+      "ru": "Уровень доступа к сети TCP/IP объединяет передачу сигналов (physical) и доставку кадров по каналу (data link). Сетевой и транспортный уровни относятся к разным уровням TCP/IP, а сеансовый входит в прикладной.",
+      "en": "TCP/IP network access combines physical signaling with data-link framing. Network and transport map to separate layers, while session functions belong to the application layer."
+    }
+  },
+  {
+    "id": "close-3-03",
+    "variant": 3,
+    "q": "Which statement describes an extended star topology?",
+    "options": [
+      "All end and intermediate devices are connected in a chain to each other.",
+      "Each end system is connected to its respective neighbor via an intermediate device.",
+      "End devices connect to a central intermediate device, which in turn connects to other central intermediate devices.",
+      "End devices are connected together by a bus and each bus connects to a central intermediate device."
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Представь два кабинета со своими коммутаторами, соединёнными с центральным коммутатором. Получается несколько связанных звёзд. Цепочка соседей или общая шина описывают другую схему соединений.",
+      "en": "An extended star links the centers of smaller stars. A chain of neighbors or a shared bus has different physical connections."
+    }
+  },
+  {
+    "id": "close-3-04",
+    "variant": 3,
+    "q": "What process involves placing one PDU inside of another PDU?",
+    "options": [
+      "flow control",
+      "segmentation",
+      "encoding",
+      "encapsulation"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Когда IP-пакет становится полезной нагрузкой Ethernet-кадра, происходит инкапсуляция. Segmentation делит данные на части, encoding представляет их сигналами, flow control регулирует скорость передачи.",
+      "en": "Encapsulation wraps one PDU inside another, as when a frame carries an IP packet. Segmentation divides data, encoding represents it in another form and flow control regulates the sender."
+    }
+  },
+  {
+    "id": "close-3-05",
+    "variant": 3,
+    "q": "What command will prevent all unencrypted passwords from displaying in plain text in a configuration file?",
+    "options": [
+      "(config-line)# password secret",
+      "(config)# service password-encryption",
+      "(config)# enable password secret",
+      "(config)# enable secret Secret_Password",
+      "(config)# enable secret Encrypted_Password"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Глобальная команда service password-encryption скрывает открытые пароли в конфигурации IOS. В классическом IOS это обратимое преобразование. Команды enable задают пароль привилегированного режима, а password в режиме линии задаёт пароль конкретной линии.",
+      "en": "The global service password-encryption command obscures cleartext configuration passwords using reversible protection in classic IOS. The enable commands affect privileged access and a line password affects only that line."
+    }
+  },
+  {
+    "id": "close-3-06",
+    "variant": 3,
+    "q": "What are two characteristics of fiber-optic cable? (Choose two.)",
+    "options": [
+      "It is not affected by EMI or RFI.",
+      "It is more expensive than UTP cabling is.",
+      "It typically contains 4 pairs of fiber-optic wires.",
+      "It combines the technique of cancellation, shielding, and twisting to protect data.",
+      "Each pair of cables is wrapped in metallic foil."
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "why": {
+      "ru": "Оптоволокно передаёт свет, поэтому электромагнитные и радиочастотные помехи не наводят ток в сигнальном пути. В типовом сравнении курса оптическая линия дороже UTP. Четыре пары, скрутка и фольга описывают варианты медной проводки.",
+      "en": "Fiber carries light and is immune to EMI and RFI along the optical path. The course compares it with typically cheaper UTP installations. Twisted pairs and foil describe copper cabling."
+    }
+  },
+  {
+    "id": "close-3-07",
+    "variant": 3,
+    "q": "A college is building a new dormitory on its campus. Workers are digging in the ground to install a new water pipe for the dormitory. A worker accidentally damages a fiber optic cable that connects two of the existing dormitories to the campus data center. Although the cable has been cut, students in the dormitories only experience a very short interruption of network services. What characteristic of the network is shown here?",
+    "options": [
+      "quality of service (QoS)",
+      "fault tolerance",
+      "integrity",
+      "security",
+      "scalability"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Одна линия оборвалась, а сервис быстро восстановился. Возможность продолжать работу после отказа — fault tolerance. QoS задаёт приоритеты, integrity относится к целостности данных, security — к защите, scalability — к росту сети.",
+      "en": "Service recovered quickly after a link failure, demonstrating fault tolerance. QoS prioritizes traffic, integrity concerns data correctness, security protects assets and scalability supports growth."
+    }
+  },
+  {
+    "id": "close-3-08",
+    "variant": 3,
+    "q": "Which command is used to manually query a DNS server to resolve a specific host name?",
+    "options": [
+      "ipconfig /displaydns",
+      "tracert",
+      "nslookup",
+      "net"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "nslookup отправляет DNS-запрос для указанного имени. ipconfig /displaydns показывает локальный кэш. tracert ищет переходы по маршруту, а net управляет службами и ресурсами Windows.",
+      "en": "nslookup queries a DNS server. ipconfig /displaydns displays the local cache, tracert traces hops and net manages Windows resources."
+    }
+  },
+  {
+    "id": "close-3-27",
+    "variant": 3,
+    "q": "A router receives a packet from the Gigabit 0/0 interface and determines that the packet needs to be forwarded out the Gigabit 0/1 interface. What will the router do next?",
+    "options": [
+      "look into the routing table to determine if the destination network is in the routing table",
+      "create a new Layer 2 Ethernet frame to be sent to the destination",
+      "route the packet out the Gigabit 0/1 interface",
+      "look into the ARP cache to determine the destination IP address"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Выход уже выбран. Перед передачей по Ethernet роутер помещает IP-пакет в новый кадр с MAC следующего перехода. IP назначения уже есть в пакете. ARP помогает найти MAC по известному IPv4.",
+      "en": "The egress is already chosen. Before transmission the router builds a new Ethernet frame addressed to the next hop. ARP resolves a known IPv4 address to a MAC."
+    }
+  },
+  {
+    "id": "close-3-28",
+    "variant": 3,
+    "q": "Which PDU is processed when a host computer is de-encapsulating a message at the transport layer of the TCP/IP model?",
+    "options": [
+      "bits",
+      "frame",
+      "packet",
+      "segment"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Из предложенных единиц транспорту соответствует segment (TCP). При получении сначала собирают кадр из битов, затем извлекают IP-пакет и только после него транспортные данные.",
+      "en": "A TCP segment is the transport PDU among the choices. Bits, frames and IP packets are processed at progressively lower layers."
+    }
+  },
+  {
+    "id": "close-3-29",
+    "variant": 3,
+    "q": "Which statement describes the treatment of ARP requests on the local link?",
+    "options": [
+      "They must be forwarded by all routers on the local network.",
+      "They are received and processed by every device on the local network.",
+      "They are received and processed only by the target device.",
+      "They are dropped by all switches on the local network."
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Обычный ARP-запрос передаётся широковещательным кадром внутри VLAN. Узлы читают запрос и сверяют IP, отвечает обычно владелец запрошенного адреса. Коммутатор распространяет кадр, а роутер ограничивает область рассылки.",
+      "en": "Hosts in the local broadcast domain receive and examine the request. Normally only the target replies. Switches flood the request within the VLAN and routers bound its reach."
+    }
+  },
+  {
+    "id": "close-3-30",
+    "variant": 3,
+    "q": "Which two host names follow the guidelines for naming conventions on Cisco IOS devices? (Choose two.)",
+    "options": [
+      "SwBranch799",
+      "RM-3-Switch-2A4",
+      "Branch2!",
+      "Floor(15)",
+      "HO Floor 17"
+    ],
+    "correct": [
+      0,
+      1
+    ],
+    "why": {
+      "ru": "Оба подходящих имени начинаются с буквы, заканчиваются буквой или цифрой и используют допустимые символы. Внутренние дефисы разрешены. В остальных именах есть восклицательный знак, скобки или пробелы.",
+      "en": "Both valid names start with a letter and end with an alphanumeric character. Interior hyphens are allowed. The other names contain an exclamation mark, parentheses or spaces."
+    }
+  },
+  {
+    "id": "close-3-31",
+    "variant": 3,
+    "q": "What service is provided by POP3?",
+    "options": [
+      "Retrieves email from the server by downloading the email to the local mail application of the client.",
+      "Uses encryption to provide secure remote access to network devices and servers.",
+      "Allows remote access to network devices and servers.",
+      "An application that allows real-time chatting among remote users."
+    ],
+    "correct": [
+      0
+    ],
+    "why": {
+      "ru": "POP3 позволяет почтовому клиенту забрать письма из ящика на сервере. Защищённая удалённая консоль — пример SSH, а интерактивный чат — отдельная служба обмена сообщениями.",
+      "en": "POP3 downloads mailbox messages to the client. Encrypted remote login describes SSH. Remote administration and real-time chat are separate services."
+    }
+  },
+  {
+    "id": "close-3-32",
+    "variant": 3,
+    "q": "Which field in the IPv4 header is used to prevent a packet from traversing a network endlessly?",
+    "options": [
+      "Sequence Number",
+      "Time-to-Live",
+      "Acknowledgment Number",
+      "Differentiated Services"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Каждый маршрутизатор уменьшает TTL. Когда значение исчерпано, пакет отбрасывается, даже если маршрут образовал петлю. Номера последовательности и подтверждения относятся к TCP, а DS управляет классом обслуживания.",
+      "en": "Each router decrements TTL. A packet whose TTL expires is discarded even in a routing loop. Sequence and acknowledgment numbers belong to TCP and differentiated services marks traffic treatment."
+    }
+  },
+  {
+    "id": "close-3-33",
+    "variant": 3,
+    "q": "Which IPv4 address can a host use to ping the loopback interface?",
+    "options": [
+      "126.0.0.0",
+      "126.0.0.1",
+      "127.0.0.1",
+      "127.0.0.0"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Стандартный адрес для проверки своего стека TCP/IP — 127.0.0.1. Диапазон 127/8 зарезервирован для loopback, поэтому на отдельных ОС могут отвечать и другие адреса этого блока. 126/8 в него не входит.",
+      "en": "The conventional IPv4 localhost address is 127.0.0.1. The whole 127/8 block is reserved for loopback, and other addresses can respond depending on the OS. The 126/8 choices are outside the block."
+    }
+  },
+  {
+    "id": "close-3-34",
+    "variant": 3,
+    "q": "Which two ICMP messages are used by both IPv4 and IPv6 protocols? (Choose two.)",
+    "options": [
+      "protocol unreachable",
+      "route redirection",
+      "router advertisement",
+      "router solicitation",
+      "neighbor solicitation"
+    ],
+    "correct": [],
+    "why": {
+      "ru": "Задание для разбора. Обе версии поддерживают Redirect. В учебных сравнениях также сопоставляют Protocol Unreachable в IPv4 с ошибкой Unrecognized Next Header в IPv6. Кроме того, Router Advertisement и Router Solicitation существуют и в IPv4 Router Discovery (RFC 1256). Поэтому без авторского ключа единственной пары для оценки здесь нет. Neighbor Solicitation относится к IPv6.",
+      "en": "Both versions support Redirect. IPv4 Protocol Unreachable corresponds to IPv6 Unrecognized Next Header under a different message type. Router Advertisement and Router Solicitation also exist in IPv4 Router Discovery (RFC 1256). The printed choices therefore do not yield an unambiguous pair. Neighbor Solicitation belongs to IPv6."
+    }
+  },
+  {
+    "id": "close-3-35",
+    "variant": 3,
+    "q": "Which interface allows remote management of a Layer 2 switch?",
+    "options": [
+      "the first Ethernet port interface",
+      "the switch virtual interface",
+      "the console port interface",
+      "the AUX interface"
+    ],
+    "correct": [
+      1
+    ],
+    "why": {
+      "ru": "Для управления через IP на коммутаторе уровня 2 адрес назначают SVI — виртуальному интерфейсу VLAN. Первый Ethernet-порт сам по себе остаётся портом коммутации. Console и AUX относятся к отдельным способам административного доступа.",
+      "en": "An SVI gives the switch an IP endpoint for in-band management. A physical switchport forwards frames. Console and AUX serve separate administrative access paths."
+    }
+  },
+  {
+    "id": "close-3-36",
+    "variant": 3,
+    "q": "In the show running-config command, what part of the syntax is represented by running-config?",
+    "options": [
+      "a prompt",
+      "the command",
+      "a keyword",
+      "a variable"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "show — команда, а running-config — предусмотренное IOS ключевое слово, выбирающее текущую конфигурацию. Prompt — приглашение вроде Router#. Переменной был бы вводимый пользователем адрес или имя.",
+      "en": "show is the command and running-config is a predefined keyword selecting the active configuration. A prompt is displayed by IOS, while a variable is supplied by the user."
+    }
+  },
+  {
+    "id": "close-3-37",
+    "variant": 3,
+    "q": "Which switching method has the lowest level of latency?",
+    "options": [
+      "cut-through",
+      "fragment-free",
+      "fast-forward",
+      "store-and-forward"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Fast-forward — самый быстрый режим семейства cut-through. Он начинает пересылку сразу после чтения MAC назначения. Fragment-free ждёт первые 64 байта, store-and-forward — весь кадр.",
+      "en": "Fast-forward is the lowest-latency cut-through mode. It starts after reading the destination MAC. Fragment-free waits for 64 bytes and store-and-forward waits for the entire frame."
+    }
+  },
+  {
+    "id": "close-3-38",
+    "variant": 3,
+    "q": "Which two functions are primary functions of a router? (Choose two.)",
+    "options": [
+      "flow control",
+      "domain name resolution",
+      "microsegmentation",
+      "path selection",
+      "packet forwarding"
+    ],
+    "correct": [
+      3,
+      4
+    ],
+    "why": {
+      "ru": "Сначала роутер выбирает путь к сети назначения, затем передаёт пакет через выходной интерфейс. Имена разрешает DNS, микросегментация характерна для коммутации, управление потоком согласует темп передачи.",
+      "en": "A router selects a path and forwards packets. DNS resolves names, switching provides microsegmentation and flow control regulates transmission rate."
+    }
+  },
+  {
+    "id": "close-3-39",
+    "variant": 3,
+    "q": "An employee at a branch office is creating a quote for a customer. In order to do this, the employee needs to access confidential pricing information from internal servers at the Head Office. What type of network would the employee access?",
+    "options": [
+      "a local area network",
+      "the Internet",
+      "an extranet",
+      "an intranet"
+    ],
+    "correct": [
+      3
+    ],
+    "why": {
+      "ru": "Сотрудник открывает внутренний ресурс своей организации — intranet. Доступ партнёров характерен для extranet. LAN описывает географический масштаб, а Интернет может лишь переносить трафик между офисами.",
+      "en": "An employee accessing internal company resources uses an intranet. An extranet extends selected access to external partners. LAN describes geographic scope and the Internet can provide underlying transport."
+    }
+  },
+  {
+    "id": "close-3-40",
+    "variant": 3,
+    "q": "During a routine inspection, a technician discovered that software that was installed on a computer was secretly collecting data about websites that were visited by users of the computer. Which type of threat is affecting this computer?",
+    "options": [
+      "zero-day attack",
+      "identity theft",
+      "spyware",
+      "DoS attack"
+    ],
+    "correct": [
+      2
+    ],
+    "why": {
+      "ru": "Скрытый сбор истории посещений — поведение spyware. Кража личности означает использование чужих данных для выдачи себя за другого человека. Zero-day связан с уязвимостью, а DoS нарушает доступность службы.",
+      "en": "Spyware secretly monitors browsing. Identity theft involves impersonation, zero-day describes exploitation of a vulnerability and denial of service affects availability."
+    }
   }
 ]

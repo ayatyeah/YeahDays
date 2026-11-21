@@ -6,7 +6,7 @@ import { eventSummaries } from "./summaries";
 
 describe("event course navigation", () => {
   it("places every published event in exactly one course", () => {
-    expect(EVENT_COURSES.map(course => course.id)).toEqual(["computer-networks", "philosophy"]);
+    expect(EVENT_COURSES.map(course => course.id)).toEqual(["philosophy"]);
     const ids = EVENT_COURSES.flatMap(course => course.eventIds);
     expect(new Set(ids).size).toBe(ids.length);
     expect([...ids].sort()).toEqual(eventSummaries().map(event => event.id).sort());

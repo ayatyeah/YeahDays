@@ -48,11 +48,11 @@ const nextConfig: NextConfig = {
   },
 
   async redirects() {
-    return ["module", "test"].map(prefix => ({
-      source: `/events/network-final/${prefix}-:set.txt`,
-      destination: `/events/courses/computer-networks/practice/${prefix}-:set`,
-      permanent: false,
-    }));
+    return [
+      "/events/courses/computer-networks/:path*",
+      "/events/computer-networks-:term/:path*",
+      "/events/network-final/:path*",
+    ].map(source => ({ source, destination: "/events", permanent: false }));
   },
 
   async headers() {

@@ -1,4 +1,5 @@
 'use client';
+import readings from '@/lib/philosophy/reading-index.json';
 import guide from '@/lib/philosophy/study-guide.json';
 import { countWords } from '@/lib/philosophy/practice';
 import styles from './philosophy.module.css';
@@ -48,6 +49,10 @@ export default function StudyGuide({ section }: { section: 'example' | 'thinkers
         })}</div>
         <p className={styles.small}>Проверь себя: закрой карточки, объясни разницу между тремя идеями и придумай по одному примеру.</p>
       </section>)}
+      <section className={styles.panel}><h2>Ещё {readings.length} мыслителей из материалов LMS</h2>
+        <p>Раскрой имя, объясни идею своими словами и найди деталь новости, к которой она применима. Ссылка ведёт к оригиналу в Moodle.</p>
+        {readings.map(person => <details key={person.name}><summary>{person.name}</summary><p>{person.idea}</p><a href={`https://lms.astanait.edu.kz/mod/resource/view.php?id=${person.id}`}>{person.title}, с. {person.page}</a></details>)}
+      </section>
     </>}
     {section === 'lectures' && <>
       <section className={styles.panel}><p className={styles.eyebrow}>LECTURES 01—10</p><h2>От первой лекции до последней — простыми словами</h2><p>{guide.scope}</p><p>Порядок: прочитай пример → объясни главную идею своими словами → реши мини-задание → открой ответ. Полный двуязычный конспект и ссылки на LMS находятся ниже.</p></section>
